@@ -111,9 +111,12 @@ namespace Altaxo.Gui.Graph.Gdi.Viewing.GraphControllerMouseHandlers
 
     protected GraphController _grac;
 
-    private enum State { NoPoint, OnePoint, TwoPoints };
+    private enum State { NoPoint, OnePoint, TwoPoints, ThreePoints, FourPoints };
 
     private State _state;
+
+    /// <summary>Gets the state that is considered as final state, i.e. the end of the initialization stage.</summary>
+    private State _finalState { get; }
 
     /// <summary>
     /// A line that is drawn from the current mouse coordinates to the nearest point on the selected curve.
@@ -136,11 +139,26 @@ namespace Altaxo.Gui.Graph.Gdi.Viewing.GraphControllerMouseHandlers
     }
 
 
-    public FourPointsOnCurveMouseHandler(GraphController grac)
+    /// <summary>
+    /// Initializes a new instance of the <see cref="FourPointsOnCurveMouseHandler"/> class.
+    /// </summary>
+    /// <param name="grac">The current graphics controller.</param>
+    /// <param name="useFourHandles">If set to <c>true</c>, 4 handles (2 outer, 2 inner) are used. If set to <c>false</c>, only two handles are used.</param>
+    /// <param name="initAllFourHandles">If set to <c>true</c>, and 4 handles are used, the user has to set all 4 handles before the initialization is finished.
+    /// If set to <c>false</c>, the user only has to set the outer handles to finish the initialization, and then he has to drag the inner handles.</param>
+    /// <exception cref="System.ArgumentNullException">grac</exception>
+    public FourPointsOnCurveMouseHandler(GraphController grac, bool useFourHandles, bool initAllFourHandles)
     {
       _grac = grac ?? throw new System.ArgumentNullException(nameof(grac));
       if (_grac is not null)
+      {
         _grac.SetPanelCursor(Cursors.Cross);
+      }
+
+      _handle = new Handle[useFourHandles ? 4 : 2];
+      _finalState = useFourHandles ? (initAllFourHandles ? State.FourPoints : State.TwoPoints) : State.TwoPoints;
+
+      UpdateDataDisplay();
     }
 
     public override GraphToolType GraphToolType => GraphToolType.FourPointsOnCurve;
@@ -156,13 +174,22 @@ namespace Altaxo.Gui.Graph.Gdi.Viewing.GraphControllerMouseHandlers
       base.OnMouseDown(position, e);
       var graphXY = _grac.ConvertMouseToRootLayerCoordinates(position);
 
-      switch (_state)
+      switch ((_state, _finalState))
       {
-        case State.NoPoint:
+        case (State.NoPoint, _):
           OnMouseDown_NoPoint(position, graphXY);
           break;
-        case State.OnePoint:
-          OnMouseDown_OnePoint(position, graphXY);
+        case (State.OnePoint, State.TwoPoints):
+          OnMouseDown_OnePointOfTwo(position, graphXY);
+          break;
+        case (State.OnePoint, State.FourPoints):
+          OnMouseDown_OnePointOfFour(position, graphXY);
+          break;
+        case (State.TwoPoints, State.FourPoints):
+          OnMouseDown_TwoPointsOfFour(position, graphXY);
+          break;
+        case (State.ThreePoints, State.FourPoints):
+          OnMouseDown_ThreePointsOfFour(position, graphXY);
           break;
         default:
           OnMouseDown_FullState(position, graphXY);
@@ -209,7 +236,7 @@ namespace Altaxo.Gui.Graph.Gdi.Viewing.GraphControllerMouseHandlers
     /// </summary>
     /// <param name="position">The position.</param>
     /// <param name="graphXY">The graph xy.</param>
-    private void OnMouseDown_OnePoint(PointD2D position, PointD2D graphXY)
+    private void OnMouseDown_OnePointOfTwo(PointD2D position, PointD2D graphXY)
     {
       var transXY = _layer.TransformCoordinatesFromRootToHere(graphXY);
       XYScatterPointInformation scatterPoint = PlotItem.GetNearestPlotPoint(_layer, transXY);
@@ -230,6 +257,84 @@ namespace Altaxo.Gui.Graph.Gdi.Viewing.GraphControllerMouseHandlers
 
         var newPixelCoord = _grac.ConvertGraphToMouseCoordinates(rootLayerCoord);
         _state = State.TwoPoints;
+        _catchLine = null;
+
+        OnHandlesUpdated();   // show coordinates in the data reader
+      }
+    }
+
+    /// <summary>
+    /// Handles the mouse down event after one point is already selected.
+    /// </summary>
+    /// <param name="position">The position.</param>
+    /// <param name="graphXY">The graph xy.</param>
+    private void OnMouseDown_OnePointOfFour(PointD2D position, PointD2D graphXY)
+    {
+      var transXY = _layer.TransformCoordinatesFromRootToHere(graphXY);
+      XYScatterPointInformation scatterPoint = PlotItem.GetNearestPlotPoint(_layer, transXY);
+      if (scatterPoint is not null)
+      {
+        var plotIndex = scatterPoint.PlotIndex;
+        var rowIndex = scatterPoint.RowIndex;
+        // convert this layer coordinates first to PrintableAreaCoordinates
+        var rootLayerCoord = _layer.TransformCoordinatesFromHereToRoot(scatterPoint.LayerCoordinates.ToPointD2D());
+        _handle[1] = new Handle { PlotIndex = plotIndex, RowIndex = rowIndex, Position = rootLayerCoord };
+        _handle[2] = new Handle { PlotIndex = plotIndex, RowIndex = rowIndex, Position = rootLayerCoord };
+        _handle[3] = new Handle { PlotIndex = plotIndex, RowIndex = rowIndex, Position = rootLayerCoord };
+
+        var newPixelCoord = _grac.ConvertGraphToMouseCoordinates(rootLayerCoord);
+        _state = State.TwoPoints;
+        _catchLine = null;
+
+        OnHandlesUpdated();   // show coordinates in the data reader
+      }
+    }
+
+    /// <summary>
+    /// Handles the mouse down event after one point is already selected.
+    /// </summary>
+    /// <param name="position">The position.</param>
+    /// <param name="graphXY">The graph xy.</param>
+    private void OnMouseDown_TwoPointsOfFour(PointD2D position, PointD2D graphXY)
+    {
+      var transXY = _layer.TransformCoordinatesFromRootToHere(graphXY);
+      XYScatterPointInformation scatterPoint = PlotItem.GetNearestPlotPoint(_layer, transXY);
+      if (scatterPoint is not null)
+      {
+        var plotIndex = scatterPoint.PlotIndex;
+        var rowIndex = scatterPoint.RowIndex;
+        // convert this layer coordinates first to PrintableAreaCoordinates
+        var rootLayerCoord = _layer.TransformCoordinatesFromHereToRoot(scatterPoint.LayerCoordinates.ToPointD2D());
+        _handle[2] = new Handle { PlotIndex = plotIndex, RowIndex = rowIndex, Position = rootLayerCoord };
+        _handle[3] = new Handle { PlotIndex = plotIndex, RowIndex = rowIndex, Position = rootLayerCoord };
+
+        var newPixelCoord = _grac.ConvertGraphToMouseCoordinates(rootLayerCoord);
+        _state = State.ThreePoints;
+        _catchLine = null;
+
+        OnHandlesUpdated();   // show coordinates in the data reader
+      }
+    }
+
+    /// <summary>
+    /// Handles the mouse down event after one point is already selected.
+    /// </summary>
+    /// <param name="position">The position.</param>
+    /// <param name="graphXY">The graph xy.</param>
+    private void OnMouseDown_ThreePointsOfFour(PointD2D position, PointD2D graphXY)
+    {
+      var transXY = _layer.TransformCoordinatesFromRootToHere(graphXY);
+      XYScatterPointInformation scatterPoint = PlotItem.GetNearestPlotPoint(_layer, transXY);
+      if (scatterPoint is not null)
+      {
+        var plotIndex = scatterPoint.PlotIndex;
+        var rowIndex = scatterPoint.RowIndex;
+        // convert this layer coordinates first to PrintableAreaCoordinates
+        var rootLayerCoord = _layer.TransformCoordinatesFromHereToRoot(scatterPoint.LayerCoordinates.ToPointD2D());
+        _handle[3] = new Handle { PlotIndex = plotIndex, RowIndex = rowIndex, Position = rootLayerCoord };
+        Array.Sort(_handle, (a, b) => a.Position.X.CompareTo(b.Position.X));
+
+        _state = State.FourPoints;
         _catchLine = null;
 
         OnHandlesUpdated();   // show coordinates in the data reader
@@ -265,7 +370,7 @@ namespace Altaxo.Gui.Graph.Gdi.Viewing.GraphControllerMouseHandlers
       base.OnMouseMove(position, e);
       var mouseRootCoord = _grac.ConvertMouseToRootLayerCoordinates(position);
 
-      if (_state == State.OnePoint)
+      if (_state != State.NoPoint && _state != _finalState)
       {
         var mouseLayerCoord = _layer.TransformCoordinatesFromRootToHere(mouseRootCoord);
         if (PlotItem.GetNearestPlotPoint(_layer, mouseLayerCoord) is { } scatterPoint)
@@ -524,7 +629,31 @@ namespace Altaxo.Gui.Graph.Gdi.Viewing.GraphControllerMouseHandlers
       if (_state == State.NoPoint)
       {
         Current.DataDisplay.WriteThreeLines(
+          "Click on a curve to set the left outer point.",
           "",
+          ""
+          );
+      }
+      else if (_state == State.OnePoint)
+      {
+        Current.DataDisplay.WriteThreeLines(
+          $"Click again to set the {(_finalState == State.FourPoints ? "left inner" : "right outer")} point",
+          "",
+          ""
+          );
+      }
+      else if (_state == State.TwoPoints && _finalState == State.FourPoints)
+      {
+        Current.DataDisplay.WriteThreeLines(
+          $"Click again to set the right inner point",
+          "",
+          ""
+          );
+      }
+      else if (_state == State.ThreePoints && _finalState == State.FourPoints)
+      {
+        Current.DataDisplay.WriteThreeLines(
+          $"Click again to set the right outer point",
           "",
           ""
           );

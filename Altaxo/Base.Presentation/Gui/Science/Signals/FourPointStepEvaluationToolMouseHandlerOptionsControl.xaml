@@ -1,0 +1,77 @@
+﻿<UserControl x:Class="Altaxo.Gui.Science.Signals.FourPointStepEvaluationToolMouseHandlerOptionsControl"
+             xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+             xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+             xmlns:axogc="clr-namespace:Altaxo.Gui.Common"
+             xmlns:axogcd="clr-namespace:Altaxo.Gui.Common.Drawing"
+             xmlns:local="clr-namespace:Altaxo.Gui.Science.Signals;assembly=AltaxoBase"
+             d:DataContext="{d:DesignInstance Type=local:FourPointStepEvaluationToolMouseHandlerOptionsController}"
+             mc:Ignorable="d"
+             d:DesignHeight="450"
+             d:DesignWidth="800">
+  <Grid>
+    <Grid.ColumnDefinitions>
+      <ColumnDefinition Width="Auto" />
+      <ColumnDefinition Width="4" />
+      <ColumnDefinition Width="Auto" />
+      <ColumnDefinition Width="4" />
+    </Grid.ColumnDefinitions>
+    <Grid.RowDefinitions>
+      <RowDefinition Height="Auto" />
+      <RowDefinition Height="4" />
+      <RowDefinition Height="Auto" />
+      <RowDefinition Height="4" />
+      <RowDefinition Height="Auto" />
+      <RowDefinition Height="4" />
+      <RowDefinition Height="Auto" />
+      <RowDefinition Height="4" />
+      <RowDefinition Height="Auto" />
+      <RowDefinition Height="4" />
+      <RowDefinition Height="Auto" />
+      <RowDefinition Height="4" />
+      <RowDefinition Height="Auto" />
+      <RowDefinition Height="4" />
+      <RowDefinition Height="Auto" />
+      <RowDefinition Height="4" />
+      <RowDefinition Height="Auto" />
+      <RowDefinition Height="4" />
+    </Grid.RowDefinitions>
+
+    <CheckBox Grid.Row="0"
+              Grid.Column="0"
+              IsChecked="{Binding UseRegressionForLeftAndRightLine, Mode=TwoWay}"
+              Content="Use regression for left and right line" />
+
+    <Label Grid.Row="2"
+           Grid.Column="0"
+           Content="Middle regression lower level:" />
+    <axogc:QuantityWithUnitTextBox Grid.Row="2"
+                                   Grid.Column="2"
+                                   SelectedQuantity="{Binding  MiddleRegressionLowerLevel, Mode=TwoWay}"
+                                   UnitEnvironment="{Binding LevelEnvironment}" />
+
+    <Label Grid.Row="4"
+           Grid.Column="0"
+           Content="Middle regression upper level:" />
+    <axogc:QuantityWithUnitTextBox Grid.Row="4"
+                                   Grid.Column="2"
+                                   SelectedQuantity="{Binding  MiddleRegressionUpperLevel, Mode=TwoWay}"
+                                   UnitEnvironment="{Binding LevelEnvironment}" />
+
+    <Label Grid.Row="6"
+           Grid.Column="0"
+           Content="Overlap of middle line:" />
+    <axogc:QuantityWithUnitTextBox Grid.Row="6"
+                                   Grid.Column="2"
+                                   SelectedQuantity="{Binding  MiddleLineOverlap, Mode=TwoWay}"
+                                   UnitEnvironment="{Binding LevelEnvironment}" />
+
+    <GroupBox Grid.Row="8"
+              Grid.Column="0"
+              Grid.ColumnSpan="4"
+              Header="Line pen:">
+      <axogcd:ColorTypeThicknessPenControl DataContext="{Binding PenController}" />
+    </GroupBox>
+  </Grid>
+</UserControl>

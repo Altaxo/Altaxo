@@ -33,15 +33,17 @@ using Altaxo.Data;
 using Altaxo.Data.Selections;
 using Altaxo.Graph.Gdi.Plot;
 using Altaxo.Graph.Gdi.Plot.Styles;
+using Altaxo.Main.Properties;
 using Altaxo.Main.Services;
 using Altaxo.Science.Signals;
 
 namespace Altaxo.Gui.Graph.Gdi.Viewing.GraphControllerMouseHandlers
 {
-  public class StepEvaluationToolMouseHandler : FourPointsOnCurveMouseHandler
+  public class FourPointStepEvaluationToolMouseHandler : FourPointsOnCurveMouseHandler
   {
-    private double _yLowerStepValue = 0.2;
-    private double _yUpperStepValue = 0.8;
+    public static PropertyKey<FourPointStepEvaluationToolMouseHandlerOptions> DefaultOptionsKey = new PropertyKey<FourPointStepEvaluationToolMouseHandlerOptions>("F83DAFE6-E522-4930-BA8B-6DC1742DD85C", "Graphs\\StepEvaluationToolOptions", PropertyLevel.Application, null, () => new FourPointStepEvaluationToolMouseHandlerOptions());
+
+    protected FourPointStepEvaluationToolMouseHandlerOptions _options;
 
     private double[] _xleft = new double[100];
     private double[] _yleft = new double[100];
@@ -59,9 +61,10 @@ namespace Altaxo.Gui.Graph.Gdi.Viewing.GraphControllerMouseHandlers
 
     private QuickLinearRegression? _leftReg, _rightReg, _middleReg;
 
-    public StepEvaluationToolMouseHandler(GraphController grac)
-      : base(grac)
+    public FourPointStepEvaluationToolMouseHandler(GraphController grac)
+      : base(grac, useFourHandles: true, initAllFourHandles: true)
     {
+      _options = grac.Doc.GetPropertyValue(DefaultOptionsKey, () => new FourPointStepEvaluationToolMouseHandlerOptions());
     }
 
     public override GraphToolType GraphToolType => GraphToolType.FourPointStepEvaluation;
@@ -289,6 +292,14 @@ namespace Altaxo.Gui.Graph.Gdi.Viewing.GraphControllerMouseHandlers
         _grac.SetGraphToolFromInternal(GraphToolType.ObjectPointer);
         return true;
       }
+      else if (e.Key == Key.R)
+      {
+        _options = _options with { UseRegressionForLeftAndRightLine = !_options.UseRegressionForLeftAndRightLine };
+        Current.Gui.InfoMessageBox($"Full regression of the left and right line is now switched {(_options.UseRegressionForLeftAndRightLine ? "on" : "off")}.", "Regression option");
+        CalculateLines();
+        UpdateDataDisplay();
+        _grac.RenderOverlay();
+      }
 
       return false;
     }
@@ -318,9 +329,9 @@ namespace Altaxo.Gui.Graph.Gdi.Viewing.GraphControllerMouseHandlers
         IndexLeftInner = _handle[1].PlotIndex,
         IndexRightInner = _handle[2].PlotIndex,
         IndexRightOuter = _handle[3].PlotIndex,
-        UseRegressionForLeftAndRightLine = true,
-        MiddleRegressionLevels = (0.25, 0.75),
-        MiddleLineOverlap = 0.1,
+        UseRegressionForLeftAndRightLine = _options.UseRegressionForLeftAndRightLine,
+        MiddleRegressionLevels = _options.MiddleRegressionLevels,
+        MiddleLineOverlap = _options.MiddleLineOverlap,
       };
 
       newTable.DataSource = new FourPointStepEvaluationDataSource(new XAndYColumn(PlotItem.Data), dataSourceOptions, new DataSourceImportOptions());
@@ -334,11 +345,15 @@ namespace Altaxo.Gui.Graph.Gdi.Viewing.GraphControllerMouseHandlers
       var newCollection = new PlotItemCollection();
       plotCollection.Add(newCollection);
 
+      var linePlotStyleTemplate = new LinePlotStyle(_grac.Doc.GetPropertyContext()) { IndependentLineColor = true };
+      linePlotStyleTemplate.LinePen = _options.LinePen.WithWidth(linePlotStyleTemplate.LinePen.Width);
+
+
       var newPlotItem = new XYColumnPlotItem(
                           new Altaxo.Graph.Plot.Data.XYColumnPlotData(newTable, FourPointStepEvaluationDataSource.ColumnGroupNumberLeft, newTable[FourPointStepEvaluationDataSource.ColumnNameLeftX], newTable[FourPointStepEvaluationDataSource.ColumnNameLeftY]),
                           new G2DPlotStyleCollection(new[]
                           {
-                              new LinePlotStyle(_grac.Doc.GetPropertyContext()) { Color = Altaxo.Drawing.NamedColors.Blue },
+                              (LinePlotStyle)linePlotStyleTemplate.Clone(),
                           }));
 
       newCollection.Add(newPlotItem);
@@ -347,7 +362,7 @@ namespace Altaxo.Gui.Graph.Gdi.Viewing.GraphControllerMouseHandlers
                     new Altaxo.Graph.Plot.Data.XYColumnPlotData(newTable, FourPointStepEvaluationDataSource.ColumnGroupNumberRight, newTable[FourPointStepEvaluationDataSource.ColumnNameRightX], newTable[FourPointStepEvaluationDataSource.ColumnNameRightY]),
                     new G2DPlotStyleCollection(new[]
                     {
-                              new LinePlotStyle(_grac.Doc.GetPropertyContext()) { Color = Altaxo.Drawing.NamedColors.Blue },
+                               (LinePlotStyle)linePlotStyleTemplate.Clone(),
                     }));
 
       newCollection.Add(newPlotItem);
@@ -357,7 +372,7 @@ namespace Altaxo.Gui.Graph.Gdi.Viewing.GraphControllerMouseHandlers
                           new Altaxo.Graph.Plot.Data.XYColumnPlotData(newTable, FourPointStepEvaluationDataSource.ColumnGroupNumberMiddle, newTable[FourPointStepEvaluationDataSource.ColumnNameMiddleX], newTable[FourPointStepEvaluationDataSource.ColumnNameMiddleY]),
                           new G2DPlotStyleCollection(new[]
                           {
-                              new LinePlotStyle(_grac.Doc.GetPropertyContext()) { Color = Altaxo.Drawing.NamedColors.Blue },
+                               (LinePlotStyle)linePlotStyleTemplate.Clone(),
                           }));
 
       newCollection.Add(newPlotItem);

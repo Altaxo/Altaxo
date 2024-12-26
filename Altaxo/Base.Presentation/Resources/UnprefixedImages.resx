@@ -289,4 +289,18 @@
        &lt;/DrawingImage.Drawing&gt;
 &lt;/DrawingImage&gt;</value>
   </data>
+  <data name="Icons.16x16.StepEvaluationTool" xml:space="preserve">
+    <value>&lt;DrawingImage  xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"&gt;
+ &lt;DrawingImage.Drawing&gt;
+         &lt;DrawingGroup&gt;
+            &lt;DrawingGroup.Children&gt;
+&lt;GeometryDrawing Brush="#FF0000FF" Geometry="F1M4.3,15 L9.7,0.4 L11.6,1.1 L6.2,15.7z" /&gt;
+&lt;GeometryDrawing Brush="#FF0000FF" Geometry="F1M1,12 L11,12 L11,14 L1,14z" /&gt;
+&lt;GeometryDrawing Brush="#FF0000FF" Geometry="F1M5,2 L15,2 L15,4 L5,4z" /&gt;
+&lt;GeometryDrawing Brush="#FF000000" Geometry="F1M0,11.2 L0.2,11.2 L0.6,11.2 L1.4,11.2 L2.2,11.2 L3.1,11.2 L3.5,11.3 L3.8,11.5 L4.3,11.9 L4.1,11.8 L4.4,11.9 L4.1,11.9 L4.3,11.9 L4.1,12 L4.4,11.8 L4.3,11.9 L4.6,11.4 L4.6,11.4 L4.8,11.1 L4.7,11.1 L5,10.6 L5,10.6 L5.4,9.4 L5.4,9.5 L6,8 L6,8 L6.5,6.5 L7.1,4.9 L7.6,3.5 L8.1,2.3 L8.4,1.8 L8.6,1.4 L9,0.8 L9.4,0.5 L9.9,0.4 L10.4,0.6 L10.8,1.1 L10.8,1 L11,1.2 L10.8,1.1 L11.1,1.2 L11,1.2 L11.8,1.2 L12.6,1.2 L13.4,1.2 L13.8,1.2 L14,1.2 L14,2.2 L13.8,2.2 L13.4,2.2 L12.6,2.2 L11.8,2.2 L10.9,2.2 L10.5,2.1 L10.2,1.8 L9.7,1.4 L9.8,1.5 L9.6,1.4 L9.9,1.4 L9.7,1.5 L9.9,1.4 L9.6,1.6 L9.7,1.5 L9.4,2 L9.4,1.9 L9.2,2.3 L9.3,2.2 L9,2.7 L9,2.7 L8.6,3.9 L8.6,3.9 L8,5.3 L8,5.3 L7.5,6.8 L6.9,8.4 L6.4,9.8 L5.9,11 L5.6,11.5 L5.4,11.9 L5,12.5 L4.6,12.8 L4.1,12.9 L3.6,12.7 L3.2,12.3 L3.2,12.3 L3,12.1 L3.2,12.2 L2.9,12.2 L3,12.2 L2.2,12.2 L1.4,12.2 L0.6,12.2 L0.2,12.2 L0,12.2z" /&gt;
+            &lt;/DrawingGroup.Children&gt;
+          &lt;/DrawingGroup&gt;
+       &lt;/DrawingImage.Drawing&gt;
+&lt;/DrawingImage&gt;</value>
+  </data>
 </root>

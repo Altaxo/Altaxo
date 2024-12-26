@@ -22,14 +22,15 @@
 
 #endregion Copyright
 
+using Altaxo.Drawing;
+using Altaxo.Main;
+
 namespace Altaxo.Science.Signals
 {
   /// <summary>
-  /// Options for a step evaluation that uses 4 points on a curve. Two points on the curve define a left straight line, and two other points on the curve define a right straight line.
-  /// The step should be located inbetween the two inner points. The step position is then evaluated by building a regression
-  /// line of the curve between the inner points, but only from a certain level to another given leven (e.g., from 25% to 75% of the distance between left and right line).
+  /// Options for the step evaluation tool mouse handler.
   /// </summary>
-  public record FourPointStepEvaluationOptions : Main.IImmutable
+  public record FourPointStepEvaluationToolMouseHandlerOptions : IImmutable
   {
     /// <summary>
     /// Gets a value indicating whether to use regression for the left and right section of the step.
@@ -55,82 +56,45 @@ namespace Altaxo.Science.Signals
     /// </summary>
     public double MiddleLineOverlap { get; init; } = 0.1;
 
-
     /// <summary>
-    /// Gets a value indicating whether the original (measured) data points should be included in the output.
+    /// Gets the pen that is used for drawing the lines.
     /// </summary>
-    /// <value>
-    /// <c>true</c> if the orignal data points should be included in the output; otherwise, <c>false</c>.
-    /// </value>
-    public bool IncludeOriginalPointsInOutput { get; init; }
-
-
-    /// <summary>
-    /// Gets the index of the first point of the left line.
-    /// </summary>
-    public int IndexLeftOuter { get; init; }
-
-    /// <summary>
-    /// Gets the index of the second point of the left line.
-    /// </summary>
-    public int IndexLeftInner { get; init; }
-
-    /// <summary>
-    /// Gets the index of the first point of the right line.
-    /// </summary>
-    public int IndexRightOuter { get; init; }
-
-    /// <summary>
-    /// Gets the index of the second point of the right line.
-    /// </summary>
-    public int IndexRightInner { get; init; }
+    public PenX LinePen { get; init; } = new PenX(NamedColors.LightBlue, 2);
 
     #region Serialization
 
     /// <summary>
-    /// 2024-12-22 V0
+    /// 2024-12-23 V0
     /// </summary>
-    /// <seealso cref="Altaxo.Serialization.Xml.IXmlSerializationSurrogate" />
-    [Altaxo.Serialization.Xml.XmlSerializationSurrogateFor(typeof(FourPointStepEvaluationOptions), 0)]
-    public class SerializationSurrogate0 : Altaxo.Serialization.Xml.IXmlSerializationSurrogate
+    /// <seealso cref="Serialization.Xml.IXmlSerializationSurrogate" />
+    [Serialization.Xml.XmlSerializationSurrogateFor(typeof(FourPointStepEvaluationToolMouseHandlerOptions), 0)]
+    public class SerializationSurrogate0 : Serialization.Xml.IXmlSerializationSurrogate
     {
-      public void Serialize(object obj, Altaxo.Serialization.Xml.IXmlSerializationInfo info)
+      public void Serialize(object obj, Serialization.Xml.IXmlSerializationInfo info)
       {
-        var s = (FourPointStepEvaluationOptions)obj;
+        var s = (FourPointStepEvaluationToolMouseHandlerOptions)obj;
 
         info.AddValue("UseRegressionForLeftAndRightLine", s.UseRegressionForLeftAndRightLine);
         info.AddValue("MiddleRegressionLowerLevel", s.MiddleRegressionLevels.LowerLevel);
         info.AddValue("MiddleRegressionUpperLevel", s.MiddleRegressionLevels.UpperLevel);
         info.AddValue("MiddleLineOverlap", s.MiddleLineOverlap);
-        info.AddValue("IncludeOriginalPointsInOutput", s.IncludeOriginalPointsInOutput);
-        info.AddValue("IndexLeftOuter", s.IndexLeftOuter);
-        info.AddValue("IndexLeftInner", s.IndexLeftInner);
-        info.AddValue("IndexRightInner", s.IndexRightInner);
-        info.AddValue("IndexRightOuter", s.IndexRightOuter);
+        info.AddValue("LinePen", s.LinePen);
       }
 
-      public object Deserialize(object? o, Altaxo.Serialization.Xml.IXmlDeserializationInfo info, object? parent)
+      public object Deserialize(object? o, Serialization.Xml.IXmlDeserializationInfo info, object? parent)
       {
         var useRegressionForLeftAndRightLine = info.GetBoolean("UseRegressionForLeftAndRightLine");
         var middleRegressionLowerLevel = info.GetDouble("MiddleRegressionLowerLevel");
         var middleRegressionUpperLevel = info.GetDouble("MiddleRegressionUpperLevel");
         var middleLineOverlap = info.GetDouble("MiddleLineOverlap");
-        var includeOriginalPointsInOutput = info.GetBoolean("IncludeOriginalPointsInOutput");
-        var indexLeftOuter = info.GetInt32("IndexLeftOuter");
-        var indexLeftInner = info.GetInt32("IndexLeftInner");
-        var indexRightInner = info.GetInt32("IndexRightInner");
-        var indexRightOuter = info.GetInt32("IndexRightOuter");
+        var linePen = info.GetValue<PenX>("LinePen", null);
 
-        return new FourPointStepEvaluationOptions()
+        return new FourPointStepEvaluationToolMouseHandlerOptions()
         {
           UseRegressionForLeftAndRightLine = useRegressionForLeftAndRightLine,
           MiddleRegressionLevels = (middleRegressionLowerLevel, middleRegressionUpperLevel),
           MiddleLineOverlap = middleLineOverlap,
-          IncludeOriginalPointsInOutput = includeOriginalPointsInOutput,
-          IndexLeftOuter = indexLeftOuter,
-          IndexLeftInner = indexLeftInner,
-          IndexRightInner = indexRightInner,
-          IndexRightOuter = indexRightOuter,
+          LinePen = linePen,
         };
       }
     }

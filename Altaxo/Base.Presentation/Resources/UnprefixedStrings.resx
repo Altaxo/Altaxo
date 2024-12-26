@@ -141,4 +141,7 @@
   <data name="XML.MainMenu.GraphMenu.Tools.FourPointTool.Description" xml:space="preserve">
     <value>Select 4 points on a curve for step or area evaluation.</value>
   </data>
+  <data name="XML.MainMenu.GraphMenu.Tools.StepEvaluationTool.Description" xml:space="preserve">
+    <value>Select 4 points on a curve and then performs step evaluation.</value>
+  </data>
 </root>

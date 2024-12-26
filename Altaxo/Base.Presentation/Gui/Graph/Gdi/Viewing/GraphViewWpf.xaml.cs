@@ -222,11 +222,11 @@ namespace Altaxo.Gui.Graph.Gdi.Viewing
               break;
 
             case GraphToolType.FourPointsOnCurve:
-              _mouseState = new GraphControllerMouseHandlers.FourPointsOnCurveMouseHandler(Controller);
+              _mouseState = new GraphControllerMouseHandlers.FourPointsOnCurveMouseHandler(Controller, useFourHandles: true, initAllFourHandles: false);
               break;
 
             case GraphToolType.FourPointStepEvaluation:
-              _mouseState = new GraphControllerMouseHandlers.StepEvaluationToolMouseHandler(Controller);
+              _mouseState = new GraphControllerMouseHandlers.FourPointStepEvaluationToolMouseHandler(Controller);
               break;
 
             default:

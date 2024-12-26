@@ -49,6 +49,9 @@
     <Compile Update="Gui\Calc\Interpolation\NonlinearFitAsInterpolationControl.xaml.cs">
       <SubType>Code</SubType>
     </Compile>
+    <Compile Update="Gui\Science\Signals\FourPointStepEvaluationToolMouseHandlerOptionsControl.xaml.cs">
+      <SubType>Code</SubType>
+    </Compile>
     <Compile Update="Gui\Science\Signals\PronySeriesRetardationControl.xaml.cs">
       <SubType>Code</SubType>
     </Compile>
