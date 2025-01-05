@@ -70,6 +70,13 @@ namespace Altaxo.Data
     {
       switch (version)
       {
+        case -1:
+          // this case is intended to deserialize XYColumnPlotData (after deriving it from XAndYColumn)
+          // we only create the members, but do not deserialize them
+          _independentVariables = new IReadableColumnProxy[1];
+          _dependentVariables = new IReadableColumnProxy[1];
+          _rangeOfRows = new AllRows() { ParentObject = this };
+          break;
         case 0:
           DeserializeSurrogate0(info);
           break;
@@ -248,7 +255,7 @@ namespace Altaxo.Data
     /// </summary>
     /// <returns>An enumeration of tuples. Each tuple consist of the column name, as it should be used to identify the column in the data dialog. The second item of this
     /// tuple is a function that returns the column proxy for this column, in order to get the underlying column or to set the underlying column.</returns>
-    public IEnumerable<GroupOfColumnsInformation> GetAdditionallyUsedColumns()
+    public virtual IEnumerable<GroupOfColumnsInformation> GetAdditionallyUsedColumns()
     {
       yield return new GroupOfColumnsInformation("Independent variables", GetIndependentVariables());
       yield return new GroupOfColumnsInformation("Dependent variables", GetDependentVariables());
@@ -293,11 +300,13 @@ namespace Altaxo.Data
     /// </summary>
     /// <param name="i">Index.</param>
     /// <param name="col">Independent variable column to set.</param>
-    public void SetIndependentVariable(int i, IReadableColumn? col)
+    /// <param name="actionAfterSet">A action that is carried out if the variable has been set.</param>
+    public void SetIndependentVariable(int i, IReadableColumn? col, Action? actionAfterSet = null)
     {
       if (!object.ReferenceEquals(_independentVariables[i]?.Document(), col))
       {
         ChildSetMember(ref _independentVariables[i], ReadableColumnProxyBase.FromColumn(col));
+        actionAfterSet?.Invoke();
         EhSelfChanged(EventArgs.Empty);
       }
     }
@@ -344,11 +353,13 @@ namespace Altaxo.Data
     /// </summary>
     /// <param name="i">Index.</param>
     /// <param name="col">Dependent variable column to set.</param>
-    public virtual void SetDependentVariable(int i, IReadableColumn? col)
+    /// <param name="actionAfterSet">A action that is carried out if the variable has been set.</param>
+    public virtual void SetDependentVariable(int i, IReadableColumn? col, Action? actionAfterSet = null)
     {
       if (!object.ReferenceEquals(_dependentVariables[i]?.Document(), col))
       {
         ChildSetMember(ref _dependentVariables[i], ReadableColumnProxyBase.FromColumn(col));
+        actionAfterSet?.Invoke();
         EhSelfChanged(EventArgs.Empty);
       }
     }
@@ -551,8 +562,10 @@ namespace Altaxo.Data
     /// <param name="Report">Function that reports the found <see cref="DocNodeProxy"/> instances to the visitor.</param>
     public virtual void VisitDocumentReferences(DocNodeProxyReporter Report)
     {
-      if (_dataTable is { } _)
+      if (_dataTable is not null)
+      {
         Report(_dataTable, this, nameof(DataTable));
+      }
 
       {
         if (_independentVariables is { } v)
@@ -560,7 +573,9 @@ namespace Altaxo.Data
           for (int i = 0; i < v.Length; ++i)
           {
             if (v[i] is { } vv)
+            {
               Report(vv, this, FormattableString.Invariant($"IndependentVariable{i}"));
+            }
           }
         }
       }
@@ -570,9 +585,14 @@ namespace Altaxo.Data
           for (int i = 0; i < v.Length; ++i)
           {
             if (v[i] is { } vv)
+            {
               Report(vv, this, FormattableString.Invariant($"DependentVariable{i}"));
+            }
           }
         }
+      }
+      {
+        _rangeOfRows.VisitDocumentReferences(Report);
       }
     }
   }

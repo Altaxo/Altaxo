@@ -63,13 +63,11 @@ namespace Altaxo.Data
     {
     }
 
-    public XAndYColumn(Altaxo.Graph.Plot.Data.XYColumnPlotData plotData)
-      : base(plotData.DataTable ?? throw new System.ArgumentException($"The argument {nameof(plotData)} has a property {nameof(plotData.DataTable)} that is null"),
-          plotData.GroupNumber, 1, 1)
+    public XAndYColumn(DataTable table, int groupNumber, Altaxo.Data.IReadableColumn xColumn, Altaxo.Data.IReadableColumn yColumn)
+      : base(table, groupNumber, 1, 1)
     {
-      XColumn = plotData.XColumn;
-      YColumn = plotData.YColumn;
-      DataRowSelection = (Selections.IRowSelection)plotData.DataRowSelection.Clone();
+      XColumn = xColumn;
+      YColumn = yColumn;
     }
 
     protected XAndYColumn(IXmlDeserializationInfo info, int version) : base(info, version)
@@ -90,15 +88,20 @@ namespace Altaxo.Data
       return "Y";
     }
 
-    public IReadableColumn? XColumn
+    public virtual IReadableColumn? XColumn
     {
       get { return GetIndependentVariable(0); }
       set { SetIndependentVariable(0, value); }
     }
-    public IReadableColumn? YColumn
+    public virtual IReadableColumn? YColumn
     {
       get { return GetDependentVariable(0); }
       set { SetDependentVariable(0, value); }
+    }
+
+    public override string ToString()
+    {
+      return string.Format("{0}(X), {1}(Y)", _independentVariables[0].ToString(), _dependentVariables[0].ToString());
     }
 
     public (double[]? X, double[]? Y, int RowCount) GetResolvedXYData()
