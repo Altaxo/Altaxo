@@ -134,7 +134,7 @@ namespace Altaxo.Gui.Graph.Gdi.Viewing.GraphControllerMouseHandlers
     {
       get
       {
-        return _state != State.NoPoint && _state != State.OnePoint;
+        return _state != State.NoPoint && _state == _finalState;
       }
     }
 

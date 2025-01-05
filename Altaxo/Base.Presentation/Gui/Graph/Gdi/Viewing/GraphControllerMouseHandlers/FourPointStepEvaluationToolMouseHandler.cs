@@ -23,7 +23,6 @@
 #endregion Copyright
 
 using System;
-using System.Collections.Generic;
 using System.Drawing;
 using System.Windows.Input;
 using Altaxo.Calc;
@@ -137,59 +136,11 @@ namespace Altaxo.Gui.Graph.Gdi.Viewing.GraphControllerMouseHandlers
         return;
       }
 
-      var xcol = PlotItem.XYColumnPlotData.XColumn;
-      var ycol = PlotItem.XYColumnPlotData.YColumn;
-
+      var (xcol, ycol, rowCount) = PlotItem.XYColumnPlotData.GetResolvedXYData();
 
       QuickLinearRegression leftReg, rightReg, middleReg;
 
-      // left line is going from the left outer point through the left inner point to x if the right inner point
-      {
-        var x0 = xcol[_handle[0].RowIndex];
-        var y0 = ycol[_handle[0].RowIndex];
-        var x1 = xcol[_handle[1].RowIndex];
-        var y1 = ycol[_handle[1].RowIndex];
-        var x2 = xcol[_handle[2].RowIndex];
-
-        var minx = Math.Min(x0, Math.Min(x1, x2));
-        var maxx = Math.Max(x0, Math.Max(x1, x2));
-
-        leftReg = new QuickLinearRegression();
-        leftReg.Add(x0, y0);
-        leftReg.Add(x1, y1);
-
-        for (int i = 0; i < _xleft.Length; i++)
-        {
-          var r = i / (_xleft.Length - 1d);
-          var x = (1 - r) * minx + r * maxx;
-          _xleft[i] = x;
-          _yleft[i] = leftReg.GetYOfX(x);
-        }
-      }
-      // right line is going from the right outer point through the right inner point to the x of the left inner point
-      {
-        var x0 = xcol[_handle[3].RowIndex];
-        var y0 = ycol[_handle[3].RowIndex];
-        var x1 = xcol[_handle[2].RowIndex];
-        var y1 = ycol[_handle[2].RowIndex];
-        var x2 = xcol[_handle[1].RowIndex];
-
-        var minx = Math.Min(x0, Math.Min(x1, x2));
-        var maxx = Math.Max(x0, Math.Max(x1, x2));
-
-        rightReg = new QuickLinearRegression();
-        rightReg.Add(x0, y0);
-        rightReg.Add(x1, y1);
-
-        for (int i = 0; i < _xleft.Length; i++)
-        {
-          var r = i / (_xleft.Length - 1d);
-          var x = (1 - r) * minx + r * maxx;
-
-          _xright[i] = x;
-          _yright[i] = rightReg.GetYOfX(x);
-        }
-      }
+      leftReg = FourPointStepEvaluationDataSource.GetLeftRightRegression(xcol, ycol, _handle[0].PlotIndex, _handle[1].PlotIndex, _options.UseRegressionForLeftAndRightLine);
 
       // if either
       if (!leftReg.IsValid)
@@ -201,6 +152,8 @@ namespace Altaxo.Gui.Graph.Gdi.Viewing.GraphControllerMouseHandlers
       {
         _leftReg = leftReg;
       }
+
+      rightReg = FourPointStepEvaluationDataSource.GetLeftRightRegression(xcol, ycol, _handle[2].PlotIndex, _handle[3].PlotIndex, _options.UseRegressionForLeftAndRightLine);
 
       if (!rightReg.IsValid)
       {
@@ -214,28 +167,59 @@ namespace Altaxo.Gui.Graph.Gdi.Viewing.GraphControllerMouseHandlers
 
       // now the middle line
       var (xs, ys) = leftReg.GetIntersectionPoint(rightReg);
-      if (RMath.IsInIntervalCC(xs, Math.Min(xcol[_handle[1].RowIndex], xcol[_handle[2].RowIndex]), Math.Max(xcol[_handle[1].RowIndex], xcol[_handle[2].RowIndex])))
+      if (RMath.IsInIntervalCC(xs, Math.Min(xcol[_handle[1].PlotIndex], xcol[_handle[2].PlotIndex]), Math.Max(xcol[_handle[1].PlotIndex], xcol[_handle[2].PlotIndex])))
       {
         _errorMessage = $"The left and the right line intersect in the middle zone, thus evaluation is not possible";
         return;
       }
 
 
-      var plotIndexList = new List<Handle>([_handle[1], _handle[2]]);
-      plotIndexList.Sort((x, y) => Comparer<int>.Default.Compare(x.PlotIndex, y.PlotIndex));
-
-      var plotPoint = PlotItem.GetNextPlotPoint(_layer, plotIndexList[0].PlotIndex, 0);
-      middleReg = new QuickLinearRegression();
-      for (; plotPoint is { } p && p.PlotIndex <= plotIndexList[1].PlotIndex; plotPoint = PlotItem.GetNextPlotPoint(_layer, plotPoint.PlotIndex, 1))
+      // left line is going from the left outer point through the left inner point to x if the right inner point
       {
-        var x = xcol[plotPoint.RowIndex];
-        var y = ycol[plotPoint.RowIndex];
-        var r = QuickLinearRegression.GetRelativeYBetweenRegressions(leftReg, rightReg, x, y);
-        if (RMath.IsInIntervalCC(r, 0.2, 0.8))
+        var x0 = xcol[_handle[0].PlotIndex];
+        var y0 = ycol[_handle[0].PlotIndex];
+        var x1 = xcol[_handle[1].PlotIndex];
+        var y1 = ycol[_handle[1].PlotIndex];
+        var x2 = xcol[_handle[2].PlotIndex];
+
+        var minx = Math.Min(x0, Math.Min(x1, x2));
+        var maxx = Math.Max(x0, Math.Max(x1, x2));
+
+        for (int i = 0; i < _xleft.Length; i++)
         {
-          middleReg.Add(x, y);
+          var r = i / (_xleft.Length - 1d);
+          var x = (1 - r) * minx + r * maxx;
+          _xleft[i] = x;
+          _yleft[i] = leftReg.GetYOfX(x);
         }
       }
+      // right line is going from the right outer point through the right inner point to the x of the left inner point
+      {
+        var x0 = xcol[_handle[3].PlotIndex];
+        var y0 = ycol[_handle[3].PlotIndex];
+        var x1 = xcol[_handle[2].PlotIndex];
+        var y1 = ycol[_handle[2].PlotIndex];
+        var x2 = xcol[_handle[1].PlotIndex];
+
+        var minx = Math.Min(x0, Math.Min(x1, x2));
+        var maxx = Math.Max(x0, Math.Max(x1, x2));
+
+
+
+        for (int i = 0; i < _xleft.Length; i++)
+        {
+          var r = i / (_xleft.Length - 1d);
+          var x = (1 - r) * minx + r * maxx;
+
+          _xright[i] = x;
+          _yright[i] = rightReg.GetYOfX(x);
+        }
+      }
+
+
+      // now get the middle regression line
+
+      middleReg = FourPointStepEvaluationDataSource.GetMiddleRegression(xcol, ycol, _handle[1].PlotIndex, _handle[2].PlotIndex, leftReg, rightReg, _options.MiddleRegressionLevels.LowerLevel, _options.MiddleRegressionLevels.UpperLevel);
 
       if (!middleReg.IsValid)
       {
@@ -249,7 +233,7 @@ namespace Altaxo.Gui.Graph.Gdi.Viewing.GraphControllerMouseHandlers
         for (int i = 0; i < _xmiddle.Length; i++)
         {
           var r = i / (_xmiddle.Length - 1d);
-          var x = (1 - r) * xcol[_handle[1].RowIndex] + r * xcol[_handle[2].RowIndex];
+          var x = (1 - r) * xcol[_handle[1].PlotIndex] + r * xcol[_handle[2].PlotIndex];
           _xmiddle[i] = x;
           _ymiddle[i] = middleReg.GetYOfX(x);
         }

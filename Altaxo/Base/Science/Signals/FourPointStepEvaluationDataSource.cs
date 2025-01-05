@@ -124,7 +124,7 @@ namespace Altaxo.Science.Signals
         ReportError(destinationTable, $"The index of the right outer point has the invalid value #{options.IndexRightOuter}. It should be in the interval [0, {rowCount - 1}]");
       }
 
-      var leftRegression = GetLeftRightRegression(x, y, options.IndexLeftOuter, options.IndexLeftInner);
+      var leftRegression = GetLeftRightRegression(x, y, options.IndexLeftOuter, options.IndexLeftInner, ProcessOptions.UseRegressionForLeftAndRightLine);
 
       if (!leftRegression.IsValid)
       {
@@ -132,7 +132,7 @@ namespace Altaxo.Science.Signals
         return;
       }
 
-      var rightRegression = GetLeftRightRegression(x, y, options.IndexRightInner, options.IndexRightOuter);
+      var rightRegression = GetLeftRightRegression(x, y, options.IndexRightInner, options.IndexRightOuter, ProcessOptions.UseRegressionForLeftAndRightLine);
 
       if (!rightRegression.IsValid)
       {
@@ -151,7 +151,7 @@ namespace Altaxo.Science.Signals
       }
 
       // create the middle regression line
-      var middleRegression = GetMiddleRegression(x, y, options.IndexLeftInner, options.IndexRightInner, leftRegression, rightRegression);
+      var middleRegression = GetMiddleRegression(x, y, options.IndexLeftInner, options.IndexRightInner, leftRegression, rightRegression, ProcessOptions.MiddleRegressionLevels.LowerLevel, ProcessOptions.MiddleRegressionLevels.UpperLevel);
 
       if (!middleRegression.IsValid)
       {
@@ -211,13 +211,23 @@ namespace Altaxo.Science.Signals
       destinationTable[ColumnNameMiddleY][4] = middleRegression.GetYOfX(xro);
     }
 
-    protected QuickLinearRegression GetLeftRightRegression(double[] x, double[] y, int index1, int index2)
+    /// <summary>
+    /// Gets the regression for the left or the right line.
+    /// </summary>
+    /// <param name="x">The x values.</param>
+    /// <param name="y">The y values.</param>
+    /// <param name="index1">The start index.</param>
+    /// <param name="index2">The end index (inclusive).</param>
+    /// <param name="useAllPointsForRegression">If set to <c>true</c>, all points from index1 to index2 are used
+    /// to create the linear regression; otherwise, only point[index1] and point[index2] are used to calculate the line.</param>
+    /// <returns>The regression that forms a line (either the left line of the step or the right line).</returns>
+    public static QuickLinearRegression GetLeftRightRegression(double[] x, double[] y, int index1, int index2, bool useAllPointsForRegression)
     {
       var min = Math.Min(index1, index2);
       var max = Math.Max(index1, index2);
       var result = new QuickLinearRegression();
 
-      if (ProcessOptions.UseRegressionForLeftAndRightLine)
+      if (useAllPointsForRegression)
       {
         for (int i = min; i <= max; ++i)
         {
@@ -233,7 +243,19 @@ namespace Altaxo.Science.Signals
       return result;
     }
 
-    protected QuickLinearRegression GetMiddleRegression(double[] x, double[] y, int index1, int index2, QuickLinearRegression leftRegression, QuickLinearRegression rightRegression)
+    /// <summary>
+    /// Gets the middle regression line.
+    /// </summary>
+    /// <param name="x">The x values.</param>
+    /// <param name="y">The y values.</param>
+    /// <param name="index1">The start index of the middle section.</param>
+    /// <param name="index2">The end index of the middle section.</param>
+    /// <param name="leftRegression">The left regression line.</param>
+    /// <param name="rightRegression">The right regression line.</param>
+    /// <param name="lowerRegressionLevel">The lower regression level (0..1). Usually, it is 0.25.</param>
+    /// <param name="upperRegressionLevel">The upper regression level (0..1). Usually, it is 0.75.</param>
+    /// <returns></returns>
+    public static QuickLinearRegression GetMiddleRegression(double[] x, double[] y, int index1, int index2, QuickLinearRegression leftRegression, QuickLinearRegression rightRegression, double lowerRegressionLevel, double upperRegressionLevel)
     {
       var min = Math.Min(index1, index2);
       var max = Math.Max(index1, index2);
@@ -242,7 +264,7 @@ namespace Altaxo.Science.Signals
       for (int i = min; i <= max; ++i)
       {
         var r = QuickLinearRegression.GetRelativeYBetweenRegressions(leftRegression, rightRegression, x[i], y[i]);
-        if (RMath.IsInIntervalCC(r, ProcessOptions.MiddleRegressionLevels.LowerLevel, ProcessOptions.MiddleRegressionLevels.UpperLevel))
+        if (RMath.IsInIntervalCC(r, lowerRegressionLevel, upperRegressionLevel))
         {
           result.Add(x[i], y[i]);
         }
