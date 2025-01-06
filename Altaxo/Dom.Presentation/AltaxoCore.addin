@@ -988,6 +988,8 @@
                     class="Altaxo.Graph.Commands.FourPointsOnCurveTool" />
           <ToolbarItem id="FourPointStepEvaluation" type="CheckBox" icon="Icons.16x16.StepEvaluationTool" tooltip="${res:XML.MainMenu.GraphMenu.Tools.FourPointTool.Description}"
                     class="Altaxo.Graph.Commands.FourPointStepEvaluationTool" />
+          <ToolbarItem id="FourPointPeakEvaluation" type="CheckBox" icon="Icons.16x16.PeakEvaluationTool" tooltip="${res:XML.MainMenu.GraphMenu.Tools.FourPointTool.Description}"
+                    class="Altaxo.Graph.Commands.FourPointPeakEvaluationTool" />
           <ToolbarItem id="ZoomAxes" type="CheckBox" icon="Icons.16x16.ZoomAxes" tooltip="${res:XML.MainMenu.GraphMenu.ZoomAxes.Description}"
                       class="Altaxo.Graph.Commands.ZoomAxesTool" />
             <ToolbarItem id="RescaleAxes" icon="Icons.16x16.RescaleAxes" tooltip="${res:XML.MainMenu.GraphMenu.RescaleAxes.Description}"

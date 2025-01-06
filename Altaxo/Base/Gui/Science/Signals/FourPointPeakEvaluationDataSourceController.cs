@@ -2,7 +2,7 @@
 
 /////////////////////////////////////////////////////////////////////////////
 //    Altaxo:  a data processing and data plotting program
-//    Copyright (C) 2002-2011 Dr. Dirk Lellinger
+//    Copyright (C) 2002-2025 Dr. Dirk Lellinger
 //
 //    This program is free software; you can redistribute it and/or modify
 //    it under the terms of the GNU General Public License as published by
@@ -22,34 +22,20 @@
 
 #endregion Copyright
 
-#nullable disable
-namespace Altaxo.Gui.Graph.Gdi.Viewing
+using Altaxo.Gui.Data;
+using Altaxo.Science.Signals;
+
+namespace Altaxo.Gui.Science.Signals
 {
-  public enum GraphToolType
+  [UserControllerForObject(typeof(FourPointPeakEvaluationDataSource))]
+  public class FourPointPeakEvaluationDataSourceController : DataSourceControllerBase<FourPointPeakEvaluationDataSource>
   {
-    None,
-    ObjectPointer,
-    ArrowLineDrawing,
-    SingleLineDrawing,
-    RectangleDrawing,
-    CurlyBraceDrawing,
-    EllipseDrawing,
-    TextDrawing,
-    ReadPlotItemData,
-    ReadXYCoordinates,
-    ZoomAxes,
-    RegularPolygonDrawing,
-    OpenCardinalSplineDrawing,
-    ClosedCardinalSplineDrawing,
-
-    /// <summary>Edits the grid of the current layer, or if it has no childs, the grid of the parent layer.</summary>
-    EditGrid,
-
-    /// <summary>Four points on a curve to evaluate areas, steps, etc,</summary>
-    FourPointsOnCurve,
-
-    FourPointStepEvaluation,
-
-    FourPointPeakEvaluation,
+    protected override IMVCANController GetProcessDataController()
+    {
+      var ctrl = new XAndYColumnController();
+      ctrl.InitializeDocument(_doc.ProcessData);
+      Current.Gui.FindAndAttachControlTo(ctrl);
+      return ctrl;
+    }
   }
 }

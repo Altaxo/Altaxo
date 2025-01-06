@@ -229,6 +229,10 @@ namespace Altaxo.Gui.Graph.Gdi.Viewing
               _mouseState = new GraphControllerMouseHandlers.FourPointStepEvaluationToolMouseHandler(Controller);
               break;
 
+            case GraphToolType.FourPointPeakEvaluation:
+              _mouseState = new GraphControllerMouseHandlers.FourPointPeakEvaluationToolMouseHandler(Controller);
+              break;
+
             default:
               throw new NotImplementedException("Type not implemented: " + value.ToString());
           } // end switch
