@@ -20,6 +20,22 @@ namespace Altaxo.Gui.Science.Signals
 
     #region Bindings
 
+    private bool _showOptionsWhenToolIsActivated;
+
+    public bool ShowOptionsWhenToolIsActivated
+    {
+      get => _showOptionsWhenToolIsActivated;
+      set
+      {
+        if (!(_showOptionsWhenToolIsActivated == value))
+        {
+          _showOptionsWhenToolIsActivated = value;
+          OnPropertyChanged(nameof(ShowOptionsWhenToolIsActivated));
+        }
+      }
+    }
+
+
     private bool _useRegressionForLeftAndRightLine;
 
     public bool UseRegressionForLeftAndRightLine
@@ -111,6 +127,7 @@ namespace Altaxo.Gui.Science.Signals
 
       if (initData)
       {
+        ShowOptionsWhenToolIsActivated = _doc.ShowOptionsWhenToolIsActivated;
         UseRegressionForLeftAndRightLine = _doc.UseRegressionForLeftAndRightLine;
         MiddleRegressionLowerLevel = new DimensionfulQuantity(_doc.MiddleRegressionLevels.LowerLevel, Altaxo.Units.Dimensionless.Unity.Instance);
         MiddleRegressionUpperLevel = new DimensionfulQuantity(_doc.MiddleRegressionLevels.UpperLevel, Altaxo.Units.Dimensionless.Unity.Instance);
@@ -145,6 +162,7 @@ namespace Altaxo.Gui.Science.Signals
 
       _doc = new FourPointStepEvaluationToolMouseHandlerOptions()
       {
+        ShowOptionsWhenToolIsActivated = ShowOptionsWhenToolIsActivated,
         UseRegressionForLeftAndRightLine = UseRegressionForLeftAndRightLine,
         MiddleRegressionLevels = (middleRegressionLowerLevel, middleRegressionUpperLevel),
         MiddleLineOverlap = middleLineOverlap,

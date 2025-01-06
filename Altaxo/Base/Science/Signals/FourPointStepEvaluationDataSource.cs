@@ -23,6 +23,7 @@
 #endregion Copyright
 
 using System;
+using System.Collections.Generic;
 using Altaxo.Calc;
 using Altaxo.Calc.Regression;
 using Altaxo.Data;
@@ -37,10 +38,45 @@ namespace Altaxo.Science.Signals
     public const string ColumnNameRightY = "RightY";
     public const string ColumnNameMiddleX = "MiddleX";
     public const string ColumnNameMiddleY = "MiddleY";
+    public const string ColumnNameCurveX = "CurveX";
+    public const string ColumnNameCurveY = "CurveY";
+    public const string ColumnNameParameterName = "ParameterName";
+    public const string ColumnNameParameterValue = "ParameterValue";
     public const int ColumnGroupNumberLeft = 0;
     public const int ColumnGroupNumberRight = 1;
     public const int ColumnGroupNumberMiddle = 2;
+    public const int ColumnGroupParameter = 3;
+    public const int ColumnGroupCurveValues = 4;
 
+    public const string ParameterNameMiddleX = "StepMiddleX";
+    public const string ParameterNameMiddleY = "StepMiddleY";
+    public const string ParameterNameStepMiddleSlope = "StepMiddleSlope";
+    public const string ParameterNameStepHeight = "StepHeight";
+    public const string ParameterNameStepWidth = "StepWidth";
+    public const string ParameterNameStepLeftX = "StepLeftX";
+    public const string ParameterNameStepLeftY = "StepLeftY";
+    public const string ParameterNameStepLeftSlope = "StepLeftSlope";
+    public const string ParameterNameStepRightX = "StepRightX";
+    public const string ParameterNameStepRightY = "StepRightY";
+    public const string ParameterNameStepRightSlope = "StepRightSlope";
+
+    public IEnumerable<string> AllParameterNames
+    {
+      get
+      {
+        yield return ParameterNameMiddleX;
+        yield return ParameterNameMiddleY;
+        yield return ParameterNameStepMiddleSlope;
+        yield return ParameterNameStepHeight;
+        yield return ParameterNameStepWidth;
+        yield return ParameterNameStepLeftX;
+        yield return ParameterNameStepLeftY;
+        yield return ParameterNameStepLeftSlope;
+        yield return ParameterNameStepRightX;
+        yield return ParameterNameStepRightY;
+        yield return ParameterNameStepRightSlope;
+      }
+    }
 
     #region Serialization
 
@@ -96,6 +132,11 @@ namespace Altaxo.Science.Signals
     {
       destinationTable.DataColumns.RemoveColumnsAll();
       destinationTable.PropCols.RemoveColumnsAll();
+      foreach (var parameterName in AllParameterNames)
+      {
+        destinationTable.PropertyBagNotNull.RemoveValue(parameterName);
+      }
+
 
       var (x, y, rowCount) = ProcessData.GetResolvedXYData();
 
@@ -167,11 +208,18 @@ namespace Altaxo.Science.Signals
 
 
       destinationTable.DataColumns.EnsureExistence(ColumnNameLeftX, typeof(DoubleColumn), ColumnKind.X, ColumnGroupNumberLeft);
-      destinationTable.DataColumns.EnsureExistence(ColumnNameLeftY, typeof(DoubleColumn), ColumnKind.Y, ColumnGroupNumberLeft);
+      destinationTable.DataColumns.EnsureExistence(ColumnNameLeftY, typeof(DoubleColumn), ColumnKind.V, ColumnGroupNumberLeft);
       destinationTable.DataColumns.EnsureExistence(ColumnNameRightX, typeof(DoubleColumn), ColumnKind.X, ColumnGroupNumberRight);
-      destinationTable.DataColumns.EnsureExistence(ColumnNameRightY, typeof(DoubleColumn), ColumnKind.Y, ColumnGroupNumberRight);
+      destinationTable.DataColumns.EnsureExistence(ColumnNameRightY, typeof(DoubleColumn), ColumnKind.V, ColumnGroupNumberRight);
       destinationTable.DataColumns.EnsureExistence(ColumnNameMiddleX, typeof(DoubleColumn), ColumnKind.X, ColumnGroupNumberMiddle);
-      destinationTable.DataColumns.EnsureExistence(ColumnNameMiddleY, typeof(DoubleColumn), ColumnKind.Y, ColumnGroupNumberMiddle);
+      destinationTable.DataColumns.EnsureExistence(ColumnNameMiddleY, typeof(DoubleColumn), ColumnKind.V, ColumnGroupNumberMiddle);
+      destinationTable.DataColumns.EnsureExistence(ColumnNameParameterName, typeof(TextColumn), ColumnKind.X, ColumnGroupParameter);
+      destinationTable.DataColumns.EnsureExistence(ColumnNameParameterValue, typeof(DoubleColumn), ColumnKind.V, ColumnGroupParameter);
+      if (ProcessOptions.IncludeOriginalPointsInOutput)
+      {
+        destinationTable.DataColumns.EnsureExistence(ColumnNameCurveX, typeof(DoubleColumn), ColumnKind.X, ColumnGroupCurveValues);
+        destinationTable.DataColumns.EnsureExistence(ColumnNameCurveY, typeof(DoubleColumn), ColumnKind.V, ColumnGroupCurveValues);
+      }
 
       // now fill the table
 
@@ -209,6 +257,63 @@ namespace Altaxo.Science.Signals
       var xro = xr + options.MiddleLineOverlap * xspan;
       destinationTable[ColumnNameMiddleX][4] = xro;
       destinationTable[ColumnNameMiddleY][4] = middleRegression.GetYOfX(xro);
+
+      // now store all parameters
+      var (xleft, yleft) = leftRegression.GetIntersectionPoint(middleRegression);
+      var (xright, yright) = rightRegression.GetIntersectionPoint(middleRegression);
+      int idxPara = 0;
+      destinationTable[ColumnNameParameterName][idxPara] = ParameterNameMiddleX;
+      destinationTable[ColumnNameParameterValue][idxPara] = xmiddle;
+      destinationTable.PropertyBagNotNull.SetValue(ParameterNameMiddleX, xmiddle);
+      ++idxPara;
+      destinationTable[ColumnNameParameterName][idxPara] = ParameterNameMiddleY;
+      destinationTable[ColumnNameParameterValue][idxPara] = ymiddle;
+      destinationTable.PropertyBagNotNull.SetValue(ParameterNameMiddleY, ymiddle);
+      ++idxPara;
+      destinationTable[ColumnNameParameterName][idxPara] = ParameterNameStepMiddleSlope;
+      destinationTable[ColumnNameParameterValue][idxPara] = middleRegression.GetA1();
+      destinationTable.PropertyBagNotNull.SetValue(ParameterNameStepMiddleSlope, middleRegression.GetA1());
+      ++idxPara;
+      destinationTable[ColumnNameParameterName][idxPara] = ParameterNameStepHeight;
+      destinationTable[ColumnNameParameterValue][idxPara] = Math.Abs(leftRegression.GetYOfX(xmiddle) - rightRegression.GetYOfX(xmiddle));
+      destinationTable.PropertyBagNotNull.SetValue(ParameterNameStepHeight, Math.Abs(leftRegression.GetYOfX(xmiddle) - rightRegression.GetYOfX(xmiddle)));
+      ++idxPara;
+      destinationTable[ColumnNameParameterName][idxPara] = ParameterNameStepWidth;
+      destinationTable[ColumnNameParameterValue][idxPara] = Math.Abs(xright - xleft);
+      destinationTable.PropertyBagNotNull.SetValue(ParameterNameStepWidth, Math.Abs(xright - xleft));
+      ++idxPara;
+      destinationTable[ColumnNameParameterName][idxPara] = ParameterNameStepLeftX;
+      destinationTable[ColumnNameParameterValue][idxPara] = xleft;
+      destinationTable.PropertyBagNotNull.SetValue(ParameterNameStepLeftX, xleft);
+      ++idxPara;
+      destinationTable[ColumnNameParameterName][idxPara] = ParameterNameStepLeftY;
+      destinationTable[ColumnNameParameterValue][idxPara] = yleft;
+      destinationTable.PropertyBagNotNull.SetValue(ParameterNameStepLeftY, yleft);
+      ++idxPara;
+      destinationTable[ColumnNameParameterName][idxPara] = ParameterNameStepLeftSlope;
+      destinationTable[ColumnNameParameterValue][idxPara] = leftRegression.GetA1();
+      ++idxPara;
+      destinationTable[ColumnNameParameterName][idxPara] = ParameterNameStepRightX;
+      destinationTable[ColumnNameParameterValue][idxPara] = xright;
+      destinationTable.PropertyBagNotNull.SetValue(ParameterNameStepRightX, xright);
+      ++idxPara;
+      destinationTable[ColumnNameParameterName][idxPara] = ParameterNameStepRightY;
+      destinationTable[ColumnNameParameterValue][idxPara] = yright;
+      destinationTable.PropertyBagNotNull.SetValue(ParameterNameStepRightY, yright);
+      ++idxPara;
+      destinationTable[ColumnNameParameterName][idxPara] = ParameterNameStepRightSlope;
+      destinationTable[ColumnNameParameterValue][idxPara] = rightRegression.GetA1();
+      destinationTable.PropertyBagNotNull.SetValue(ParameterNameStepRightSlope, rightRegression.GetA1());
+
+      // output the curve values
+      if (ProcessOptions.IncludeOriginalPointsInOutput)
+      {
+        for (int i = 0; i < rowCount; ++i)
+        {
+          destinationTable[ColumnNameCurveX][i] = x[i];
+          destinationTable[ColumnNameCurveY][i] = y[i];
+        }
+      }
     }
 
     /// <summary>

@@ -40,7 +40,7 @@ namespace Altaxo.Gui.Graph.Gdi.Viewing.GraphControllerMouseHandlers
 {
   public class FourPointStepEvaluationToolMouseHandler : FourPointsOnCurveMouseHandler
   {
-    public static PropertyKey<FourPointStepEvaluationToolMouseHandlerOptions> DefaultOptionsKey = new PropertyKey<FourPointStepEvaluationToolMouseHandlerOptions>("F83DAFE6-E522-4930-BA8B-6DC1742DD85C", "Graphs\\StepEvaluationToolOptions", PropertyLevel.Application, null, () => new FourPointStepEvaluationToolMouseHandlerOptions());
+    public static PropertyKey<FourPointStepEvaluationToolMouseHandlerOptions> DefaultOptionsKey = new PropertyKey<FourPointStepEvaluationToolMouseHandlerOptions>("F83DAFE6-E522-4930-BA8B-6DC1742DD85C", "Graph\\StepEvaluationToolOptions", PropertyLevel.Application, null, () => new FourPointStepEvaluationToolMouseHandlerOptions());
 
     protected FourPointStepEvaluationToolMouseHandlerOptions _options;
 
@@ -64,6 +64,14 @@ namespace Altaxo.Gui.Graph.Gdi.Viewing.GraphControllerMouseHandlers
       : base(grac, useFourHandles: true, initAllFourHandles: true)
     {
       _options = grac.Doc.GetPropertyValue(DefaultOptionsKey, () => new FourPointStepEvaluationToolMouseHandlerOptions());
+
+      if (_options.ShowOptionsWhenToolIsActivated)
+      {
+        if (Current.Gui.ShowDialog<FourPointStepEvaluationToolMouseHandlerOptions>(ref _options, "Options for the Step Evaluation Tool", false))
+        {
+          Current.PropertyService.UserSettings.SetValue(DefaultOptionsKey, _options);
+        }
+      }
     }
 
     public override GraphToolType GraphToolType => GraphToolType.FourPointStepEvaluation;
@@ -77,7 +85,7 @@ namespace Altaxo.Gui.Graph.Gdi.Viewing.GraphControllerMouseHandlers
 
     public override void AfterPaint(Graphics g)
     {
-      using (var pen = new Pen(new SolidBrush(Color.LightBlue), (float)(2 / _grac.ZoomFactor)))
+      using (var pen = new Pen(new SolidBrush(_options.LinePen.Color), (float)(2 / _grac.ZoomFactor)))
       {
         DrawLines(g, pen);
       }

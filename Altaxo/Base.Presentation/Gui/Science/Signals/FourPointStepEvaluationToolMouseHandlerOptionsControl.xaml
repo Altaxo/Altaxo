@@ -36,38 +36,45 @@
       <RowDefinition Height="4" />
       <RowDefinition Height="Auto" />
       <RowDefinition Height="4" />
+      <RowDefinition Height="Auto" />
+      <RowDefinition Height="4" />
     </Grid.RowDefinitions>
 
     <CheckBox Grid.Row="0"
               Grid.Column="0"
+              IsChecked="{Binding ShowOptionsWhenToolIsActivated, Mode=TwoWay}"
+              Content="Show this dialog when step evaluation tool is activated" />
+
+    <CheckBox Grid.Row="2"
+              Grid.Column="0"
               IsChecked="{Binding UseRegressionForLeftAndRightLine, Mode=TwoWay}"
               Content="Use regression for left and right line" />
 
-    <Label Grid.Row="2"
+    <Label Grid.Row="4"
            Grid.Column="0"
            Content="Middle regression lower level:" />
-    <axogc:QuantityWithUnitTextBox Grid.Row="2"
+    <axogc:QuantityWithUnitTextBox Grid.Row="4"
                                    Grid.Column="2"
                                    SelectedQuantity="{Binding  MiddleRegressionLowerLevel, Mode=TwoWay}"
                                    UnitEnvironment="{Binding LevelEnvironment}" />
 
-    <Label Grid.Row="4"
+    <Label Grid.Row="6"
            Grid.Column="0"
            Content="Middle regression upper level:" />
-    <axogc:QuantityWithUnitTextBox Grid.Row="4"
+    <axogc:QuantityWithUnitTextBox Grid.Row="6"
                                    Grid.Column="2"
                                    SelectedQuantity="{Binding  MiddleRegressionUpperLevel, Mode=TwoWay}"
                                    UnitEnvironment="{Binding LevelEnvironment}" />
 
-    <Label Grid.Row="6"
+    <Label Grid.Row="8"
            Grid.Column="0"
            Content="Overlap of middle line:" />
-    <axogc:QuantityWithUnitTextBox Grid.Row="6"
+    <axogc:QuantityWithUnitTextBox Grid.Row="8"
                                    Grid.Column="2"
                                    SelectedQuantity="{Binding  MiddleLineOverlap, Mode=TwoWay}"
                                    UnitEnvironment="{Binding LevelEnvironment}" />
 
-    <GroupBox Grid.Row="8"
+    <GroupBox Grid.Row="10"
               Grid.Column="0"
               Grid.ColumnSpan="4"
               Header="Line pen:">

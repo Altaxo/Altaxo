@@ -33,6 +33,12 @@ namespace Altaxo.Science.Signals
   public record FourPointStepEvaluationToolMouseHandlerOptions : IImmutable
   {
     /// <summary>
+    /// If true, the options dialog is shown when the four point step evaluation tool is activated.
+    /// </summary>
+    public bool ShowOptionsWhenToolIsActivated { get; init; } = true;
+
+
+    /// <summary>
     /// Gets a value indicating whether to use regression for the left and right section of the step.
     /// </summary>
     /// <value>
@@ -74,6 +80,7 @@ namespace Altaxo.Science.Signals
       {
         var s = (FourPointStepEvaluationToolMouseHandlerOptions)obj;
 
+        info.AddValue("ShowOptionsWhenToolIsActivated", s.ShowOptionsWhenToolIsActivated);
         info.AddValue("UseRegressionForLeftAndRightLine", s.UseRegressionForLeftAndRightLine);
         info.AddValue("MiddleRegressionLowerLevel", s.MiddleRegressionLevels.LowerLevel);
         info.AddValue("MiddleRegressionUpperLevel", s.MiddleRegressionLevels.UpperLevel);
@@ -83,6 +90,7 @@ namespace Altaxo.Science.Signals
 
       public object Deserialize(object? o, Serialization.Xml.IXmlDeserializationInfo info, object? parent)
       {
+        var showOptionsWhenToolIsActivated = info.GetBoolean("ShowOptionsWhenToolIsActivated");
         var useRegressionForLeftAndRightLine = info.GetBoolean("UseRegressionForLeftAndRightLine");
         var middleRegressionLowerLevel = info.GetDouble("MiddleRegressionLowerLevel");
         var middleRegressionUpperLevel = info.GetDouble("MiddleRegressionUpperLevel");
@@ -91,6 +99,7 @@ namespace Altaxo.Science.Signals
 
         return new FourPointStepEvaluationToolMouseHandlerOptions()
         {
+          ShowOptionsWhenToolIsActivated = showOptionsWhenToolIsActivated,
           UseRegressionForLeftAndRightLine = useRegressionForLeftAndRightLine,
           MiddleRegressionLevels = (middleRegressionLowerLevel, middleRegressionUpperLevel),
           MiddleLineOverlap = middleLineOverlap,
