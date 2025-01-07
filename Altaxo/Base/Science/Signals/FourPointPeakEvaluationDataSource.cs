@@ -45,9 +45,12 @@ namespace Altaxo.Science.Signals
     public const int ColumnGroupParameter = 2;
     public const int ColumnGroupCurveValues = 3;
 
-    public const string ParameterNameAreaLeftX = "AreaLeftX";
-    public const string ParameterNameAreaRightX = "AreaRightX";
-    public const string ParameterNameAreaValue = "Area";
+    public const string ParameterNameAreaLeftX = "AreaLeftBorderX";
+    public const string ParameterNameAreaRightX = "AreaRightBorderX";
+    public const string ParameterNameAreaValue = "AreaValue";
+    public const string ParameterNameHeight = "PeakHeight";
+    public const string ParameterNamePeakX = "PeakPositionX";
+    public const string ParameterNameFWHM = "PeakFWHM";
 
     public IEnumerable<string> AllParameterNames
     {
@@ -56,6 +59,9 @@ namespace Altaxo.Science.Signals
         yield return ParameterNameAreaLeftX;
         yield return ParameterNameAreaRightX;
         yield return ParameterNameAreaValue;
+        yield return ParameterNameHeight;
+        yield return ParameterNamePeakX;
+        yield return ParameterNameFWHM;
       }
     }
 
@@ -158,7 +164,8 @@ namespace Altaxo.Science.Signals
       var innerRightX = RMath.InterpolateLinear(options.IndexRightInner, x);
 
       // Perform the area calculation
-      var area = GetArea(x, y, baselineRegression, options.IndexLeftInner, options.IndexRightInner);
+      var area = CalculateArea(x, y, baselineRegression, options.IndexLeftInner, options.IndexRightInner);
+      var (height, peakX, fwhm) = CalculatePeakParameters(x, y, baselineRegression, options.IndexLeftInner, options.IndexRightInner);
 
 
       // now fill the data table
@@ -188,8 +195,8 @@ namespace Altaxo.Science.Signals
       var xRightInner = RMath.InterpolateLinear(options.IndexRightInner, x);
       destinationTable[ColumnNameInnerLineX][0] = xLeftInner;
       destinationTable[ColumnNameInnerLineY][0] = baselineRegression.GetYOfX(xLeftInner);
-      destinationTable[ColumnNameInnerLineX][1] = xRightOuter;
-      destinationTable[ColumnNameInnerLineY][1] = baselineRegression.GetYOfX(xLeftOuter);
+      destinationTable[ColumnNameInnerLineX][1] = xRightInner;
+      destinationTable[ColumnNameInnerLineY][1] = baselineRegression.GetYOfX(xRightInner);
 
       // output the curve values
       if (ProcessOptions.IncludeOriginalPointsInOutput)
@@ -214,6 +221,19 @@ namespace Altaxo.Science.Signals
       destinationTable[ColumnNameParameterName][idxPara] = ParameterNameAreaValue;
       destinationTable[ColumnNameParameterValue][idxPara] = area;
       destinationTable.PropertyBagNotNull.SetValue(ParameterNameAreaValue, area);
+      ++idxPara;
+      destinationTable[ColumnNameParameterName][idxPara] = ParameterNameHeight;
+      destinationTable[ColumnNameParameterValue][idxPara] = height;
+      destinationTable.PropertyBagNotNull.SetValue(ParameterNameHeight, height);
+      ++idxPara;
+      destinationTable[ColumnNameParameterName][idxPara] = ParameterNamePeakX;
+      destinationTable[ColumnNameParameterValue][idxPara] = peakX;
+      destinationTable.PropertyBagNotNull.SetValue(ParameterNamePeakX, peakX);
+      ++idxPara;
+      destinationTable[ColumnNameParameterName][idxPara] = ParameterNameFWHM;
+      destinationTable[ColumnNameParameterValue][idxPara] = fwhm;
+      destinationTable.PropertyBagNotNull.SetValue(ParameterNameFWHM, fwhm);
+      ++idxPara;
     }
 
     /// <summary>
@@ -258,7 +278,7 @@ namespace Altaxo.Science.Signals
     /// <param name="index1">The start index (start of the integration).</param>
     /// <param name="index2">The end index (end of the integration).</param>
     /// <returns>The area under the y-values to the baseline.</returns>
-    public static double GetArea(double[] x, double[] y, QuickLinearRegression baselineRegression, double index1, double index2)
+    public static double CalculateArea(double[] x, double[] y, QuickLinearRegression baselineRegression, double index1, double index2)
     {
       var dir = Math.Sign(index2 - index1);
       double area;
@@ -268,7 +288,6 @@ namespace Altaxo.Science.Signals
       }
       else
       {
-
         var prev_x = RMath.InterpolateLinear(index1, x);
         var prev_y = RMath.InterpolateLinear(index1, y);
         var end_x = RMath.InterpolateLinear(index2, x);
@@ -304,6 +323,98 @@ namespace Altaxo.Science.Signals
         }
       }
       return area;
+    }
+
+    /// <summary>
+    /// Gets the area.
+    /// </summary>
+    /// <param name="x">The x values.</param>
+    /// <param name="y">The y values.</param>
+    /// <param name="baselineRegression">The regression that forms the baseline of the peak.</param>
+    /// <param name="index1">The start index (start of the integration).</param>
+    /// <param name="index2">The end index (end of the integration).</param>
+    /// <returns>The area under the y-values to the baseline.</returns>
+    public static (double Height, double PeakX, double FWHM) CalculatePeakParameters(double[] x, double[] y, QuickLinearRegression baselineRegression, double index1, double index2)
+    {
+      var dir = Math.Sign(index2 - index1);
+      if (dir == 0) // both indices are the same
+      {
+        var xpeak = RMath.InterpolateLinear(index1, x);
+        var height = RMath.InterpolateLinear(index1, y) - baselineRegression.GetYOfX(xpeak);
+        var fwhm = 0;
+        return (height, xpeak, fwhm);
+      }
+      else
+      {
+        // Note that we here only linearly interpolate between the points.
+        // Thus, for every segment, we have to consider only the start end end of the segment.
+        var iStart = IntFloorOrCeiling(index1, dir);
+        var iEnd = IntFloorOrCeiling(index2, -dir);
+        var height = double.NegativeInfinity;
+        var peakX = double.NaN;
+        var peakIdx = double.NaN;
+        var fwhm = double.NaN;
+        double dy;
+
+        if (iStart != index1)
+        {
+          dy = Math.Abs(y[iStart] - baselineRegression.GetYOfX(x[iStart]));
+          if (height < dy)
+          {
+            height = dy;
+            peakIdx = iStart;
+          }
+          dy = Math.Abs(RMath.InterpolateLinear(index1, y) - baselineRegression.GetYOfX(RMath.InterpolateLinear(index1, x)));
+          if (height < dy)
+          {
+            height = dy;
+            peakIdx = index1;
+          }
+        }
+        if (iEnd != index2)
+        {
+          dy = Math.Abs(y[iEnd] - baselineRegression.GetYOfX(x[iEnd]));
+          if (height < dy)
+          {
+            height = dy;
+            peakIdx = iEnd;
+          }
+          dy = Math.Abs(RMath.InterpolateLinear(index2, y) - baselineRegression.GetYOfX(RMath.InterpolateLinear(index2, x)));
+          if (height < dy)
+          {
+            height = dy;
+            peakIdx = index2;
+          }
+        }
+
+        for (int i = iStart; i != iEnd; i += dir)
+        {
+          var x1 = x[i];
+          var y1 = y[i];
+          var x2 = x[i + dir];
+          var y2 = y[i + dir];
+          dy = Math.Abs(y1 - baselineRegression.GetYOfX(x1));
+          if (height < dy)
+          {
+            height = dy;
+            peakIdx = i;
+          }
+          dy = Math.Abs(y2 - baselineRegression.GetYOfX(x2));
+          if (height < dy)
+          {
+            height = dy;
+            peakIdx = i + dir;
+          }
+        }
+
+        // now that we have the x at maximum, we can calculate the FWHM
+        if (!double.IsNaN(peakIdx))
+        {
+          height = Math.Abs(RMath.InterpolateLinear(peakIdx, y) - baselineRegression.GetYOfX(RMath.InterpolateLinear(peakIdx, x)));
+          peakX = RMath.InterpolateLinear(peakIdx, x);
+        }
+        return (height, peakX, fwhm);
+      }
     }
 
     protected void ReportError(DataTable destinationTable, string message)

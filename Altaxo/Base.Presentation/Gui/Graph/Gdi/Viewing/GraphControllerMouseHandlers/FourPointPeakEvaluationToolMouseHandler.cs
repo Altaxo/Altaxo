@@ -31,6 +31,7 @@ using Altaxo.Collections;
 using Altaxo.Data;
 using Altaxo.Graph.Gdi.Plot;
 using Altaxo.Graph.Gdi.Plot.Styles;
+using Altaxo.Graph.Plot.Data;
 using Altaxo.Main.Properties;
 using Altaxo.Main.Services;
 using Altaxo.Science.Signals;
@@ -47,6 +48,11 @@ namespace Altaxo.Gui.Graph.Gdi.Viewing.GraphControllerMouseHandlers
     private double[] _yOuter = new double[100];
     private double[] _xInner = new double[100];
     private double[] _yInner = new double[100];
+
+    private double _areaValue;
+    private double _height;
+    private double _peakX;
+    private double _FWHM;
 
     private List<(double x, double y)> _areaPointList = new List<(double x, double y)>();
 
@@ -167,6 +173,7 @@ namespace Altaxo.Gui.Graph.Gdi.Viewing.GraphControllerMouseHandlers
       {
         _lineRegression = lineReg;
       }
+      _errorMessage = string.Empty;
 
       // outer line is going from the left outer point to the right outer point
       {
@@ -222,15 +229,30 @@ namespace Altaxo.Gui.Graph.Gdi.Viewing.GraphControllerMouseHandlers
           _areaPointList.Add((xcol[i], lineReg.GetYOfX(xcol[i])));
         }
       }
+
+      _areaValue = FourPointPeakEvaluationDataSource.CalculateArea(xcol, ycol, lineReg, _handle[1].PlotIndex, _handle[2].PlotIndex);
+      (_height, _peakX, _FWHM) = FourPointPeakEvaluationDataSource.CalculatePeakParameters(xcol, ycol, lineReg, _handle[1].PlotIndex, _handle[2].PlotIndex);
     }
 
     protected override void UpdateDataDisplay()
     {
-      Current.DataDisplay.WriteThreeLines(
+      if (!string.IsNullOrEmpty(_errorMessage))
+      {
+        Current.DataDisplay.WriteThreeLines(
           _errorMessage,
           "",
           ""
           );
+        return;
+      }
+      else
+      {
+        Current.DataDisplay.WriteThreeLines(
+          $"OuterLeft: ({_xOuter[0]}, {_yOuter[0]}); OuterRight: ({_xOuter[^1]}, {_yOuter[^1]})",
+          $"InnerLeft: ({_xInner[0]}, {_yInner[0]}); InnerRight: ({_xInner[^1]}, {_yInner[^1]})",
+          $"Area: {_areaValue}; Height: {_height}; PeakPos: {_peakX}; FWHM: {_FWHM}"
+          );
+      }
     }
 
     public override bool ProcessCmdKey(KeyEventArgs e)
@@ -296,43 +318,22 @@ namespace Altaxo.Gui.Graph.Gdi.Viewing.GraphControllerMouseHandlers
       newCollection.Add(newPlotItem);
 
       newPlotItem = new XYColumnPlotItem(
+                          (XYColumnPlotData)PlotItem.XYColumnPlotData.Clone(),
+                          new G2DPlotStyleCollection(new IG2DPlotStyle[]
+                          {
+                              new LinePlotStyle(_grac.Doc.GetPropertyContext()) { IndependentLineColor = true, Color = Altaxo.Drawing.NamedColors.Transparent },
+                          }));
+      newCollection.Add(newPlotItem);
+
+      newPlotItem = new XYColumnPlotItem(
                     new Altaxo.Graph.Plot.Data.XYColumnPlotData(newTable, FourPointPeakEvaluationDataSource.ColumnGroupNumberInnerLine, newTable[FourPointPeakEvaluationDataSource.ColumnNameInnerLineX], newTable[FourPointPeakEvaluationDataSource.ColumnNameInnerLineY]),
-                    new G2DPlotStyleCollection(new[]
+                    new G2DPlotStyleCollection(new IG2DPlotStyle[]
                     {
                                (LinePlotStyle)linePlotStyleTemplate.Clone(),
+                               new FillToCurvePlotStyle(_grac.Doc.GetPropertyContext()) {  FillToNextItem = false, FillToPreviousItem = true, IndependentFillColor = true, FillBrush = _options.AreaBrush },
                     }));
 
       newCollection.Add(newPlotItem);
-
-
-      /*
-
-      newPlotItem = new XYColumnPlotItem(
-                          new Altaxo.Graph.Plot.Data.XYColumnPlotData(newTable, FourPointPeakEvaluationDataSource.ColumnGroupNumberMiddle, newTable[FourPointPeakEvaluationDataSource.ColumnNameMiddleX], newTable[FourPointPeakEvaluationDataSource.ColumnNameMiddleY])
-                          {
-                            DataRowSelection = RangeOfRowIndices.FromStartAndCount(2, 1)
-                          },
-                          new G2DPlotStyleCollection(new IG2DPlotStyle[]
-                          {
-                              new ScatterPlotStyle(_grac.Doc.GetPropertyContext()) { Color = Altaxo.Drawing.NamedColors.Black },
-                              new LabelPlotStyle(newTable[FourPointPeakEvaluationDataSource.ColumnNameMiddleX], _grac.Doc.GetPropertyContext())
-                              {
-                                 AlignmentX = Altaxo.Drawing.Alignment.Near,
-                                 AlignmentY = Altaxo.Drawing.Alignment.Far,
-                                 LabelFormatString = "x = {0:G5}",
-                                 OffsetXEmUnits = 0.5,
-                              },
-                              new LabelPlotStyle(newTable[FourPointPeakvaluationDataSource.ColumnNameMiddleY], _grac.Doc.GetPropertyContext())
-                              {
-                                 AlignmentX = Altaxo.Drawing.Alignment.Near,
-                                 AlignmentY = Altaxo.Drawing.Alignment.Near,
-                                 LabelFormatString = "y = {0:G5}",
-                                 OffsetXEmUnits = 0.5,
-                              },
-                          }));
-
-      newCollection.Add(newPlotItem);
-      */
     }
   }
 }
