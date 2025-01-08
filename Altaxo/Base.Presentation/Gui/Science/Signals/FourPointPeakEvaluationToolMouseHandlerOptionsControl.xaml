@@ -57,7 +57,7 @@
     <GroupBox Grid.Row="4"
               Grid.Column="0"
               Grid.ColumnSpan="4"
-              Header="Line pen:">
+              Header="Area brush:">
       <axogcd:BrushAllPropertiesControl DataContext="{Binding BrushController}" />
     </GroupBox>
   </Grid>

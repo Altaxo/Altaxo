@@ -72,7 +72,7 @@ namespace Altaxo.Gui.Common.Drawing
           OnPropertyChanged(nameof(TextureOffsetX));
           OnPropertyChanged(nameof(TextureOffsetY));
 
-          if(value == BrushType.SyntheticTextureBrush && _doc.TextureImage is null && Altaxo.Graph.TextureManager.SyntheticBrushes.FirstOrDefault() is { } syntheticTexture)
+          if (value == BrushType.SyntheticTextureBrush && _doc.TextureImage is null && Altaxo.Graph.TextureManager.SyntheticBrushes.FirstOrDefault() is { } syntheticTexture)
           {
             _doc = _doc.WithTextureImage(syntheticTexture);
           }
@@ -89,7 +89,7 @@ namespace Altaxo.Gui.Common.Drawing
       }
     }
 
-    bool _foreColorEnable;
+    private bool _foreColorEnable;
     public bool ForeColorEnable { get => _foreColorEnable; set { if (!(ForeColorEnable == value)) { _foreColorEnable = value; OnPropertyChanged(nameof(ForeColorEnable)); } } }
 
     public NamedColor ForeColor
@@ -109,8 +109,7 @@ namespace Altaxo.Gui.Common.Drawing
     private bool _restrictBrushColorToPlotColorsOnly;
     public bool ShowPlotColorsOnly { get => _restrictBrushColorToPlotColorsOnly; set { if (!(ShowPlotColorsOnly == value)) { _restrictBrushColorToPlotColorsOnly = value; OnPropertyChanged(nameof(ShowPlotColorsOnly)); } } }
 
-
-    bool _backColorEnable;
+    private bool _backColorEnable;
     public bool BackColorEnable { get => _backColorEnable; set { if (!(BackColorEnable == value)) { _backColorEnable = value; OnPropertyChanged(nameof(BackColorEnable)); } } }
     public NamedColor BackColor
     {
@@ -126,7 +125,7 @@ namespace Altaxo.Gui.Common.Drawing
       }
     }
 
-    bool _exchangeColorsEnable;
+    private bool _exchangeColorsEnable;
     public bool ExchangeColorsEnable { get => _exchangeColorsEnable; set { if (!(ExchangeColorsEnable == value)) { _exchangeColorsEnable = value; OnPropertyChanged(nameof(ExchangeColorsEnable)); } } }
 
     public bool ExchangeColors
@@ -145,7 +144,7 @@ namespace Altaxo.Gui.Common.Drawing
       }
     }
 
-    bool _wrapModeEnable;
+    private bool _wrapModeEnable;
     public bool WrapModeEnable { get => _wrapModeEnable; set { if (!(WrapModeEnable == value)) { _wrapModeEnable = value; OnPropertyChanged(nameof(WrapModeEnable)); } } }
 
 
@@ -164,7 +163,8 @@ namespace Altaxo.Gui.Common.Drawing
     }
 
     public QuantityWithUnitGuiEnvironment GradientAngleEnvironment { get; set; }
-    bool _gradientAngleEnable;
+
+    private bool _gradientAngleEnable;
     public bool GradientAngleEnable { get => _gradientAngleEnable; set { if (!(GradientAngleEnable == value)) { _gradientAngleEnable = value; OnPropertyChanged(nameof(GradientAngleEnable)); } } }
 
     public DimensionfulQuantity GradientAngle
@@ -182,7 +182,8 @@ namespace Altaxo.Gui.Common.Drawing
     }
 
     public QuantityWithUnitGuiEnvironment GradientFocusEnvironment { get; set; }
-    bool _gradientFocusEnable;
+
+    private bool _gradientFocusEnable;
     public bool GradientFocusEnable { get => _gradientFocusEnable; set { if (!(GradientFocusEnable == value)) { _gradientFocusEnable = value; OnPropertyChanged(nameof(GradientFocusEnable)); } } }
 
     public DimensionfulQuantity GradientFocus
@@ -200,7 +201,8 @@ namespace Altaxo.Gui.Common.Drawing
     }
 
     public QuantityWithUnitGuiEnvironment GradientColorScaleEnvironment { get; set; }
-    bool _gradientColorScaleEnable;
+
+    private bool _gradientColorScaleEnable;
     public bool GradientColorScaleEnable { get => _gradientColorScaleEnable; set { if (!(GradientColorScaleEnable == value)) { _gradientColorScaleEnable = value; OnPropertyChanged(nameof(GradientColorScaleEnable)); } } }
     public DimensionfulQuantity GradientColorScale
     {
@@ -218,7 +220,8 @@ namespace Altaxo.Gui.Common.Drawing
 
 
     public QuantityWithUnitGuiEnvironment TextureOffsetXEnvironment => RelationEnvironment.Instance;
-    bool _textureOffsetXEnable;
+
+    private bool _textureOffsetXEnable;
     public bool TextureOffsetXEnable { get => _textureOffsetXEnable; set { if (!(TextureOffsetXEnable == value)) { _textureOffsetXEnable = value; OnPropertyChanged(nameof(TextureOffsetXEnable)); } } }
     public DimensionfulQuantity TextureOffsetX
     {
@@ -238,7 +241,7 @@ namespace Altaxo.Gui.Common.Drawing
 
     public QuantityWithUnitGuiEnvironment TextureOffsetYEnvironment => RelationEnvironment.Instance;
 
-    bool _textureOffsetYEnable;
+    private bool _textureOffsetYEnable;
     public bool TextureOffsetYEnable { get => _textureOffsetYEnable; set { if (!(TextureOffsetYEnable == value)) { _textureOffsetYEnable = value; OnPropertyChanged(nameof(TextureOffsetYEnable)); } } }
 
     public DimensionfulQuantity TextureOffsetY
@@ -255,12 +258,12 @@ namespace Altaxo.Gui.Common.Drawing
       }
     }
 
-    bool _textureScalingEnable;
+    private bool _textureScalingEnable;
     public bool TextureScalingEnable { get => _textureScalingEnable; set { if (!(TextureScalingEnable == value)) { _textureScalingEnable = value; OnPropertyChanged(nameof(TextureScalingEnable)); } } }
 
     public TextureScalingController TextureScalingController => _textureScalingController;
 
-    bool _textureImageEnable;
+    private bool _textureImageEnable;
     public bool TextureImageEnable { get => _textureImageEnable; set { if (!(TextureImageEnable == value)) { _textureImageEnable = value; OnPropertyChanged(nameof(TextureImageEnable)); } } }
 
     public ImageProxy TextureImage
@@ -278,7 +281,7 @@ namespace Altaxo.Gui.Common.Drawing
       }
     }
 
-    void OnTextureImageChanged()
+    private void OnTextureImageChanged()
     {
       _additionalPropertiesController.InitializeDocument(_doc.TextureImage);
       if (_doc.TextureImage is not null)
@@ -304,10 +307,6 @@ namespace Altaxo.Gui.Common.Drawing
         _textureScalingController.InitializeDocument(_doc.TextureScale);
         if (_doc.TextureImage is not null)
           _textureScalingController.SourceTextureSize = GetSizeOfImageProxy(_doc.TextureImage);
-      }
-
-      if (_view is not null)
-      {
         EnableElementsInDependenceOnBrushType();
       }
     }
@@ -387,7 +386,7 @@ namespace Altaxo.Gui.Common.Drawing
           textureImage = true;
           textureOffsetX = true;
           textureOffsetY = true;
-          
+
           break;
       }
       ForeColorEnable = foreColor;
@@ -403,7 +402,7 @@ namespace Altaxo.Gui.Common.Drawing
       TextureImageEnable = textureImage;
       OnTextureImageChanged();
 
-      
+
     }
 
     private VectorD2D GetSizeOfImageProxy(ImageProxy proxy)

@@ -412,6 +412,76 @@ namespace Altaxo.Science.Signals
         {
           height = Math.Abs(RMath.InterpolateLinear(peakIdx, y) - baselineRegression.GetYOfX(RMath.InterpolateLinear(peakIdx, x)));
           peakX = RMath.InterpolateLinear(peakIdx, x);
+
+          // now find the left and right half maximum
+          var signedheight = RMath.InterpolateLinear(peakIdx, y) - baselineRegression.GetYOfX(RMath.InterpolateLinear(peakIdx, x));
+          double? rightIdx = null;
+          var prev_idx = peakIdx;
+          var prev_x = peakX;
+          var prev_relheight = 1d;
+          var next_idx = IntFloorOrCeiling(peakIdx + dir, -dir);
+          while (next_idx <= iEnd)
+          {
+            var curr_x = RMath.InterpolateLinear(next_idx, x);
+            var curr_relheight = (RMath.InterpolateLinear(next_idx, y) - baselineRegression.GetYOfX(curr_x)) / signedheight;
+            var frac = RMath.InFractionOfUnorderedIntervalCC(0.5, Math.Min(prev_relheight, curr_relheight), Math.Max(prev_relheight, curr_relheight));
+            if (frac.HasValue)
+            {
+              rightIdx = prev_idx + frac * (next_idx - prev_idx);
+              break;
+            }
+            prev_idx = next_idx;
+            prev_x = curr_x;
+            prev_relheight = curr_relheight;
+            next_idx = IntFloorOrCeiling(next_idx + dir, -dir);
+          }
+          if (!rightIdx.HasValue && prev_idx != iEnd)
+          {
+            var curr_x = RMath.InterpolateLinear(iEnd, x);
+            var curr_relheight = (RMath.InterpolateLinear(iEnd, y) - baselineRegression.GetYOfX(curr_x)) / signedheight;
+            var frac = RMath.InFractionOfUnorderedIntervalCC(0.5, Math.Min(prev_relheight, curr_relheight), Math.Max(prev_relheight, curr_relheight));
+            if (frac.HasValue)
+            {
+              rightIdx = prev_idx + frac * (next_idx - prev_idx);
+            }
+          }
+
+          // now the other side
+          double? leftIdx = null;
+          prev_idx = peakIdx;
+          prev_x = peakX;
+          prev_relheight = 1d;
+          next_idx = IntFloorOrCeiling(peakIdx - dir, +dir);
+          while (next_idx >= iStart)
+          {
+            var curr_x = RMath.InterpolateLinear(next_idx, x);
+            var curr_relheight = (RMath.InterpolateLinear(next_idx, y) - baselineRegression.GetYOfX(curr_x)) / signedheight;
+            var frac = RMath.InFractionOfUnorderedIntervalCC(0.5, Math.Min(prev_relheight, curr_relheight), Math.Max(prev_relheight, curr_relheight));
+            if (frac.HasValue)
+            {
+              leftIdx = prev_idx + frac * (next_idx - prev_idx);
+              break;
+            }
+            prev_idx = next_idx;
+            prev_x = curr_x;
+            prev_relheight = curr_relheight;
+            next_idx = IntFloorOrCeiling(next_idx - dir, +dir);
+          }
+          if (!leftIdx.HasValue && prev_idx != iStart)
+          {
+            var curr_x = RMath.InterpolateLinear(iStart, x);
+            var curr_relheight = Math.Abs(RMath.InterpolateLinear(iStart, y) - baselineRegression.GetYOfX(curr_x)) / signedheight;
+            var frac = RMath.InFractionOfUnorderedIntervalCC(0.5, Math.Min(prev_relheight, curr_relheight), Math.Max(prev_relheight, curr_relheight));
+            if (frac.HasValue)
+            {
+              leftIdx = prev_idx + frac * (next_idx - prev_idx);
+            }
+          }
+
+          if (leftIdx.HasValue && rightIdx.HasValue)
+          {
+            fwhm = Math.Abs(RMath.InterpolateLinear(rightIdx.Value, x) - RMath.InterpolateLinear(leftIdx.Value, x));
+          }
         }
         return (height, peakX, fwhm);
       }
