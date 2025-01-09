@@ -25,8 +25,6 @@
 #nullable enable
 using System;
 using System.Collections.Generic;
-using System.Linq;
-using System.Text;
 
 namespace Altaxo.Graph.Scales.Ticks
 {
@@ -158,7 +156,7 @@ namespace Altaxo.Graph.Scales.Ticks
 
       protected virtual Log10TickSpacing SDeserialize(object? o, Altaxo.Serialization.Xml.IXmlDeserializationInfo info, object? parent)
       {
-        var s =  (Log10TickSpacing?)o ?? new Log10TickSpacing();
+        var s = (Log10TickSpacing?)o ?? new Log10TickSpacing();
 
         s._oneLever = info.GetDouble("OneLever");
         s._orgGrace = info.GetDouble("MinGrace");
@@ -684,6 +682,9 @@ namespace Altaxo.Graph.Scales.Ticks
     {
       _majorTicks.Clear();
 
+      if (!RMath.IsFinite(lg10Org) || !RMath.IsFinite(lg10End))
+        return;
+
       int decadesPerMajorTick = cachedMajorMinor.DecadesPerMajorTick;
 
       if (decadesPerMajorTick > 0)
@@ -1112,6 +1113,12 @@ namespace Altaxo.Graph.Scales.Ticks
       return x;
     }
 
+    /// <summary>
+    /// The maximum value that is possible for the scale decades
+    /// </summary>
+    private static readonly double MaximumValueScaleDecades = Math.Log10(double.MaxValue) - Math.Log10(double.Epsilon);
+
+
     /// <summary>Calculates the number of decades per major tick.</summary>
     /// <param name="overridenScaleDecades">The overriden scale decades (Log10(end)-Log10(org)).</param>
     /// <param name="targetNumberOfMajorTicks">The target number of major ticks.</param>
@@ -1121,7 +1128,7 @@ namespace Altaxo.Graph.Scales.Ticks
       if (targetNumberOfMajorTicks <= 0)
         return 0;
 
-      if (!(overridenScaleDecades > 0))
+      if (!(overridenScaleDecades > 0) || overridenScaleDecades > MaximumValueScaleDecades)
         overridenScaleDecades = 1;
 
       double rawMajorDecades = overridenScaleDecades / targetNumberOfMajorTicks;
