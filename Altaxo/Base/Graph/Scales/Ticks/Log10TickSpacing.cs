@@ -728,6 +728,9 @@ namespace Altaxo.Graph.Scales.Ticks
     {
       _minorTicks.Clear();
 
+      if (!RMath.IsFinite(lg10Org) || !RMath.IsFinite(lg10End))
+        return;
+
       int decadesPerMajorTick = cachedMajorMinor.DecadesPerMajorTick;
       int minorTicks = cachedMajorMinor.MinorTicks;
 
