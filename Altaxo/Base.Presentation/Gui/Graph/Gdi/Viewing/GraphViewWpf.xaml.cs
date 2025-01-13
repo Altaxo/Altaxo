@@ -157,10 +157,9 @@ namespace Altaxo.Gui.Graph.Gdi.Viewing
       set
       {
         GraphToolType oldType = CurrentGraphTool;
+        var _oldMouseState = _mouseState;
         if (oldType != value)
         {
-          _mouseState?.OnDeselection();
-
           switch (value)
           {
             case GraphToolType.None:
@@ -238,6 +237,11 @@ namespace Altaxo.Gui.Graph.Gdi.Viewing
             default:
               throw new NotImplementedException("Type not implemented: " + value.ToString());
           } // end switch
+
+          if (!object.ReferenceEquals(_oldMouseState, _mouseState) && _oldMouseState is not null)
+          {
+            _oldMouseState.OnLeaveTool(_mouseState);
+          }
 
           FocusOnGraphPanel();
 

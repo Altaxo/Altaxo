@@ -139,9 +139,12 @@
     <value>Do you really want to quit Altaxo? Unsaved changes will be lost!</value>
   </data>
   <data name="XML.MainMenu.GraphMenu.Tools.FourPointTool.Description" xml:space="preserve">
-    <value>Select 4 points on a curve for step or area evaluation.</value>
+    <value>Select 4 points on a curve for probing and evaluation.</value>
   </data>
   <data name="XML.MainMenu.GraphMenu.Tools.StepEvaluationTool.Description" xml:space="preserve">
-    <value>Select 4 points on a curve and then performs step evaluation.</value>
+    <value>Select 4 points on a curve and then perform step evaluation.</value>
+  </data>
+  <data name="XML.MainMenu.GraphMenu.Tools.PeakEvaluationTool.Description" xml:space="preserve">
+    <value>Select 4 points on a curve and then perform peak evaluation.</value>
   </data>
 </root>

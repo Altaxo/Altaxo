@@ -66,6 +66,7 @@ namespace Altaxo.Gui.Graph.Gdi.Viewing.GraphControllerMouseHandlers
     private QuickLinearRegression? _lineRegression;
 
     private string? _destinationTableName;
+    private bool _isEvaluationSaved;
 
     public FourPointPeakEvaluationToolMouseHandler(GraphController grac)
       : base(grac, useFourHandles: true, initAllFourHandles: false)
@@ -148,6 +149,16 @@ namespace Altaxo.Gui.Graph.Gdi.Viewing.GraphControllerMouseHandlers
       }
     }
 
+    public override void OnLeaveTool(MouseStateHandler newTool)
+    {
+      base.OnLeaveTool(newTool);
+
+      if (!_isEvaluationSaved && IsReadyToBeUsed)
+      {
+        if (true == Current.Gui.YesNoMessageBox("Your evaluation is not yet saved into an evaluation table\r\nDo you want to save it before leaving this tool?", "Save?", true))
+          MakeEvaluationPermanent();
+      }
+    }
 
 
     protected override void OnHandlesUpdated()
@@ -480,6 +491,8 @@ namespace Altaxo.Gui.Graph.Gdi.Viewing.GraphControllerMouseHandlers
                     }));
 
       newCollection.Add(newPlotItem);
+
+      _isEvaluationSaved = true;
     }
   }
 }

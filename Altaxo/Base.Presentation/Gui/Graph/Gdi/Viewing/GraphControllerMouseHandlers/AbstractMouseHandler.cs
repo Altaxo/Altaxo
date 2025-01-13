@@ -120,14 +120,7 @@ namespace Altaxo.Gui.Graph.Gdi.Viewing.GraphControllerMouseHandlers
     /// Called when this tool is left in favor of another tool.
     /// </summary>
     /// <param name="newTool">The new tool.</param>
-    public virtual void OnLeaveTool(GraphToolType newTool)
-    {
-    }
-
-    /// <summary>
-    /// Is called when the mouse state handler is deselected.
-    /// </summary>
-    public virtual void OnDeselection()
+    public virtual void OnLeaveTool(MouseStateHandler newTool)
     {
     }
 
