@@ -25,6 +25,7 @@
 using System;
 using System.Drawing;
 using System.Windows.Input;
+using Altaxo.Calc;
 using Altaxo.Geometry;
 using Altaxo.Graph.Gdi;
 using Altaxo.Graph.Gdi.Plot;
@@ -57,12 +58,15 @@ namespace Altaxo.Gui.Graph.Gdi.Viewing.GraphControllerMouseHandlers
       /// <summary>
       /// The index of the plot data. This can be different from the row index, e.g. if not all data are plotted.
       /// </summary>
-      public int PlotIndex;
+      public double PlotIndex;
 
       /// <summary>
-      /// The index of the row in the underlying data table of the data that is plotted.
+      /// The row index. Note, that when the plot index is fractional, the row index must be interpolated
+      /// between the row index corresponding to the floor of the plot point index and the row index
+      /// corresponding to the ceiling of the plot point index.
       /// </summary>
-      public int RowIndex;
+      public double RowIndex;
+
       /// <summary>
       /// The position of the handle in root layer coordinates
       /// </summary>
@@ -79,8 +83,8 @@ namespace Altaxo.Gui.Graph.Gdi.Viewing.GraphControllerMouseHandlers
       public int IndexOfHandle;
       public PointD2D MouseStartCoordinates;
 
-      public int PlotIndex;
-      public int RowIndex;
+      public double PlotIndex;
+      public double RowIndex;
       public PointD2D Position;
     }
 
@@ -111,12 +115,12 @@ namespace Altaxo.Gui.Graph.Gdi.Viewing.GraphControllerMouseHandlers
 
     protected GraphController _grac;
 
-    private enum State { NoPoint, OnePoint, TwoPoints, ThreePoints, FourPoints };
+    protected enum State { NoPoint, OnePoint, TwoPoints, ThreePoints, FourPoints };
 
-    private State _state;
+    protected State _state;
 
     /// <summary>Gets the state that is considered as final state, i.e. the end of the initialization stage.</summary>
-    private State _finalState { get; }
+    protected State _finalState { get; }
 
     /// <summary>
     /// A line that is drawn from the current mouse coordinates to the nearest point on the selected curve.
@@ -228,7 +232,16 @@ namespace Altaxo.Gui.Graph.Gdi.Viewing.GraphControllerMouseHandlers
 
           OnHandlesUpdated();   // show coordinates in the data reader
         }
+        OnPlotItemSet(item);
       }
+    }
+
+    /// <summary>
+    /// Is called when the plot item is set, so that now the curve which is under consideration is fixed.
+    /// </summary>
+    /// <param name="plotItem">The plot item.</param>
+    protected virtual void OnPlotItemSet(XYColumnPlotItem plotItem)
+    {
     }
 
     /// <summary>
@@ -555,8 +568,8 @@ namespace Altaxo.Gui.Graph.Gdi.Viewing.GraphControllerMouseHandlers
       var prevPlotIndexDown = h.PlotIndex;
       for (; ; )
       {
-        up = PlotItem.GetNextPlotPoint(_layer, h.PlotIndex, 1);
-        down = PlotItem.GetNextPlotPoint(_layer, h.PlotIndex, -1);
+        up = PlotItem.GetNextPlotPoint(_layer, (int)h.PlotIndex, 1);
+        down = PlotItem.GetNextPlotPoint(_layer, (int)h.PlotIndex, -1);
 
         if (up is not null)
         {
@@ -660,29 +673,27 @@ namespace Altaxo.Gui.Graph.Gdi.Viewing.GraphControllerMouseHandlers
       }
       else if (_handle.Length == 2)
       {
-        var xcol = PlotItem.XYColumnPlotData.XColumn;
-        var ycol = PlotItem.XYColumnPlotData.YColumn;
+        var (xcol, ycol, rowCount) = PlotItem.XYColumnPlotData.GetResolvedXYData();
 
         if (xcol is not null && ycol is not null)
         {
           Current.DataDisplay.WriteThreeLines(
             $"{_layer.Name}: {PlotItem}",
-            $"XL[{_handle[0].RowIndex}]={xcol[_handle[0].RowIndex]}; YL[{_handle[0].RowIndex}]={ycol[_handle[0].RowIndex]}; XR[{_handle[1].RowIndex}]={xcol[_handle[1].RowIndex]}; YR[{_handle[1].RowIndex}]={ycol[_handle[1].RowIndex]}",
-            $"DX={xcol[_handle[1].RowIndex] - xcol[_handle[0].RowIndex]}; DY={ycol[_handle[1].RowIndex] - ycol[_handle[0].RowIndex]}"
+            $"XL[{_handle[0].RowIndex}]={RMath.InterpolateLinear(_handle[0].PlotIndex, xcol)}; YL[{_handle[0].RowIndex}]={RMath.InterpolateLinear(_handle[0].PlotIndex, ycol)}; XR[{_handle[1].RowIndex}]={RMath.InterpolateLinear(_handle[1].PlotIndex, xcol)}; YR[{_handle[1].RowIndex}]={RMath.InterpolateLinear(_handle[1].PlotIndex, ycol)}",
+            $"DX={RMath.InterpolateLinear(_handle[1].PlotIndex, xcol) - RMath.InterpolateLinear(_handle[0].PlotIndex, xcol)}; DY={RMath.InterpolateLinear(_handle[1].PlotIndex, ycol) - RMath.InterpolateLinear(_handle[0].PlotIndex, ycol)}"
             );
         }
       }
       else if (_handle.Length == 4)
       {
-        var xcol = PlotItem.XYColumnPlotData.XColumn;
-        var ycol = PlotItem.XYColumnPlotData.YColumn;
+        var (xcol, ycol, rowCount) = PlotItem.XYColumnPlotData.GetResolvedXYData();
 
         if (xcol is not null && ycol is not null)
         {
           Current.DataDisplay.WriteThreeLines(
             $"{_layer.Name}: {PlotItem}",
-            $"XLO[{_handle[0].RowIndex}]={xcol[_handle[0].RowIndex]}; YLO[{_handle[0].RowIndex}]={ycol[_handle[0].RowIndex]}; XRO[{_handle[3].RowIndex}]={xcol[_handle[3].RowIndex]}; YRO[{_handle[3].RowIndex}]={ycol[_handle[3].RowIndex]}; DX={xcol[_handle[3].RowIndex] - xcol[_handle[0].RowIndex]}; DY={ycol[_handle[3].RowIndex] - ycol[_handle[0].RowIndex]}",
-            $"XLI[{_handle[1].RowIndex}]={xcol[_handle[1].RowIndex]}; YLI[{_handle[1].RowIndex}]={ycol[_handle[1].RowIndex]}; XRI[{_handle[2].RowIndex}]={xcol[_handle[2].RowIndex]}; YRI[{_handle[2].RowIndex}]={ycol[_handle[2].RowIndex]}; DX={xcol[_handle[2].RowIndex] - xcol[_handle[1].RowIndex]}; DY={ycol[_handle[2].RowIndex] - ycol[_handle[1].RowIndex]}"
+            $"XLO[{_handle[0].RowIndex}]={RMath.InterpolateLinear(_handle[0].PlotIndex, xcol)}; YLO[{_handle[0].RowIndex}]={RMath.InterpolateLinear(_handle[0].PlotIndex, ycol)}; XRO[{_handle[3].RowIndex}]={RMath.InterpolateLinear(_handle[3].PlotIndex, xcol)}; YRO[{_handle[3].RowIndex}]={RMath.InterpolateLinear(_handle[3].PlotIndex, ycol)}; DX={RMath.InterpolateLinear(_handle[3].PlotIndex, xcol) - RMath.InterpolateLinear(_handle[0].PlotIndex, xcol)}; DY={RMath.InterpolateLinear(_handle[3].PlotIndex, ycol) - RMath.InterpolateLinear(_handle[0].PlotIndex, ycol)}",
+            $"XLI[{_handle[1].RowIndex}]={RMath.InterpolateLinear(_handle[1].PlotIndex, xcol)}; YLI[{_handle[1].RowIndex}]={RMath.InterpolateLinear(_handle[1].PlotIndex, ycol)}; XRI[{_handle[2].RowIndex}]={RMath.InterpolateLinear(_handle[2].PlotIndex, xcol)}; YRI[{_handle[2].RowIndex}]={RMath.InterpolateLinear(_handle[2].PlotIndex, ycol)}; DX={RMath.InterpolateLinear(_handle[2].PlotIndex, xcol) - RMath.InterpolateLinear(_handle[1].PlotIndex, xcol)}; DY={RMath.InterpolateLinear(_handle[2].PlotIndex, ycol) - RMath.InterpolateLinear(_handle[1].PlotIndex, ycol)}"
             );
         }
       }

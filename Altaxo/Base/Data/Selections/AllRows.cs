@@ -96,6 +96,15 @@ namespace Altaxo.Data.Selections
     }
 
     /// <inheritdoc/>
+    public bool Equals(IRowSelection? rowSel)
+    {
+      if (rowSel is not AllRows other)
+        return false;
+
+      return true;
+    }
+
+    /// <inheritdoc/>
     public IEnumerable<IRowSelection>? ChildNodes => null;
 
   }

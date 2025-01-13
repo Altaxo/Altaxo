@@ -68,22 +68,22 @@ namespace Altaxo.Science.Signals
     /// <summary>
     /// Gets the index of the first point of the left line.
     /// </summary>
-    public int IndexLeftOuter { get; init; }
+    public double IndexLeftOuter { get; init; }
 
     /// <summary>
     /// Gets the index of the second point of the left line.
     /// </summary>
-    public int IndexLeftInner { get; init; }
+    public double IndexLeftInner { get; init; }
 
     /// <summary>
     /// Gets the index of the first point of the right line.
     /// </summary>
-    public int IndexRightOuter { get; init; }
+    public double IndexRightOuter { get; init; }
 
     /// <summary>
     /// Gets the index of the second point of the right line.
     /// </summary>
-    public int IndexRightInner { get; init; }
+    public double IndexRightInner { get; init; }
 
     #region Serialization
 
@@ -116,10 +116,10 @@ namespace Altaxo.Science.Signals
         var middleRegressionUpperLevel = info.GetDouble("MiddleRegressionUpperLevel");
         var middleLineOverlap = info.GetDouble("MiddleLineOverlap");
         var includeOriginalPointsInOutput = info.GetBoolean("IncludeOriginalPointsInOutput");
-        var indexLeftOuter = info.GetInt32("IndexLeftOuter");
-        var indexLeftInner = info.GetInt32("IndexLeftInner");
-        var indexRightInner = info.GetInt32("IndexRightInner");
-        var indexRightOuter = info.GetInt32("IndexRightOuter");
+        var indexLeftOuter = info.GetDouble("IndexLeftOuter");
+        var indexLeftInner = info.GetDouble("IndexLeftInner");
+        var indexRightInner = info.GetDouble("IndexRightInner");
+        var indexRightOuter = info.GetDouble("IndexRightOuter");
 
         return new FourPointStepEvaluationOptions()
         {

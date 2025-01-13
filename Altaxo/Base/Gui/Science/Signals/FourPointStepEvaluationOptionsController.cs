@@ -98,9 +98,9 @@ namespace Altaxo.Gui.Science.Signals
     }
 
 
-    private int _IndexLeftOuter;
+    private double _IndexLeftOuter;
 
-    public int IndexLeftOuter
+    public double IndexLeftOuter
     {
       get => _IndexLeftOuter;
       set
@@ -113,9 +113,9 @@ namespace Altaxo.Gui.Science.Signals
       }
     }
 
-    private int _IndexLeftInner;
+    private double _IndexLeftInner;
 
-    public int IndexLeftInner
+    public double IndexLeftInner
     {
       get => _IndexLeftInner;
       set
@@ -128,9 +128,9 @@ namespace Altaxo.Gui.Science.Signals
       }
     }
 
-    private int _IndexRightOuter;
+    private double _IndexRightOuter;
 
-    public int IndexRightOuter
+    public double IndexRightOuter
     {
       get => _IndexRightOuter;
       set
@@ -143,9 +143,9 @@ namespace Altaxo.Gui.Science.Signals
       }
     }
 
-    private int _IndexRightInner;
+    private double _IndexRightInner;
 
-    public int IndexRightInner
+    public double IndexRightInner
     {
       get => _IndexRightInner;
       set

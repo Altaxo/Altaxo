@@ -189,5 +189,14 @@ namespace Altaxo.Data.Selections
     /// <inheritdoc/>
     public IEnumerable<IRowSelection>? ChildNodes => null;
 
+
+    /// <inheritdoc/>
+    public bool Equals(IRowSelection? rowSel)
+    {
+      return
+        rowSel is RangeOfRowIndices other &&
+        this._firstRowIndexInclusive == other._firstRowIndexInclusive &&
+        this._lastRowIndexInclusive == other._lastRowIndexInclusive;
+    }
   }
 }

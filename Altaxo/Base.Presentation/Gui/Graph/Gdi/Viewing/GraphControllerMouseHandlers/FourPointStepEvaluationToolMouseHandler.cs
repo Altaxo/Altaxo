@@ -23,7 +23,9 @@
 #endregion Copyright
 
 using System;
+using System.Collections.Generic;
 using System.Drawing;
+using System.Linq;
 using System.Windows.Input;
 using Altaxo.Calc;
 using Altaxo.Calc.Regression;
@@ -32,6 +34,8 @@ using Altaxo.Data;
 using Altaxo.Data.Selections;
 using Altaxo.Graph.Gdi.Plot;
 using Altaxo.Graph.Gdi.Plot.Styles;
+using Altaxo.Graph.Plot.Data;
+using Altaxo.Gui.Common;
 using Altaxo.Main.Properties;
 using Altaxo.Main.Services;
 using Altaxo.Science.Signals;
@@ -60,6 +64,8 @@ namespace Altaxo.Gui.Graph.Gdi.Viewing.GraphControllerMouseHandlers
 
     private QuickLinearRegression? _leftReg, _rightReg, _middleReg;
 
+    private string? _destinationTableName;
+
     public FourPointStepEvaluationToolMouseHandler(GraphController grac)
       : base(grac, useFourHandles: true, initAllFourHandles: true)
     {
@@ -75,6 +81,71 @@ namespace Altaxo.Gui.Graph.Gdi.Viewing.GraphControllerMouseHandlers
     }
 
     public override GraphToolType GraphToolType => GraphToolType.FourPointStepEvaluation;
+
+    protected override void OnPlotItemSet(XYColumnPlotItem plotItem)
+    {
+      const string NameOfNewTableEntry = "New evaluation table";
+
+      base.OnPlotItemSet(plotItem);
+
+      var tableList = GetExistingDestinationTables(plotItem.XYColumnPlotData);
+
+      DataTable? selectedTable = null;
+
+      if (tableList.Count == 1)
+      {
+        if (Current.Gui.YesNoMessageBox(
+          $"There is already an evaluation in table {tableList[0].Name}\r\n" +
+          $"Do you want to use and overwrite the existing evaluation?\r\n" +
+          $"'Yes' to use and overwrite the existing evaluation\r\n" +
+          "'No' to save the results in a new evaluation table",
+          "Use existing evaluation?",
+          true)
+          )
+        {
+          selectedTable = tableList[0];
+        }
+      }
+      else if (tableList.Count > 1)
+      {
+        var list = new List<string>();
+        list.Add(NameOfNewTableEntry);
+        list.AddRange(tableList.Select(t => t.ShortName));
+        var controller = new SingleChoiceController(list.ToArray(), 0);
+        controller.DescriptionText =
+          $"There already exist {tableList.Count} evaluation tables\r\n" +
+          $"If you want to use and overwrite an existing table, choose that\r\n" +
+          $"table from the list; otherwise, choose the option to create\r\n" +
+          "a new evaluation table.";
+
+        if (Current.Gui.ShowDialog(controller, "Choose new or existing evaluation table"))
+        {
+          var selection = list[(int)controller.ModelObject];
+          selectedTable = tableList.FirstOrDefault(t => t.Name == selection);
+        }
+      }
+
+      if (selectedTable is not null)
+      {
+        _destinationTableName = tableList[0].Name;
+
+        var ds = (FourPointStepEvaluationDataSource)selectedTable.DataSource;
+        var maxPlotIndex = plotItem.XYColumnPlotData.GetCommonRowCountFromDataColumns() - 1;
+        _handle[0].PlotIndex = Math.Min(ds.ProcessOptions.IndexLeftOuter, maxPlotIndex);
+        _handle[1].PlotIndex = Math.Min(ds.ProcessOptions.IndexLeftInner, maxPlotIndex);
+        _handle[2].PlotIndex = Math.Min(ds.ProcessOptions.IndexRightInner, maxPlotIndex);
+        _handle[3].PlotIndex = Math.Min(ds.ProcessOptions.IndexRightOuter, maxPlotIndex);
+
+        for (int i = 0; i < _handle.Length; ++i)
+        {
+          (_handle[i].Position, _handle[i].RowIndex) = plotItem.GetPlotPointAt(_handle[i].PlotIndex, this._layer).Value;
+          _handle[i].Position = _layer.TransformCoordinatesFromHereToRoot(_handle[i].Position);
+        }
+        _state = _finalState;
+
+        OnHandlesUpdated();
+      }
+    }
 
     protected override void OnHandlesUpdated()
     {
@@ -175,7 +246,7 @@ namespace Altaxo.Gui.Graph.Gdi.Viewing.GraphControllerMouseHandlers
 
       // now the middle line
       var (xs, ys) = leftReg.GetIntersectionPoint(rightReg);
-      if (RMath.IsInIntervalCC(xs, Math.Min(xcol[_handle[1].PlotIndex], xcol[_handle[2].PlotIndex]), Math.Max(xcol[_handle[1].PlotIndex], xcol[_handle[2].PlotIndex])))
+      if (RMath.IsInIntervalCC(xs, Math.Min(RMath.InterpolateLinear(_handle[1].PlotIndex, xcol), RMath.InterpolateLinear(_handle[2].PlotIndex, xcol)), Math.Max(RMath.InterpolateLinear(_handle[1].PlotIndex, xcol), RMath.InterpolateLinear(_handle[2].PlotIndex, xcol))))
       {
         _errorMessage = $"The left and the right line intersect in the middle zone, thus evaluation is not possible";
         return;
@@ -184,11 +255,11 @@ namespace Altaxo.Gui.Graph.Gdi.Viewing.GraphControllerMouseHandlers
 
       // left line is going from the left outer point through the left inner point to x if the right inner point
       {
-        var x0 = xcol[_handle[0].PlotIndex];
-        var y0 = ycol[_handle[0].PlotIndex];
-        var x1 = xcol[_handle[1].PlotIndex];
-        var y1 = ycol[_handle[1].PlotIndex];
-        var x2 = xcol[_handle[2].PlotIndex];
+        var x0 = RMath.InterpolateLinear(_handle[0].PlotIndex, xcol);
+        var y0 = RMath.InterpolateLinear(_handle[0].PlotIndex, ycol);
+        var x1 = RMath.InterpolateLinear(_handle[1].PlotIndex, xcol);
+        var y1 = RMath.InterpolateLinear(_handle[1].PlotIndex, ycol);
+        var x2 = RMath.InterpolateLinear(_handle[2].PlotIndex, xcol);
 
         var minx = Math.Min(x0, Math.Min(x1, x2));
         var maxx = Math.Max(x0, Math.Max(x1, x2));
@@ -203,11 +274,11 @@ namespace Altaxo.Gui.Graph.Gdi.Viewing.GraphControllerMouseHandlers
       }
       // right line is going from the right outer point through the right inner point to the x of the left inner point
       {
-        var x0 = xcol[_handle[3].PlotIndex];
-        var y0 = ycol[_handle[3].PlotIndex];
-        var x1 = xcol[_handle[2].PlotIndex];
-        var y1 = ycol[_handle[2].PlotIndex];
-        var x2 = xcol[_handle[1].PlotIndex];
+        var x0 = RMath.InterpolateLinear(_handle[3].PlotIndex, xcol);
+        var y0 = RMath.InterpolateLinear(_handle[3].PlotIndex, ycol);
+        var x1 = RMath.InterpolateLinear(_handle[2].PlotIndex, xcol);
+        var y1 = RMath.InterpolateLinear(_handle[2].PlotIndex, ycol);
+        var x2 = RMath.InterpolateLinear(_handle[1].PlotIndex, xcol);
 
         var minx = Math.Min(x0, Math.Min(x1, x2));
         var maxx = Math.Max(x0, Math.Max(x1, x2));
@@ -241,7 +312,7 @@ namespace Altaxo.Gui.Graph.Gdi.Viewing.GraphControllerMouseHandlers
         for (int i = 0; i < _xmiddle.Length; i++)
         {
           var r = i / (_xmiddle.Length - 1d);
-          var x = (1 - r) * xcol[_handle[1].PlotIndex] + r * xcol[_handle[2].PlotIndex];
+          var x = (1 - r) * RMath.InterpolateLinear(_handle[1].PlotIndex, xcol) + r * RMath.InterpolateLinear(_handle[2].PlotIndex, xcol);
           _xmiddle[i] = x;
           _ymiddle[i] = middleReg.GetYOfX(x);
         }
@@ -296,6 +367,40 @@ namespace Altaxo.Gui.Graph.Gdi.Viewing.GraphControllerMouseHandlers
       return false;
     }
 
+
+    /// <summary>
+    /// Gets the existing destination tables. They are searched in the folder in which the data of the plot item is located.
+    /// All tables with a <see cref="FourPointPeakEvaluationDataSource"/> are returned, which have the same <see cref="XYColumnPlotData"/> as the current plot item.
+    /// </summary>
+    /// <param name="columnPlotData">The column plot data.</param>
+    /// <returns>A list with all tables with a <see cref="FourPointPeakEvaluationDataSource"/> are returned, which have the same <see cref="XYColumnPlotData"/> as the current plot item.</returns>
+    public static List<DataTable> GetExistingDestinationTables(XYColumnPlotData? columnPlotData)
+    {
+      var result = new List<DataTable>();
+      if (columnPlotData?.XColumn is not { } xcol || columnPlotData?.YColumn is not { } ycol)
+      {
+        return result;
+      }
+      var sourceTable = Altaxo.Data.DataTable.GetParentDataTableOf(xcol.GetUnderlyingDataColumnOrDefault());
+      if (sourceTable is null)
+      {
+        return result;
+      }
+
+      foreach (var t in Current.Project.Folders.GetItemsInFolder(sourceTable.Folder).OfType<DataTable>())
+      {
+        if (object.ReferenceEquals(t, sourceTable))
+          continue;
+
+        if (t.DataSource is FourPointStepEvaluationDataSource ds)
+        {
+          if (ds.ProcessData.Equals(columnPlotData))
+            result.Add(t);
+        }
+      }
+      return result;
+    }
+
     public virtual void MakeEvaluationPermanent()
     {
       if (_showMiddleCross == false)
@@ -312,8 +417,20 @@ namespace Altaxo.Gui.Graph.Gdi.Viewing.GraphControllerMouseHandlers
 
       var xname = xcol.GetUnderlyingDataColumnOrDefault()?.Name ?? "X";
       var yname = ycol.GetUnderlyingDataColumnOrDefault()?.Name ?? "Y";
-      var newTableName = sourceTable.Name + $"_StepEvaluation_{yname}_Vs_{xname}";
-      var newTable = Current.Project.DataTableCollection.EnsureExistence(newTableName);
+
+      DataTable? newTable = null;
+
+      if (!string.IsNullOrEmpty(_destinationTableName))
+      {
+        Current.Project.DataTableCollection.TryGetValue(_destinationTableName, out newTable);
+      }
+
+      if (newTable is null)
+      {
+        var newTableName = sourceTable.Name + $"_StepEvaluation_{yname}_Vs_{xname}";
+        newTableName = Current.Project.DataTableCollection.FindNewItemName(newTableName);
+        newTable = Current.Project.DataTableCollection.EnsureExistence(newTableName);
+      }
 
       var dataSourceOptions = new FourPointStepEvaluationOptions()
       {

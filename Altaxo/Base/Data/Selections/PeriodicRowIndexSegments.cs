@@ -198,5 +198,15 @@ namespace Altaxo.Data.Selections
     /// <inheritdoc/>
     public IEnumerable<IRowSelection>? ChildNodes => null;
 
+    /// <inheritdoc/>
+    public bool Equals(IRowSelection? rowSel)
+    {
+      return
+        rowSel is PeriodicRowIndexSegments other &&
+        this._firstRowIndexInclusive == other._firstRowIndexInclusive &&
+        this._lengthOfPeriod == other._lengthOfPeriod &&
+        this._numberOfItemsPerPeriod == other._numberOfItemsPerPeriod;
+    }
+
   }
 }

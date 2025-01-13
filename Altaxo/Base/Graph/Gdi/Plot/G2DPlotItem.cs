@@ -308,6 +308,46 @@ namespace Altaxo.Graph.Gdi.Plot
     }
 
     /// <summary>
+    /// Gets the plot point at a fractional index <paramref name="plotIndex"/>.
+    /// </summary>
+    /// <param name="plotIndex">The index of the plot point. Must be &gt;= 0, but not neccessarily an integer.</param>
+    /// <param name="layer">The plot layer.</param>
+    /// <returns>The layer coordinates of the plot point and the original index in the data table corresponding to the plot point index. If the plot point index is fractional,
+    /// then (x,y) of the floor of the index and (x,y) of the ceiling of the index is linearly interpolated, and then the layer coordinated of that interpolated point is calculated.
+    /// Likewise, the original row index of the floor of the plot point index and the ceiling of the plot point index is calculated.</returns>
+    public (PointD2D layerCoordinates, double rowIndex)? GetPlotPointAt(double plotIndex, IPlotArea layer)
+    {
+      if (_cachedPlotDataUsedForPainting is { } pdata && pdata.RangeList is { } rangeList && pdata.PlotPointsInAbsoluteLayerCoordinates is { } ptArray && ptArray.Length > 1)
+      {
+        int iPlotIndex = (int)Math.Floor(plotIndex);
+        if (iPlotIndex == plotIndex)
+        {
+          // ok, minindex is the point we are looking for
+          // so we have a look in the rangeList, what row it belongs to
+          int rowindex = rangeList.GetRowIndexForPlotIndex(iPlotIndex);
+          return (new PointD2D(ptArray[iPlotIndex].X, ptArray[iPlotIndex].Y), rowindex);
+        }
+        else
+        {
+          var r = plotIndex - iPlotIndex;
+          int rowIndex1 = rangeList.GetRowIndexForPlotIndex(iPlotIndex);
+          int rowIndex2 = rangeList.GetRowIndexForPlotIndex(iPlotIndex + 1);
+          double rowIndex = rowIndex1 + r * (rowIndex2 - rowIndex1);
+          var x1 = _cachedPlotDataUsedForPainting.GetXPhysical(rowIndex1);
+          var y1 = _cachedPlotDataUsedForPainting.GetYPhysical(rowIndex1);
+          var x2 = _cachedPlotDataUsedForPainting.GetXPhysical(rowIndex2);
+          var y2 = _cachedPlotDataUsedForPainting.GetYPhysical(rowIndex2);
+          var x = x1 + r * (x2 - x1);
+          var y = y1 + r * (y2 - y1);
+          var logical = layer.GetLogical3D(x, y);
+          layer.CoordinateSystem.LogicalToLayerCoordinates(logical, out var ptX, out var ptY);
+          return (new PointD2D(ptX, ptY), rowIndex);
+        }
+      }
+      return null;
+    }
+
+    /// <summary>
     /// For a given plot point of index oldplotindex, finds the index and coordinates of a plot point
     /// of index oldplotindex+increment.
     /// </summary>

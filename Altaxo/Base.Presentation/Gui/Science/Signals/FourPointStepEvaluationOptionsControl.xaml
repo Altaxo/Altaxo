@@ -74,7 +74,7 @@
     <Label Grid.Row="10"
            Grid.Column="0"
            Content="Index of left outer point:" />
-    <axogc:Int32UpDown Grid.Row="10"
+    <axogc:DoubleUpDown Grid.Row="10"
                        Grid.Column="2"
                        Value="{Binding  IndexLeftOuter, Mode=TwoWay}"
                        Minimum="0" />
@@ -82,7 +82,7 @@
     <Label Grid.Row="12"
            Grid.Column="0"
            Content="Index of left inner point:" />
-    <axogc:Int32UpDown Grid.Row="12"
+    <axogc:DoubleUpDown Grid.Row="12"
                        Grid.Column="2"
                        Value="{Binding  IndexLeftInner, Mode=TwoWay}"
                        Minimum="0" />
@@ -90,7 +90,7 @@
     <Label Grid.Row="14"
            Grid.Column="0"
            Content="Index of right inner point:" />
-    <axogc:Int32UpDown Grid.Row="14"
+    <axogc:DoubleUpDown Grid.Row="14"
                        Grid.Column="2"
                        Value="{Binding  IndexRightInner, Mode=TwoWay}"
                        Minimum="0" />
@@ -98,7 +98,7 @@
     <Label Grid.Row="16"
            Grid.Column="0"
            Content="Index of right outer point:" />
-    <axogc:Int32UpDown Grid.Row="16"
+    <axogc:DoubleUpDown Grid.Row="16"
                        Grid.Column="2"
                        Value="{Binding  IndexRightOuter, Mode=TwoWay}"
                        Minimum="0" />

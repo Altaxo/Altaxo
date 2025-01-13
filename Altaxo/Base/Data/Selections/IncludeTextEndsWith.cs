@@ -245,5 +245,14 @@ namespace Altaxo.Data.Selections
     /// <inheritdoc/>
     public IEnumerable<IRowSelection>? ChildNodes => null;
 
+    /// <inheritdoc/>
+    public bool Equals(IRowSelection? rowSel)
+    {
+      return
+        rowSel is IncludeTextEndsWith other &&
+        this._value == other._value &&
+        this._ignoreCase == other._ignoreCase &&
+        object.ReferenceEquals(this._columnProxy?.Document(), other._columnProxy?.Document());
+    }
   }
 }

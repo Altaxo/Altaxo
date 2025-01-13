@@ -229,5 +229,13 @@ namespace Altaxo.Data.Selections
     /// <inheritdoc/>
     public IEnumerable<IRowSelection>? ChildNodes => null;
 
+    /// <inheritdoc/>
+    public bool Equals(IRowSelection? rowSel)
+    {
+      return
+        rowSel is IncludeSingleNumericalValue other &&
+        this._value == other._value &&
+        object.ReferenceEquals(this._columnProxy?.Document(), other._columnProxy?.Document());
+    }
   }
 }

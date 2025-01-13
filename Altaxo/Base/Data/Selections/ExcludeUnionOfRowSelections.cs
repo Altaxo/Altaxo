@@ -311,5 +311,23 @@ namespace Altaxo.Data.Selections
         _rowSelections[i].VisitDocumentReferences(Report);
       }
     }
+
+    /// <inheritdoc/>
+    public bool Equals(IRowSelection? rowSel)
+    {
+      if (rowSel is not ExcludeUnionOfRowSelections other)
+        return false;
+
+      if (this._rowSelections.Count != other._rowSelections.Count)
+        return false;
+
+      for (int i = 0; i < this._rowSelections.Count; ++i)
+      {
+        if (!this._rowSelections[i].Equals(other._rowSelections[i]))
+          return false;
+      }
+
+      return true;
+    }
   }
 }

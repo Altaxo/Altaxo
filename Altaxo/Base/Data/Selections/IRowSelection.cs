@@ -31,7 +31,7 @@ using Altaxo.Main;
 
 namespace Altaxo.Data.Selections
 {
-  public interface IRowSelection : Main.IDocumentLeafNode, ICloneable, ITreeNode<IRowSelection>
+  public interface IRowSelection : Main.IDocumentLeafNode, ICloneable, ITreeNode<IRowSelection>, IEquatable<IRowSelection>
   {
     /// <summary>
     /// Gets the selected row indices as segments of (startIndex, endIndexExclusive), beginning with no less than the start index and less than the maximum index.
@@ -104,6 +104,53 @@ namespace Altaxo.Data.Selections
         for (int i = segment.start; i < segment.endExclusive; ++i)
           yield return i;
       }
+    }
+
+    /// <summary>
+    /// Gets the index of the original row in the data table by providing the index of the filtered row.
+    /// </summary>
+    /// <param name="rowSelection">The row selection (the filter).</param>
+    /// <param name="filteredRowIndex">Index of the filtered row.</param>
+    /// <param name="table">The underlying data table.</param>
+    /// <param name="totalRowCount">The total row count.</param>
+    /// <returns>The index of the original row in the data table corresponding to the index of the filtered row. If the index of the filtered row equal to or higher than the total number
+    /// of filtered rows, the return value is null.</returns>
+    public static int? GetOriginalRowIndexForFilteredRowIndex(this IRowSelection rowSelection, int filteredRowIndex, DataColumnCollection? table, int totalRowCount)
+    {
+      var remaining = filteredRowIndex;
+      foreach (var segment in rowSelection.GetSelectedRowIndexSegmentsFromTo(0, int.MaxValue, table, totalRowCount))
+      {
+        var segmentLength = segment.endExclusive - segment.start;
+        if (remaining < segmentLength)
+          return segment.start + remaining;
+        else
+          remaining -= segmentLength;
+      }
+      return null;
+    }
+
+    /// <summary>
+    /// Gets the index of the filtered row by providing the index of the original row in the data table.
+    /// </summary>
+    /// <param name="rowSelection">The row selection (the filter).</param>
+    /// <param name="originalRowIndex">Index of the original row in the data table.</param>
+    /// <param name="table">The underlying data table.</param>
+    /// <param name="totalRowCount">The total row count.</param>
+    /// <returns>The index of the filtered row corresponding to the index of the original row in the data table . If the index of the original row is not included by the filter,
+    /// the return value is null.</returns>
+    public static int? GetFilteredRowIndexForOriginalRowIndex(this IRowSelection rowSelection, int originalRowIndex, DataColumnCollection? table, int totalRowCount)
+    {
+      var filteredRowIndexOffset = 0;
+      foreach (var segment in rowSelection.GetSelectedRowIndexSegmentsFromTo(0, totalRowCount, table, totalRowCount))
+      {
+        if (originalRowIndex < segment.start)
+          break;
+        if (originalRowIndex < segment.endExclusive)
+          return filteredRowIndexOffset + (originalRowIndex - segment.start);
+        else
+          filteredRowIndexOffset += segment.endExclusive - segment.start;
+      }
+      return null;
     }
   }
 }

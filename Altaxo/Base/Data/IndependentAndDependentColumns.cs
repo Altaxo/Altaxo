@@ -45,6 +45,7 @@ namespace Altaxo.Data
     Main.SuspendableDocumentNodeWithSetOfEventArgs,
     IColumnPlotData,
     ICloneable,
+    IEquatable<IndependentAndDependentColumns>,
     IHasDocumentReferences
   {
     /// <summary>Holds a reference to the underlying data table. If the Empty property of the proxy is null, the underlying table must be determined from the column proxies.</summary>
@@ -248,6 +249,54 @@ namespace Altaxo.Data
           EhSelfChanged(EventArgs.Empty);
         }
       }
+    }
+
+    /// <summary>
+    /// Gets the index of the original row in the data table by providing the index of the filtered row.
+    /// </summary>
+    /// <param name="filteredRowIndex">Index of the filtered row.</param>
+    /// <returns>The index of the original row in the data table corresponding to the index of the filtered row. If the index of the filtered row equal to or higher than the total number
+    /// of filtered rows, the return value is null.</returns>
+    public int? GetOriginalRowIndexForFilteredRowIndex(int filteredRowIndex)
+    {
+      var maxRowCount = GetCommonRowCountFromDataColumns();
+      return _rangeOfRows.GetOriginalRowIndexForFilteredRowIndex(filteredRowIndex, DataTable.DataColumns, maxRowCount);
+    }
+
+    /// <summary>
+    /// Gets the index of the original row in the data table by providing the index of the filtered row.
+    /// </summary>
+    /// <param name="filteredRowIndex">Index of the filtered row.</param>
+    /// <returns>The index of the original row in the data table corresponding to the index of the filtered row.
+    /// If the index is not an integer, the result is linearly interpolated between the result of the floor of the index and the ceiling of the index.
+    /// If the index of the filtered row equal to or higher than the total number
+    /// of filtered rows, the return value is null.</returns>
+    public double? GetOriginalRowIndexForFilteredRowIndex(double filteredRowIndex)
+    {
+      var iFilteredRowIndex = (int)Math.Floor(filteredRowIndex);
+      if (iFilteredRowIndex == filteredRowIndex)
+      {
+        return GetOriginalRowIndexForFilteredRowIndex(iFilteredRowIndex);
+      }
+      else
+      {
+        var maxRowCount = GetCommonRowCountFromDataColumns();
+        var r = filteredRowIndex - iFilteredRowIndex;
+        return (1 - r) * _rangeOfRows.GetOriginalRowIndexForFilteredRowIndex(iFilteredRowIndex, DataTable.DataColumns, maxRowCount) +
+                (r) * _rangeOfRows.GetOriginalRowIndexForFilteredRowIndex(iFilteredRowIndex + 1, DataTable.DataColumns, maxRowCount);
+      }
+    }
+
+    /// <summary>
+    /// Gets the index of the filtered row by providing the index of the original row in the data table.
+    /// </summary>
+    /// <param name="originalRowIndex">Index of the original row in the data table.</param>
+    /// <returns>The index of the filtered row corresponding to the index of the original row in the data table . If the index of the original row is not included by the filter,
+    /// the return value is null.</returns>
+    public int? GetFilteredRowIndexForOriginalRowIndex(int originalRowIndex)
+    {
+      var maxRowCount = GetCommonRowCountFromDataColumns();
+      return _rangeOfRows.GetFilteredRowIndexForOriginalRowIndex(originalRowIndex, DataTable.DataColumns, maxRowCount);
     }
 
     /// <summary>
@@ -594,6 +643,41 @@ namespace Altaxo.Data
       {
         _rangeOfRows.VisitDocumentReferences(Report);
       }
+    }
+
+    public bool Equals(IndependentAndDependentColumns? other)
+    {
+      if (other is null)
+        return false;
+
+      if (!object.ReferenceEquals(DataTable, other.DataTable))
+        return false;
+
+      if (_groupNumber != other._groupNumber)
+        return false;
+
+      if (_independentVariables.Length != other._independentVariables.Length)
+        return false;
+
+      if (_dependentVariables.Length != other._dependentVariables.Length)
+        return false;
+
+      for (int i = 0; i < _independentVariables.Length; ++i)
+      {
+        if (!object.ReferenceEquals(_independentVariables[i]?.Document(), other._independentVariables[i]?.Document()))
+          return false;
+      }
+
+      for (int i = 0; i < _dependentVariables.Length; ++i)
+      {
+        if (!object.ReferenceEquals(_dependentVariables[i]?.Document(), other._dependentVariables[i]?.Document()))
+          return false;
+      }
+
+      if (!this._rangeOfRows.Equals(other._rangeOfRows))
+        return false;
+
+      return true;
     }
   }
 }

@@ -159,6 +159,8 @@ namespace Altaxo.Gui.Graph.Gdi.Viewing
         GraphToolType oldType = CurrentGraphTool;
         if (oldType != value)
         {
+          _mouseState?.OnDeselection();
+
           switch (value)
           {
             case GraphToolType.None:

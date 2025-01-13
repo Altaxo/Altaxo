@@ -315,5 +315,17 @@ namespace Altaxo.Data.Selections
     /// <inheritdoc/>
     public IEnumerable<IRowSelection>? ChildNodes => null;
 
+    /// <inheritdoc/>
+    public bool Equals(IRowSelection? rowSel)
+    {
+      return
+        rowSel is RangeOfNumericalValues other &&
+        this._lowerValue == other._lowerValue &&
+        this._isLowerInclusive == other._isLowerInclusive &&
+        this._upperValue == other._upperValue &&
+        this._isUpperInclusive == other._isUpperInclusive &&
+        object.ReferenceEquals(this._columnProxy?.Document(), other._columnProxy?.Document());
+    }
+
   }
 }

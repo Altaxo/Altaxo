@@ -184,7 +184,7 @@ namespace Altaxo.Science.Signals
       // both lines must not intersect in the inner region
 
       var (intersectionX, _) = leftRegression.GetIntersectionPoint(rightRegression);
-      var (xinnerleft, xinnerright) = RMath.MinMax(x[options.IndexLeftInner], x[options.IndexRightInner]);
+      var (xinnerleft, xinnerright) = RMath.MinMax(RMath.InterpolateLinear(options.IndexLeftInner, x), RMath.InterpolateLinear(options.IndexRightInner, x));
 
       if (RMath.IsInIntervalCC(intersectionX, xinnerleft, xinnerright))
       {
@@ -223,19 +223,19 @@ namespace Altaxo.Science.Signals
 
       // now fill the table
 
-      destinationTable[ColumnNameLeftX][0] = x[options.IndexLeftOuter];
-      destinationTable[ColumnNameLeftY][0] = leftRegression.GetYOfX(x[options.IndexLeftOuter]);
-      destinationTable[ColumnNameLeftX][1] = x[options.IndexLeftInner];
-      destinationTable[ColumnNameLeftY][1] = leftRegression.GetYOfX(x[options.IndexLeftInner]);
-      destinationTable[ColumnNameLeftX][2] = x[options.IndexRightInner];
-      destinationTable[ColumnNameLeftY][2] = leftRegression.GetYOfX(x[options.IndexRightInner]);
+      destinationTable[ColumnNameLeftX][0] = RMath.InterpolateLinear(options.IndexLeftOuter, x);
+      destinationTable[ColumnNameLeftY][0] = leftRegression.GetYOfX(RMath.InterpolateLinear(options.IndexLeftOuter, x));
+      destinationTable[ColumnNameLeftX][1] = RMath.InterpolateLinear(options.IndexLeftInner, x);
+      destinationTable[ColumnNameLeftY][1] = leftRegression.GetYOfX(RMath.InterpolateLinear(options.IndexLeftInner, x));
+      destinationTable[ColumnNameLeftX][2] = RMath.InterpolateLinear(options.IndexRightInner, x);
+      destinationTable[ColumnNameLeftY][2] = leftRegression.GetYOfX(RMath.InterpolateLinear(options.IndexRightInner, x));
 
-      destinationTable[ColumnNameRightX][0] = x[options.IndexLeftInner];
-      destinationTable[ColumnNameRightY][0] = rightRegression.GetYOfX(x[options.IndexLeftInner]);
-      destinationTable[ColumnNameRightX][1] = x[options.IndexRightInner];
-      destinationTable[ColumnNameRightY][1] = rightRegression.GetYOfX(x[options.IndexRightInner]);
-      destinationTable[ColumnNameRightX][2] = x[options.IndexRightOuter];
-      destinationTable[ColumnNameRightY][2] = rightRegression.GetYOfX(x[options.IndexRightOuter]);
+      destinationTable[ColumnNameRightX][0] = RMath.InterpolateLinear(options.IndexLeftInner, x);
+      destinationTable[ColumnNameRightY][0] = rightRegression.GetYOfX(RMath.InterpolateLinear(options.IndexLeftInner, x));
+      destinationTable[ColumnNameRightX][1] = RMath.InterpolateLinear(options.IndexRightInner, x);
+      destinationTable[ColumnNameRightY][1] = rightRegression.GetYOfX(RMath.InterpolateLinear(options.IndexRightInner, x));
+      destinationTable[ColumnNameRightX][2] = RMath.InterpolateLinear(options.IndexRightOuter, x);
+      destinationTable[ColumnNameRightY][2] = rightRegression.GetYOfX(RMath.InterpolateLinear(options.IndexRightOuter, x));
 
       var (xl, yl) = leftRegression.GetIntersectionPoint(middleRegression);
       var (xr, yr) = rightRegression.GetIntersectionPoint(middleRegression);
@@ -326,7 +326,7 @@ namespace Altaxo.Science.Signals
     /// <param name="useAllPointsForRegression">If set to <c>true</c>, all points from index1 to index2 are used
     /// to create the linear regression; otherwise, only point[index1] and point[index2] are used to calculate the line.</param>
     /// <returns>The regression that forms a line (either the left line of the step or the right line).</returns>
-    public static QuickLinearRegression GetLeftRightRegression(double[] x, double[] y, int index1, int index2, bool useAllPointsForRegression)
+    public static QuickLinearRegression GetLeftRightRegression(double[] x, double[] y, double index1, double index2, bool useAllPointsForRegression)
     {
       var min = Math.Min(index1, index2);
       var max = Math.Max(index1, index2);
@@ -334,15 +334,27 @@ namespace Altaxo.Science.Signals
 
       if (useAllPointsForRegression)
       {
-        for (int i = min; i <= max; ++i)
+        int i = (int)min;
+        if (Math.IEEERemainder(min, 1) != 0)
+        {
+          result.Add(RMath.InterpolateLinear(min, x), RMath.InterpolateLinear(min, y));
+          i = (int)Math.Ceiling(min);
+        }
+
+        for (; i <= max; ++i)
         {
           result.Add(x[i], y[i]);
+        }
+
+        if (Math.IEEERemainder(max, 1) != 0)
+        {
+          result.Add(RMath.InterpolateLinear(max, x), RMath.InterpolateLinear(max, y));
         }
       }
       else
       {
-        result.Add(x[min], y[min]);
-        result.Add(x[max], y[max]);
+        result.Add(RMath.InterpolateLinear(min, x), RMath.InterpolateLinear(min, y));
+        result.Add(RMath.InterpolateLinear(max, x), RMath.InterpolateLinear(max, y));
       }
 
       return result;
@@ -360,13 +372,19 @@ namespace Altaxo.Science.Signals
     /// <param name="lowerRegressionLevel">The lower regression level (0..1). Usually, it is 0.25.</param>
     /// <param name="upperRegressionLevel">The upper regression level (0..1). Usually, it is 0.75.</param>
     /// <returns></returns>
-    public static QuickLinearRegression GetMiddleRegression(double[] x, double[] y, int index1, int index2, QuickLinearRegression leftRegression, QuickLinearRegression rightRegression, double lowerRegressionLevel, double upperRegressionLevel)
+    public static QuickLinearRegression GetMiddleRegression(double[] x, double[] y, double index1, double index2, QuickLinearRegression leftRegression, QuickLinearRegression rightRegression, double lowerRegressionLevel, double upperRegressionLevel)
     {
       var min = Math.Min(index1, index2);
       var max = Math.Max(index1, index2);
       var result = new QuickLinearRegression();
 
-      for (int i = min; i <= max; ++i)
+      int i = (int)min;
+      if (Math.IEEERemainder(min, 1) != 0)
+      {
+        result.Add(RMath.InterpolateLinear(min, x), RMath.InterpolateLinear(min, y));
+        i = (int)Math.Ceiling(min);
+      }
+      for (; i <= max; ++i)
       {
         var r = QuickLinearRegression.GetRelativeYBetweenRegressions(leftRegression, rightRegression, x[i], y[i]);
         if (RMath.IsInIntervalCC(r, lowerRegressionLevel, upperRegressionLevel))
@@ -374,6 +392,11 @@ namespace Altaxo.Science.Signals
           result.Add(x[i], y[i]);
         }
       }
+      if (Math.IEEERemainder(max, 1) != 0)
+      {
+        result.Add(RMath.InterpolateLinear(max, x), RMath.InterpolateLinear(max, y));
+      }
+
       return result;
     }
 
