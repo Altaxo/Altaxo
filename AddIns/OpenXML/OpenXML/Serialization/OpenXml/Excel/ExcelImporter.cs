@@ -117,20 +117,15 @@ namespace Altaxo.Serialization.OpenXml.Excel
                 }
 
                 var localImportOptions = importOptions with { IndicesOfImportedSheets = [idxSheet] };
-
-                var result = Import([fileName], dataTable, localImportOptions);
-                if (result is not null)
-                {
-                  stb.AppendLine(result);
-                }
                 Current.Project.AddItemWithThisOrModifiedName(dataTable);
-                Current.ProjectService.CreateNewWorksheet(dataTable);
                 dataTable.DataSource = CreateTableDataSource(fileNames, localImportOptions);
+                Current.ProjectService.CreateNewWorksheet(dataTable);
               }
             }
           }
           else
           {
+            // here we distribute each file to a separate table
             var dataTable = new DataTable();
             var result = Import([fileName], dataTable, importOptions);
             if (result is not null)
@@ -227,28 +222,30 @@ namespace Altaxo.Serialization.OpenXml.Excel
 
       SheetData sheetData = worksheetPart.Worksheet.GetFirstChild<SheetData>();
 
-      int idxRow = -1;
+      int idxRowExcel = -1;
+      int idxRowAltaxo = -1;
       foreach (Row row in sheetData.Elements<Row>())
       {
-        ++idxRow;
+        ++idxRowExcel;
 
         // get the column names
-        if (idxRow == docAnalysis.IndexOfCaptionLine)
+        if (idxRowExcel == docAnalysis.IndexOfCaptionLine)
         {
           int idxColumn = -1;
           foreach (Cell cell in row.Elements<Cell>())
           {
             ++idxColumn;
-            columnNames[idxColumn] = cell.CellValue.Text;
+            columnNames[idxColumn] = GetCellValue(cell, workbookPart); // cell.CellValue.Text;
           }
         }
 
-        if (idxRow < docAnalysis.NumberOfMainHeaderLines)
+        if (idxRowExcel < docAnalysis.NumberOfMainHeaderLines)
         {
 
         }
         else
         {
+          ++idxRowAltaxo;
           int idxColumn = -1;
           foreach (Cell cell in row.Elements<Cell>())
           {
@@ -259,15 +256,15 @@ namespace Altaxo.Serialization.OpenXml.Excel
               case Ascii.AsciiColumnType.Int64:
               case Ascii.AsciiColumnType.Double:
                 if (cell.CellValue.TryGetDouble(out var dbl))
-                  columns[idxColumn][idxRow] = dbl;
+                  columns[idxColumn][idxRowAltaxo] = dbl;
                 break;
               case Ascii.AsciiColumnType.DateTime:
                 if (cell.CellValue.TryGetDateTime(out var dt))
-                  columns[idxColumn][idxRow] = dt;
-                columns[idxColumn][idxRow] = dt;
+                  columns[idxColumn][idxRowAltaxo] = dt;
+                columns[idxColumn][idxRowAltaxo] = dt;
                 break;
               default:
-                columns[idxColumn][idxRow] = cell.CellValue.Text;
+                columns[idxColumn][idxRowAltaxo] = GetCellValue(cell, workbookPart); //cell.CellValue.Text;
                 break;
             }
           }
