@@ -165,23 +165,13 @@ namespace Altaxo.Science.Spectroscopy.PeakFitting
       var fitFunc = FitFunction.WithNumberOfTerms(1);
       int numberOfParametersPerPeak = fitFunc.NumberOfParameters;
 
-      var (minimalXDistance, maximalXDistance, minimalXValue, maximalXValue) = SignalMath.GetMinimalAndMaximalProperties(xArray);
-
-      var userMinimalFWHM = this.IsMinimalFWHMValueInXUnits ? MinimalFWHMValue : MinimalFWHMValue * minimalXDistance;
-
-      var (lowerBounds, upperBounds) = fitFunc.GetParameterBoundariesForPositivePeaks(
-       minimalPosition: minimalXValue - 32 * (maximalXValue - minimalXValue),
-       maximalPosition: maximalXValue + 32 * (maximalXValue - minimalXValue),
-       minimalFWHM: Math.Max(userMinimalFWHM, minimalXDistance / 2d),
-       maximalFWHM: (maximalXValue - minimalXValue) * 32d
-       );
-
-
+      var (minimalXDistanceGlobal, maximalXDistanceGlobal, minimalXValueGlobal, maximalXValueGlobal) = SignalMath.GetMinimalAndMaximalProperties(xArray);
 
       var list = new List<PeakFitting.PeakDescription>();
-
+      int idxDescription = -1;
       foreach (var description in peakDescriptions)
       {
+        ++idxDescription;
         int first = (int)Math.Max(0, Math.Floor(description.PositionIndex - FitWidthScalingFactor * description.WidthPixels / 2));
         int last = (int)Math.Min(xArray.Length - 1, Math.Ceiling(description.PositionIndex + FitWidthScalingFactor * description.WidthPixels / 2));
         int len = last - first + 1;
@@ -195,6 +185,15 @@ namespace Altaxo.Science.Spectroscopy.PeakFitting
         var yCut = new double[len];
         Array.Copy(xArray, first, xCut, 0, len);
         Array.Copy(yArray, first, yCut, 0, len);
+
+        var (minimalXDistanceLocal, maximalXDistanceLocal, minimalXValueLocal, maximalXValueLocal) =
+          SignalMath.GetMinimalAndMaximalProperties(xCut);
+        var minimalFWHMValueInXUnits = this.IsMinimalFWHMValueInXUnits ? MinimalFWHMValue : MinimalFWHMValue * maximalXDistanceLocal;
+        var (lowerBounds, upperBounds) = fitFunc.GetParameterBoundariesForPositivePeaks(
+            minimalPosition: minimalXValueLocal,
+            maximalPosition: maximalXValueLocal,
+            minimalFWHM: Math.Max(minimalFWHMValueInXUnits, maximalXDistanceLocal / 2d),
+            maximalFWHM: (maximalXValueGlobal - minimalXValueGlobal));
 
         var xPosition = description.PositionValue;
         double xWidth = description.WidthValue;

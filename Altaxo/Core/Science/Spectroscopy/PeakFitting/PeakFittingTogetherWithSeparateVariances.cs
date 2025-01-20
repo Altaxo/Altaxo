@@ -138,7 +138,7 @@ namespace Altaxo.Science.Spectroscopy.PeakFitting
       IFitFunctionPeak fitFunc,
       int numberOfParametersPerPeak,
       Dictionary<PeakSearching.PeakDescription, PeakDescription> dictionaryOfNotFittedPeaks,
-      List<(int FirstPoint, int LastPoint, double maximalXDistanceLocal, PeakSearching.PeakDescription Description)> peakParam,
+      List<(int FirstPoint, int LastPoint, double maximalXDistanceLocal, double minimalXValue, double maximalXValue, PeakSearching.PeakDescription Description)> peakParam,
       IReadOnlyList<double?>? lowerBounds,
       IReadOnlyList<double?>? upperBounds,
       QuickNonlinearRegression fit,
@@ -160,7 +160,7 @@ namespace Altaxo.Science.Spectroscopy.PeakFitting
       var covariancesSeparate = new Matrix<double>[param.Length]; // Array of matrices that holds the covariances of each peak separately
       var sumChiSquareSeparate = new double[param.Length];
       var sigmaSquareSeparate = new double[param.Length];
-      foreach (var (first, last, maxXDistance, description) in peakParam)
+      foreach (var (first, last, maxXDistance, minimalXValue, maximalXValue, description) in peakParam)
       {
         if (dictionaryOfNotFittedPeaks.ContainsKey(description))
           continue;
