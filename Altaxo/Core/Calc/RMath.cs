@@ -272,6 +272,39 @@ namespace Altaxo.Calc
       return InterpolateLinear(index - idx, array[idx], array[idx + 1]);
     }
 
+    /// <summary>
+    /// Interpolates values of an array.
+    /// </summary>
+    /// <param name="index">The index into the array. Can be fractional.</param>
+    /// <param name="array">The array.</param>
+    /// <param name="extendToSides">If true and the value of index is out of range, the values of the array
+    /// at the left side or the right side will be returned; otherwise, if the index is out of range, an exception will be thrown.</param>
+    /// <returns>The interpolated value at the fractional index.</returns>
+    public static double InterpolateLinear(double index, IReadOnlyList<double> array, bool extendToSides = false)
+    {
+      if (!(index >= 0))
+      {
+        if (extendToSides)
+          return array[0];
+        else
+          throw new ArgumentOutOfRangeException(nameof(index));
+      }
+      else if (!(index <= array.Count - 1))
+      {
+        if (extendToSides)
+          return array[array.Count - 1];
+        else
+          throw new ArgumentOutOfRangeException(nameof(index));
+      }
+      else if (index == array.Count - 1)
+      {
+        return array[array.Count - 1];
+      }
+
+      int idx = (int)index;
+      return InterpolateLinear(index - idx, array[idx], array[idx + 1]);
+    }
+
     #endregion Number tests
 
     public static double Log1p(double x)
@@ -626,6 +659,56 @@ namespace Altaxo.Calc
     public static (double Min, double Max) MinMax(double a, double b, double c, double d)
     {
       return (Math.Min(a, Math.Min(b, Math.Min(c, d))), Math.Max(a, Math.Max(b, Math.Max(c, d))));
+    }
+
+    /// <summary>
+    /// Finds the (fractional) index of the nearest element in the xVector to the xValue.
+    /// </summary>
+    /// <param name="xVector">The x vector.</param>
+    /// <param name="xValue">The x value.</param>
+    /// <returns>A tuple, consisting of the nearest index, and a boolean value.
+    /// If any element of the xVector is equal to xValue, the boolean value is true.
+    /// Also, if xValue is between two elements of the xVector, the boolean value is true.
+    /// Otherwise, the boolean value is false, for instance, if the xValue is outside the limit of the elements of the xVector.
+    /// </returns>
+    /// <exception cref="System.ArgumentNullException">xVector</exception>
+    /// <exception cref="System.ArgumentException">The list must not be empty. - xVector</exception>
+    public static (double index, bool isExact) FindNearestIndex(IReadOnlyList<double> xVector, double xValue)
+    {
+      if (xVector is null)
+        throw new ArgumentNullException(nameof(xVector));
+      if (xVector.Count == 0)
+        throw new ArgumentException("The list must not be empty.", nameof(xVector));
+      if (xVector.Count == 1 || xVector[0] == xValue)
+        return (0, true);
+
+      double minDiff = Math.Abs(xVector[0] - xValue);
+      double minIndex = 0;
+      for (int i = 1; i < xVector.Count; i++)
+      {
+        if (xVector[i] == xValue)
+        {
+          return (i, true);
+        }
+        else if (xVector[i - 1] < xValue && xVector[i] > xValue)
+        {
+          return (i - 1 + (xValue - xVector[i - 1]) / (xVector[i] - xVector[i - 1]), true);
+        }
+        else if (xVector[i - 1] > xValue && xVector[i] < xValue)
+        {
+          return (i - 1 + (xValue - xVector[i - 1]) / (xVector[i] - xVector[i - 1]), true);
+        }
+        else
+        {
+          var diff = Math.Abs(xVector[i] - xValue);
+          if (diff < minDiff)
+          {
+            minDiff = diff;
+            minIndex = i;
+          }
+        }
+      }
+      return (minIndex, false);
     }
   }
 }

@@ -41,6 +41,11 @@ namespace Altaxo.Calc.Regression
     private double _syx;
 
     /// <summary>
+    /// Gets an invalid regression.
+    /// </summary>
+    public static QuickLinearRegression Invalid => new QuickLinearRegression() { _n = double.NaN };
+
+    /// <summary>
     /// Adds a data point to the regression.
     /// </summary>
     /// <param name="x">The x value of the data point.</param>
