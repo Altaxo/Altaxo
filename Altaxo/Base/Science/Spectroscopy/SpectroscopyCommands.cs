@@ -30,6 +30,7 @@ using Altaxo.Calc.FitFunctions.Peaks;
 using Altaxo.Calc.LinearAlgebra;
 using Altaxo.Collections;
 using Altaxo.Data;
+using Altaxo.Data.Selections;
 using Altaxo.Graph.Gdi;
 using Altaxo.Graph.Gdi.Plot;
 using Altaxo.Graph.Gdi.Plot.Styles;
@@ -934,6 +935,12 @@ namespace Altaxo.Science.Spectroscopy
         graphName = peakTable.FolderName + GraphName_PeaksTogether(numberOfSpectrum, numberOfSpectra);
       }
       var (graph, group) = CreateGraphWithPreprocessedSpectrum(peakTable, numberOfSpectrum, graphName, useLinePlot: false, doOpenGraph: doOpenGraph);
+      var plotItem1 = (XYColumnPlotItem)group[0];
+      var plotItem2 = (XYColumnPlotItem)plotItem1.Clone();
+      group.Add(plotItem2);
+      plotItem1.Data.DataRowSelection = new IncludeSingleNumericalValue { Value = 0, Column = peakTable[PeakTable_UsedForFitColumnName(numberOfSpectrum)] };
+      plotItem2.Data.DataRowSelection = new IncludeSingleNumericalValue { Value = 1, Column = peakTable[PeakTable_UsedForFitColumnName(numberOfSpectrum)] };
+
       var plotStyle = PlotCommands.PlotStyle_Line(graph.GetPropertyContext());
       var lineStyle = plotStyle.OfType<LinePlotStyle>().FirstOrDefault();
       if (lineStyle is not null && lineStyle.Color.ParentColorSet is { } parentCSet)
@@ -962,6 +969,13 @@ namespace Altaxo.Science.Spectroscopy
         graphName = peakTable.FolderName + GraphName_PeaksSeparate(numberOfSpectrum, numberOfSpectra);
       }
       var (graph, group) = CreateGraphWithPreprocessedSpectrum(peakTable, numberOfSpectrum, graphName, useLinePlot: false, doOpenGraph: doOpenGraph);
+      var plotItem1 = (XYColumnPlotItem)group[0];
+      var plotItem2 = (XYColumnPlotItem)plotItem1.Clone();
+      group.Add(plotItem2);
+      plotItem1.Data.DataRowSelection = new IncludeSingleNumericalValue { Value = 0, Column = peakTable[PeakTable_UsedForFitColumnName(numberOfSpectrum)] };
+      plotItem2.Data.DataRowSelection = new IncludeSingleNumericalValue { Value = 1, Column = peakTable[PeakTable_UsedForFitColumnName(numberOfSpectrum)] };
+
+
       var plotStyle = PlotCommands.PlotStyle_Line(graph.GetPropertyContext());
       var lineStyle = plotStyle.OfType<LinePlotStyle>().FirstOrDefault();
       if (lineStyle is not null)
