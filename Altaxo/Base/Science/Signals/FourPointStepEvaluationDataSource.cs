@@ -25,7 +25,6 @@
 using System;
 using System.Collections.Generic;
 using Altaxo.Calc;
-using Altaxo.Calc.Regression;
 using Altaxo.Data;
 
 namespace Altaxo.Science.Signals
@@ -147,62 +146,13 @@ namespace Altaxo.Science.Signals
 
       var options = ProcessOptions;
 
-      // test the data
-      if (options.IndexLeftOuter < 0 && options.IndexLeftOuter >= rowCount)
-      {
-        ReportError(destinationTable, $"The index of the left outer point has the invalid value #{options.IndexLeftOuter}. It should be in the interval [0, {rowCount - 1}]");
-      }
-      if (options.IndexLeftInner < 0 && options.IndexLeftInner >= rowCount)
-      {
-        ReportError(destinationTable, $"The index of the left inner point has the invalid value #{options.IndexLeftInner}. It should be in the interval [0, {rowCount - 1}]");
-      }
-      if (options.IndexRightInner < 0 && options.IndexRightInner >= rowCount)
-      {
-        ReportError(destinationTable, $"The index of the right inner point has the invalid value #{options.IndexRightInner}. It should be in the interval [0, {rowCount - 1}]");
-      }
-      if (options.IndexRightOuter < 0 && options.IndexRightOuter >= rowCount)
-      {
-        ReportError(destinationTable, $"The index of the right outer point has the invalid value #{options.IndexRightOuter}. It should be in the interval [0, {rowCount - 1}]");
-      }
+      var stepEvaluation = FourPointStepEvaluation.CreateFromIndices(x, y, options.IndexLeftOuter, options.IndexLeftInner, options.IndexRightInner, options.IndexRightOuter, options.UseRegressionForLeftAndRightLine, options.MiddleRegressionLevels, false);
 
-      var leftRegression = GetLeftRightRegression(x, y, options.IndexLeftOuter, options.IndexLeftInner, ProcessOptions.UseRegressionForLeftAndRightLine);
-
-      if (!leftRegression.IsValid)
+      if (stepEvaluation.HasErrors)
       {
-        ReportError(destinationTable, $"The left regression line is not valid.");
+        ReportError(destinationTable, $"The step evaluation has errors: {stepEvaluation.Errors}");
         return;
       }
-
-      var rightRegression = GetLeftRightRegression(x, y, options.IndexRightInner, options.IndexRightOuter, ProcessOptions.UseRegressionForLeftAndRightLine);
-
-      if (!rightRegression.IsValid)
-      {
-        ReportError(destinationTable, $"The right regression line is not valid.");
-        return;
-      }
-
-      // both lines must not intersect in the inner region
-
-      var (intersectionX, _) = leftRegression.GetIntersectionPoint(rightRegression);
-      var (xinnerleft, xinnerright) = RMath.MinMax(RMath.InterpolateLinear(options.IndexLeftInner, x), RMath.InterpolateLinear(options.IndexRightInner, x));
-
-      if (RMath.IsInIntervalCC(intersectionX, xinnerleft, xinnerright))
-      {
-        ReportError(destinationTable, $"The left and right line intersect in the inner region. This is not allowed.");
-      }
-
-      // create the middle regression line
-      var middleRegression = GetMiddleRegression(x, y, options.IndexLeftInner, options.IndexRightInner, leftRegression, rightRegression, ProcessOptions.MiddleRegressionLevels.LowerLevel, ProcessOptions.MiddleRegressionLevels.UpperLevel);
-
-      if (!middleRegression.IsValid)
-      {
-        ReportError(destinationTable, $"The middle regression line is not valid.");
-      }
-
-
-      // now find the point on the middle regression line where the relative y between left and right regression is 0.5
-      var xmiddle = (leftRegression.GetA0() + rightRegression.GetA0() - 2 * middleRegression.GetA0()) / (2 * middleRegression.GetA1() - leftRegression.GetA1() - rightRegression.GetA1());
-      var ymiddle = middleRegression.GetYOfX(xmiddle);
 
       // now fill the data table
 
@@ -224,43 +174,42 @@ namespace Altaxo.Science.Signals
       // now fill the table
 
       destinationTable[ColumnNameLeftX][0] = RMath.InterpolateLinear(options.IndexLeftOuter, x);
-      destinationTable[ColumnNameLeftY][0] = leftRegression.GetYOfX(RMath.InterpolateLinear(options.IndexLeftOuter, x));
+      destinationTable[ColumnNameLeftY][0] = stepEvaluation.LeftRegression.GetYOfX(RMath.InterpolateLinear(options.IndexLeftOuter, x));
       destinationTable[ColumnNameLeftX][1] = RMath.InterpolateLinear(options.IndexLeftInner, x);
-      destinationTable[ColumnNameLeftY][1] = leftRegression.GetYOfX(RMath.InterpolateLinear(options.IndexLeftInner, x));
+      destinationTable[ColumnNameLeftY][1] = stepEvaluation.LeftRegression.GetYOfX(RMath.InterpolateLinear(options.IndexLeftInner, x));
       destinationTable[ColumnNameLeftX][2] = RMath.InterpolateLinear(options.IndexRightInner, x);
-      destinationTable[ColumnNameLeftY][2] = leftRegression.GetYOfX(RMath.InterpolateLinear(options.IndexRightInner, x));
+      destinationTable[ColumnNameLeftY][2] = stepEvaluation.LeftRegression.GetYOfX(RMath.InterpolateLinear(options.IndexRightInner, x));
 
       destinationTable[ColumnNameRightX][0] = RMath.InterpolateLinear(options.IndexLeftInner, x);
-      destinationTable[ColumnNameRightY][0] = rightRegression.GetYOfX(RMath.InterpolateLinear(options.IndexLeftInner, x));
+      destinationTable[ColumnNameRightY][0] = stepEvaluation.RightRegression.GetYOfX(RMath.InterpolateLinear(options.IndexLeftInner, x));
       destinationTable[ColumnNameRightX][1] = RMath.InterpolateLinear(options.IndexRightInner, x);
-      destinationTable[ColumnNameRightY][1] = rightRegression.GetYOfX(RMath.InterpolateLinear(options.IndexRightInner, x));
+      destinationTable[ColumnNameRightY][1] = stepEvaluation.RightRegression.GetYOfX(RMath.InterpolateLinear(options.IndexRightInner, x));
       destinationTable[ColumnNameRightX][2] = RMath.InterpolateLinear(options.IndexRightOuter, x);
-      destinationTable[ColumnNameRightY][2] = rightRegression.GetYOfX(RMath.InterpolateLinear(options.IndexRightOuter, x));
+      destinationTable[ColumnNameRightY][2] = stepEvaluation.RightRegression.GetYOfX(RMath.InterpolateLinear(options.IndexRightOuter, x));
 
-      var (xl, yl) = leftRegression.GetIntersectionPoint(middleRegression);
-      var (xr, yr) = rightRegression.GetIntersectionPoint(middleRegression);
+      var (xl, yl) = stepEvaluation.IntersectionPointLeftMiddle;
+      var (xr, yr) = stepEvaluation.IntersectionPointRightMiddle;
 
       var xspan = xr - xl;
       var xlo = xl - options.MiddleLineOverlap * xspan;
       destinationTable[ColumnNameMiddleX][0] = xlo;
-      destinationTable[ColumnNameMiddleY][0] = middleRegression.GetYOfX(xlo);
+      destinationTable[ColumnNameMiddleY][0] = stepEvaluation.MiddleRegression.GetYOfX(xlo);
 
       destinationTable[ColumnNameMiddleX][1] = xl;
       destinationTable[ColumnNameMiddleY][1] = yl;
 
-      destinationTable[ColumnNameMiddleX][2] = xmiddle;
-      destinationTable[ColumnNameMiddleY][2] = ymiddle;
+      destinationTable[ColumnNameMiddleX][2] = stepEvaluation.MiddlePointX;
+      destinationTable[ColumnNameMiddleY][2] = stepEvaluation.MiddlePointY;
 
       destinationTable[ColumnNameMiddleX][3] = xr;
       destinationTable[ColumnNameMiddleY][3] = yr;
 
       var xro = xr + options.MiddleLineOverlap * xspan;
       destinationTable[ColumnNameMiddleX][4] = xro;
-      destinationTable[ColumnNameMiddleY][4] = middleRegression.GetYOfX(xro);
+      destinationTable[ColumnNameMiddleY][4] = stepEvaluation.MiddleRegression.GetYOfX(xro);
 
       // now store all parameters
-      var (xleft, yleft) = leftRegression.GetIntersectionPoint(middleRegression);
-      var (xright, yright) = rightRegression.GetIntersectionPoint(middleRegression);
+      var (xmiddle, ymiddle) = stepEvaluation.MiddlePoint;
       int idxPara = 0;
       destinationTable[ColumnNameParameterName][idxPara] = ParameterNameMiddleX;
       destinationTable[ColumnNameParameterValue][idxPara] = xmiddle;
@@ -271,39 +220,39 @@ namespace Altaxo.Science.Signals
       destinationTable.PropertyBagNotNull.SetValue(ParameterNameMiddleY, ymiddle);
       ++idxPara;
       destinationTable[ColumnNameParameterName][idxPara] = ParameterNameStepMiddleSlope;
-      destinationTable[ColumnNameParameterValue][idxPara] = middleRegression.GetA1();
-      destinationTable.PropertyBagNotNull.SetValue(ParameterNameStepMiddleSlope, middleRegression.GetA1());
+      destinationTable[ColumnNameParameterValue][idxPara] = stepEvaluation.StepSlope;
+      destinationTable.PropertyBagNotNull.SetValue(ParameterNameStepMiddleSlope, stepEvaluation.StepSlope);
       ++idxPara;
       destinationTable[ColumnNameParameterName][idxPara] = ParameterNameStepHeight;
-      destinationTable[ColumnNameParameterValue][idxPara] = Math.Abs(leftRegression.GetYOfX(xmiddle) - rightRegression.GetYOfX(xmiddle));
-      destinationTable.PropertyBagNotNull.SetValue(ParameterNameStepHeight, Math.Abs(leftRegression.GetYOfX(xmiddle) - rightRegression.GetYOfX(xmiddle)));
+      destinationTable[ColumnNameParameterValue][idxPara] = stepEvaluation.StepHeight;
+      destinationTable.PropertyBagNotNull.SetValue(ParameterNameStepHeight, stepEvaluation.StepHeight);
       ++idxPara;
       destinationTable[ColumnNameParameterName][idxPara] = ParameterNameStepWidth;
-      destinationTable[ColumnNameParameterValue][idxPara] = Math.Abs(xright - xleft);
-      destinationTable.PropertyBagNotNull.SetValue(ParameterNameStepWidth, Math.Abs(xright - xleft));
+      destinationTable[ColumnNameParameterValue][idxPara] = stepEvaluation.StepWidth;
+      destinationTable.PropertyBagNotNull.SetValue(ParameterNameStepWidth, stepEvaluation.StepWidth);
       ++idxPara;
       destinationTable[ColumnNameParameterName][idxPara] = ParameterNameStepLeftX;
-      destinationTable[ColumnNameParameterValue][idxPara] = xleft;
-      destinationTable.PropertyBagNotNull.SetValue(ParameterNameStepLeftX, xleft);
+      destinationTable[ColumnNameParameterValue][idxPara] = xl;
+      destinationTable.PropertyBagNotNull.SetValue(ParameterNameStepLeftX, xl);
       ++idxPara;
       destinationTable[ColumnNameParameterName][idxPara] = ParameterNameStepLeftY;
-      destinationTable[ColumnNameParameterValue][idxPara] = yleft;
-      destinationTable.PropertyBagNotNull.SetValue(ParameterNameStepLeftY, yleft);
+      destinationTable[ColumnNameParameterValue][idxPara] = yl;
+      destinationTable.PropertyBagNotNull.SetValue(ParameterNameStepLeftY, yl);
       ++idxPara;
       destinationTable[ColumnNameParameterName][idxPara] = ParameterNameStepLeftSlope;
-      destinationTable[ColumnNameParameterValue][idxPara] = leftRegression.GetA1();
+      destinationTable[ColumnNameParameterValue][idxPara] = stepEvaluation.LeftRegression.GetA1();
       ++idxPara;
       destinationTable[ColumnNameParameterName][idxPara] = ParameterNameStepRightX;
-      destinationTable[ColumnNameParameterValue][idxPara] = xright;
-      destinationTable.PropertyBagNotNull.SetValue(ParameterNameStepRightX, xright);
+      destinationTable[ColumnNameParameterValue][idxPara] = xr;
+      destinationTable.PropertyBagNotNull.SetValue(ParameterNameStepRightX, xr);
       ++idxPara;
       destinationTable[ColumnNameParameterName][idxPara] = ParameterNameStepRightY;
-      destinationTable[ColumnNameParameterValue][idxPara] = yright;
-      destinationTable.PropertyBagNotNull.SetValue(ParameterNameStepRightY, yright);
+      destinationTable[ColumnNameParameterValue][idxPara] = yr;
+      destinationTable.PropertyBagNotNull.SetValue(ParameterNameStepRightY, yr);
       ++idxPara;
       destinationTable[ColumnNameParameterName][idxPara] = ParameterNameStepRightSlope;
-      destinationTable[ColumnNameParameterValue][idxPara] = rightRegression.GetA1();
-      destinationTable.PropertyBagNotNull.SetValue(ParameterNameStepRightSlope, rightRegression.GetA1());
+      destinationTable[ColumnNameParameterValue][idxPara] = stepEvaluation.RightRegression.GetA1();
+      destinationTable.PropertyBagNotNull.SetValue(ParameterNameStepRightSlope, stepEvaluation.RightRegression.GetA1());
 
       // output the curve values
       if (ProcessOptions.IncludeOriginalPointsInOutput)
@@ -314,90 +263,6 @@ namespace Altaxo.Science.Signals
           destinationTable[ColumnNameCurveY][i] = y[i];
         }
       }
-    }
-
-    /// <summary>
-    /// Gets the regression for the left or the right line.
-    /// </summary>
-    /// <param name="x">The x values.</param>
-    /// <param name="y">The y values.</param>
-    /// <param name="index1">The start index.</param>
-    /// <param name="index2">The end index (inclusive).</param>
-    /// <param name="useAllPointsForRegression">If set to <c>true</c>, all points from index1 to index2 are used
-    /// to create the linear regression; otherwise, only point[index1] and point[index2] are used to calculate the line.</param>
-    /// <returns>The regression that forms a line (either the left line of the step or the right line).</returns>
-    public static QuickLinearRegression GetLeftRightRegression(double[] x, double[] y, double index1, double index2, bool useAllPointsForRegression)
-    {
-      var min = Math.Min(index1, index2);
-      var max = Math.Max(index1, index2);
-      var result = new QuickLinearRegression();
-
-      if (useAllPointsForRegression)
-      {
-        int i = (int)min;
-        if (Math.IEEERemainder(min, 1) != 0)
-        {
-          result.Add(RMath.InterpolateLinear(min, x), RMath.InterpolateLinear(min, y));
-          i = (int)Math.Ceiling(min);
-        }
-
-        for (; i <= max; ++i)
-        {
-          result.Add(x[i], y[i]);
-        }
-
-        if (Math.IEEERemainder(max, 1) != 0)
-        {
-          result.Add(RMath.InterpolateLinear(max, x), RMath.InterpolateLinear(max, y));
-        }
-      }
-      else
-      {
-        result.Add(RMath.InterpolateLinear(min, x), RMath.InterpolateLinear(min, y));
-        result.Add(RMath.InterpolateLinear(max, x), RMath.InterpolateLinear(max, y));
-      }
-
-      return result;
-    }
-
-    /// <summary>
-    /// Gets the middle regression line.
-    /// </summary>
-    /// <param name="x">The x values.</param>
-    /// <param name="y">The y values.</param>
-    /// <param name="index1">The start index of the middle section.</param>
-    /// <param name="index2">The end index of the middle section.</param>
-    /// <param name="leftRegression">The left regression line.</param>
-    /// <param name="rightRegression">The right regression line.</param>
-    /// <param name="lowerRegressionLevel">The lower regression level (0..1). Usually, it is 0.25.</param>
-    /// <param name="upperRegressionLevel">The upper regression level (0..1). Usually, it is 0.75.</param>
-    /// <returns></returns>
-    public static QuickLinearRegression GetMiddleRegression(double[] x, double[] y, double index1, double index2, QuickLinearRegression leftRegression, QuickLinearRegression rightRegression, double lowerRegressionLevel, double upperRegressionLevel)
-    {
-      var min = Math.Min(index1, index2);
-      var max = Math.Max(index1, index2);
-      var result = new QuickLinearRegression();
-
-      int i = (int)min;
-      if (Math.IEEERemainder(min, 1) != 0)
-      {
-        result.Add(RMath.InterpolateLinear(min, x), RMath.InterpolateLinear(min, y));
-        i = (int)Math.Ceiling(min);
-      }
-      for (; i <= max; ++i)
-      {
-        var r = QuickLinearRegression.GetRelativeYBetweenRegressions(leftRegression, rightRegression, x[i], y[i]);
-        if (RMath.IsInIntervalCC(r, lowerRegressionLevel, upperRegressionLevel))
-        {
-          result.Add(x[i], y[i]);
-        }
-      }
-      if (Math.IEEERemainder(max, 1) != 0)
-      {
-        result.Add(RMath.InterpolateLinear(max, x), RMath.InterpolateLinear(max, y));
-      }
-
-      return result;
     }
 
     protected void ReportError(DataTable destinationTable, string message)

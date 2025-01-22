@@ -39,6 +39,10 @@ namespace Altaxo.Science.Signals
   public class FourPointStepEvaluation : Main.IImmutable
   {
     private StringBuilder? _errors;
+    /// <summary>
+    /// If true, any error will throw an <see cref="InvalidOperationException"/>.
+    /// </summary>
+    private bool _throwOnError = true;
 
     /// <summary>
     /// Gets the error message(s).
@@ -82,17 +86,17 @@ namespace Altaxo.Science.Signals
     /// <summary>
     /// Gets the x value of the step middle point.
     /// </summary>
-    public double XMiddle { get; private set; } = double.NaN;
+    public double MiddlePointX { get; private set; } = double.NaN;
 
     /// <summary>
     /// Gets the y value of the step middle point.
     /// </summary>
-    public double YMiddle { get; private set; } = double.NaN;
+    public double MiddlePointY { get; private set; } = double.NaN;
 
     /// <summary>
     /// Gets the x and y value of the step middle point.
     /// </summary>
-    public (double X, double Y) MiddlePoint => (XMiddle, YMiddle);
+    public (double X, double Y) MiddlePoint => (MiddlePointX, MiddlePointY);
 
     /// <summary>
     /// Gets the left regression.
@@ -156,10 +160,12 @@ namespace Altaxo.Science.Signals
     /// <param name="useRegressionForLeftAndRightLine">If set to <c>true</c>, a full regression is used for the left and right line. If set to <c>false</c>, only the inner and outer points are used to form the line.</param>
     /// <param name="middleRegressionLevels">the regression levels for the middle line. For instance, if the value is set to (0.25, 0.75), then all points between 25% and 75% distance from the left and right line are used
     /// for the regression of the middle line.</param>
+    /// <param name="throwOnError">If true, any error in the evaluation will throw an <see cref="InvalidOperationException"/>. If false,
+    /// no exception is thrown; instead, the error is stored and can be read-out using the property <see cref="Errors"/>.</param>
     /// <returns>The result of the step evaluation.</returns>
-    public static FourPointStepEvaluation CreateFromIndices(IReadOnlyList<double> x, IReadOnlyList<double> y, double indexLeftOuter, double indexLeftInner, double indexRightInner, double indexRightOuter, bool useRegressionForLeftAndRightLine, (double LowerLevel, double UpperLevel) middleRegressionLevels)
+    public static FourPointStepEvaluation CreateFromIndices(IReadOnlyList<double> x, IReadOnlyList<double> y, double indexLeftOuter, double indexLeftInner, double indexRightInner, double indexRightOuter, bool useRegressionForLeftAndRightLine, (double LowerLevel, double UpperLevel) middleRegressionLevels, bool throwOnError = true)
     {
-      return new FourPointStepEvaluation(x, y, indexLeftOuter, indexLeftInner, indexRightInner, indexRightOuter, useRegressionForLeftAndRightLine, middleRegressionLevels);
+      return new FourPointStepEvaluation(x, y, indexLeftOuter, indexLeftInner, indexRightInner, indexRightOuter, useRegressionForLeftAndRightLine, middleRegressionLevels, throwOnError);
     }
 
     /// <summary>
@@ -174,18 +180,22 @@ namespace Altaxo.Science.Signals
     /// <param name="useRegressionForLeftAndRightLine">If set to <c>true</c>, a full regression is used for the left and right line. If set to <c>false</c>, only the inner and outer points are used to form the line.</param>
     /// <param name="middleRegressionLevels">the regression levels for the middle line. For instance, if the value is set to (0.25, 0.75), then all points between 25% and 75% distance from the left and right line are used
     /// for the regression of the middle line.</param>
+    /// <param name="throwOnError">If true, any error in the evaluation will throw an <see cref="InvalidOperationException"/>. If false,
+    /// no exception is thrown; instead, the error is stored and can be read-out using the property <see cref="Errors"/>.</param>
     /// <returns>The result of the step evaluation.</returns>
-    public static FourPointStepEvaluation CreateFromValues(IReadOnlyList<double> x, IReadOnlyList<double> y, double xLeftOuter, double xLeftInner, double xRightInner, double xRightOuter, bool useRegressionForLeftAndRightLine, (double LowerLevel, double UpperLevel) middleRegressionLevels)
+    public static FourPointStepEvaluation CreateFromValues(IReadOnlyList<double> x, IReadOnlyList<double> y, double xLeftOuter, double xLeftInner, double xRightInner, double xRightOuter, bool useRegressionForLeftAndRightLine, (double LowerLevel, double UpperLevel) middleRegressionLevels, bool throwOnError = true)
     {
       var (indexLeftOuter, foundLeftOuter) = RMath.FindNearestIndex(x, xLeftOuter);
       var (indexLeftInner, foundLeftInner) = RMath.FindNearestIndex(x, xLeftInner);
       var (indexRightInner, foundRightInner) = RMath.FindNearestIndex(x, xRightInner);
       var (indexRightOuter, foundRightOuter) = RMath.FindNearestIndex(x, xRightOuter);
-      return new FourPointStepEvaluation(x, y, indexLeftOuter, indexLeftInner, indexRightInner, indexRightOuter, useRegressionForLeftAndRightLine, middleRegressionLevels);
+      return new FourPointStepEvaluation(x, y, indexLeftOuter, indexLeftInner, indexRightInner, indexRightOuter, useRegressionForLeftAndRightLine, middleRegressionLevels, throwOnError);
     }
 
-    private FourPointStepEvaluation(IReadOnlyList<double> x, IReadOnlyList<double> y, double indexLeftOuter, double indexLeftInner, double indexRightInner, double indexRightOuter, bool useRegressionForLeftAndRightLine, (double LowerLevel, double UpperLevel) middleRegressionLevels)
+    private FourPointStepEvaluation(IReadOnlyList<double> x, IReadOnlyList<double> y, double indexLeftOuter, double indexLeftInner, double indexRightInner, double indexRightOuter, bool useRegressionForLeftAndRightLine, (double LowerLevel, double UpperLevel) middleRegressionLevels, bool throwOnError)
     {
+      _throwOnError = throwOnError;
+
       if (x is null)
       {
         throw new ArgumentNullException(nameof(x));
@@ -197,6 +207,14 @@ namespace Altaxo.Science.Signals
       if (x.Count != y.Count)
       {
         throw new ArgumentException("The x and y arrays must have the same length.");
+      }
+
+      if (!(middleRegressionLevels.LowerLevel >= 0 && middleRegressionLevels.LowerLevel <= 1) ||
+         !(middleRegressionLevels.UpperLevel >= 0 && middleRegressionLevels.UpperLevel <= 1) ||
+         !(middleRegressionLevels.LowerLevel < middleRegressionLevels.UpperLevel)
+        )
+      {
+        throw new ArgumentException($"LowerLevel and UpperLevel should be both in the range [0,1], and LowerLevel<UpperLevel, but it was {middleRegressionLevels}", nameof(middleRegressionLevels));
       }
 
       MiddleRegressionLevels = middleRegressionLevels;
@@ -268,8 +286,8 @@ namespace Altaxo.Science.Signals
 
 
       // now find the point on the middle regression line where the relative y between left and right regression is 0.5
-      XMiddle = (leftRegression.GetA0() + rightRegression.GetA0() - 2 * middleRegression.GetA0()) / (2 * middleRegression.GetA1() - leftRegression.GetA1() - rightRegression.GetA1());
-      YMiddle = middleRegression.GetYOfX(XMiddle);
+      MiddlePointX = (leftRegression.GetA0() + rightRegression.GetA0() - 2 * middleRegression.GetA0()) / (2 * middleRegression.GetA1() - leftRegression.GetA1() - rightRegression.GetA1());
+      MiddlePointY = middleRegression.GetYOfX(MiddlePointX);
 
       LeftRegression = leftRegression;
       RightRegression = rightRegression;
@@ -278,7 +296,7 @@ namespace Altaxo.Science.Signals
       IntersectionPointLeftMiddle = leftRegression.GetIntersectionPoint(middleRegression);
       IntersectionPointRightMiddle = rightRegression.GetIntersectionPoint(middleRegression);
 
-      StepHeight = Math.Abs(leftRegression.GetYOfX(XMiddle) - rightRegression.GetYOfX(XMiddle));
+      StepHeight = Math.Abs(leftRegression.GetYOfX(MiddlePointX) - rightRegression.GetYOfX(MiddlePointX));
       StepWidth = Math.Abs(IntersectionPointLeftMiddle.X - IntersectionPointRightMiddle.X);
       StepSlope = MiddleRegression.GetA1();
     }
@@ -370,8 +388,15 @@ namespace Altaxo.Science.Signals
 
     private void ReportError(string message)
     {
-      _errors ??= new StringBuilder();
-      _errors.AppendLine(message);
+      if (_throwOnError)
+      {
+        throw new InvalidOperationException(message);
+      }
+      else
+      {
+        _errors ??= new StringBuilder();
+        _errors.AppendLine(message);
+      }
     }
   }
 }

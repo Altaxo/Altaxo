@@ -231,7 +231,7 @@ namespace Altaxo.Gui.Graph.Gdi.Viewing.GraphControllerMouseHandlers
 
       QuickLinearRegression leftReg, rightReg, middleReg;
 
-      leftReg = FourPointStepEvaluationDataSource.GetLeftRightRegression(xcol, ycol, _handle[0].PlotIndex, _handle[1].PlotIndex, _options.UseRegressionForLeftAndRightLine);
+      leftReg = FourPointStepEvaluation.GetLeftRightRegression(xcol, ycol, _handle[0].PlotIndex, _handle[1].PlotIndex, _options.UseRegressionForLeftAndRightLine);
 
       // if either
       if (!leftReg.IsValid)
@@ -244,7 +244,7 @@ namespace Altaxo.Gui.Graph.Gdi.Viewing.GraphControllerMouseHandlers
         _leftReg = leftReg;
       }
 
-      rightReg = FourPointStepEvaluationDataSource.GetLeftRightRegression(xcol, ycol, _handle[2].PlotIndex, _handle[3].PlotIndex, _options.UseRegressionForLeftAndRightLine);
+      rightReg = FourPointStepEvaluation.GetLeftRightRegression(xcol, ycol, _handle[2].PlotIndex, _handle[3].PlotIndex, _options.UseRegressionForLeftAndRightLine);
 
       if (!rightReg.IsValid)
       {
@@ -310,7 +310,7 @@ namespace Altaxo.Gui.Graph.Gdi.Viewing.GraphControllerMouseHandlers
 
       // now get the middle regression line
 
-      middleReg = FourPointStepEvaluationDataSource.GetMiddleRegression(xcol, ycol, _handle[1].PlotIndex, _handle[2].PlotIndex, leftReg, rightReg, _options.MiddleRegressionLevels.LowerLevel, _options.MiddleRegressionLevels.UpperLevel);
+      middleReg = FourPointStepEvaluation.GetMiddleRegression(xcol, ycol, _handle[1].PlotIndex, _handle[2].PlotIndex, leftReg, rightReg, _options.MiddleRegressionLevels.LowerLevel, _options.MiddleRegressionLevels.UpperLevel);
 
       if (!middleReg.IsValid)
       {
