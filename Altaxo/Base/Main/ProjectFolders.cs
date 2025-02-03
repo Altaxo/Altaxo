@@ -906,12 +906,13 @@ namespace Altaxo.Main
     /// <param name="sourceFolderName">Name of folder in which the items should be deleted.</param>
     /// <param name="includeSubfolders">If set to <c>true</c>, the items in all subfolders are also deleted.</param>
     /// <param name="throwIfFolderDoesNotExists">If true, and the provided folder does not exist, a <see cref="ArgumentOutOfRangeException"/></param> is thrown.
+    /// <param name="showConfirmationDialog">If <c>true</c>, shows the confirmation dialog to confirm that the items should really be deleted.</param>
     /// <returns>True if any item was deleted; otherwise, false.</returns>
-    public bool DeleteItemsInFolder(string sourceFolderName, bool includeSubfolders = true, bool throwIfFolderDoesNotExists = false)
+    public bool DeleteItemsInFolder(string sourceFolderName, bool includeSubfolders = true, bool throwIfFolderDoesNotExists = false, bool showConfirmationDialog = true)
     {
       var items = includeSubfolders ? GetItemsInFolderAndSubfolders(sourceFolderName, throwIfFolderDoesNotExists) : GetItemsInFolder(sourceFolderName, throwIfFolderDoesNotExists);
       var isAny = items.Count > 0;
-      DeleteDocuments(items);
+      DeleteDocuments(items, showConfirmationDialog: showConfirmationDialog);
       return isAny;
     }
 
@@ -920,10 +921,11 @@ namespace Altaxo.Main
     /// </summary>
     /// <param name="sourceFolderName">Name of the source folder.</param>
     /// <param name="throwIfFolderDoesNotExists">If true, and the provided folder does not exist, a <see cref="ArgumentOutOfRangeException"/></param> is thrown.
+    /// <param name="showConfirmationDialog">If <c>true</c>, shows the confirmation dialog to confirm that the items should really be deleted.</param>
     /// <returns>True if any item was deleted; otherwise, false.</returns>
-    public bool DeleteFolder(string sourceFolderName, bool throwIfFolderDoesNotExists = false)
+    public bool DeleteFolder(string sourceFolderName, bool throwIfFolderDoesNotExists = false, bool showConfirmationDialog = true)
     {
-      return DeleteItemsInFolder(sourceFolderName, includeSubfolders: true, throwIfFolderDoesNotExists: throwIfFolderDoesNotExists);
+      return DeleteItemsInFolder(sourceFolderName, includeSubfolders: true, throwIfFolderDoesNotExists: throwIfFolderDoesNotExists, showConfirmationDialog: showConfirmationDialog);
     }
 
     /// <summary>
