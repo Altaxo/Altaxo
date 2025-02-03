@@ -234,11 +234,14 @@ namespace Altaxo.Science.Spectroscopy.PeakFitting
         {
           var peakP = peakParam[i];
           var minimalFWHMValueInXUnits = IsMinimalFWHMValueInXUnits ? MinimalFWHMValue : MinimalFWHMValue * peakP.maximalXDistanceLocal;
+          minimalFWHMValueInXUnits = Math.Max(minimalFWHMValueInXUnits, peakP.maximalXDistanceLocal / 2d);
+          var maximalFWHMValueInXUnits = maximalXValueGlobal - minimalXValueGlobal;
+          maximalFWHMValueInXUnits = Math.Max(maximalFWHMValueInXUnits, minimalFWHMValueInXUnits);
           var (localLowerBounds, localUpperBounds) = FitFunction.GetParameterBoundariesForPositivePeaks(
             minimalPosition: peakP.MinimalXValue,
             maximalPosition: peakP.MaximalXValue,
-            minimalFWHM: Math.Max(minimalFWHMValueInXUnits, peakP.maximalXDistanceLocal / 2d),
-            maximalFWHM: (maximalXValueGlobal - minimalXValueGlobal));
+            minimalFWHM: minimalFWHMValueInXUnits,
+            maximalFWHM: maximalFWHMValueInXUnits);
           if (localLowerBounds is not null)
           {
             VectorMath.Copy(localLowerBounds, 0, lowerBoundsArr, i * numberOfParametersPerPeak, numberOfParametersPerPeak);
