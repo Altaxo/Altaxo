@@ -816,5 +816,43 @@ namespace Altaxo.Collections
       }
     }
 
+    /// <summary>
+    /// Gets the same element if all elements of the enumeration are the same. If the elements in the enumeration are different, the return value is null or default.
+    /// </summary>
+    /// <typeparam name="T">Type of the enumeration.</typeparam>
+    /// <param name="seq">The enumeration.</param>
+    /// <param name="transform">The transformation function that converts the elements of the enumeration to a comparable value.</param>
+    /// <returns>The element if all elements of the enumeration are the same. If the elements in the enumeration are different, the return value is null or default.</returns>
+    [return: MaybeNull]
+    public static S GetSameOrDefault<T, S>(this IEnumerable<T> seq, Func<T, S> transform)
+    {
+      var it = seq.GetEnumerator();
+      if (it.MoveNext())
+      {
+        var first = transform(it.Current);
+        if (first is null)
+        {
+          while (it.MoveNext())
+          {
+            if (transform(it.Current) is not null)
+              return default;
+          }
+          return first;
+        }
+        else
+        {
+          while (it.MoveNext())
+          {
+            if (!first.Equals(transform(it.Current)))
+              return default;
+          }
+          return first;
+        }
+      }
+      else
+      {
+        return default;
+      }
+    }
   }
 }

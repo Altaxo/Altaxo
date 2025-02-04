@@ -130,7 +130,7 @@ namespace Altaxo.Gui.Graph.Gdi.Plot
       }
     }
 
-    IEnumerable<NGTreeNode> AvailableItemsSelected
+    private IEnumerable<NGTreeNode> AvailableItemsSelected
     {
       get
       {
@@ -157,8 +157,7 @@ namespace Altaxo.Gui.Graph.Gdi.Plot
       }
     }
 
-
-    IEnumerable<NGTreeNode> PlotItemsSelected
+    private IEnumerable<NGTreeNode> PlotItemsSelected
     {
       get
       {
@@ -1006,11 +1005,13 @@ namespace Altaxo.Gui.Graph.Gdi.Plot
       {
         foreach (IGPlotItem item in coll) // it is neccessary to add the items to the doc first, because otherwise they don't have names
         {
-          var clonedItem = (IGPlotItem)item.Clone();
-          _doc.Add(clonedItem); // cloning neccessary because coll will be disposed afterwards, which would destroy all items
+          var clonedItem = (IGPlotItem)item.Clone(); // cloning neccessary because coll will be disposed afterwards, which would destroy all items
           var newNode = new NGTreeNode();
           PlotItemsToTree(newNode, clonedItem);
-          _plotItemsRootNode.Nodes.Add(newNode);
+
+          var commonParent = GetCommonParentOfSelectedPlotItems() ?? _plotItemsRootNode;
+          commonParent.Nodes.Add(newNode);
+          ((PlotItemCollection)commonParent.Tag).Add(clonedItem);
         }
       }
 
@@ -1018,6 +1019,20 @@ namespace Altaxo.Gui.Graph.Gdi.Plot
       if (!TreeNodeExtensions.IsStructuralEquivalentTo<NGTreeNode, IGPlotItem>(_plotItemsRootNode, _doc, (x, y) => object.ReferenceEquals(x.Tag, y)))
         throw new InvalidProgramException("Trees of plot items and model nodes are not structural equivalent");
 #endif
+    }
+
+
+    /// <summary>
+    /// Gets the common parent of the currently selected plot items, or null if there is no common parent.
+    /// </summary>
+    /// <returns>The common parent of the currently selected plot items, or null if there is no common parent.</returns>
+    private NGTreeNode GetCommonParentOfSelectedPlotItems()
+    {
+      var selNodes = NGTreeNode.FilterIndependentNodes(PlotItemsSelected.ToArray());
+
+      var commonParent = selNodes.GetSameOrDefault(n => n.ParentNode);
+
+      return commonParent;
     }
 
     #endregion ILineScatterLayerContentsController Members
