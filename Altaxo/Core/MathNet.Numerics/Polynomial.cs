@@ -365,7 +365,7 @@ namespace Altaxo.Calc
       // Negate, and normalize (scale such that the polynomial becomes monic)
       double aN = Coefficients[n];
       double[] p = new double[n];
-      for (int i = n - 1; i >= 0; i--)
+      for (int i = n - 1, j = 0; i >= 0; i--, j++)
       {
         p[i] = -Coefficients[i] / aN;
       }
@@ -374,7 +374,7 @@ namespace Altaxo.Calc
       DenseMatrix A = new DenseMatrix(n);
 
       A.SetSubMatrix(1, 0, A0);
-      A.SetRow(0, p.Reverse().ToArray());
+      A.SetRow(0, p);
 
       return A;
     }
