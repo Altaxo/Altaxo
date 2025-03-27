@@ -85,6 +85,16 @@
                        Visibility="{Binding IsManualPivotIndexRequired, Converter={x:Static axogcc:FalseToVisibilityHiddenConverter.Instance}}"
                        Minimum="0"
                        ToolTip="The index of the data column where the master curve creation starts. This is the data column which remains unshifted, i.e. that has a shift factor of 1." />
+    <Label Grid.Row="2"
+           Grid.Column="4"
+           Content="Indices:"
+           Visibility="{Binding IsManualShiftOrder, Converter={x:Static axogcc:FalseToVisibilityHiddenConverter.Instance}}" />
+    <axogc:ValidatingTextBoxN Grid.Row="2"
+                              Grid.Column="6"
+                              Text="{Binding ManualShiftOrderIndices}"
+                              ValidationError="{Binding ManualShiftOrderIndicesValidationError}"
+                              Visibility="{Binding IsManualShiftOrder, Converter={x:Static axogcc:FalseToVisibilityHiddenConverter.Instance}}"
+                              ToolTip="Enter the indices of the order in which the curves should be shifted (zero based). Numbers separated by space, comma or semicolon." />
 
     <Label Grid.Row="4"
            Grid.Column="0"

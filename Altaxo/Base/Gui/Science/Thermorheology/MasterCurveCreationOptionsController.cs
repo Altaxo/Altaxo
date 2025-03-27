@@ -25,6 +25,7 @@
 using System;
 using System.Collections.Generic;
 using System.Collections.Immutable;
+using System.Globalization;
 using System.Linq;
 using Altaxo.Collections;
 using Altaxo.Gui.Common;
@@ -41,7 +42,7 @@ namespace Altaxo.Gui.Science.Thermorheology
   [UserControllerForObject(typeof(MasterCurveCreationOptions))]
   public class MasterCurveCreationOptionsController : MVCANDControllerEditImmutableDocBase<MasterCurveCreationOptions, IMasterCurveCreationOptionsView>
   {
-    IMVCAController? _selectedController;
+    private IMVCAController? _selectedController;
 
     public override IEnumerable<ControllerAndSetNullMethod> GetSubControllers()
     {
@@ -113,11 +114,76 @@ namespace Altaxo.Gui.Science.Thermorheology
     {
       OnPropertyChanged(nameof(IsPivotIndexRequired));
       OnPropertyChanged(nameof(IsManualPivotIndexRequired));
+      OnPropertyChanged(nameof(IsManualShiftOrder));
+      if (order is Manual manual)
+      {
+        ManualShiftOrderIndices = ToShiftOrderString(manual.Indices);
+      }
     }
 
     public bool IsPivotIndexRequired => ShiftOrder?.SelectedValue?.IsPivotIndexRequired ?? false;
 
+    public bool IsManualShiftOrder => ShiftOrder?.SelectedValue is Manual;
+
     public bool IsManualPivotIndexRequired => IsPivotIndexRequired && UseManualPivotCurveIndex;
+
+    private string ToShiftOrderString(IReadOnlyList<int> indices)
+    {
+      return string.Join(", ", indices.Select(i => i.ToString(CultureInfo.InvariantCulture)));
+    }
+
+    private string _manualShiftOrderIndices;
+
+
+    public string ManualShiftOrderIndices
+    {
+      get => _manualShiftOrderIndices;
+      set
+      {
+        if (!(_manualShiftOrderIndices == value))
+        {
+          _manualShiftOrderIndices = value;
+          OnPropertyChanged(nameof(ManualShiftOrderIndices));
+
+          ManualShiftOrderIndicesValidationError = string.Empty;
+          var parts = value.Split(new char[] { ',', ';', ' ', '\t' }, StringSplitOptions.RemoveEmptyEntries);
+          var indices = new List<int>();
+          for (int i = 0; i < parts.Length; i++)
+          {
+            if (int.TryParse(parts[i], System.Globalization.NumberStyles.Integer, CultureInfo.InvariantCulture, out var v))
+            {
+              indices.Add(v);
+            }
+            else
+            {
+              ManualShiftOrderIndicesValidationError = $"Entry at position #{i} ({parts[i]}) can not be parsed to an integer number.";
+            }
+          }
+          if (ShiftOrder.SelectedItem.Tag is Manual manual)
+          {
+            var manualnew = manual with { Indices = indices.ToArray() };
+            ShiftOrder.SelectedItem.Tag = manualnew;
+            ShiftOrder.SelectedValue = manualnew;
+          }
+        }
+      }
+    }
+
+    private string? _ManualShiftOrderIndicesValidationError;
+
+    public string? ManualShiftOrderIndicesValidationError
+    {
+      get => _ManualShiftOrderIndicesValidationError;
+      set
+      {
+        if (!(_ManualShiftOrderIndicesValidationError == value))
+        {
+          _ManualShiftOrderIndicesValidationError = value;
+          OnPropertyChanged(nameof(ManualShiftOrderIndicesValidationError));
+        }
+      }
+    }
+
 
     private ItemsController<IShiftOrder> _shiftOrder;
 
@@ -329,7 +395,7 @@ namespace Altaxo.Gui.Science.Thermorheology
     }
 
 
-    ItemsController<IMVCAController> _tabControllers;
+    private ItemsController<IMVCAController> _tabControllers;
     public ItemsController<IMVCAController> TabControllers
     {
       get => _tabControllers;
@@ -409,10 +475,10 @@ namespace Altaxo.Gui.Science.Thermorheology
       {
         _numberOfGroups = Math.Max(1, _doc.GroupOptions.Count); // must be set silently in order to avoid calling EhNumberOfGroupsChanged
         var types = Altaxo.Main.Services.ReflectionService.GetNonAbstractSubclassesOf(typeof(IShiftOrder));
-        var instances = types.Select(t => (IShiftOrder)Activator.CreateInstance(t));
+        var instances = types.Select(t => t == _doc.ShiftOrder.GetType() ? _doc.ShiftOrder : (IShiftOrder)Activator.CreateInstance(t));
         ShiftOrder = new ItemsController<IShiftOrder>(new SelectableListNodeList(
           instances.Select(i => new SelectableListNode(i.GetType().Name, i, false))), EhShiftOrderChanged);
-        ShiftOrder.SelectedValue = _doc.ShiftOrder.WithPivotIndex(null);
+        ShiftOrder.SelectedValue = _doc.ShiftOrder; //.WithPivotIndex(null);
 
         UseManualPivotCurveIndex = _doc.ShiftOrder.PivotIndex.HasValue;
         if (_doc.ShiftOrder.PivotIndex.HasValue)
@@ -652,7 +718,6 @@ namespace Altaxo.Gui.Science.Thermorheology
       {
         shiftOrder = shiftOrder.WithPivotIndex(ManualPivotCurveIndex);
       }
-
 
       _doc = _doc with
       {

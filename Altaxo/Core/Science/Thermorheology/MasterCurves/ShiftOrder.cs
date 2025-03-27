@@ -24,6 +24,7 @@
 
 using System;
 using System.Collections.Generic;
+using System.Linq;
 
 namespace Altaxo.Science.Thermorheology.MasterCurves.ShiftOrder
 {
@@ -40,23 +41,23 @@ namespace Altaxo.Science.Thermorheology.MasterCurves.ShiftOrder
     /// <returns>Enumeration of curve indices in the order in which the curves should be fitted.
     /// Attention: the first returned index is the index of the curve that is fixed!
     /// </returns>
-    IEnumerable<int> GetShiftOrderIndices(int numberOfCurves);
+    public IEnumerable<int> GetShiftOrderIndices(int numberOfCurves);
 
     /// <summary>
     /// Gets a value indicating whether this instance requires a pivot index to be set.
     /// </summary>
-    bool IsPivotIndexRequired { get; }
+    public bool IsPivotIndexRequired { get; }
 
     /// <summary>
     /// Gets /sets the pivot index.
     /// </summary>
-    int? PivotIndex { get; init; }
+    public int? PivotIndex { get; init; }
 
     /// <summary>
     /// Returns a new instance of the same class with the pivot index set.
     /// If no pivot index is required (check by <see cref="IsPivotIndexRequired"/>), the same instance is returned./>
     /// </summary>
-    IShiftOrder WithPivotIndex(int? index);
+    public IShiftOrder WithPivotIndex(int? index);
   }
 
   /// <summary>Fit by fixing the 1st curve, then adding the 2nd curve, 3rd curve, up to the Nth curve.</summary>
@@ -80,7 +81,8 @@ namespace Altaxo.Science.Thermorheology.MasterCurves.ShiftOrder
     /// <inheritdoc/>
     public IShiftOrder WithPivotIndex(int? index) => this;
 
-    static void Noop() { }
+    private static void Noop()
+    { }
 
     #region Serialization
 
@@ -120,7 +122,8 @@ namespace Altaxo.Science.Thermorheology.MasterCurves.ShiftOrder
     /// <inheritdoc/>
     public IShiftOrder WithPivotIndex(int? index) => this;
 
-    static void Noop() { }
+    private static void Noop()
+    { }
 
     #region Serialization
 
@@ -142,7 +145,7 @@ namespace Altaxo.Science.Thermorheology.MasterCurves.ShiftOrder
   /// <summary>Fit by fixing the Rth curve, then adding the R+1 curve, .. Nth curve. Then adding the R-1 curve, down to the 0th curve.</summary>
   public record PivotToLastThenToFirst : IShiftOrder
   {
-    int? _pivotIndex;
+    private int? _pivotIndex;
 
     /// <inheritdoc/>
     public IEnumerable<int> GetShiftOrderIndices(int numberOfCurves)
@@ -189,7 +192,7 @@ namespace Altaxo.Science.Thermorheology.MasterCurves.ShiftOrder
   /// <summary>Fit by fixing the Rth curve, then adding the R-1 curve, .. 0th curve. Then adding the R+1 curve, up to the Nth curve.</summary>
   public record PivotToFirstThenToLast : IShiftOrder
   {
-    int? _pivotIndex;
+    private int? _pivotIndex;
 
     /// <inheritdoc/>
     public IEnumerable<int> GetShiftOrderIndices(int numberOfCurves)
@@ -236,7 +239,7 @@ namespace Altaxo.Science.Thermorheology.MasterCurves.ShiftOrder
   /// <summary>Fit by fixing the Rth curve, then adding the R+1 curve, R-1 curve, up and down to the Nth and 0th curve.</summary>
   public record PivotToLastAlternating : IShiftOrder
   {
-    int? _pivotIndex;
+    private int? _pivotIndex;
 
     /// <inheritdoc/>
     public IEnumerable<int> GetShiftOrderIndices(int numberOfCurves)
@@ -287,7 +290,7 @@ namespace Altaxo.Science.Thermorheology.MasterCurves.ShiftOrder
   /// <summary>Fit by fixing the Rth curve, then adding the R-1 curve, R+1 curve, down and up to the 0th and Nth curve.</summary>
   public record PivotToFirstAlternating : IShiftOrder
   {
-    int? _pivotIndex;
+    private int? _pivotIndex;
 
     /// <inheritdoc/>
     public IEnumerable<int> GetShiftOrderIndices(int numberOfCurves)
@@ -330,6 +333,72 @@ namespace Altaxo.Science.Thermorheology.MasterCurves.ShiftOrder
       {
         var pivotIndex = info.GetNullableInt32("PivotIndex");
         return new PivotToFirstAlternating() { _pivotIndex = pivotIndex };
+      }
+    }
+    #endregion
+  }
+
+  /// <summary>The order of the shift curves is given manually by a list of indices.</summary>
+  public record Manual : IShiftOrder
+  {
+    private int[] _indices = [];
+
+    /// <inheritdoc/>
+    public IEnumerable<int> GetShiftOrderIndices(int numberOfCurves)
+    {
+      var indexHash = new HashSet<int>(Enumerable.Range(0, numberOfCurves));
+
+      for (int i = 0; i < _indices.Length; i++)
+      {
+        var idx = _indices[i];
+        if (indexHash.Contains(idx))
+        {
+          yield return idx;
+          indexHash.Remove(idx);
+        }
+      }
+
+      for (int i = 0; i < numberOfCurves; i++)
+      {
+        if (indexHash.Contains(i))
+          yield return i;
+      }
+    }
+
+    /// <inheritdoc/>
+    public bool IsPivotIndexRequired => false;
+
+    /// <inheritdoc/>
+    public int? PivotIndex { get => null; init => Noop(); }
+
+    /// <inheritdoc/>
+    public IShiftOrder WithPivotIndex(int? index) => this;
+
+    public IReadOnlyList<int> Indices
+    {
+      get => _indices;
+      init => _indices = value?.ToArray() ?? throw new ArgumentNullException(nameof(Indices));
+    }
+
+    private static void Noop()
+    { }
+
+    #region Serialization
+
+    [Altaxo.Serialization.Xml.XmlSerializationSurrogateFor(typeof(Manual), 0)]
+    public class SerializationSurrogate0 : Altaxo.Serialization.Xml.IXmlSerializationSurrogate
+    {
+      public void Serialize(object obj, Altaxo.Serialization.Xml.IXmlSerializationInfo info)
+      {
+        var s = (Manual)obj;
+        info.AddArray("Indices", s._indices, s._indices.Length);
+      }
+
+      public object Deserialize(object? o, Altaxo.Serialization.Xml.IXmlDeserializationInfo info, object? parent)
+      {
+        info.GetArray("Indices", out int[] indices);
+
+        return new Manual { _indices = indices };
       }
     }
     #endregion
