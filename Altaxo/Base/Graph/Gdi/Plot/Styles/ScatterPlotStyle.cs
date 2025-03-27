@@ -1012,8 +1012,9 @@ namespace Altaxo.Graph.Gdi.Plot.Styles
         ColorGroupStyle.PrepareStyle(externalGroups, localGroups, delegate ()
         { return Color; });
 
-      ScatterSymbolGroupStyle.PrepareStyle(externalGroups, localGroups, delegate
-      { return _scatterSymbol; });
+      if (!IndependentScatterSymbol)
+        ScatterSymbolGroupStyle.PrepareStyle(externalGroups, localGroups, delegate
+        { return _scatterSymbol; });
 
       if (IsSymbolSizeProvider)
         SymbolSizeGroupStyle.PrepareStyle(externalGroups, localGroups, delegate ()
