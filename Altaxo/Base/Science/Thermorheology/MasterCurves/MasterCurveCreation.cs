@@ -234,6 +234,7 @@ namespace Altaxo.Science.Thermorheology.MasterCurves
         IReadOnlyList<double> lastX = new double[0];
         for (int idxGroup = 0; idxGroup < processData.CurveData.Count; idxGroup++)
         {
+          var baseGroupNumber = groupNumber + 1;
           var group = processData.CurveData[idxGroup];
           for (int idxCurve = 0; idxCurve < group.Length; idxCurve++)
           {
@@ -246,7 +247,7 @@ namespace Altaxo.Science.Thermorheology.MasterCurves
 
             if (lastX.Count != shiftCurve.X.Count || !VectorMath.AreValuesEqual(lastX, shiftCurve.X))
             {
-              ++groupNumber;
+              groupNumber = baseGroupNumber + idxCurve;
               var xCol = col.EnsureExistence($"xOrg{(char)('A' + idxGroup)}{idxCurve}", typeof(DoubleColumn), ColumnKind.X, groupNumber);
               xCol.Data = lastX = shiftCurve.X;
             }
@@ -277,6 +278,7 @@ namespace Altaxo.Science.Thermorheology.MasterCurves
         // in groups
         for (int idxGroup = 0; idxGroup < processData.CurveData.Count; idxGroup++)
         {
+          var baseGroupNumber = groupNumber + 1;
           var group = processData.CurveData[idxGroup];
           var groupOptions = GetGroupOptions(effectiveProcessOptions, idxGroup);
           for (int idxCurve = 0; idxCurve < group.Length; idxCurve++)
@@ -295,7 +297,7 @@ namespace Altaxo.Science.Thermorheology.MasterCurves
 
             if (lastX.Count != xshifted.Length || !VectorMath.AreValuesEqual(lastX, xshifted))
             {
-              ++groupNumber;
+              groupNumber = baseGroupNumber + idxCurve;
               var xCol = new DoubleColumn();
               xCol.Data = xshifted;
               lastX = xshifted;
