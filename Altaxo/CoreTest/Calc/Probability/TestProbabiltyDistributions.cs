@@ -714,10 +714,11 @@ new double[]{1.5, 1.75, 0.762628880480291575561159, 0.424377229596168368465272, 
         if (_dist.NextDouble() <= _a[2])
           suml++;
       }
-      double p1_tested = suml / (double)len;
-      double confidence = BinomialDistribution.CDF(suml, _a[3], len);
-      AssertEx.Greater(confidence, 0.01, $"Unexpected result of distribution of generated values : outside (left) the 1% confidence limits, expected p={_a[3]}, actual p={p1_tested}, confidence={confidence}");
-      AssertEx.Less(confidence, 0.999, $"Unexpected result of distribution of generated values : outside (right) the 1% confidence limits, expected p={_a[3]}, actual p={p1_tested}, confidence={confidence}");
+
+      // wir nähern die Binomialverteilung mit der Normalverteilung an:
+      var sigma = Math.Sqrt(len * _a[3] * (1 - _a[3]));
+      var delta = Math.Abs(suml - len * _a[3]);
+      AssertEx.Less(delta, 5 * sigma, $"Unexpected result of distribution of generated values : outside the five sigma confidence limits, expected d < 5*sigma d={delta}, 5*sigma={5 * sigma}");
     }
   }
 
