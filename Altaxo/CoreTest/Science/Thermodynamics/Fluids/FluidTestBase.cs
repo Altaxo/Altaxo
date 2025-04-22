@@ -23,11 +23,7 @@
 #endregion Copyright
 
 using System;
-using System.Collections.Generic;
 using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-using Altaxo.Science.Thermodynamics.Fluids;
 using Xunit;
 
 namespace Altaxo.Science.Thermodynamics.Fluids
@@ -223,7 +219,7 @@ namespace Altaxo.Science.Thermodynamics.Fluids
 
         if (temperature < previousTemperature - 0.1)
         {
-          AssertEx.Less(pressure, previousPressure, $"Monotony of sublimation pressure curve not given for {_fluid.GetType()} at temperature={ temperature}, previous temperature={previousTemperature}");
+          AssertEx.Less(pressure, previousPressure, $"Monotony of sublimation pressure curve not given for {_fluid.GetType()} at temperature={temperature}, previous temperature={previousTemperature}");
         }
 
         previousTemperature = temperature;
@@ -290,7 +286,7 @@ namespace Altaxo.Science.Thermodynamics.Fluids
       const double relativeDeviation = 5E-2;
       const double absoluteDeviation = 100; // Pa
 
-      foreach (var (temperature, pressureExpected) in _testDataSublimationLine.Reverse())
+      foreach (var (temperature, pressureExpected) in Enumerable.Reverse(_testDataSublimationLine))
       {
         var pressureHere = _fluid.SublimationPressureEstimate_FromTemperature(temperature);
         AssertEx.Equal(pressureExpected, pressureHere, GetAllowedError(pressureExpected, relativeDeviation, absoluteDeviation), $"Temperature: {temperature}");
@@ -302,7 +298,7 @@ namespace Altaxo.Science.Thermodynamics.Fluids
       const double relativeDeviation = 0;
       double absoluteDeviation = 1; // Kelvin
 
-      foreach (var (temperatureExpected, pressure) in _testDataSublimationLine.Reverse())
+      foreach (var (temperatureExpected, pressure) in Enumerable.Reverse(_testDataSublimationLine))
       {
         if (temperatureExpected < _fluid.TriplePointTemperature / 2)
           absoluteDeviation = 2; // for very low temperatures, allow more deviation
