@@ -76,7 +76,7 @@ namespace Altaxo.Calc.Regression
     /// function, given degree and kernel halfwidth.This
     /// constructor is useful for repeated smoothing operations with
     /// the same parameters and data sets of the same length.
-    /// Otherwise the static <see cref="Smooth(double[], double[], int, int, int)"/>
+    /// Otherwise the static <see cref="Smooth(double[], double[], WeightType, int, int)"/>
     /// method is more convenient.
     /// </summary>
     /// <param name="weightType">Type of the weight.</param>
