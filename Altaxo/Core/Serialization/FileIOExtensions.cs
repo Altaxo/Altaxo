@@ -22,6 +22,7 @@
 //
 /////////////////////////////////////////////////////////////////////////////
 
+using System;
 using System.IO;
 
 namespace Altaxo.Serialization
@@ -53,6 +54,41 @@ namespace Altaxo.Serialization
         length -= read;
         offset += read;
       }
+    }
+
+    /// <summary>
+    /// Searches a binary stream for a given byte sequence.
+    /// </summary>
+    /// <param name="stream">The stream.</param>
+    /// <param name="sequence">The searched sequence.</param>
+    /// <returns>When the sequence is found, it returns the position in the stream where the sequence starts; if the sequence was not found, -1 is returned.</returns>
+    public static long PositionOf(this Stream stream, ReadOnlySpan<byte> sequence)
+    {
+      if (stream is null)
+        throw new System.ArgumentNullException(nameof(stream));
+      if (sequence.Length == 0)
+        throw new System.ArgumentException("The sequence must not be empty.", nameof(sequence));
+
+      long pos = stream.Position;
+      int matchIndex = 0;
+
+      int currentByte;
+      while ((currentByte = stream.ReadByte()) != -1)
+      {
+        if ((byte)currentByte == sequence[matchIndex])
+        {
+          matchIndex++;
+          if (matchIndex == sequence.Length)
+            return pos - sequence.Length + 1; // Sequence found
+        }
+        else
+        {
+          matchIndex = (byte)currentByte == sequence[0] ? 1 : 0; // Reset match index
+        }
+        pos++;
+      }
+
+      return -1; // Not found
     }
   }
 }
