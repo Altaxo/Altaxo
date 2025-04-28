@@ -25,13 +25,9 @@
 #nullable disable
 using System;
 using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using Altaxo.Collections;
 using Altaxo.Data;
 using Altaxo.Gui.Common;
 using Altaxo.Scripting;
-using Altaxo.Serialization.Ascii;
 
 namespace Altaxo.Gui.Data
 {
@@ -39,10 +35,6 @@ namespace Altaxo.Gui.Data
   [UserControllerForObject(typeof(FileImportScriptDataSource))]
   public class FileImportScriptDataSourceController : MVCANControllerEditOriginalDocBase<FileImportScriptDataSource, IImportDataSourceView>, IMVCSupportsApplyCallback
   {
-    private IMVCANController _commonImportOptionsController;
-    private IMVCANController _specificImportOptionsController;
-    private MultipleFilesController _specificImportSourceController;
-
     public event Action SuccessfullyApplied;
 
     public override IEnumerable<ControllerAndSetNullMethod> GetSubControllers()
@@ -52,24 +44,125 @@ namespace Altaxo.Gui.Data
       yield return new ControllerAndSetNullMethod(_specificImportSourceController, () => _specificImportSourceController = null);
     }
 
+    #region Bindings
+
+    private string _commonImportOptionsControlHeader;
+
+    public string CommonImportOptionsControlHeader
+    {
+      get => _commonImportOptionsControlHeader;
+      set
+      {
+        if (!(_commonImportOptionsControlHeader == value))
+        {
+          _commonImportOptionsControlHeader = value;
+          OnPropertyChanged(nameof(CommonImportOptionsControlHeader));
+        }
+      }
+    }
+
+
+    private IMVCANController _commonImportOptionsController;
+
+    public IMVCANController CommonImportOptionsController
+    {
+      get => _commonImportOptionsController;
+      set
+      {
+        if (!(_commonImportOptionsController == value))
+        {
+          _commonImportOptionsController?.Dispose();
+          _commonImportOptionsController = value;
+          OnPropertyChanged(nameof(CommonImportOptionsController));
+        }
+      }
+    }
+
+    private string _specificImportOptionsControlHeader;
+
+    public string SpecificImportOptionsControlHeader
+    {
+      get => _specificImportOptionsControlHeader;
+      set
+      {
+        if (!(_specificImportOptionsControlHeader == value))
+        {
+          _specificImportOptionsControlHeader = value;
+          OnPropertyChanged(nameof(SpecificImportOptionsControlHeader));
+        }
+      }
+    }
+
+
+    private IMVCANController _specificImportOptionsController;
+
+    public IMVCANController SpecificImportOptionsController
+    {
+      get => _specificImportOptionsController;
+      set
+      {
+        if (!(_specificImportOptionsController == value))
+        {
+          _specificImportOptionsController?.Dispose();
+          _specificImportOptionsController = value;
+          OnPropertyChanged(nameof(SpecificImportOptionsController));
+        }
+      }
+    }
+
+    private string _specificImportSourceControlHeader;
+
+    public string SpecificImportSourceControlHeader
+    {
+      get => _specificImportSourceControlHeader;
+      set
+      {
+        if (!(_specificImportSourceControlHeader == value))
+        {
+          _specificImportSourceControlHeader = value;
+          OnPropertyChanged(nameof(SpecificImportSourceControlHeader));
+        }
+      }
+    }
+
+
+    private MultipleFilesController _specificImportSourceController;
+
+    public MultipleFilesController SpecificImportSourceController
+    {
+      get => _specificImportSourceController;
+      set
+      {
+        if (!(_specificImportSourceController == value))
+        {
+          _specificImportSourceController?.Dispose();
+          _specificImportSourceController = value;
+          OnPropertyChanged(nameof(SpecificImportSourceController));
+        }
+      }
+    }
+
+
+
+
+    #endregion
+
     protected override void Initialize(bool initData)
     {
       base.Initialize(initData);
 
       if (initData)
       {
-        //_doc.SourceFileName
+        CommonImportOptionsControlHeader = "Common import options";
+        SpecificImportOptionsControlHeader = "Import script";
+        SpecificImportSourceControlHeader = "File(s) to import";
 
-        _commonImportOptionsController = (IMVCANController)Current.Gui.GetControllerAndControl(new object[] { _doc.ImportOptions }, typeof(IMVCANController), UseDocument.Directly);
-        _specificImportOptionsController = (IMVCANController)Current.Gui.GetControllerAndControl(new object[] { _doc.ImportScript }, typeof(IMVCANController), UseDocument.Directly);
-        _specificImportSourceController = new MultipleFilesController();
-        _specificImportSourceController.InitializeDocument(_doc.SourceFileNames);
-        Current.Gui.FindAndAttachControlTo(_specificImportSourceController);
-
-      }
-
-      if (_view is not null)
-      {
+        CommonImportOptionsController = (IMVCANController)Current.Gui.GetControllerAndControl(new object[] { _doc.ImportOptions }, typeof(IMVCANController), UseDocument.Directly);
+        SpecificImportOptionsController = (IMVCANController)Current.Gui.GetControllerAndControl(new object[] { _doc.ImportScript }, typeof(IMVCANController), UseDocument.Directly);
+        var specificImportSourceController = new MultipleFilesController();
+        specificImportSourceController.InitializeDocument(_doc.SourceFileNames);
+        Current.Gui.FindAndAttachControlTo(specificImportSourceController);
+        SpecificImportSourceController = specificImportSourceController;
       }
     }
 
@@ -98,36 +191,9 @@ namespace Altaxo.Gui.Data
       else
         _doc.SourceFileNames = (IEnumerable<string>)_specificImportSourceController.ModelObject; // AsciiImportOptions is cloned in property set
 
-      if (disposeController)
-      {
-        _commonImportOptionsController.Dispose();
-        _specificImportOptionsController.Dispose();
-        _specificImportSourceController.Dispose();
-      }
-
       SuccessfullyApplied?.Invoke();
 
       return ApplyEnd(true, disposeController);
     }
-
-    protected override void AttachView()
-    {
-      base.AttachView();
-      _view.SetCommonImportOptionsControl("Common import options", _commonImportOptionsController.ViewObject);
-      _view.SetSpecificImportOptionsControl("Import script", _specificImportOptionsController.ViewObject);
-      _view.SetSpecificImportSourceControl("File(s) to import", _specificImportSourceController.ViewObject);
-    }
-
-    protected override void DetachView()
-    {
-      _view.SetCommonImportOptionsControl(string.Empty, null);
-      _view.SetSpecificImportOptionsControl(string.Empty, null);
-      _view.SetSpecificImportSourceControl(string.Empty, null);
-
-      base.DetachView();
-    }
-
-
-
   }
 }

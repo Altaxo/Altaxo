@@ -22,18 +22,12 @@
 
 #endregion Copyright
 
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Windows;
 using System.Windows.Controls;
-using System.Windows.Input;
 
 namespace Altaxo.Gui.Data
 {
   /// <summary>
-  /// Interaction logic for RealFourierTransformation2DDataSourceControl.xaml
+  /// Interaction logic for ImportDataSourceControl
   /// </summary>
   public partial class ImportDataSourceControl : UserControl, IImportDataSourceView
   {
@@ -41,25 +35,5 @@ namespace Altaxo.Gui.Data
     {
       InitializeComponent();
     }
-
-    public void SetSpecificImportOptionsControl(string header, object p)
-    {
-      _guiSpecificOptionsHeader.Text = header;
-      _guiAsciiImportOptionsHost.Child = p as UIElement;
-    }
-
-    public void SetCommonImportOptionsControl(string header, object p)
-    {
-      _guiCommonOptionsHeader.Text = header;
-      _guiImportOptionsHost.Child = p as UIElement;
-    }
-
-    public void SetSpecificImportSourceControl(string header, object p)
-    {
-      _guiSpecificSourceHeader.Text = header;
-      _guiFilesHost.Child = p as UIElement;
-    }
-
-
   }
 }

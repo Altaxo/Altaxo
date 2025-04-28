@@ -3,32 +3,43 @@
              xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
              xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
              xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+             xmlns:data="clr-namespace:Altaxo.Gui.Data;assembly=AltaxoBase"
+             d:DataContext="{d:DesignInstance Type=data:FileImportScriptDataSourceController}"
              mc:Ignorable="d"
-             d:DesignHeight="300" d:DesignWidth="500"
-						 ScrollViewer.VerticalScrollBarVisibility="Visible">
-    <Grid>
-        <Grid.RowDefinitions>
-            <RowDefinition Height="Auto" />
-            <RowDefinition Height="Auto" />
-            <RowDefinition  Height="Auto" />
-        </Grid.RowDefinitions>
-        <Expander Grid.Row="0" Background="BlanchedAlmond">
-            <Expander.Header>
-                <TextBlock x:Name="_guiCommonOptionsHeader" Text="Data source import options" FontWeight="Bold" />
-            </Expander.Header>
-            <Border x:Name="_guiImportOptionsHost" />
-        </Expander>
-        <Expander Grid.Row="1"  Background="Lavender">
-            <Expander.Header>
-                <TextBlock x:Name="_guiSpecificOptionsHeader" Text="Ascii import options" FontWeight="Bold" />
-            </Expander.Header>
-            <Border x:Name="_guiAsciiImportOptionsHost" />
-        </Expander>
-        <Expander Grid.Row="2" IsExpanded="True" Background="BlanchedAlmond">
-            <Expander.Header>
-                <TextBlock x:Name="_guiSpecificSourceHeader" Text="Ascii file(s):" FontWeight="Bold" />
-            </Expander.Header>
-            <Border x:Name="_guiFilesHost" />
-        </Expander>
-    </Grid>
+             d:DesignHeight="300"
+             d:DesignWidth="500"
+             ScrollViewer.VerticalScrollBarVisibility="Visible">
+  <Grid>
+    <Grid.RowDefinitions>
+      <RowDefinition Height="Auto" />
+      <RowDefinition Height="Auto" />
+      <RowDefinition  Height="Auto" />
+    </Grid.RowDefinitions>
+    <Expander Grid.Row="0"
+              Background="BlanchedAlmond">
+      <Expander.Header>
+        <TextBlock Text="{Binding CommonImportOptionsControlHeader}"
+                   FontWeight="Bold" />
+      </Expander.Header>
+      <ContentControl Content="{Binding CommonImportOptionsController.ViewObject}" />
+    </Expander>
+    <Expander Grid.Row="1"
+              Background="Lavender"
+              >
+      <Expander.Header>
+        <TextBlock Text="{Binding SpecificImportOptionsControlHeader}"
+                   FontWeight="Bold" />
+      </Expander.Header>
+        <ContentControl Content="{Binding SpecificImportOptionsController.ViewObject}" />
+    </Expander>
+    <Expander Grid.Row="2"
+              IsExpanded="True"
+              Background="BlanchedAlmond">
+      <Expander.Header>
+        <TextBlock Text="{Binding SpecificImportSourceControlHeader}"
+                   FontWeight="Bold" />
+      </Expander.Header>
+      <ContentControl Content="{Binding SpecificImportSourceController.ViewObject}" />
+    </Expander>
+  </Grid>
 </UserControl>
