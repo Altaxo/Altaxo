@@ -1,7 +1,22 @@
 <Solution>
-  <Configurations>
-   
-  </Configurations>
+  <Folder Name="/Solution Items/">
+    <File Path=".editorconfig" />
+    <File Path="Altaxo/AltaxoProject.ico" />
+    <File Path="Content/doc/altaxotodo.xml" />
+    <File Path="LayerButtons.bmp" />
+    <File Path="README.md" />
+  </Folder>
+   <Project Path="Altaxo/Startup/AltaxoStartup.csproj">
+    <BuildDependency Project="Addins/D3D/D3DPresentation/D3DPresentation.csproj" />
+    <BuildDependency Project="AddIns/MLNET/MLNET/MLNet.csproj" />
+    <BuildDependency Project="AddIns/MLNET/MLNetDependencies/MLNetDependencies.csproj" />
+    <BuildDependency Project="AddIns/OpenXML/OpenXML.Presentation/OpenXML.Presentation.csproj" />
+    <BuildDependency Project="AddIns/OriginConnector/OriginConnector.csproj" />
+    <BuildDependency Project="Altaxo/Base/AltaxoBase.csproj" />
+    <BuildDependency Project="Altaxo/Core/AltaxoCore.csproj" />
+    <BuildDependency Project="Altaxo/Dom.Presentation/AltaxoDom.Presentation.csproj" />
+    <BuildDependency Project="Content/Content.csproj" />
+  </Project>
   <Folder Name="/Analyzer/">
     <Project Path="Analyzer/NullComparisonAnalyzer/NullComparisonAnalyzer.csproj">
     </Project>
@@ -34,13 +49,7 @@
     <Project Path="Libraries/xaml-math/src/XamlMath.Shared/XamlMath.Shared.csproj">
     </Project>
   </Folder>
-  <Folder Name="/Solution Items/">
-    <File Path=".editorconfig" />
-    <File Path="Altaxo/AltaxoProject.ico" />
-    <File Path="Content/doc/altaxotodo.xml" />
-    <File Path="LayerButtons.bmp" />
-    <File Path="README.md" />
-  </Folder>
+  
   <Project Path="Addins/D3D/D3DPresentation/D3DPresentation.csproj">
   </Project>
   <Project Path="AddIns/MLNET/MLNET/MLNet.csproj">
@@ -79,17 +88,7 @@
   </Project>
   <Project Path="Altaxo/Providers.MKL/Providers.MKL.csproj">
   </Project>
-  <Project Path="Altaxo/Startup/AltaxoStartup.csproj">
-    <BuildDependency Project="Addins/D3D/D3DPresentation/D3DPresentation.csproj" />
-    <BuildDependency Project="AddIns/MLNET/MLNET/MLNet.csproj" />
-    <BuildDependency Project="AddIns/MLNET/MLNetDependencies/MLNetDependencies.csproj" />
-    <BuildDependency Project="AddIns/OpenXML/OpenXML.Presentation/OpenXML.Presentation.csproj" />
-    <BuildDependency Project="AddIns/OriginConnector/OriginConnector.csproj" />
-    <BuildDependency Project="Altaxo/Base/AltaxoBase.csproj" />
-    <BuildDependency Project="Altaxo/Core/AltaxoCore.csproj" />
-    <BuildDependency Project="Altaxo/Dom.Presentation/AltaxoDom.Presentation.csproj" />
-    <BuildDependency Project="Content/Content.csproj" />
-  </Project>
+ 
   <Project Path="Altaxo/Startup32/AltaxoStartup32.csproj">
     <Platform Project="x86" />
   </Project>

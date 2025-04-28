@@ -1,0 +1,4 @@
+<Solution>
+  <Project Path="Altaxo/Core/AltaxoCore.csproj" />
+  <Project Path="Altaxo/CoreTest/AltaxoCoreTest.csproj" />
+</Solution>

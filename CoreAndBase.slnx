@@ -1,0 +1,5 @@
+<Solution>
+  <Project Path="Altaxo/Base/AltaxoBase.csproj"/>
+  <Project Path="Altaxo/Core/AltaxoCore.csproj"/>
+  <Project Path="Libraries/Numerator/zNumerator.csproj"/>
+</Solution>
