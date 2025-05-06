@@ -4,18 +4,23 @@
              xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
              xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
              xmlns:data="clr-namespace:Altaxo.Gui.Data;assembly=AltaxoBase"
+             xmlns:axogcc="clr-namespace:Altaxo.Gui.Common.Converters"
              d:DataContext="{d:DesignInstance Type=data:FileImportScriptDataSourceController}"
              mc:Ignorable="d"
              d:DesignHeight="300"
              d:DesignWidth="500"
              ScrollViewer.VerticalScrollBarVisibility="Visible">
   <Grid>
+    <Grid.Resources>
+      <axogcc:ExpandedToGridHeightStarConverter x:Key="HeightConverter" />
+    </Grid.Resources>
     <Grid.RowDefinitions>
       <RowDefinition Height="Auto" />
-      <RowDefinition Height="Auto" />
-      <RowDefinition  Height="Auto" />
+      <RowDefinition Height="{Binding IsExpanded, ElementName=_guiExpander1, Converter={StaticResource HeightConverter}}" />
+      <RowDefinition Height="{Binding IsExpanded, ElementName=_guiExpander2, Converter={StaticResource HeightConverter}}" />
     </Grid.RowDefinitions>
-    <Expander Grid.Row="0"
+    <Expander x:Name="_guiExpander0" 
+              Grid.Row="0"
               Background="BlanchedAlmond">
       <Expander.Header>
         <TextBlock Text="{Binding CommonImportOptionsControlHeader}"
@@ -23,7 +28,8 @@
       </Expander.Header>
       <ContentControl Content="{Binding CommonImportOptionsController.ViewObject}" />
     </Expander>
-    <Expander Grid.Row="1"
+    <Expander x:Name="_guiExpander1"
+              Grid.Row="1"
               Background="Lavender"
               >
       <Expander.Header>
@@ -32,7 +38,8 @@
       </Expander.Header>
         <ContentControl Content="{Binding SpecificImportOptionsController.ViewObject}" />
     </Expander>
-    <Expander Grid.Row="2"
+    <Expander x:Name="_guiExpander2"
+              Grid.Row="2"
               IsExpanded="True"
               Background="BlanchedAlmond">
       <Expander.Header>
