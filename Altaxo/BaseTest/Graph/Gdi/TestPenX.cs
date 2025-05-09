@@ -26,6 +26,7 @@ using System.Collections.Generic;
 using Altaxo.Drawing.DashPatternManagement;
 using Altaxo.Geometry;
 using Altaxo.Main;
+using Altaxo.Main.Services;
 using Xunit;
 
 namespace Altaxo.Drawing
@@ -81,6 +82,7 @@ namespace Altaxo.Drawing
     public void TestHash_PenX()
     {
       Current.AddService<IProjectService>(new ProjectServiceDummyImpl());
+      Current.AddService<IPropertyService>(new PropertyServiceFallbackImplementation());
       foreach (var entry in TestGenerator())
       {
         Tester(entry.pen1, entry.pen2, entry.comment);
@@ -91,6 +93,7 @@ namespace Altaxo.Drawing
     public void TestHash_PenXEnv()
     {
       Current.AddService<IProjectService>(new ProjectServiceDummyImpl());
+      Current.AddService<IPropertyService>(new PropertyServiceFallbackImplementation());
       foreach (var entry in TestGenerator())
       {
         var env1 = new PenXEnv(entry.pen1, new Geometry.RectangleD2D(0, 0, 1000, 2000), 96);
