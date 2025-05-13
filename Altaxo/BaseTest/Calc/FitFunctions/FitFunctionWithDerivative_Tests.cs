@@ -110,6 +110,11 @@ namespace Altaxo.Calc.FitFunctions
         (() => new Kinetics.ConversionNthOrder(), 3.5, new double[]{2,1,3,1.5}, 153/169d),
         (() => new Kinetics.RateOfConversionNthOrder(), 3.5, new double[]{2,1,3,1.5}, 192/2197d),
         (() => new Altaxo.Science.Spectroscopy.PeakFitting.MultipleSpectra.FitFunctionMultipleSpectraSeparatePeakHeightsSeparateBaseline(new GaussAmplitude(1,1),new int[]{0}), 0.5, new double[]{2,3,5,1,3}, 1+3*0.5+2*Math.Exp(-0.5*RMath.Pow2((0.5-3)/5))),
+        (() => new Viscosity.CarreauYasudaModel(), 3.5, new double[]{53, 5, 0.5, 2.5, 3 }, 180.37360429021057453),
+        (() => new Viscosity.CrossModel(), 3.5, new double[]{53, 5, 0.5, 2.5 }, 14.502491711079347792),
+        (() => new Viscosity.BinghamPlasticModel(), 3.5, new double[]{53, 3 }, 18.142857142857142857),
+        (() => new Viscosity.HerschelBulkleyModel(), 3.5, new double[]{5, 53, 3 }, 650.67857142857142857),
+        (() => new Viscosity.PowerLawModel(), 3.5, new double[]{53, 3 }, 649.25),
       };
     private static DoubleEqualityComparer CompareD = new DoubleEqualityComparer(1E-100, 1E-12);
     private static DoubleEqualityComparer CompareDerivatives = new DoubleEqualityComparer(1E-4, 1E-4);
