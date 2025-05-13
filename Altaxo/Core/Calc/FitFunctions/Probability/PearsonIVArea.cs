@@ -203,9 +203,13 @@ namespace Altaxo.Calc.FitFunctions.Probability
           _ => throw new InvalidProgramException()
         };
       }
-      else
+      else if (k <= _orderOfBaselinePolynomial)
       {
         return FormattableString.Invariant($"b{k}");
+      }
+      else
+      {
+        throw new ArgumentOutOfRangeException(nameof(i), i, "Parameter index out of range.");
       }
     }
 
@@ -224,9 +228,13 @@ namespace Altaxo.Calc.FitFunctions.Probability
           _ => 0
         };
       }
+      else if (k <= _orderOfBaselinePolynomial)
+      {
+        return 0;
+      }
       else
       {
-        return 0; // no baseline
+        throw new ArgumentOutOfRangeException(nameof(i), i, "Parameter index out of range.");
       }
     }
 

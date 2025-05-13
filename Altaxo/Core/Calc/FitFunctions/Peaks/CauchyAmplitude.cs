@@ -153,8 +153,8 @@ namespace Altaxo.Calc.FitFunctions.Peaks
       return this with { NumberOfTerms = numberOfTerms };
     }
 
-    const double DefaultMinWidth = 1E-81; // Math.Pow(double.Epsilon, 0.25);
-    const double DefaultMaxWidth = 1E+77; // Math.Pow(double.MaxValue, 0.25);
+    private const double DefaultMinWidth = 1E-81; // Math.Pow(double.Epsilon, 0.25);
+    private const double DefaultMaxWidth = 1E+77; // Math.Pow(double.MaxValue, 0.25);
 
     /// <inheritdoc/>
     public (IReadOnlyList<double?>? LowerBounds, IReadOnlyList<double?>? UpperBounds) GetParameterBoundariesForPositivePeaks(double? minimalPosition = null, double? maximalPosition = null, double? minimalFWHM = null, double? maximalFWHM = null)
@@ -248,19 +248,37 @@ namespace Altaxo.Calc.FitFunctions.Peaks
           _ => throw new InvalidProgramException()
         };
       }
-      else
+      else if (k <= OrderOfBaselinePolynomial)
       {
         return FormattableString.Invariant($"b{k}");
+      }
+      else
+      {
+        throw new ArgumentOutOfRangeException(nameof(i), $"Parameter index {i} is out of range.");
       }
     }
 
     public double DefaultParameterValue(int i)
     {
       int k = i - NumberOfParametersPerPeak * _numberOfTerms;
-      if (k < 0 && i % NumberOfParametersPerPeak == 2)
-        return 1;
-      else
+      if (k < 0)
+      {
+        return (i % NumberOfParametersPerPeak) switch
+        {
+          0 => 0,
+          1 => 0,
+          2 => 1,
+          _ => throw new InvalidProgramException()
+        };
+      }
+      else if (k <= OrderOfBaselinePolynomial)
+      {
         return 0;
+      }
+      else
+      {
+        throw new ArgumentOutOfRangeException(nameof(i), $"Parameter index {i} is out of range.");
+      }
     }
 
     public IVarianceScaling? DefaultVarianceScaling(int i)

@@ -113,7 +113,7 @@ namespace Altaxo.Calc.FitFunctions.Probability
       return new CauchyArea(1, 0);
     }
 
-    [FitFunctionCreator("CauchyArea", "Probability", 1, 1, 4)]
+    [FitFunctionCreator("CauchyArea", "Probability", 1, 1, 3)]
     [System.ComponentModel.Description("${res:Altaxo.Calc.FitFunctions.Probability.CauchyArea}")]
     public static IFitFunction Create_1_M1()
     {
@@ -254,19 +254,37 @@ namespace Altaxo.Calc.FitFunctions.Probability
           _ => throw new InvalidProgramException()
         };
       }
-      else
+      else if (k <= _orderOfBaselinePolynomial)
       {
         return FormattableString.Invariant($"b{k}");
+      }
+      else
+      {
+        throw new ArgumentOutOfRangeException(nameof(i), i, "Parameter index out of range.");
       }
     }
 
     public double DefaultParameterValue(int i)
     {
       int k = i - NumberOfParametersPerPeak * _numberOfTerms;
-      if (k < 0 && i % NumberOfParametersPerPeak == 2)
-        return 1;
-      else
+      if (k < 0)
+      {
+        return (i % NumberOfParametersPerPeak) switch
+        {
+          0 => 0, // amplitude
+          1 => 0, // position
+          2 => 1, // width
+          _ => throw new InvalidProgramException()
+        };
+      }
+      else if (k <= _orderOfBaselinePolynomial)
+      {
         return 0;
+      }
+      else
+      {
+        throw new ArgumentOutOfRangeException(nameof(i), i, "Parameter index out of range.");
+      }
     }
 
     public IVarianceScaling? DefaultVarianceScaling(int i)

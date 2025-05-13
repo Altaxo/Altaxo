@@ -110,7 +110,7 @@ namespace Altaxo.Calc.FitFunctions.Probability
       return new GaussArea(1, 0);
     }
 
-    [FitFunctionCreator("GaussArea", "Probability", 1, 1, 4)]
+    [FitFunctionCreator("GaussArea", "Probability", 1, 1, 3)]
     [System.ComponentModel.Description("${res:Altaxo.Calc.FitFunctions.Probability.GaussArea}")]
     public static IFitFunction Create_1_M1()
     {
@@ -224,7 +224,7 @@ namespace Altaxo.Calc.FitFunctions.Probability
     {
       get
       {
-        return _numberOfTerms * 3 + _orderOfBaselinePolynomial + 1;
+        return _numberOfTerms * NumberOfParametersPerPeak + _orderOfBaselinePolynomial + 1;
       }
     }
 
@@ -252,19 +252,37 @@ namespace Altaxo.Calc.FitFunctions.Probability
           _ => throw new InvalidProgramException()
         };
       }
-      else
+      else if (k <= _orderOfBaselinePolynomial)
       {
         return FormattableString.Invariant($"b{k}");
+      }
+      else
+      {
+        throw new ArgumentOutOfRangeException(nameof(i), i, "Parameter index out of range.");
       }
     }
 
     public double DefaultParameterValue(int i)
     {
-      int k = i - 3 * _numberOfTerms;
-      if (k < 0 && i % 3 == 2)
-        return 1;
-      else
+      int k = i - NumberOfParametersPerPeak * _numberOfTerms;
+      if (k < 0)
+      {
+        return (i % NumberOfParametersPerPeak) switch
+        {
+          0 => 0, // amplitude
+          1 => 0, // position
+          2 => 1, // width
+          _ => throw new InvalidProgramException()
+        };
+      }
+      else if (k <= _orderOfBaselinePolynomial)
+      {
         return 0;
+      }
+      else
+      {
+        throw new ArgumentOutOfRangeException(nameof(i), i, "Parameter index out of range.");
+      }
     }
 
     public IVarianceScaling? DefaultVarianceScaling(int i)

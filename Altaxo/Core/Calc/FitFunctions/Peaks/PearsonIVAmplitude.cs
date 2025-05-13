@@ -201,9 +201,13 @@ namespace Altaxo.Calc.FitFunctions.Peaks
           _ => throw new InvalidProgramException()
         };
       }
-      else
+      else if (k <= OrderOfBaselinePolynomial)
       {
         return FormattableString.Invariant($"b{k}");
+      }
+      else
+      {
+        throw new ArgumentOutOfRangeException(nameof(i), $"Parameter index {i} is out of range.");
       }
     }
 
@@ -219,12 +223,16 @@ namespace Altaxo.Calc.FitFunctions.Peaks
           2 => 1, // width
           3 => 1, // m (Lorentzian),
           4 => 0, // v (symmetric)
-          _ => 0
+          _ => throw new InvalidProgramException(),
         };
+      }
+      else if (k <= OrderOfBaselinePolynomial)
+      {
+        return 0; // no baseline
       }
       else
       {
-        return 0; // no baseline
+        throw new ArgumentOutOfRangeException(nameof(i), $"Parameter index {i} is out of range.");
       }
     }
 
@@ -355,8 +363,8 @@ namespace Altaxo.Calc.FitFunctions.Peaks
       return new double[NumberOfParametersPerPeak] { height, position, w, 1, 0 }; // Parameters for the Lorentz limit
     }
 
-    const double DefaultMinWidth = 1E-81; // Math.Pow(double.Epsilon, 0.25);
-    const double DefaultMaxWidth = 1E+77; // Math.Pow(double.MaxValue, 0.25);
+    private const double DefaultMinWidth = 1E-81; // Math.Pow(double.Epsilon, 0.25);
+    private const double DefaultMaxWidth = 1E+77; // Math.Pow(double.MaxValue, 0.25);
 
     /// <inheritdoc/>
     public (IReadOnlyList<double?>? LowerBounds, IReadOnlyList<double?>? UpperBounds) GetParameterBoundariesForPositivePeaks(double? minimalPosition = null, double? maximalPosition = null, double? minimalFWHM = null, double? maximalFWHM = null)

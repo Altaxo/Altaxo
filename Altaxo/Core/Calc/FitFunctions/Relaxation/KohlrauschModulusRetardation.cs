@@ -283,7 +283,7 @@ namespace Altaxo.Calc.FitFunctions.Relaxation
       return result;
     }
 
-    [FitFunctionCreator("Lg10 Kohlrausch Complex (Frequency)", "Retardation/Modulus", 1, 2, 4)]
+    [FitFunctionCreator("Lg10 Kohlrausch Complex (Frequency)", "Retardation/Modulus", 1, 2, 5)]
     [Description("${res:Altaxo.Calc.FitFunctions.Retardation.Modulus.Lg10KohlrauschComplexFrequency}")]
     public static IFitFunction CreateLg10ModulusOfFrequency()
     {
@@ -353,7 +353,7 @@ namespace Altaxo.Calc.FitFunctions.Relaxation
         2 => "tau_retard",
         3 => "beta",
         4 => _invertViscosity ? "sigma" : "eta",
-        _ => throw new NotImplementedException()
+        _ => throw new ArgumentOutOfRangeException(nameof(i), i, "Parameter index out of range.")
       };
     }
 
@@ -366,7 +366,7 @@ namespace Altaxo.Calc.FitFunctions.Relaxation
         2 => 1,
         3 => 1,
         4 => 1E33,
-        _ => throw new NotImplementedException()
+        _ => throw new ArgumentOutOfRangeException(nameof(i), i, "Parameter index out of range.")
       };
     }
 

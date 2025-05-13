@@ -374,7 +374,7 @@ namespace Altaxo.Calc.FitFunctions.Relaxation
     }
 
 
-    [FitFunctionCreator("HavriliakNegami Complex Multi (Omega)", "Retardation/Modulus", 1, 2, 6)]
+    [FitFunctionCreator("HavriliakNegami Complex Multi (Omega)", "Retardation/Modulus", 1, 2, 10)]
     [Description("${res:Altaxo.Calc.FitFunctions.Retardation.Modulus.HavriliakNegamiMultiComplexOmega}")]
     public static IFitFunction CreateModulusFunctionOfOmega()
     {
@@ -390,7 +390,7 @@ namespace Altaxo.Calc.FitFunctions.Relaxation
       return result;
     }
 
-    [FitFunctionCreator("HavriliakNegami Complex Multi (Frequency)", "Retardation/Modulus", 1, 2, 6)]
+    [FitFunctionCreator("HavriliakNegami Complex Multi (Frequency)", "Retardation/Modulus", 1, 2, 10)]
     [Description("${res:Altaxo.Calc.FitFunctions.Retardation.Modulus.HavriliakNegamiMultiComplexFrequency}")]
     public static IFitFunction CreateModulusFunctionOfFrequency()
     {
@@ -480,22 +480,34 @@ namespace Altaxo.Calc.FitFunctions.Relaxation
         var term = i / 4;
         return namearr[idx + 1] + (term > 0 ? string.Format("_{0}", term) : "");
       }
-
-      // flow term
-
-      if (_isDielectricData)
-        return _invertViscosity ? "sigmaDC" : "rhoDC";
+      else if (i == 4 * NumberOfTerms && _useFlowTerm)
+      {
+        // flow term
+        if (_isDielectricData)
+          return _invertViscosity ? "sigmaDC" : "rhoDC";
+        else
+          return _invertViscosity ? "sigma" : "eta";
+      }
       else
-        return _invertViscosity ? "sigma" : "eta";
+      {
+        throw new ArgumentOutOfRangeException(nameof(i), i, "Parameter index out of range.");
+      }
+
     }
 
     public double DefaultParameterValue(int i)
     {
       if (i < (1 + 4 * _numberOfTerms))
+      {
         return 1;
-      else
+      }
+      else if (i == 1 + 4 * NumberOfTerms && _useFlowTerm)
       {
         return _invertViscosity ? 0 : 1E33;
+      }
+      else
+      {
+        throw new ArgumentOutOfRangeException(nameof(i), i, "Parameter index out of range.");
       }
     }
 

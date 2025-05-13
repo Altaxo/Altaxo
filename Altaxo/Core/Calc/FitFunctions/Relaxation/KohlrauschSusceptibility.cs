@@ -45,6 +45,7 @@ namespace Altaxo.Calc.FitFunctions.Relaxation
     private int _numberOfTerms = 1;
     private bool _invertResult;
     private bool _logarithmizeResults;
+    private const int ParametersPerTerm = 3; // tau, beta, delta_chi or delta_epsR
 
     #region Serialization
 
@@ -327,7 +328,7 @@ namespace Altaxo.Calc.FitFunctions.Relaxation
       return result;
     }
 
-    [FitFunctionCreator("Kohlrausch Complex (Omega)", "Retardation/Dielectrics", 1, 2, 4)]
+    [FitFunctionCreator("Kohlrausch Complex (Omega)", "Retardation/Dielectrics", 1, 2, 5)]
     [Description("${res:Altaxo.Calc.FitFunctions.Retardation.Dielectrics.KohlrauschComplexOmega}")]
 
     public static IFitFunction CreateDielectricFunctionOfOmega()
@@ -342,7 +343,7 @@ namespace Altaxo.Calc.FitFunctions.Relaxation
       return result;
     }
 
-    [FitFunctionCreator("Kohlrausch Complex (Frequency)", "Retardation/Dielectrics", 1, 2, 4)]
+    [FitFunctionCreator("Kohlrausch Complex (Frequency)", "Retardation/Dielectrics", 1, 2, 5)]
     [Description("${res:Altaxo.Calc.FitFunctions.Retardation.Dielectrics.KohlrauschComplexFrequency}")]
 
     public static IFitFunction CreateDielectricFunctionOfFrequency()
@@ -411,9 +412,9 @@ namespace Altaxo.Calc.FitFunctions.Relaxation
       get
       {
         if (_useFlowTerm)
-          return 2 + 3 * _numberOfTerms;
+          return 2 + ParametersPerTerm * _numberOfTerms;
         else
-          return 1 + 3 * _numberOfTerms;
+          return 1 + ParametersPerTerm * _numberOfTerms;
       }
     }
 
@@ -422,31 +423,44 @@ namespace Altaxo.Calc.FitFunctions.Relaxation
       var namearr = _isDielectricData ? _parameterNameD : _parameterNameS;
 
       if (0 == i)
-        return namearr[0]; // eps_inf
-
-      --i;
-      if (i < 3 * NumberOfTerms)
       {
+        return namearr[0]; // eps_inf
+      }
+      else if (i < 1 + ParametersPerTerm * _numberOfTerms)
+      {
+        --i;
+
         var idx = i % 3;
         var term = i / 3;
         return namearr[idx + 1] + (term > 0 ? string.Format("_{0}", term) : "");
       }
-
-      // flow term
-
-      if (_isDielectricData)
-        return _invertViscosity ? "sigmaDC" : "rhoDC";
+      else if (_useFlowTerm && i == 1 + ParametersPerTerm * _numberOfTerms)
+      {
+        // flow term
+        if (_isDielectricData)
+          return _invertViscosity ? "sigmaDC" : "rhoDC";
+        else
+          return _invertViscosity ? "sigma" : "eta";
+      }
       else
-        return _invertViscosity ? "sigma" : "eta";
+      {
+        throw new ArgumentOutOfRangeException(nameof(i), i, "Parameter index out of range.");
+      }
     }
 
     public double DefaultParameterValue(int i)
     {
-      if (i < (1 + 3 * _numberOfTerms))
+      if (i < (1 + ParametersPerTerm * _numberOfTerms))
+      {
         return 1;
-      else
+      }
+      else if (i == (1 + ParametersPerTerm * _numberOfTerms))
       {
         return _invertViscosity ? 0 : 1E33;
+      }
+      else
+      {
+        throw new ArgumentOutOfRangeException(nameof(i), i, "Parameter index out of range.");
       }
     }
 

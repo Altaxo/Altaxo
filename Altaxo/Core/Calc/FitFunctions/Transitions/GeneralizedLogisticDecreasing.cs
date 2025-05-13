@@ -227,9 +227,13 @@ namespace Altaxo.Calc.FitFunctions.Transitions
           _ => throw new InvalidProgramException()
         };
       }
-      else
+      else if (k <= _orderOfBackgroundPolynomial)
       {
         return FormattableString.Invariant($"b{k}");
+      }
+      else
+      {
+        throw new ArgumentOutOfRangeException(nameof(i), i, "Parameter index out of range.");
       }
     }
 
@@ -249,9 +253,13 @@ namespace Altaxo.Calc.FitFunctions.Transitions
           _ => throw new InvalidProgramException()
         };
       }
-      else
+      else if (k <= _orderOfBackgroundPolynomial)
       {
         return 0;
+      }
+      else
+      {
+        throw new ArgumentOutOfRangeException(nameof(i), i, "Parameter index out of range.");
       }
     }
 

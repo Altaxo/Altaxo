@@ -24,9 +24,6 @@
 
 using System;
 using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 using Altaxo.Calc.Regression.Nonlinear;
 using Xunit;
 
@@ -67,5 +64,77 @@ namespace Altaxo.Calc.FitFunctions
         }
       }
     }
+
+    /// <summary>
+    /// Collects all fit function creator attributes. Then creates the fit functions and checks if the number of parameters, of the dependent and independent variables is correct.
+    /// </summary>
+    [Fact]
+    public void TestCreatorNumberOfParameters()
+    {
+      IEnumerable<Type> classentries = Altaxo.Main.Services.ReflectionService.GetUnsortedClassTypesHavingAttribute(typeof(FitFunctionClassAttribute), true);
+
+      var list = new SortedList<FitFunctionCreatorAttribute, System.Reflection.MethodInfo>();
+
+      foreach (Type definedtype in classentries)
+      {
+        System.Reflection.MethodInfo[] methods = definedtype.GetMethods(System.Reflection.BindingFlags.Static | System.Reflection.BindingFlags.Public);
+        foreach (System.Reflection.MethodInfo method in methods)
+        {
+          if (method.IsStatic && method.ReturnType != typeof(void) && method.GetParameters().Length == 0)
+          {
+            object[] attribs = method.GetCustomAttributes(typeof(FitFunctionCreatorAttribute), false);
+
+            if (attribs.Length == 0)
+            {
+              continue;
+            }
+
+            // now construct the fit function using this method
+            var o = method.Invoke(null, null);
+
+            Assert.IsAssignableFrom<IFitFunction>(o);
+
+            foreach (FitFunctionCreatorAttribute creatorattrib in attribs)
+            {
+              // check if the number of parameters is correct
+              var fitfunction = (IFitFunction)o;
+              Assert.True(creatorattrib.NumberOfIndependentVariables == fitfunction.NumberOfIndependentVariables, $"{o.GetType()} {method}");
+              Assert.True(creatorattrib.NumberOfDependentVariables == fitfunction.NumberOfDependentVariables, $"{o.GetType()} {method}");
+              Assert.True(creatorattrib.NumberOfParameters == fitfunction.NumberOfParameters, $"{o.GetType()} {method}");
+
+              // check if the number of parameters is correct
+              for (int i = 0; i < fitfunction.NumberOfParameters; i++)
+              {
+                Assert.True(!string.IsNullOrEmpty(fitfunction.ParameterName(i)), $"{o.GetType()} {method} {i}");
+                Assert.True(!double.IsNaN(fitfunction.DefaultParameterValue(i)), $"{o.GetType()} {method} {i}");
+              }
+
+              Exception? exception = null;
+              try
+              {
+                var p = fitfunction.ParameterName(fitfunction.NumberOfParameters);
+              }
+              catch (Exception ex)
+              {
+                exception = ex;
+              }
+              Assert.True(exception is ArgumentOutOfRangeException, $"ParameterName does not throw ArgumentOutOfRangeException {o.GetType()} {method} {exception?.GetType()} {exception?.Message}");
+
+              exception = null;
+              try
+              {
+                var p = fitfunction.DefaultParameterValue(fitfunction.NumberOfParameters);
+              }
+              catch (ArgumentOutOfRangeException ex)
+              {
+                exception = ex;
+              }
+              Assert.True(exception is ArgumentOutOfRangeException, $"DefaultParameterValue does not throw ArgumentOuntOfRangeException {o.GetType()} {method} {exception?.GetType()} {exception?.Message}");
+            }
+          }
+        }
+      }
+    }
+
   }
 }

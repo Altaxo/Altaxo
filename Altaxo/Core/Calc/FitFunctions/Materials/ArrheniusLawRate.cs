@@ -178,17 +178,12 @@ namespace Altaxo.Calc.FitFunctions.Materials
 
     public string ParameterName(int i)
     {
-      switch (i)
+      return i switch
       {
-        case 0:
-          return "y0";
-
-        case 1:
-          return "E_" + _paramEnergyUnit.ToString();
-
-        default:
-          throw new ArgumentOutOfRangeException("i");
-      }
+        0 => "y0",
+        1 => "E_" + _paramEnergyUnit.ToString(),
+        _ => throw new ArgumentOutOfRangeException(nameof(i)),
+      };
     }
 
     public double DefaultParameterValue(int i)
@@ -202,9 +197,9 @@ namespace Altaxo.Calc.FitFunctions.Materials
           var en = new Energy(80000, EnergyRepresentation.JoulePerMole);
           return en.ConvertTo(_paramEnergyUnit).Value;
 
+        default:
+          throw new ArgumentOutOfRangeException(nameof(i));
       }
-
-      return 0;
     }
 
     public IVarianceScaling? DefaultVarianceScaling(int i)

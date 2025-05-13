@@ -105,29 +105,28 @@ namespace Altaxo.Calc.FitFunctions.Transitions
 
     public virtual string ParameterName(int i)
     {
-      switch (i)
+      return i switch
       {
-        case 0:
-          return "y0";
-
-        case 1:
-          return "y1";
-
-        case 2:
-          return "phi_c";
-
-        case 3:
-          return "s";
-
-        case 4:
-          return "t";
-      }
-      return string.Empty;
+        0 => "y0",
+        1 => "y1",
+        2 => "phi_c",
+        3 => "s",
+        4 => "t",
+        _ => throw new ArgumentOutOfRangeException(nameof(i), i, "Parameter index out of range.")
+      };
     }
 
     public double DefaultParameterValue(int i)
     {
-      return i <= 1 ? 0 : i == 2 ? 0.5 : 1;
+      return i switch
+      {
+        0 => 0,
+        1 => 0,
+        2 => 0.5,
+        3 => 1,
+        4 => 1,
+        _ => throw new ArgumentOutOfRangeException(nameof(i), i, "Parameter index out of range.")
+      };
     }
 
     public IVarianceScaling? DefaultVarianceScaling(int i)
@@ -382,24 +381,15 @@ namespace Altaxo.Calc.FitFunctions.Transitions
 
     public override string ParameterName(int i)
     {
-      switch (i)
+      return i switch
       {
-        case 0:
-          return "Lg_y0";
-
-        case 1:
-          return "Lg_y1)";
-
-        case 2:
-          return "phi_c";
-
-        case 3:
-          return "s";
-
-        case 4:
-          return "t";
-      }
-      return string.Empty;
+        0 => "Lg_y0",
+        1 => "Lg_y1)",
+        2 => "phi_c",
+        3 => "s",
+        4 => "t",
+        _ => throw new ArgumentOutOfRangeException(nameof(i), i, "Parameter index out of range.")
+      };
     }
   }
 }

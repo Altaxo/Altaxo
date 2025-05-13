@@ -180,12 +180,18 @@ namespace Altaxo.Calc.FitFunctions.General
 
     public string ParameterName(int i)
     {
-      return i <= _order_n ? FormattableString.Invariant($"a{i}") : FormattableString.Invariant($"b{i - _order_n}");
+      if (i < 0 || i >= NumberOfParameters)
+        throw new ArgumentOutOfRangeException($"Parameter index {i} is out of range [0..{NumberOfParameters - 1}]");
+      else
+        return i <= _order_n ? FormattableString.Invariant($"a{i}") : FormattableString.Invariant($"b{i - _order_n}");
     }
 
     public double DefaultParameterValue(int i)
     {
-      return 0;
+      if (i < 0 || i >= NumberOfParameters)
+        throw new ArgumentOutOfRangeException($"Parameter index {i} is out of range [0..{NumberOfParameters - 1}]");
+      else
+        return 0;
     }
 
     public IVarianceScaling? DefaultVarianceScaling(int i)

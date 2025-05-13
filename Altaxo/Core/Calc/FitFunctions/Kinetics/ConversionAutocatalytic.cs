@@ -108,7 +108,7 @@ namespace Altaxo.Calc.FitFunctions.Kinetics
     {
       get
       {
-        return 5;
+        return 6;
       }
     }
 
@@ -135,7 +135,7 @@ namespace Altaxo.Calc.FitFunctions.Kinetics
         3 => "k2",
         4 => "m",
         5 => "n",
-        _ => throw new InvalidOperationException()
+        _ => throw new ArgumentOutOfRangeException(nameof(i))
       };
     }
 
@@ -150,7 +150,7 @@ namespace Altaxo.Calc.FitFunctions.Kinetics
         3 => 1,
         4 => 1,
         5 => 1,
-        _ => throw new InvalidOperationException()
+        _ => throw new ArgumentOutOfRangeException(nameof(i))
       };
     }
 

@@ -164,18 +164,38 @@ namespace Altaxo.Calc.FitFunctions.General
     {
       if (i == 0)
         return "y0";
+      else if (i - 1 < NumberOfTerms * 2)
+      {
+        return ((i - 1) % 2) switch
+        {
+          0 => FormattableString.Invariant($"a{(i - 1) / 2}"),
+          1 => FormattableString.Invariant($"Tau{(i - 1) / 2}"),
+          _ => throw new InvalidProgramException()
+        };
+      }
       else
-        return (i - 1) % 2 == 0 ? FormattableString.Invariant($"a{(i - 1) / 2}") : FormattableString.Invariant($"Tau{(i - 1) / 2}");
+      {
+        throw new ArgumentOutOfRangeException($"{nameof(i)} must be less than {NumberOfParameters}");
+      }
     }
 
     public double DefaultParameterValue(int i)
     {
       if (i == 0)
         return 0;
-      else if ((i - 1) % 2 == 0)
-        return 0;
+      else if (i - 1 < NumberOfTerms * 2)
+      {
+        return ((i - 1) % 2) switch
+        {
+          0 => 0,
+          1 => RMath.Pow(10, (i - 1) / 2),
+          _ => throw new InvalidProgramException()
+        };
+      }
       else
-        return RMath.Pow(10, (i - 1) / 2);
+      {
+        throw new ArgumentOutOfRangeException($"{nameof(i)} must be less than {NumberOfParameters}");
+      }
     }
 
     public IVarianceScaling? DefaultVarianceScaling(int i)

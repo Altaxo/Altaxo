@@ -224,9 +224,13 @@ namespace Altaxo.Calc.FitFunctions.Transitions
           _ => throw new InvalidProgramException()
         };
       }
-      else
+      else if (k <= _orderOfBackgroundPolynomial)
       {
         return FormattableString.Invariant($"b{k}");
+      }
+      else
+      {
+        throw new ArgumentOutOfRangeException(nameof(i), i, "Parameter index out of range.");
       }
     }
 
@@ -234,10 +238,24 @@ namespace Altaxo.Calc.FitFunctions.Transitions
     public double DefaultParameterValue(int i)
     {
       int k = i - 3 * _numberOfTerms;
-      if (k < 0 && i % 3 == 2)
-        return 1;
-      else
+      if (k < 0)
+      {
+        return (i % 3) switch
+        {
+          0 => 0,
+          1 => 0,
+          2 => 1,
+          _ => throw new InvalidProgramException()
+        };
+      }
+      else if (k <= _orderOfBackgroundPolynomial)
+      {
         return 0;
+      }
+      else
+      {
+        throw new ArgumentOutOfRangeException(nameof(i), i, "Parameter index out of range.");
+      }
     }
 
     public IVarianceScaling? DefaultVarianceScaling(int i)

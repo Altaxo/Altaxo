@@ -72,7 +72,7 @@ namespace Altaxo.Calc.FitFunctions.Kinetics
     /// Creates the fit function.
     /// </summary>
     /// <returns>The fit function.</returns>
-    [FitFunctionCreator("ConversionNthOrder", "Kinetics", 1, 1, 3)]
+    [FitFunctionCreator("ConversionNthOrder", "Kinetics", 1, 1, 4)]
     [System.ComponentModel.Description("${res:Altaxo.Calc.FitFunctions.Kinetics.ConversionNthOrder}")]
     public static IFitFunction CreateFitFunction()
     {
@@ -132,7 +132,7 @@ namespace Altaxo.Calc.FitFunctions.Kinetics
         1 => "A0",
         2 => "k",
         3 => "n",
-        _ => throw new InvalidOperationException()
+        _ => throw new ArgumentOutOfRangeException(nameof(i))
       };
     }
 
@@ -145,7 +145,7 @@ namespace Altaxo.Calc.FitFunctions.Kinetics
         1 => 1,
         2 => 1,
         3 => 1,
-        _ => throw new InvalidOperationException()
+        _ => throw new ArgumentOutOfRangeException(nameof(i))
       };
     }
 

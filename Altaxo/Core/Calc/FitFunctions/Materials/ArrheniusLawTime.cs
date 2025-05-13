@@ -187,7 +187,7 @@ namespace Altaxo.Calc.FitFunctions.Materials
           return "E_" + _paramEnergyUnit.ToString();
 
         default:
-          throw new ArgumentOutOfRangeException("i");
+          throw new ArgumentOutOfRangeException(nameof(i));
       }
     }
 
@@ -201,9 +201,10 @@ namespace Altaxo.Calc.FitFunctions.Materials
         case 1:
           var en = new Energy(80000, EnergyRepresentation.JoulePerMole);
           return en.ConvertTo(_paramEnergyUnit).Value;
-      }
 
-      return 0;
+        default:
+          throw new ArgumentOutOfRangeException(nameof(i));
+      }
     }
 
     public IVarianceScaling? DefaultVarianceScaling(int i)

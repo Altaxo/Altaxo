@@ -372,7 +372,7 @@ namespace Altaxo.Calc.FitFunctions.Relaxation
         2 => "tau_relax",
         3 => "beta",
         4 => _invertViscosity ? "sigma" : "eta",
-        _ => throw new NotImplementedException()
+        _ => throw new ArgumentOutOfRangeException(nameof(i), i, "Parameter index out of range.")
       };
     }
 
@@ -385,7 +385,7 @@ namespace Altaxo.Calc.FitFunctions.Relaxation
         2 => 1,
         3 => 1,
         4 => _invertViscosity ? 0 : 1E33,
-        _ => throw new NotImplementedException()
+        _ => throw new ArgumentOutOfRangeException(nameof(i), i, "Parameter index out of range.")
       };
     }
 

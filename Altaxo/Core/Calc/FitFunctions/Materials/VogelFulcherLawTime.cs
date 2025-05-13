@@ -223,7 +223,7 @@ namespace Altaxo.Calc.FitFunctions.Materials
           return "T0_" + _temperatureUnitOfT0.ToString();
 
         default:
-          throw new ArgumentOutOfRangeException("i");
+          throw new ArgumentOutOfRangeException(nameof(i));
       }
     }
 
@@ -240,9 +240,10 @@ namespace Altaxo.Calc.FitFunctions.Materials
 
         case 2: // T0
           return 0;
-      }
 
-      return 0;
+        default:
+          throw new ArgumentOutOfRangeException(nameof(i));
+      }
     }
 
     public IVarianceScaling? DefaultVarianceScaling(int i)

@@ -226,7 +226,7 @@ namespace Altaxo.Calc.FitFunctions.Relaxation
         return "HavriliakNegami Complex " + (_useFrequencyInsteadOmega ? "(Frequency)" : "(Omega)");
     }
 
-    [FitFunctionCreator("HavriliakNegami Complex (Omega)", "Relaxation/Modulus", 1, 2, 5)]
+    [FitFunctionCreator("HavriliakNegami Complex (Omega)", "Relaxation/Modulus", 1, 2, 6)]
     [Description("${res:Altaxo.Calc.FitFunctions.Relaxation.Modulus.HavriliakNegamiModulusRelaxationOmega}")]
     public static IFitFunction CreateModulusOfOmega()
     {
@@ -241,7 +241,7 @@ namespace Altaxo.Calc.FitFunctions.Relaxation
       return result;
     }
 
-    [FitFunctionCreator("Lg10 HavriliakNegami Complex (Omega)", "Relaxation/Modulus", 1, 2, 5)]
+    [FitFunctionCreator("Lg10 HavriliakNegami Complex (Omega)", "Relaxation/Modulus", 1, 2, 6)]
     [Description("${res:Altaxo.Calc.FitFunctions.Relaxation.Modulus.Lg10HavriliakNegamiModulusRelaxationOmega}")]
     public static IFitFunction CreateLg10ModulusOfOmega()
     {
@@ -256,7 +256,7 @@ namespace Altaxo.Calc.FitFunctions.Relaxation
       return result;
     }
 
-    [FitFunctionCreator("HavriliakNegami Complex (Frequency)", "Relaxation/Modulus", 1, 2, 5)]
+    [FitFunctionCreator("HavriliakNegami Complex (Frequency)", "Relaxation/Modulus", 1, 2, 6)]
     [Description("${res:Altaxo.Calc.FitFunctions.Relaxation.Modulus.HavriliakNegamiModulusRelaxationFrequency}")]
     public static IFitFunction CreateModulusOfFrequency()
     {
@@ -271,7 +271,7 @@ namespace Altaxo.Calc.FitFunctions.Relaxation
       return result;
     }
 
-    [FitFunctionCreator("Lg10 HavriliakNegami Complex (Frequency)", "Relaxation/Modulus", 1, 2, 5)]
+    [FitFunctionCreator("Lg10 HavriliakNegami Complex (Frequency)", "Relaxation/Modulus", 1, 2, 6)]
     [Description("${res:Altaxo.Calc.FitFunctions.Relaxation.Modulus.Lg10HavriliakNegamiModulusRelaxationFrequency}")]
     public static IFitFunction CreateLg10ModulusOfFrequency()
     {
@@ -345,7 +345,7 @@ namespace Altaxo.Calc.FitFunctions.Relaxation
         3 => "alpha",
         4 => "gamma",
         5 => _invertViscosity ? "sigma" : "eta",
-        _ => throw new NotImplementedException()
+        _ => throw new ArgumentOutOfRangeException(nameof(i), i, "Parameter index out of range.")
       };
     }
 
@@ -359,7 +359,7 @@ namespace Altaxo.Calc.FitFunctions.Relaxation
         3 => 1,
         4 => 1,
         5 => _invertViscosity ? 0 : 1E33,
-        _ => throw new NotImplementedException()
+        _ => throw new ArgumentOutOfRangeException(nameof(i), i, "Parameter index out of range.")
       };
     }
 

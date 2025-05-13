@@ -199,9 +199,13 @@ namespace Altaxo.Calc.FitFunctions.Peaks
           _ => throw new InvalidProgramException()
         };
       }
-      else
+      else if (k <= OrderOfBaselinePolynomial)
       {
         return FormattableString.Invariant($"b{k}");
+      }
+      else
+      {
+        throw new ArgumentOutOfRangeException(nameof(i), $"Parameter index {i} is out of range.");
       }
     }
 
@@ -216,13 +220,18 @@ namespace Altaxo.Calc.FitFunctions.Peaks
           1 => 0, // position
           2 => 1, // width
           3 => 1, // m (Lorentzian),
-          _ => 0
+          _ => throw new InvalidProgramException()
         };
       }
-      else
+      else if (k <= OrderOfBaselinePolynomial)
       {
         return 0; // no baseline
       }
+      else
+      {
+        throw new ArgumentOutOfRangeException(nameof(i), $"Parameter index {i} is out of range.");
+      }
+
     }
     public IVarianceScaling? DefaultVarianceScaling(int i)
     {
@@ -348,8 +357,8 @@ namespace Altaxo.Calc.FitFunctions.Peaks
       return new double[NumberOfParametersPerPeak] { height, position, w, 1 }; // Parameters for the Lorentz limit
     }
 
-    const double DefaultMinWidth = 1E-81; // Math.Pow(double.Epsilon, 0.25);
-    const double DefaultMaxWidth = 1E+77; // Math.Pow(double.MaxValue, 0.25);
+    private const double DefaultMinWidth = 1E-81; // Math.Pow(double.Epsilon, 0.25);
+    private const double DefaultMaxWidth = 1E+77; // Math.Pow(double.MaxValue, 0.25);
 
 
     /// <inheritdoc/>

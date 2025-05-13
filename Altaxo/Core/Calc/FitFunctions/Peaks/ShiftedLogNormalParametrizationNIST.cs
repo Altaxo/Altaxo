@@ -269,17 +269,21 @@ namespace Altaxo.Calc.FitFunctions.Peaks
           _ => throw new InvalidProgramException()
         };
       }
-      else
+      else if (k <= OrderOfBaselinePolynomial)
       {
         return FormattableString.Invariant($"b{k}");
+      }
+      else
+      {
+        throw new ArgumentOutOfRangeException(nameof(i), $"Parameter index {i} is out of range.");
       }
     }
 
     public double DefaultParameterValue(int i)
     {
-      if (i >= NumberOfParametersPerPeak * _numberOfTerms)
-        return 0; // Polynomials
-      else
+      int k = i - NumberOfParametersPerPeak * _numberOfTerms;
+      if (k < 0)
+      {
         return (i % NumberOfParametersPerPeak) switch
         {
           0 => 1, // height
@@ -288,7 +292,17 @@ namespace Altaxo.Calc.FitFunctions.Peaks
           3 => 1, // Shape
           _ => throw new InvalidProgramException(),
         };
+      }
+      else if (k <= OrderOfBaselinePolynomial)
+      {
+        return 0; // no baseline
+      }
+      else
+      {
+        throw new ArgumentOutOfRangeException(nameof(i), $"Parameter index {i} is out of range.");
+      }
     }
+
 
     public IVarianceScaling? DefaultVarianceScaling(int i)
     {

@@ -199,11 +199,17 @@ namespace Altaxo.Calc.FitFunctions.General
 
     public string ParameterName(int i)
     {
+      if (i < 0 || i > _order_n + _order_m)
+        throw new ArgumentOutOfRangeException($"Parameter index {i} is out of range [0, {_order_n + _order_m}]");
+
       return i <= _order_n ? FormattableString.Invariant($"a{i}") : FormattableString.Invariant($"b{i - _order_n}");
     }
 
     public double DefaultParameterValue(int i)
     {
+      if (i < 0 || i > _order_n + _order_m)
+        throw new ArgumentOutOfRangeException($"Parameter index {i} is out of range [0, {_order_n + _order_m}]");
+
       return 0;
     }
 

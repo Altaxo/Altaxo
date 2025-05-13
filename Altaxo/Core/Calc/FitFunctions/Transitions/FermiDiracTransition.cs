@@ -114,44 +114,26 @@ namespace Altaxo.Calc.FitFunctions.Transitions
 
     public string ParameterName(int i)
     {
-      switch (i)
+      return i switch
       {
-        case 0:
-          return "y0";
-
-        case 1:
-          return "y1";
-
-        case 2:
-          return "pc";
-
-        case 3:
-          return "w";
-
-        default:
-          return "?";
-      }
+        0 => "y0",
+        1 => "y1",
+        2 => "pc",
+        3 => "w",
+        _ => throw new ArgumentOutOfRangeException(nameof(i)),
+      };
     }
 
     public double DefaultParameterValue(int i)
     {
-      switch (i)
+      return i switch
       {
-        case 0:
-          return 1;
-
-        case 1:
-          return 10;
-
-        case 2:
-          return 0.5;
-
-        case 3:
-          return 0.5;
-
-        default:
-          return 0;
-      }
+        0 => 1,
+        1 => 10,
+        2 => 0.5,
+        3 => 0.5,
+        _ => throw new ArgumentOutOfRangeException(nameof(i)),
+      };
     }
 
     public abstract IVarianceScaling DefaultVarianceScaling(int i);

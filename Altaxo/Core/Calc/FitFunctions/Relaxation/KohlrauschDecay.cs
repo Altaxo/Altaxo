@@ -40,6 +40,8 @@ namespace Altaxo.Calc.FitFunctions.Relaxation
     private int _numberOfRelaxations = 1;
     private bool _logarithmizeResult;
 
+    public const int ParametersPerTerm = 3; // amplitude, tau, beta
+
     #region Serialization
 
     [Altaxo.Serialization.Xml.XmlSerializationSurrogateFor("AltaxoBase", "Altaxo.Calc.FitFunctions.Relaxation.KohlrauschDecay", 0)]
@@ -149,7 +151,7 @@ namespace Altaxo.Calc.FitFunctions.Relaxation
     {
       get
       {
-        return 1 + 3 * _numberOfRelaxations;
+        return 1 + ParametersPerTerm * _numberOfRelaxations;
       }
     }
 
@@ -169,29 +171,45 @@ namespace Altaxo.Calc.FitFunctions.Relaxation
     {
       var namearr = _parameterNames;
       if (0 == i)
+      {
         return namearr[0]; // eps_inf
-
-      --i;
-      var idx = i % 3;
-      var term = i / 3;
-      return namearr[idx + 1] + (term > 0 ? string.Format("_{0}", term + 1) : "");
+      }
+      else if (i < 1 + ParametersPerTerm * _numberOfRelaxations)
+      {
+        var idx = (i - 1) % ParametersPerTerm;
+        var term = (i - 1) / ParametersPerTerm;
+        return namearr[idx + 1] + (term > 0 ? string.Format("_{0}", term + 1) : "");
+      }
+      else
+      {
+        throw new ArgumentOutOfRangeException(nameof(i), "Parameter index out of range.");
+      }
     }
 
     public double DefaultParameterValue(int i)
     {
       if (0 == i)
+      {
         return 0; // offset
-      --i;
-      var idx = i % 3;
-      var term = i / 3;
+      }
+      else if (i < 1 + ParametersPerTerm * _numberOfRelaxations)
+      {
+        --i;
+        var idx = i % ParametersPerTerm;
+        var term = i / ParametersPerTerm;
 
-      if (term == 0)
-        return 1; // 1 for all parameters in relaxation term1
+        if (term == 0)
+          return 1; // 1 for all parameters in relaxation term1
 
-      if (idx == 1 || idx == 2)
-        return 1; // 1 for all taus and betas
+        if (idx == 1 || idx == 2)
+          return 1; // 1 for all taus and betas
 
-      return 0; // 0 for all amplitudes
+        return 0; // 0 for all amplitudes
+      }
+      else
+      {
+        throw new ArgumentOutOfRangeException(nameof(i), "Parameter index out of range.");
+      }
     }
 
     public IVarianceScaling? DefaultVarianceScaling(int i)

@@ -102,7 +102,7 @@ namespace Altaxo.Calc.FitFunctions.Probability
       return $"{this.GetType().Name} NumberOfTerms={NumberOfTerms} OrderOfBaseline={OrderOfBaselinePolynomial}";
     }
 
-    [FitFunctionCreator("VoigtArea", "General", 1, 1, NumberOfParametersPerPeak)]
+    [FitFunctionCreator("VoigtArea", "General", 1, 1, NumberOfParametersPerPeak + 1)]
     [System.ComponentModel.Description("${res:Altaxo.Calc.FitFunctions.Probability.VoigtArea}")]
     public static IFitFunction Create_1_0()
     {
@@ -208,19 +208,38 @@ namespace Altaxo.Calc.FitFunctions.Probability
           _ => throw new InvalidProgramException()
         };
       }
-      else
+      else if (k <= OrderOfBaselinePolynomial)
       {
         return FormattableString.Invariant($"b{k}");
+      }
+      else
+      {
+        throw new ArgumentOutOfRangeException(nameof(i), $"Parameter index {i} is out of range.");
       }
     }
 
     public double DefaultParameterValue(int i)
     {
       int k = i - NumberOfParametersPerPeak * _numberOfTerms;
-      if (k < 0 && i % NumberOfParametersPerPeak == 2)
-        return 1;
+      if (k < 0)
+      {
+        return (i % NumberOfParametersPerPeak) switch
+        {
+          0 => 0,
+          1 => 0,
+          2 => 1,
+          3 => 0,
+          _ => throw new InvalidProgramException()
+        };
+      }
+      else if (k <= OrderOfBaselinePolynomial)
+      {
+        return 0; // no baseline
+      }
       else
-        return 0;
+      {
+        throw new ArgumentOutOfRangeException(nameof(i), $"Parameter index {i} is out of range.");
+      }
     }
 
     public IVarianceScaling? DefaultVarianceScaling(int i)
