@@ -194,7 +194,7 @@ namespace Altaxo.Main.Properties
     {
       get
       {
-        return _properties.Count + base.Count;
+        return _propertiesLazyLoaded.Count + base.Count;
       }
     }
 
