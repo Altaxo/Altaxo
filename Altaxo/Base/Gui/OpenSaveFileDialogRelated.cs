@@ -45,9 +45,10 @@ namespace Altaxo.Gui
     ///	options.AddFilter("*.*", "All files (*.*)");
     /// </code>
     /// </example>
-    public void AddFilter(string filter, string description)
+    public OpenFileOptions AddFilter(string filter, string description)
     {
       _filterList.Add(new KeyValuePair<string, string>(filter, description));
+      return this;
     }
 
     /// <summary>
@@ -139,6 +140,12 @@ namespace Altaxo.Gui
     /// The default extension.
     /// </value>
     public string DefaultExt { get; set; } = string.Empty;
+
+    public new SaveFileOptions AddFilter(string filter, string description)
+    {
+      base.AddFilter(filter, description);
+      return this;
+    }
   }
 
   public class FolderChoiceOptions
