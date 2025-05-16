@@ -3728,4 +3728,128 @@ in which
 ---
 </value>
   </data>
+  <data name="Viscosity.BinghamPlasticModel" xml:space="preserve">
+    <value>##### Bingham plastic model
+
+This model describes the dependence of the viscosity $\eta$ on the shear rate $\dot{\gamma}$ according to the following  equation:
+
+$$
+\eta(\dot{\gamma}) = \frac{\tau_0}{\dot{\gamma}} + \eta_p
+$$
+
+in which:
+- $\tau_0$: yield stress
+- $\eta_p$: viscosity (limes for high shear rates) 
+
+^^^
+![](res:Altaxo.Calc.FitFunctions.Viscosity.BinghamPlasticModel.Fig1.png){width=15cm}  
+^^^ Fig. 1: Bingham plastic model with $\tau_0=10^{4}$ and $\eta_p=1$.
+---
+References:
+- Bingham, E.C. (1916). "An Investigation of the Laws of Plastic Flow". Bulletin of the Bureau of Standards. 13 (2): 309–353. doi:10.6028/bulletin.304. hdl:2027/mdp.39015086559054
+
+
+
+</value>
+  </data>
+  <data name="Viscosity.CarreauYasudaModel" xml:space="preserve">
+    <value>##### Carreau-Yasuda model
+
+This model describes the dependence of the viscosity $\eta$ on the shear rate $\dot{\gamma}$ according to the following  equation:
+
+$$
+\eta(\dot{\gamma}) = \eta_{\infty} + (\eta_0 - \eta_{\infty})\left ( 1+(\lambda \dot{\gamma})^a \right )^{\frac{n-1}{a}}
+$$
+
+in which:
+- $\eta_0$ : zero shear viscosity
+- $\eta_{\infty}$ : terminal viscosity at very high shear rates ($\eta_{\infty} &lt; \eta_0$)
+- $\lambda$: parameter (inverse characteristic viscosity)
+- $a$, $n$: exponents ($a&gt;0$, $n&lt;1$)
+
+In the special case $n=1-a$ this model is equivalent to the Cross model.
+
+^^^
+![](res:Altaxo.Calc.FitFunctions.Viscosity.CarreauYasudaModel.Fig1.png){width=15cm}  
+^^^ Fig. 1: Carreau-Yasuda model with $\eta_0=10^{4}$, $\eta_{\infty}=1$, $\lambda=0.01$, $a=2$ and $n=0.3$.
+---
+References:
+- Yasuda K, Armstrong RC, Cohen RE (1981) Shear flow properties of concentrated solutions of linear and star branched polystyrenes. Rheol Acta 20:163–178
+</value>
+  </data>
+  <data name="Viscosity.CrossModel" xml:space="preserve">
+    <value>##### Cross model
+
+This model describes the dependence of the viscosity $\eta$ on the shear rate $\dot{\gamma}$ according to the following  equation:
+
+$$
+\eta(\dot{\gamma}) = \eta_{\infty} + \frac{\eta_0 - \eta_{\infty}}{1+(\lambda \dot{\gamma})^a}
+$$
+
+in which:
+- $\eta_0$ : zero shear viscosity
+- $\eta_{\infty}$ : terminal viscosity at very high shear rates ($\eta_{\infty} &lt; \eta_0$)
+- $\lambda, a$ : parameters, $\lambda&gt;0$, $a&gt;0$
+
+^^^
+![](res:Altaxo.Calc.FitFunctions.Viscosity.CrossModel.Fig1.png){width=15cm}  
+^^^ Fig. 1: Cross model with $\eta_0=10^{4}$, $\eta_{\infty}=1$, $\lambda=0.01$ and $a=2$.
+---
+References:
+- Cross MM (1965) Rheology of non-Newtonian fluids—a new flow equation for pseudoplastic systems. J Colloid Sci 20:417–437
+- Cross MM (1979) Relation between viscoelasticity and shear-thinning behaviour in liquids. Rheol Acta 18:609–614
+
+</value>
+  </data>
+  <data name="Viscosity.HerschelBulkleyModel" xml:space="preserve">
+    <value>##### Herschel-Bulkley model
+
+This model describes the dependence of the viscosity $\eta$ on the shear rate $\dot{\gamma}$ according to the following  equation:
+
+$$
+\eta(\dot{\gamma}) = \frac{\tau_0}{\dot{\gamma}} + K \dot{\gamma}^{(n-1)}
+$$
+
+in which:
+- $\tau_0$: yield stress
+- $K$: pre-factor
+- $n$: exponent ($n&lt;1$)
+
+&gt; Note: With $n=1$ and $K=\eta_p$ this model is equivalent to the Bingham plastic model.
+
+^^^
+![](res:Altaxo.Calc.FitFunctions.Viscosity.HerschelBulkleyModel.Fig1.png){width=15cm}  
+^^^ Fig. 1: Herschel-Bulkley model with $\tau_0=10^{4}$, $K=10^{4}$  and $n=0.5$.
+---
+References:
+- Herschel, W.H.; Bulkley, R. (1926), "Konsistenzmessungen von Gummi-Benzollösungen", Kolloid Zeitschrift, 39 (4): 291–300, doi:10.1007/BF01432034, S2CID 97549389
+
+
+
+</value>
+  </data>
+  <data name="Viscosity.PowerLawModel" xml:space="preserve">
+    <value>##### Power law model
+
+This model describes the dependence of the viscosity $\eta$ on the shear rate $\dot{\gamma}$ according to the following  equation:
+
+$$
+\eta(\dot{\gamma}) = K \dot{\gamma}^{(n-1)}
+$$
+
+in which:
+- $K$ : pre-factor
+- $n$: exponent ($n&lt;1$)
+
+^^^
+![](res:Altaxo.Calc.FitFunctions.Viscosity.PowerLawModel.Fig1.png){width=15cm}  
+^^^ Fig. 1: Power law model with $K=10^{4}$ and $n=0.5$.
+---
+References:
+- Markus Reiner et al., "Viskosimetrische Untersuchungen an Lösungen hochmolekularer Naturstoffe", Kolloid Zeitschrift (1933) 65 (1) 44-62
+
+
+
+</value>
+  </data>
 </root>

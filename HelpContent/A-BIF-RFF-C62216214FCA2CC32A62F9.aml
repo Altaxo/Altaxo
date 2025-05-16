@@ -25,15 +25,15 @@ Previous section: <link xlink:href="052F8E33410F287DB9D621D604778F69">Fit functi
 <para>
 This function models the complex dynamic modulus in dependence on the frequency as:
 </para>
-<markup><a href="ACAC6A80-7CE0-4CB9-B36C-B2FB6ACAB027.htm#BE7A7DA80288CBD6FA61512A1EE36062"><img src="../media/BE7A7DA80288CBD6FA61512A1EE36062.png" width="403" height="36"></img></a></markup>
+<markup><a href="ACAC6A80-7CE0-4CB9-B36C-B2FB6ACAB027.htm#66B13858FD0EC6E6169DEC986991A5BD"><img src="../media/66B13858FD0EC6E6169DEC986991A5BD.png" width="403" height="36"></img></a></markup>
 
 <para>
-or with a generalized flow term (both equations are equivalent if <markup><a href="ACAC6A80-7CE0-4CB9-B36C-B2FB6ACAB027.htm#50B1474D8FD6F792DFC01CFE00EFEE88"><img src="../media/50B1474D8FD6F792DFC01CFE00EFEE88.png" width="36" height="12" align="middle"></img></a></markup>) :
+or with a generalized flow term (both equations are equivalent if <markup><a href="ACAC6A80-7CE0-4CB9-B36C-B2FB6ACAB027.htm#D04CC2CA1747C29DDC472AF42CC86EF1"><img src="../media/D04CC2CA1747C29DDC472AF42CC86EF1.png" width="36" height="12" align="middle"></img></a></markup>) :
 </para>
-<markup><a href="ACAC6A80-7CE0-4CB9-B36C-B2FB6ACAB027.htm#D0C934246F92FF89964B10E3AF0E6FA7"><img src="../media/D0C934246F92FF89964B10E3AF0E6FA7.png" width="449" height="50"></img></a></markup>
+<markup><a href="ACAC6A80-7CE0-4CB9-B36C-B2FB6ACAB027.htm#B72726048AB9B7539F2D5F539923E615"><img src="../media/B72726048AB9B7539F2D5F539923E615.png" width="449" height="50"></img></a></markup>
 
 <para>
-with the frequency <markup><a href="ACAC6A80-7CE0-4CB9-B36C-B2FB6ACAB027.htm#2A199B72CD7E9D0B67178EAA44A43EF9"><img src="../media/2A199B72CD7E9D0B67178EAA44A43EF9.png" width="7" height="14" align="middle"></img></a></markup>  being the independent variable, and <markup><a href="ACAC6A80-7CE0-4CB9-B36C-B2FB6ACAB027.htm#7E9CB98732A24BA274625D7166F5DC15"><img src="../media/7E9CB98732A24BA274625D7166F5DC15.png" width="38" height="17" align="bottom"></img></a></markup> and <markup><a href="ACAC6A80-7CE0-4CB9-B36C-B2FB6ACAB027.htm#8352B193A8B99128593FDAEC94E67A0D"><img src="../media/8352B193A8B99128593FDAEC94E67A0D.png" width="41" height="17" align="bottom"></img></a></markup> being the dependent variables, namely the real and imaginary part of the complex dynamic modulus <markup><a href="ACAC6A80-7CE0-4CB9-B36C-B2FB6ACAB027.htm#339BE51F6F1A624E84DD2CBCB97F4D71"><img src="../media/339BE51F6F1A624E84DD2CBCB97F4D71.png" width="41" height="16" align="bottom"></img></a></markup>.
+with the frequency <markup><a href="ACAC6A80-7CE0-4CB9-B36C-B2FB6ACAB027.htm#13B763A150BF87133FFDB7AA40158ACC"><img src="../media/13B763A150BF87133FFDB7AA40158ACC.png" width="7" height="14" align="middle"></img></a></markup>  being the independent variable, and <markup><a href="ACAC6A80-7CE0-4CB9-B36C-B2FB6ACAB027.htm#234F0446C580459E7E6FDA69E23C95B0"><img src="../media/234F0446C580459E7E6FDA69E23C95B0.png" width="38" height="17" align="bottom"></img></a></markup> and <markup><a href="ACAC6A80-7CE0-4CB9-B36C-B2FB6ACAB027.htm#AF35514881202C11B20DF57C04F59E25"><img src="../media/AF35514881202C11B20DF57C04F59E25.png" width="41" height="17" align="bottom"></img></a></markup> being the dependent variables, namely the real and imaginary part of the complex dynamic modulus <markup><a href="ACAC6A80-7CE0-4CB9-B36C-B2FB6ACAB027.htm#E7DB27B74536AFA08C6E221BF0A99AF5"><img src="../media/E7DB27B74536AFA08C6E221BF0A99AF5.png" width="41" height="16" align="bottom"></img></a></markup>.
 </para>
 
 <para>
@@ -45,35 +45,35 @@ The parameters are:
 <listItem>
 
 <para>
-<markup><a href="ACAC6A80-7CE0-4CB9-B36C-B2FB6ACAB027.htm#C786D2F3F30157E1B705ED28A558404E"><img src="../media/C786D2F3F30157E1B705ED28A558404E.png" width="20" height="13" align="middle"></img></a></markup> : low frequency modulus limit
+<markup><a href="ACAC6A80-7CE0-4CB9-B36C-B2FB6ACAB027.htm#5A86C002C48D07CDC17F5AA3F906A7B4"><img src="../media/5A86C002C48D07CDC17F5AA3F906A7B4.png" width="20" height="13" align="middle"></img></a></markup> : low frequency modulus limit
 </para>
 </listItem>
 
 <listItem>
 
 <para>
-<markup><a href="ACAC6A80-7CE0-4CB9-B36C-B2FB6ACAB027.htm#DE940E41F516E3A901A246CBB8714205"><img src="../media/DE940E41F516E3A901A246CBB8714205.png" width="25" height="13" align="middle"></img></a></markup> : high frequency modulus limit
+<markup><a href="ACAC6A80-7CE0-4CB9-B36C-B2FB6ACAB027.htm#37C494001947111A3EB8B7F199E0E39C"><img src="../media/37C494001947111A3EB8B7F199E0E39C.png" width="25" height="13" align="middle"></img></a></markup> : high frequency modulus limit
 </para>
 </listItem>
 
 <listItem>
 
 <para>
-<markup><a href="ACAC6A80-7CE0-4CB9-B36C-B2FB6ACAB027.htm#28EC17121C89EBFA982608CD3F98C1BD"><img src="../media/28EC17121C89EBFA982608CD3F98C1BD.png" width="7" height="8" align="middle"></img></a></markup> : relaxation time
+<markup><a href="ACAC6A80-7CE0-4CB9-B36C-B2FB6ACAB027.htm#BFA313332602014B62FEEF342DFA23F5"><img src="../media/BFA313332602014B62FEEF342DFA23F5.png" width="7" height="8" align="middle"></img></a></markup> : relaxation time
 </para>
 </listItem>
 
 <listItem>
 
 <para>
-<markup><a href="ACAC6A80-7CE0-4CB9-B36C-B2FB6ACAB027.htm#2C77A09812900D70AB98273FC4626605"><img src="../media/2C77A09812900D70AB98273FC4626605.png" width="10" height="8" align="middle"></img></a></markup>, <markup><a href="ACAC6A80-7CE0-4CB9-B36C-B2FB6ACAB027.htm#3A94731BF74551B8E1D2F433B38EA40C"><img src="../media/3A94731BF74551B8E1D2F433B38EA40C.png" width="8" height="10" align="bottom"></img></a></markup> : shape exponents (usually <markup><a href="ACAC6A80-7CE0-4CB9-B36C-B2FB6ACAB027.htm#2C079671313FD28CD0F480904B56E305"><img src="../media/2C079671313FD28CD0F480904B56E305.png" width="65" height="13" align="middle"></img></a></markup> and <markup><a href="ACAC6A80-7CE0-4CB9-B36C-B2FB6ACAB027.htm#5D705B98A0875D8C5E437975AB3F92AC"><img src="../media/5D705B98A0875D8C5E437975AB3F92AC.png" width="63" height="14" align="bottom"></img></a></markup>)
+<markup><a href="ACAC6A80-7CE0-4CB9-B36C-B2FB6ACAB027.htm#113355CB1E8ACA7E77699CB7EC6DCB2D"><img src="../media/113355CB1E8ACA7E77699CB7EC6DCB2D.png" width="10" height="8" align="middle"></img></a></markup>, <markup><a href="ACAC6A80-7CE0-4CB9-B36C-B2FB6ACAB027.htm#0CAC28E03B356FE9EF532183700F9A62"><img src="../media/0CAC28E03B356FE9EF532183700F9A62.png" width="8" height="10" align="bottom"></img></a></markup> : shape exponents (usually <markup><a href="ACAC6A80-7CE0-4CB9-B36C-B2FB6ACAB027.htm#A2B0EB51B95EC0FCE6271B5CCAEEBB59"><img src="../media/A2B0EB51B95EC0FCE6271B5CCAEEBB59.png" width="65" height="13" align="middle"></img></a></markup> and <markup><a href="ACAC6A80-7CE0-4CB9-B36C-B2FB6ACAB027.htm#EE75980BD04116C4ED305EAEB8D03B03"><img src="../media/EE75980BD04116C4ED305EAEB8D03B03.png" width="63" height="14" align="bottom"></img></a></markup>)
 </para>
 </listItem>
 
 <listItem>
 
 <para>
-<markup><a href="ACAC6A80-7CE0-4CB9-B36C-B2FB6ACAB027.htm#98D8F159118ED8A3C571992589A74534"><img src="../media/98D8F159118ED8A3C571992589A74534.png" width="9" height="8" align="middle"></img></a></markup> : generalized flow term, for instance fluidity (inverse viscosity), conductivity etc.
+<markup><a href="ACAC6A80-7CE0-4CB9-B36C-B2FB6ACAB027.htm#DE5EA325656D857AFB5CA4E8DB46FCC8"><img src="../media/DE5EA325656D857AFB5CA4E8DB46FCC8.png" width="9" height="8" align="middle"></img></a></markup> : generalized flow term, for instance fluidity (inverse viscosity), conductivity etc.
 </para>
 </listItem>
 </list>
@@ -82,24 +82,24 @@ The parameters are:
 
 <para>
 Note:<lineBreak/>
-Since in most cases <markup><a href="ACAC6A80-7CE0-4CB9-B36C-B2FB6ACAB027.htm#C786D2F3F30157E1B705ED28A558404E"><img src="../media/C786D2F3F30157E1B705ED28A558404E.png" width="20" height="13" align="middle"></img></a></markup> and <markup><a href="ACAC6A80-7CE0-4CB9-B36C-B2FB6ACAB027.htm#DE940E41F516E3A901A246CBB8714205"><img src="../media/DE940E41F516E3A901A246CBB8714205.png" width="25" height="13" align="middle"></img></a></markup> differ by several orders of magnitude, your fit function will also cover several orders of magnitude. This will result in a poor fit of the low modulus data. To avoid this behavior, you should use a NaturalLogarithmTransformation for both your data and for the fit function's dependent variables.
+Since in most cases <markup><a href="ACAC6A80-7CE0-4CB9-B36C-B2FB6ACAB027.htm#5A86C002C48D07CDC17F5AA3F906A7B4"><img src="../media/5A86C002C48D07CDC17F5AA3F906A7B4.png" width="20" height="13" align="middle"></img></a></markup> and <markup><a href="ACAC6A80-7CE0-4CB9-B36C-B2FB6ACAB027.htm#37C494001947111A3EB8B7F199E0E39C"><img src="../media/37C494001947111A3EB8B7F199E0E39C.png" width="25" height="13" align="middle"></img></a></markup> differ by several orders of magnitude, your fit function will also cover several orders of magnitude. This will result in a poor fit of the low modulus data. To avoid this behavior, you should use a NaturalLogarithmTransformation for both your data and for the fit function's dependent variables.
 </para>
 </quote>
 
 <para>
-<markup><a href="ACAC6A80-7CE0-4CB9-B36C-B2FB6ACAB027.htm#0940750D79B395455B830CE78177C8E2"><img src="../media/0940750D79B395455B830CE78177C8E2.png" width="567"></img></a></markup>
+<markup><a href="ACAC6A80-7CE0-4CB9-B36C-B2FB6ACAB027.htm#0CC9AB25812C100FCA2247E4D40889EA"><img src="../media/0CC9AB25812C100FCA2247E4D40889EA.png" width="567"></img></a></markup>
 </para>
 
 <para>
-Fig. 1: Havriliak-Negami (with <markup><a href="ACAC6A80-7CE0-4CB9-B36C-B2FB6ACAB027.htm#477C86F89FF1AC7C56F8AD31411DA120"><img src="../media/477C86F89FF1AC7C56F8AD31411DA120.png" width="61" height="17" align="bottom"></img></a></markup>, <markup><a href="ACAC6A80-7CE0-4CB9-B36C-B2FB6ACAB027.htm#BA4058289A667030CA0467E7C80B1E17"><img src="../media/BA4058289A667030CA0467E7C80B1E17.png" width="66" height="17" align="bottom"></img></a></markup>, <markup><a href="ACAC6A80-7CE0-4CB9-B36C-B2FB6ACAB027.htm#8A25980AE7F8C4A9552E0FAFD8A3803D"><img src="../media/8A25980AE7F8C4A9552E0FAFD8A3803D.png" width="34" height="12" align="middle"></img></a></markup> and <markup><a href="ACAC6A80-7CE0-4CB9-B36C-B2FB6ACAB027.htm#D65D3202D8A6138138B728C5DBD74C60"><img src="../media/D65D3202D8A6138138B728C5DBD74C60.png" width="53" height="17" align="bottom"></img></a></markup>). The values for <markup><a href="ACAC6A80-7CE0-4CB9-B36C-B2FB6ACAB027.htm#2C77A09812900D70AB98273FC4626605"><img src="../media/2C77A09812900D70AB98273FC4626605.png" width="10" height="8" align="middle"></img></a></markup> and <markup><a href="ACAC6A80-7CE0-4CB9-B36C-B2FB6ACAB027.htm#3A94731BF74551B8E1D2F433B38EA40C"><img src="../media/3A94731BF74551B8E1D2F433B38EA40C.png" width="8" height="10" align="bottom"></img></a></markup> are indicated in the legend.
+Fig. 1: Havriliak-Negami (with <markup><a href="ACAC6A80-7CE0-4CB9-B36C-B2FB6ACAB027.htm#C3D2936C1F30BFC1A2403F572013F229"><img src="../media/C3D2936C1F30BFC1A2403F572013F229.png" width="61" height="17" align="bottom"></img></a></markup>, <markup><a href="ACAC6A80-7CE0-4CB9-B36C-B2FB6ACAB027.htm#7A2771CF7C9D85CE5BC131B64EE5200D"><img src="../media/7A2771CF7C9D85CE5BC131B64EE5200D.png" width="66" height="17" align="bottom"></img></a></markup>, <markup><a href="ACAC6A80-7CE0-4CB9-B36C-B2FB6ACAB027.htm#9CCF1F5EAEF30C125C86686903242590"><img src="../media/9CCF1F5EAEF30C125C86686903242590.png" width="34" height="12" align="middle"></img></a></markup> and <markup><a href="ACAC6A80-7CE0-4CB9-B36C-B2FB6ACAB027.htm#D2FC203547E7734D298590FDFA921573"><img src="../media/D2FC203547E7734D298590FDFA921573.png" width="53" height="17" align="bottom"></img></a></markup>). The values for <markup><a href="ACAC6A80-7CE0-4CB9-B36C-B2FB6ACAB027.htm#113355CB1E8ACA7E77699CB7EC6DCB2D"><img src="../media/113355CB1E8ACA7E77699CB7EC6DCB2D.png" width="10" height="8" align="middle"></img></a></markup> and <markup><a href="ACAC6A80-7CE0-4CB9-B36C-B2FB6ACAB027.htm#0CAC28E03B356FE9EF532183700F9A62"><img src="../media/0CAC28E03B356FE9EF532183700F9A62.png" width="8" height="10" align="bottom"></img></a></markup> are indicated in the legend.
 </para>
 
 <para>
-<markup><a href="ACAC6A80-7CE0-4CB9-B36C-B2FB6ACAB027.htm#8453AC47EBDD78AA873EC5D33C911E6A"><img src="../media/8453AC47EBDD78AA873EC5D33C911E6A.png" width="567"></img></a></markup>
+<markup><a href="ACAC6A80-7CE0-4CB9-B36C-B2FB6ACAB027.htm#25FA541178F6B911EFB4ABB5D704B7F4"><img src="../media/25FA541178F6B911EFB4ABB5D704B7F4.png" width="567"></img></a></markup>
 </para>
 
 <para>
-Fig. 2: Comparison of Havriliak-Negami (with <markup><a href="ACAC6A80-7CE0-4CB9-B36C-B2FB6ACAB027.htm#477C86F89FF1AC7C56F8AD31411DA120"><img src="../media/477C86F89FF1AC7C56F8AD31411DA120.png" width="61" height="17" align="bottom"></img></a></markup>, <markup><a href="ACAC6A80-7CE0-4CB9-B36C-B2FB6ACAB027.htm#BA4058289A667030CA0467E7C80B1E17"><img src="../media/BA4058289A667030CA0467E7C80B1E17.png" width="66" height="17" align="bottom"></img></a></markup>, <markup><a href="ACAC6A80-7CE0-4CB9-B36C-B2FB6ACAB027.htm#8A25980AE7F8C4A9552E0FAFD8A3803D"><img src="../media/8A25980AE7F8C4A9552E0FAFD8A3803D.png" width="34" height="12" align="middle"></img></a></markup>, <markup><a href="ACAC6A80-7CE0-4CB9-B36C-B2FB6ACAB027.htm#77559B9B2DF2747DB53C5F8D18791054"><img src="../media/77559B9B2DF2747DB53C5F8D18791054.png" width="37" height="12" align="middle"></img></a></markup> and <markup><a href="ACAC6A80-7CE0-4CB9-B36C-B2FB6ACAB027.htm#CD3FC97AA6D99E879C7B66E922BFD82F"><img src="../media/CD3FC97AA6D99E879C7B66E922BFD82F.png" width="35" height="14" align="bottom"></img></a></markup>) without and with flow term. The values for <markup><a href="ACAC6A80-7CE0-4CB9-B36C-B2FB6ACAB027.htm#AD83B92637685B08C33F44DB1DA49D05"><img src="../media/AD83B92637685B08C33F44DB1DA49D05.png" width="7" height="10" align="bottom"></img></a></markup> are indicated in the legend.
+Fig. 2: Comparison of Havriliak-Negami (with <markup><a href="ACAC6A80-7CE0-4CB9-B36C-B2FB6ACAB027.htm#C3D2936C1F30BFC1A2403F572013F229"><img src="../media/C3D2936C1F30BFC1A2403F572013F229.png" width="61" height="17" align="bottom"></img></a></markup>, <markup><a href="ACAC6A80-7CE0-4CB9-B36C-B2FB6ACAB027.htm#7A2771CF7C9D85CE5BC131B64EE5200D"><img src="../media/7A2771CF7C9D85CE5BC131B64EE5200D.png" width="66" height="17" align="bottom"></img></a></markup>, <markup><a href="ACAC6A80-7CE0-4CB9-B36C-B2FB6ACAB027.htm#9CCF1F5EAEF30C125C86686903242590"><img src="../media/9CCF1F5EAEF30C125C86686903242590.png" width="34" height="12" align="middle"></img></a></markup>, <markup><a href="ACAC6A80-7CE0-4CB9-B36C-B2FB6ACAB027.htm#FDD0BFC720BA333CDF5E6BD3C90F7F3F"><img src="../media/FDD0BFC720BA333CDF5E6BD3C90F7F3F.png" width="37" height="12" align="middle"></img></a></markup> and <markup><a href="ACAC6A80-7CE0-4CB9-B36C-B2FB6ACAB027.htm#72FCCC3803AB1972CADF5BDA1A5F0E80"><img src="../media/72FCCC3803AB1972CADF5BDA1A5F0E80.png" width="35" height="14" align="bottom"></img></a></markup>) without and with flow term. The values for <markup><a href="ACAC6A80-7CE0-4CB9-B36C-B2FB6ACAB027.htm#F503E608C29C68825DF5C8DE41E076A3"><img src="../media/F503E608C29C68825DF5C8DE41E076A3.png" width="7" height="10" align="bottom"></img></a></markup> are indicated in the legend.
 </para>
 <markup><hr/></markup>
 
@@ -125,15 +125,15 @@ Havriliak, S., Negami, S., &quot;A complex plane representation of dielectric an
 <para>
 This function models the complex dynamic modulus in dependence on the circular frequency as:
 </para>
-<markup><a href="ACAC6A80-7CE0-4CB9-B36C-B2FB6ACAB027.htm#5FCB7EDD83F1464606E45C3CB1240BE6"><img src="../media/5FCB7EDD83F1464606E45C3CB1240BE6.png" width="395" height="36"></img></a></markup>
+<markup><a href="ACAC6A80-7CE0-4CB9-B36C-B2FB6ACAB027.htm#DA2B5B6DD710DA1B0607B37C4F7DCABA"><img src="../media/DA2B5B6DD710DA1B0607B37C4F7DCABA.png" width="395" height="36"></img></a></markup>
 
 <para>
-or with a generalized flow term (both equations are equivalent if <markup><a href="ACAC6A80-7CE0-4CB9-B36C-B2FB6ACAB027.htm#50B1474D8FD6F792DFC01CFE00EFEE88"><img src="../media/50B1474D8FD6F792DFC01CFE00EFEE88.png" width="36" height="12" align="middle"></img></a></markup>) :
+or with a generalized flow term (both equations are equivalent if <markup><a href="ACAC6A80-7CE0-4CB9-B36C-B2FB6ACAB027.htm#D04CC2CA1747C29DDC472AF42CC86EF1"><img src="../media/D04CC2CA1747C29DDC472AF42CC86EF1.png" width="36" height="12" align="middle"></img></a></markup>) :
 </para>
-<markup><a href="ACAC6A80-7CE0-4CB9-B36C-B2FB6ACAB027.htm#314F78B1BCA80A2F54B21D5BE2731F98"><img src="../media/314F78B1BCA80A2F54B21D5BE2731F98.png" width="436" height="50"></img></a></markup>
+<markup><a href="ACAC6A80-7CE0-4CB9-B36C-B2FB6ACAB027.htm#343147BC737686A4D418977DB1335CAD"><img src="../media/343147BC737686A4D418977DB1335CAD.png" width="436" height="50"></img></a></markup>
 
 <para>
-with the circular frequency <markup><a href="ACAC6A80-7CE0-4CB9-B36C-B2FB6ACAB027.htm#72D23EA1819B9CC33DD47098677C7746"><img src="../media/72D23EA1819B9CC33DD47098677C7746.png" width="53" height="14" align="middle"></img></a></markup>  being the independent variable, and <markup><a href="ACAC6A80-7CE0-4CB9-B36C-B2FB6ACAB027.htm#9A1A2413972960B7581A2CC2E178F9E9"><img src="../media/9A1A2413972960B7581A2CC2E178F9E9.png" width="40" height="17" align="bottom"></img></a></markup> and <markup><a href="ACAC6A80-7CE0-4CB9-B36C-B2FB6ACAB027.htm#58A8E51CD9A68ACB0ABA93AF2B326CDB"><img src="../media/58A8E51CD9A68ACB0ABA93AF2B326CDB.png" width="43" height="17" align="bottom"></img></a></markup> being the dependent variables, namely the real and imaginary part of the complex dynamic modulus <markup><a href="ACAC6A80-7CE0-4CB9-B36C-B2FB6ACAB027.htm#318CCB08565DA5D42A00A2AFB8E8F633"><img src="../media/318CCB08565DA5D42A00A2AFB8E8F633.png" width="43" height="16" align="bottom"></img></a></markup>.
+with the circular frequency <markup><a href="ACAC6A80-7CE0-4CB9-B36C-B2FB6ACAB027.htm#06D94BA2FE8567AEC73EDCAB2371C209"><img src="../media/06D94BA2FE8567AEC73EDCAB2371C209.png" width="53" height="14" align="middle"></img></a></markup>  being the independent variable, and <markup><a href="ACAC6A80-7CE0-4CB9-B36C-B2FB6ACAB027.htm#8DF46970E8416BF9E2B85C8504476466"><img src="../media/8DF46970E8416BF9E2B85C8504476466.png" width="40" height="17" align="bottom"></img></a></markup> and <markup><a href="ACAC6A80-7CE0-4CB9-B36C-B2FB6ACAB027.htm#460C55A7981ADEA62A8E58D4A661C722"><img src="../media/460C55A7981ADEA62A8E58D4A661C722.png" width="43" height="17" align="bottom"></img></a></markup> being the dependent variables, namely the real and imaginary part of the complex dynamic modulus <markup><a href="ACAC6A80-7CE0-4CB9-B36C-B2FB6ACAB027.htm#236F783D333428754E6F28818E4D084F"><img src="../media/236F783D333428754E6F28818E4D084F.png" width="43" height="16" align="bottom"></img></a></markup>.
 </para>
 
 <para>
@@ -145,35 +145,35 @@ The parameters are:
 <listItem>
 
 <para>
-<markup><a href="ACAC6A80-7CE0-4CB9-B36C-B2FB6ACAB027.htm#C786D2F3F30157E1B705ED28A558404E"><img src="../media/C786D2F3F30157E1B705ED28A558404E.png" width="20" height="13" align="middle"></img></a></markup> : low frequency modulus limit
+<markup><a href="ACAC6A80-7CE0-4CB9-B36C-B2FB6ACAB027.htm#5A86C002C48D07CDC17F5AA3F906A7B4"><img src="../media/5A86C002C48D07CDC17F5AA3F906A7B4.png" width="20" height="13" align="middle"></img></a></markup> : low frequency modulus limit
 </para>
 </listItem>
 
 <listItem>
 
 <para>
-<markup><a href="ACAC6A80-7CE0-4CB9-B36C-B2FB6ACAB027.htm#DE940E41F516E3A901A246CBB8714205"><img src="../media/DE940E41F516E3A901A246CBB8714205.png" width="25" height="13" align="middle"></img></a></markup> : high frequency modulus limit
+<markup><a href="ACAC6A80-7CE0-4CB9-B36C-B2FB6ACAB027.htm#37C494001947111A3EB8B7F199E0E39C"><img src="../media/37C494001947111A3EB8B7F199E0E39C.png" width="25" height="13" align="middle"></img></a></markup> : high frequency modulus limit
 </para>
 </listItem>
 
 <listItem>
 
 <para>
-<markup><a href="ACAC6A80-7CE0-4CB9-B36C-B2FB6ACAB027.htm#28EC17121C89EBFA982608CD3F98C1BD"><img src="../media/28EC17121C89EBFA982608CD3F98C1BD.png" width="7" height="8" align="middle"></img></a></markup> : relaxation time
+<markup><a href="ACAC6A80-7CE0-4CB9-B36C-B2FB6ACAB027.htm#BFA313332602014B62FEEF342DFA23F5"><img src="../media/BFA313332602014B62FEEF342DFA23F5.png" width="7" height="8" align="middle"></img></a></markup> : relaxation time
 </para>
 </listItem>
 
 <listItem>
 
 <para>
-<markup><a href="ACAC6A80-7CE0-4CB9-B36C-B2FB6ACAB027.htm#2C77A09812900D70AB98273FC4626605"><img src="../media/2C77A09812900D70AB98273FC4626605.png" width="10" height="8" align="middle"></img></a></markup>, <markup><a href="ACAC6A80-7CE0-4CB9-B36C-B2FB6ACAB027.htm#3A94731BF74551B8E1D2F433B38EA40C"><img src="../media/3A94731BF74551B8E1D2F433B38EA40C.png" width="8" height="10" align="bottom"></img></a></markup> : shape exponents (usually <markup><a href="ACAC6A80-7CE0-4CB9-B36C-B2FB6ACAB027.htm#2C079671313FD28CD0F480904B56E305"><img src="../media/2C079671313FD28CD0F480904B56E305.png" width="65" height="13" align="middle"></img></a></markup> and <markup><a href="ACAC6A80-7CE0-4CB9-B36C-B2FB6ACAB027.htm#5D705B98A0875D8C5E437975AB3F92AC"><img src="../media/5D705B98A0875D8C5E437975AB3F92AC.png" width="63" height="14" align="bottom"></img></a></markup>)
+<markup><a href="ACAC6A80-7CE0-4CB9-B36C-B2FB6ACAB027.htm#113355CB1E8ACA7E77699CB7EC6DCB2D"><img src="../media/113355CB1E8ACA7E77699CB7EC6DCB2D.png" width="10" height="8" align="middle"></img></a></markup>, <markup><a href="ACAC6A80-7CE0-4CB9-B36C-B2FB6ACAB027.htm#0CAC28E03B356FE9EF532183700F9A62"><img src="../media/0CAC28E03B356FE9EF532183700F9A62.png" width="8" height="10" align="bottom"></img></a></markup> : shape exponents (usually <markup><a href="ACAC6A80-7CE0-4CB9-B36C-B2FB6ACAB027.htm#A2B0EB51B95EC0FCE6271B5CCAEEBB59"><img src="../media/A2B0EB51B95EC0FCE6271B5CCAEEBB59.png" width="65" height="13" align="middle"></img></a></markup> and <markup><a href="ACAC6A80-7CE0-4CB9-B36C-B2FB6ACAB027.htm#EE75980BD04116C4ED305EAEB8D03B03"><img src="../media/EE75980BD04116C4ED305EAEB8D03B03.png" width="63" height="14" align="bottom"></img></a></markup>)
 </para>
 </listItem>
 
 <listItem>
 
 <para>
-<markup><a href="ACAC6A80-7CE0-4CB9-B36C-B2FB6ACAB027.htm#98D8F159118ED8A3C571992589A74534"><img src="../media/98D8F159118ED8A3C571992589A74534.png" width="9" height="8" align="middle"></img></a></markup> : generalized flow term, for instance fluidity (inverse viscosity), conductivity etc.
+<markup><a href="ACAC6A80-7CE0-4CB9-B36C-B2FB6ACAB027.htm#DE5EA325656D857AFB5CA4E8DB46FCC8"><img src="../media/DE5EA325656D857AFB5CA4E8DB46FCC8.png" width="9" height="8" align="middle"></img></a></markup> : generalized flow term, for instance fluidity (inverse viscosity), conductivity etc.
 </para>
 </listItem>
 </list>
@@ -182,24 +182,24 @@ The parameters are:
 
 <para>
 Note:<lineBreak/>
-Since in most cases <markup><a href="ACAC6A80-7CE0-4CB9-B36C-B2FB6ACAB027.htm#C786D2F3F30157E1B705ED28A558404E"><img src="../media/C786D2F3F30157E1B705ED28A558404E.png" width="20" height="13" align="middle"></img></a></markup> and <markup><a href="ACAC6A80-7CE0-4CB9-B36C-B2FB6ACAB027.htm#DE940E41F516E3A901A246CBB8714205"><img src="../media/DE940E41F516E3A901A246CBB8714205.png" width="25" height="13" align="middle"></img></a></markup> differ by several orders of magnitude, your fit function will also cover several orders of magnitude. This will result in a poor fit of the low modulus data. To avoid this behavior, you should use a NaturalLogarithmTransformation for both your data and for the fit function's dependent variables.
+Since in most cases <markup><a href="ACAC6A80-7CE0-4CB9-B36C-B2FB6ACAB027.htm#5A86C002C48D07CDC17F5AA3F906A7B4"><img src="../media/5A86C002C48D07CDC17F5AA3F906A7B4.png" width="20" height="13" align="middle"></img></a></markup> and <markup><a href="ACAC6A80-7CE0-4CB9-B36C-B2FB6ACAB027.htm#37C494001947111A3EB8B7F199E0E39C"><img src="../media/37C494001947111A3EB8B7F199E0E39C.png" width="25" height="13" align="middle"></img></a></markup> differ by several orders of magnitude, your fit function will also cover several orders of magnitude. This will result in a poor fit of the low modulus data. To avoid this behavior, you should use a NaturalLogarithmTransformation for both your data and for the fit function's dependent variables.
 </para>
 </quote>
 
 <para>
-<markup><a href="ACAC6A80-7CE0-4CB9-B36C-B2FB6ACAB027.htm#42B6C7C6784F182529E59936127B08C1"><img src="../media/42B6C7C6784F182529E59936127B08C1.png" width="567"></img></a></markup>
+<markup><a href="ACAC6A80-7CE0-4CB9-B36C-B2FB6ACAB027.htm#0394399D794F05FCE0FBC9EA5376383E"><img src="../media/0394399D794F05FCE0FBC9EA5376383E.png" width="567"></img></a></markup>
 </para>
 
 <para>
-Fig. 1: Havriliak-Negami (with <markup><a href="ACAC6A80-7CE0-4CB9-B36C-B2FB6ACAB027.htm#477C86F89FF1AC7C56F8AD31411DA120"><img src="../media/477C86F89FF1AC7C56F8AD31411DA120.png" width="61" height="17" align="bottom"></img></a></markup>, <markup><a href="ACAC6A80-7CE0-4CB9-B36C-B2FB6ACAB027.htm#BA4058289A667030CA0467E7C80B1E17"><img src="../media/BA4058289A667030CA0467E7C80B1E17.png" width="66" height="17" align="bottom"></img></a></markup>, <markup><a href="ACAC6A80-7CE0-4CB9-B36C-B2FB6ACAB027.htm#8A25980AE7F8C4A9552E0FAFD8A3803D"><img src="../media/8A25980AE7F8C4A9552E0FAFD8A3803D.png" width="34" height="12" align="middle"></img></a></markup> and <markup><a href="ACAC6A80-7CE0-4CB9-B36C-B2FB6ACAB027.htm#D65D3202D8A6138138B728C5DBD74C60"><img src="../media/D65D3202D8A6138138B728C5DBD74C60.png" width="53" height="17" align="bottom"></img></a></markup>). The values for <markup><a href="ACAC6A80-7CE0-4CB9-B36C-B2FB6ACAB027.htm#2C77A09812900D70AB98273FC4626605"><img src="../media/2C77A09812900D70AB98273FC4626605.png" width="10" height="8" align="middle"></img></a></markup> and <markup><a href="ACAC6A80-7CE0-4CB9-B36C-B2FB6ACAB027.htm#3A94731BF74551B8E1D2F433B38EA40C"><img src="../media/3A94731BF74551B8E1D2F433B38EA40C.png" width="8" height="10" align="bottom"></img></a></markup> are indicated in the legend.
+Fig. 1: Havriliak-Negami (with <markup><a href="ACAC6A80-7CE0-4CB9-B36C-B2FB6ACAB027.htm#C3D2936C1F30BFC1A2403F572013F229"><img src="../media/C3D2936C1F30BFC1A2403F572013F229.png" width="61" height="17" align="bottom"></img></a></markup>, <markup><a href="ACAC6A80-7CE0-4CB9-B36C-B2FB6ACAB027.htm#7A2771CF7C9D85CE5BC131B64EE5200D"><img src="../media/7A2771CF7C9D85CE5BC131B64EE5200D.png" width="66" height="17" align="bottom"></img></a></markup>, <markup><a href="ACAC6A80-7CE0-4CB9-B36C-B2FB6ACAB027.htm#9CCF1F5EAEF30C125C86686903242590"><img src="../media/9CCF1F5EAEF30C125C86686903242590.png" width="34" height="12" align="middle"></img></a></markup> and <markup><a href="ACAC6A80-7CE0-4CB9-B36C-B2FB6ACAB027.htm#D2FC203547E7734D298590FDFA921573"><img src="../media/D2FC203547E7734D298590FDFA921573.png" width="53" height="17" align="bottom"></img></a></markup>). The values for <markup><a href="ACAC6A80-7CE0-4CB9-B36C-B2FB6ACAB027.htm#113355CB1E8ACA7E77699CB7EC6DCB2D"><img src="../media/113355CB1E8ACA7E77699CB7EC6DCB2D.png" width="10" height="8" align="middle"></img></a></markup> and <markup><a href="ACAC6A80-7CE0-4CB9-B36C-B2FB6ACAB027.htm#0CAC28E03B356FE9EF532183700F9A62"><img src="../media/0CAC28E03B356FE9EF532183700F9A62.png" width="8" height="10" align="bottom"></img></a></markup> are indicated in the legend.
 </para>
 
 <para>
-<markup><a href="ACAC6A80-7CE0-4CB9-B36C-B2FB6ACAB027.htm#10633FF0181CABD8E432E63C57F8132E"><img src="../media/10633FF0181CABD8E432E63C57F8132E.png" width="567"></img></a></markup>
+<markup><a href="ACAC6A80-7CE0-4CB9-B36C-B2FB6ACAB027.htm#DCBC82F020573441A5CF66FBB4DE5ABA"><img src="../media/DCBC82F020573441A5CF66FBB4DE5ABA.png" width="567"></img></a></markup>
 </para>
 
 <para>
-Fig. 2: Comparison of Havriliak-Negami (with <markup><a href="ACAC6A80-7CE0-4CB9-B36C-B2FB6ACAB027.htm#477C86F89FF1AC7C56F8AD31411DA120"><img src="../media/477C86F89FF1AC7C56F8AD31411DA120.png" width="61" height="17" align="bottom"></img></a></markup>, <markup><a href="ACAC6A80-7CE0-4CB9-B36C-B2FB6ACAB027.htm#BA4058289A667030CA0467E7C80B1E17"><img src="../media/BA4058289A667030CA0467E7C80B1E17.png" width="66" height="17" align="bottom"></img></a></markup>, <markup><a href="ACAC6A80-7CE0-4CB9-B36C-B2FB6ACAB027.htm#8A25980AE7F8C4A9552E0FAFD8A3803D"><img src="../media/8A25980AE7F8C4A9552E0FAFD8A3803D.png" width="34" height="12" align="middle"></img></a></markup>, <markup><a href="ACAC6A80-7CE0-4CB9-B36C-B2FB6ACAB027.htm#77559B9B2DF2747DB53C5F8D18791054"><img src="../media/77559B9B2DF2747DB53C5F8D18791054.png" width="37" height="12" align="middle"></img></a></markup> and <markup><a href="ACAC6A80-7CE0-4CB9-B36C-B2FB6ACAB027.htm#CD3FC97AA6D99E879C7B66E922BFD82F"><img src="../media/CD3FC97AA6D99E879C7B66E922BFD82F.png" width="35" height="14" align="bottom"></img></a></markup>) without and with flow term. The values for <markup><a href="ACAC6A80-7CE0-4CB9-B36C-B2FB6ACAB027.htm#AD83B92637685B08C33F44DB1DA49D05"><img src="../media/AD83B92637685B08C33F44DB1DA49D05.png" width="7" height="10" align="bottom"></img></a></markup> are indicated in the legend.
+Fig. 2: Comparison of Havriliak-Negami (with <markup><a href="ACAC6A80-7CE0-4CB9-B36C-B2FB6ACAB027.htm#C3D2936C1F30BFC1A2403F572013F229"><img src="../media/C3D2936C1F30BFC1A2403F572013F229.png" width="61" height="17" align="bottom"></img></a></markup>, <markup><a href="ACAC6A80-7CE0-4CB9-B36C-B2FB6ACAB027.htm#7A2771CF7C9D85CE5BC131B64EE5200D"><img src="../media/7A2771CF7C9D85CE5BC131B64EE5200D.png" width="66" height="17" align="bottom"></img></a></markup>, <markup><a href="ACAC6A80-7CE0-4CB9-B36C-B2FB6ACAB027.htm#9CCF1F5EAEF30C125C86686903242590"><img src="../media/9CCF1F5EAEF30C125C86686903242590.png" width="34" height="12" align="middle"></img></a></markup>, <markup><a href="ACAC6A80-7CE0-4CB9-B36C-B2FB6ACAB027.htm#FDD0BFC720BA333CDF5E6BD3C90F7F3F"><img src="../media/FDD0BFC720BA333CDF5E6BD3C90F7F3F.png" width="37" height="12" align="middle"></img></a></markup> and <markup><a href="ACAC6A80-7CE0-4CB9-B36C-B2FB6ACAB027.htm#72FCCC3803AB1972CADF5BDA1A5F0E80"><img src="../media/72FCCC3803AB1972CADF5BDA1A5F0E80.png" width="35" height="14" align="bottom"></img></a></markup>) without and with flow term. The values for <markup><a href="ACAC6A80-7CE0-4CB9-B36C-B2FB6ACAB027.htm#F503E608C29C68825DF5C8DE41E076A3"><img src="../media/F503E608C29C68825DF5C8DE41E076A3.png" width="7" height="10" align="bottom"></img></a></markup> are indicated in the legend.
 </para>
 <markup><hr/></markup>
 
@@ -225,15 +225,15 @@ Havriliak, S., Negami, S., &quot;A complex plane representation of dielectric an
 <para>
 This function models the complex dynamic modulus in dependence on the  frequency as:
 </para>
-<markup><a href="ACAC6A80-7CE0-4CB9-B36C-B2FB6ACAB027.htm#EDC3AF768AD58902CA149BFA79BC7A48"><img src="../media/EDC3AF768AD58902CA149BFA79BC7A48.png" width="460" height="101"></img></a></markup>
+<markup><a href="ACAC6A80-7CE0-4CB9-B36C-B2FB6ACAB027.htm#A4769176B3C46B2FF91699C309DD234B"><img src="../media/A4769176B3C46B2FF91699C309DD234B.png" width="460" height="101"></img></a></markup>
 
 <para>
-or with a generalized flow term (both equations are equivalent if <markup><a href="ACAC6A80-7CE0-4CB9-B36C-B2FB6ACAB027.htm#50B1474D8FD6F792DFC01CFE00EFEE88"><img src="../media/50B1474D8FD6F792DFC01CFE00EFEE88.png" width="36" height="12" align="middle"></img></a></markup>) :
+or with a generalized flow term (both equations are equivalent if <markup><a href="ACAC6A80-7CE0-4CB9-B36C-B2FB6ACAB027.htm#D04CC2CA1747C29DDC472AF42CC86EF1"><img src="../media/D04CC2CA1747C29DDC472AF42CC86EF1.png" width="36" height="12" align="middle"></img></a></markup>) :
 </para>
-<markup><a href="ACAC6A80-7CE0-4CB9-B36C-B2FB6ACAB027.htm#0F6BF618492ADCF0C7A004A361B3ABF3"><img src="../media/0F6BF618492ADCF0C7A004A361B3ABF3.png" width="577" height="68"></img></a></markup>
+<markup><a href="ACAC6A80-7CE0-4CB9-B36C-B2FB6ACAB027.htm#FFA9F2C3051E2ABF71C59FE0A3C403D3"><img src="../media/FFA9F2C3051E2ABF71C59FE0A3C403D3.png" width="577" height="68"></img></a></markup>
 
 <para>
-based on the Fourier transform of the derivative of the time-domain Kohlrausch function <markup><a href="ACAC6A80-7CE0-4CB9-B36C-B2FB6ACAB027.htm#952E6F0FC9FCC03E9E5999E3D4E0ABC5"><img src="../media/952E6F0FC9FCC03E9E5999E3D4E0ABC5.png" width="28" height="16" align="bottom"></img></a></markup>.
+based on the Fourier transform of the derivative of the time-domain Kohlrausch function <markup><a href="ACAC6A80-7CE0-4CB9-B36C-B2FB6ACAB027.htm#1834F148BD008DA5215D70E2881A2E14"><img src="../media/1834F148BD008DA5215D70E2881A2E14.png" width="28" height="16" align="bottom"></img></a></markup>.
 </para>
 
 <para>
@@ -242,16 +242,16 @@ It is a special case of the underlying base function with the options  <codeInli
 </para>
 
 <para>
-The underlying base function models the generalized complex dynamic modulus in dependence on the circular frequency <markup><a href="ACAC6A80-7CE0-4CB9-B36C-B2FB6ACAB027.htm#A5F264A28E9DDE42FCE98BDF5F021978"><img src="../media/A5F264A28E9DDE42FCE98BDF5F021978.png" width="9" height="8" align="middle"></img></a></markup> with one relaxation term and a flow term as:
+The underlying base function models the generalized complex dynamic modulus in dependence on the circular frequency <markup><a href="ACAC6A80-7CE0-4CB9-B36C-B2FB6ACAB027.htm#7A31DECBB5CCD075DC40F02DCE7C4BB3"><img src="../media/7A31DECBB5CCD075DC40F02DCE7C4BB3.png" width="9" height="8" align="middle"></img></a></markup> with one relaxation term and a flow term as:
 </para>
-<markup><a href="ACAC6A80-7CE0-4CB9-B36C-B2FB6ACAB027.htm#565E213269300E7A74C81A7BD68D58C7"><img src="../media/565E213269300E7A74C81A7BD68D58C7.png" width="610" height="193"></img></a></markup>
+<markup><a href="ACAC6A80-7CE0-4CB9-B36C-B2FB6ACAB027.htm#CA19C020D627D529D9F62B35E31A0297"><img src="../media/CA19C020D627D529D9F62B35E31A0297.png" width="610" height="193"></img></a></markup>
 
 <para>
-based on the Fourier transformation of the time derivative of the Kohlrausch function <markup><a href="ACAC6A80-7CE0-4CB9-B36C-B2FB6ACAB027.htm#952E6F0FC9FCC03E9E5999E3D4E0ABC5"><img src="../media/952E6F0FC9FCC03E9E5999E3D4E0ABC5.png" width="28" height="16" align="bottom"></img></a></markup>, with the circular frequency <markup><a href="ACAC6A80-7CE0-4CB9-B36C-B2FB6ACAB027.htm#A5F264A28E9DDE42FCE98BDF5F021978"><img src="../media/A5F264A28E9DDE42FCE98BDF5F021978.png" width="9" height="8" align="middle"></img></a></markup> being the independent variable (or, depending on an option, the frequency <markup><a href="ACAC6A80-7CE0-4CB9-B36C-B2FB6ACAB027.htm#2A199B72CD7E9D0B67178EAA44A43EF9"><img src="../media/2A199B72CD7E9D0B67178EAA44A43EF9.png" width="7" height="14" align="middle"></img></a></markup>, <markup><a href="ACAC6A80-7CE0-4CB9-B36C-B2FB6ACAB027.htm#72D23EA1819B9CC33DD47098677C7746"><img src="../media/72D23EA1819B9CC33DD47098677C7746.png" width="53" height="14" align="middle"></img></a></markup>), and <markup><a href="ACAC6A80-7CE0-4CB9-B36C-B2FB6ACAB027.htm#9A1A2413972960B7581A2CC2E178F9E9"><img src="../media/9A1A2413972960B7581A2CC2E178F9E9.png" width="40" height="17" align="bottom"></img></a></markup> and <markup><a href="ACAC6A80-7CE0-4CB9-B36C-B2FB6ACAB027.htm#58A8E51CD9A68ACB0ABA93AF2B326CDB"><img src="../media/58A8E51CD9A68ACB0ABA93AF2B326CDB.png" width="43" height="17" align="bottom"></img></a></markup> being the dependent variables, namely the real and negative imaginary part of the complex dynamic modulus <markup><a href="ACAC6A80-7CE0-4CB9-B36C-B2FB6ACAB027.htm#318CCB08565DA5D42A00A2AFB8E8F633"><img src="../media/318CCB08565DA5D42A00A2AFB8E8F633.png" width="43" height="16" align="bottom"></img></a></markup>.
+based on the Fourier transformation of the time derivative of the Kohlrausch function <markup><a href="ACAC6A80-7CE0-4CB9-B36C-B2FB6ACAB027.htm#1834F148BD008DA5215D70E2881A2E14"><img src="../media/1834F148BD008DA5215D70E2881A2E14.png" width="28" height="16" align="bottom"></img></a></markup>, with the circular frequency <markup><a href="ACAC6A80-7CE0-4CB9-B36C-B2FB6ACAB027.htm#7A31DECBB5CCD075DC40F02DCE7C4BB3"><img src="../media/7A31DECBB5CCD075DC40F02DCE7C4BB3.png" width="9" height="8" align="middle"></img></a></markup> being the independent variable (or, depending on an option, the frequency <markup><a href="ACAC6A80-7CE0-4CB9-B36C-B2FB6ACAB027.htm#13B763A150BF87133FFDB7AA40158ACC"><img src="../media/13B763A150BF87133FFDB7AA40158ACC.png" width="7" height="14" align="middle"></img></a></markup>, <markup><a href="ACAC6A80-7CE0-4CB9-B36C-B2FB6ACAB027.htm#06D94BA2FE8567AEC73EDCAB2371C209"><img src="../media/06D94BA2FE8567AEC73EDCAB2371C209.png" width="53" height="14" align="middle"></img></a></markup>), and <markup><a href="ACAC6A80-7CE0-4CB9-B36C-B2FB6ACAB027.htm#8DF46970E8416BF9E2B85C8504476466"><img src="../media/8DF46970E8416BF9E2B85C8504476466.png" width="40" height="17" align="bottom"></img></a></markup> and <markup><a href="ACAC6A80-7CE0-4CB9-B36C-B2FB6ACAB027.htm#460C55A7981ADEA62A8E58D4A661C722"><img src="../media/460C55A7981ADEA62A8E58D4A661C722.png" width="43" height="17" align="bottom"></img></a></markup> being the dependent variables, namely the real and negative imaginary part of the complex dynamic modulus <markup><a href="ACAC6A80-7CE0-4CB9-B36C-B2FB6ACAB027.htm#236F783D333428754E6F28818E4D084F"><img src="../media/236F783D333428754E6F28818E4D084F.png" width="43" height="16" align="bottom"></img></a></markup>.
 </para>
 
 <para>
-Typical use cases are fits to the complex to the complex mechanical modulus <markup><a href="ACAC6A80-7CE0-4CB9-B36C-B2FB6ACAB027.htm#396F0F4EF17DD9236D9C75E0A1E0B7A6"><img src="../media/396F0F4EF17DD9236D9C75E0A1E0B7A6.png" width="22" height="15" align="middle"></img></a></markup> (e.g. shear modulus <markup><a href="ACAC6A80-7CE0-4CB9-B36C-B2FB6ACAB027.htm#B6C72BB52B38D0FDCABA94A4303FDE43"><img src="../media/B6C72BB52B38D0FDCABA94A4303FDE43.png" width="17" height="15" align="middle"></img></a></markup> or Young's modulus <markup><a href="ACAC6A80-7CE0-4CB9-B36C-B2FB6ACAB027.htm#0C961C932FF59845244C5C0C2027DFD4"><img src="../media/0C961C932FF59845244C5C0C2027DFD4.png" width="18" height="15" align="middle"></img></a></markup>)
+Typical use cases are fits to the complex to the complex mechanical modulus <markup><a href="ACAC6A80-7CE0-4CB9-B36C-B2FB6ACAB027.htm#2B9D9C0AC7C44F76561998FECCFF740D"><img src="../media/2B9D9C0AC7C44F76561998FECCFF740D.png" width="22" height="15" align="middle"></img></a></markup> (e.g. shear modulus <markup><a href="ACAC6A80-7CE0-4CB9-B36C-B2FB6ACAB027.htm#0613D2B6C6661AF685DF4127D56F56FE"><img src="../media/0613D2B6C6661AF685DF4127D56F56FE.png" width="17" height="15" align="middle"></img></a></markup> or Young's modulus <markup><a href="ACAC6A80-7CE0-4CB9-B36C-B2FB6ACAB027.htm#A9FA09A569D7D26FA66366681C1819E3"><img src="../media/A9FA09A569D7D26FA66366681C1819E3.png" width="18" height="15" align="middle"></img></a></markup>)
 </para>
 
 <para>
@@ -263,42 +263,42 @@ The parameters are:
 <listItem>
 
 <para>
-<markup><a href="ACAC6A80-7CE0-4CB9-B36C-B2FB6ACAB027.htm#C786D2F3F30157E1B705ED28A558404E"><img src="../media/C786D2F3F30157E1B705ED28A558404E.png" width="20" height="13" align="middle"></img></a></markup> : low frequency modulus limit
+<markup><a href="ACAC6A80-7CE0-4CB9-B36C-B2FB6ACAB027.htm#5A86C002C48D07CDC17F5AA3F906A7B4"><img src="../media/5A86C002C48D07CDC17F5AA3F906A7B4.png" width="20" height="13" align="middle"></img></a></markup> : low frequency modulus limit
 </para>
 </listItem>
 
 <listItem>
 
 <para>
-<markup><a href="ACAC6A80-7CE0-4CB9-B36C-B2FB6ACAB027.htm#DE940E41F516E3A901A246CBB8714205"><img src="../media/DE940E41F516E3A901A246CBB8714205.png" width="25" height="13" align="middle"></img></a></markup> : high frequency modulus limit
+<markup><a href="ACAC6A80-7CE0-4CB9-B36C-B2FB6ACAB027.htm#37C494001947111A3EB8B7F199E0E39C"><img src="../media/37C494001947111A3EB8B7F199E0E39C.png" width="25" height="13" align="middle"></img></a></markup> : high frequency modulus limit
 </para>
 </listItem>
 
 <listItem>
 
 <para>
-<markup><a href="ACAC6A80-7CE0-4CB9-B36C-B2FB6ACAB027.htm#28EC17121C89EBFA982608CD3F98C1BD"><img src="../media/28EC17121C89EBFA982608CD3F98C1BD.png" width="7" height="8" align="middle"></img></a></markup> : relaxation time
+<markup><a href="ACAC6A80-7CE0-4CB9-B36C-B2FB6ACAB027.htm#BFA313332602014B62FEEF342DFA23F5"><img src="../media/BFA313332602014B62FEEF342DFA23F5.png" width="7" height="8" align="middle"></img></a></markup> : relaxation time
 </para>
 </listItem>
 
 <listItem>
 
 <para>
-<markup><a href="ACAC6A80-7CE0-4CB9-B36C-B2FB6ACAB027.htm#C59DE8EA7BFCAF44DCB084433305FEDE"><img src="../media/C59DE8EA7BFCAF44DCB084433305FEDE.png" width="8" height="14" align="middle"></img></a></markup> : shape exponent (usually <markup><a href="ACAC6A80-7CE0-4CB9-B36C-B2FB6ACAB027.htm#8BEDE380AFE7C0F7C07863B80ABF0695"><img src="../media/8BEDE380AFE7C0F7C07863B80ABF0695.png" width="63" height="14" align="middle"></img></a></markup>)
+<markup><a href="ACAC6A80-7CE0-4CB9-B36C-B2FB6ACAB027.htm#4529DD909963469A738B1430F79E7F34"><img src="../media/4529DD909963469A738B1430F79E7F34.png" width="8" height="14" align="middle"></img></a></markup> : shape exponent (usually <markup><a href="ACAC6A80-7CE0-4CB9-B36C-B2FB6ACAB027.htm#19397DC5627220C0D901CC0F70703078"><img src="../media/19397DC5627220C0D901CC0F70703078.png" width="63" height="14" align="middle"></img></a></markup>)
 </para>
 </listItem>
 
 <listItem>
 
 <para>
-<markup><a href="ACAC6A80-7CE0-4CB9-B36C-B2FB6ACAB027.htm#98D8F159118ED8A3C571992589A74534"><img src="../media/98D8F159118ED8A3C571992589A74534.png" width="9" height="8" align="middle"></img></a></markup> : fluidity (inverse viscosity)
+<markup><a href="ACAC6A80-7CE0-4CB9-B36C-B2FB6ACAB027.htm#DE5EA325656D857AFB5CA4E8DB46FCC8"><img src="../media/DE5EA325656D857AFB5CA4E8DB46FCC8.png" width="9" height="8" align="middle"></img></a></markup> : fluidity (inverse viscosity)
 </para>
 </listItem>
 
 <listItem>
 
 <para>
-<markup><a href="ACAC6A80-7CE0-4CB9-B36C-B2FB6ACAB027.htm#AD83B92637685B08C33F44DB1DA49D05"><img src="../media/AD83B92637685B08C33F44DB1DA49D05.png" width="7" height="10" align="bottom"></img></a></markup> : viscosity
+<markup><a href="ACAC6A80-7CE0-4CB9-B36C-B2FB6ACAB027.htm#F503E608C29C68825DF5C8DE41E076A3"><img src="../media/F503E608C29C68825DF5C8DE41E076A3.png" width="7" height="10" align="bottom"></img></a></markup> : viscosity
 </para>
 </listItem>
 </list>
@@ -313,8 +313,8 @@ The available options are:
 
 <para>
 <codeInline>UseFrequencyInsteadOfOmega</codeInline>:<lineBreak/>
-If true, the frequency <markup><a href="ACAC6A80-7CE0-4CB9-B36C-B2FB6ACAB027.htm#2A199B72CD7E9D0B67178EAA44A43EF9"><img src="../media/2A199B72CD7E9D0B67178EAA44A43EF9.png" width="7" height="14" align="middle"></img></a></markup> is used as the independent variable, thus <markup><a href="ACAC6A80-7CE0-4CB9-B36C-B2FB6ACAB027.htm#A5F264A28E9DDE42FCE98BDF5F021978"><img src="../media/A5F264A28E9DDE42FCE98BDF5F021978.png" width="9" height="8" align="middle"></img></a></markup> in the formula above is replaced by <markup><a href="ACAC6A80-7CE0-4CB9-B36C-B2FB6ACAB027.htm#607823C2C8C4627769DC0432404FC63B"><img src="../media/607823C2C8C4627769DC0432404FC63B.png" width="23" height="14" align="middle"></img></a></markup>.<lineBreak/>
-If false, the circular frequency (<markup><a href="ACAC6A80-7CE0-4CB9-B36C-B2FB6ACAB027.htm#A5F264A28E9DDE42FCE98BDF5F021978"><img src="../media/A5F264A28E9DDE42FCE98BDF5F021978.png" width="9" height="8" align="middle"></img></a></markup>) is used as the independent variable.
+If true, the frequency <markup><a href="ACAC6A80-7CE0-4CB9-B36C-B2FB6ACAB027.htm#13B763A150BF87133FFDB7AA40158ACC"><img src="../media/13B763A150BF87133FFDB7AA40158ACC.png" width="7" height="14" align="middle"></img></a></markup> is used as the independent variable, thus <markup><a href="ACAC6A80-7CE0-4CB9-B36C-B2FB6ACAB027.htm#7A31DECBB5CCD075DC40F02DCE7C4BB3"><img src="../media/7A31DECBB5CCD075DC40F02DCE7C4BB3.png" width="9" height="8" align="middle"></img></a></markup> in the formula above is replaced by <markup><a href="ACAC6A80-7CE0-4CB9-B36C-B2FB6ACAB027.htm#B691A58116D738AAA972C66599BDE5F9"><img src="../media/B691A58116D738AAA972C66599BDE5F9.png" width="23" height="14" align="middle"></img></a></markup>.<lineBreak/>
+If false, the circular frequency (<markup><a href="ACAC6A80-7CE0-4CB9-B36C-B2FB6ACAB027.htm#7A31DECBB5CCD075DC40F02DCE7C4BB3"><img src="../media/7A31DECBB5CCD075DC40F02DCE7C4BB3.png" width="9" height="8" align="middle"></img></a></markup>) is used as the independent variable.
 </para>
 </listItem>
 
@@ -331,8 +331,8 @@ If false, the flow term is not used, and the parameter corresponding with the fl
 
 <para>
 <codeInline>InvertViscosity</codeInline>:<lineBreak/>
-If true, the parameter in the flow term is an inverted viscosity (i.e.  fluidity). Thus the flow term generally is <markup><a href="ACAC6A80-7CE0-4CB9-B36C-B2FB6ACAB027.htm#EB444FB55417610C3EC8001A1A99626D"><img src="../media/EB444FB55417610C3EC8001A1A99626D.png" width="42" height="16" align="bottom"></img></a></markup>.<lineBreak/>
-If false, the parameter in the flow term is a viscosity, and the flow term generally is <markup><a href="ACAC6A80-7CE0-4CB9-B36C-B2FB6ACAB027.htm#097573A7CE1409BF7BCE1268D45D07A8"><img src="../media/097573A7CE1409BF7BCE1268D45D07A8.png" width="53" height="16" align="bottom"></img></a></markup>.
+If true, the parameter in the flow term is an inverted viscosity (i.e.  fluidity). Thus the flow term generally is <markup><a href="ACAC6A80-7CE0-4CB9-B36C-B2FB6ACAB027.htm#F622BAF25D811405F0FDED9F29F5F4B1"><img src="../media/F622BAF25D811405F0FDED9F29F5F4B1.png" width="42" height="16" align="bottom"></img></a></markup>.<lineBreak/>
+If false, the parameter in the flow term is a viscosity, and the flow term generally is <markup><a href="ACAC6A80-7CE0-4CB9-B36C-B2FB6ACAB027.htm#4792C1DF6FFA3F4876EA4684C117F296"><img src="../media/4792C1DF6FFA3F4876EA4684C117F296.png" width="53" height="16" align="bottom"></img></a></markup>.
 </para>
 </listItem>
 
@@ -340,7 +340,7 @@ If false, the parameter in the flow term is a viscosity, and the flow term gener
 
 <para>
 <codeInline>LogarithmizeResult</codeInline>:<lineBreak/>
-If true, the resulting values of <markup><a href="ACAC6A80-7CE0-4CB9-B36C-B2FB6ACAB027.htm#D4BC72FBD851BF0360BCD8BD8BD53264"><img src="../media/D4BC72FBD851BF0360BCD8BD8BD53264.png" width="19" height="16" align="bottom"></img></a></markup> and <markup><a href="ACAC6A80-7CE0-4CB9-B36C-B2FB6ACAB027.htm#181D9DCE08B815F1B1D1D903B76B3C19"><img src="../media/181D9DCE08B815F1B1D1D903B76B3C19.png" width="22" height="16" align="bottom"></img></a></markup> are logarithmized (decadic logarithm).<lineBreak/>
+If true, the resulting values of <markup><a href="ACAC6A80-7CE0-4CB9-B36C-B2FB6ACAB027.htm#75E4F2FB0476FA9E325F7E55208D10F9"><img src="../media/75E4F2FB0476FA9E325F7E55208D10F9.png" width="19" height="16" align="bottom"></img></a></markup> and <markup><a href="ACAC6A80-7CE0-4CB9-B36C-B2FB6ACAB027.htm#2BB798BABE32B125370ABED8FF0238EC"><img src="../media/2BB798BABE32B125370ABED8FF0238EC.png" width="22" height="16" align="bottom"></img></a></markup> are logarithmized (decadic logarithm).<lineBreak/>
 If false, the original values are used.
 </para>
 </listItem>
@@ -350,24 +350,24 @@ If false, the original values are used.
 
 <para>
 Note:<lineBreak/>
-Since in most cases <markup><a href="ACAC6A80-7CE0-4CB9-B36C-B2FB6ACAB027.htm#C786D2F3F30157E1B705ED28A558404E"><img src="../media/C786D2F3F30157E1B705ED28A558404E.png" width="20" height="13" align="middle"></img></a></markup> and <markup><a href="ACAC6A80-7CE0-4CB9-B36C-B2FB6ACAB027.htm#DE940E41F516E3A901A246CBB8714205"><img src="../media/DE940E41F516E3A901A246CBB8714205.png" width="25" height="13" align="middle"></img></a></markup> differ by several orders of magnitude, your fit function will also cover several orders of magnitude. This will result in a poor fit of the low modulus data. To avoid this behavior, you should either use a NaturalLogarithmTransformation for both your data and for the fit function's dependent variables, or use the option in this fit function to logarithmize the results and then use a DecadicLogarithmTransformation to transform your data.
+Since in most cases <markup><a href="ACAC6A80-7CE0-4CB9-B36C-B2FB6ACAB027.htm#5A86C002C48D07CDC17F5AA3F906A7B4"><img src="../media/5A86C002C48D07CDC17F5AA3F906A7B4.png" width="20" height="13" align="middle"></img></a></markup> and <markup><a href="ACAC6A80-7CE0-4CB9-B36C-B2FB6ACAB027.htm#37C494001947111A3EB8B7F199E0E39C"><img src="../media/37C494001947111A3EB8B7F199E0E39C.png" width="25" height="13" align="middle"></img></a></markup> differ by several orders of magnitude, your fit function will also cover several orders of magnitude. This will result in a poor fit of the low modulus data. To avoid this behavior, you should either use a NaturalLogarithmTransformation for both your data and for the fit function's dependent variables, or use the option in this fit function to logarithmize the results and then use a DecadicLogarithmTransformation to transform your data.
 </para>
 </quote>
 
 <para>
-<markup><a href="ACAC6A80-7CE0-4CB9-B36C-B2FB6ACAB027.htm#2BD28C3D1DC06B90C3D183A81959905B"><img src="../media/2BD28C3D1DC06B90C3D183A81959905B.png" width="567"></img></a></markup>
+<markup><a href="ACAC6A80-7CE0-4CB9-B36C-B2FB6ACAB027.htm#326D63589007CFA4857B8717A783084C"><img src="../media/326D63589007CFA4857B8717A783084C.png" width="567"></img></a></markup>
 </para>
 
 <para>
-Fig. 1: Kohlrausch fit functions (with <markup><a href="ACAC6A80-7CE0-4CB9-B36C-B2FB6ACAB027.htm#477C86F89FF1AC7C56F8AD31411DA120"><img src="../media/477C86F89FF1AC7C56F8AD31411DA120.png" width="61" height="17" align="bottom"></img></a></markup>, <markup><a href="ACAC6A80-7CE0-4CB9-B36C-B2FB6ACAB027.htm#BA4058289A667030CA0467E7C80B1E17"><img src="../media/BA4058289A667030CA0467E7C80B1E17.png" width="66" height="17" align="bottom"></img></a></markup>, <markup><a href="ACAC6A80-7CE0-4CB9-B36C-B2FB6ACAB027.htm#8A25980AE7F8C4A9552E0FAFD8A3803D"><img src="../media/8A25980AE7F8C4A9552E0FAFD8A3803D.png" width="34" height="12" align="middle"></img></a></markup> and <markup><a href="ACAC6A80-7CE0-4CB9-B36C-B2FB6ACAB027.htm#D65D3202D8A6138138B728C5DBD74C60"><img src="../media/D65D3202D8A6138138B728C5DBD74C60.png" width="53" height="17" align="bottom"></img></a></markup>). The values for <markup><a href="ACAC6A80-7CE0-4CB9-B36C-B2FB6ACAB027.htm#C59DE8EA7BFCAF44DCB084433305FEDE"><img src="../media/C59DE8EA7BFCAF44DCB084433305FEDE.png" width="8" height="14" align="middle"></img></a></markup> are indicated in the legend.
+Fig. 1: Kohlrausch fit functions (with <markup><a href="ACAC6A80-7CE0-4CB9-B36C-B2FB6ACAB027.htm#C3D2936C1F30BFC1A2403F572013F229"><img src="../media/C3D2936C1F30BFC1A2403F572013F229.png" width="61" height="17" align="bottom"></img></a></markup>, <markup><a href="ACAC6A80-7CE0-4CB9-B36C-B2FB6ACAB027.htm#7A2771CF7C9D85CE5BC131B64EE5200D"><img src="../media/7A2771CF7C9D85CE5BC131B64EE5200D.png" width="66" height="17" align="bottom"></img></a></markup>, <markup><a href="ACAC6A80-7CE0-4CB9-B36C-B2FB6ACAB027.htm#9CCF1F5EAEF30C125C86686903242590"><img src="../media/9CCF1F5EAEF30C125C86686903242590.png" width="34" height="12" align="middle"></img></a></markup> and <markup><a href="ACAC6A80-7CE0-4CB9-B36C-B2FB6ACAB027.htm#D2FC203547E7734D298590FDFA921573"><img src="../media/D2FC203547E7734D298590FDFA921573.png" width="53" height="17" align="bottom"></img></a></markup>). The values for <markup><a href="ACAC6A80-7CE0-4CB9-B36C-B2FB6ACAB027.htm#4529DD909963469A738B1430F79E7F34"><img src="../media/4529DD909963469A738B1430F79E7F34.png" width="8" height="14" align="middle"></img></a></markup> are indicated in the legend.
 </para>
 
 <para>
-<markup><a href="ACAC6A80-7CE0-4CB9-B36C-B2FB6ACAB027.htm#2EC9AE13CEAC76588B21DCF2CA9ACCEA"><img src="../media/2EC9AE13CEAC76588B21DCF2CA9ACCEA.png" width="567"></img></a></markup>
+<markup><a href="ACAC6A80-7CE0-4CB9-B36C-B2FB6ACAB027.htm#95E66B19860422F296CF3514F996A076"><img src="../media/95E66B19860422F296CF3514F996A076.png" width="567"></img></a></markup>
 </para>
 
 <para>
-Fig. 2: Comparison of Kohlrausch fit functions (with <markup><a href="ACAC6A80-7CE0-4CB9-B36C-B2FB6ACAB027.htm#477C86F89FF1AC7C56F8AD31411DA120"><img src="../media/477C86F89FF1AC7C56F8AD31411DA120.png" width="61" height="17" align="bottom"></img></a></markup>, <markup><a href="ACAC6A80-7CE0-4CB9-B36C-B2FB6ACAB027.htm#BA4058289A667030CA0467E7C80B1E17"><img src="../media/BA4058289A667030CA0467E7C80B1E17.png" width="66" height="17" align="bottom"></img></a></markup>, <markup><a href="ACAC6A80-7CE0-4CB9-B36C-B2FB6ACAB027.htm#8A25980AE7F8C4A9552E0FAFD8A3803D"><img src="../media/8A25980AE7F8C4A9552E0FAFD8A3803D.png" width="34" height="12" align="middle"></img></a></markup> and <markup><a href="ACAC6A80-7CE0-4CB9-B36C-B2FB6ACAB027.htm#96FC41B42935117D03B35F9FDE018E4C"><img src="../media/96FC41B42935117D03B35F9FDE018E4C.png" width="36" height="14" align="middle"></img></a></markup>) without and with flow term. The values for <markup><a href="ACAC6A80-7CE0-4CB9-B36C-B2FB6ACAB027.htm#AD83B92637685B08C33F44DB1DA49D05"><img src="../media/AD83B92637685B08C33F44DB1DA49D05.png" width="7" height="10" align="bottom"></img></a></markup> are indicated in the legend.
+Fig. 2: Comparison of Kohlrausch fit functions (with <markup><a href="ACAC6A80-7CE0-4CB9-B36C-B2FB6ACAB027.htm#C3D2936C1F30BFC1A2403F572013F229"><img src="../media/C3D2936C1F30BFC1A2403F572013F229.png" width="61" height="17" align="bottom"></img></a></markup>, <markup><a href="ACAC6A80-7CE0-4CB9-B36C-B2FB6ACAB027.htm#7A2771CF7C9D85CE5BC131B64EE5200D"><img src="../media/7A2771CF7C9D85CE5BC131B64EE5200D.png" width="66" height="17" align="bottom"></img></a></markup>, <markup><a href="ACAC6A80-7CE0-4CB9-B36C-B2FB6ACAB027.htm#9CCF1F5EAEF30C125C86686903242590"><img src="../media/9CCF1F5EAEF30C125C86686903242590.png" width="34" height="12" align="middle"></img></a></markup> and <markup><a href="ACAC6A80-7CE0-4CB9-B36C-B2FB6ACAB027.htm#2E14EAFE7289A8E7D74981961B0DF91E"><img src="../media/2E14EAFE7289A8E7D74981961B0DF91E.png" width="36" height="14" align="middle"></img></a></markup>) without and with flow term. The values for <markup><a href="ACAC6A80-7CE0-4CB9-B36C-B2FB6ACAB027.htm#F503E608C29C68825DF5C8DE41E076A3"><img src="../media/F503E608C29C68825DF5C8DE41E076A3.png" width="7" height="10" align="bottom"></img></a></markup> are indicated in the legend.
 </para>
 <markup><hr/></markup>
 
@@ -400,15 +400,15 @@ Williams, G., Watts, D. C., &quot;Non-Symmetrical Dielectric Relaxation Behavior
 <para>
 This function models the complex dynamic modulus in dependence on the circular frequency as:
 </para>
-<markup><a href="ACAC6A80-7CE0-4CB9-B36C-B2FB6ACAB027.htm#50B9A9C2B0F54BAF6AD44796D7044877"><img src="../media/50B9A9C2B0F54BAF6AD44796D7044877.png" width="452" height="101"></img></a></markup>
+<markup><a href="ACAC6A80-7CE0-4CB9-B36C-B2FB6ACAB027.htm#08A255DA6B4860B1BD5C096E052507B3"><img src="../media/08A255DA6B4860B1BD5C096E052507B3.png" width="452" height="101"></img></a></markup>
 
 <para>
-or with a generalized flow term (both equations are equivalent if <markup><a href="ACAC6A80-7CE0-4CB9-B36C-B2FB6ACAB027.htm#50B1474D8FD6F792DFC01CFE00EFEE88"><img src="../media/50B1474D8FD6F792DFC01CFE00EFEE88.png" width="36" height="12" align="middle"></img></a></markup>) :
+or with a generalized flow term (both equations are equivalent if <markup><a href="ACAC6A80-7CE0-4CB9-B36C-B2FB6ACAB027.htm#D04CC2CA1747C29DDC472AF42CC86EF1"><img src="../media/D04CC2CA1747C29DDC472AF42CC86EF1.png" width="36" height="12" align="middle"></img></a></markup>) :
 </para>
-<markup><a href="ACAC6A80-7CE0-4CB9-B36C-B2FB6ACAB027.htm#666CF3AB3D927D655CFF26EFF45D8AB4"><img src="../media/666CF3AB3D927D655CFF26EFF45D8AB4.png" width="555" height="68"></img></a></markup>
+<markup><a href="ACAC6A80-7CE0-4CB9-B36C-B2FB6ACAB027.htm#CF9FAAA3AFA5C4F8AA9AC70C0B06DF73"><img src="../media/CF9FAAA3AFA5C4F8AA9AC70C0B06DF73.png" width="555" height="68"></img></a></markup>
 
 <para>
-based on the Fourier transform of the derivative of the time-domain Kohlrausch function <markup><a href="ACAC6A80-7CE0-4CB9-B36C-B2FB6ACAB027.htm#952E6F0FC9FCC03E9E5999E3D4E0ABC5"><img src="../media/952E6F0FC9FCC03E9E5999E3D4E0ABC5.png" width="28" height="16" align="bottom"></img></a></markup>.
+based on the Fourier transform of the derivative of the time-domain Kohlrausch function <markup><a href="ACAC6A80-7CE0-4CB9-B36C-B2FB6ACAB027.htm#1834F148BD008DA5215D70E2881A2E14"><img src="../media/1834F148BD008DA5215D70E2881A2E14.png" width="28" height="16" align="bottom"></img></a></markup>.
 </para>
 
 <para>
@@ -417,16 +417,16 @@ It is a special case of the underlying base function with the options  <codeInli
 </para>
 
 <para>
-The underlying base function models the generalized complex dynamic modulus in dependence on the circular frequency <markup><a href="ACAC6A80-7CE0-4CB9-B36C-B2FB6ACAB027.htm#A5F264A28E9DDE42FCE98BDF5F021978"><img src="../media/A5F264A28E9DDE42FCE98BDF5F021978.png" width="9" height="8" align="middle"></img></a></markup> with one relaxation term and a flow term as:
+The underlying base function models the generalized complex dynamic modulus in dependence on the circular frequency <markup><a href="ACAC6A80-7CE0-4CB9-B36C-B2FB6ACAB027.htm#7A31DECBB5CCD075DC40F02DCE7C4BB3"><img src="../media/7A31DECBB5CCD075DC40F02DCE7C4BB3.png" width="9" height="8" align="middle"></img></a></markup> with one relaxation term and a flow term as:
 </para>
-<markup><a href="ACAC6A80-7CE0-4CB9-B36C-B2FB6ACAB027.htm#565E213269300E7A74C81A7BD68D58C7"><img src="../media/565E213269300E7A74C81A7BD68D58C7.png" width="610" height="193"></img></a></markup>
+<markup><a href="ACAC6A80-7CE0-4CB9-B36C-B2FB6ACAB027.htm#CA19C020D627D529D9F62B35E31A0297"><img src="../media/CA19C020D627D529D9F62B35E31A0297.png" width="610" height="193"></img></a></markup>
 
 <para>
-based on the Fourier transformation of the time derivative of the Kohlrausch function <markup><a href="ACAC6A80-7CE0-4CB9-B36C-B2FB6ACAB027.htm#952E6F0FC9FCC03E9E5999E3D4E0ABC5"><img src="../media/952E6F0FC9FCC03E9E5999E3D4E0ABC5.png" width="28" height="16" align="bottom"></img></a></markup>, with the circular frequency <markup><a href="ACAC6A80-7CE0-4CB9-B36C-B2FB6ACAB027.htm#A5F264A28E9DDE42FCE98BDF5F021978"><img src="../media/A5F264A28E9DDE42FCE98BDF5F021978.png" width="9" height="8" align="middle"></img></a></markup> being the independent variable (or, depending on an option, the frequency <markup><a href="ACAC6A80-7CE0-4CB9-B36C-B2FB6ACAB027.htm#2A199B72CD7E9D0B67178EAA44A43EF9"><img src="../media/2A199B72CD7E9D0B67178EAA44A43EF9.png" width="7" height="14" align="middle"></img></a></markup>, <markup><a href="ACAC6A80-7CE0-4CB9-B36C-B2FB6ACAB027.htm#72D23EA1819B9CC33DD47098677C7746"><img src="../media/72D23EA1819B9CC33DD47098677C7746.png" width="53" height="14" align="middle"></img></a></markup>), and <markup><a href="ACAC6A80-7CE0-4CB9-B36C-B2FB6ACAB027.htm#9A1A2413972960B7581A2CC2E178F9E9"><img src="../media/9A1A2413972960B7581A2CC2E178F9E9.png" width="40" height="17" align="bottom"></img></a></markup> and <markup><a href="ACAC6A80-7CE0-4CB9-B36C-B2FB6ACAB027.htm#58A8E51CD9A68ACB0ABA93AF2B326CDB"><img src="../media/58A8E51CD9A68ACB0ABA93AF2B326CDB.png" width="43" height="17" align="bottom"></img></a></markup> being the dependent variables, namely the real and negative imaginary part of the complex dynamic modulus <markup><a href="ACAC6A80-7CE0-4CB9-B36C-B2FB6ACAB027.htm#318CCB08565DA5D42A00A2AFB8E8F633"><img src="../media/318CCB08565DA5D42A00A2AFB8E8F633.png" width="43" height="16" align="bottom"></img></a></markup>.
+based on the Fourier transformation of the time derivative of the Kohlrausch function <markup><a href="ACAC6A80-7CE0-4CB9-B36C-B2FB6ACAB027.htm#1834F148BD008DA5215D70E2881A2E14"><img src="../media/1834F148BD008DA5215D70E2881A2E14.png" width="28" height="16" align="bottom"></img></a></markup>, with the circular frequency <markup><a href="ACAC6A80-7CE0-4CB9-B36C-B2FB6ACAB027.htm#7A31DECBB5CCD075DC40F02DCE7C4BB3"><img src="../media/7A31DECBB5CCD075DC40F02DCE7C4BB3.png" width="9" height="8" align="middle"></img></a></markup> being the independent variable (or, depending on an option, the frequency <markup><a href="ACAC6A80-7CE0-4CB9-B36C-B2FB6ACAB027.htm#13B763A150BF87133FFDB7AA40158ACC"><img src="../media/13B763A150BF87133FFDB7AA40158ACC.png" width="7" height="14" align="middle"></img></a></markup>, <markup><a href="ACAC6A80-7CE0-4CB9-B36C-B2FB6ACAB027.htm#06D94BA2FE8567AEC73EDCAB2371C209"><img src="../media/06D94BA2FE8567AEC73EDCAB2371C209.png" width="53" height="14" align="middle"></img></a></markup>), and <markup><a href="ACAC6A80-7CE0-4CB9-B36C-B2FB6ACAB027.htm#8DF46970E8416BF9E2B85C8504476466"><img src="../media/8DF46970E8416BF9E2B85C8504476466.png" width="40" height="17" align="bottom"></img></a></markup> and <markup><a href="ACAC6A80-7CE0-4CB9-B36C-B2FB6ACAB027.htm#460C55A7981ADEA62A8E58D4A661C722"><img src="../media/460C55A7981ADEA62A8E58D4A661C722.png" width="43" height="17" align="bottom"></img></a></markup> being the dependent variables, namely the real and negative imaginary part of the complex dynamic modulus <markup><a href="ACAC6A80-7CE0-4CB9-B36C-B2FB6ACAB027.htm#236F783D333428754E6F28818E4D084F"><img src="../media/236F783D333428754E6F28818E4D084F.png" width="43" height="16" align="bottom"></img></a></markup>.
 </para>
 
 <para>
-Typical use cases are fits to the complex to the complex mechanical modulus <markup><a href="ACAC6A80-7CE0-4CB9-B36C-B2FB6ACAB027.htm#396F0F4EF17DD9236D9C75E0A1E0B7A6"><img src="../media/396F0F4EF17DD9236D9C75E0A1E0B7A6.png" width="22" height="15" align="middle"></img></a></markup> (e.g. shear modulus <markup><a href="ACAC6A80-7CE0-4CB9-B36C-B2FB6ACAB027.htm#B6C72BB52B38D0FDCABA94A4303FDE43"><img src="../media/B6C72BB52B38D0FDCABA94A4303FDE43.png" width="17" height="15" align="middle"></img></a></markup> or Young's modulus <markup><a href="ACAC6A80-7CE0-4CB9-B36C-B2FB6ACAB027.htm#0C961C932FF59845244C5C0C2027DFD4"><img src="../media/0C961C932FF59845244C5C0C2027DFD4.png" width="18" height="15" align="middle"></img></a></markup>)
+Typical use cases are fits to the complex to the complex mechanical modulus <markup><a href="ACAC6A80-7CE0-4CB9-B36C-B2FB6ACAB027.htm#2B9D9C0AC7C44F76561998FECCFF740D"><img src="../media/2B9D9C0AC7C44F76561998FECCFF740D.png" width="22" height="15" align="middle"></img></a></markup> (e.g. shear modulus <markup><a href="ACAC6A80-7CE0-4CB9-B36C-B2FB6ACAB027.htm#0613D2B6C6661AF685DF4127D56F56FE"><img src="../media/0613D2B6C6661AF685DF4127D56F56FE.png" width="17" height="15" align="middle"></img></a></markup> or Young's modulus <markup><a href="ACAC6A80-7CE0-4CB9-B36C-B2FB6ACAB027.htm#A9FA09A569D7D26FA66366681C1819E3"><img src="../media/A9FA09A569D7D26FA66366681C1819E3.png" width="18" height="15" align="middle"></img></a></markup>)
 </para>
 
 <para>
@@ -438,42 +438,42 @@ The parameters are:
 <listItem>
 
 <para>
-<markup><a href="ACAC6A80-7CE0-4CB9-B36C-B2FB6ACAB027.htm#C786D2F3F30157E1B705ED28A558404E"><img src="../media/C786D2F3F30157E1B705ED28A558404E.png" width="20" height="13" align="middle"></img></a></markup> : low frequency modulus limit
+<markup><a href="ACAC6A80-7CE0-4CB9-B36C-B2FB6ACAB027.htm#5A86C002C48D07CDC17F5AA3F906A7B4"><img src="../media/5A86C002C48D07CDC17F5AA3F906A7B4.png" width="20" height="13" align="middle"></img></a></markup> : low frequency modulus limit
 </para>
 </listItem>
 
 <listItem>
 
 <para>
-<markup><a href="ACAC6A80-7CE0-4CB9-B36C-B2FB6ACAB027.htm#DE940E41F516E3A901A246CBB8714205"><img src="../media/DE940E41F516E3A901A246CBB8714205.png" width="25" height="13" align="middle"></img></a></markup> : high frequency modulus limit
+<markup><a href="ACAC6A80-7CE0-4CB9-B36C-B2FB6ACAB027.htm#37C494001947111A3EB8B7F199E0E39C"><img src="../media/37C494001947111A3EB8B7F199E0E39C.png" width="25" height="13" align="middle"></img></a></markup> : high frequency modulus limit
 </para>
 </listItem>
 
 <listItem>
 
 <para>
-<markup><a href="ACAC6A80-7CE0-4CB9-B36C-B2FB6ACAB027.htm#28EC17121C89EBFA982608CD3F98C1BD"><img src="../media/28EC17121C89EBFA982608CD3F98C1BD.png" width="7" height="8" align="middle"></img></a></markup> : relaxation time
+<markup><a href="ACAC6A80-7CE0-4CB9-B36C-B2FB6ACAB027.htm#BFA313332602014B62FEEF342DFA23F5"><img src="../media/BFA313332602014B62FEEF342DFA23F5.png" width="7" height="8" align="middle"></img></a></markup> : relaxation time
 </para>
 </listItem>
 
 <listItem>
 
 <para>
-<markup><a href="ACAC6A80-7CE0-4CB9-B36C-B2FB6ACAB027.htm#C59DE8EA7BFCAF44DCB084433305FEDE"><img src="../media/C59DE8EA7BFCAF44DCB084433305FEDE.png" width="8" height="14" align="middle"></img></a></markup> : shape exponent (usually <markup><a href="ACAC6A80-7CE0-4CB9-B36C-B2FB6ACAB027.htm#8BEDE380AFE7C0F7C07863B80ABF0695"><img src="../media/8BEDE380AFE7C0F7C07863B80ABF0695.png" width="63" height="14" align="middle"></img></a></markup>)
+<markup><a href="ACAC6A80-7CE0-4CB9-B36C-B2FB6ACAB027.htm#4529DD909963469A738B1430F79E7F34"><img src="../media/4529DD909963469A738B1430F79E7F34.png" width="8" height="14" align="middle"></img></a></markup> : shape exponent (usually <markup><a href="ACAC6A80-7CE0-4CB9-B36C-B2FB6ACAB027.htm#19397DC5627220C0D901CC0F70703078"><img src="../media/19397DC5627220C0D901CC0F70703078.png" width="63" height="14" align="middle"></img></a></markup>)
 </para>
 </listItem>
 
 <listItem>
 
 <para>
-<markup><a href="ACAC6A80-7CE0-4CB9-B36C-B2FB6ACAB027.htm#98D8F159118ED8A3C571992589A74534"><img src="../media/98D8F159118ED8A3C571992589A74534.png" width="9" height="8" align="middle"></img></a></markup> : fluidity (inverse viscosity)
+<markup><a href="ACAC6A80-7CE0-4CB9-B36C-B2FB6ACAB027.htm#DE5EA325656D857AFB5CA4E8DB46FCC8"><img src="../media/DE5EA325656D857AFB5CA4E8DB46FCC8.png" width="9" height="8" align="middle"></img></a></markup> : fluidity (inverse viscosity)
 </para>
 </listItem>
 
 <listItem>
 
 <para>
-<markup><a href="ACAC6A80-7CE0-4CB9-B36C-B2FB6ACAB027.htm#AD83B92637685B08C33F44DB1DA49D05"><img src="../media/AD83B92637685B08C33F44DB1DA49D05.png" width="7" height="10" align="bottom"></img></a></markup> : viscosity
+<markup><a href="ACAC6A80-7CE0-4CB9-B36C-B2FB6ACAB027.htm#F503E608C29C68825DF5C8DE41E076A3"><img src="../media/F503E608C29C68825DF5C8DE41E076A3.png" width="7" height="10" align="bottom"></img></a></markup> : viscosity
 </para>
 </listItem>
 </list>
@@ -488,8 +488,8 @@ The available options are:
 
 <para>
 <codeInline>UseFrequencyInsteadOfOmega</codeInline>:<lineBreak/>
-If true, the frequency <markup><a href="ACAC6A80-7CE0-4CB9-B36C-B2FB6ACAB027.htm#2A199B72CD7E9D0B67178EAA44A43EF9"><img src="../media/2A199B72CD7E9D0B67178EAA44A43EF9.png" width="7" height="14" align="middle"></img></a></markup> is used as the independent variable, thus <markup><a href="ACAC6A80-7CE0-4CB9-B36C-B2FB6ACAB027.htm#A5F264A28E9DDE42FCE98BDF5F021978"><img src="../media/A5F264A28E9DDE42FCE98BDF5F021978.png" width="9" height="8" align="middle"></img></a></markup> in the formula above is replaced by <markup><a href="ACAC6A80-7CE0-4CB9-B36C-B2FB6ACAB027.htm#607823C2C8C4627769DC0432404FC63B"><img src="../media/607823C2C8C4627769DC0432404FC63B.png" width="23" height="14" align="middle"></img></a></markup>.<lineBreak/>
-If false, the circular frequency (<markup><a href="ACAC6A80-7CE0-4CB9-B36C-B2FB6ACAB027.htm#A5F264A28E9DDE42FCE98BDF5F021978"><img src="../media/A5F264A28E9DDE42FCE98BDF5F021978.png" width="9" height="8" align="middle"></img></a></markup>) is used as the independent variable.
+If true, the frequency <markup><a href="ACAC6A80-7CE0-4CB9-B36C-B2FB6ACAB027.htm#13B763A150BF87133FFDB7AA40158ACC"><img src="../media/13B763A150BF87133FFDB7AA40158ACC.png" width="7" height="14" align="middle"></img></a></markup> is used as the independent variable, thus <markup><a href="ACAC6A80-7CE0-4CB9-B36C-B2FB6ACAB027.htm#7A31DECBB5CCD075DC40F02DCE7C4BB3"><img src="../media/7A31DECBB5CCD075DC40F02DCE7C4BB3.png" width="9" height="8" align="middle"></img></a></markup> in the formula above is replaced by <markup><a href="ACAC6A80-7CE0-4CB9-B36C-B2FB6ACAB027.htm#B691A58116D738AAA972C66599BDE5F9"><img src="../media/B691A58116D738AAA972C66599BDE5F9.png" width="23" height="14" align="middle"></img></a></markup>.<lineBreak/>
+If false, the circular frequency (<markup><a href="ACAC6A80-7CE0-4CB9-B36C-B2FB6ACAB027.htm#7A31DECBB5CCD075DC40F02DCE7C4BB3"><img src="../media/7A31DECBB5CCD075DC40F02DCE7C4BB3.png" width="9" height="8" align="middle"></img></a></markup>) is used as the independent variable.
 </para>
 </listItem>
 
@@ -506,8 +506,8 @@ If false, the flow term is not used, and the parameter corresponding with the fl
 
 <para>
 <codeInline>InvertViscosity</codeInline>:<lineBreak/>
-If true, the parameter in the flow term is an inverted viscosity (i.e.  fluidity). Thus the flow term generally is <markup><a href="ACAC6A80-7CE0-4CB9-B36C-B2FB6ACAB027.htm#EB444FB55417610C3EC8001A1A99626D"><img src="../media/EB444FB55417610C3EC8001A1A99626D.png" width="42" height="16" align="bottom"></img></a></markup>.<lineBreak/>
-If false, the parameter in the flow term is a viscosity, and the flow term generally is <markup><a href="ACAC6A80-7CE0-4CB9-B36C-B2FB6ACAB027.htm#097573A7CE1409BF7BCE1268D45D07A8"><img src="../media/097573A7CE1409BF7BCE1268D45D07A8.png" width="53" height="16" align="bottom"></img></a></markup>.
+If true, the parameter in the flow term is an inverted viscosity (i.e.  fluidity). Thus the flow term generally is <markup><a href="ACAC6A80-7CE0-4CB9-B36C-B2FB6ACAB027.htm#F622BAF25D811405F0FDED9F29F5F4B1"><img src="../media/F622BAF25D811405F0FDED9F29F5F4B1.png" width="42" height="16" align="bottom"></img></a></markup>.<lineBreak/>
+If false, the parameter in the flow term is a viscosity, and the flow term generally is <markup><a href="ACAC6A80-7CE0-4CB9-B36C-B2FB6ACAB027.htm#4792C1DF6FFA3F4876EA4684C117F296"><img src="../media/4792C1DF6FFA3F4876EA4684C117F296.png" width="53" height="16" align="bottom"></img></a></markup>.
 </para>
 </listItem>
 
@@ -515,7 +515,7 @@ If false, the parameter in the flow term is a viscosity, and the flow term gener
 
 <para>
 <codeInline>LogarithmizeResult</codeInline>:<lineBreak/>
-If true, the resulting values of <markup><a href="ACAC6A80-7CE0-4CB9-B36C-B2FB6ACAB027.htm#D4BC72FBD851BF0360BCD8BD8BD53264"><img src="../media/D4BC72FBD851BF0360BCD8BD8BD53264.png" width="19" height="16" align="bottom"></img></a></markup> and <markup><a href="ACAC6A80-7CE0-4CB9-B36C-B2FB6ACAB027.htm#181D9DCE08B815F1B1D1D903B76B3C19"><img src="../media/181D9DCE08B815F1B1D1D903B76B3C19.png" width="22" height="16" align="bottom"></img></a></markup> are logarithmized (decadic logarithm).<lineBreak/>
+If true, the resulting values of <markup><a href="ACAC6A80-7CE0-4CB9-B36C-B2FB6ACAB027.htm#75E4F2FB0476FA9E325F7E55208D10F9"><img src="../media/75E4F2FB0476FA9E325F7E55208D10F9.png" width="19" height="16" align="bottom"></img></a></markup> and <markup><a href="ACAC6A80-7CE0-4CB9-B36C-B2FB6ACAB027.htm#2BB798BABE32B125370ABED8FF0238EC"><img src="../media/2BB798BABE32B125370ABED8FF0238EC.png" width="22" height="16" align="bottom"></img></a></markup> are logarithmized (decadic logarithm).<lineBreak/>
 If false, the original values are used.
 </para>
 </listItem>
@@ -525,24 +525,24 @@ If false, the original values are used.
 
 <para>
 Note:<lineBreak/>
-Since in most cases <markup><a href="ACAC6A80-7CE0-4CB9-B36C-B2FB6ACAB027.htm#C786D2F3F30157E1B705ED28A558404E"><img src="../media/C786D2F3F30157E1B705ED28A558404E.png" width="20" height="13" align="middle"></img></a></markup> and <markup><a href="ACAC6A80-7CE0-4CB9-B36C-B2FB6ACAB027.htm#DE940E41F516E3A901A246CBB8714205"><img src="../media/DE940E41F516E3A901A246CBB8714205.png" width="25" height="13" align="middle"></img></a></markup> differ by several orders of magnitude, your fit function will also cover several orders of magnitude. This will result in a poor fit of the low modulus data. To avoid this behavior, you should either use a NaturalLogarithmTransformation for both your data and for the fit function's dependent variables, or use the option in this fit function to logarithmize the results and then use a DecadicLogarithmTransformation to transform your data.
+Since in most cases <markup><a href="ACAC6A80-7CE0-4CB9-B36C-B2FB6ACAB027.htm#5A86C002C48D07CDC17F5AA3F906A7B4"><img src="../media/5A86C002C48D07CDC17F5AA3F906A7B4.png" width="20" height="13" align="middle"></img></a></markup> and <markup><a href="ACAC6A80-7CE0-4CB9-B36C-B2FB6ACAB027.htm#37C494001947111A3EB8B7F199E0E39C"><img src="../media/37C494001947111A3EB8B7F199E0E39C.png" width="25" height="13" align="middle"></img></a></markup> differ by several orders of magnitude, your fit function will also cover several orders of magnitude. This will result in a poor fit of the low modulus data. To avoid this behavior, you should either use a NaturalLogarithmTransformation for both your data and for the fit function's dependent variables, or use the option in this fit function to logarithmize the results and then use a DecadicLogarithmTransformation to transform your data.
 </para>
 </quote>
 
 <para>
-<markup><a href="ACAC6A80-7CE0-4CB9-B36C-B2FB6ACAB027.htm#065E8D4C513C9D4D5E728592C6E94CBD"><img src="../media/065E8D4C513C9D4D5E728592C6E94CBD.png" width="567"></img></a></markup>
+<markup><a href="ACAC6A80-7CE0-4CB9-B36C-B2FB6ACAB027.htm#897DB669B1BB4F544EA497667F96C3E4"><img src="../media/897DB669B1BB4F544EA497667F96C3E4.png" width="567"></img></a></markup>
 </para>
 
 <para>
-Fig. 1: Kohlrausch fit functions (with <markup><a href="ACAC6A80-7CE0-4CB9-B36C-B2FB6ACAB027.htm#477C86F89FF1AC7C56F8AD31411DA120"><img src="../media/477C86F89FF1AC7C56F8AD31411DA120.png" width="61" height="17" align="bottom"></img></a></markup>, <markup><a href="ACAC6A80-7CE0-4CB9-B36C-B2FB6ACAB027.htm#BA4058289A667030CA0467E7C80B1E17"><img src="../media/BA4058289A667030CA0467E7C80B1E17.png" width="66" height="17" align="bottom"></img></a></markup>, <markup><a href="ACAC6A80-7CE0-4CB9-B36C-B2FB6ACAB027.htm#8A25980AE7F8C4A9552E0FAFD8A3803D"><img src="../media/8A25980AE7F8C4A9552E0FAFD8A3803D.png" width="34" height="12" align="middle"></img></a></markup> and <markup><a href="ACAC6A80-7CE0-4CB9-B36C-B2FB6ACAB027.htm#D65D3202D8A6138138B728C5DBD74C60"><img src="../media/D65D3202D8A6138138B728C5DBD74C60.png" width="53" height="17" align="bottom"></img></a></markup>). The values for <markup><a href="ACAC6A80-7CE0-4CB9-B36C-B2FB6ACAB027.htm#C59DE8EA7BFCAF44DCB084433305FEDE"><img src="../media/C59DE8EA7BFCAF44DCB084433305FEDE.png" width="8" height="14" align="middle"></img></a></markup> are indicated in the legend.
+Fig. 1: Kohlrausch fit functions (with <markup><a href="ACAC6A80-7CE0-4CB9-B36C-B2FB6ACAB027.htm#C3D2936C1F30BFC1A2403F572013F229"><img src="../media/C3D2936C1F30BFC1A2403F572013F229.png" width="61" height="17" align="bottom"></img></a></markup>, <markup><a href="ACAC6A80-7CE0-4CB9-B36C-B2FB6ACAB027.htm#7A2771CF7C9D85CE5BC131B64EE5200D"><img src="../media/7A2771CF7C9D85CE5BC131B64EE5200D.png" width="66" height="17" align="bottom"></img></a></markup>, <markup><a href="ACAC6A80-7CE0-4CB9-B36C-B2FB6ACAB027.htm#9CCF1F5EAEF30C125C86686903242590"><img src="../media/9CCF1F5EAEF30C125C86686903242590.png" width="34" height="12" align="middle"></img></a></markup> and <markup><a href="ACAC6A80-7CE0-4CB9-B36C-B2FB6ACAB027.htm#D2FC203547E7734D298590FDFA921573"><img src="../media/D2FC203547E7734D298590FDFA921573.png" width="53" height="17" align="bottom"></img></a></markup>). The values for <markup><a href="ACAC6A80-7CE0-4CB9-B36C-B2FB6ACAB027.htm#4529DD909963469A738B1430F79E7F34"><img src="../media/4529DD909963469A738B1430F79E7F34.png" width="8" height="14" align="middle"></img></a></markup> are indicated in the legend.
 </para>
 
 <para>
-<markup><a href="ACAC6A80-7CE0-4CB9-B36C-B2FB6ACAB027.htm#10633FF0181CABD8E432E63C57F8132E"><img src="../media/10633FF0181CABD8E432E63C57F8132E.png" width="567"></img></a></markup>
+<markup><a href="ACAC6A80-7CE0-4CB9-B36C-B2FB6ACAB027.htm#DCBC82F020573441A5CF66FBB4DE5ABA"><img src="../media/DCBC82F020573441A5CF66FBB4DE5ABA.png" width="567"></img></a></markup>
 </para>
 
 <para>
-Fig. 2: Comparison of Kohlrausch fit functions (with <markup><a href="ACAC6A80-7CE0-4CB9-B36C-B2FB6ACAB027.htm#477C86F89FF1AC7C56F8AD31411DA120"><img src="../media/477C86F89FF1AC7C56F8AD31411DA120.png" width="61" height="17" align="bottom"></img></a></markup>, <markup><a href="ACAC6A80-7CE0-4CB9-B36C-B2FB6ACAB027.htm#BA4058289A667030CA0467E7C80B1E17"><img src="../media/BA4058289A667030CA0467E7C80B1E17.png" width="66" height="17" align="bottom"></img></a></markup>, <markup><a href="ACAC6A80-7CE0-4CB9-B36C-B2FB6ACAB027.htm#8A25980AE7F8C4A9552E0FAFD8A3803D"><img src="../media/8A25980AE7F8C4A9552E0FAFD8A3803D.png" width="34" height="12" align="middle"></img></a></markup> and <markup><a href="ACAC6A80-7CE0-4CB9-B36C-B2FB6ACAB027.htm#96FC41B42935117D03B35F9FDE018E4C"><img src="../media/96FC41B42935117D03B35F9FDE018E4C.png" width="36" height="14" align="middle"></img></a></markup>) without and with flow term. The values for <markup><a href="ACAC6A80-7CE0-4CB9-B36C-B2FB6ACAB027.htm#AD83B92637685B08C33F44DB1DA49D05"><img src="../media/AD83B92637685B08C33F44DB1DA49D05.png" width="7" height="10" align="bottom"></img></a></markup> are indicated in the legend.
+Fig. 2: Comparison of Kohlrausch fit functions (with <markup><a href="ACAC6A80-7CE0-4CB9-B36C-B2FB6ACAB027.htm#C3D2936C1F30BFC1A2403F572013F229"><img src="../media/C3D2936C1F30BFC1A2403F572013F229.png" width="61" height="17" align="bottom"></img></a></markup>, <markup><a href="ACAC6A80-7CE0-4CB9-B36C-B2FB6ACAB027.htm#7A2771CF7C9D85CE5BC131B64EE5200D"><img src="../media/7A2771CF7C9D85CE5BC131B64EE5200D.png" width="66" height="17" align="bottom"></img></a></markup>, <markup><a href="ACAC6A80-7CE0-4CB9-B36C-B2FB6ACAB027.htm#9CCF1F5EAEF30C125C86686903242590"><img src="../media/9CCF1F5EAEF30C125C86686903242590.png" width="34" height="12" align="middle"></img></a></markup> and <markup><a href="ACAC6A80-7CE0-4CB9-B36C-B2FB6ACAB027.htm#2E14EAFE7289A8E7D74981961B0DF91E"><img src="../media/2E14EAFE7289A8E7D74981961B0DF91E.png" width="36" height="14" align="middle"></img></a></markup>) without and with flow term. The values for <markup><a href="ACAC6A80-7CE0-4CB9-B36C-B2FB6ACAB027.htm#F503E608C29C68825DF5C8DE41E076A3"><img src="../media/F503E608C29C68825DF5C8DE41E076A3.png" width="7" height="10" align="bottom"></img></a></markup> are indicated in the legend.
 </para>
 <markup><hr/></markup>
 
@@ -575,15 +575,15 @@ Williams, G., Watts, D. C., &quot;Non-Symmetrical Dielectric Relaxation Behavior
 <para>
 This function models the complex dynamic modulus in dependence on the frequency as:
 </para>
-<markup><a href="ACAC6A80-7CE0-4CB9-B36C-B2FB6ACAB027.htm#BE7A7DA80288CBD6FA61512A1EE36062"><img src="../media/BE7A7DA80288CBD6FA61512A1EE36062.png" width="403" height="36"></img></a></markup>
+<markup><a href="ACAC6A80-7CE0-4CB9-B36C-B2FB6ACAB027.htm#66B13858FD0EC6E6169DEC986991A5BD"><img src="../media/66B13858FD0EC6E6169DEC986991A5BD.png" width="403" height="36"></img></a></markup>
 
 <para>
-or with a generalized flow term (both equations are equivalent if <markup><a href="ACAC6A80-7CE0-4CB9-B36C-B2FB6ACAB027.htm#50B1474D8FD6F792DFC01CFE00EFEE88"><img src="../media/50B1474D8FD6F792DFC01CFE00EFEE88.png" width="36" height="12" align="middle"></img></a></markup>) :
+or with a generalized flow term (both equations are equivalent if <markup><a href="ACAC6A80-7CE0-4CB9-B36C-B2FB6ACAB027.htm#D04CC2CA1747C29DDC472AF42CC86EF1"><img src="../media/D04CC2CA1747C29DDC472AF42CC86EF1.png" width="36" height="12" align="middle"></img></a></markup>) :
 </para>
-<markup><a href="ACAC6A80-7CE0-4CB9-B36C-B2FB6ACAB027.htm#D0C934246F92FF89964B10E3AF0E6FA7"><img src="../media/D0C934246F92FF89964B10E3AF0E6FA7.png" width="449" height="50"></img></a></markup>
+<markup><a href="ACAC6A80-7CE0-4CB9-B36C-B2FB6ACAB027.htm#B72726048AB9B7539F2D5F539923E615"><img src="../media/B72726048AB9B7539F2D5F539923E615.png" width="449" height="50"></img></a></markup>
 
 <para>
-with the frequency <markup><a href="ACAC6A80-7CE0-4CB9-B36C-B2FB6ACAB027.htm#2A199B72CD7E9D0B67178EAA44A43EF9"><img src="../media/2A199B72CD7E9D0B67178EAA44A43EF9.png" width="7" height="14" align="middle"></img></a></markup>  being the independent variable, and <markup><a href="ACAC6A80-7CE0-4CB9-B36C-B2FB6ACAB027.htm#9EC6586BEDE4B325139DA30F78A41433"><img src="../media/9EC6586BEDE4B325139DA30F78A41433.png" width="80" height="17" align="bottom"></img></a></markup> and <markup><a href="ACAC6A80-7CE0-4CB9-B36C-B2FB6ACAB027.htm#187E51CF9880CD4877CD3C8E74C03176"><img src="../media/187E51CF9880CD4877CD3C8E74C03176.png" width="83" height="17" align="bottom"></img></a></markup> being the dependent variables, namely the decadic logarithm of the real and imaginary part of the complex dynamic modulus <markup><a href="ACAC6A80-7CE0-4CB9-B36C-B2FB6ACAB027.htm#339BE51F6F1A624E84DD2CBCB97F4D71"><img src="../media/339BE51F6F1A624E84DD2CBCB97F4D71.png" width="41" height="16" align="bottom"></img></a></markup>.
+with the frequency <markup><a href="ACAC6A80-7CE0-4CB9-B36C-B2FB6ACAB027.htm#13B763A150BF87133FFDB7AA40158ACC"><img src="../media/13B763A150BF87133FFDB7AA40158ACC.png" width="7" height="14" align="middle"></img></a></markup>  being the independent variable, and <markup><a href="ACAC6A80-7CE0-4CB9-B36C-B2FB6ACAB027.htm#0FD169A524096845A5B011BBF6ED8356"><img src="../media/0FD169A524096845A5B011BBF6ED8356.png" width="80" height="17" align="bottom"></img></a></markup> and <markup><a href="ACAC6A80-7CE0-4CB9-B36C-B2FB6ACAB027.htm#D4858BD8937CE88D872118E1D3267067"><img src="../media/D4858BD8937CE88D872118E1D3267067.png" width="83" height="17" align="bottom"></img></a></markup> being the dependent variables, namely the decadic logarithm of the real and imaginary part of the complex dynamic modulus <markup><a href="ACAC6A80-7CE0-4CB9-B36C-B2FB6ACAB027.htm#E7DB27B74536AFA08C6E221BF0A99AF5"><img src="../media/E7DB27B74536AFA08C6E221BF0A99AF5.png" width="41" height="16" align="bottom"></img></a></markup>.
 </para>
 
 <para>
@@ -595,35 +595,35 @@ The parameters are:
 <listItem>
 
 <para>
-<markup><a href="ACAC6A80-7CE0-4CB9-B36C-B2FB6ACAB027.htm#C786D2F3F30157E1B705ED28A558404E"><img src="../media/C786D2F3F30157E1B705ED28A558404E.png" width="20" height="13" align="middle"></img></a></markup> : low frequency modulus limit
+<markup><a href="ACAC6A80-7CE0-4CB9-B36C-B2FB6ACAB027.htm#5A86C002C48D07CDC17F5AA3F906A7B4"><img src="../media/5A86C002C48D07CDC17F5AA3F906A7B4.png" width="20" height="13" align="middle"></img></a></markup> : low frequency modulus limit
 </para>
 </listItem>
 
 <listItem>
 
 <para>
-<markup><a href="ACAC6A80-7CE0-4CB9-B36C-B2FB6ACAB027.htm#DE940E41F516E3A901A246CBB8714205"><img src="../media/DE940E41F516E3A901A246CBB8714205.png" width="25" height="13" align="middle"></img></a></markup> : high frequency modulus limit
+<markup><a href="ACAC6A80-7CE0-4CB9-B36C-B2FB6ACAB027.htm#37C494001947111A3EB8B7F199E0E39C"><img src="../media/37C494001947111A3EB8B7F199E0E39C.png" width="25" height="13" align="middle"></img></a></markup> : high frequency modulus limit
 </para>
 </listItem>
 
 <listItem>
 
 <para>
-<markup><a href="ACAC6A80-7CE0-4CB9-B36C-B2FB6ACAB027.htm#28EC17121C89EBFA982608CD3F98C1BD"><img src="../media/28EC17121C89EBFA982608CD3F98C1BD.png" width="7" height="8" align="middle"></img></a></markup> : relaxation time
+<markup><a href="ACAC6A80-7CE0-4CB9-B36C-B2FB6ACAB027.htm#BFA313332602014B62FEEF342DFA23F5"><img src="../media/BFA313332602014B62FEEF342DFA23F5.png" width="7" height="8" align="middle"></img></a></markup> : relaxation time
 </para>
 </listItem>
 
 <listItem>
 
 <para>
-<markup><a href="ACAC6A80-7CE0-4CB9-B36C-B2FB6ACAB027.htm#2C77A09812900D70AB98273FC4626605"><img src="../media/2C77A09812900D70AB98273FC4626605.png" width="10" height="8" align="middle"></img></a></markup>, <markup><a href="ACAC6A80-7CE0-4CB9-B36C-B2FB6ACAB027.htm#3A94731BF74551B8E1D2F433B38EA40C"><img src="../media/3A94731BF74551B8E1D2F433B38EA40C.png" width="8" height="10" align="bottom"></img></a></markup> : shape exponents (usually <markup><a href="ACAC6A80-7CE0-4CB9-B36C-B2FB6ACAB027.htm#2C079671313FD28CD0F480904B56E305"><img src="../media/2C079671313FD28CD0F480904B56E305.png" width="65" height="13" align="middle"></img></a></markup> and <markup><a href="ACAC6A80-7CE0-4CB9-B36C-B2FB6ACAB027.htm#5D705B98A0875D8C5E437975AB3F92AC"><img src="../media/5D705B98A0875D8C5E437975AB3F92AC.png" width="63" height="14" align="bottom"></img></a></markup>)
+<markup><a href="ACAC6A80-7CE0-4CB9-B36C-B2FB6ACAB027.htm#113355CB1E8ACA7E77699CB7EC6DCB2D"><img src="../media/113355CB1E8ACA7E77699CB7EC6DCB2D.png" width="10" height="8" align="middle"></img></a></markup>, <markup><a href="ACAC6A80-7CE0-4CB9-B36C-B2FB6ACAB027.htm#0CAC28E03B356FE9EF532183700F9A62"><img src="../media/0CAC28E03B356FE9EF532183700F9A62.png" width="8" height="10" align="bottom"></img></a></markup> : shape exponents (usually <markup><a href="ACAC6A80-7CE0-4CB9-B36C-B2FB6ACAB027.htm#A2B0EB51B95EC0FCE6271B5CCAEEBB59"><img src="../media/A2B0EB51B95EC0FCE6271B5CCAEEBB59.png" width="65" height="13" align="middle"></img></a></markup> and <markup><a href="ACAC6A80-7CE0-4CB9-B36C-B2FB6ACAB027.htm#EE75980BD04116C4ED305EAEB8D03B03"><img src="../media/EE75980BD04116C4ED305EAEB8D03B03.png" width="63" height="14" align="bottom"></img></a></markup>)
 </para>
 </listItem>
 
 <listItem>
 
 <para>
-<markup><a href="ACAC6A80-7CE0-4CB9-B36C-B2FB6ACAB027.htm#98D8F159118ED8A3C571992589A74534"><img src="../media/98D8F159118ED8A3C571992589A74534.png" width="9" height="8" align="middle"></img></a></markup> : generalized flow term, for instance fluidity (inverse viscosity), conductivity etc.
+<markup><a href="ACAC6A80-7CE0-4CB9-B36C-B2FB6ACAB027.htm#DE5EA325656D857AFB5CA4E8DB46FCC8"><img src="../media/DE5EA325656D857AFB5CA4E8DB46FCC8.png" width="9" height="8" align="middle"></img></a></markup> : generalized flow term, for instance fluidity (inverse viscosity), conductivity etc.
 </para>
 </listItem>
 </list>
@@ -637,19 +637,19 @@ If your data are not logarithmized already, please use a DecadicLogarithmTransfo
 </quote>
 
 <para>
-<markup><a href="ACAC6A80-7CE0-4CB9-B36C-B2FB6ACAB027.htm#31D66E6DD1C743045556A3591CF3A030"><img src="../media/31D66E6DD1C743045556A3591CF3A030.png" width="567"></img></a></markup>
+<markup><a href="ACAC6A80-7CE0-4CB9-B36C-B2FB6ACAB027.htm#52DA5B28BD63AB929A929129A68E3AE5"><img src="../media/52DA5B28BD63AB929A929129A68E3AE5.png" width="567"></img></a></markup>
 </para>
 
 <para>
-Fig. 1: Havriliak-Negami (with <markup><a href="ACAC6A80-7CE0-4CB9-B36C-B2FB6ACAB027.htm#477C86F89FF1AC7C56F8AD31411DA120"><img src="../media/477C86F89FF1AC7C56F8AD31411DA120.png" width="61" height="17" align="bottom"></img></a></markup>, <markup><a href="ACAC6A80-7CE0-4CB9-B36C-B2FB6ACAB027.htm#BA4058289A667030CA0467E7C80B1E17"><img src="../media/BA4058289A667030CA0467E7C80B1E17.png" width="66" height="17" align="bottom"></img></a></markup>, <markup><a href="ACAC6A80-7CE0-4CB9-B36C-B2FB6ACAB027.htm#8A25980AE7F8C4A9552E0FAFD8A3803D"><img src="../media/8A25980AE7F8C4A9552E0FAFD8A3803D.png" width="34" height="12" align="middle"></img></a></markup> and <markup><a href="ACAC6A80-7CE0-4CB9-B36C-B2FB6ACAB027.htm#D65D3202D8A6138138B728C5DBD74C60"><img src="../media/D65D3202D8A6138138B728C5DBD74C60.png" width="53" height="17" align="bottom"></img></a></markup>). The values for <markup><a href="ACAC6A80-7CE0-4CB9-B36C-B2FB6ACAB027.htm#2C77A09812900D70AB98273FC4626605"><img src="../media/2C77A09812900D70AB98273FC4626605.png" width="10" height="8" align="middle"></img></a></markup> and <markup><a href="ACAC6A80-7CE0-4CB9-B36C-B2FB6ACAB027.htm#3A94731BF74551B8E1D2F433B38EA40C"><img src="../media/3A94731BF74551B8E1D2F433B38EA40C.png" width="8" height="10" align="bottom"></img></a></markup> are indicated in the legend.
+Fig. 1: Havriliak-Negami (with <markup><a href="ACAC6A80-7CE0-4CB9-B36C-B2FB6ACAB027.htm#C3D2936C1F30BFC1A2403F572013F229"><img src="../media/C3D2936C1F30BFC1A2403F572013F229.png" width="61" height="17" align="bottom"></img></a></markup>, <markup><a href="ACAC6A80-7CE0-4CB9-B36C-B2FB6ACAB027.htm#7A2771CF7C9D85CE5BC131B64EE5200D"><img src="../media/7A2771CF7C9D85CE5BC131B64EE5200D.png" width="66" height="17" align="bottom"></img></a></markup>, <markup><a href="ACAC6A80-7CE0-4CB9-B36C-B2FB6ACAB027.htm#9CCF1F5EAEF30C125C86686903242590"><img src="../media/9CCF1F5EAEF30C125C86686903242590.png" width="34" height="12" align="middle"></img></a></markup> and <markup><a href="ACAC6A80-7CE0-4CB9-B36C-B2FB6ACAB027.htm#D2FC203547E7734D298590FDFA921573"><img src="../media/D2FC203547E7734D298590FDFA921573.png" width="53" height="17" align="bottom"></img></a></markup>). The values for <markup><a href="ACAC6A80-7CE0-4CB9-B36C-B2FB6ACAB027.htm#113355CB1E8ACA7E77699CB7EC6DCB2D"><img src="../media/113355CB1E8ACA7E77699CB7EC6DCB2D.png" width="10" height="8" align="middle"></img></a></markup> and <markup><a href="ACAC6A80-7CE0-4CB9-B36C-B2FB6ACAB027.htm#0CAC28E03B356FE9EF532183700F9A62"><img src="../media/0CAC28E03B356FE9EF532183700F9A62.png" width="8" height="10" align="bottom"></img></a></markup> are indicated in the legend.
 </para>
 
 <para>
-<markup><a href="ACAC6A80-7CE0-4CB9-B36C-B2FB6ACAB027.htm#F692593BBC16F4054CC18D83DF8FB1EC"><img src="../media/F692593BBC16F4054CC18D83DF8FB1EC.png" width="567"></img></a></markup>
+<markup><a href="ACAC6A80-7CE0-4CB9-B36C-B2FB6ACAB027.htm#CB997944AF1CC0EABD1B8751B3AFF515"><img src="../media/CB997944AF1CC0EABD1B8751B3AFF515.png" width="567"></img></a></markup>
 </para>
 
 <para>
-Fig. 2: Comparison of Havriliak-Negami (with <markup><a href="ACAC6A80-7CE0-4CB9-B36C-B2FB6ACAB027.htm#477C86F89FF1AC7C56F8AD31411DA120"><img src="../media/477C86F89FF1AC7C56F8AD31411DA120.png" width="61" height="17" align="bottom"></img></a></markup>, <markup><a href="ACAC6A80-7CE0-4CB9-B36C-B2FB6ACAB027.htm#BA4058289A667030CA0467E7C80B1E17"><img src="../media/BA4058289A667030CA0467E7C80B1E17.png" width="66" height="17" align="bottom"></img></a></markup>, <markup><a href="ACAC6A80-7CE0-4CB9-B36C-B2FB6ACAB027.htm#8A25980AE7F8C4A9552E0FAFD8A3803D"><img src="../media/8A25980AE7F8C4A9552E0FAFD8A3803D.png" width="34" height="12" align="middle"></img></a></markup>, <markup><a href="ACAC6A80-7CE0-4CB9-B36C-B2FB6ACAB027.htm#77559B9B2DF2747DB53C5F8D18791054"><img src="../media/77559B9B2DF2747DB53C5F8D18791054.png" width="37" height="12" align="middle"></img></a></markup> and <markup><a href="ACAC6A80-7CE0-4CB9-B36C-B2FB6ACAB027.htm#CD3FC97AA6D99E879C7B66E922BFD82F"><img src="../media/CD3FC97AA6D99E879C7B66E922BFD82F.png" width="35" height="14" align="bottom"></img></a></markup>) without and with flow term. The values for <markup><a href="ACAC6A80-7CE0-4CB9-B36C-B2FB6ACAB027.htm#AD83B92637685B08C33F44DB1DA49D05"><img src="../media/AD83B92637685B08C33F44DB1DA49D05.png" width="7" height="10" align="bottom"></img></a></markup> are indicated in the legend.
+Fig. 2: Comparison of Havriliak-Negami (with <markup><a href="ACAC6A80-7CE0-4CB9-B36C-B2FB6ACAB027.htm#C3D2936C1F30BFC1A2403F572013F229"><img src="../media/C3D2936C1F30BFC1A2403F572013F229.png" width="61" height="17" align="bottom"></img></a></markup>, <markup><a href="ACAC6A80-7CE0-4CB9-B36C-B2FB6ACAB027.htm#7A2771CF7C9D85CE5BC131B64EE5200D"><img src="../media/7A2771CF7C9D85CE5BC131B64EE5200D.png" width="66" height="17" align="bottom"></img></a></markup>, <markup><a href="ACAC6A80-7CE0-4CB9-B36C-B2FB6ACAB027.htm#9CCF1F5EAEF30C125C86686903242590"><img src="../media/9CCF1F5EAEF30C125C86686903242590.png" width="34" height="12" align="middle"></img></a></markup>, <markup><a href="ACAC6A80-7CE0-4CB9-B36C-B2FB6ACAB027.htm#FDD0BFC720BA333CDF5E6BD3C90F7F3F"><img src="../media/FDD0BFC720BA333CDF5E6BD3C90F7F3F.png" width="37" height="12" align="middle"></img></a></markup> and <markup><a href="ACAC6A80-7CE0-4CB9-B36C-B2FB6ACAB027.htm#72FCCC3803AB1972CADF5BDA1A5F0E80"><img src="../media/72FCCC3803AB1972CADF5BDA1A5F0E80.png" width="35" height="14" align="bottom"></img></a></markup>) without and with flow term. The values for <markup><a href="ACAC6A80-7CE0-4CB9-B36C-B2FB6ACAB027.htm#F503E608C29C68825DF5C8DE41E076A3"><img src="../media/F503E608C29C68825DF5C8DE41E076A3.png" width="7" height="10" align="bottom"></img></a></markup> are indicated in the legend.
 </para>
 <markup><hr/></markup>
 
@@ -675,15 +675,15 @@ Havriliak, S., Negami, S., &quot;A complex plane representation of dielectric an
 <para>
 This function models the complex dynamic modulus in dependence on the circular frequency as:
 </para>
-<markup><a href="ACAC6A80-7CE0-4CB9-B36C-B2FB6ACAB027.htm#5FCB7EDD83F1464606E45C3CB1240BE6"><img src="../media/5FCB7EDD83F1464606E45C3CB1240BE6.png" width="395" height="36"></img></a></markup>
+<markup><a href="ACAC6A80-7CE0-4CB9-B36C-B2FB6ACAB027.htm#DA2B5B6DD710DA1B0607B37C4F7DCABA"><img src="../media/DA2B5B6DD710DA1B0607B37C4F7DCABA.png" width="395" height="36"></img></a></markup>
 
 <para>
-or with a generalized flow term (both equations are equivalent if <markup><a href="ACAC6A80-7CE0-4CB9-B36C-B2FB6ACAB027.htm#50B1474D8FD6F792DFC01CFE00EFEE88"><img src="../media/50B1474D8FD6F792DFC01CFE00EFEE88.png" width="36" height="12" align="middle"></img></a></markup>) :
+or with a generalized flow term (both equations are equivalent if <markup><a href="ACAC6A80-7CE0-4CB9-B36C-B2FB6ACAB027.htm#D04CC2CA1747C29DDC472AF42CC86EF1"><img src="../media/D04CC2CA1747C29DDC472AF42CC86EF1.png" width="36" height="12" align="middle"></img></a></markup>) :
 </para>
-<markup><a href="ACAC6A80-7CE0-4CB9-B36C-B2FB6ACAB027.htm#314F78B1BCA80A2F54B21D5BE2731F98"><img src="../media/314F78B1BCA80A2F54B21D5BE2731F98.png" width="436" height="50"></img></a></markup>
+<markup><a href="ACAC6A80-7CE0-4CB9-B36C-B2FB6ACAB027.htm#343147BC737686A4D418977DB1335CAD"><img src="../media/343147BC737686A4D418977DB1335CAD.png" width="436" height="50"></img></a></markup>
 
 <para>
-with the circular frequency <markup><a href="ACAC6A80-7CE0-4CB9-B36C-B2FB6ACAB027.htm#72D23EA1819B9CC33DD47098677C7746"><img src="../media/72D23EA1819B9CC33DD47098677C7746.png" width="53" height="14" align="middle"></img></a></markup>  being the independent variable, and <markup><a href="ACAC6A80-7CE0-4CB9-B36C-B2FB6ACAB027.htm#19B3438744BD5BC683BF98D4547B864D"><img src="../media/19B3438744BD5BC683BF98D4547B864D.png" width="82" height="17" align="bottom"></img></a></markup> and <markup><a href="ACAC6A80-7CE0-4CB9-B36C-B2FB6ACAB027.htm#ED551C5ACC101942B7536F729684A333"><img src="../media/ED551C5ACC101942B7536F729684A333.png" width="85" height="17" align="bottom"></img></a></markup> being the dependent variables, namely the decadic logarithm of the real and imaginary part of the complex dynamic modulus <markup><a href="ACAC6A80-7CE0-4CB9-B36C-B2FB6ACAB027.htm#318CCB08565DA5D42A00A2AFB8E8F633"><img src="../media/318CCB08565DA5D42A00A2AFB8E8F633.png" width="43" height="16" align="bottom"></img></a></markup>.
+with the circular frequency <markup><a href="ACAC6A80-7CE0-4CB9-B36C-B2FB6ACAB027.htm#06D94BA2FE8567AEC73EDCAB2371C209"><img src="../media/06D94BA2FE8567AEC73EDCAB2371C209.png" width="53" height="14" align="middle"></img></a></markup>  being the independent variable, and <markup><a href="ACAC6A80-7CE0-4CB9-B36C-B2FB6ACAB027.htm#F32E5ABCA21C121CB89D52ED07688E52"><img src="../media/F32E5ABCA21C121CB89D52ED07688E52.png" width="82" height="17" align="bottom"></img></a></markup> and <markup><a href="ACAC6A80-7CE0-4CB9-B36C-B2FB6ACAB027.htm#6AA5D74C3063D9DF3F9D6DF06D451D96"><img src="../media/6AA5D74C3063D9DF3F9D6DF06D451D96.png" width="85" height="17" align="bottom"></img></a></markup> being the dependent variables, namely the decadic logarithm of the real and imaginary part of the complex dynamic modulus <markup><a href="ACAC6A80-7CE0-4CB9-B36C-B2FB6ACAB027.htm#236F783D333428754E6F28818E4D084F"><img src="../media/236F783D333428754E6F28818E4D084F.png" width="43" height="16" align="bottom"></img></a></markup>.
 </para>
 
 <para>
@@ -695,35 +695,35 @@ The parameters are:
 <listItem>
 
 <para>
-<markup><a href="ACAC6A80-7CE0-4CB9-B36C-B2FB6ACAB027.htm#C786D2F3F30157E1B705ED28A558404E"><img src="../media/C786D2F3F30157E1B705ED28A558404E.png" width="20" height="13" align="middle"></img></a></markup> : low frequency modulus limit
+<markup><a href="ACAC6A80-7CE0-4CB9-B36C-B2FB6ACAB027.htm#5A86C002C48D07CDC17F5AA3F906A7B4"><img src="../media/5A86C002C48D07CDC17F5AA3F906A7B4.png" width="20" height="13" align="middle"></img></a></markup> : low frequency modulus limit
 </para>
 </listItem>
 
 <listItem>
 
 <para>
-<markup><a href="ACAC6A80-7CE0-4CB9-B36C-B2FB6ACAB027.htm#DE940E41F516E3A901A246CBB8714205"><img src="../media/DE940E41F516E3A901A246CBB8714205.png" width="25" height="13" align="middle"></img></a></markup> : high frequency modulus limit
+<markup><a href="ACAC6A80-7CE0-4CB9-B36C-B2FB6ACAB027.htm#37C494001947111A3EB8B7F199E0E39C"><img src="../media/37C494001947111A3EB8B7F199E0E39C.png" width="25" height="13" align="middle"></img></a></markup> : high frequency modulus limit
 </para>
 </listItem>
 
 <listItem>
 
 <para>
-<markup><a href="ACAC6A80-7CE0-4CB9-B36C-B2FB6ACAB027.htm#28EC17121C89EBFA982608CD3F98C1BD"><img src="../media/28EC17121C89EBFA982608CD3F98C1BD.png" width="7" height="8" align="middle"></img></a></markup> : relaxation time
+<markup><a href="ACAC6A80-7CE0-4CB9-B36C-B2FB6ACAB027.htm#BFA313332602014B62FEEF342DFA23F5"><img src="../media/BFA313332602014B62FEEF342DFA23F5.png" width="7" height="8" align="middle"></img></a></markup> : relaxation time
 </para>
 </listItem>
 
 <listItem>
 
 <para>
-<markup><a href="ACAC6A80-7CE0-4CB9-B36C-B2FB6ACAB027.htm#2C77A09812900D70AB98273FC4626605"><img src="../media/2C77A09812900D70AB98273FC4626605.png" width="10" height="8" align="middle"></img></a></markup>, <markup><a href="ACAC6A80-7CE0-4CB9-B36C-B2FB6ACAB027.htm#3A94731BF74551B8E1D2F433B38EA40C"><img src="../media/3A94731BF74551B8E1D2F433B38EA40C.png" width="8" height="10" align="bottom"></img></a></markup> : shape exponents (usually <markup><a href="ACAC6A80-7CE0-4CB9-B36C-B2FB6ACAB027.htm#2C079671313FD28CD0F480904B56E305"><img src="../media/2C079671313FD28CD0F480904B56E305.png" width="65" height="13" align="middle"></img></a></markup> and <markup><a href="ACAC6A80-7CE0-4CB9-B36C-B2FB6ACAB027.htm#5D705B98A0875D8C5E437975AB3F92AC"><img src="../media/5D705B98A0875D8C5E437975AB3F92AC.png" width="63" height="14" align="bottom"></img></a></markup>)
+<markup><a href="ACAC6A80-7CE0-4CB9-B36C-B2FB6ACAB027.htm#113355CB1E8ACA7E77699CB7EC6DCB2D"><img src="../media/113355CB1E8ACA7E77699CB7EC6DCB2D.png" width="10" height="8" align="middle"></img></a></markup>, <markup><a href="ACAC6A80-7CE0-4CB9-B36C-B2FB6ACAB027.htm#0CAC28E03B356FE9EF532183700F9A62"><img src="../media/0CAC28E03B356FE9EF532183700F9A62.png" width="8" height="10" align="bottom"></img></a></markup> : shape exponents (usually <markup><a href="ACAC6A80-7CE0-4CB9-B36C-B2FB6ACAB027.htm#A2B0EB51B95EC0FCE6271B5CCAEEBB59"><img src="../media/A2B0EB51B95EC0FCE6271B5CCAEEBB59.png" width="65" height="13" align="middle"></img></a></markup> and <markup><a href="ACAC6A80-7CE0-4CB9-B36C-B2FB6ACAB027.htm#EE75980BD04116C4ED305EAEB8D03B03"><img src="../media/EE75980BD04116C4ED305EAEB8D03B03.png" width="63" height="14" align="bottom"></img></a></markup>)
 </para>
 </listItem>
 
 <listItem>
 
 <para>
-<markup><a href="ACAC6A80-7CE0-4CB9-B36C-B2FB6ACAB027.htm#98D8F159118ED8A3C571992589A74534"><img src="../media/98D8F159118ED8A3C571992589A74534.png" width="9" height="8" align="middle"></img></a></markup> : generalized flow term, for instance fluidity (inverse viscosity), conductivity etc.
+<markup><a href="ACAC6A80-7CE0-4CB9-B36C-B2FB6ACAB027.htm#DE5EA325656D857AFB5CA4E8DB46FCC8"><img src="../media/DE5EA325656D857AFB5CA4E8DB46FCC8.png" width="9" height="8" align="middle"></img></a></markup> : generalized flow term, for instance fluidity (inverse viscosity), conductivity etc.
 </para>
 </listItem>
 </list>
@@ -737,19 +737,19 @@ If your data are not logarithmized already, please use a DecadicLogarithmTransfo
 </quote>
 
 <para>
-<markup><a href="ACAC6A80-7CE0-4CB9-B36C-B2FB6ACAB027.htm#79D944A4031067E8BE2422A9443B3706"><img src="../media/79D944A4031067E8BE2422A9443B3706.png" width="567"></img></a></markup>
+<markup><a href="ACAC6A80-7CE0-4CB9-B36C-B2FB6ACAB027.htm#4599E03623A14A6ABFBC1FC64A630401"><img src="../media/4599E03623A14A6ABFBC1FC64A630401.png" width="567"></img></a></markup>
 </para>
 
 <para>
-Fig. 1: Havriliak-Negami (with <markup><a href="ACAC6A80-7CE0-4CB9-B36C-B2FB6ACAB027.htm#477C86F89FF1AC7C56F8AD31411DA120"><img src="../media/477C86F89FF1AC7C56F8AD31411DA120.png" width="61" height="17" align="bottom"></img></a></markup>, <markup><a href="ACAC6A80-7CE0-4CB9-B36C-B2FB6ACAB027.htm#BA4058289A667030CA0467E7C80B1E17"><img src="../media/BA4058289A667030CA0467E7C80B1E17.png" width="66" height="17" align="bottom"></img></a></markup>, <markup><a href="ACAC6A80-7CE0-4CB9-B36C-B2FB6ACAB027.htm#8A25980AE7F8C4A9552E0FAFD8A3803D"><img src="../media/8A25980AE7F8C4A9552E0FAFD8A3803D.png" width="34" height="12" align="middle"></img></a></markup> and <markup><a href="ACAC6A80-7CE0-4CB9-B36C-B2FB6ACAB027.htm#D65D3202D8A6138138B728C5DBD74C60"><img src="../media/D65D3202D8A6138138B728C5DBD74C60.png" width="53" height="17" align="bottom"></img></a></markup>). The values for <markup><a href="ACAC6A80-7CE0-4CB9-B36C-B2FB6ACAB027.htm#2C77A09812900D70AB98273FC4626605"><img src="../media/2C77A09812900D70AB98273FC4626605.png" width="10" height="8" align="middle"></img></a></markup> and <markup><a href="ACAC6A80-7CE0-4CB9-B36C-B2FB6ACAB027.htm#3A94731BF74551B8E1D2F433B38EA40C"><img src="../media/3A94731BF74551B8E1D2F433B38EA40C.png" width="8" height="10" align="bottom"></img></a></markup> are indicated in the legend.
+Fig. 1: Havriliak-Negami (with <markup><a href="ACAC6A80-7CE0-4CB9-B36C-B2FB6ACAB027.htm#C3D2936C1F30BFC1A2403F572013F229"><img src="../media/C3D2936C1F30BFC1A2403F572013F229.png" width="61" height="17" align="bottom"></img></a></markup>, <markup><a href="ACAC6A80-7CE0-4CB9-B36C-B2FB6ACAB027.htm#7A2771CF7C9D85CE5BC131B64EE5200D"><img src="../media/7A2771CF7C9D85CE5BC131B64EE5200D.png" width="66" height="17" align="bottom"></img></a></markup>, <markup><a href="ACAC6A80-7CE0-4CB9-B36C-B2FB6ACAB027.htm#9CCF1F5EAEF30C125C86686903242590"><img src="../media/9CCF1F5EAEF30C125C86686903242590.png" width="34" height="12" align="middle"></img></a></markup> and <markup><a href="ACAC6A80-7CE0-4CB9-B36C-B2FB6ACAB027.htm#D2FC203547E7734D298590FDFA921573"><img src="../media/D2FC203547E7734D298590FDFA921573.png" width="53" height="17" align="bottom"></img></a></markup>). The values for <markup><a href="ACAC6A80-7CE0-4CB9-B36C-B2FB6ACAB027.htm#113355CB1E8ACA7E77699CB7EC6DCB2D"><img src="../media/113355CB1E8ACA7E77699CB7EC6DCB2D.png" width="10" height="8" align="middle"></img></a></markup> and <markup><a href="ACAC6A80-7CE0-4CB9-B36C-B2FB6ACAB027.htm#0CAC28E03B356FE9EF532183700F9A62"><img src="../media/0CAC28E03B356FE9EF532183700F9A62.png" width="8" height="10" align="bottom"></img></a></markup> are indicated in the legend.
 </para>
 
 <para>
-<markup><a href="ACAC6A80-7CE0-4CB9-B36C-B2FB6ACAB027.htm#8E85065C7D2FEF54E4C38004C60796EE"><img src="../media/8E85065C7D2FEF54E4C38004C60796EE.png" width="567"></img></a></markup>
+<markup><a href="ACAC6A80-7CE0-4CB9-B36C-B2FB6ACAB027.htm#9770504A3A0E710C1AC33A79B5FFE6CF"><img src="../media/9770504A3A0E710C1AC33A79B5FFE6CF.png" width="567"></img></a></markup>
 </para>
 
 <para>
-Fig. 2: Comparison of Havriliak-Negami (with <markup><a href="ACAC6A80-7CE0-4CB9-B36C-B2FB6ACAB027.htm#477C86F89FF1AC7C56F8AD31411DA120"><img src="../media/477C86F89FF1AC7C56F8AD31411DA120.png" width="61" height="17" align="bottom"></img></a></markup>, <markup><a href="ACAC6A80-7CE0-4CB9-B36C-B2FB6ACAB027.htm#BA4058289A667030CA0467E7C80B1E17"><img src="../media/BA4058289A667030CA0467E7C80B1E17.png" width="66" height="17" align="bottom"></img></a></markup>, <markup><a href="ACAC6A80-7CE0-4CB9-B36C-B2FB6ACAB027.htm#8A25980AE7F8C4A9552E0FAFD8A3803D"><img src="../media/8A25980AE7F8C4A9552E0FAFD8A3803D.png" width="34" height="12" align="middle"></img></a></markup>, <markup><a href="ACAC6A80-7CE0-4CB9-B36C-B2FB6ACAB027.htm#77559B9B2DF2747DB53C5F8D18791054"><img src="../media/77559B9B2DF2747DB53C5F8D18791054.png" width="37" height="12" align="middle"></img></a></markup> and <markup><a href="ACAC6A80-7CE0-4CB9-B36C-B2FB6ACAB027.htm#CD3FC97AA6D99E879C7B66E922BFD82F"><img src="../media/CD3FC97AA6D99E879C7B66E922BFD82F.png" width="35" height="14" align="bottom"></img></a></markup>) without and with flow term. The values for <markup><a href="ACAC6A80-7CE0-4CB9-B36C-B2FB6ACAB027.htm#AD83B92637685B08C33F44DB1DA49D05"><img src="../media/AD83B92637685B08C33F44DB1DA49D05.png" width="7" height="10" align="bottom"></img></a></markup> are indicated in the legend.
+Fig. 2: Comparison of Havriliak-Negami (with <markup><a href="ACAC6A80-7CE0-4CB9-B36C-B2FB6ACAB027.htm#C3D2936C1F30BFC1A2403F572013F229"><img src="../media/C3D2936C1F30BFC1A2403F572013F229.png" width="61" height="17" align="bottom"></img></a></markup>, <markup><a href="ACAC6A80-7CE0-4CB9-B36C-B2FB6ACAB027.htm#7A2771CF7C9D85CE5BC131B64EE5200D"><img src="../media/7A2771CF7C9D85CE5BC131B64EE5200D.png" width="66" height="17" align="bottom"></img></a></markup>, <markup><a href="ACAC6A80-7CE0-4CB9-B36C-B2FB6ACAB027.htm#9CCF1F5EAEF30C125C86686903242590"><img src="../media/9CCF1F5EAEF30C125C86686903242590.png" width="34" height="12" align="middle"></img></a></markup>, <markup><a href="ACAC6A80-7CE0-4CB9-B36C-B2FB6ACAB027.htm#FDD0BFC720BA333CDF5E6BD3C90F7F3F"><img src="../media/FDD0BFC720BA333CDF5E6BD3C90F7F3F.png" width="37" height="12" align="middle"></img></a></markup> and <markup><a href="ACAC6A80-7CE0-4CB9-B36C-B2FB6ACAB027.htm#72FCCC3803AB1972CADF5BDA1A5F0E80"><img src="../media/72FCCC3803AB1972CADF5BDA1A5F0E80.png" width="35" height="14" align="bottom"></img></a></markup>) without and with flow term. The values for <markup><a href="ACAC6A80-7CE0-4CB9-B36C-B2FB6ACAB027.htm#F503E608C29C68825DF5C8DE41E076A3"><img src="../media/F503E608C29C68825DF5C8DE41E076A3.png" width="7" height="10" align="bottom"></img></a></markup> are indicated in the legend.
 </para>
 <markup><hr/></markup>
 
@@ -775,21 +775,21 @@ Havriliak, S., Negami, S., &quot;A complex plane representation of dielectric an
 <para>
 This function models the complex dynamic modulus in dependence on the  frequency as:
 </para>
-<markup><a href="ACAC6A80-7CE0-4CB9-B36C-B2FB6ACAB027.htm#EDC3AF768AD58902CA149BFA79BC7A48"><img src="../media/EDC3AF768AD58902CA149BFA79BC7A48.png" width="460" height="101"></img></a></markup>
+<markup><a href="ACAC6A80-7CE0-4CB9-B36C-B2FB6ACAB027.htm#A4769176B3C46B2FF91699C309DD234B"><img src="../media/A4769176B3C46B2FF91699C309DD234B.png" width="460" height="101"></img></a></markup>
 
 <para>
-or with a generalized flow term (both equations are equivalent if <markup><a href="ACAC6A80-7CE0-4CB9-B36C-B2FB6ACAB027.htm#50B1474D8FD6F792DFC01CFE00EFEE88"><img src="../media/50B1474D8FD6F792DFC01CFE00EFEE88.png" width="36" height="12" align="middle"></img></a></markup>) :
+or with a generalized flow term (both equations are equivalent if <markup><a href="ACAC6A80-7CE0-4CB9-B36C-B2FB6ACAB027.htm#D04CC2CA1747C29DDC472AF42CC86EF1"><img src="../media/D04CC2CA1747C29DDC472AF42CC86EF1.png" width="36" height="12" align="middle"></img></a></markup>) :
 </para>
-<markup><a href="ACAC6A80-7CE0-4CB9-B36C-B2FB6ACAB027.htm#0F6BF618492ADCF0C7A004A361B3ABF3"><img src="../media/0F6BF618492ADCF0C7A004A361B3ABF3.png" width="577" height="68"></img></a></markup>
+<markup><a href="ACAC6A80-7CE0-4CB9-B36C-B2FB6ACAB027.htm#FFA9F2C3051E2ABF71C59FE0A3C403D3"><img src="../media/FFA9F2C3051E2ABF71C59FE0A3C403D3.png" width="577" height="68"></img></a></markup>
 
 <para>
-based on the Fourier transform of the derivative of the time-domain Kohlrausch function <markup><a href="ACAC6A80-7CE0-4CB9-B36C-B2FB6ACAB027.htm#952E6F0FC9FCC03E9E5999E3D4E0ABC5"><img src="../media/952E6F0FC9FCC03E9E5999E3D4E0ABC5.png" width="28" height="16" align="bottom"></img></a></markup>.
+based on the Fourier transform of the derivative of the time-domain Kohlrausch function <markup><a href="ACAC6A80-7CE0-4CB9-B36C-B2FB6ACAB027.htm#1834F148BD008DA5215D70E2881A2E14"><img src="../media/1834F148BD008DA5215D70E2881A2E14.png" width="28" height="16" align="bottom"></img></a></markup>.
 </para>
 
 <para>
 Here, the values of the real and imaginary part of the calculated modulus are <legacyBold>logarithmized</legacyBold> for the output:
 </para>
-<markup><a href="ACAC6A80-7CE0-4CB9-B36C-B2FB6ACAB027.htm#68B5C20E476F4E0EAF59A2F359110497"><img src="../media/68B5C20E476F4E0EAF59A2F359110497.png" width="163" height="48"></img></a></markup>
+<markup><a href="ACAC6A80-7CE0-4CB9-B36C-B2FB6ACAB027.htm#73ACC189A5DAF03E7060036C815A6BF8"><img src="../media/73ACC189A5DAF03E7060036C815A6BF8.png" width="163" height="48"></img></a></markup>
 
 <para>
 Should your data are not logarithmized, use a DecadicLogarithmTransformation to logarithmize them, too.
@@ -801,16 +801,16 @@ It is a special case of the underlying base function with the options  <codeInli
 </para>
 
 <para>
-The underlying base function models the generalized complex dynamic modulus in dependence on the circular frequency <markup><a href="ACAC6A80-7CE0-4CB9-B36C-B2FB6ACAB027.htm#A5F264A28E9DDE42FCE98BDF5F021978"><img src="../media/A5F264A28E9DDE42FCE98BDF5F021978.png" width="9" height="8" align="middle"></img></a></markup> with one relaxation term and a flow term as:
+The underlying base function models the generalized complex dynamic modulus in dependence on the circular frequency <markup><a href="ACAC6A80-7CE0-4CB9-B36C-B2FB6ACAB027.htm#7A31DECBB5CCD075DC40F02DCE7C4BB3"><img src="../media/7A31DECBB5CCD075DC40F02DCE7C4BB3.png" width="9" height="8" align="middle"></img></a></markup> with one relaxation term and a flow term as:
 </para>
-<markup><a href="ACAC6A80-7CE0-4CB9-B36C-B2FB6ACAB027.htm#565E213269300E7A74C81A7BD68D58C7"><img src="../media/565E213269300E7A74C81A7BD68D58C7.png" width="610" height="193"></img></a></markup>
+<markup><a href="ACAC6A80-7CE0-4CB9-B36C-B2FB6ACAB027.htm#CA19C020D627D529D9F62B35E31A0297"><img src="../media/CA19C020D627D529D9F62B35E31A0297.png" width="610" height="193"></img></a></markup>
 
 <para>
-based on the Fourier transformation of the time derivative of the Kohlrausch function <markup><a href="ACAC6A80-7CE0-4CB9-B36C-B2FB6ACAB027.htm#952E6F0FC9FCC03E9E5999E3D4E0ABC5"><img src="../media/952E6F0FC9FCC03E9E5999E3D4E0ABC5.png" width="28" height="16" align="bottom"></img></a></markup>, with the circular frequency <markup><a href="ACAC6A80-7CE0-4CB9-B36C-B2FB6ACAB027.htm#A5F264A28E9DDE42FCE98BDF5F021978"><img src="../media/A5F264A28E9DDE42FCE98BDF5F021978.png" width="9" height="8" align="middle"></img></a></markup> being the independent variable (or, depending on an option, the frequency <markup><a href="ACAC6A80-7CE0-4CB9-B36C-B2FB6ACAB027.htm#2A199B72CD7E9D0B67178EAA44A43EF9"><img src="../media/2A199B72CD7E9D0B67178EAA44A43EF9.png" width="7" height="14" align="middle"></img></a></markup>, <markup><a href="ACAC6A80-7CE0-4CB9-B36C-B2FB6ACAB027.htm#72D23EA1819B9CC33DD47098677C7746"><img src="../media/72D23EA1819B9CC33DD47098677C7746.png" width="53" height="14" align="middle"></img></a></markup>), and <markup><a href="ACAC6A80-7CE0-4CB9-B36C-B2FB6ACAB027.htm#9A1A2413972960B7581A2CC2E178F9E9"><img src="../media/9A1A2413972960B7581A2CC2E178F9E9.png" width="40" height="17" align="bottom"></img></a></markup> and <markup><a href="ACAC6A80-7CE0-4CB9-B36C-B2FB6ACAB027.htm#58A8E51CD9A68ACB0ABA93AF2B326CDB"><img src="../media/58A8E51CD9A68ACB0ABA93AF2B326CDB.png" width="43" height="17" align="bottom"></img></a></markup> being the dependent variables, namely the real and negative imaginary part of the complex dynamic modulus <markup><a href="ACAC6A80-7CE0-4CB9-B36C-B2FB6ACAB027.htm#318CCB08565DA5D42A00A2AFB8E8F633"><img src="../media/318CCB08565DA5D42A00A2AFB8E8F633.png" width="43" height="16" align="bottom"></img></a></markup>.
+based on the Fourier transformation of the time derivative of the Kohlrausch function <markup><a href="ACAC6A80-7CE0-4CB9-B36C-B2FB6ACAB027.htm#1834F148BD008DA5215D70E2881A2E14"><img src="../media/1834F148BD008DA5215D70E2881A2E14.png" width="28" height="16" align="bottom"></img></a></markup>, with the circular frequency <markup><a href="ACAC6A80-7CE0-4CB9-B36C-B2FB6ACAB027.htm#7A31DECBB5CCD075DC40F02DCE7C4BB3"><img src="../media/7A31DECBB5CCD075DC40F02DCE7C4BB3.png" width="9" height="8" align="middle"></img></a></markup> being the independent variable (or, depending on an option, the frequency <markup><a href="ACAC6A80-7CE0-4CB9-B36C-B2FB6ACAB027.htm#13B763A150BF87133FFDB7AA40158ACC"><img src="../media/13B763A150BF87133FFDB7AA40158ACC.png" width="7" height="14" align="middle"></img></a></markup>, <markup><a href="ACAC6A80-7CE0-4CB9-B36C-B2FB6ACAB027.htm#06D94BA2FE8567AEC73EDCAB2371C209"><img src="../media/06D94BA2FE8567AEC73EDCAB2371C209.png" width="53" height="14" align="middle"></img></a></markup>), and <markup><a href="ACAC6A80-7CE0-4CB9-B36C-B2FB6ACAB027.htm#8DF46970E8416BF9E2B85C8504476466"><img src="../media/8DF46970E8416BF9E2B85C8504476466.png" width="40" height="17" align="bottom"></img></a></markup> and <markup><a href="ACAC6A80-7CE0-4CB9-B36C-B2FB6ACAB027.htm#460C55A7981ADEA62A8E58D4A661C722"><img src="../media/460C55A7981ADEA62A8E58D4A661C722.png" width="43" height="17" align="bottom"></img></a></markup> being the dependent variables, namely the real and negative imaginary part of the complex dynamic modulus <markup><a href="ACAC6A80-7CE0-4CB9-B36C-B2FB6ACAB027.htm#236F783D333428754E6F28818E4D084F"><img src="../media/236F783D333428754E6F28818E4D084F.png" width="43" height="16" align="bottom"></img></a></markup>.
 </para>
 
 <para>
-Typical use cases are fits to the complex to the complex mechanical modulus <markup><a href="ACAC6A80-7CE0-4CB9-B36C-B2FB6ACAB027.htm#396F0F4EF17DD9236D9C75E0A1E0B7A6"><img src="../media/396F0F4EF17DD9236D9C75E0A1E0B7A6.png" width="22" height="15" align="middle"></img></a></markup> (e.g. shear modulus <markup><a href="ACAC6A80-7CE0-4CB9-B36C-B2FB6ACAB027.htm#B6C72BB52B38D0FDCABA94A4303FDE43"><img src="../media/B6C72BB52B38D0FDCABA94A4303FDE43.png" width="17" height="15" align="middle"></img></a></markup> or Young's modulus <markup><a href="ACAC6A80-7CE0-4CB9-B36C-B2FB6ACAB027.htm#0C961C932FF59845244C5C0C2027DFD4"><img src="../media/0C961C932FF59845244C5C0C2027DFD4.png" width="18" height="15" align="middle"></img></a></markup>)
+Typical use cases are fits to the complex to the complex mechanical modulus <markup><a href="ACAC6A80-7CE0-4CB9-B36C-B2FB6ACAB027.htm#2B9D9C0AC7C44F76561998FECCFF740D"><img src="../media/2B9D9C0AC7C44F76561998FECCFF740D.png" width="22" height="15" align="middle"></img></a></markup> (e.g. shear modulus <markup><a href="ACAC6A80-7CE0-4CB9-B36C-B2FB6ACAB027.htm#0613D2B6C6661AF685DF4127D56F56FE"><img src="../media/0613D2B6C6661AF685DF4127D56F56FE.png" width="17" height="15" align="middle"></img></a></markup> or Young's modulus <markup><a href="ACAC6A80-7CE0-4CB9-B36C-B2FB6ACAB027.htm#A9FA09A569D7D26FA66366681C1819E3"><img src="../media/A9FA09A569D7D26FA66366681C1819E3.png" width="18" height="15" align="middle"></img></a></markup>)
 </para>
 
 <para>
@@ -822,42 +822,42 @@ The parameters are:
 <listItem>
 
 <para>
-<markup><a href="ACAC6A80-7CE0-4CB9-B36C-B2FB6ACAB027.htm#C786D2F3F30157E1B705ED28A558404E"><img src="../media/C786D2F3F30157E1B705ED28A558404E.png" width="20" height="13" align="middle"></img></a></markup> : low frequency modulus limit
+<markup><a href="ACAC6A80-7CE0-4CB9-B36C-B2FB6ACAB027.htm#5A86C002C48D07CDC17F5AA3F906A7B4"><img src="../media/5A86C002C48D07CDC17F5AA3F906A7B4.png" width="20" height="13" align="middle"></img></a></markup> : low frequency modulus limit
 </para>
 </listItem>
 
 <listItem>
 
 <para>
-<markup><a href="ACAC6A80-7CE0-4CB9-B36C-B2FB6ACAB027.htm#DE940E41F516E3A901A246CBB8714205"><img src="../media/DE940E41F516E3A901A246CBB8714205.png" width="25" height="13" align="middle"></img></a></markup> : high frequency modulus limit
+<markup><a href="ACAC6A80-7CE0-4CB9-B36C-B2FB6ACAB027.htm#37C494001947111A3EB8B7F199E0E39C"><img src="../media/37C494001947111A3EB8B7F199E0E39C.png" width="25" height="13" align="middle"></img></a></markup> : high frequency modulus limit
 </para>
 </listItem>
 
 <listItem>
 
 <para>
-<markup><a href="ACAC6A80-7CE0-4CB9-B36C-B2FB6ACAB027.htm#28EC17121C89EBFA982608CD3F98C1BD"><img src="../media/28EC17121C89EBFA982608CD3F98C1BD.png" width="7" height="8" align="middle"></img></a></markup> : relaxation time
+<markup><a href="ACAC6A80-7CE0-4CB9-B36C-B2FB6ACAB027.htm#BFA313332602014B62FEEF342DFA23F5"><img src="../media/BFA313332602014B62FEEF342DFA23F5.png" width="7" height="8" align="middle"></img></a></markup> : relaxation time
 </para>
 </listItem>
 
 <listItem>
 
 <para>
-<markup><a href="ACAC6A80-7CE0-4CB9-B36C-B2FB6ACAB027.htm#C59DE8EA7BFCAF44DCB084433305FEDE"><img src="../media/C59DE8EA7BFCAF44DCB084433305FEDE.png" width="8" height="14" align="middle"></img></a></markup> : shape exponent (usually <markup><a href="ACAC6A80-7CE0-4CB9-B36C-B2FB6ACAB027.htm#8BEDE380AFE7C0F7C07863B80ABF0695"><img src="../media/8BEDE380AFE7C0F7C07863B80ABF0695.png" width="63" height="14" align="middle"></img></a></markup>)
+<markup><a href="ACAC6A80-7CE0-4CB9-B36C-B2FB6ACAB027.htm#4529DD909963469A738B1430F79E7F34"><img src="../media/4529DD909963469A738B1430F79E7F34.png" width="8" height="14" align="middle"></img></a></markup> : shape exponent (usually <markup><a href="ACAC6A80-7CE0-4CB9-B36C-B2FB6ACAB027.htm#19397DC5627220C0D901CC0F70703078"><img src="../media/19397DC5627220C0D901CC0F70703078.png" width="63" height="14" align="middle"></img></a></markup>)
 </para>
 </listItem>
 
 <listItem>
 
 <para>
-<markup><a href="ACAC6A80-7CE0-4CB9-B36C-B2FB6ACAB027.htm#98D8F159118ED8A3C571992589A74534"><img src="../media/98D8F159118ED8A3C571992589A74534.png" width="9" height="8" align="middle"></img></a></markup> : fluidity (inverse viscosity)
+<markup><a href="ACAC6A80-7CE0-4CB9-B36C-B2FB6ACAB027.htm#DE5EA325656D857AFB5CA4E8DB46FCC8"><img src="../media/DE5EA325656D857AFB5CA4E8DB46FCC8.png" width="9" height="8" align="middle"></img></a></markup> : fluidity (inverse viscosity)
 </para>
 </listItem>
 
 <listItem>
 
 <para>
-<markup><a href="ACAC6A80-7CE0-4CB9-B36C-B2FB6ACAB027.htm#AD83B92637685B08C33F44DB1DA49D05"><img src="../media/AD83B92637685B08C33F44DB1DA49D05.png" width="7" height="10" align="bottom"></img></a></markup> : viscosity
+<markup><a href="ACAC6A80-7CE0-4CB9-B36C-B2FB6ACAB027.htm#F503E608C29C68825DF5C8DE41E076A3"><img src="../media/F503E608C29C68825DF5C8DE41E076A3.png" width="7" height="10" align="bottom"></img></a></markup> : viscosity
 </para>
 </listItem>
 </list>
@@ -872,8 +872,8 @@ The available options are:
 
 <para>
 <codeInline>UseFrequencyInsteadOfOmega</codeInline>:<lineBreak/>
-If true, the frequency <markup><a href="ACAC6A80-7CE0-4CB9-B36C-B2FB6ACAB027.htm#2A199B72CD7E9D0B67178EAA44A43EF9"><img src="../media/2A199B72CD7E9D0B67178EAA44A43EF9.png" width="7" height="14" align="middle"></img></a></markup> is used as the independent variable, thus <markup><a href="ACAC6A80-7CE0-4CB9-B36C-B2FB6ACAB027.htm#A5F264A28E9DDE42FCE98BDF5F021978"><img src="../media/A5F264A28E9DDE42FCE98BDF5F021978.png" width="9" height="8" align="middle"></img></a></markup> in the formula above is replaced by <markup><a href="ACAC6A80-7CE0-4CB9-B36C-B2FB6ACAB027.htm#607823C2C8C4627769DC0432404FC63B"><img src="../media/607823C2C8C4627769DC0432404FC63B.png" width="23" height="14" align="middle"></img></a></markup>.<lineBreak/>
-If false, the circular frequency (<markup><a href="ACAC6A80-7CE0-4CB9-B36C-B2FB6ACAB027.htm#A5F264A28E9DDE42FCE98BDF5F021978"><img src="../media/A5F264A28E9DDE42FCE98BDF5F021978.png" width="9" height="8" align="middle"></img></a></markup>) is used as the independent variable.
+If true, the frequency <markup><a href="ACAC6A80-7CE0-4CB9-B36C-B2FB6ACAB027.htm#13B763A150BF87133FFDB7AA40158ACC"><img src="../media/13B763A150BF87133FFDB7AA40158ACC.png" width="7" height="14" align="middle"></img></a></markup> is used as the independent variable, thus <markup><a href="ACAC6A80-7CE0-4CB9-B36C-B2FB6ACAB027.htm#7A31DECBB5CCD075DC40F02DCE7C4BB3"><img src="../media/7A31DECBB5CCD075DC40F02DCE7C4BB3.png" width="9" height="8" align="middle"></img></a></markup> in the formula above is replaced by <markup><a href="ACAC6A80-7CE0-4CB9-B36C-B2FB6ACAB027.htm#B691A58116D738AAA972C66599BDE5F9"><img src="../media/B691A58116D738AAA972C66599BDE5F9.png" width="23" height="14" align="middle"></img></a></markup>.<lineBreak/>
+If false, the circular frequency (<markup><a href="ACAC6A80-7CE0-4CB9-B36C-B2FB6ACAB027.htm#7A31DECBB5CCD075DC40F02DCE7C4BB3"><img src="../media/7A31DECBB5CCD075DC40F02DCE7C4BB3.png" width="9" height="8" align="middle"></img></a></markup>) is used as the independent variable.
 </para>
 </listItem>
 
@@ -890,8 +890,8 @@ If false, the flow term is not used, and the parameter corresponding with the fl
 
 <para>
 <codeInline>InvertViscosity</codeInline>:<lineBreak/>
-If true, the parameter in the flow term is an inverted viscosity (i.e.  fluidity). Thus the flow term generally is <markup><a href="ACAC6A80-7CE0-4CB9-B36C-B2FB6ACAB027.htm#EB444FB55417610C3EC8001A1A99626D"><img src="../media/EB444FB55417610C3EC8001A1A99626D.png" width="42" height="16" align="bottom"></img></a></markup>.<lineBreak/>
-If false, the parameter in the flow term is a viscosity, and the flow term generally is <markup><a href="ACAC6A80-7CE0-4CB9-B36C-B2FB6ACAB027.htm#097573A7CE1409BF7BCE1268D45D07A8"><img src="../media/097573A7CE1409BF7BCE1268D45D07A8.png" width="53" height="16" align="bottom"></img></a></markup>.
+If true, the parameter in the flow term is an inverted viscosity (i.e.  fluidity). Thus the flow term generally is <markup><a href="ACAC6A80-7CE0-4CB9-B36C-B2FB6ACAB027.htm#F622BAF25D811405F0FDED9F29F5F4B1"><img src="../media/F622BAF25D811405F0FDED9F29F5F4B1.png" width="42" height="16" align="bottom"></img></a></markup>.<lineBreak/>
+If false, the parameter in the flow term is a viscosity, and the flow term generally is <markup><a href="ACAC6A80-7CE0-4CB9-B36C-B2FB6ACAB027.htm#4792C1DF6FFA3F4876EA4684C117F296"><img src="../media/4792C1DF6FFA3F4876EA4684C117F296.png" width="53" height="16" align="bottom"></img></a></markup>.
 </para>
 </listItem>
 
@@ -899,7 +899,7 @@ If false, the parameter in the flow term is a viscosity, and the flow term gener
 
 <para>
 <codeInline>LogarithmizeResult</codeInline>:<lineBreak/>
-If true, the resulting values of <markup><a href="ACAC6A80-7CE0-4CB9-B36C-B2FB6ACAB027.htm#D4BC72FBD851BF0360BCD8BD8BD53264"><img src="../media/D4BC72FBD851BF0360BCD8BD8BD53264.png" width="19" height="16" align="bottom"></img></a></markup> and <markup><a href="ACAC6A80-7CE0-4CB9-B36C-B2FB6ACAB027.htm#181D9DCE08B815F1B1D1D903B76B3C19"><img src="../media/181D9DCE08B815F1B1D1D903B76B3C19.png" width="22" height="16" align="bottom"></img></a></markup> are logarithmized (decadic logarithm).<lineBreak/>
+If true, the resulting values of <markup><a href="ACAC6A80-7CE0-4CB9-B36C-B2FB6ACAB027.htm#75E4F2FB0476FA9E325F7E55208D10F9"><img src="../media/75E4F2FB0476FA9E325F7E55208D10F9.png" width="19" height="16" align="bottom"></img></a></markup> and <markup><a href="ACAC6A80-7CE0-4CB9-B36C-B2FB6ACAB027.htm#2BB798BABE32B125370ABED8FF0238EC"><img src="../media/2BB798BABE32B125370ABED8FF0238EC.png" width="22" height="16" align="bottom"></img></a></markup> are logarithmized (decadic logarithm).<lineBreak/>
 If false, the original values are used.
 </para>
 </listItem>
@@ -909,24 +909,24 @@ If false, the original values are used.
 
 <para>
 Note:<lineBreak/>
-Since in most cases <markup><a href="ACAC6A80-7CE0-4CB9-B36C-B2FB6ACAB027.htm#C786D2F3F30157E1B705ED28A558404E"><img src="../media/C786D2F3F30157E1B705ED28A558404E.png" width="20" height="13" align="middle"></img></a></markup> and <markup><a href="ACAC6A80-7CE0-4CB9-B36C-B2FB6ACAB027.htm#DE940E41F516E3A901A246CBB8714205"><img src="../media/DE940E41F516E3A901A246CBB8714205.png" width="25" height="13" align="middle"></img></a></markup> differ by several orders of magnitude, your fit function will also cover several orders of magnitude. This will result in a poor fit of the low modulus data. To avoid this behavior, you should either use a NaturalLogarithmTransformation for both your data and for the fit function's dependent variables, or use the option in this fit function to logarithmize the results and then use a DecadicLogarithmTransformation to transform your data.
+Since in most cases <markup><a href="ACAC6A80-7CE0-4CB9-B36C-B2FB6ACAB027.htm#5A86C002C48D07CDC17F5AA3F906A7B4"><img src="../media/5A86C002C48D07CDC17F5AA3F906A7B4.png" width="20" height="13" align="middle"></img></a></markup> and <markup><a href="ACAC6A80-7CE0-4CB9-B36C-B2FB6ACAB027.htm#37C494001947111A3EB8B7F199E0E39C"><img src="../media/37C494001947111A3EB8B7F199E0E39C.png" width="25" height="13" align="middle"></img></a></markup> differ by several orders of magnitude, your fit function will also cover several orders of magnitude. This will result in a poor fit of the low modulus data. To avoid this behavior, you should either use a NaturalLogarithmTransformation for both your data and for the fit function's dependent variables, or use the option in this fit function to logarithmize the results and then use a DecadicLogarithmTransformation to transform your data.
 </para>
 </quote>
 
 <para>
-<markup><a href="ACAC6A80-7CE0-4CB9-B36C-B2FB6ACAB027.htm#0D604098F1124D6EA651515E53344291"><img src="../media/0D604098F1124D6EA651515E53344291.png" width="567"></img></a></markup>
+<markup><a href="ACAC6A80-7CE0-4CB9-B36C-B2FB6ACAB027.htm#022BA568C5AF690795536E67A3038E63"><img src="../media/022BA568C5AF690795536E67A3038E63.png" width="567"></img></a></markup>
 </para>
 
 <para>
-Fig. 1: Kohlrausch fit functions (with <markup><a href="ACAC6A80-7CE0-4CB9-B36C-B2FB6ACAB027.htm#477C86F89FF1AC7C56F8AD31411DA120"><img src="../media/477C86F89FF1AC7C56F8AD31411DA120.png" width="61" height="17" align="bottom"></img></a></markup>, <markup><a href="ACAC6A80-7CE0-4CB9-B36C-B2FB6ACAB027.htm#BA4058289A667030CA0467E7C80B1E17"><img src="../media/BA4058289A667030CA0467E7C80B1E17.png" width="66" height="17" align="bottom"></img></a></markup>, <markup><a href="ACAC6A80-7CE0-4CB9-B36C-B2FB6ACAB027.htm#8A25980AE7F8C4A9552E0FAFD8A3803D"><img src="../media/8A25980AE7F8C4A9552E0FAFD8A3803D.png" width="34" height="12" align="middle"></img></a></markup> and <markup><a href="ACAC6A80-7CE0-4CB9-B36C-B2FB6ACAB027.htm#D65D3202D8A6138138B728C5DBD74C60"><img src="../media/D65D3202D8A6138138B728C5DBD74C60.png" width="53" height="17" align="bottom"></img></a></markup>). The values for <markup><a href="ACAC6A80-7CE0-4CB9-B36C-B2FB6ACAB027.htm#C59DE8EA7BFCAF44DCB084433305FEDE"><img src="../media/C59DE8EA7BFCAF44DCB084433305FEDE.png" width="8" height="14" align="middle"></img></a></markup> are indicated in the legend.
+Fig. 1: Kohlrausch fit functions (with <markup><a href="ACAC6A80-7CE0-4CB9-B36C-B2FB6ACAB027.htm#C3D2936C1F30BFC1A2403F572013F229"><img src="../media/C3D2936C1F30BFC1A2403F572013F229.png" width="61" height="17" align="bottom"></img></a></markup>, <markup><a href="ACAC6A80-7CE0-4CB9-B36C-B2FB6ACAB027.htm#7A2771CF7C9D85CE5BC131B64EE5200D"><img src="../media/7A2771CF7C9D85CE5BC131B64EE5200D.png" width="66" height="17" align="bottom"></img></a></markup>, <markup><a href="ACAC6A80-7CE0-4CB9-B36C-B2FB6ACAB027.htm#9CCF1F5EAEF30C125C86686903242590"><img src="../media/9CCF1F5EAEF30C125C86686903242590.png" width="34" height="12" align="middle"></img></a></markup> and <markup><a href="ACAC6A80-7CE0-4CB9-B36C-B2FB6ACAB027.htm#D2FC203547E7734D298590FDFA921573"><img src="../media/D2FC203547E7734D298590FDFA921573.png" width="53" height="17" align="bottom"></img></a></markup>). The values for <markup><a href="ACAC6A80-7CE0-4CB9-B36C-B2FB6ACAB027.htm#4529DD909963469A738B1430F79E7F34"><img src="../media/4529DD909963469A738B1430F79E7F34.png" width="8" height="14" align="middle"></img></a></markup> are indicated in the legend.
 </para>
 
 <para>
-<markup><a href="ACAC6A80-7CE0-4CB9-B36C-B2FB6ACAB027.htm#F692593BBC16F4054CC18D83DF8FB1EC"><img src="../media/F692593BBC16F4054CC18D83DF8FB1EC.png" width="567"></img></a></markup>
+<markup><a href="ACAC6A80-7CE0-4CB9-B36C-B2FB6ACAB027.htm#CB997944AF1CC0EABD1B8751B3AFF515"><img src="../media/CB997944AF1CC0EABD1B8751B3AFF515.png" width="567"></img></a></markup>
 </para>
 
 <para>
-Fig. 2: Comparison of Kohlrausch fit functions (with <markup><a href="ACAC6A80-7CE0-4CB9-B36C-B2FB6ACAB027.htm#477C86F89FF1AC7C56F8AD31411DA120"><img src="../media/477C86F89FF1AC7C56F8AD31411DA120.png" width="61" height="17" align="bottom"></img></a></markup>, <markup><a href="ACAC6A80-7CE0-4CB9-B36C-B2FB6ACAB027.htm#BA4058289A667030CA0467E7C80B1E17"><img src="../media/BA4058289A667030CA0467E7C80B1E17.png" width="66" height="17" align="bottom"></img></a></markup>, <markup><a href="ACAC6A80-7CE0-4CB9-B36C-B2FB6ACAB027.htm#8A25980AE7F8C4A9552E0FAFD8A3803D"><img src="../media/8A25980AE7F8C4A9552E0FAFD8A3803D.png" width="34" height="12" align="middle"></img></a></markup> and <markup><a href="ACAC6A80-7CE0-4CB9-B36C-B2FB6ACAB027.htm#96FC41B42935117D03B35F9FDE018E4C"><img src="../media/96FC41B42935117D03B35F9FDE018E4C.png" width="36" height="14" align="middle"></img></a></markup>) without and with flow term. The values for <markup><a href="ACAC6A80-7CE0-4CB9-B36C-B2FB6ACAB027.htm#AD83B92637685B08C33F44DB1DA49D05"><img src="../media/AD83B92637685B08C33F44DB1DA49D05.png" width="7" height="10" align="bottom"></img></a></markup> are indicated in the legend.
+Fig. 2: Comparison of Kohlrausch fit functions (with <markup><a href="ACAC6A80-7CE0-4CB9-B36C-B2FB6ACAB027.htm#C3D2936C1F30BFC1A2403F572013F229"><img src="../media/C3D2936C1F30BFC1A2403F572013F229.png" width="61" height="17" align="bottom"></img></a></markup>, <markup><a href="ACAC6A80-7CE0-4CB9-B36C-B2FB6ACAB027.htm#7A2771CF7C9D85CE5BC131B64EE5200D"><img src="../media/7A2771CF7C9D85CE5BC131B64EE5200D.png" width="66" height="17" align="bottom"></img></a></markup>, <markup><a href="ACAC6A80-7CE0-4CB9-B36C-B2FB6ACAB027.htm#9CCF1F5EAEF30C125C86686903242590"><img src="../media/9CCF1F5EAEF30C125C86686903242590.png" width="34" height="12" align="middle"></img></a></markup> and <markup><a href="ACAC6A80-7CE0-4CB9-B36C-B2FB6ACAB027.htm#2E14EAFE7289A8E7D74981961B0DF91E"><img src="../media/2E14EAFE7289A8E7D74981961B0DF91E.png" width="36" height="14" align="middle"></img></a></markup>) without and with flow term. The values for <markup><a href="ACAC6A80-7CE0-4CB9-B36C-B2FB6ACAB027.htm#F503E608C29C68825DF5C8DE41E076A3"><img src="../media/F503E608C29C68825DF5C8DE41E076A3.png" width="7" height="10" align="bottom"></img></a></markup> are indicated in the legend.
 </para>
 <markup><hr/></markup>
 
@@ -959,21 +959,21 @@ Williams, G., Watts, D. C., &quot;Non-Symmetrical Dielectric Relaxation Behavior
 <para>
 This function models the complex dynamic modulus in dependence on the circular frequency as:
 </para>
-<markup><a href="ACAC6A80-7CE0-4CB9-B36C-B2FB6ACAB027.htm#50B9A9C2B0F54BAF6AD44796D7044877"><img src="../media/50B9A9C2B0F54BAF6AD44796D7044877.png" width="452" height="101"></img></a></markup>
+<markup><a href="ACAC6A80-7CE0-4CB9-B36C-B2FB6ACAB027.htm#08A255DA6B4860B1BD5C096E052507B3"><img src="../media/08A255DA6B4860B1BD5C096E052507B3.png" width="452" height="101"></img></a></markup>
 
 <para>
-or with a generalized flow term (both equations are equivalent if <markup><a href="ACAC6A80-7CE0-4CB9-B36C-B2FB6ACAB027.htm#50B1474D8FD6F792DFC01CFE00EFEE88"><img src="../media/50B1474D8FD6F792DFC01CFE00EFEE88.png" width="36" height="12" align="middle"></img></a></markup>) :
+or with a generalized flow term (both equations are equivalent if <markup><a href="ACAC6A80-7CE0-4CB9-B36C-B2FB6ACAB027.htm#D04CC2CA1747C29DDC472AF42CC86EF1"><img src="../media/D04CC2CA1747C29DDC472AF42CC86EF1.png" width="36" height="12" align="middle"></img></a></markup>) :
 </para>
-<markup><a href="ACAC6A80-7CE0-4CB9-B36C-B2FB6ACAB027.htm#666CF3AB3D927D655CFF26EFF45D8AB4"><img src="../media/666CF3AB3D927D655CFF26EFF45D8AB4.png" width="555" height="68"></img></a></markup>
+<markup><a href="ACAC6A80-7CE0-4CB9-B36C-B2FB6ACAB027.htm#CF9FAAA3AFA5C4F8AA9AC70C0B06DF73"><img src="../media/CF9FAAA3AFA5C4F8AA9AC70C0B06DF73.png" width="555" height="68"></img></a></markup>
 
 <para>
-based on the Fourier transform of the derivative of the time-domain Kohlrausch function <markup><a href="ACAC6A80-7CE0-4CB9-B36C-B2FB6ACAB027.htm#952E6F0FC9FCC03E9E5999E3D4E0ABC5"><img src="../media/952E6F0FC9FCC03E9E5999E3D4E0ABC5.png" width="28" height="16" align="bottom"></img></a></markup>.
+based on the Fourier transform of the derivative of the time-domain Kohlrausch function <markup><a href="ACAC6A80-7CE0-4CB9-B36C-B2FB6ACAB027.htm#1834F148BD008DA5215D70E2881A2E14"><img src="../media/1834F148BD008DA5215D70E2881A2E14.png" width="28" height="16" align="bottom"></img></a></markup>.
 </para>
 
 <para>
 Here, the values of the real and imaginary part of the calculated modulus are <legacyBold>logarithmized</legacyBold> for the output:
 </para>
-<markup><a href="ACAC6A80-7CE0-4CB9-B36C-B2FB6ACAB027.htm#5D1777809D0CFF63D605D4DD14C79242"><img src="../media/5D1777809D0CFF63D605D4DD14C79242.png" width="167" height="48"></img></a></markup>
+<markup><a href="ACAC6A80-7CE0-4CB9-B36C-B2FB6ACAB027.htm#3E470D92882284576A34530CF52883D8"><img src="../media/3E470D92882284576A34530CF52883D8.png" width="167" height="48"></img></a></markup>
 
 <para>
 Should your data are not logarithmized, use a DecadicLogarithmTransformation to logarithmize them, too.
@@ -985,16 +985,16 @@ It is a special case of the underlying base function with the options  <codeInli
 </para>
 
 <para>
-The underlying base function models the generalized complex dynamic modulus in dependence on the circular frequency <markup><a href="ACAC6A80-7CE0-4CB9-B36C-B2FB6ACAB027.htm#A5F264A28E9DDE42FCE98BDF5F021978"><img src="../media/A5F264A28E9DDE42FCE98BDF5F021978.png" width="9" height="8" align="middle"></img></a></markup> with one relaxation term and a flow term as:
+The underlying base function models the generalized complex dynamic modulus in dependence on the circular frequency <markup><a href="ACAC6A80-7CE0-4CB9-B36C-B2FB6ACAB027.htm#7A31DECBB5CCD075DC40F02DCE7C4BB3"><img src="../media/7A31DECBB5CCD075DC40F02DCE7C4BB3.png" width="9" height="8" align="middle"></img></a></markup> with one relaxation term and a flow term as:
 </para>
-<markup><a href="ACAC6A80-7CE0-4CB9-B36C-B2FB6ACAB027.htm#565E213269300E7A74C81A7BD68D58C7"><img src="../media/565E213269300E7A74C81A7BD68D58C7.png" width="610" height="193"></img></a></markup>
+<markup><a href="ACAC6A80-7CE0-4CB9-B36C-B2FB6ACAB027.htm#CA19C020D627D529D9F62B35E31A0297"><img src="../media/CA19C020D627D529D9F62B35E31A0297.png" width="610" height="193"></img></a></markup>
 
 <para>
-based on the Fourier transformation of the time derivative of the Kohlrausch function <markup><a href="ACAC6A80-7CE0-4CB9-B36C-B2FB6ACAB027.htm#952E6F0FC9FCC03E9E5999E3D4E0ABC5"><img src="../media/952E6F0FC9FCC03E9E5999E3D4E0ABC5.png" width="28" height="16" align="bottom"></img></a></markup>, with the circular frequency <markup><a href="ACAC6A80-7CE0-4CB9-B36C-B2FB6ACAB027.htm#A5F264A28E9DDE42FCE98BDF5F021978"><img src="../media/A5F264A28E9DDE42FCE98BDF5F021978.png" width="9" height="8" align="middle"></img></a></markup> being the independent variable (or, depending on an option, the frequency <markup><a href="ACAC6A80-7CE0-4CB9-B36C-B2FB6ACAB027.htm#2A199B72CD7E9D0B67178EAA44A43EF9"><img src="../media/2A199B72CD7E9D0B67178EAA44A43EF9.png" width="7" height="14" align="middle"></img></a></markup>, <markup><a href="ACAC6A80-7CE0-4CB9-B36C-B2FB6ACAB027.htm#72D23EA1819B9CC33DD47098677C7746"><img src="../media/72D23EA1819B9CC33DD47098677C7746.png" width="53" height="14" align="middle"></img></a></markup>), and <markup><a href="ACAC6A80-7CE0-4CB9-B36C-B2FB6ACAB027.htm#9A1A2413972960B7581A2CC2E178F9E9"><img src="../media/9A1A2413972960B7581A2CC2E178F9E9.png" width="40" height="17" align="bottom"></img></a></markup> and <markup><a href="ACAC6A80-7CE0-4CB9-B36C-B2FB6ACAB027.htm#58A8E51CD9A68ACB0ABA93AF2B326CDB"><img src="../media/58A8E51CD9A68ACB0ABA93AF2B326CDB.png" width="43" height="17" align="bottom"></img></a></markup> being the dependent variables, namely the real and negative imaginary part of the complex dynamic modulus <markup><a href="ACAC6A80-7CE0-4CB9-B36C-B2FB6ACAB027.htm#318CCB08565DA5D42A00A2AFB8E8F633"><img src="../media/318CCB08565DA5D42A00A2AFB8E8F633.png" width="43" height="16" align="bottom"></img></a></markup>.
+based on the Fourier transformation of the time derivative of the Kohlrausch function <markup><a href="ACAC6A80-7CE0-4CB9-B36C-B2FB6ACAB027.htm#1834F148BD008DA5215D70E2881A2E14"><img src="../media/1834F148BD008DA5215D70E2881A2E14.png" width="28" height="16" align="bottom"></img></a></markup>, with the circular frequency <markup><a href="ACAC6A80-7CE0-4CB9-B36C-B2FB6ACAB027.htm#7A31DECBB5CCD075DC40F02DCE7C4BB3"><img src="../media/7A31DECBB5CCD075DC40F02DCE7C4BB3.png" width="9" height="8" align="middle"></img></a></markup> being the independent variable (or, depending on an option, the frequency <markup><a href="ACAC6A80-7CE0-4CB9-B36C-B2FB6ACAB027.htm#13B763A150BF87133FFDB7AA40158ACC"><img src="../media/13B763A150BF87133FFDB7AA40158ACC.png" width="7" height="14" align="middle"></img></a></markup>, <markup><a href="ACAC6A80-7CE0-4CB9-B36C-B2FB6ACAB027.htm#06D94BA2FE8567AEC73EDCAB2371C209"><img src="../media/06D94BA2FE8567AEC73EDCAB2371C209.png" width="53" height="14" align="middle"></img></a></markup>), and <markup><a href="ACAC6A80-7CE0-4CB9-B36C-B2FB6ACAB027.htm#8DF46970E8416BF9E2B85C8504476466"><img src="../media/8DF46970E8416BF9E2B85C8504476466.png" width="40" height="17" align="bottom"></img></a></markup> and <markup><a href="ACAC6A80-7CE0-4CB9-B36C-B2FB6ACAB027.htm#460C55A7981ADEA62A8E58D4A661C722"><img src="../media/460C55A7981ADEA62A8E58D4A661C722.png" width="43" height="17" align="bottom"></img></a></markup> being the dependent variables, namely the real and negative imaginary part of the complex dynamic modulus <markup><a href="ACAC6A80-7CE0-4CB9-B36C-B2FB6ACAB027.htm#236F783D333428754E6F28818E4D084F"><img src="../media/236F783D333428754E6F28818E4D084F.png" width="43" height="16" align="bottom"></img></a></markup>.
 </para>
 
 <para>
-Typical use cases are fits to the complex to the complex mechanical modulus <markup><a href="ACAC6A80-7CE0-4CB9-B36C-B2FB6ACAB027.htm#396F0F4EF17DD9236D9C75E0A1E0B7A6"><img src="../media/396F0F4EF17DD9236D9C75E0A1E0B7A6.png" width="22" height="15" align="middle"></img></a></markup> (e.g. shear modulus <markup><a href="ACAC6A80-7CE0-4CB9-B36C-B2FB6ACAB027.htm#B6C72BB52B38D0FDCABA94A4303FDE43"><img src="../media/B6C72BB52B38D0FDCABA94A4303FDE43.png" width="17" height="15" align="middle"></img></a></markup> or Young's modulus <markup><a href="ACAC6A80-7CE0-4CB9-B36C-B2FB6ACAB027.htm#0C961C932FF59845244C5C0C2027DFD4"><img src="../media/0C961C932FF59845244C5C0C2027DFD4.png" width="18" height="15" align="middle"></img></a></markup>)
+Typical use cases are fits to the complex to the complex mechanical modulus <markup><a href="ACAC6A80-7CE0-4CB9-B36C-B2FB6ACAB027.htm#2B9D9C0AC7C44F76561998FECCFF740D"><img src="../media/2B9D9C0AC7C44F76561998FECCFF740D.png" width="22" height="15" align="middle"></img></a></markup> (e.g. shear modulus <markup><a href="ACAC6A80-7CE0-4CB9-B36C-B2FB6ACAB027.htm#0613D2B6C6661AF685DF4127D56F56FE"><img src="../media/0613D2B6C6661AF685DF4127D56F56FE.png" width="17" height="15" align="middle"></img></a></markup> or Young's modulus <markup><a href="ACAC6A80-7CE0-4CB9-B36C-B2FB6ACAB027.htm#A9FA09A569D7D26FA66366681C1819E3"><img src="../media/A9FA09A569D7D26FA66366681C1819E3.png" width="18" height="15" align="middle"></img></a></markup>)
 </para>
 
 <para>
@@ -1006,42 +1006,42 @@ The parameters are:
 <listItem>
 
 <para>
-<markup><a href="ACAC6A80-7CE0-4CB9-B36C-B2FB6ACAB027.htm#C786D2F3F30157E1B705ED28A558404E"><img src="../media/C786D2F3F30157E1B705ED28A558404E.png" width="20" height="13" align="middle"></img></a></markup> : low frequency modulus limit
+<markup><a href="ACAC6A80-7CE0-4CB9-B36C-B2FB6ACAB027.htm#5A86C002C48D07CDC17F5AA3F906A7B4"><img src="../media/5A86C002C48D07CDC17F5AA3F906A7B4.png" width="20" height="13" align="middle"></img></a></markup> : low frequency modulus limit
 </para>
 </listItem>
 
 <listItem>
 
 <para>
-<markup><a href="ACAC6A80-7CE0-4CB9-B36C-B2FB6ACAB027.htm#DE940E41F516E3A901A246CBB8714205"><img src="../media/DE940E41F516E3A901A246CBB8714205.png" width="25" height="13" align="middle"></img></a></markup> : high frequency modulus limit
+<markup><a href="ACAC6A80-7CE0-4CB9-B36C-B2FB6ACAB027.htm#37C494001947111A3EB8B7F199E0E39C"><img src="../media/37C494001947111A3EB8B7F199E0E39C.png" width="25" height="13" align="middle"></img></a></markup> : high frequency modulus limit
 </para>
 </listItem>
 
 <listItem>
 
 <para>
-<markup><a href="ACAC6A80-7CE0-4CB9-B36C-B2FB6ACAB027.htm#28EC17121C89EBFA982608CD3F98C1BD"><img src="../media/28EC17121C89EBFA982608CD3F98C1BD.png" width="7" height="8" align="middle"></img></a></markup> : relaxation time
+<markup><a href="ACAC6A80-7CE0-4CB9-B36C-B2FB6ACAB027.htm#BFA313332602014B62FEEF342DFA23F5"><img src="../media/BFA313332602014B62FEEF342DFA23F5.png" width="7" height="8" align="middle"></img></a></markup> : relaxation time
 </para>
 </listItem>
 
 <listItem>
 
 <para>
-<markup><a href="ACAC6A80-7CE0-4CB9-B36C-B2FB6ACAB027.htm#C59DE8EA7BFCAF44DCB084433305FEDE"><img src="../media/C59DE8EA7BFCAF44DCB084433305FEDE.png" width="8" height="14" align="middle"></img></a></markup> : shape exponent (usually <markup><a href="ACAC6A80-7CE0-4CB9-B36C-B2FB6ACAB027.htm#8BEDE380AFE7C0F7C07863B80ABF0695"><img src="../media/8BEDE380AFE7C0F7C07863B80ABF0695.png" width="63" height="14" align="middle"></img></a></markup>)
+<markup><a href="ACAC6A80-7CE0-4CB9-B36C-B2FB6ACAB027.htm#4529DD909963469A738B1430F79E7F34"><img src="../media/4529DD909963469A738B1430F79E7F34.png" width="8" height="14" align="middle"></img></a></markup> : shape exponent (usually <markup><a href="ACAC6A80-7CE0-4CB9-B36C-B2FB6ACAB027.htm#19397DC5627220C0D901CC0F70703078"><img src="../media/19397DC5627220C0D901CC0F70703078.png" width="63" height="14" align="middle"></img></a></markup>)
 </para>
 </listItem>
 
 <listItem>
 
 <para>
-<markup><a href="ACAC6A80-7CE0-4CB9-B36C-B2FB6ACAB027.htm#98D8F159118ED8A3C571992589A74534"><img src="../media/98D8F159118ED8A3C571992589A74534.png" width="9" height="8" align="middle"></img></a></markup> : fluidity (inverse viscosity)
+<markup><a href="ACAC6A80-7CE0-4CB9-B36C-B2FB6ACAB027.htm#DE5EA325656D857AFB5CA4E8DB46FCC8"><img src="../media/DE5EA325656D857AFB5CA4E8DB46FCC8.png" width="9" height="8" align="middle"></img></a></markup> : fluidity (inverse viscosity)
 </para>
 </listItem>
 
 <listItem>
 
 <para>
-<markup><a href="ACAC6A80-7CE0-4CB9-B36C-B2FB6ACAB027.htm#AD83B92637685B08C33F44DB1DA49D05"><img src="../media/AD83B92637685B08C33F44DB1DA49D05.png" width="7" height="10" align="bottom"></img></a></markup> : viscosity
+<markup><a href="ACAC6A80-7CE0-4CB9-B36C-B2FB6ACAB027.htm#F503E608C29C68825DF5C8DE41E076A3"><img src="../media/F503E608C29C68825DF5C8DE41E076A3.png" width="7" height="10" align="bottom"></img></a></markup> : viscosity
 </para>
 </listItem>
 </list>
@@ -1056,8 +1056,8 @@ The available options are:
 
 <para>
 <codeInline>UseFrequencyInsteadOfOmega</codeInline>:<lineBreak/>
-If true, the frequency <markup><a href="ACAC6A80-7CE0-4CB9-B36C-B2FB6ACAB027.htm#2A199B72CD7E9D0B67178EAA44A43EF9"><img src="../media/2A199B72CD7E9D0B67178EAA44A43EF9.png" width="7" height="14" align="middle"></img></a></markup> is used as the independent variable, thus <markup><a href="ACAC6A80-7CE0-4CB9-B36C-B2FB6ACAB027.htm#A5F264A28E9DDE42FCE98BDF5F021978"><img src="../media/A5F264A28E9DDE42FCE98BDF5F021978.png" width="9" height="8" align="middle"></img></a></markup> in the formula above is replaced by <markup><a href="ACAC6A80-7CE0-4CB9-B36C-B2FB6ACAB027.htm#607823C2C8C4627769DC0432404FC63B"><img src="../media/607823C2C8C4627769DC0432404FC63B.png" width="23" height="14" align="middle"></img></a></markup>.<lineBreak/>
-If false, the circular frequency (<markup><a href="ACAC6A80-7CE0-4CB9-B36C-B2FB6ACAB027.htm#A5F264A28E9DDE42FCE98BDF5F021978"><img src="../media/A5F264A28E9DDE42FCE98BDF5F021978.png" width="9" height="8" align="middle"></img></a></markup>) is used as the independent variable.
+If true, the frequency <markup><a href="ACAC6A80-7CE0-4CB9-B36C-B2FB6ACAB027.htm#13B763A150BF87133FFDB7AA40158ACC"><img src="../media/13B763A150BF87133FFDB7AA40158ACC.png" width="7" height="14" align="middle"></img></a></markup> is used as the independent variable, thus <markup><a href="ACAC6A80-7CE0-4CB9-B36C-B2FB6ACAB027.htm#7A31DECBB5CCD075DC40F02DCE7C4BB3"><img src="../media/7A31DECBB5CCD075DC40F02DCE7C4BB3.png" width="9" height="8" align="middle"></img></a></markup> in the formula above is replaced by <markup><a href="ACAC6A80-7CE0-4CB9-B36C-B2FB6ACAB027.htm#B691A58116D738AAA972C66599BDE5F9"><img src="../media/B691A58116D738AAA972C66599BDE5F9.png" width="23" height="14" align="middle"></img></a></markup>.<lineBreak/>
+If false, the circular frequency (<markup><a href="ACAC6A80-7CE0-4CB9-B36C-B2FB6ACAB027.htm#7A31DECBB5CCD075DC40F02DCE7C4BB3"><img src="../media/7A31DECBB5CCD075DC40F02DCE7C4BB3.png" width="9" height="8" align="middle"></img></a></markup>) is used as the independent variable.
 </para>
 </listItem>
 
@@ -1074,8 +1074,8 @@ If false, the flow term is not used, and the parameter corresponding with the fl
 
 <para>
 <codeInline>InvertViscosity</codeInline>:<lineBreak/>
-If true, the parameter in the flow term is an inverted viscosity (i.e.  fluidity). Thus the flow term generally is <markup><a href="ACAC6A80-7CE0-4CB9-B36C-B2FB6ACAB027.htm#EB444FB55417610C3EC8001A1A99626D"><img src="../media/EB444FB55417610C3EC8001A1A99626D.png" width="42" height="16" align="bottom"></img></a></markup>.<lineBreak/>
-If false, the parameter in the flow term is a viscosity, and the flow term generally is <markup><a href="ACAC6A80-7CE0-4CB9-B36C-B2FB6ACAB027.htm#097573A7CE1409BF7BCE1268D45D07A8"><img src="../media/097573A7CE1409BF7BCE1268D45D07A8.png" width="53" height="16" align="bottom"></img></a></markup>.
+If true, the parameter in the flow term is an inverted viscosity (i.e.  fluidity). Thus the flow term generally is <markup><a href="ACAC6A80-7CE0-4CB9-B36C-B2FB6ACAB027.htm#F622BAF25D811405F0FDED9F29F5F4B1"><img src="../media/F622BAF25D811405F0FDED9F29F5F4B1.png" width="42" height="16" align="bottom"></img></a></markup>.<lineBreak/>
+If false, the parameter in the flow term is a viscosity, and the flow term generally is <markup><a href="ACAC6A80-7CE0-4CB9-B36C-B2FB6ACAB027.htm#4792C1DF6FFA3F4876EA4684C117F296"><img src="../media/4792C1DF6FFA3F4876EA4684C117F296.png" width="53" height="16" align="bottom"></img></a></markup>.
 </para>
 </listItem>
 
@@ -1083,7 +1083,7 @@ If false, the parameter in the flow term is a viscosity, and the flow term gener
 
 <para>
 <codeInline>LogarithmizeResult</codeInline>:<lineBreak/>
-If true, the resulting values of <markup><a href="ACAC6A80-7CE0-4CB9-B36C-B2FB6ACAB027.htm#D4BC72FBD851BF0360BCD8BD8BD53264"><img src="../media/D4BC72FBD851BF0360BCD8BD8BD53264.png" width="19" height="16" align="bottom"></img></a></markup> and <markup><a href="ACAC6A80-7CE0-4CB9-B36C-B2FB6ACAB027.htm#181D9DCE08B815F1B1D1D903B76B3C19"><img src="../media/181D9DCE08B815F1B1D1D903B76B3C19.png" width="22" height="16" align="bottom"></img></a></markup> are logarithmized (decadic logarithm).<lineBreak/>
+If true, the resulting values of <markup><a href="ACAC6A80-7CE0-4CB9-B36C-B2FB6ACAB027.htm#75E4F2FB0476FA9E325F7E55208D10F9"><img src="../media/75E4F2FB0476FA9E325F7E55208D10F9.png" width="19" height="16" align="bottom"></img></a></markup> and <markup><a href="ACAC6A80-7CE0-4CB9-B36C-B2FB6ACAB027.htm#2BB798BABE32B125370ABED8FF0238EC"><img src="../media/2BB798BABE32B125370ABED8FF0238EC.png" width="22" height="16" align="bottom"></img></a></markup> are logarithmized (decadic logarithm).<lineBreak/>
 If false, the original values are used.
 </para>
 </listItem>
@@ -1093,24 +1093,24 @@ If false, the original values are used.
 
 <para>
 Note:<lineBreak/>
-Since in most cases <markup><a href="ACAC6A80-7CE0-4CB9-B36C-B2FB6ACAB027.htm#C786D2F3F30157E1B705ED28A558404E"><img src="../media/C786D2F3F30157E1B705ED28A558404E.png" width="20" height="13" align="middle"></img></a></markup> and <markup><a href="ACAC6A80-7CE0-4CB9-B36C-B2FB6ACAB027.htm#DE940E41F516E3A901A246CBB8714205"><img src="../media/DE940E41F516E3A901A246CBB8714205.png" width="25" height="13" align="middle"></img></a></markup> differ by several orders of magnitude, your fit function will also cover several orders of magnitude. This will result in a poor fit of the low modulus data. To avoid this behavior, you should either use a NaturalLogarithmTransformation for both your data and for the fit function's dependent variables, or use the option in this fit function to logarithmize the results and then use a DecadicLogarithmTransformation to transform your data.
+Since in most cases <markup><a href="ACAC6A80-7CE0-4CB9-B36C-B2FB6ACAB027.htm#5A86C002C48D07CDC17F5AA3F906A7B4"><img src="../media/5A86C002C48D07CDC17F5AA3F906A7B4.png" width="20" height="13" align="middle"></img></a></markup> and <markup><a href="ACAC6A80-7CE0-4CB9-B36C-B2FB6ACAB027.htm#37C494001947111A3EB8B7F199E0E39C"><img src="../media/37C494001947111A3EB8B7F199E0E39C.png" width="25" height="13" align="middle"></img></a></markup> differ by several orders of magnitude, your fit function will also cover several orders of magnitude. This will result in a poor fit of the low modulus data. To avoid this behavior, you should either use a NaturalLogarithmTransformation for both your data and for the fit function's dependent variables, or use the option in this fit function to logarithmize the results and then use a DecadicLogarithmTransformation to transform your data.
 </para>
 </quote>
 
 <para>
-<markup><a href="ACAC6A80-7CE0-4CB9-B36C-B2FB6ACAB027.htm#2E81C89DAC8BFEED61D456E35DFE09E5"><img src="../media/2E81C89DAC8BFEED61D456E35DFE09E5.png" width="567"></img></a></markup>
+<markup><a href="ACAC6A80-7CE0-4CB9-B36C-B2FB6ACAB027.htm#832E51338CEC1D711B53380F71D79E1B"><img src="../media/832E51338CEC1D711B53380F71D79E1B.png" width="567"></img></a></markup>
 </para>
 
 <para>
-Fig. 1: Kohlrausch fit functions (with <markup><a href="ACAC6A80-7CE0-4CB9-B36C-B2FB6ACAB027.htm#477C86F89FF1AC7C56F8AD31411DA120"><img src="../media/477C86F89FF1AC7C56F8AD31411DA120.png" width="61" height="17" align="bottom"></img></a></markup>, <markup><a href="ACAC6A80-7CE0-4CB9-B36C-B2FB6ACAB027.htm#BA4058289A667030CA0467E7C80B1E17"><img src="../media/BA4058289A667030CA0467E7C80B1E17.png" width="66" height="17" align="bottom"></img></a></markup>, <markup><a href="ACAC6A80-7CE0-4CB9-B36C-B2FB6ACAB027.htm#8A25980AE7F8C4A9552E0FAFD8A3803D"><img src="../media/8A25980AE7F8C4A9552E0FAFD8A3803D.png" width="34" height="12" align="middle"></img></a></markup> and <markup><a href="ACAC6A80-7CE0-4CB9-B36C-B2FB6ACAB027.htm#D65D3202D8A6138138B728C5DBD74C60"><img src="../media/D65D3202D8A6138138B728C5DBD74C60.png" width="53" height="17" align="bottom"></img></a></markup>). The values for <markup><a href="ACAC6A80-7CE0-4CB9-B36C-B2FB6ACAB027.htm#C59DE8EA7BFCAF44DCB084433305FEDE"><img src="../media/C59DE8EA7BFCAF44DCB084433305FEDE.png" width="8" height="14" align="middle"></img></a></markup> are indicated in the legend.
+Fig. 1: Kohlrausch fit functions (with <markup><a href="ACAC6A80-7CE0-4CB9-B36C-B2FB6ACAB027.htm#C3D2936C1F30BFC1A2403F572013F229"><img src="../media/C3D2936C1F30BFC1A2403F572013F229.png" width="61" height="17" align="bottom"></img></a></markup>, <markup><a href="ACAC6A80-7CE0-4CB9-B36C-B2FB6ACAB027.htm#7A2771CF7C9D85CE5BC131B64EE5200D"><img src="../media/7A2771CF7C9D85CE5BC131B64EE5200D.png" width="66" height="17" align="bottom"></img></a></markup>, <markup><a href="ACAC6A80-7CE0-4CB9-B36C-B2FB6ACAB027.htm#9CCF1F5EAEF30C125C86686903242590"><img src="../media/9CCF1F5EAEF30C125C86686903242590.png" width="34" height="12" align="middle"></img></a></markup> and <markup><a href="ACAC6A80-7CE0-4CB9-B36C-B2FB6ACAB027.htm#D2FC203547E7734D298590FDFA921573"><img src="../media/D2FC203547E7734D298590FDFA921573.png" width="53" height="17" align="bottom"></img></a></markup>). The values for <markup><a href="ACAC6A80-7CE0-4CB9-B36C-B2FB6ACAB027.htm#4529DD909963469A738B1430F79E7F34"><img src="../media/4529DD909963469A738B1430F79E7F34.png" width="8" height="14" align="middle"></img></a></markup> are indicated in the legend.
 </para>
 
 <para>
-<markup><a href="ACAC6A80-7CE0-4CB9-B36C-B2FB6ACAB027.htm#8E85065C7D2FEF54E4C38004C60796EE"><img src="../media/8E85065C7D2FEF54E4C38004C60796EE.png" width="567"></img></a></markup>
+<markup><a href="ACAC6A80-7CE0-4CB9-B36C-B2FB6ACAB027.htm#9770504A3A0E710C1AC33A79B5FFE6CF"><img src="../media/9770504A3A0E710C1AC33A79B5FFE6CF.png" width="567"></img></a></markup>
 </para>
 
 <para>
-Fig. 2: Comparison of Kohlrausch fit functions (with <markup><a href="ACAC6A80-7CE0-4CB9-B36C-B2FB6ACAB027.htm#477C86F89FF1AC7C56F8AD31411DA120"><img src="../media/477C86F89FF1AC7C56F8AD31411DA120.png" width="61" height="17" align="bottom"></img></a></markup>, <markup><a href="ACAC6A80-7CE0-4CB9-B36C-B2FB6ACAB027.htm#BA4058289A667030CA0467E7C80B1E17"><img src="../media/BA4058289A667030CA0467E7C80B1E17.png" width="66" height="17" align="bottom"></img></a></markup>, <markup><a href="ACAC6A80-7CE0-4CB9-B36C-B2FB6ACAB027.htm#8A25980AE7F8C4A9552E0FAFD8A3803D"><img src="../media/8A25980AE7F8C4A9552E0FAFD8A3803D.png" width="34" height="12" align="middle"></img></a></markup> and <markup><a href="ACAC6A80-7CE0-4CB9-B36C-B2FB6ACAB027.htm#96FC41B42935117D03B35F9FDE018E4C"><img src="../media/96FC41B42935117D03B35F9FDE018E4C.png" width="36" height="14" align="middle"></img></a></markup>) without and with flow term. The values for <markup><a href="ACAC6A80-7CE0-4CB9-B36C-B2FB6ACAB027.htm#AD83B92637685B08C33F44DB1DA49D05"><img src="../media/AD83B92637685B08C33F44DB1DA49D05.png" width="7" height="10" align="bottom"></img></a></markup> are indicated in the legend.
+Fig. 2: Comparison of Kohlrausch fit functions (with <markup><a href="ACAC6A80-7CE0-4CB9-B36C-B2FB6ACAB027.htm#C3D2936C1F30BFC1A2403F572013F229"><img src="../media/C3D2936C1F30BFC1A2403F572013F229.png" width="61" height="17" align="bottom"></img></a></markup>, <markup><a href="ACAC6A80-7CE0-4CB9-B36C-B2FB6ACAB027.htm#7A2771CF7C9D85CE5BC131B64EE5200D"><img src="../media/7A2771CF7C9D85CE5BC131B64EE5200D.png" width="66" height="17" align="bottom"></img></a></markup>, <markup><a href="ACAC6A80-7CE0-4CB9-B36C-B2FB6ACAB027.htm#9CCF1F5EAEF30C125C86686903242590"><img src="../media/9CCF1F5EAEF30C125C86686903242590.png" width="34" height="12" align="middle"></img></a></markup> and <markup><a href="ACAC6A80-7CE0-4CB9-B36C-B2FB6ACAB027.htm#2E14EAFE7289A8E7D74981961B0DF91E"><img src="../media/2E14EAFE7289A8E7D74981961B0DF91E.png" width="36" height="14" align="middle"></img></a></markup>) without and with flow term. The values for <markup><a href="ACAC6A80-7CE0-4CB9-B36C-B2FB6ACAB027.htm#F503E608C29C68825DF5C8DE41E076A3"><img src="../media/F503E608C29C68825DF5C8DE41E076A3.png" width="7" height="10" align="bottom"></img></a></markup> are indicated in the legend.
 </para>
 <markup><hr/></markup>
 

@@ -86,7 +86,7 @@ namespace Altaxo.Calc.FitFunctions.Viscosity
       return i switch
       {
         0 => 1,
-        1 => 1,
+        1 => 0.5,
         _ => throw new ArgumentOutOfRangeException(nameof(i), i, null)
       };
     }
@@ -127,7 +127,7 @@ namespace Altaxo.Calc.FitFunctions.Viscosity
     /// <inheritdoc/>
     public (IReadOnlyList<double?>? LowerBounds, IReadOnlyList<double?>? UpperBounds) GetParameterBoundariesSoftLimit()
     {
-      return (null, null);
+      return ([0, null], [null, 1]);
     }
 
     /// <inheritdoc/>

@@ -225,7 +225,7 @@ Wavelength in nm of the peak that was found in the neon spectrum used for calibr
 
 <para>
 <codeInline>DifferenceOfPeakWavelengths [nm]</codeInline><lineBreak/>
-Difference <markup><a href="ACAC6A80-7CE0-4CB9-B36C-B2FB6ACAB027.htm#0027C5956DBE30289A11653FA07EBEBE"><img src="../media/0027C5956DBE30289A11653FA07EBEBE.png" width="490" height="16" align="bottom"></img></a></markup>
+Difference <markup><a href="ACAC6A80-7CE0-4CB9-B36C-B2FB6ACAB027.htm#7E3087053DEECFC30D7551095F39F8E1"><img src="../media/7E3087053DEECFC30D7551095F39F8E1.png" width="490" height="16" align="bottom"></img></a></markup>
 </para>
 </listItem>
 
@@ -433,7 +433,7 @@ Its upper part contain the spectral preprocessing pipeline. If the dark signal i
 </para>
 
 <para>
-<markup><a href="ACAC6A80-7CE0-4CB9-B36C-B2FB6ACAB027.htm#07DA0606F0EFA3681389AE3EE69A1B21"><img src="../media/07DA0606F0EFA3681389AE3EE69A1B21.png" width="567"></img></a></markup>  
+<markup><a href="ACAC6A80-7CE0-4CB9-B36C-B2FB6ACAB027.htm#576609F581FDAB08E804D20250AA2368"><img src="../media/576609F581FDAB08E804D20250AA2368.png" width="567"></img></a></markup>  
 </para>
 
 <para>
@@ -509,7 +509,7 @@ The <link xlink:href="FCC125D44CCD76A52BBA4BE955537F85#RamanSpectroscopy_Intensi
 <listItem>
 
 <para>
-<codeInline>ScalingDenominator (not smoothed)</codeInline> is the unsmoothed correction denominator (<markup><a href="ACAC6A80-7CE0-4CB9-B36C-B2FB6ACAB027.htm#B877418511F2BD1F948722C85678128A"><img src="../media/B877418511F2BD1F948722C85678128A.png" width="183" height="17" align="middle"></img></a></markup>). The y-values of any uncalibrated spectrum have to be divided by this denominator values in order to obtain the calibrated y-values.
+<codeInline>ScalingDenominator (not smoothed)</codeInline> is the unsmoothed correction denominator (<markup><a href="ACAC6A80-7CE0-4CB9-B36C-B2FB6ACAB027.htm#667F8813E78C0C741EF754B38C6215E5"><img src="../media/667F8813E78C0C741EF754B38C6215E5.png" width="183" height="17" align="middle"></img></a></markup>). The y-values of any uncalibrated spectrum have to be divided by this denominator values in order to obtain the calibrated y-values.
 </para>
 </listItem>
 

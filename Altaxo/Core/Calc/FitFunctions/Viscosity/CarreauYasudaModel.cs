@@ -90,11 +90,11 @@ namespace Altaxo.Calc.FitFunctions.Viscosity
     {
       return i switch
       {
-        0 => 1,
-        1 => 10,
+        0 => 1000,
+        1 => 1,
         2 => 1,
         3 => 1,
-        4 => 2,
+        4 => 0.5,
         _ => throw new ArgumentOutOfRangeException(nameof(i), i, null)
       };
     }

@@ -143,7 +143,7 @@ Filter criteria are e.g. the height of the peak (peaks under a threshold height 
 </para>
 
 <para>
-<markup><a href="ACAC6A80-7CE0-4CB9-B36C-B2FB6ACAB027.htm#73FAA6654DF169E6F1669CA6F26A6319"><img src="../media/73FAA6654DF169E6F1669CA6F26A6319.png" width="378"></img></a></markup>
+<markup><a href="ACAC6A80-7CE0-4CB9-B36C-B2FB6ACAB027.htm#8C8673B5417319F51AC65D21DA75394A"><img src="../media/8C8673B5417319F51AC65D21DA75394A.png" width="378"></img></a></markup>
 </para>
 
 <para>
@@ -193,7 +193,7 @@ The algorithm starts with a very narrow Ricker wavelet (which has a width of 1 p
 </para>
 
 <para>
-<markup><a href="ACAC6A80-7CE0-4CB9-B36C-B2FB6ACAB027.htm#133CFFCD49047B3108B99E21804F35F0"><img src="../media/133CFFCD49047B3108B99E21804F35F0.png" width="378"></img></a></markup>
+<markup><a href="ACAC6A80-7CE0-4CB9-B36C-B2FB6ACAB027.htm#243574EC910BBB4B29D9EAA57844F913"><img src="../media/243574EC910BBB4B29D9EAA57844F913.png" width="378"></img></a></markup>
 </para>
 
 <para>
@@ -201,7 +201,7 @@ Fig. 2: Example of a spectrum that is used for CWT transformation, see below.
 </para>
 
 <para>
-<markup><a href="ACAC6A80-7CE0-4CB9-B36C-B2FB6ACAB027.htm#B0CC2B678D2C3D6372A1FBB804B18B4C"><img src="../media/B0CC2B678D2C3D6372A1FBB804B18B4C.png" width="567"></img></a></markup>  
+<markup><a href="ACAC6A80-7CE0-4CB9-B36C-B2FB6ACAB027.htm#340D8CCDE220AAFC677FC00E50DF7B4B"><img src="../media/340D8CCDE220AAFC677FC00E50DF7B4B.png" width="567"></img></a></markup>  
 </para>
 
 <para>
@@ -232,7 +232,7 @@ Wavelet: Choose between a Ricker wavelet, and a wavelet which is the 2nd derivat
 <listItem>
 
 <para>
-Points per octave: The default value 8 means the Ricker wavelet is made broader in steps of <markup><a href="ACAC6A80-7CE0-4CB9-B36C-B2FB6ACAB027.htm#50D6949625AD905885D89F7608052A89"><img src="../media/50D6949625AD905885D89F7608052A89.png" width="24" height="17" align="texttop"></img></a></markup>, i.e. after 8 steps the wavelet is twice as broad as before. The more points, the finer is the resolution of the determination of the peak width, but more steps require more evaluation time.
+Points per octave: The default value 8 means the Ricker wavelet is made broader in steps of <markup><a href="ACAC6A80-7CE0-4CB9-B36C-B2FB6ACAB027.htm#D7B32DD5FD4E58FB3DD97E55A2CD2BF7"><img src="../media/D7B32DD5FD4E58FB3DD97E55A2CD2BF7.png" width="24" height="17" align="texttop"></img></a></markup>, i.e. after 8 steps the wavelet is twice as broad as before. The more points, the finer is the resolution of the determination of the peak width, but more steps require more evaluation time.
 </para>
 </listItem>
 

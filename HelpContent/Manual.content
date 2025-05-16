@@ -2,9 +2,9 @@
 <Topics>
 <Topic id="1B7FE024E7E614BFA13DAA1FD005CB2E" visible="True" title="Altaxo user manual" isDefault="true" isExpanded="true" isSelected="true">
 <Topic id="1F4C428AAA53AFE4CCEE7744AB1CB94F" visible="True" title="Installation of Altaxo">
-<Topic id="FB292AFF9A439E8CD0E9A6A6770023DB" visible="True" title="Installation by Copy-and-Paste on Windows 7, 8.1 and 10">
+<Topic id="7B9AF5585E8F3500D3474330F71C8A57" visible="True" title="Installation by Copy-and-Paste on Windows 10 and 11">
 </Topic>
-<Topic id="577B485E0653126B7C72BCA3C63D6692" visible="True" title="Installation by using a Microsoft installer file (.msi) on Windows 7, 8.1 and 10">
+<Topic id="715022B878E4EFB1E52ED28E24307D28" visible="True" title="Installation by using a Microsoft installer file (.msi) on Windows 10 and 11">
 </Topic>
 <Topic id="2FD7A20CC4874B8AC0167F6E62AF3C00" visible="True" title="Installation on Linux (using Wine)">
 <Topic id="065FC596CC034F1B98FCEBFB3AD1498B" visible="True" title="Installation of Wine on Ubuntu">
@@ -224,6 +224,8 @@
 <Topic id="E771D4FEB3C4838C0A284850BEEFBF46" visible="True" title="Retardation fit functions">
 </Topic>
 <Topic id="CC0F38133338898C0E8F0A706D55FDAA" visible="True" title="Fit functions for transitions">
+</Topic>
+<Topic id="5E135DDC61482072F84C6E0D352875BA" visible="True" title="Fit functions for the viscosity versus the shear rate">
 </Topic>
 </Topic>
 <Topic id="8A73F813C2BA5A0BB70B3262B294B137" visible="True" title="Altaxo's command line arguments">

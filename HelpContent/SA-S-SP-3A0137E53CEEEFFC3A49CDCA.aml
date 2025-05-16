@@ -562,10 +562,10 @@ The different options for normalization are described in the following sections.
 <para>
 Executes area normalization:
 </para>
-<markup><a href="ACAC6A80-7CE0-4CB9-B36C-B2FB6ACAB027.htm#ACF1A6228985351731FC99ECC18CC812"><img src="../media/ACF1A6228985351731FC99ECC18CC812.png" width="91" height="33"></img></a></markup>
+<markup><a href="ACAC6A80-7CE0-4CB9-B36C-B2FB6ACAB027.htm#F7A541C4B45671BF0C91397F464D3890"><img src="../media/F7A541C4B45671BF0C91397F464D3890.png" width="91" height="33"></img></a></markup>
 
 <para>
-in which <markup><a href="ACAC6A80-7CE0-4CB9-B36C-B2FB6ACAB027.htm#42C57BCB8A6CF73131B4324CF60E9E03"><img src="../media/42C57BCB8A6CF73131B4324CF60E9E03.png" width="27" height="12" align="middle"></img></a></markup> is the minimal y-value and <markup><a href="ACAC6A80-7CE0-4CB9-B36C-B2FB6ACAB027.htm#3B9F51AF15BA5EA651CD824736E3AD93"><img src="../media/3B9F51AF15BA5EA651CD824736E3AD93.png" width="37" height="8" align="middle"></img></a></markup> is the average of all y-values. This results in a spectrum for which:
+in which <markup><a href="ACAC6A80-7CE0-4CB9-B36C-B2FB6ACAB027.htm#9FEF8770170B2171BFE394FF1D0DF7FA"><img src="../media/9FEF8770170B2171BFE394FF1D0DF7FA.png" width="27" height="12" align="middle"></img></a></markup> is the minimal y-value and <markup><a href="ACAC6A80-7CE0-4CB9-B36C-B2FB6ACAB027.htm#1953302A23DC793F5919056E3C65E095"><img src="../media/1953302A23DC793F5919056E3C65E095.png" width="37" height="8" align="middle"></img></a></markup> is the average of all y-values. This results in a spectrum for which:
 </para>
 
 <list class="bullet">
@@ -593,10 +593,10 @@ the sum of all y-values is 1
 <para>
 Executes min-max normalization:
 </para>
-<markup><a href="ACAC6A80-7CE0-4CB9-B36C-B2FB6ACAB027.htm#1C29ABDF79DCAE4910F0722724DF0242"><img src="../media/1C29ABDF79DCAE4910F0722724DF0242.png" width="113" height="33"></img></a></markup>
+<markup><a href="ACAC6A80-7CE0-4CB9-B36C-B2FB6ACAB027.htm#6AB5AFBD6DB2D6802667923D1AD3D16C"><img src="../media/6AB5AFBD6DB2D6802667923D1AD3D16C.png" width="113" height="33"></img></a></markup>
 
 <para>
-in which <markup><a href="ACAC6A80-7CE0-4CB9-B36C-B2FB6ACAB027.htm#42C57BCB8A6CF73131B4324CF60E9E03"><img src="../media/42C57BCB8A6CF73131B4324CF60E9E03.png" width="27" height="12" align="middle"></img></a></markup> and <markup><a href="ACAC6A80-7CE0-4CB9-B36C-B2FB6ACAB027.htm#52CA7D30572CF113400DC2C8B695AF09"><img src="../media/52CA7D30572CF113400DC2C8B695AF09.png" width="30" height="8" align="middle"></img></a></markup> are the minimal and the maximal y-values, respectively. This results in a spectrum for which:
+in which <markup><a href="ACAC6A80-7CE0-4CB9-B36C-B2FB6ACAB027.htm#9FEF8770170B2171BFE394FF1D0DF7FA"><img src="../media/9FEF8770170B2171BFE394FF1D0DF7FA.png" width="27" height="12" align="middle"></img></a></markup> and <markup><a href="ACAC6A80-7CE0-4CB9-B36C-B2FB6ACAB027.htm#9EEDBEE5C3ECD6BD10803DE9CC5CBD30"><img src="../media/9EEDBEE5C3ECD6BD10803DE9CC5CBD30.png" width="30" height="8" align="middle"></img></a></markup> are the minimal and the maximal y-values, respectively. This results in a spectrum for which:
 </para>
 
 <list class="bullet">
@@ -622,12 +622,12 @@ the maximal y-value is 1
 <content>
 
 <para>
-Executes min-max normalization, but for determination of <markup><a href="ACAC6A80-7CE0-4CB9-B36C-B2FB6ACAB027.htm#42C57BCB8A6CF73131B4324CF60E9E03"><img src="../media/42C57BCB8A6CF73131B4324CF60E9E03.png" width="27" height="12" align="middle"></img></a></markup> and <markup><a href="ACAC6A80-7CE0-4CB9-B36C-B2FB6ACAB027.htm#52CA7D30572CF113400DC2C8B695AF09"><img src="../media/52CA7D30572CF113400DC2C8B695AF09.png" width="30" height="8" align="middle"></img></a></markup>, only a user-defined region of the spectrum is used:
+Executes min-max normalization, but for determination of <markup><a href="ACAC6A80-7CE0-4CB9-B36C-B2FB6ACAB027.htm#9FEF8770170B2171BFE394FF1D0DF7FA"><img src="../media/9FEF8770170B2171BFE394FF1D0DF7FA.png" width="27" height="12" align="middle"></img></a></markup> and <markup><a href="ACAC6A80-7CE0-4CB9-B36C-B2FB6ACAB027.htm#9EEDBEE5C3ECD6BD10803DE9CC5CBD30"><img src="../media/9EEDBEE5C3ECD6BD10803DE9CC5CBD30.png" width="30" height="8" align="middle"></img></a></markup>, only a user-defined region of the spectrum is used:
 </para>
-<markup><a href="ACAC6A80-7CE0-4CB9-B36C-B2FB6ACAB027.htm#1C29ABDF79DCAE4910F0722724DF0242"><img src="../media/1C29ABDF79DCAE4910F0722724DF0242.png" width="113" height="33"></img></a></markup>
+<markup><a href="ACAC6A80-7CE0-4CB9-B36C-B2FB6ACAB027.htm#6AB5AFBD6DB2D6802667923D1AD3D16C"><img src="../media/6AB5AFBD6DB2D6802667923D1AD3D16C.png" width="113" height="33"></img></a></markup>
 
 <para>
-in which <markup><a href="ACAC6A80-7CE0-4CB9-B36C-B2FB6ACAB027.htm#42C57BCB8A6CF73131B4324CF60E9E03"><img src="../media/42C57BCB8A6CF73131B4324CF60E9E03.png" width="27" height="12" align="middle"></img></a></markup> and <markup><a href="ACAC6A80-7CE0-4CB9-B36C-B2FB6ACAB027.htm#52CA7D30572CF113400DC2C8B695AF09"><img src="../media/52CA7D30572CF113400DC2C8B695AF09.png" width="30" height="8" align="middle"></img></a></markup> are the minimal and the maximal y-values in the user defined region, respectively. This results in a spectrum for which:
+in which <markup><a href="ACAC6A80-7CE0-4CB9-B36C-B2FB6ACAB027.htm#9FEF8770170B2171BFE394FF1D0DF7FA"><img src="../media/9FEF8770170B2171BFE394FF1D0DF7FA.png" width="27" height="12" align="middle"></img></a></markup> and <markup><a href="ACAC6A80-7CE0-4CB9-B36C-B2FB6ACAB027.htm#9EEDBEE5C3ECD6BD10803DE9CC5CBD30"><img src="../media/9EEDBEE5C3ECD6BD10803DE9CC5CBD30.png" width="30" height="8" align="middle"></img></a></markup> are the minimal and the maximal y-values in the user defined region, respectively. This results in a spectrum for which:
 </para>
 
 <list class="bullet">
@@ -674,10 +674,10 @@ Fig. 2: The normalization method <codeInline>NormalizationMinMaxInRange</codeInl
 <para>
 Executes SNV (standard  normal variate) normalization:
 </para>
-<markup><a href="ACAC6A80-7CE0-4CB9-B36C-B2FB6ACAB027.htm#A58744C4029CBF6E6829FD3D3BF73BF4"><img src="../media/A58744C4029CBF6E6829FD3D3BF73BF4.png" width="101" height="30"></img></a></markup>
+<markup><a href="ACAC6A80-7CE0-4CB9-B36C-B2FB6ACAB027.htm#03664C30EB05BE7093F71556973112B1"><img src="../media/03664C30EB05BE7093F71556973112B1.png" width="101" height="30"></img></a></markup>
 
 <para>
-in which <markup><a href="ACAC6A80-7CE0-4CB9-B36C-B2FB6ACAB027.htm#3B9F51AF15BA5EA651CD824736E3AD93"><img src="../media/3B9F51AF15BA5EA651CD824736E3AD93.png" width="37" height="8" align="middle"></img></a></markup> is the average of all y-values and <markup><a href="ACAC6A80-7CE0-4CB9-B36C-B2FB6ACAB027.htm#F030411283F894142B74EA62B6D8CF2D"><img src="../media/F030411283F894142B74EA62B6D8CF2D.png" width="20" height="13" align="middle"></img></a></markup> is the standard deviation of the y-values.
+in which <markup><a href="ACAC6A80-7CE0-4CB9-B36C-B2FB6ACAB027.htm#1953302A23DC793F5919056E3C65E095"><img src="../media/1953302A23DC793F5919056E3C65E095.png" width="37" height="8" align="middle"></img></a></markup> is the average of all y-values and <markup><a href="ACAC6A80-7CE0-4CB9-B36C-B2FB6ACAB027.htm#AA2626355BF2672F5A78970C1D1EF2D9"><img src="../media/AA2626355BF2672F5A78970C1D1EF2D9.png" width="20" height="13" align="middle"></img></a></markup> is the standard deviation of the y-values.
 </para>
 
 <para>
@@ -709,12 +709,12 @@ the standard deviation of the y-values is 1
 <para>
 Executes vector normalization:
 </para>
-<markup><a href="ACAC6A80-7CE0-4CB9-B36C-B2FB6ACAB027.htm#22B253003388F36A5391D27006E1898C"><img src="../media/22B253003388F36A5391D27006E1898C.png" width="74" height="29"></img></a></markup>
+<markup><a href="ACAC6A80-7CE0-4CB9-B36C-B2FB6ACAB027.htm#E9F2CBE728DC8F3E02B2A31BD544EEFF"><img src="../media/E9F2CBE728DC8F3E02B2A31BD544EEFF.png" width="74" height="29"></img></a></markup>
 
 <para>
-in which <markup><a href="ACAC6A80-7CE0-4CB9-B36C-B2FB6ACAB027.htm#A053379EB9B8E8E017FA0F6912D534A5"><img src="../media/A053379EB9B8E8E017FA0F6912D534A5.png" width="36" height="8" align="middle"></img></a></markup> is the L2 norm of the y-values, i.e.
+in which <markup><a href="ACAC6A80-7CE0-4CB9-B36C-B2FB6ACAB027.htm#3E596B492E990C1F5E9160390FFD4DBF"><img src="../media/3E596B492E990C1F5E9160390FFD4DBF.png" width="36" height="8" align="middle"></img></a></markup> is the L2 norm of the y-values, i.e.
 </para>
-<markup><a href="ACAC6A80-7CE0-4CB9-B36C-B2FB6ACAB027.htm#ECF83C6D6300051112F786A97096E8F9"><img src="../media/ECF83C6D6300051112F786A97096E8F9.png" width="109" height="34"></img></a></markup>
+<markup><a href="ACAC6A80-7CE0-4CB9-B36C-B2FB6ACAB027.htm#A5FD3F251F1E490F3B41BA445F023BE7"><img src="../media/A5FD3F251F1E490F3B41BA445F023BE7.png" width="109" height="34"></img></a></markup>
 
 <para>
 This results in a spectrum for which:

@@ -27,10 +27,10 @@ Knots are nice examples of lines in 3D space. We visit the <externalLink><linkTe
 <para>
 The x, y, and z values in this example are varied according to the following equations:
 </para>
-<markup><a href="ACAC6A80-7CE0-4CB9-B36C-B2FB6ACAB027.htm#7C44CD687CB6E635478D3AB3DDA1919D"><img src="../media/7C44CD687CB6E635478D3AB3DDA1919D.png" width="159" height="36"></img></a></markup><markup><a href="ACAC6A80-7CE0-4CB9-B36C-B2FB6ACAB027.htm#E4ADB7E10EBB1C7CE596BA73908DA707"><img src="../media/E4ADB7E10EBB1C7CE596BA73908DA707.png" width="156" height="36"></img></a></markup><markup><a href="ACAC6A80-7CE0-4CB9-B36C-B2FB6ACAB027.htm#11D6F368BF7B16756F9FFE2B3EE16464"><img src="../media/11D6F368BF7B16756F9FFE2B3EE16464.png" width="188" height="35"></img></a></markup>
+<markup><a href="ACAC6A80-7CE0-4CB9-B36C-B2FB6ACAB027.htm#83737D6EA2F4140DC18CEA76E75AAC4F"><img src="../media/83737D6EA2F4140DC18CEA76E75AAC4F.png" width="159" height="36"></img></a></markup><markup><a href="ACAC6A80-7CE0-4CB9-B36C-B2FB6ACAB027.htm#111F61764EDC2D7F8BD5F1D0E26789A6"><img src="../media/111F61764EDC2D7F8BD5F1D0E26789A6.png" width="156" height="36"></img></a></markup><markup><a href="ACAC6A80-7CE0-4CB9-B36C-B2FB6ACAB027.htm#4DF582BAFE442A0CD0E50CC1BD879282"><img src="../media/4DF582BAFE442A0CD0E50CC1BD879282.png" width="188" height="35"></img></a></markup>
 
 <para>
-with <markup><a href="ACAC6A80-7CE0-4CB9-B36C-B2FB6ACAB027.htm#0168FB009B1F95990FF3C29BFC08930B"><img src="../media/0168FB009B1F95990FF3C29BFC08930B.png" width="9" height="10" align="bottom"></img></a></markup> ranging from 0 to <markup><a href="ACAC6A80-7CE0-4CB9-B36C-B2FB6ACAB027.htm#5FF1740DA19BB9C53C3F3E557D8DD49D"><img src="../media/5FF1740DA19BB9C53C3F3E557D8DD49D.png" width="16" height="12" align="middle"></img></a></markup>.
+with <markup><a href="ACAC6A80-7CE0-4CB9-B36C-B2FB6ACAB027.htm#EE08375A8870F8D3299AC5649339033B"><img src="../media/EE08375A8870F8D3299AC5649339033B.png" width="9" height="10" align="bottom"></img></a></markup> ranging from 0 to <markup><a href="ACAC6A80-7CE0-4CB9-B36C-B2FB6ACAB027.htm#9EF04164314A12B785E270B040D368BB"><img src="../media/9EF04164314A12B785E270B040D368BB.png" width="16" height="12" align="middle"></img></a></markup>.
 </para>
 
 <para>
@@ -87,7 +87,7 @@ Now use from the main menu <codeInline>Plot → 3D-Plots → Line</codeInline> t
 </para>
 
 <para>
-<markup><a href="ACAC6A80-7CE0-4CB9-B36C-B2FB6ACAB027.htm#66E0A16BEA77BC0772436853206AB13B"><img src="../media/66E0A16BEA77BC0772436853206AB13B.png" width="567"></img></a></markup>
+<markup><a href="ACAC6A80-7CE0-4CB9-B36C-B2FB6ACAB027.htm#D1F071DEA0BD5DCB23BC4EFD09D91A41"><img src="../media/D1F071DEA0BD5DCB23BC4EFD09D91A41.png" width="567"></img></a></markup>
 </para>
 
 <para>
@@ -95,7 +95,7 @@ This could look even better when modifiying the line widths to 10 and 2, and pla
 </para>
 
 <para>
-<markup><a href="ACAC6A80-7CE0-4CB9-B36C-B2FB6ACAB027.htm#78768AAED9FCA5659DE54BD09B20C5D1"><img src="../media/78768AAED9FCA5659DE54BD09B20C5D1.png" width="567"></img></a></markup>
+<markup><a href="ACAC6A80-7CE0-4CB9-B36C-B2FB6ACAB027.htm#B0A5C80BA7C7842780269C1E4795C49B"><img src="../media/B0A5C80BA7C7842780269C1E4795C49B.png" width="567"></img></a></markup>
 </para>
 </content>
 </section>

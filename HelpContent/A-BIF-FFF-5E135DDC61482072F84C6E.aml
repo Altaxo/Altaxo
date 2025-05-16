@@ -1,0 +1,348 @@
+﻿
+<topic id="5E135DDC61482072F84C6E0D352875BA" revisionNumber="1">
+
+<developerConceptualDocument xmlns="http://ddue.schemas.microsoft.com/authoring/2003/5" xmlns:xlink="http://www.w3.org/1999/xlink">
+
+<introduction>
+
+<para>
+Previous section: <link xlink:href="CC0F38133338898C0E8F0A706D55FDAA">Fit functions for transitions</link></para>
+<autoOutline />
+<markup><hr/></markup></introduction>
+
+<section address="A13C6781C0DC24D191D3C9C5B797ACDD">
+<title>Bingham plastic model
+</title>
+<content>
+
+<para>
+This model describes the dependence of the viscosity <markup><a href="ACAC6A80-7CE0-4CB9-B36C-B2FB6ACAB027.htm#F503E608C29C68825DF5C8DE41E076A3"><img src="../media/F503E608C29C68825DF5C8DE41E076A3.png" width="7" height="10" align="bottom"></img></a></markup> on the shear rate <markup><a href="ACAC6A80-7CE0-4CB9-B36C-B2FB6ACAB027.htm#FE97004EB6D6FC0E41A0163B299CAE88"><img src="../media/FE97004EB6D6FC0E41A0163B299CAE88.png" width="8" height="14" align="bottom"></img></a></markup> according to the following  equation:
+</para>
+<markup><a href="ACAC6A80-7CE0-4CB9-B36C-B2FB6ACAB027.htm#4A6174539101C39EEDBABEB60C448215"><img src="../media/4A6174539101C39EEDBABEB60C448215.png" width="91" height="35"></img></a></markup>
+
+<para>
+in which:
+</para>
+
+<list class="bullet">
+
+<listItem>
+
+<para>
+<markup><a href="ACAC6A80-7CE0-4CB9-B36C-B2FB6ACAB027.htm#E101F669BD47AC52B7B7FBACA05F9CAE"><img src="../media/E101F669BD47AC52B7B7FBACA05F9CAE.png" width="12" height="11" align="bottom"></img></a></markup>: yield stress
+</para>
+</listItem>
+
+<listItem>
+
+<para>
+<markup><a href="ACAC6A80-7CE0-4CB9-B36C-B2FB6ACAB027.htm#ACCAD98AF1669268C82A3A1B6CCB4093"><img src="../media/ACCAD98AF1669268C82A3A1B6CCB4093.png" width="13" height="17" align="middle"></img></a></markup>: viscosity (limes for high shear rates)
+</para>
+</listItem>
+</list>
+
+<para>
+<markup><a href="ACAC6A80-7CE0-4CB9-B36C-B2FB6ACAB027.htm#EFA38404CCE511F728345164A758E5E9"><img src="../media/EFA38404CCE511F728345164A758E5E9.png" width="567"></img></a></markup>
+</para>
+
+<para>
+Fig. 1: Bingham plastic model with <markup><a href="ACAC6A80-7CE0-4CB9-B36C-B2FB6ACAB027.htm#75B4E3D64E85247805FA0688D5A1A532"><img src="../media/75B4E3D64E85247805FA0688D5A1A532.png" width="53" height="17" align="bottom"></img></a></markup> and <markup><a href="ACAC6A80-7CE0-4CB9-B36C-B2FB6ACAB027.htm#36285018647CDB7549ECB8CADD3CCB8D"><img src="../media/36285018647CDB7549ECB8CADD3CCB8D.png" width="41" height="17" align="middle"></img></a></markup>.
+</para>
+<markup><hr/></markup>
+
+<para>
+References:
+</para>
+
+<list class="bullet">
+
+<listItem>
+
+<para>
+Bingham, E.C. (1916). &quot;An Investigation of the Laws of Plastic Flow&quot;. Bulletin of the Bureau of Standards. 13 (2): 309–353. doi:10.6028/bulletin.304. hdl:2027/mdp.39015086559054
+</para>
+</listItem>
+</list>
+</content>
+</section>
+
+<section address="FC6038A012E98B69251D71188BB59637">
+<title>Carreau-Yasuda model
+</title>
+<content>
+
+<para>
+This model describes the dependence of the viscosity <markup><a href="ACAC6A80-7CE0-4CB9-B36C-B2FB6ACAB027.htm#F503E608C29C68825DF5C8DE41E076A3"><img src="../media/F503E608C29C68825DF5C8DE41E076A3.png" width="7" height="10" align="bottom"></img></a></markup> on the shear rate <markup><a href="ACAC6A80-7CE0-4CB9-B36C-B2FB6ACAB027.htm#FE97004EB6D6FC0E41A0163B299CAE88"><img src="../media/FE97004EB6D6FC0E41A0163B299CAE88.png" width="8" height="14" align="bottom"></img></a></markup> according to the following  equation:
+</para>
+<markup><a href="ACAC6A80-7CE0-4CB9-B36C-B2FB6ACAB027.htm#CAED38005C8A2431CBDB465D22296B86"><img src="../media/CAED38005C8A2431CBDB465D22296B86.png" width="231" height="21"></img></a></markup>
+
+<para>
+in which:
+</para>
+
+<list class="bullet">
+
+<listItem>
+
+<para>
+<markup><a href="ACAC6A80-7CE0-4CB9-B36C-B2FB6ACAB027.htm#2C03DCEB66298FF6AAE42B9E22D868E9"><img src="../media/2C03DCEB66298FF6AAE42B9E22D868E9.png" width="13" height="10" align="bottom"></img></a></markup> : zero shear viscosity
+</para>
+</listItem>
+
+<listItem>
+
+<para>
+<markup><a href="ACAC6A80-7CE0-4CB9-B36C-B2FB6ACAB027.htm#FF279A4B7654FA98138BD35684772DC5"><img src="../media/FF279A4B7654FA98138BD35684772DC5.png" width="18" height="10" align="bottom"></img></a></markup> : terminal viscosity at very high shear rates (<markup><a href="ACAC6A80-7CE0-4CB9-B36C-B2FB6ACAB027.htm#349D2C699B88C71DA898CF646DA386DA"><img src="../media/349D2C699B88C71DA898CF646DA386DA.png" width="51" height="12" align="bottom"></img></a></markup>)
+</para>
+</listItem>
+
+<listItem>
+
+<para>
+<markup><a href="ACAC6A80-7CE0-4CB9-B36C-B2FB6ACAB027.htm#0966D279BCCD445798A8F97685BAF697"><img src="../media/0966D279BCCD445798A8F97685BAF697.png" width="9" height="13" align="middle"></img></a></markup>: parameter (inverse characteristic viscosity)
+</para>
+</listItem>
+
+<listItem>
+
+<para>
+<markup><a href="ACAC6A80-7CE0-4CB9-B36C-B2FB6ACAB027.htm#4F11DA582A0CE0B49F38E7DFCED7D01F"><img src="../media/4F11DA582A0CE0B49F38E7DFCED7D01F.png" width="8" height="8" align="middle"></img></a></markup>, <markup><a href="ACAC6A80-7CE0-4CB9-B36C-B2FB6ACAB027.htm#63BAF2C6E1D151502445F0425493D190"><img src="../media/63BAF2C6E1D151502445F0425493D190.png" width="9" height="8" align="middle"></img></a></markup>: exponents (<markup><a href="ACAC6A80-7CE0-4CB9-B36C-B2FB6ACAB027.htm#9700D9D3927AD92C2FB6989CE26E13D2"><img src="../media/9700D9D3927AD92C2FB6989CE26E13D2.png" width="35" height="12" align="middle"></img></a></markup>, <markup><a href="ACAC6A80-7CE0-4CB9-B36C-B2FB6ACAB027.htm#C50B1D720DC519391F4396E801B61541"><img src="../media/C50B1D720DC519391F4396E801B61541.png" width="37" height="12" align="middle"></img></a></markup>)
+</para>
+</listItem>
+</list>
+
+<para>
+In the special case <markup><a href="ACAC6A80-7CE0-4CB9-B36C-B2FB6ACAB027.htm#F3CFA626FD46084617E191D48AE86B79"><img src="../media/F3CFA626FD46084617E191D48AE86B79.png" width="63" height="12" align="middle"></img></a></markup> this model is equivalent to the Cross model.
+</para>
+
+<para>
+<markup><a href="ACAC6A80-7CE0-4CB9-B36C-B2FB6ACAB027.htm#4ACE9521647E8A904CCF5273E73D0F04"><img src="../media/4ACE9521647E8A904CCF5273E73D0F04.png" width="567"></img></a></markup>
+</para>
+
+<para>
+Fig. 1: Carreau-Yasuda model with <markup><a href="ACAC6A80-7CE0-4CB9-B36C-B2FB6ACAB027.htm#AF20AB22C16A5996DCAD9A3B5881D4F2"><img src="../media/AF20AB22C16A5996DCAD9A3B5881D4F2.png" width="54" height="17" align="bottom"></img></a></markup>, <markup><a href="ACAC6A80-7CE0-4CB9-B36C-B2FB6ACAB027.htm#8CAA825C8A4CD30BEB1CAD6F08B1459A"><img src="../media/8CAA825C8A4CD30BEB1CAD6F08B1459A.png" width="46" height="14" align="bottom"></img></a></markup>, <markup><a href="ACAC6A80-7CE0-4CB9-B36C-B2FB6ACAB027.htm#1DA5810CA9E533EB8524E9A9A777CEE9"><img src="../media/1DA5810CA9E533EB8524E9A9A777CEE9.png" width="55" height="13" align="middle"></img></a></markup>, <markup><a href="ACAC6A80-7CE0-4CB9-B36C-B2FB6ACAB027.htm#794E67A66187DFCA2556A2C84BFE7C53"><img src="../media/794E67A66187DFCA2556A2C84BFE7C53.png" width="35" height="12" align="middle"></img></a></markup> and <markup><a href="ACAC6A80-7CE0-4CB9-B36C-B2FB6ACAB027.htm#8D2B06178FFE0E10A292B9A8DF2BAB34"><img src="../media/8D2B06178FFE0E10A292B9A8DF2BAB34.png" width="48" height="12" align="middle"></img></a></markup>.
+</para>
+<markup><hr/></markup>
+
+<para>
+References:
+</para>
+
+<list class="bullet">
+
+<listItem>
+
+<para>
+Yasuda K, Armstrong RC, Cohen RE (1981) Shear flow properties of concentrated solutions of linear and star branched polystyrenes. Rheol Acta 20:163–178
+</para>
+</listItem>
+</list>
+</content>
+</section>
+
+<section address="C95994A0F688F5AB00522EDB2B6B876B">
+<title>Cross model
+</title>
+<content>
+
+<para>
+This model describes the dependence of the viscosity <markup><a href="ACAC6A80-7CE0-4CB9-B36C-B2FB6ACAB027.htm#F503E608C29C68825DF5C8DE41E076A3"><img src="../media/F503E608C29C68825DF5C8DE41E076A3.png" width="7" height="10" align="bottom"></img></a></markup> on the shear rate <markup><a href="ACAC6A80-7CE0-4CB9-B36C-B2FB6ACAB027.htm#FE97004EB6D6FC0E41A0163B299CAE88"><img src="../media/FE97004EB6D6FC0E41A0163B299CAE88.png" width="8" height="14" align="bottom"></img></a></markup> according to the following  equation:
+</para>
+<markup><a href="ACAC6A80-7CE0-4CB9-B36C-B2FB6ACAB027.htm#BAA6AB3C4FA546ADABCDB6AE5C06755E"><img src="../media/BAA6AB3C4FA546ADABCDB6AE5C06755E.png" width="143" height="36"></img></a></markup>
+
+<para>
+in which:
+</para>
+
+<list class="bullet">
+
+<listItem>
+
+<para>
+<markup><a href="ACAC6A80-7CE0-4CB9-B36C-B2FB6ACAB027.htm#2C03DCEB66298FF6AAE42B9E22D868E9"><img src="../media/2C03DCEB66298FF6AAE42B9E22D868E9.png" width="13" height="10" align="bottom"></img></a></markup> : zero shear viscosity
+</para>
+</listItem>
+
+<listItem>
+
+<para>
+<markup><a href="ACAC6A80-7CE0-4CB9-B36C-B2FB6ACAB027.htm#FF279A4B7654FA98138BD35684772DC5"><img src="../media/FF279A4B7654FA98138BD35684772DC5.png" width="18" height="10" align="bottom"></img></a></markup> : terminal viscosity at very high shear rates (<markup><a href="ACAC6A80-7CE0-4CB9-B36C-B2FB6ACAB027.htm#349D2C699B88C71DA898CF646DA386DA"><img src="../media/349D2C699B88C71DA898CF646DA386DA.png" width="51" height="12" align="bottom"></img></a></markup>)
+</para>
+</listItem>
+
+<listItem>
+
+<para>
+<markup><a href="ACAC6A80-7CE0-4CB9-B36C-B2FB6ACAB027.htm#0F1A150DECF87A36C1785F3C2D82E856"><img src="../media/0F1A150DECF87A36C1785F3C2D82E856.png" width="23" height="14" align="middle"></img></a></markup> : parameters, <markup><a href="ACAC6A80-7CE0-4CB9-B36C-B2FB6ACAB027.htm#C2A4AD33272312113AD5E03B46E8D46F"><img src="../media/C2A4AD33272312113AD5E03B46E8D46F.png" width="36" height="14" align="middle"></img></a></markup>, <markup><a href="ACAC6A80-7CE0-4CB9-B36C-B2FB6ACAB027.htm#9700D9D3927AD92C2FB6989CE26E13D2"><img src="../media/9700D9D3927AD92C2FB6989CE26E13D2.png" width="35" height="12" align="middle"></img></a></markup>
+</para>
+</listItem>
+</list>
+
+<para>
+<markup><a href="ACAC6A80-7CE0-4CB9-B36C-B2FB6ACAB027.htm#C5FF952B54064E55A15BBAC3FA83B33D"><img src="../media/C5FF952B54064E55A15BBAC3FA83B33D.png" width="567"></img></a></markup>
+</para>
+
+<para>
+Fig. 1: Cross model with <markup><a href="ACAC6A80-7CE0-4CB9-B36C-B2FB6ACAB027.htm#AF20AB22C16A5996DCAD9A3B5881D4F2"><img src="../media/AF20AB22C16A5996DCAD9A3B5881D4F2.png" width="54" height="17" align="bottom"></img></a></markup>, <markup><a href="ACAC6A80-7CE0-4CB9-B36C-B2FB6ACAB027.htm#8CAA825C8A4CD30BEB1CAD6F08B1459A"><img src="../media/8CAA825C8A4CD30BEB1CAD6F08B1459A.png" width="46" height="14" align="bottom"></img></a></markup>, <markup><a href="ACAC6A80-7CE0-4CB9-B36C-B2FB6ACAB027.htm#1DA5810CA9E533EB8524E9A9A777CEE9"><img src="../media/1DA5810CA9E533EB8524E9A9A777CEE9.png" width="55" height="13" align="middle"></img></a></markup> and <markup><a href="ACAC6A80-7CE0-4CB9-B36C-B2FB6ACAB027.htm#794E67A66187DFCA2556A2C84BFE7C53"><img src="../media/794E67A66187DFCA2556A2C84BFE7C53.png" width="35" height="12" align="middle"></img></a></markup>.
+</para>
+<markup><hr/></markup>
+
+<para>
+References:
+</para>
+
+<list class="bullet">
+
+<listItem>
+
+<para>
+Cross MM (1965) Rheology of non-Newtonian fluids—a new flow equation for pseudoplastic systems. J Colloid Sci 20:417–437
+</para>
+</listItem>
+
+<listItem>
+
+<para>
+Cross MM (1979) Relation between viscoelasticity and shear-thinning behaviour in liquids. Rheol Acta 18:609–614
+</para>
+</listItem>
+</list>
+</content>
+</section>
+
+<section address="CE6891970AF61CBB80DB7291889C597F">
+<title>Herschel-Bulkley model
+</title>
+<content>
+
+<para>
+This model describes the dependence of the viscosity <markup><a href="ACAC6A80-7CE0-4CB9-B36C-B2FB6ACAB027.htm#F503E608C29C68825DF5C8DE41E076A3"><img src="../media/F503E608C29C68825DF5C8DE41E076A3.png" width="7" height="10" align="bottom"></img></a></markup> on the shear rate <markup><a href="ACAC6A80-7CE0-4CB9-B36C-B2FB6ACAB027.htm#FE97004EB6D6FC0E41A0163B299CAE88"><img src="../media/FE97004EB6D6FC0E41A0163B299CAE88.png" width="8" height="14" align="bottom"></img></a></markup> according to the following  equation:
+</para>
+<markup><a href="ACAC6A80-7CE0-4CB9-B36C-B2FB6ACAB027.htm#56C50C305FC4EE10FC5EC41EE8E619F8"><img src="../media/56C50C305FC4EE10FC5EC41EE8E619F8.png" width="126" height="35"></img></a></markup>
+
+<para>
+in which:
+</para>
+
+<list class="bullet">
+
+<listItem>
+
+<para>
+<markup><a href="ACAC6A80-7CE0-4CB9-B36C-B2FB6ACAB027.htm#E101F669BD47AC52B7B7FBACA05F9CAE"><img src="../media/E101F669BD47AC52B7B7FBACA05F9CAE.png" width="12" height="11" align="bottom"></img></a></markup>: yield stress
+</para>
+</listItem>
+
+<listItem>
+
+<para>
+<markup><a href="ACAC6A80-7CE0-4CB9-B36C-B2FB6ACAB027.htm#FF3D15A11EA1435A7BB6F944AB0C19B4"><img src="../media/FF3D15A11EA1435A7BB6F944AB0C19B4.png" width="13" height="13" align="middle"></img></a></markup>: pre-factor
+</para>
+</listItem>
+
+<listItem>
+
+<para>
+<markup><a href="ACAC6A80-7CE0-4CB9-B36C-B2FB6ACAB027.htm#63BAF2C6E1D151502445F0425493D190"><img src="../media/63BAF2C6E1D151502445F0425493D190.png" width="9" height="8" align="middle"></img></a></markup>: exponent (<markup><a href="ACAC6A80-7CE0-4CB9-B36C-B2FB6ACAB027.htm#C50B1D720DC519391F4396E801B61541"><img src="../media/C50B1D720DC519391F4396E801B61541.png" width="37" height="12" align="middle"></img></a></markup>)
+</para>
+</listItem>
+</list>
+
+<quote>
+
+<para>
+Note: With <markup><a href="ACAC6A80-7CE0-4CB9-B36C-B2FB6ACAB027.htm#287447E6CCD693FF440BCD8E3A58F8F1"><img src="../media/287447E6CCD693FF440BCD8E3A58F8F1.png" width="37" height="12" align="middle"></img></a></markup> and <markup><a href="ACAC6A80-7CE0-4CB9-B36C-B2FB6ACAB027.htm#CA2B1B16CD4D7E3A90F140D32A02A67F"><img src="../media/CA2B1B16CD4D7E3A90F140D32A02A67F.png" width="46" height="17" align="middle"></img></a></markup> this model is equivalent to the Bingham plastic model.
+</para>
+</quote>
+
+<para>
+<markup><a href="ACAC6A80-7CE0-4CB9-B36C-B2FB6ACAB027.htm#03AAC6E7DF5A341CE539540C3BF69275"><img src="../media/03AAC6E7DF5A341CE539540C3BF69275.png" width="567"></img></a></markup>
+</para>
+
+<para>
+Fig. 1: Herschel-Bulkley model with <markup><a href="ACAC6A80-7CE0-4CB9-B36C-B2FB6ACAB027.htm#75B4E3D64E85247805FA0688D5A1A532"><img src="../media/75B4E3D64E85247805FA0688D5A1A532.png" width="53" height="17" align="bottom"></img></a></markup>, <markup><a href="ACAC6A80-7CE0-4CB9-B36C-B2FB6ACAB027.htm#331DD90AF9CB0254BFC16E8B00ED4A2C"><img src="../media/331DD90AF9CB0254BFC16E8B00ED4A2C.png" width="53" height="16" align="texttop"></img></a></markup>  and <markup><a href="ACAC6A80-7CE0-4CB9-B36C-B2FB6ACAB027.htm#A6BE3821B079AF8139CB65647DCCC35E"><img src="../media/A6BE3821B079AF8139CB65647DCCC35E.png" width="48" height="12" align="middle"></img></a></markup>.
+</para>
+<markup><hr/></markup>
+
+<para>
+References:
+</para>
+
+<list class="bullet">
+
+<listItem>
+
+<para>
+Herschel, W.H.; Bulkley, R. (1926), &quot;Konsistenzmessungen von Gummi-Benzollösungen&quot;, Kolloid Zeitschrift, 39 (4): 291–300, doi:10.1007/BF01432034, S2CID 97549389
+</para>
+</listItem>
+</list>
+</content>
+</section>
+
+<section address="598E3340DFD31D6519EEAAF3FB2C81E6">
+<title>Power law model
+</title>
+<content>
+
+<para>
+This model describes the dependence of the viscosity <markup><a href="ACAC6A80-7CE0-4CB9-B36C-B2FB6ACAB027.htm#F503E608C29C68825DF5C8DE41E076A3"><img src="../media/F503E608C29C68825DF5C8DE41E076A3.png" width="7" height="10" align="bottom"></img></a></markup> on the shear rate <markup><a href="ACAC6A80-7CE0-4CB9-B36C-B2FB6ACAB027.htm#FE97004EB6D6FC0E41A0163B299CAE88"><img src="../media/FE97004EB6D6FC0E41A0163B299CAE88.png" width="8" height="14" align="bottom"></img></a></markup> according to the following  equation:
+</para>
+<markup><a href="ACAC6A80-7CE0-4CB9-B36C-B2FB6ACAB027.htm#7C1C6AB14239616E46FE1DB10E216CDF"><img src="../media/7C1C6AB14239616E46FE1DB10E216CDF.png" width="96" height="19"></img></a></markup>
+
+<para>
+in which:
+</para>
+
+<list class="bullet">
+
+<listItem>
+
+<para>
+<markup><a href="ACAC6A80-7CE0-4CB9-B36C-B2FB6ACAB027.htm#FF3D15A11EA1435A7BB6F944AB0C19B4"><img src="../media/FF3D15A11EA1435A7BB6F944AB0C19B4.png" width="13" height="13" align="middle"></img></a></markup> : pre-factor
+</para>
+</listItem>
+
+<listItem>
+
+<para>
+<markup><a href="ACAC6A80-7CE0-4CB9-B36C-B2FB6ACAB027.htm#63BAF2C6E1D151502445F0425493D190"><img src="../media/63BAF2C6E1D151502445F0425493D190.png" width="9" height="8" align="middle"></img></a></markup>: exponent (<markup><a href="ACAC6A80-7CE0-4CB9-B36C-B2FB6ACAB027.htm#C50B1D720DC519391F4396E801B61541"><img src="../media/C50B1D720DC519391F4396E801B61541.png" width="37" height="12" align="middle"></img></a></markup>)
+</para>
+</listItem>
+</list>
+
+<para>
+<markup><a href="ACAC6A80-7CE0-4CB9-B36C-B2FB6ACAB027.htm#D6CCE4C81A592D47DB4AA6D5964898AB"><img src="../media/D6CCE4C81A592D47DB4AA6D5964898AB.png" width="567"></img></a></markup>
+</para>
+
+<para>
+Fig. 1: Power law model with <markup><a href="ACAC6A80-7CE0-4CB9-B36C-B2FB6ACAB027.htm#331DD90AF9CB0254BFC16E8B00ED4A2C"><img src="../media/331DD90AF9CB0254BFC16E8B00ED4A2C.png" width="53" height="16" align="texttop"></img></a></markup> and <markup><a href="ACAC6A80-7CE0-4CB9-B36C-B2FB6ACAB027.htm#A6BE3821B079AF8139CB65647DCCC35E"><img src="../media/A6BE3821B079AF8139CB65647DCCC35E.png" width="48" height="12" align="middle"></img></a></markup>.
+</para>
+<markup><hr/></markup>
+
+<para>
+References:
+</para>
+
+<list class="bullet">
+
+<listItem>
+
+<para>
+Markus Reiner et al., &quot;Viskosimetrische Untersuchungen an Lösungen hochmolekularer Naturstoffe&quot;, Kolloid Zeitschrift (1933) 65 (1) 44-62
+</para>
+</listItem>
+</list>
+</content>
+</section>
+<markup><hr/></markup>
+<section>
+
+<content>
+
+<para>
+Next section: <link xlink:href="8A73F813C2BA5A0BB70B3262B294B137">Altaxo's command line arguments</link></para>
+</content>
+</section>
+</developerConceptualDocument>
+</topic>
