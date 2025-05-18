@@ -23,13 +23,9 @@
 #endregion Copyright
 
 #nullable enable
-using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-using System.Xml;
 using Altaxo.Collections;
 using Markdig.Renderers;
 
@@ -62,7 +58,7 @@ namespace Altaxo.Text.Renderers
       var filesToDelete = new HashSet<string>();
       foreach (var extension in new string[] { ".png", ".tif", ".jpg", ".jpeg", ".bmp" })
       {
-        filesToDelete.AddRange(dir.GetFiles("????????????????" + extension).Select(x => x.FullName));
+        filesToDelete.AddRange(dir.GetFiles("????????????????????????????????" + extension).Select(x => x.FullName));
       }
 
       // now delete the files
