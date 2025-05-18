@@ -24,12 +24,9 @@
 
 #nullable enable
 using System;
-using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 using System.Text;
-using System.Threading.Tasks;
-using System.Xml;
 using Markdig.Renderers;
 
 namespace Altaxo.Text.Renderers
@@ -84,7 +81,7 @@ namespace Altaxo.Text.Renderers
       if (0 == _amlFileList.Count)
         return;
 
-      var tw = new System.IO.StreamWriter(ContentLayoutFileName, false, Encoding.UTF8, 1024);
+      var tw = new System.IO.StreamWriter(ContentLayoutFileName, false, Encoding.UTF8, 1024) { NewLine = "\n" };
       Writer = tw;
 
       WriteLine("<?xml version=\"1.0\" encoding=\"utf-8\"?>");

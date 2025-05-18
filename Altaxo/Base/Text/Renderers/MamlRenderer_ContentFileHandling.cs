@@ -28,7 +28,6 @@ using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 using System.Text;
-using System.Threading.Tasks;
 using Altaxo.Collections;
 using Altaxo.Text.Renderers.Maml;
 using Markdig.Renderers;
@@ -127,7 +126,7 @@ namespace Altaxo.Text.Renderers
         var mamlFile = _amlFileList[_indexOfAmlFile];
 
         System.IO.Directory.CreateDirectory(Path.GetDirectoryName(mamlFile.fileName) ?? throw new InvalidOperationException($"Can not get directory of file name {mamlFile.fileName}"));
-        var tw = new System.IO.StreamWriter(mamlFile.fileName, false, Encoding.UTF8, 1024);
+        var tw = new System.IO.StreamWriter(mamlFile.fileName, false, Encoding.UTF8, 1024) { NewLine = "\n" };
         Writer = tw;
 
         Push(MamlElements.topic, new[] { new KeyValuePair<string, string>("id", mamlFile.guid), new KeyValuePair<string, string>("revisionNumber", "1") });

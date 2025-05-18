@@ -23,14 +23,9 @@
 #endregion Copyright
 
 #nullable enable
-using System;
 using System.Collections.Generic;
 using System.IO;
-using System.Linq;
 using System.Text;
-using System.Threading.Tasks;
-using System.Xml;
-using Altaxo.Collections;
 using Altaxo.Text.Renderers.Maml;
 using Markdig.Renderers;
 
@@ -49,7 +44,7 @@ namespace Altaxo.Text.Renderers
     public (string fullFileName, string guid) WriteImageTopicFile()
     {
       var fileName = AmlBaseFileName + "_Images.aml";
-      var tw = new System.IO.StreamWriter(fileName, false, Encoding.UTF8, 1024);
+      var tw = new System.IO.StreamWriter(fileName, false, Encoding.UTF8, 1024) { NewLine = "\n" };
       Writer = tw;
 
       Push(MamlElements.topic, new[] { new KeyValuePair<string, string>("id", ImageTopicFileGuid), new KeyValuePair<string, string>("revisionNumber", "1") });
