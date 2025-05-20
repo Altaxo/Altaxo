@@ -33,25 +33,25 @@ namespace Altaxo.Gui.Science.Thermorheology
 {
   public partial class MasterCurveDataController : MVCANControllerEditCopyOfDocBase<MasterCurveData, IMasterCurveDataView>
   {
-    List<SelectableListNodeList> _dataNodes = [];
+    private List<SelectableListNodeList> _dataNodes = [];
 
     /// <summary>
     /// Creates a new empty Gui node (i.e. without an x-y curve).
     /// </summary>
-    MyNode NewEmptyGuiNode => new MyNode("---", null, false);
+    private MyNode NewEmptyGuiNode => new MyNode("---", null, false);
 
     /// <summary>
     /// Creates new Gui node that represents an x-y-curve.
     /// </summary>
     /// <param name="xycol">The x-y-curve.</param>
     /// <returns>New node for use in the Gui.</returns>
-    MyNode NewGuiNode(XAndYColumn xycol) => new MyNode(xycol?.GetName(0x21) ?? string.Empty, xycol, false);
+    private MyNode NewGuiNode(XAndYColumn xycol) => new MyNode(xycol?.GetName(0x21) ?? string.Empty, xycol, false);
 
     /// <summary>
     /// Initializes the Gui usable list of the data items <see cref="_dataNodes"/> from the document's items
     /// </summary>
     /// <param name="_doc">The document.</param>
-    void InitializeGuiNodesFromDocument(MasterCurveData _doc)
+    private void InitializeGuiNodesFromDocument(MasterCurveData _doc)
     {
       if (_dataNodes.Count > 0)
         throw new NotImplementedException("We assumed that the list is empty (otherwise disposal of is neccessary)");
@@ -75,7 +75,7 @@ namespace Altaxo.Gui.Science.Thermorheology
     /// Ensures that the number of items in each group of the Gui list is at least the provided number.
     /// </summary>
     /// <param name="numberOfItems">The number of items.</param>
-    void EnsureNumberOfItemsInGuiListIsAtLeast(int numberOfItems)
+    private void EnsureNumberOfItemsInGuiListIsAtLeast(int numberOfItems)
     {
       foreach (var sublist in _dataNodes)
       {
@@ -88,7 +88,7 @@ namespace Altaxo.Gui.Science.Thermorheology
     /// Ensures that the number of groups in the Gui list is exactly the provided number.
     /// </summary>
     /// <param name="numberOfGroups">The number of groups.</param>
-    void EnsureNumberOfGroupsInGuiListIsExactly(int numberOfGroups)
+    private void EnsureNumberOfGroupsInGuiListIsExactly(int numberOfGroups)
     {
       if (numberOfGroups > _dataNodes.Count)
       {
@@ -117,14 +117,22 @@ namespace Altaxo.Gui.Science.Thermorheology
     /// <param name="groupNumber">The group number to which to append.</param>
     /// <param name="toLast">If false, the item is put immediately before the first selected node (or at the top of the list).
     /// If true, the item is put immediately after the last selected node (or at the end of the list).</param>
-    void AddItemsToGuiList(IReadOnlyList<XAndYColumn> curves, int groupNumber, bool toLast)
+    private void AddItemsToGuiList(IReadOnlyList<XAndYColumn> curves, int groupNumber, bool toLast)
     {
       int maxListIndexFilled = _dataNodes.Count == 0 ? 0 : _dataNodes.Max(x => x.IndexOfLast((node, j) => node.Tag is not null));
       int insertPosition;
       if (toLast)
       {
         var lastIdx = _dataNodes[groupNumber].IndexOfLast((node, i) => node.IsSelected);
-        insertPosition = lastIdx < 0 ? maxListIndexFilled + 1 : lastIdx + 1;
+        if (lastIdx < 0)
+        {
+          int maxListIndexLocallyFilled = _dataNodes.Count == 0 ? 0 : _dataNodes[groupNumber].IndexOfLast((node, j) => node.Tag is not null);
+          insertPosition = Math.Min(maxListIndexFilled + 1, maxListIndexLocallyFilled + 1);
+        }
+        else
+        {
+          insertPosition = lastIdx + 1;
+        }
       }
       else
       {
@@ -145,7 +153,16 @@ namespace Altaxo.Gui.Science.Thermorheology
       // Insert the curve nodes into the current group
       for (int i = 0; i < curves.Count; i++)
       {
-        _dataNodes[groupNumber].Insert(insertPosition + i, NewGuiNode(curves[i]));
+        var j = insertPosition + i;
+        if (j < _dataNodes[groupNumber].Count && _dataNodes[groupNumber][j].Tag is null)
+        {
+          // then we replace the empty node instead of inserting
+          _dataNodes[groupNumber][j] = NewGuiNode(curves[i]);
+        }
+        else
+        {
+          _dataNodes[groupNumber].Insert(j, NewGuiNode(curves[i]));
+        }
       }
 
       // Now insert the same amout of empty curve nodes into the other groups
@@ -153,9 +170,10 @@ namespace Altaxo.Gui.Science.Thermorheology
       {
         if (idxGroup != groupNumber)
         {
-          for (int i = 0; i < curves.Count; i++)
+          int missingCount = _dataNodes.Max(n => n.Count) - _dataNodes[idxGroup].Count;
+          for (int i = 0; i < missingCount; i++)
           {
-            _dataNodes[groupNumber].Insert(insertPosition + i, NewEmptyGuiNode);
+            _dataNodes[idxGroup].Insert(insertPosition + i, NewEmptyGuiNode);
           }
         }
       }
@@ -165,7 +183,7 @@ namespace Altaxo.Gui.Science.Thermorheology
 
     #region Properties
 
-    void UpdateGuiNodeWithProperties(MyNode node, int idx)
+    private void UpdateGuiNodeWithProperties(MyNode node, int idx)
     {
       object? property1 = null, property2 = null;
 
@@ -179,7 +197,7 @@ namespace Altaxo.Gui.Science.Thermorheology
       node.Property2 = property2;
     }
 
-    DataColumn? GetRootDataColumn(IReadableColumn? column)
+    private DataColumn? GetRootDataColumn(IReadableColumn? column)
     {
       while (column is TransformedReadableColumn trc)
       {
@@ -188,7 +206,7 @@ namespace Altaxo.Gui.Science.Thermorheology
       return column as DataColumn;
     }
 
-    void UpdateAllGuiNodesWithProperties()
+    private void UpdateAllGuiNodesWithProperties()
     {
       foreach (var sublist in _dataNodes)
       {
@@ -216,7 +234,7 @@ namespace Altaxo.Gui.Science.Thermorheology
 
     #endregion
 
-    class MyNode : SelectableListNode
+    private class MyNode : SelectableListNode
     {
       private object? _Property1;
 
@@ -252,7 +270,7 @@ namespace Altaxo.Gui.Science.Thermorheology
 
 
 
-      int _index;
+      private int _index;
       public int Index
       {
         get { return _index; }
