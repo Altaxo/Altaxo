@@ -4,6 +4,7 @@
              xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
              xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
              xmlns:local="clr-namespace:Altaxo.Gui.Serialization.TA_Instruments;assembly=AltaxoBase"
+             xmlns:axogc="clr-namespace:Altaxo.Gui.Common"
              d:DataContext="{d:DesignInstance Type=local:Q800ImportOptionsController}"
              mc:Ignorable="d" 
              d:DesignHeight="450" d:DesignWidth="800">
@@ -13,13 +14,15 @@
             <ColumnDefinition Width="4"/>
             <ColumnDefinition Width="Auto"/>
             <ColumnDefinition Width="4"/>
-        </Grid.ColumnDefinitions>
+    </Grid.ColumnDefinitions>
         <Grid.RowDefinitions>
             <RowDefinition Height="Auto"/>
             <RowDefinition Height="4"/>
             <RowDefinition Height="Auto"/>
             <RowDefinition Height="4"/>
-        </Grid.RowDefinitions>
+      <RowDefinition Height="Auto" />
+      <RowDefinition Height="4" />
+    </Grid.RowDefinitions>
 
         <CheckBox Grid.Row="0" Grid.Column="0"
                   IsChecked="{Binding ConvertUnitsToSIUnits, Mode=TwoWay}"
@@ -28,5 +31,13 @@
         <CheckBox Grid.Row="2" Grid.Column="0"
                   IsChecked="{Binding IncludeFilePathAsProperty, Mode=TwoWay}"
                   Content="Include file path as property"/>
-    </Grid>
+
+    <GroupBox Grid.Row="4" Grid.Column="0"
+      Header="Meta data destination:">
+    <axogc:SingleChoiceRadioStackPanelDC
+      Orientation="Vertical"
+      ItemsSource="{Binding MetadataDestination.Items}"
+      SelectedItem="{Binding MetadataDestination.SelectedItem}"/>
+    </GroupBox>
+  </Grid>
 </UserControl>

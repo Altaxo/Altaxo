@@ -35,7 +35,7 @@ namespace Altaxo.Serialization.TA_Instruments
     /// <inheritdoc/>
     public override (IReadOnlyList<string> FileExtensions, string Explanation) GetFileExtensions()
     {
-      return ([".0", ".1"], "TA instruments DMA files (*.0;*.1)");
+      return ([".txt", ".001", ".002", ".003", ".004", ".005", ".006", ".007", ".008", ".009"], "TA instruments DMA files (*.txt;*.001;*.002;*.003;*.004;*.005;*.006;*.007;*.008;*.009)");
     }
 
     /// <inheritdoc/>
@@ -64,8 +64,8 @@ namespace Altaxo.Serialization.TA_Instruments
       try
       {
         using var stream = new FileStream(fileName, FileMode.Open, FileAccess.Read, FileShare.Read);
-        var result = Q800FileReader.FromStream(stream, false);
-        if (result.NumberOfColumns > 0 && result.NumberOfRows > 0)
+        var result = Q800FileReader.CheckFileFormat(stream);
+        if (result.isQ800File)
         {
           p += 0.5;
         }
@@ -105,6 +105,7 @@ namespace Altaxo.Serialization.TA_Instruments
       int idxFile = -1;
       bool multipleFiles = filenames.Count > 1;
       var pcolUnit = table.PropCols.EnsureExistence("Unit", typeof(TextColumn), ColumnKind.V, 0);
+      var readers = new Q800FileReader[filenames.Count];
       foreach (string filename in filenames)
       {
         idxFile++;
@@ -140,6 +141,7 @@ namespace Altaxo.Serialization.TA_Instruments
           col.Data = imported.Data[c];
           pcolUnit[table.DataColumns.GetColumnNumber(col)] = imported.Units[c];
         }
+        readers[idxFile] = imported;
       }
 
       // Make also a note from where it was imported
@@ -148,6 +150,34 @@ namespace Altaxo.Serialization.TA_Instruments
           table.Notes.WriteLine($"Imported from {filenames[0]} at {DateTimeOffset.Now}");
         else if (filenames.Count > 1)
           table.Notes.WriteLine($"Imported from {filenames[0]} and more ({filenames.Count} files) at {DateTimeOffset.Now}");
+      }
+
+      if (importOptions.HeaderLinesDestination != MetadataDestination.Ignore)
+      {
+        if (importOptions.HeaderLinesDestination == MetadataDestination.Notes)
+        {
+          // Add the header lines to the table notes
+          foreach (var reader in readers)
+          {
+            table.Notes.WriteLine(reader.Notes);
+          }
+        }
+        if (importOptions.HeaderLinesDestination == MetadataDestination.PropertyColumn)
+        {
+          var pcol = table.PropCols.EnsureExistence("Header", typeof(TextColumn), ColumnKind.V, 0);
+          // Add the header lines to the column properties
+          for (idxFile = 0; idxFile < readers.Length; idxFile++)
+          {
+            var reader = readers[idxFile];
+            if (reader is null)
+              continue;
+            var col = table.DataColumns.Columns.FirstOrDefault(c => table.DataColumns.GetColumnGroup(c) == idxFile);
+            if (col is not null)
+            {
+              pcol[table.DataColumns.GetColumnNumber(col)] = reader.Notes;
+            }
+          }
+        }
       }
 
       if (attachDataSource)

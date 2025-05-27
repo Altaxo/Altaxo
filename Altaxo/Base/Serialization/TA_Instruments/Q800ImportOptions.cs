@@ -25,6 +25,14 @@
 
 namespace Altaxo.Serialization.TA_Instruments
 {
+  public enum MetadataDestination
+  {
+    Ignore,  // Ignore the metadata
+    PropertyColumn,  // Add the metadata as a column property
+    Notes,  // Add the metadata to the notes of the table
+  };
+
+
   /// <summary>
   /// Import options for importing TA Instruments Q800 series files.
   /// </summary>
@@ -40,6 +48,8 @@ namespace Altaxo.Serialization.TA_Instruments
     /// </summary>
     public bool IncludeFilePathAsProperty { get; init; } = true;
 
+    public MetadataDestination HeaderLinesDestination { get; init; } = MetadataDestination.Ignore;
+
     #region Serialization
 
     /// <summary>
@@ -53,22 +63,26 @@ namespace Altaxo.Serialization.TA_Instruments
         var s = (Q800ImportOptions)obj;
         info.AddValue("ConvertUnitsToSIUnits", s.ConvertUnitsToSIUnits);
         info.AddValue("IncludeFilePathAsProperty", s.IncludeFilePathAsProperty);
+        info.AddEnum("HeaderLinesDestination", s.HeaderLinesDestination);
       }
 
       public object Deserialize(object? o, Altaxo.Serialization.Xml.IXmlDeserializationInfo info, object? parent)
       {
         var convertUnitsToSIUnits = info.GetBoolean("ConvertUnitsToSIUnits");
         var includeFilePathAsProperty = info.GetBoolean("IncludeFilePathAsProperty");
+        var headerLinesDestination = info.GetEnum<MetadataDestination>("HeaderLinesDestination");
 
         return o is null ? new Q800ImportOptions
         {
           ConvertUnitsToSIUnits = convertUnitsToSIUnits,
           IncludeFilePathAsProperty = includeFilePathAsProperty,
+          HeaderLinesDestination = headerLinesDestination
         } :
           ((Q800ImportOptions)o) with
           {
             ConvertUnitsToSIUnits = convertUnitsToSIUnits,
             IncludeFilePathAsProperty = includeFilePathAsProperty,
+            HeaderLinesDestination = headerLinesDestination
           };
       }
     }

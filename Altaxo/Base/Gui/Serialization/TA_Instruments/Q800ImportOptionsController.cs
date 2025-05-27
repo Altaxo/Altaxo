@@ -23,6 +23,7 @@
 #endregion Copyright
 
 using System.Collections.Generic;
+using Altaxo.Gui.Common;
 using Altaxo.Serialization.TA_Instruments;
 
 namespace Altaxo.Gui.Serialization.TA_Instruments
@@ -70,6 +71,23 @@ namespace Altaxo.Gui.Serialization.TA_Instruments
       }
     }
 
+    private ItemsController<MetadataDestination> _metadataDestination;
+
+    public ItemsController<MetadataDestination> MetadataDestination
+    {
+      get => _metadataDestination;
+      set
+      {
+        if (!(_metadataDestination == value))
+        {
+          _metadataDestination?.Dispose();
+          _metadataDestination = value;
+          OnPropertyChanged(nameof(MetadataDestination));
+        }
+      }
+    }
+
+
 
     #endregion
 
@@ -81,6 +99,7 @@ namespace Altaxo.Gui.Serialization.TA_Instruments
       {
         ConvertUnitsToSIUnits = _doc.ConvertUnitsToSIUnits;
         IncludeFilePathAsProperty = _doc.IncludeFilePathAsProperty;
+        MetadataDestination = new ItemsController<MetadataDestination>(new Collections.SelectableListNodeList(_doc.HeaderLinesDestination));
       }
     }
 
@@ -91,6 +110,7 @@ namespace Altaxo.Gui.Serialization.TA_Instruments
 
         ConvertUnitsToSIUnits = ConvertUnitsToSIUnits,
         IncludeFilePathAsProperty = IncludeFilePathAsProperty,
+        HeaderLinesDestination = MetadataDestination.SelectedValue,
       };
 
       return ApplyEnd(true, disposeController);

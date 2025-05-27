@@ -81,7 +81,7 @@ namespace Altaxo.Serialization.Ascii
         }
 
         if (len > 10 && sumSpecialChars * 4 < len)
-          p += 0.5;
+          p += 0.499;  // allow other, more specific text importers to have a higher probability
       }
       catch
       {
