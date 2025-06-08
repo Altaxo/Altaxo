@@ -22,11 +22,6 @@
 
 #endregion Copyright
 
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-
 #nullable enable
 
 namespace Altaxo.Units.Mass
@@ -34,9 +29,7 @@ namespace Altaxo.Units.Mass
   [UnitDescription("Mass", 0, 1, 0, 0, 0, 0, 0)]
   public class Kilogram : SIUnit, IPrefixedUnit
   {
-    private static readonly Kilogram _instance = new Kilogram();
-
-    public static Kilogram Instance { get { return _instance; } }
+    public static Kilogram Instance { get; } = new();
 
     #region Serialization
 
@@ -53,8 +46,6 @@ namespace Altaxo.Units.Mass
       }
     }
     #endregion
-
-
 
     private Kilogram()
         : base(0, 1, 0, 0, 0, 0, 0)

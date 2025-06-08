@@ -24,9 +24,7 @@
 
 using System;
 using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
+using Altaxo.Units;
 
 namespace Altaxo.Science.Thermodynamics.Fluids
 {
@@ -40,6 +38,8 @@ namespace Altaxo.Science.Thermodynamics.Fluids
     /// </summary>
     public static readonly double UniversalGasConstant = 8.314459848;
 
+    public static readonly DimensionfulQuantity UniversalGasConstantWithDimension = new DimensionfulQuantity(UniversalGasConstant, Altaxo.Units.MolarEntropy.JoulePerMoleKelvin.Instance);
+
     #region Reduced density and pressure
 
     /// <summary>
@@ -48,10 +48,21 @@ namespace Altaxo.Science.Thermodynamics.Fluids
     public abstract double MolecularWeight { get; }
 
     /// <summary>
+    /// Gets the (typical) molecular weight of the fluid.
+    /// </summary>
+    public DimensionfulQuantity MolecularWeightWithDimension => new DimensionfulQuantity(MolecularWeight, Altaxo.Units.MolarMass.KilogramPerMole.Instance);
+
+    /// <summary>
     /// Gets the molar density (in mol/m³) used to calculate the reduced (dimensionless) density.
     /// </summary>
     /// <remarks>The reduced density called delta and is calculated by: delta = density / <see cref="ReducingMassDensity"/>.</remarks>
     public abstract double ReducingMoleDensity { get; }
+
+    /// <summary>
+    /// Gets the molar density (in mol/m³) used to calculate the reduced (dimensionless) density.
+    /// </summary>
+    /// <remarks>The reduced density called delta and is calculated by: delta = density / <see cref="ReducingMassDensity"/>.</remarks>
+    public DimensionfulQuantity ReducingMoleDensityWithDimension => new DimensionfulQuantity(ReducingMoleDensity, Altaxo.Units.VolumetricMolarDensity.MolePerCubicMeter.Instance);
 
     /// <summary>
     /// Gets the temperature (in Kelvin) that is used to calculate the inverse reduced temperature.
@@ -60,9 +71,20 @@ namespace Altaxo.Science.Thermodynamics.Fluids
     public abstract double ReducingTemperature { get; }
 
     /// <summary>
+    /// Gets the temperature (in Kelvin) that is used to calculate the inverse reduced temperature.
+    /// </summary>
+    /// <remarks>The inverse reduced temperature is called tau and is calculated by: tau = <see cref="ReducingTemperature"/> / temperature.</remarks>
+    public DimensionfulQuantity ReducingTemperatureWithDimension => new DimensionfulQuantity(ReducingTemperature, Altaxo.Units.Temperature.Kelvin.Instance);
+
+    /// <summary>
     /// Gets the universal gas constant that was used at the time this model was developed.
     /// </summary>
     public abstract double WorkingUniversalGasConstant { get; }
+
+    /// <summary>
+    /// Gets the universal gas constant that was used at the time this model was developed.
+    /// </summary>
+    public DimensionfulQuantity WorkingUniversalGasConstantWithDimension => new DimensionfulQuantity(WorkingUniversalGasConstant, Altaxo.Units.MolarEntropy.JoulePerMoleKelvin.Instance);
 
     /// <summary>
     /// Gets the density (in kg/m³) used to calculate the reduced (dimensionless) density.
@@ -71,12 +93,26 @@ namespace Altaxo.Science.Thermodynamics.Fluids
     public double ReducingMassDensity => ReducingMoleDensity * MolecularWeight;
 
     /// <summary>
+    /// Gets the density (in kg/m³) used to calculate the reduced (dimensionless) density.
+    /// </summary>
+    /// <remarks>The reduced density called delta and is calculated by: delta = density / <see cref="ReducingMassDensity"/>.</remarks>
+    public DimensionfulQuantity ReducingMassDensityWithDimension => new DimensionfulQuantity(ReducingMassDensity, Altaxo.Units.VolumetricMassDensity.KilogramPerCubicMeter.Instance);
+
+    /// <summary>
     /// Gets the specific gas constant of the fluid. Is calculated from <see cref="WorkingUniversalGasConstant"/> and <see cref="MolecularWeight"/>.
     /// </summary>
     /// <value>
     /// The working specific gas constant.
     /// </value>
     public double WorkingSpecificGasConstant => WorkingUniversalGasConstant / MolecularWeight;
+
+    /// <summary>
+    /// Gets the specific gas constant of the fluid. Is calculated from <see cref="WorkingUniversalGasConstant"/> and <see cref="MolecularWeight"/>.
+    /// </summary>
+    /// <value>
+    /// The working specific gas constant.
+    /// </value>
+    public DimensionfulQuantity WorkingSpecificGasConstantWithDimension => new DimensionfulQuantity(WorkingSpecificGasConstant, Altaxo.Units.MassSpecificEntropy.JoulePerKilogramKelvin.Instance);
 
     /// <summary>
     /// Gets the reduced density by density / <see cref="ReducingMassDensity"/>.
@@ -207,6 +243,17 @@ namespace Altaxo.Science.Thermodynamics.Fluids
     }
 
     /// <summary>
+    /// Gets the mass density (SIUnit: kg/m³) from mole density (SIUnit: mol/m³).
+    /// </summary>
+    /// <param name="moleDensity">The mole density (unit compatible with mol/m³).</param>
+    /// <returns>The mass density (SIUnit: kg/m³).</returns>
+    public DimensionfulQuantity MassDensity_FromMoleDensity(DimensionfulQuantity moleDensity)
+    {
+      moleDensity.CheckUnitCompatibleWith(Altaxo.Units.VolumetricMolarDensity.MolePerCubicMeter.Instance, nameof(moleDensity));
+      return new DimensionfulQuantity(MassDensity_FromMoleDensity(moleDensity.AsValueInSIUnits), Altaxo.Units.VolumetricMassDensity.KilogramPerCubicMeter.Instance);
+    }
+
+    /// <summary>
     /// Gets the mole density (in mol/m³) from mass density (in kg/m³).
     /// </summary>
     /// <param name="massDensity">The mass density in kg/m³.</param>
@@ -214,6 +261,17 @@ namespace Altaxo.Science.Thermodynamics.Fluids
     public virtual double MoleDensity_FromMassDensity(double massDensity)
     {
       return massDensity / MolecularWeight;
+    }
+
+    /// <summary>
+    /// Gets the mole density from mass density.
+    /// </summary>
+    /// <param name="massDensity">The mass density (compatible with kg/m³).</param>
+    /// <returns>The mole density (SIUnit: mol/m³).</returns>
+    public DimensionfulQuantity MoleDensity_FromMassDensity(DimensionfulQuantity massDensity)
+    {
+      massDensity.CheckUnitCompatibleWith(Altaxo.Units.VolumetricMassDensity.KilogramPerCubicMeter.Instance, nameof(massDensity));
+      return new DimensionfulQuantity(MoleDensity_FromMassDensity(massDensity.AsValueInSIUnits), Altaxo.Units.VolumetricMolarDensity.MolePerCubicMeter.Instance);
     }
 
     /// <summary>
@@ -234,6 +292,20 @@ namespace Altaxo.Science.Thermodynamics.Fluids
     }
 
     /// <summary>
+    /// Gets the pressure from a given molar density and temperature.
+    /// Attention - unchecked function: it is presumed, but not checked (!), that the given parameter combination describes a single phase fluid!.
+    /// </summary>
+    /// <param name="moleDensity">The density (compatible with mol/m³).</param>
+    /// <param name="temperature">The temperature (compatible with Kelvin).</param>
+    /// <returns>The pressure (SIUnit: Pa).</returns>
+    public DimensionfulQuantity Pressure_FromMoleDensityAndTemperature(DimensionfulQuantity moleDensity, DimensionfulQuantity temperature)
+    {
+      moleDensity.CheckUnitCompatibleWith(Altaxo.Units.VolumetricMolarDensity.MolePerCubicMeter.Instance, nameof(moleDensity));
+      temperature.CheckUnitCompatibleWith(Altaxo.Units.Temperature.Kelvin.Instance, nameof(temperature));
+      return new DimensionfulQuantity(Pressure_FromMoleDensityAndTemperature(moleDensity.AsValueInSIUnits, temperature.AsValueInSIUnits), Altaxo.Units.Pressure.Pascal.Instance);
+    }
+
+    /// <summary>
     /// Get the pressure from a given density and temperature.
     /// Attention - unchecked function: it is presumed, but not checked (!), that the given parameter combination describes a single phase fluid!.
     /// </summary>
@@ -246,12 +318,26 @@ namespace Altaxo.Science.Thermodynamics.Fluids
     }
 
     /// <summary>
+    /// Get the pressure from a given density and temperature.
+    /// Attention - unchecked function: it is presumed, but not checked (!), that the given parameter combination describes a single phase fluid!.
+    /// </summary>
+    /// <param name="massDensity">The density (compatible with kg/m³).</param>
+    /// <param name="temperature">The temperature (compatible with Kelvin).</param>
+    /// <returns>The pressure (SIUnit: Pa).</returns>
+    public virtual DimensionfulQuantity Pressure_FromMassDensityAndTemperature(DimensionfulQuantity massDensity, DimensionfulQuantity temperature)
+    {
+      massDensity.CheckUnitCompatibleWith(Altaxo.Units.VolumetricMassDensity.KilogramPerCubicMeter.Instance, nameof(massDensity));
+      temperature.CheckUnitCompatibleWith(Altaxo.Units.Temperature.Kelvin.Instance, nameof(temperature));
+      return new DimensionfulQuantity(Pressure_FromMassDensityAndTemperature(massDensity.AsValueInSIUnits, temperature.AsValueInSIUnits), Altaxo.Units.Pressure.Pascal.Instance);
+    }
+
+    /// <summary>
     /// Gets the derivative of pressure w.r.t. the mole density at isothermal conditions.
     /// Attention - unchecked function: it is presumed, but not checked (!), that the given parameter combination describes a single phase fluid!.
     /// </summary>
-    /// <param name="moleDensity">The mole density.</param>
-    /// <param name="temperature">The temperature.</param>
-    /// <returns>Derivative of pressure w.r.t. the mole density at isothermal conditions.</returns>
+    /// <param name="moleDensity">The mole density (mol/m³).</param>
+    /// <param name="temperature">The temperature (K).</param>
+    /// <returns>Derivative of pressure w.r.t. the mole density at isothermal conditions (J/mol).</returns>
     public double IsothermalDerivativePressureWrtMoleDensity_FromMoleDensityAndTemperature(double moleDensity, double temperature)
     {
       double delta = GetDeltaFromMoleDensity(moleDensity); // reduced density
@@ -260,6 +346,20 @@ namespace Altaxo.Science.Thermodynamics.Fluids
       double phir_deltadelta = PhiR_deltadelta_OfReducedVariables(delta, tau); // derivative of PhiR with respect to delta
 
       return WorkingUniversalGasConstant * temperature * (1 + 2 * delta * phir_delta + delta * delta * phir_deltadelta);
+    }
+
+    /// <summary>
+    /// Gets the derivative of pressure w.r.t. the mole density at isothermal conditions.
+    /// Attention - unchecked function: it is presumed, but not checked (!), that the given parameter combination describes a single phase fluid!.
+    /// </summary>
+    /// <param name="moleDensity">The mole density (compatible with mol/m³).</param>
+    /// <param name="temperature">The temperature (compatible with K).</param>
+    /// <returns>Derivative of pressure w.r.t. the mole density at isothermal conditions (SIUnit: J/mol).</returns>
+    public DimensionfulQuantity IsothermalDerivativePressureWrtMoleDensity_FromMoleDensityAndTemperature(DimensionfulQuantity moleDensity, DimensionfulQuantity temperature)
+    {
+      moleDensity.CheckUnitCompatibleWith(Altaxo.Units.VolumetricMolarDensity.MolePerCubicMeter.Instance, nameof(moleDensity));
+      temperature.CheckUnitCompatibleWith(Altaxo.Units.Temperature.Kelvin.Instance, nameof(temperature));
+      return new DimensionfulQuantity(IsothermalDerivativePressureWrtMoleDensity_FromMoleDensityAndTemperature(moleDensity.AsValueInSIUnits, temperature.AsValueInSIUnits), Altaxo.Units.MolarEnergy.JoulePerMole.Instance);
     }
 
     /// <summary>
@@ -288,6 +388,20 @@ namespace Altaxo.Science.Thermodynamics.Fluids
     }
 
     /// <summary>
+    /// Gets the isothermal compressibility in 1/Pa from mole density (mol/m³) and temperature (K).
+    /// Attention - unchecked function: it is presumed, but not checked (!), that the given parameter combination describes a single phase fluid!.
+    /// </summary>
+    /// <param name="moleDensity">The density (compatible with mol/m³).</param>
+    /// <param name="temperature">The temperature (compatible with Kelvin).</param>
+    /// <returns>The isothermal compressibility (SIUnit: 1/Pa).</returns>
+    public DimensionfulQuantity IsothermalCompressibility_FromMoleDensityAndTemperature(DimensionfulQuantity moleDensity, DimensionfulQuantity temperature)
+    {
+      moleDensity.CheckUnitCompatibleWith(Altaxo.Units.VolumetricMolarDensity.MolePerCubicMeter.Instance, nameof(moleDensity));
+      temperature.CheckUnitCompatibleWith(Altaxo.Units.Temperature.Kelvin.Instance, nameof(temperature));
+      return new DimensionfulQuantity(IsothermalCompressibility_FromMoleDensityAndTemperature(moleDensity.AsValueInSIUnits, temperature.AsValueInSIUnits), Altaxo.Units.Compressibility.PascalInverse.Instance);
+    }
+
+    /// <summary>
     /// Gets the isothermal compressibility in 1/Pa from mass density (kg/m³) and temperature (K).
     /// Attention - unchecked function: it is presumed, but not checked (!), that the given parameter combination describes a single phase fluid!.
     /// </summary>
@@ -297,6 +411,20 @@ namespace Altaxo.Science.Thermodynamics.Fluids
     public double IsothermalCompressibility_FromMassDensityAndTemperature(double massDensity, double temperature)
     {
       return IsothermalDerivativePressureWrtMoleDensity_FromMoleDensityAndTemperature(massDensity / MolecularWeight, temperature);
+    }
+
+    /// <summary>
+    /// Gets the isothermal compressibility in 1/Pa from mass density (kg/m³) and temperature (K).
+    /// Attention - unchecked function: it is presumed, but not checked (!), that the given parameter combination describes a single phase fluid!.
+    /// </summary>
+    /// <param name="massDensity">The density (compatible with kg/m³).</param>
+    /// <param name="temperature">The temperature (compatible with Kelvin).</param>
+    /// <returns>The isothermal compressibility (SIUnit: 1/Pa).</returns>
+    public DimensionfulQuantity IsothermalCompressibility_FromMassDensityAndTemperature(DimensionfulQuantity massDensity, DimensionfulQuantity temperature)
+    {
+      massDensity.CheckUnitCompatibleWith(Altaxo.Units.VolumetricMassDensity.KilogramPerCubicMeter.Instance, nameof(massDensity));
+      temperature.CheckUnitCompatibleWith(Altaxo.Units.Temperature.Kelvin.Instance, nameof(temperature));
+      return new DimensionfulQuantity(IsothermalCompressibility_FromMassDensityAndTemperature(massDensity.AsValueInSIUnits, temperature.AsValueInSIUnits), Altaxo.Units.Compressibility.PascalInverse.Instance);
     }
 
     /// <summary>
@@ -313,6 +441,20 @@ namespace Altaxo.Science.Thermodynamics.Fluids
     }
 
     /// <summary>
+    /// Gets the isothermal compressional modulus in Pa from density and temperature.
+    /// Attention - unchecked function: it is presumed, but not checked (!), that the given parameter combination describes a single phase fluid!.
+    /// </summary>
+    /// <param name="moleDensity">The density (compatible with kg/m³).</param>
+    /// <param name="temperature">The temperature (compatible with Kelvin).</param>
+    /// <returns>The isothermal compressional modulus K (SIUnit: Pa).</returns>
+    public DimensionfulQuantity IsothermalCompressionalModulus_FromMoleDensityAndTemperature(DimensionfulQuantity moleDensity, DimensionfulQuantity temperature)
+    {
+      moleDensity.CheckUnitCompatibleWith(Altaxo.Units.VolumetricMolarDensity.MolePerCubicMeter.Instance, nameof(moleDensity));
+      temperature.CheckUnitCompatibleWith(Altaxo.Units.Temperature.Kelvin.Instance, nameof(temperature));
+      return new DimensionfulQuantity(IsothermalCompressionalModulus_FromMoleDensityAndTemperature(moleDensity.AsValueInSIUnits, temperature.AsValueInSIUnits), Altaxo.Units.Pressure.Pascal.Instance);
+    }
+
+    /// <summary>
     /// Gets the isothermal compressional modulus K in Pa from density and temperature.
     /// Attention - unchecked function: it is presumed, but not checked (!), that the given parameter combination describes a single phase fluid!.
     /// </summary>
@@ -322,6 +464,20 @@ namespace Altaxo.Science.Thermodynamics.Fluids
     public double IsothermalCompressionalModulus_FromMassDensityAndTemperature(double massDensity, double temperature)
     {
       return IsothermalCompressionalModulus_FromMoleDensityAndTemperature(massDensity / MolecularWeight, temperature);
+    }
+
+    /// <summary>
+    /// Gets the isothermal compressional modulus K in Pa from density and temperature.
+    /// Attention - unchecked function: it is presumed, but not checked (!), that the given parameter combination describes a single phase fluid!.
+    /// </summary>
+    /// <param name="massDensity">The density (compatible with kg/m³).</param>
+    /// <param name="temperature">The temperature (compatible with Kelvin).</param>
+    /// <returns>The isothermal compressional modulus K (SIUnit: Pa).</returns>
+    public DimensionfulQuantity IsothermalCompressionalModulus_FromMassDensityAndTemperature(DimensionfulQuantity massDensity, DimensionfulQuantity temperature)
+    {
+      massDensity.CheckUnitCompatibleWith(Altaxo.Units.VolumetricMassDensity.KilogramPerCubicMeter.Instance, nameof(massDensity));
+      temperature.CheckUnitCompatibleWith(Altaxo.Units.Temperature.Kelvin.Instance, nameof(temperature));
+      return new DimensionfulQuantity(IsothermalCompressionalModulus_FromMassDensityAndTemperature(massDensity.AsValueInSIUnits, temperature.AsValueInSIUnits), Altaxo.Units.Pressure.Pascal.Instance);
     }
 
     /// <summary>
@@ -335,6 +491,22 @@ namespace Altaxo.Science.Thermodynamics.Fluids
       // Since we don't have all the information here, we use the ideal gas equation for an estimate
       // in derived classes, we override this function to get more precise guesses
       yield return pressure / (UniversalGasConstant * temperature);
+    }
+
+    /// <summary>
+    /// Gets an estimate of the mole densities at a given pressure and temperature.
+    /// </summary>
+    /// <param name="pressure">The pressure (compatible with Pa).</param>
+    /// <param name="temperature">The temperature (compatible with Kelvin).</param>
+    /// <returns>A tuple, consisting of the estimate of the mole density. If there is a second guess, it always has a lower value. In this case the second value of the tuple contains this second guess.</returns>
+    public IEnumerable<DimensionfulQuantity> MoleDensityEstimates_FromPressureAndTemperature(DimensionfulQuantity pressure, DimensionfulQuantity temperature)
+    {
+      pressure.CheckUnitCompatibleWith(Altaxo.Units.Pressure.Pascal.Instance, nameof(pressure));
+      temperature.CheckUnitCompatibleWith(Altaxo.Units.Temperature.Kelvin.Instance, nameof(temperature));
+      foreach (var moleDensityGuess in MoleDensityEstimates_FromPressureAndTemperature(pressure.AsValueInSIUnits, temperature.AsValueInSIUnits))
+      {
+        yield return new DimensionfulQuantity(moleDensityGuess, Altaxo.Units.VolumetricMolarDensity.MolePerCubicMeter.Instance);
+      }
     }
 
     /// <summary>
@@ -400,6 +572,25 @@ namespace Altaxo.Science.Thermodynamics.Fluids
     }
 
     /// <summary>
+    /// Get the mole density for a given pressure and temperature.
+    /// </summary>
+    /// <param name="pressure">The pressure (compatible with Pa).</param>
+    /// <param name="temperature">The temperature (compatible with Kelvin).</param>
+    /// <param name="relativeAccuracy">The target relative accuracy of the result. Default is 1E-6.</param>
+    /// <returns>The mole density (SIUnit: mol/m³).</returns>
+    /// <remarks>The density has to be calculated iteratively, using Newton-Raphson.
+    /// Therefore we need the target accuracy.
+    /// The iteration is ended if the pressure calculated back from the density compared with the pressure given in the argument
+    /// is within the relative accuracy.
+    /// </remarks>
+    public virtual DimensionfulQuantity MoleDensity_FromPressureAndTemperature(DimensionfulQuantity pressure, DimensionfulQuantity temperature, double relativeAccuracy = 1E-6)
+    {
+      pressure.CheckUnitCompatibleWith(Altaxo.Units.Pressure.Pascal.Instance, nameof(pressure));
+      temperature.CheckUnitCompatibleWith(Altaxo.Units.Temperature.Kelvin.Instance, nameof(temperature));
+      return new DimensionfulQuantity(MoleDensity_FromPressureAndTemperature(pressure.AsValueInSIUnits, temperature.AsValueInSIUnits, relativeAccuracy), Altaxo.Units.VolumetricMolarDensity.MolePerCubicMeter.Instance);
+    }
+
+    /// <summary>
     /// Gets the mass density for a given pressure and temperature.
     /// </summary>
     /// <param name="pressure">The pressure in Pa.</param>
@@ -414,6 +605,25 @@ namespace Altaxo.Science.Thermodynamics.Fluids
     public virtual double MassDensity_FromPressureAndTemperature(double pressure, double temperature, double relativeAccuracy = 1E-6)
     {
       return MolecularWeight * MoleDensity_FromPressureAndTemperature(pressure, temperature, relativeAccuracy);
+    }
+
+    /// <summary>
+    /// Gets the mass density for a given pressure and temperature.
+    /// </summary>
+    /// <param name="pressure">The pressure (compatible with Pa).</param>
+    /// <param name="temperature">The temperature (compatible with Kelvin).</param>
+    /// <param name="relativeAccuracy">The target relative accuracy of the result.</param>
+    /// <returns>The mass density (SIUnit: kg/m³).</returns>
+    /// <remarks>The density has to be calculated iteratively, using Newton-Raphson.
+    /// Therefore we need the target accuracy.
+    /// The iteration is ended if the pressure calculated back from the density compared with the pressure given in the argument
+    /// is within the relative accuracy.
+    /// </remarks>
+    public DimensionfulQuantity MassDensity_FromPressureAndTemperature(DimensionfulQuantity pressure, DimensionfulQuantity temperature, double relativeAccuracy = 1E-6)
+    {
+      pressure.CheckUnitCompatibleWith(Altaxo.Units.Pressure.Pascal.Instance, nameof(pressure));
+      temperature.CheckUnitCompatibleWith(Altaxo.Units.Temperature.Kelvin.Instance, nameof(temperature));
+      return new DimensionfulQuantity(MassDensity_FromPressureAndTemperature(pressure.AsValueInSIUnits, temperature.AsValueInSIUnits, relativeAccuracy), Altaxo.Units.VolumetricMassDensity.KilogramPerCubicMeter.Instance);
     }
 
     /// <summary>
@@ -487,15 +697,35 @@ namespace Altaxo.Science.Thermodynamics.Fluids
       return double.NaN;
     }
 
-
     /// <summary>
     /// Gets the mole density from a given pressure and temperature.
+    /// </summary>
+    /// <param name="pressure">The pressure (compatible with Pa).</param>
+    /// <param name="temperature">The temperature (compatible with Kelvin).</param>
+    /// <param name="relativeAccuracy">The target relative accuracy of the result.</param>
+    /// <param name="moleDensityStartValue">The start value for the density to search for (compatible with mol/m³).</param>
+    /// <returns>The molar density (SIUnit: mol/m³).</returns>
+    /// <remarks>The density has to be calculated iteratively, using Newton-Raphson.
+    /// Therefore we need the target accuracy.
+    /// The iteration is ended if the pressure calculated back from the density compared with the pressure given in the argument
+    /// is within the relative accuracy.
+    /// </remarks>
+    public DimensionfulQuantity MoleDensity_FromPressureAndTemperature(DimensionfulQuantity pressure, DimensionfulQuantity temperature, double relativeAccuracy, DimensionfulQuantity moleDensityStartValue)
+    {
+      pressure.CheckUnitCompatibleWith(Altaxo.Units.Pressure.Pascal.Instance, nameof(pressure));
+      temperature.CheckUnitCompatibleWith(Altaxo.Units.Temperature.Kelvin.Instance, nameof(temperature));
+      moleDensityStartValue.CheckUnitCompatibleWith(Altaxo.Units.VolumetricMolarDensity.MolePerCubicMeter.Instance, nameof(moleDensityStartValue));
+      return new DimensionfulQuantity(MoleDensity_FromPressureAndTemperature(pressure.AsValueInSIUnits, temperature.AsValueInSIUnits, relativeAccuracy, moleDensityStartValue.AsValueInSIUnits), Altaxo.Units.VolumetricMolarDensity.MolePerCubicMeter.Instance);
+    }
+
+    /// <summary>
+    /// Gets the mass density from a given pressure and temperature.
     /// </summary>
     /// <param name="pressure">The pressure in Pa.</param>
     /// <param name="temperature">The temperature in Kelvin.</param>
     /// <param name="relativeAccuracy">The target relative accuracy of the result.</param>
     /// <param name="massDensityStartValue">The start value for the density to search for (kg/m³).</param>
-    /// <returns>The density in mol/m³</returns>
+    /// <returns>The density in kg/m³</returns>
     /// <remarks>The density has to be calculated iteratively, using Newton-Raphson.
     /// Therefore we need the target accuracy.
     /// The iteration is ended if the pressure calculated back from the density compared with the pressure given in the argument
@@ -507,12 +737,33 @@ namespace Altaxo.Science.Thermodynamics.Fluids
     }
 
     /// <summary>
+    /// Gets the mass density from a given pressure and temperature.
+    /// </summary>
+    /// <param name="pressure">The pressure (compatible with Pa).</param>
+    /// <param name="temperature">The temperature (compatible with Kelvin).</param>
+    /// <param name="relativeAccuracy">The target relative accuracy of the result.</param>
+    /// <param name="massDensityStartValue">The start value for the density to search for (compatible with kg/m³).</param>
+    /// <returns>The mass density in (SIUnit: kg/m³).</returns>
+    /// <remarks>The density has to be calculated iteratively, using Newton-Raphson.
+    /// Therefore we need the target accuracy.
+    /// The iteration is ended if the pressure calculated back from the density compared with the pressure given in the argument
+    /// is within the relative accuracy.
+    /// </remarks>
+    public DimensionfulQuantity MassDensity_FromPressureAndTemperature(DimensionfulQuantity pressure, DimensionfulQuantity temperature, double relativeAccuracy, DimensionfulQuantity massDensityStartValue)
+    {
+      pressure.CheckUnitCompatibleWith(Altaxo.Units.Pressure.Pascal.Instance, nameof(pressure));
+      temperature.CheckUnitCompatibleWith(Altaxo.Units.Temperature.Kelvin.Instance, nameof(temperature));
+      massDensityStartValue.CheckUnitCompatibleWith(Altaxo.Units.VolumetricMassDensity.KilogramPerCubicMeter.Instance, nameof(massDensityStartValue));
+      return new DimensionfulQuantity(MassDensity_FromPressureAndTemperature(pressure.AsValueInSIUnits, temperature.AsValueInSIUnits, relativeAccuracy, massDensityStartValue.AsValueInSIUnits), Altaxo.Units.VolumetricMassDensity.KilogramPerCubicMeter.Instance);
+    }
+
+    /// <summary>
     /// Get the Helmholtz energy from a given mole density and temperature.
     /// Attention - unchecked function: it is presumed, but not checked (!), that the given parameter combination describes a single phase fluid!.
     /// </summary>
     /// <param name="moleDensity">The density in mol/m³.</param>
     /// <param name="temperature">The temperature in Kelvin.</param>
-    /// <returns>The Helmholtz energy in J/(mol K).</returns>
+    /// <returns>The mole specific Helmholtz energy in J/mol.</returns>
     public double MoleSpecificHelmholtzEnergy_FromMoleDensityAndTemperature(double moleDensity, double temperature)
     {
       double delta = GetDeltaFromMoleDensity(moleDensity); // reduced density
@@ -522,6 +773,20 @@ namespace Altaxo.Science.Thermodynamics.Fluids
       double phiR = PhiR_OfReducedVariables(delta, tau);
 
       return WorkingUniversalGasConstant * temperature * (phi0 + phiR);
+    }
+
+    /// <summary>
+    /// Get the Helmholtz energy from a given mole density and temperature.
+    /// Attention - unchecked function: it is presumed, but not checked (!), that the given parameter combination describes a single phase fluid!.
+    /// </summary>
+    /// <param name="moleDensity">The density (compatible with mol/m³).</param>
+    /// <param name="temperature">The temperature (compatible with Kelvin).</param>
+    /// <returns>The mole specific Helmholtz energy (SIUnit: J/mol).</returns>
+    public DimensionfulQuantity MoleSpecificHelmholtzEnergy_FromMoleDensityAndTemperature(DimensionfulQuantity moleDensity, DimensionfulQuantity temperature)
+    {
+      moleDensity.CheckUnitCompatibleWith(Altaxo.Units.VolumetricMolarDensity.MolePerCubicMeter.Instance, nameof(moleDensity));
+      temperature.CheckUnitCompatibleWith(Altaxo.Units.Temperature.Kelvin.Instance, nameof(temperature));
+      return new DimensionfulQuantity(MoleSpecificHelmholtzEnergy_FromMoleDensityAndTemperature(moleDensity.AsValueInSIUnits, temperature.AsValueInSIUnits), Altaxo.Units.MolarEnergy.JoulePerMole.Instance);
     }
 
     /// <summary>
@@ -537,15 +802,43 @@ namespace Altaxo.Science.Thermodynamics.Fluids
     }
 
     /// <summary>
+    /// Get the Helmholtz energy from a given mass density and temperature.
+    /// Attention - unchecked function: it is presumed, but not checked (!), that the given parameter combination describes a single phase fluid!.
+    /// </summary>
+    /// <param name="massDensity">The density (compatible with kg/m³).</param>
+    /// <param name="temperature">The temperature (compatible with Kelvin).</param>
+    /// <returns>The mole specific Helmholtz energy (SIUnit: J/mol).</returns>
+    public DimensionfulQuantity MoleSpecificHelmholtzEnergy_FromMassDensityAndTemperature(DimensionfulQuantity massDensity, DimensionfulQuantity temperature)
+    {
+      massDensity.CheckUnitCompatibleWith(Altaxo.Units.VolumetricMassDensity.KilogramPerCubicMeter.Instance, nameof(massDensity));
+      temperature.CheckUnitCompatibleWith(Altaxo.Units.Temperature.Kelvin.Instance, nameof(temperature));
+      return new DimensionfulQuantity(MoleSpecificHelmholtzEnergy_FromMassDensityAndTemperature(massDensity.AsValueInSIUnits, temperature.AsValueInSIUnits), Altaxo.Units.MolarEnergy.JoulePerMole.Instance);
+    }
+
+    /// <summary>
     /// Get the mass specific Helmholtz energy from a given mass density and temperature.
     /// Attention - unchecked function: it is presumed, but not checked (!), that the given parameter combination describes a single phase fluid!.
     /// </summary>
     /// <param name="moleDensity">The density in mol/m³.</param>
     /// <param name="temperature">The temperature in Kelvin.</param>
-    /// <returns>The Helmholtz energy in J/(kg K).</returns>
+    /// <returns>The Helmholtz energy in J/kg.</returns>
     public double MassSpecificHelmholtzEnergy_FromMoleDensityAndTemperature(double moleDensity, double temperature)
     {
       return MoleSpecificHelmholtzEnergy_FromMoleDensityAndTemperature(moleDensity, temperature) / MolecularWeight;
+    }
+
+    /// <summary>
+    /// Get the mass specific Helmholtz energy from a given mass density and temperature.
+    /// Attention - unchecked function: it is presumed, but not checked (!), that the given parameter combination describes a single phase fluid!.
+    /// </summary>
+    /// <param name="moleDensity">The density in mol/m³.</param>
+    /// <param name="temperature">The temperature in Kelvin.</param>
+    /// <returns>The Helmholtz energy in J/kg.</returns>
+    public DimensionfulQuantity MassSpecificHelmholtzEnergy_FromMoleDensityAndTemperature(DimensionfulQuantity moleDensity, DimensionfulQuantity temperature)
+    {
+      moleDensity.CheckUnitCompatibleWith(Altaxo.Units.VolumetricMolarDensity.MolePerCubicMeter.Instance, nameof(moleDensity));
+      temperature.CheckUnitCompatibleWith(Altaxo.Units.Temperature.Kelvin.Instance, nameof(temperature));
+      return new DimensionfulQuantity(MassSpecificHelmholtzEnergy_FromMoleDensityAndTemperature(moleDensity.AsValueInSIUnits, temperature.AsValueInSIUnits), Altaxo.Units.MassSpecificEnergy.JoulePerKilogram.Instance);
     }
 
     /// <summary>
@@ -554,10 +847,24 @@ namespace Altaxo.Science.Thermodynamics.Fluids
     /// </summary>
     /// <param name="massDensity">The density in kg/m³.</param>
     /// <param name="temperature">The temperature in Kelvin.</param>
-    /// <returns>The Helmholtz energy in J/(kg K).</returns>
+    /// <returns>The Helmholtz energy in J/kg.</returns>
     public double MassSpecificHelmholtzEnergy_FromMassDensityAndTemperature(double massDensity, double temperature)
     {
       return MoleSpecificHelmholtzEnergy_FromMoleDensityAndTemperature(massDensity / MolecularWeight, temperature) / MolecularWeight;
+    }
+
+    /// <summary>
+    /// Get the Helmholtz energy from a given mass density and temperature.
+    /// Attention - unchecked function: it is presumed, but not checked (!), that the given parameter combination describes a single phase fluid!.
+    /// </summary>
+    /// <param name="massDensity">The density (compatible with kg/m³).</param>
+    /// <param name="temperature">The temperature (compatible with Kelvin).</param>
+    /// <returns>The Helmholtz energy (SIUnit: J/kg).</returns>
+    public DimensionfulQuantity MassSpecificHelmholtzEnergy_FromMassDensityAndTemperature(DimensionfulQuantity massDensity, DimensionfulQuantity temperature)
+    {
+      massDensity.CheckUnitCompatibleWith(Altaxo.Units.VolumetricMassDensity.KilogramPerCubicMeter.Instance, nameof(massDensity));
+      temperature.CheckUnitCompatibleWith(Altaxo.Units.Temperature.Kelvin.Instance, nameof(temperature));
+      return new DimensionfulQuantity(MassSpecificHelmholtzEnergy_FromMassDensityAndTemperature(massDensity.AsValueInSIUnits, temperature.AsValueInSIUnits), Altaxo.Units.MassSpecificEnergy.JoulePerKilogram.Instance);
     }
 
     /// <summary>
@@ -566,7 +873,7 @@ namespace Altaxo.Science.Thermodynamics.Fluids
     /// </summary>
     /// <param name="moleDensity">The density in mol/m³.</param>
     /// <param name="temperature">The temperature in Kelvin.</param>
-    /// <returns>The Gibbs energy in J/(mol K).</returns>
+    /// <returns>The Gibbs energy in J/mol.</returns>
     public double MoleSpecificGibbsEnergy_FromMoleDensityAndTemperature(double moleDensity, double temperature)
     {
       double delta = GetDeltaFromMoleDensity(moleDensity); // reduced density
@@ -583,6 +890,20 @@ namespace Altaxo.Science.Thermodynamics.Fluids
     /// Get the mole specific Gibbs energy from a given mass density and temperature.
     /// Attention - unchecked function: it is presumed, but not checked (!), that the given parameter combination describes a single phase fluid!.
     /// </summary>
+    /// <param name="moleDensity">The density (compatible with mol/m³).</param>
+    /// <param name="temperature">The temperature (compatible with Kelvin).</param>
+    /// <returns>The Gibbs energy (SIUnit: J/mol).</returns>
+    public DimensionfulQuantity MoleSpecificGibbsEnergy_FromMoleDensityAndTemperature(DimensionfulQuantity moleDensity, DimensionfulQuantity temperature)
+    {
+      moleDensity.CheckUnitCompatibleWith(Altaxo.Units.VolumetricMolarDensity.MolePerCubicMeter.Instance, nameof(moleDensity));
+      temperature.CheckUnitCompatibleWith(Altaxo.Units.Temperature.Kelvin.Instance, nameof(temperature));
+      return new DimensionfulQuantity(MoleSpecificGibbsEnergy_FromMoleDensityAndTemperature(moleDensity.AsValueInSIUnits, temperature.AsValueInSIUnits), Altaxo.Units.MolarEnergy.JoulePerMole.Instance);
+    }
+
+    /// <summary>
+    /// Get the mole specific Gibbs energy from a given mass density and temperature.
+    /// Attention - unchecked function: it is presumed, but not checked (!), that the given parameter combination describes a single phase fluid!.
+    /// </summary>
     /// <param name="massDensity">The density in kg/m³.</param>
     /// <param name="temperature">The temperature in Kelvin.</param>
     /// <returns>The Gibbs energy in J/(mol K).</returns>
@@ -592,12 +913,26 @@ namespace Altaxo.Science.Thermodynamics.Fluids
     }
 
     /// <summary>
+    /// Get the mole specific Gibbs energy from a given mass density and temperature.
+    /// Attention - unchecked function: it is presumed, but not checked (!), that the given parameter combination describes a single phase fluid!.
+    /// </summary>
+    /// <param name="massDensity">The density (compatible with kg/m³).</param>
+    /// <param name="temperature">The temperature (compatible with Kelvin).</param>
+    /// <returns>The Gibbs energy in J/mol.</returns>
+    public DimensionfulQuantity MoleSpecificGibbsEnergy_FromMassDensityAndTemperature(DimensionfulQuantity massDensity, DimensionfulQuantity temperature)
+    {
+      massDensity.CheckUnitCompatibleWith(Altaxo.Units.VolumetricMassDensity.KilogramPerCubicMeter.Instance, nameof(massDensity));
+      temperature.CheckUnitCompatibleWith(Altaxo.Units.Temperature.Kelvin.Instance, nameof(temperature));
+      return new DimensionfulQuantity(MoleSpecificGibbsEnergy_FromMassDensityAndTemperature(massDensity.AsValueInSIUnits, temperature.AsValueInSIUnits), Altaxo.Units.MolarEnergy.JoulePerMole.Instance);
+    }
+
+    /// <summary>
     /// Get the mass specific Gibbs energy from a given mass density and temperature.
     /// Attention - unchecked function: it is presumed, but not checked (!), that the given parameter combination describes a single phase fluid!.
     /// </summary>
     /// <param name="moleDensity">The density in mol/m³.</param>
     /// <param name="temperature">The temperature in Kelvin.</param>
-    /// <returns>The Gibbs energy in J/(kg K).</returns>
+    /// <returns>The Gibbs energy in J/kg.</returns>
     public double MassSpecificGibbsEnergy_FromMoleDensityAndTemperature(double moleDensity, double temperature)
     {
       return MoleSpecificGibbsEnergy_FromMoleDensityAndTemperature(moleDensity, temperature) / MolecularWeight;
@@ -607,12 +942,40 @@ namespace Altaxo.Science.Thermodynamics.Fluids
     /// Get the mass specific Gibbs energy from a given mass density and temperature.
     /// Attention - unchecked function: it is presumed, but not checked (!), that the given parameter combination describes a single phase fluid!.
     /// </summary>
+    /// <param name="moleDensity">The density (compatible with mol/m³).</param>
+    /// <param name="temperature">The temperature (compatible with Kelvin).</param>
+    /// <returns>The Gibbs energy (SIUnit: J/kg).</returns>
+    public DimensionfulQuantity MassSpecificGibbsEnergy_FromMoleDensityAndTemperature(DimensionfulQuantity moleDensity, DimensionfulQuantity temperature)
+    {
+      moleDensity.CheckUnitCompatibleWith(Altaxo.Units.VolumetricMolarDensity.MolePerCubicMeter.Instance, nameof(moleDensity));
+      temperature.CheckUnitCompatibleWith(Altaxo.Units.Temperature.Kelvin.Instance, nameof(temperature));
+      return new DimensionfulQuantity(MassSpecificGibbsEnergy_FromMoleDensityAndTemperature(moleDensity.AsValueInSIUnits, temperature.AsValueInSIUnits), Altaxo.Units.MassSpecificEnergy.JoulePerKilogram.Instance);
+    }
+
+    /// <summary>
+    /// Get the mass specific Gibbs energy from a given mass density and temperature.
+    /// Attention - unchecked function: it is presumed, but not checked (!), that the given parameter combination describes a single phase fluid!.
+    /// </summary>
     /// <param name="massDensity">The density in kg/m³.</param>
     /// <param name="temperature">The temperature in Kelvin.</param>
-    /// <returns>The Gibbs energy in J/(kg K).</returns>
+    /// <returns>The Gibbs energy in J/kg.</returns>
     public double MassSpecificGibbsEnergy_FromMassDensityAndTemperature(double massDensity, double temperature)
     {
       return MoleSpecificGibbsEnergy_FromMoleDensityAndTemperature(massDensity / MolecularWeight, temperature) / MolecularWeight;
+    }
+
+    /// <summary>
+    /// Get the mass specific Gibbs energy from a given mass density and temperature.
+    /// Attention - unchecked function: it is presumed, but not checked (!), that the given parameter combination describes a single phase fluid!.
+    /// </summary>
+    /// <param name="massDensity">The density (compatible with kg/m³).</param>
+    /// <param name="temperature">The temperature (compatible with Kelvin).</param>
+    /// <returns>The Gibbs energy (SIUnit: J/kg).</returns>
+    public DimensionfulQuantity MassSpecificGibbsEnergy_FromMassDensityAndTemperature(DimensionfulQuantity massDensity, DimensionfulQuantity temperature)
+    {
+      massDensity.CheckUnitCompatibleWith(Altaxo.Units.VolumetricMassDensity.KilogramPerCubicMeter.Instance, nameof(massDensity));
+      temperature.CheckUnitCompatibleWith(Altaxo.Units.Temperature.Kelvin.Instance, nameof(temperature));
+      return new DimensionfulQuantity(MassSpecificGibbsEnergy_FromMassDensityAndTemperature(massDensity.AsValueInSIUnits, temperature.AsValueInSIUnits), Altaxo.Units.MassSpecificEnergy.JoulePerKilogram.Instance);
     }
 
     /// <summary>
@@ -640,9 +1003,23 @@ namespace Altaxo.Science.Thermodynamics.Fluids
     /// Get the entropy from a given mole density and temperature.
     /// Attention - unchecked function: it is presumed, but not checked (!), that the given parameter combination describes a single phase fluid!.
     /// </summary>
+    /// <param name="moleDensity">The density (compatible with mol/m³).</param>
+    /// <param name="temperature">The temperature (compatible with Kelvin).</param>
+    /// <returns>The entropy (SIUnit: J/(mol·K)).</returns>
+    public DimensionfulQuantity MoleSpecificEntropy_FromMoleDensityAndTemperature(DimensionfulQuantity moleDensity, DimensionfulQuantity temperature)
+    {
+      moleDensity.CheckUnitCompatibleWith(Altaxo.Units.VolumetricMolarDensity.MolePerCubicMeter.Instance, nameof(moleDensity));
+      temperature.CheckUnitCompatibleWith(Altaxo.Units.Temperature.Kelvin.Instance, nameof(temperature));
+      return new DimensionfulQuantity(MoleSpecificEntropy_FromMoleDensityAndTemperature(moleDensity.AsValueInSIUnits, temperature.AsValueInSIUnits), Altaxo.Units.MolarEntropy.JoulePerMoleKelvin.Instance);
+    }
+
+    /// <summary>
+    /// Get the entropy from a given mole density and temperature.
+    /// Attention - unchecked function: it is presumed, but not checked (!), that the given parameter combination describes a single phase fluid!.
+    /// </summary>
     /// <param name="massDensity">The density in kg/m³.</param>
     /// <param name="temperature">The temperature in Kelvin.</param>
-    /// <returns>The entropy in J/(mol K).</returns>
+    /// <returns>The entropy in J/(mol·K).</returns>
     public double MoleSpecificEntropy_FromMassDensityAndTemperature(double massDensity, double temperature)
     {
       return MoleSpecificEntropy_FromMoleDensityAndTemperature(massDensity / MolecularWeight, temperature);
@@ -652,13 +1029,40 @@ namespace Altaxo.Science.Thermodynamics.Fluids
     /// Get the entropy from a given mole density and temperature.
     /// Attention - unchecked function: it is presumed, but not checked (!), that the given parameter combination describes a single phase fluid!.
     /// </summary>
+    /// <param name="massDensity">The density (compatible with kg/m³).</param>
+    /// <param name="temperature">The temperature (compatible with Kelvin).</param>
+    /// <returns>The entropy (SIUnit: J/(mol·K)).</returns>
+    public DimensionfulQuantity MoleSpecificEntropy_FromMassDensityAndTemperature(DimensionfulQuantity massDensity, DimensionfulQuantity temperature)
+    {
+      massDensity.CheckUnitCompatibleWith(Altaxo.Units.VolumetricMassDensity.KilogramPerCubicMeter.Instance, nameof(massDensity));
+      temperature.CheckUnitCompatibleWith(Altaxo.Units.Temperature.Kelvin.Instance, nameof(temperature));
+      return new DimensionfulQuantity(MoleSpecificEntropy_FromMassDensityAndTemperature(massDensity.AsValueInSIUnits, temperature.AsValueInSIUnits), Altaxo.Units.MolarEntropy.JoulePerMoleKelvin.Instance);
+    }
+
+    /// <summary>
+    /// Get the entropy from a given mole density and temperature.
+    /// Attention - unchecked function: it is presumed, but not checked (!), that the given parameter combination describes a single phase fluid!.
+    /// </summary>
     /// <param name="moleDensity">The density in mol/m³.</param>
     /// <param name="temperature">The temperature in Kelvin.</param>
-    /// <returns>The entropy in J/(kg K).</returns>
+    /// <returns>The mass specific entropy in J/(kg·K).</returns>
     public double MassSpecificEntropy_FromMoleDensityAndTemperature(double moleDensity, double temperature)
     {
       return MoleSpecificEntropy_FromMoleDensityAndTemperature(moleDensity, temperature) / MolecularWeight;
-      ;
+    }
+
+    /// <summary>
+    /// Get the entropy from a given mole density and temperature.
+    /// Attention - unchecked function: it is presumed, but not checked (!), that the given parameter combination describes a single phase fluid!.
+    /// </summary>
+    /// <param name="moleDensity">The density (compatible with mol/m³).</param>
+    /// <param name="temperature">The temperature (compatible with Kelvin).</param>
+    /// <returns>The mass specific entropy (SIUnit: J/(kg·K)).</returns>
+    public DimensionfulQuantity MassSpecificEntropy_FromMoleDensityAndTemperature(DimensionfulQuantity moleDensity, DimensionfulQuantity temperature)
+    {
+      moleDensity.CheckUnitCompatibleWith(Altaxo.Units.VolumetricMolarDensity.MolePerCubicMeter.Instance, nameof(moleDensity));
+      temperature.CheckUnitCompatibleWith(Altaxo.Units.Temperature.Kelvin.Instance, nameof(temperature));
+      return new DimensionfulQuantity(MassSpecificEntropy_FromMoleDensityAndTemperature(moleDensity.AsValueInSIUnits, temperature.AsValueInSIUnits), Altaxo.Units.MassSpecificEntropy.JoulePerKilogramKelvin.Instance);
     }
 
     /// <summary>
@@ -667,11 +1071,24 @@ namespace Altaxo.Science.Thermodynamics.Fluids
     /// </summary>
     /// <param name="massDensity">The density in kg/m³.</param>
     /// <param name="temperature">The temperature in Kelvin.</param>
-    /// <returns>The entropy in J/(kg K).</returns>
+    /// <returns>The entropy in J/(kg·K).</returns>
     public double MassSpecificEntropy_FromMassDensityAndTemperature(double massDensity, double temperature)
     {
       return MoleSpecificEntropy_FromMoleDensityAndTemperature(massDensity / MolecularWeight, temperature) / MolecularWeight;
-      ;
+    }
+
+    /// <summary>
+    /// Get the entropy from a given mole density and temperature.
+    /// Attention - unchecked function: it is presumed, but not checked (!), that the given parameter combination describes a single phase fluid!.
+    /// </summary>
+    /// <param name="massDensity">The density (compatible with kg/m³).</param>
+    /// <param name="temperature">The temperature (compatible with Kelvin).</param>
+    /// <returns>The mass specific entropy (SIUnit: J/(kg·K)).</returns>
+    public DimensionfulQuantity MassSpecificEntropy_FromMassDensityAndTemperature(DimensionfulQuantity massDensity, DimensionfulQuantity temperature)
+    {
+      massDensity.CheckUnitCompatibleWith(Altaxo.Units.VolumetricMassDensity.KilogramPerCubicMeter.Instance, nameof(massDensity));
+      temperature.CheckUnitCompatibleWith(Altaxo.Units.Temperature.Kelvin.Instance, nameof(temperature));
+      return new DimensionfulQuantity(MassSpecificEntropy_FromMassDensityAndTemperature(massDensity.AsValueInSIUnits, temperature.AsValueInSIUnits), Altaxo.Units.MassSpecificEntropy.JoulePerKilogramKelvin.Instance);
     }
 
     /// <summary>
@@ -680,7 +1097,7 @@ namespace Altaxo.Science.Thermodynamics.Fluids
     /// </summary>
     /// <param name="moleDensity">The density in mol/m³.</param>
     /// <param name="temperature">The temperature in Kelvin.</param>
-    /// <returns>The internal energy in J/mol.</returns>
+    /// <returns>The mole specific internal energy in J/mol.</returns>
     public double MoleSpecificInternalEnergy_FromMoleDensityAndTemperature(double moleDensity, double temperature)
     {
       double delta = GetDeltaFromMoleDensity(moleDensity); // reduced density
@@ -695,9 +1112,23 @@ namespace Altaxo.Science.Thermodynamics.Fluids
     /// Get the internal energy from a given density and temperature.
     /// Attention - unchecked function: it is presumed, but not checked (!), that the given parameter combination describes a single phase fluid!.
     /// </summary>
+    /// <param name="moleDensity">The density (compatible with mol/m³.</param>
+    /// <param name="temperature">The temperature (compatible with Kelvin).</param>
+    /// <returns>The mole specific internal energy (SIUnit: J/mol).</returns>
+    public DimensionfulQuantity MoleSpecificInternalEnergy_FromMoleDensityAndTemperature(DimensionfulQuantity moleDensity, DimensionfulQuantity temperature)
+    {
+      moleDensity.CheckUnitCompatibleWith(Altaxo.Units.VolumetricMolarDensity.MolePerCubicMeter.Instance, nameof(moleDensity));
+      temperature.CheckUnitCompatibleWith(Altaxo.Units.Temperature.Kelvin.Instance, nameof(temperature));
+      return new DimensionfulQuantity(MoleSpecificInternalEnergy_FromMoleDensityAndTemperature(moleDensity.AsValueInSIUnits, temperature.AsValueInSIUnits), Altaxo.Units.MolarEnergy.JoulePerMole.Instance);
+    }
+
+    /// <summary>
+    /// Get the internal energy from a given density and temperature.
+    /// Attention - unchecked function: it is presumed, but not checked (!), that the given parameter combination describes a single phase fluid!.
+    /// </summary>
     /// <param name="massDensity">The density in kg/m³.</param>
     /// <param name="temperature">The temperature in Kelvin.</param>
-    /// <returns>The internal energy in J/mol.</returns>
+    /// <returns>The mole specific internal energy in J/mol.</returns>
     public double MoleSpecificInternalEnergy_FromMassDensityAndTemperature(double massDensity, double temperature)
     {
       return MoleSpecificInternalEnergy_FromMoleDensityAndTemperature(massDensity / MolecularWeight, temperature);
@@ -707,12 +1138,40 @@ namespace Altaxo.Science.Thermodynamics.Fluids
     /// Get the internal energy from a given density and temperature.
     /// Attention - unchecked function: it is presumed, but not checked (!), that the given parameter combination describes a single phase fluid!.
     /// </summary>
+    /// <param name="massDensity">The density (compatible with kg/m³).</param>
+    /// <param name="temperature">The temperature (compatible with Kelvin).</param>
+    /// <returns>The mole specific internal energy (SIUnit: J/mol).</returns>
+    public DimensionfulQuantity MoleSpecificInternalEnergy_FromMassDensityAndTemperature(DimensionfulQuantity massDensity, DimensionfulQuantity temperature)
+    {
+      massDensity.CheckUnitCompatibleWith(Altaxo.Units.VolumetricMassDensity.KilogramPerCubicMeter.Instance, nameof(massDensity));
+      temperature.CheckUnitCompatibleWith(Altaxo.Units.Temperature.Kelvin.Instance, nameof(temperature));
+      return new DimensionfulQuantity(MoleSpecificInternalEnergy_FromMassDensityAndTemperature(massDensity.AsValueInSIUnits, temperature.AsValueInSIUnits), Altaxo.Units.MolarEnergy.JoulePerMole.Instance);
+    }
+
+    /// <summary>
+    /// Get the internal energy from a given density and temperature.
+    /// Attention - unchecked function: it is presumed, but not checked (!), that the given parameter combination describes a single phase fluid!.
+    /// </summary>
     /// <param name="moleDensity">The density in kg/m³.</param>
     /// <param name="temperature">The temperature in Kelvin.</param>
-    /// <returns>The internal energy in J/mol.</returns>
+    /// <returns>The mass specific internal energy in J/kg.</returns>
     public double MassSpecificInternalEnergy_FromMoleDensityAndTemperature(double moleDensity, double temperature)
     {
       return MoleSpecificInternalEnergy_FromMoleDensityAndTemperature(moleDensity, temperature) / MolecularWeight;
+    }
+
+    /// <summary>
+    /// Get the internal energy from a given density and temperature.
+    /// Attention - unchecked function: it is presumed, but not checked (!), that the given parameter combination describes a single phase fluid!.
+    /// </summary>
+    /// <param name="moleDensity">The density (compatible with kg/m³).</param>
+    /// <param name="temperature">The temperature (compatible with Kelvin).</param>
+    /// <returns>The mass specific internal energy (SIUnit: J/kg).</returns>
+    public DimensionfulQuantity MassSpecificInternalEnergy_FromMoleDensityAndTemperature(DimensionfulQuantity moleDensity, DimensionfulQuantity temperature)
+    {
+      moleDensity.CheckUnitCompatibleWith(Altaxo.Units.VolumetricMolarDensity.MolePerCubicMeter.Instance, nameof(moleDensity));
+      temperature.CheckUnitCompatibleWith(Altaxo.Units.Temperature.Kelvin.Instance, nameof(temperature));
+      return new DimensionfulQuantity(MassSpecificInternalEnergy_FromMoleDensityAndTemperature(moleDensity.AsValueInSIUnits, temperature.AsValueInSIUnits), Altaxo.Units.MassSpecificEnergy.JoulePerKilogram.Instance);
     }
 
     /// <summary>
@@ -725,6 +1184,20 @@ namespace Altaxo.Science.Thermodynamics.Fluids
     public double MassSpecificInternalEnergy_FromMassDensityAndTemperature(double massDensity, double temperature)
     {
       return MoleSpecificInternalEnergy_FromMoleDensityAndTemperature(massDensity / MolecularWeight, temperature) / MolecularWeight;
+    }
+
+    /// <summary>
+    /// Get the internal energy from a given density and temperature.
+    /// Attention - unchecked function: it is presumed, but not checked (!), that the given parameter combination describes a single phase fluid!.
+    /// </summary>
+    /// <param name="massDensity">The density (compatible with kg/m³).</param>
+    /// <param name="temperature">The temperature (compatible with Kelvin).</param>
+    /// <returns>The mass specific internal energy (SIUnit: J/kg).</returns>
+    public DimensionfulQuantity MassSpecificInternalEnergy_FromMassDensityAndTemperature(DimensionfulQuantity massDensity, DimensionfulQuantity temperature)
+    {
+      massDensity.CheckUnitCompatibleWith(Altaxo.Units.VolumetricMassDensity.KilogramPerCubicMeter.Instance, nameof(massDensity));
+      temperature.CheckUnitCompatibleWith(Altaxo.Units.Temperature.Kelvin.Instance, nameof(temperature));
+      return new DimensionfulQuantity(MassSpecificInternalEnergy_FromMassDensityAndTemperature(massDensity.AsValueInSIUnits, temperature.AsValueInSIUnits), Altaxo.Units.MassSpecificEnergy.JoulePerKilogram.Instance);
     }
 
     /// <summary>
@@ -751,9 +1224,23 @@ namespace Altaxo.Science.Thermodynamics.Fluids
     /// Get the enthalpy from a given density and temperature.
     /// Attention - unchecked function: it is presumed, but not checked (!), that the given parameter combination describes a single phase fluid!.
     /// </summary>
+    /// <param name="moleDensity">The molar density (compatible with mol/m³).</param>
+    /// <param name="temperature">The temperature (compatible with Kelvin).</param>
+    /// <returns>The mole specific enthalpy (SIUnit: J/mol).</returns>
+    public DimensionfulQuantity MoleSpecificEnthalpy_FromMoleDensityAndTemperature(DimensionfulQuantity moleDensity, DimensionfulQuantity temperature)
+    {
+      moleDensity.CheckUnitCompatibleWith(Altaxo.Units.VolumetricMolarDensity.MolePerCubicMeter.Instance, nameof(moleDensity));
+      temperature.CheckUnitCompatibleWith(Altaxo.Units.Temperature.Kelvin.Instance, nameof(temperature));
+      return new DimensionfulQuantity(MoleSpecificEnthalpy_FromMoleDensityAndTemperature(moleDensity.AsValueInSIUnits, temperature.AsValueInSIUnits), Altaxo.Units.MolarEnergy.JoulePerMole.Instance);
+    }
+
+    /// <summary>
+    /// Get the enthalpy from a given density and temperature.
+    /// Attention - unchecked function: it is presumed, but not checked (!), that the given parameter combination describes a single phase fluid!.
+    /// </summary>
     /// <param name="massDensity">The density in kg/m³.</param>
     /// <param name="temperature">The temperature in Kelvin.</param>
-    /// <returns>The enthalpy in J/mol.</returns>
+    /// <returns>The mole specific enthalpy in J/mol.</returns>
     public double MoleSpecificEnthalpy_FromMassDensityAndTemperature(double massDensity, double temperature)
     {
       return MoleSpecificEnthalpy_FromMoleDensityAndTemperature(massDensity / MolecularWeight, temperature);
@@ -761,13 +1248,40 @@ namespace Altaxo.Science.Thermodynamics.Fluids
 
     /// <summary>
     /// Get the enthalpy from a given density and temperature.
+    /// Attention - unchecked function: it is presumed, but not checked (!), that the given parameter combination describes a single phase fluid!.
+    /// </summary>
+    /// <param name="massDensity">The density (compatible with kg/m³).</param>
+    /// <param name="temperature">The temperature (compatible with Kelvin).</param>
+    /// <returns>The mole specific enthalpy (SIUnit: J/mol).</returns>
+    public DimensionfulQuantity MoleSpecificEnthalpy_FromMassDensityAndTemperature(DimensionfulQuantity massDensity, DimensionfulQuantity temperature)
+    {
+      massDensity.CheckUnitCompatibleWith(Altaxo.Units.VolumetricMassDensity.KilogramPerCubicMeter.Instance, nameof(massDensity));
+      temperature.CheckUnitCompatibleWith(Altaxo.Units.Temperature.Kelvin.Instance, nameof(temperature));
+      return new DimensionfulQuantity(MoleSpecificEnthalpy_FromMassDensityAndTemperature(massDensity.AsValueInSIUnits, temperature.AsValueInSIUnits), Altaxo.Units.MolarEnergy.JoulePerMole.Instance);
+    }
+
+    /// <summary>
+    /// Get the enthalpy from a given density and temperature.
     /// </summary>
     /// <param name="moleDensity">The density in mol/m³.</param>
     /// <param name="temperature">The temperature in Kelvin.</param>
-    /// <returns>The enthalpy in J/kg.</returns>
+    /// <returns>The mass specific enthalpy in J/kg.</returns>
     public double MassSpecificEnthalpy_FromMoleDensityAndTemperature(double moleDensity, double temperature)
     {
       return MoleSpecificEnthalpy_FromMoleDensityAndTemperature(moleDensity, temperature) / MolecularWeight;
+    }
+
+    /// <summary>
+    /// Get the enthalpy from a given density and temperature.
+    /// </summary>
+    /// <param name="moleDensity">The density (compatible with mol/m³).</param>
+    /// <param name="temperature">The temperature (compatible with Kelvin).</param>
+    /// <returns>The mass specific enthalpy (SIUnit: J/kg).</returns>
+    public DimensionfulQuantity MassSpecificEnthalpy_FromMoleDensityAndTemperature(DimensionfulQuantity moleDensity, DimensionfulQuantity temperature)
+    {
+      moleDensity.CheckUnitCompatibleWith(Altaxo.Units.VolumetricMolarDensity.MolePerCubicMeter.Instance, nameof(moleDensity));
+      temperature.CheckUnitCompatibleWith(Altaxo.Units.Temperature.Kelvin.Instance, nameof(temperature));
+      return new DimensionfulQuantity(MassSpecificEnthalpy_FromMoleDensityAndTemperature(moleDensity.AsValueInSIUnits, temperature.AsValueInSIUnits), Altaxo.Units.MassSpecificEnergy.JoulePerKilogram.Instance);
     }
 
     /// <summary>
@@ -780,6 +1294,20 @@ namespace Altaxo.Science.Thermodynamics.Fluids
     public double MassSpecificEnthalpy_FromMassDensityAndTemperature(double massDensity, double temperature)
     {
       return MoleSpecificEnthalpy_FromMoleDensityAndTemperature(massDensity / MolecularWeight, temperature) / MolecularWeight;
+    }
+
+    /// <summary>
+    /// Get the enthalpy from a given density and temperature.
+    /// Attention - unchecked function: it is presumed, but not checked (!), that the given parameter combination describes a single phase fluid!.
+    /// </summary>
+    /// <param name="massDensity">The density (compatible with kg/m³).</param>
+    /// <param name="temperature">The temperature (compatible with Kelvin).</param>
+    /// <returns>The enthalpy (SIUnit: J/kg).</returns>
+    public DimensionfulQuantity MassSpecificEnthalpy_FromMassDensityAndTemperature(DimensionfulQuantity massDensity, DimensionfulQuantity temperature)
+    {
+      massDensity.CheckUnitCompatibleWith(Altaxo.Units.VolumetricMassDensity.KilogramPerCubicMeter.Instance, nameof(massDensity));
+      temperature.CheckUnitCompatibleWith(Altaxo.Units.Temperature.Kelvin.Instance, nameof(temperature));
+      return new DimensionfulQuantity(MassSpecificEnthalpy_FromMassDensityAndTemperature(massDensity.AsValueInSIUnits, temperature.AsValueInSIUnits), Altaxo.Units.MassSpecificEnergy.JoulePerKilogram.Instance);
     }
 
     /// <summary>
@@ -804,12 +1332,40 @@ namespace Altaxo.Science.Thermodynamics.Fluids
     /// Get the mole specific isochoric heat capacity from a given density and temperature.
     /// Attention - unchecked function: it is presumed, but not checked (!), that the given parameter combination describes a single phase fluid!.
     /// </summary>
+    /// <param name="moleDensity">The density (compatible with mol/m³).</param>
+    /// <param name="temperature">The temperature (compatible with Kelvin).</param>
+    /// <returns>The isochoric heat capacity (SIUnit: J/(mol K)).</returns>
+    public DimensionfulQuantity MoleSpecificIsochoricHeatCapacity_FromMoleDensityAndTemperature(DimensionfulQuantity moleDensity, DimensionfulQuantity temperature)
+    {
+      moleDensity.CheckUnitCompatibleWith(Altaxo.Units.VolumetricMolarDensity.MolePerCubicMeter.Instance, nameof(moleDensity));
+      temperature.CheckUnitCompatibleWith(Altaxo.Units.Temperature.Kelvin.Instance, nameof(temperature));
+      return new DimensionfulQuantity(MoleSpecificIsochoricHeatCapacity_FromMoleDensityAndTemperature(moleDensity.AsValueInSIUnits, temperature.AsValueInSIUnits), Altaxo.Units.MolarEntropy.JoulePerMoleKelvin.Instance);
+    }
+
+    /// <summary>
+    /// Get the mole specific isochoric heat capacity from a given density and temperature.
+    /// Attention - unchecked function: it is presumed, but not checked (!), that the given parameter combination describes a single phase fluid!.
+    /// </summary>
     /// <param name="massDensity">The density in kg/m³.</param>
     /// <param name="temperature">The temperature in Kelvin.</param>
     /// <returns>The isochoric heat capacity in J/(mol K).</returns>
     public double MoleSpecificIsochoricHeatCapacity_FromMassDensityAndTemperature(double massDensity, double temperature)
     {
       return MoleSpecificIsochoricHeatCapacity_FromMoleDensityAndTemperature(massDensity / MolecularWeight, temperature);
+    }
+
+    /// <summary>
+    /// Get the mole specific isochoric heat capacity from a given density and temperature.
+    /// Attention - unchecked function: it is presumed, but not checked (!), that the given parameter combination describes a single phase fluid!.
+    /// </summary>
+    /// <param name="massDensity">The density (compatible with kg/m³).</param>
+    /// <param name="temperature">The temperature (compatible with Kelvin).</param>
+    /// <returns>The isochoric heat capacity (SIUnit: J/(mol K)).</returns>
+    public DimensionfulQuantity MoleSpecificIsochoricHeatCapacity_FromMassDensityAndTemperature(DimensionfulQuantity massDensity, DimensionfulQuantity temperature)
+    {
+      massDensity.CheckUnitCompatibleWith(Altaxo.Units.VolumetricMassDensity.KilogramPerCubicMeter.Instance, nameof(massDensity));
+      temperature.CheckUnitCompatibleWith(Altaxo.Units.Temperature.Kelvin.Instance, nameof(temperature));
+      return new DimensionfulQuantity(MoleSpecificIsochoricHeatCapacity_FromMassDensityAndTemperature(massDensity.AsValueInSIUnits, temperature.AsValueInSIUnits), Altaxo.Units.MolarEntropy.JoulePerMoleKelvin.Instance);
     }
 
     /// <summary>
@@ -828,12 +1384,40 @@ namespace Altaxo.Science.Thermodynamics.Fluids
     /// Get the isochoric heat capacity from a given density and temperature.
     /// Attention - unchecked function: it is presumed, but not checked (!), that the given parameter combination describes a single phase fluid!.
     /// </summary>
+    /// <param name="moleDensity">The density (compatible with mol/m³).</param>
+    /// <param name="temperature">The temperature (compatible with Kelvin).</param>
+    /// <returns>The isochoric heat capacity (SIUnit: J/(kg K)).</returns>
+    public DimensionfulQuantity MassSpecificIsochoricHeatCapacity_FromMoleDensityAndTemperature(DimensionfulQuantity moleDensity, DimensionfulQuantity temperature)
+    {
+      moleDensity.CheckUnitCompatibleWith(Altaxo.Units.VolumetricMolarDensity.MolePerCubicMeter.Instance, nameof(moleDensity));
+      temperature.CheckUnitCompatibleWith(Altaxo.Units.Temperature.Kelvin.Instance, nameof(temperature));
+      return new DimensionfulQuantity(MassSpecificIsochoricHeatCapacity_FromMoleDensityAndTemperature(moleDensity.AsValueInSIUnits, temperature.AsValueInSIUnits), Altaxo.Units.MassSpecificEntropy.JoulePerKilogramKelvin.Instance);
+    }
+
+    /// <summary>
+    /// Get the isochoric heat capacity from a given density and temperature.
+    /// Attention - unchecked function: it is presumed, but not checked (!), that the given parameter combination describes a single phase fluid!.
+    /// </summary>
     /// <param name="massDensity">The density in kg/m³.</param>
     /// <param name="temperature">The temperature in Kelvin.</param>
     /// <returns>The isochoric heat capacity in J/(kg K).</returns>
     public double MassSpecificIsochoricHeatCapacity_FromMassDensityAndTemperature(double massDensity, double temperature)
     {
       return MoleSpecificIsochoricHeatCapacity_FromMoleDensityAndTemperature(massDensity / MolecularWeight, temperature) / MolecularWeight;
+    }
+
+    /// <summary>
+    /// Get the isochoric heat capacity from a given density and temperature.
+    /// Attention - unchecked function: it is presumed, but not checked (!), that the given parameter combination describes a single phase fluid!.
+    /// </summary>
+    /// <param name="massDensity">The density (compatible with kg/m³).</param>
+    /// <param name="temperature">The temperature (compatible with Kelvin).</param>
+    /// <returns>The isochoric heat capacity (SIUnit: J/(kg K)).</returns>
+    public DimensionfulQuantity MassSpecificIsochoricHeatCapacity_FromMassDensityAndTemperature(DimensionfulQuantity massDensity, DimensionfulQuantity temperature)
+    {
+      massDensity.CheckUnitCompatibleWith(Altaxo.Units.VolumetricMassDensity.KilogramPerCubicMeter.Instance, nameof(massDensity));
+      temperature.CheckUnitCompatibleWith(Altaxo.Units.Temperature.Kelvin.Instance, nameof(temperature));
+      return new DimensionfulQuantity(MassSpecificIsochoricHeatCapacity_FromMassDensityAndTemperature(massDensity.AsValueInSIUnits, temperature.AsValueInSIUnits), Altaxo.Units.MassSpecificEntropy.JoulePerKilogramKelvin.Instance);
     }
 
     /// <summary>
@@ -866,12 +1450,40 @@ namespace Altaxo.Science.Thermodynamics.Fluids
     /// Gets the isobaric heat capacity from a given density and temperature.
     /// Attention - unchecked function: it is presumed, but not checked (!), that the given parameter combination describes a single phase fluid!.
     /// </summary>
+    /// <param name="moleDensity">The density (compatible with mol/m³).</param>
+    /// <param name="temperature">The temperature (compatible with Kelvin).</param>
+    /// <returns>The isobaric heat capacity (SIUnit: J/(mol K)).</returns>
+    public DimensionfulQuantity MoleSpecificIsobaricHeatCapacity_FromMoleDensityAndTemperature(DimensionfulQuantity moleDensity, DimensionfulQuantity temperature)
+    {
+      moleDensity.CheckUnitCompatibleWith(Altaxo.Units.VolumetricMolarDensity.MolePerCubicMeter.Instance, nameof(moleDensity));
+      temperature.CheckUnitCompatibleWith(Altaxo.Units.Temperature.Kelvin.Instance, nameof(temperature));
+      return new DimensionfulQuantity(MoleSpecificIsobaricHeatCapacity_FromMoleDensityAndTemperature(moleDensity.AsValueInSIUnits, temperature.AsValueInSIUnits), Altaxo.Units.MolarEntropy.JoulePerMoleKelvin.Instance);
+    }
+
+    /// <summary>
+    /// Gets the isobaric heat capacity from a given density and temperature.
+    /// Attention - unchecked function: it is presumed, but not checked (!), that the given parameter combination describes a single phase fluid!.
+    /// </summary>
     /// <param name="massDensity">The density in kg/m³.</param>
     /// <param name="temperature">The temperature in Kelvin.</param>
     /// <returns>The isobaric heat capacity in J/(mol K).</returns>
     public double MoleSpecificIsobaricHeatCapacity_FromMassDensityAndTemperature(double massDensity, double temperature)
     {
       return MoleSpecificIsobaricHeatCapacity_FromMoleDensityAndTemperature(massDensity / MolecularWeight, temperature);
+    }
+
+    /// <summary>
+    /// Gets the isobaric heat capacity from a given density and temperature.
+    /// Attention - unchecked function: it is presumed, but not checked (!), that the given parameter combination describes a single phase fluid!.
+    /// </summary>
+    /// <param name="massDensity">The density (compatible with kg/m³).</param>
+    /// <param name="temperature">The temperature (compatible with Kelvin).</param>
+    /// <returns>The mole specific isobaric heat capacity (SIUnit: J/(mol K)).</returns>
+    public DimensionfulQuantity MoleSpecificIsobaricHeatCapacity_FromMassDensityAndTemperature(DimensionfulQuantity massDensity, DimensionfulQuantity temperature)
+    {
+      massDensity.CheckUnitCompatibleWith(Altaxo.Units.VolumetricMassDensity.KilogramPerCubicMeter.Instance, nameof(massDensity));
+      temperature.CheckUnitCompatibleWith(Altaxo.Units.Temperature.Kelvin.Instance, nameof(temperature));
+      return new DimensionfulQuantity(MoleSpecificIsobaricHeatCapacity_FromMassDensityAndTemperature(massDensity.AsValueInSIUnits, temperature.AsValueInSIUnits), Altaxo.Units.MolarEntropy.JoulePerMoleKelvin.Instance);
     }
 
     /// <summary>
@@ -890,12 +1502,40 @@ namespace Altaxo.Science.Thermodynamics.Fluids
     /// Gets the isobaric heat capacity from a given density and temperature.
     /// Attention - unchecked function: it is presumed, but not checked (!), that the given parameter combination describes a single phase fluid!.
     /// </summary>
+    /// <param name="moleDensity">The density (compatible with mol/m³).</param>
+    /// <param name="temperature">The temperature (compatible with Kelvin).</param>
+    /// <returns>The mass specific isobaric heat capacity (SIUnit: J/(kg K)).</returns>
+    public DimensionfulQuantity MassSpecificIsobaricHeatCapacity_FromMoleDensityAndTemperature(DimensionfulQuantity moleDensity, DimensionfulQuantity temperature)
+    {
+      moleDensity.CheckUnitCompatibleWith(Altaxo.Units.VolumetricMolarDensity.MolePerCubicMeter.Instance, nameof(moleDensity));
+      temperature.CheckUnitCompatibleWith(Altaxo.Units.Temperature.Kelvin.Instance, nameof(temperature));
+      return new DimensionfulQuantity(MassSpecificIsobaricHeatCapacity_FromMoleDensityAndTemperature(moleDensity.AsValueInSIUnits, temperature.AsValueInSIUnits), Altaxo.Units.MassSpecificEntropy.JoulePerKilogramKelvin.Instance);
+    }
+
+    /// <summary>
+    /// Gets the isobaric heat capacity from a given density and temperature.
+    /// Attention - unchecked function: it is presumed, but not checked (!), that the given parameter combination describes a single phase fluid!.
+    /// </summary>
     /// <param name="massDensity">The density in kg/m³.</param>
     /// <param name="temperature">The temperature in Kelvin.</param>
-    /// <returns>The isobaric heat capacity in J/(kg K).</returns>
+    /// <returns>The mass specific isobaric heat capacity in J/(kg K).</returns>
     public double MassSpecificIsobaricHeatCapacity_FromMassDensityAndTemperature(double massDensity, double temperature)
     {
       return MoleSpecificIsobaricHeatCapacity_FromMoleDensityAndTemperature(massDensity / MolecularWeight, temperature) / MolecularWeight;
+    }
+
+    /// <summary>
+    /// Gets the isobaric heat capacity from a given density and temperature.
+    /// Attention - unchecked function: it is presumed, but not checked (!), that the given parameter combination describes a single phase fluid!.
+    /// </summary>
+    /// <param name="massDensity">The density (compatible with kg/m³).</param>
+    /// <param name="temperature">The temperature (compatible with Kelvin).</param>
+    /// <returns>The mass specific isobaric heat capacity (SIUnit: J/(kg K)).</returns>
+    public DimensionfulQuantity MassSpecificIsobaricHeatCapacity_FromMassDensityAndTemperature(DimensionfulQuantity massDensity, DimensionfulQuantity temperature)
+    {
+      massDensity.CheckUnitCompatibleWith(Altaxo.Units.VolumetricMassDensity.KilogramPerCubicMeter.Instance, nameof(massDensity));
+      temperature.CheckUnitCompatibleWith(Altaxo.Units.Temperature.Kelvin.Instance, nameof(temperature));
+      return new DimensionfulQuantity(MassSpecificIsobaricHeatCapacity_FromMassDensityAndTemperature(massDensity.AsValueInSIUnits, temperature.AsValueInSIUnits), Altaxo.Units.MassSpecificEntropy.JoulePerKilogramKelvin.Instance);
     }
 
     /// <summary>
@@ -925,12 +1565,40 @@ namespace Altaxo.Science.Thermodynamics.Fluids
     /// Get the speed of sound from a given density and temperature.
     /// Attention - unchecked function: it is presumed, but not checked (!), that the given parameter combination describes a single phase fluid!.
     /// </summary>
+    /// <param name="moleDensity">The density (compatible with mol/m³).</param>
+    /// <param name="temperature">The temperature (compatible with Kelvin).</param>
+    /// <returns>The speed of sound (SIUnit: m/s).</returns>
+    public DimensionfulQuantity SpeedOfSound_FromMoleDensityAndTemperature(DimensionfulQuantity moleDensity, DimensionfulQuantity temperature)
+    {
+      moleDensity.CheckUnitCompatibleWith(Altaxo.Units.VolumetricMolarDensity.MolePerCubicMeter.Instance, nameof(moleDensity));
+      temperature.CheckUnitCompatibleWith(Altaxo.Units.Temperature.Kelvin.Instance, nameof(temperature));
+      return new DimensionfulQuantity(SpeedOfSound_FromMoleDensityAndTemperature(moleDensity.AsValueInSIUnits, temperature.AsValueInSIUnits), Altaxo.Units.Speed.MeterPerSecond.Instance);
+    }
+
+    /// <summary>
+    /// Get the speed of sound from a given density and temperature.
+    /// Attention - unchecked function: it is presumed, but not checked (!), that the given parameter combination describes a single phase fluid!.
+    /// </summary>
     /// <param name="massDensity">The density in kg/m³.</param>
     /// <param name="temperature">The temperature in Kelvin.</param>
     /// <returns>The speed of sound in m/s.</returns>
     public double SpeedOfSound_FromMassDensityAndTemperature(double massDensity, double temperature)
     {
       return SpeedOfSound_FromMoleDensityAndTemperature(massDensity / MolecularWeight, temperature);
+    }
+
+    /// <summary>
+    /// Get the speed of sound from a given density and temperature.
+    /// Attention - unchecked function: it is presumed, but not checked (!), that the given parameter combination describes a single phase fluid!.
+    /// </summary>
+    /// <param name="massDensity">The density (comatible with kg/m³).</param>
+    /// <param name="temperature">The temperature (compatible with Kelvin).</param>
+    /// <returns>The speed of sound (SIUnit: m/s).</returns>
+    public DimensionfulQuantity SpeedOfSound_FromMassDensityAndTemperature(DimensionfulQuantity massDensity, DimensionfulQuantity temperature)
+    {
+      massDensity.CheckUnitCompatibleWith(Altaxo.Units.VolumetricMassDensity.KilogramPerCubicMeter.Instance, nameof(massDensity));
+      temperature.CheckUnitCompatibleWith(Altaxo.Units.Temperature.Kelvin.Instance, nameof(temperature));
+      return new DimensionfulQuantity(SpeedOfSound_FromMassDensityAndTemperature(massDensity.AsValueInSIUnits, temperature.AsValueInSIUnits), Altaxo.Units.Speed.MeterPerSecond.Instance);
     }
 
     /// <summary>
@@ -947,6 +1615,19 @@ namespace Altaxo.Science.Thermodynamics.Fluids
     }
 
     /// <summary>
+    /// Gets the isentropic (adiabatic) derivative of the mass specific volume w.r.t. pressure from mole density and temperature.
+    /// </summary>
+    /// <param name="moleDensity">The mole density (compatible with mol/m³).</param>
+    /// <param name="temperature">The temperature (compatible with K).</param>
+    /// <returns>The isentropic (adiabatic) derivative of the mass specific volume w.r.t. pressure (SIUnit: m³/(kg Pa)).</returns>
+    public DimensionfulQuantity IsentropicDerivativeOfMassSpecificVolumeWrtPressure_FromMoleDensityAndTemperature(DimensionfulQuantity moleDensity, DimensionfulQuantity temperature)
+    {
+      moleDensity.CheckUnitCompatibleWith(Altaxo.Units.VolumetricMolarDensity.MolePerCubicMeter.Instance, nameof(moleDensity));
+      temperature.CheckUnitCompatibleWith(Altaxo.Units.Temperature.Kelvin.Instance, nameof(temperature));
+      return new DimensionfulQuantity(IsentropicDerivativeOfMassSpecificVolumeWrtPressure_FromMoleDensityAndTemperature(moleDensity.AsValueInSIUnits, temperature.AsValueInSIUnits), new SIUnit(4, -2, 2, 0, 0, 0, 0));
+    }
+
+    /// <summary>
     /// Gets the isentropic (adiabatic) derivative of the mole specific volume w.r.t. pressure from mole density and temperature.
     /// </summary>
     /// <param name="moleDensity">The mole density.</param>
@@ -959,8 +1640,86 @@ namespace Altaxo.Science.Thermodynamics.Fluids
       return -1 / (c * c * moleDensity * moleDensity * MolecularWeight);
     }
 
+    /// <summary>
+    /// Gets the isentropic (adiabatic) derivative of the mole specific volume w.r.t. pressure from mole density and temperature.
+    /// </summary>
+    /// <param name="moleDensity">The mole density (compatible with mol/m³).</param>
+    /// <param name="temperature">The temperature (compatible with K).</param>
+    /// <returns>The isentropic (adiabatic) derivative of the mole specific volume w.r.t. pressure (SIUnit: m³/(mol Pa)).</returns>
+    public DimensionfulQuantity IsentropicDerivativeOfMoleSpecificVolumeWrtPressure_FromMoleDensityAndTemperature(DimensionfulQuantity moleDensity, DimensionfulQuantity temperature)
+    {
+      moleDensity.CheckUnitCompatibleWith(Altaxo.Units.VolumetricMolarDensity.MolePerCubicMeter.Instance, nameof(moleDensity));
+      temperature.CheckUnitCompatibleWith(Altaxo.Units.Temperature.Kelvin.Instance, nameof(temperature));
+      return new DimensionfulQuantity(IsentropicDerivativeOfMoleSpecificVolumeWrtPressure_FromMoleDensityAndTemperature(moleDensity.AsValueInSIUnits, temperature.AsValueInSIUnits), new SIUnit(4, -1, 2, 0, 0, -1, 0));
+    }
 
     #endregion Thermodynamic properties derived from dimensionless Helmholtz energy
+
+    #region Other thermodynamic calculations
+
+    #endregion Other thermodynamic calculations
+
+    /// <summary>
+    /// Gets the gas temperature after an adiabatic pressure change in a gas. ATTENTION UNCHECKED: this function assumes that the
+    /// adiabatic pressure change happens in single gas phase, i.e., no phase transitions occur.
+    /// </summary>
+    /// <param name="initialPressure">The initial pressure in Pa.</param>
+    /// <param name="initialTemperature">The initial temperature in K.</param>
+    /// <param name="targetPressure">The target pressure in Pa, i.e. the pressure after the adiabatic pressure change.</param>
+    /// <returns>The temperature of the gas in K after the adiabatic pressure change. If no solution is found, <see cref="Double.NaN"/> is returned.</returns>
+    /// <exception cref="System.ArgumentOutOfRangeException">All arguments must be positive.</exception>
+    public double GetTemperatureAfterAdiabaticPressureChangeInGasPhase(double initialPressure, double initialTemperature, double targetPressure)
+    {
+      if (initialPressure <= 0 || initialTemperature <= 0 || targetPressure <= 0)
+        throw new ArgumentOutOfRangeException("All arguments must be positive.");
+
+      /// <summary>
+      /// Gets the total entropy in J/kg) for a given pressure and temperature.
+      /// </summary>
+      /// <param name="pressure">The pressure.</param>
+      /// <param name="temperature">The temperature.</param>
+      /// <returns>Entropy in J/kg</returns>
+      double GetTotalEntropy(double pressure, double temperature)
+      {
+        var massDensity = MassDensity_FromPressureAndTemperature(pressure, temperature);
+        return temperature * MassSpecificEntropy_FromMassDensityAndTemperature(massDensity, temperature);
+      }
+
+      var initialEntropy = GetTotalEntropy(initialPressure, initialTemperature);
+
+      double T1 = initialTemperature;
+      double T2 = initialTemperature + Math.Min(1, initialTemperature / 100); // T2 is always higher that T1 to ensure that it is still a gas
+
+
+      if (Altaxo.Calc.RootFinding.QuickRootFinding.BracketRootByExtensionOnly(T => GetTotalEntropy(targetPressure, T) - initialEntropy, 0, ref T1, ref T2))
+      {
+        return Altaxo.Calc.RootFinding.QuickRootFinding.ByBrentsAlgorithm(T => GetTotalEntropy(targetPressure, T) - initialEntropy, T1, T2);
+      }
+      else
+      {
+        return double.NaN; // no solution found
+      }
+    }
+
+    /// <summary>
+    /// Gets the gas temperature after an adiabatic pressure change in a gas. ATTENTION UNCHECKED: this function assumes that the
+    /// adiabatic pressure change happens in single gas phase, i.e., no phase transitions occur.
+    /// </summary>
+    /// <param name="initialPressure">The initial pressure in Pa.</param>
+    /// <param name="initialTemperature">The initial temperature in K.</param>
+    /// <param name="targetPressure">The target pressure in Pa, i.e. the pressure after the adiabatic pressure change.</param>
+    /// <returns>The temperature of the gas in K after the adiabatic pressure change. If no solution is found, <see cref="Double.NaN"/> is returned.</returns>
+    /// <exception cref="System.ArgumentOutOfRangeException">All arguments must be positive.</exception>
+    public DimensionfulQuantity GetTemperatureAfterAdiabaticPressureChangeInGasPhase(DimensionfulQuantity initialPressure, DimensionfulQuantity initialTemperature, DimensionfulQuantity targetPressure)
+    {
+      initialPressure.CheckUnitCompatibleWith(Altaxo.Units.Pressure.Pascal.Instance, nameof(initialPressure));
+      targetPressure.CheckUnitCompatibleWith(Altaxo.Units.Pressure.Pascal.Instance, nameof(targetPressure));
+      initialTemperature.CheckUnitCompatibleWith(Altaxo.Units.Temperature.Kelvin.Instance, nameof(initialTemperature));
+
+      return new DimensionfulQuantity(GetTemperatureAfterAdiabaticPressureChangeInGasPhase(
+        initialPressure.AsValueInSIUnits, initialTemperature.AsValueInSIUnits, targetPressure.AsValueInSIUnits),
+        Altaxo.Units.Temperature.Kelvin.Instance);
+    }
 
     #region Helper functions
 

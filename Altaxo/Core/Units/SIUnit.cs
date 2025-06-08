@@ -23,8 +23,6 @@
 #endregion Copyright
 
 using System;
-using System.Collections.Generic;
-using System.Linq;
 using System.Text;
 
 #nullable enable
@@ -36,13 +34,43 @@ namespace Altaxo.Units
   /// </summary>
   public class SIUnit : IUnit, IEquatable<SIUnit>, IEquatable<IUnit>
   {
-    private sbyte _metre;
-    private sbyte _kilogram;
-    private sbyte _second;
-    private sbyte _ampere;
-    private sbyte _kelvin;
-    private sbyte _mole;
-    private sbyte _candela;
+    private readonly sbyte _metre;
+    private readonly sbyte _kilogram;
+    private readonly sbyte _second;
+    private readonly sbyte _ampere;
+    private readonly sbyte _kelvin;
+    private readonly sbyte _mole;
+    private readonly sbyte _candela;
+
+    /// <summary>
+    /// Gets the exponent for the metre component.
+    /// </summary>
+    public int ExponentMetre => _metre;
+    /// <summary>
+    /// Gets the exponent for the kilogram component.
+    /// </summary>
+    public int ExponentKilogram => _kilogram;
+    /// <summary>
+    /// Gets the exponent for the second component.
+    /// </summary>
+    public int ExponentSecond => _second;
+    /// <summary>
+    /// Gets the exponent for the Ampere component.
+    /// </summary>
+    public int ExponentAmpere => _ampere;
+    /// <summary>
+    /// Gets the exponent for the Kelvin component.
+    /// </summary>
+    public int ExponentKelvin => _kelvin;
+    /// <summary>
+    /// Gets the exponent for the mole component.
+    /// </summary>
+    public int ExponentMole => _mole;
+    /// <summary>
+    /// Gets the exponent for the candela component.
+    /// </summary>
+    public int ExponentCandela => _candela;
+
 
     /// <summary>
     /// Constructor of the SI unit.

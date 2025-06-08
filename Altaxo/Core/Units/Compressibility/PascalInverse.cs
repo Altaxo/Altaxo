@@ -2,7 +2,7 @@
 
 /////////////////////////////////////////////////////////////////////////////
 //    Altaxo:  a data processing and data plotting program
-//    Copyright (C) 2014 Dr. Dirk Lellinger
+//    Copyright (C) 2025 Dr. Dirk Lellinger
 //
 //    This program is free software; you can redistribute it and/or modify
 //    it under the terms of the GNU General Public License as published by
@@ -24,20 +24,16 @@
 
 #nullable enable
 
-namespace Altaxo.Units.Pressure
+namespace Altaxo.Units.Compressibility
 {
-  [UnitDescription("Pressure", -1, 1, -2, 0, 0, 0, 0)]
-  public class PoundPerSquareInch : UnitBase, IUnit
+  [UnitDescription("Compressibility", 1, -1, 2, 0, 0, 0, 0)]
+  public class PascalInverse : SIUnit
   {
-    public const double OnePoundPerSquareInchInPascal = (0.45359237 * 9.80665) / (0.0254 * 0.0254);
-
-    public static PoundPerSquareInch Instance { get; } = new();
-
-    private ISIPrefixList _prefixes = new SIPrefixList(new[] { SIPrefix.None, SIPrefix.Mega });
+    public static PascalInverse Instance { get; } = new();
 
     #region Serialization
 
-    [Altaxo.Serialization.Xml.XmlSerializationSurrogateFor(typeof(PoundPerSquareInch), 0)]
+    [Altaxo.Serialization.Xml.XmlSerializationSurrogateFor(typeof(PascalInverse), 0)]
     public class SerializationSurrogate0 : Altaxo.Serialization.Xml.IXmlSerializationSurrogate
     {
       public void Serialize(object obj, Altaxo.Serialization.Xml.IXmlSerializationInfo info)
@@ -46,43 +42,29 @@ namespace Altaxo.Units.Pressure
 
       public object Deserialize(object? o, Altaxo.Serialization.Xml.IXmlDeserializationInfo info, object? parent)
       {
-        return PoundPerSquareInch.Instance;
+        return PascalInverse.Instance;
       }
     }
     #endregion
 
-    protected PoundPerSquareInch()
+    private PascalInverse()
+        : base(1, -1, 2, 0, 0, 0, 0)
     {
     }
 
-    public string Name
+    public override string Name
     {
-      get { return "Pounds per square inch"; }
+      get { return "PascalInverse"; }
     }
 
-    public string ShortCut
+    public override string ShortCut
     {
-      get { return "psi"; }
+      get { return "1/Pa"; }
     }
 
-    public double ToSIUnit(double x)
+    public override ISIPrefixList Prefixes
     {
-      return x * OnePoundPerSquareInchInPascal;
-    }
-
-    public double FromSIUnit(double x)
-    {
-      return x / OnePoundPerSquareInchInPascal;
-    }
-
-    public ISIPrefixList Prefixes
-    {
-      get { return _prefixes; }
-    }
-
-    public SIUnit SIUnit
-    {
-      get { return Pascal.Instance; }
+      get { return SIPrefix.ListWithNonePrefixOnly; }
     }
   }
 }
