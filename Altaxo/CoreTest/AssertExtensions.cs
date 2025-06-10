@@ -1,8 +1,4 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 
 namespace Xunit
@@ -65,7 +61,7 @@ namespace Xunit
     public static void AreEqual(double expected, double actual, double absError, double relError)
     {
       double delta = Math.Abs(absError) + Math.Abs(relError * expected);
-      Assert.True(Math.Abs(expected - actual) <= delta);
+      Assert.True(Math.Abs(expected - actual) <= delta, $"Expected value: {expected} but actually is: {actual}");
     }
 
     public static void Equal(double expected, double actual, double absError, double relError, string comment)

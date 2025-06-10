@@ -115,6 +115,9 @@ namespace Altaxo.Calc.FitFunctions
         (() => new Viscosity.BinghamPlasticModel(), 3.5, new double[]{53, 3 }, 18.142857142857142857),
         (() => new Viscosity.HerschelBulkleyModel(), 3.5, new double[]{5, 53, 3 }, 650.67857142857142857),
         (() => new Viscosity.PowerLawModel(), 3.5, new double[]{53, 3 }, 649.25),
+        (() => new Diffusion.MassChangeAfterStepForPlaneSheet(){ Thickness = 3 }, 1/1024d + 1 / 2048d, new double[]{1 / 1024d, 7, 11, 5 }, 7.4088617766183434),
+        (() => new Diffusion.MassChangeAfterStepForPlaneSheet(){ Thickness = 3 }, 1/1024d + 60 / 2048d, new double[]{1 / 1024d, 7, 11, 5 }, 10.1670296632051528),
+        (() => new Diffusion.MassChangeAfterStepForPlaneSheet(){ Thickness = 3 }, 1/1024d - 60 / 2048d, new double[]{1 / 1024d, 7, 11, 5 }, 7),
       };
     private static DoubleEqualityComparer CompareD = new DoubleEqualityComparer(1E-100, 1E-12);
     private static DoubleEqualityComparer CompareDerivatives = new DoubleEqualityComparer(1E-4, 1E-4);
