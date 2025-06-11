@@ -97,8 +97,12 @@ namespace Altaxo.Serialization.OpenXml.Excel
               int idxSheet = -1;
               foreach (Sheet sheet in workbookPart.Workbook.Sheets)
               {
+                if (workbookPart.GetPartById(sheet.Id) is not WorksheetPart worksheetPart)
+                {
+                  continue;
+                }
+
                 ++idxSheet;
-                WorksheetPart worksheetPart = (WorksheetPart)workbookPart.GetPartById(sheet.Id);
                 var dataTable = new DataTable();
                 string title = string.Empty;
                 int groupNumber = 0;
@@ -188,9 +192,10 @@ namespace Altaxo.Serialization.OpenXml.Excel
           {
             continue;
           }
-
-          WorksheetPart worksheetPart = (WorksheetPart)workbookPart.GetPartById(sheet.Id);
-          ImportOneSheet(worksheetPart, workbookPart, table, importOptions, columnNameDictionary, fileName, sheet.Name, ref groupNumber);
+          if (workbookPart.GetPartById(sheet.Id) is WorksheetPart worksheetPart && worksheetPart.Worksheet is not null)
+          {
+            ImportOneSheet(worksheetPart, workbookPart, table, importOptions, columnNameDictionary, fileName, sheet.Name, ref groupNumber);
+          }
         }
       }
       return null;
@@ -218,30 +223,71 @@ namespace Altaxo.Serialization.OpenXml.Excel
             columns[i] = new TextColumn();
             break;
         }
+
+        // add the columns already here (because we need them to determine the property column cells), later we will rename them
+        table.DataColumns.Add(columns[i], Guid.NewGuid().ToString(), i == 0 ? ColumnKind.X : ColumnKind.V, groupNumber);
       }
 
       SheetData sheetData = worksheetPart.Worksheet.GetFirstChild<SheetData>();
 
+      var headerText = new StringBuilder();
+      int idxHeaderLine = 0;
       int idxRowExcel = -1;
       int idxRowAltaxo = -1;
       foreach (Row row in sheetData.Elements<Row>())
       {
         ++idxRowExcel;
 
-        // get the column names
-        if (idxRowExcel == docAnalysis.IndexOfCaptionLine)
-        {
-          int idxColumn = -1;
-          foreach (Cell cell in row.Elements<Cell>())
-          {
-            ++idxColumn;
-            columnNames[idxColumn] = GetCellValue(cell, workbookPart); // cell.CellValue.Text;
-          }
-        }
-
         if (idxRowExcel < docAnalysis.NumberOfMainHeaderLines)
         {
+          // get the column names
+          if (idxRowExcel == docAnalysis.IndexOfCaptionLine && !importOptions.UseNeutralColumnName)
+          {
+            int idxColumn = -1;
+            foreach (Cell cell in row.Elements<Cell>())
+            {
+              ++idxColumn;
+              columnNames[idxColumn] = GetCellValue(cell, workbookPart); // cell.CellValue.Text;
+            }
+          }
+          else
+          {
+            int idxColumn = -1;
+            DataColumn? pCol = null;
+            if (importOptions.HeaderLinesDestination == Ascii.AsciiHeaderLinesDestination.ImportToProperties ||
+                importOptions.HeaderLinesDestination == Ascii.AsciiHeaderLinesDestination.ImportToPropertiesAndNotes ||
+                importOptions.HeaderLinesDestination == Ascii.AsciiHeaderLinesDestination.ImportToPropertiesOrNotes
+              )
+            {
+              pCol = table.PropCols.EnsureExistence($"HeaderLine{idxHeaderLine}", typeof(TextColumn), ColumnKind.V, 0);
+              ++idxHeaderLine;
+            }
+            foreach (Cell cell in row.Elements<Cell>())
+            {
+              ++idxColumn;
+              var value = GetCellValue(cell, workbookPart); // cell.CellValue.Text;
+              if (!string.IsNullOrEmpty(value))
+              {
+                if (pCol is not null)
+                {
+                  pCol[table.DataColumns.GetColumnNumber(columns[idxColumn])] = value;
+                }
 
+                if (idxColumn == 0)
+                {
+                  if (headerText.Length > 0)
+                  {
+                    headerText.AppendLine();
+                  }
+                }
+                else
+                {
+                  headerText.Append("\t");
+                }
+                headerText.Append(value);
+              }
+            }
+          }
         }
         else
         {
@@ -255,13 +301,12 @@ namespace Altaxo.Serialization.OpenXml.Excel
             {
               case Ascii.AsciiColumnType.Int64:
               case Ascii.AsciiColumnType.Double:
-                if (cell.CellValue.TryGetDouble(out var dbl))
+                if (true == cell.CellValue?.TryGetDouble(out var dbl))
                   columns[idxColumn][idxRowAltaxo] = dbl;
                 break;
               case Ascii.AsciiColumnType.DateTime:
-                if (cell.CellValue.TryGetDateTime(out var dt))
+                if (true == cell.CellValue?.TryGetDateTime(out var dt))
                   columns[idxColumn][idxRowAltaxo] = dt;
-                columns[idxColumn][idxRowAltaxo] = dt;
                 break;
               default:
                 columns[idxColumn][idxRowAltaxo] = GetCellValue(cell, workbookPart); //cell.CellValue.Text;
@@ -271,7 +316,7 @@ namespace Altaxo.Serialization.OpenXml.Excel
         }
       }
 
-      // now add the columns to the table
+      // now rename the columns to the table
       for (int i = 0; i < columns.Length; ++i)
       {
         var columnName = columnNames[i];
@@ -281,7 +326,7 @@ namespace Altaxo.Serialization.OpenXml.Excel
           columnName = importOptions.NeutralColumnName;
         (columnName, var postfix) = GetColumnNameWithPostfix(columnName, table, columnNameDictionary);
 
-        table.DataColumns.Add(columns[i], columnName, ColumnKind.V, groupNumber);
+        table.DataColumns.SetColumnName(columns[i], columnName);
 
         int columnNumber = table.DataColumns.GetColumnNumber(columns[i]);
         if (importOptions.IncludeFilePathAsProperty)
@@ -294,13 +339,22 @@ namespace Altaxo.Serialization.OpenXml.Excel
         }
       }
 
+      // add the header text
+      if (headerText.Length > 0)
+      {
+        if (importOptions.HeaderLinesDestination == Ascii.AsciiHeaderLinesDestination.ImportToNotes || importOptions.HeaderLinesDestination == Ascii.AsciiHeaderLinesDestination.ImportToPropertiesAndNotes)
+        {
+          table.Notes.Text += headerText.ToString();
+        }
+      }
+
       ++groupNumber;
     }
 
     private static string GetCellValue(Cell cell, WorkbookPart workbookPart)
     {
-      string value = cell.CellValue?.InnerText;
-      if (cell.DataType != null && cell.DataType.Value == CellValues.SharedString)
+      var value = cell.CellValue?.InnerText;
+      if (cell.DataType is not null && cell.DataType.Value == CellValues.SharedString)
       {
         return workbookPart.SharedStringTablePart.SharedStringTable
             .Elements<SharedStringItem>().ElementAt(int.Parse(value)).InnerText;

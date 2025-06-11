@@ -128,7 +128,7 @@ namespace Altaxo.Serialization.OpenXml.Excel
 
       for (int i = 0; i < _lineAnalysisOfBodyLines.Count; i++)
       {
-        if (_lineAnalysisOfBodyLines[i].IsCompatibleWith(HighestScoredLineStructure))
+        if (_lineAnalysisOfBodyLines[i].IsCompatibleWith(HighestScoredLineStructure) && _lineAnalysisOfBodyLines[i].ShortCuts != new string('O', _lineAnalysisOfBodyLines[i].Count))
         {
           NumberOfMainHeaderLines = i;
           break;
@@ -174,12 +174,26 @@ namespace Altaxo.Serialization.OpenXml.Excel
           _lineAnalysisOfHeaderLines.Add(ExcelLineAnalysis.GetStructure(row));
         }
 
+        // preferredly, we search for a line with the same number of columns, but with every cell a text cell (shortcut 'T')
+        var searchedLineStructure = new string('T', HighestScoredLineStructure.Count);
         for (int i = 0; i < NumberOfMainHeaderLines; i++)
         {
-          if (_lineAnalysisOfHeaderLines[i].Count == HighestScoredLineStructure.Count)
+          if (_lineAnalysisOfHeaderLines[i].ShortCuts == searchedLineStructure)
           {
             IndexOfCaptionLine = i;
             break;
+          }
+        }
+
+        if (-1 == IndexOfCaptionLine) // if still the caption line was not found, we search for a line with the same number of columns
+        {
+          for (int i = 0; i < NumberOfMainHeaderLines; i++)
+          {
+            if (_lineAnalysisOfHeaderLines[i].Count == HighestScoredLineStructure.Count)
+            {
+              IndexOfCaptionLine = i;
+              break;
+            }
           }
         }
       }

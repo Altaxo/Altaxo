@@ -47,7 +47,7 @@ namespace Altaxo.Serialization.OpenXml.Excel
 
       foreach (Cell cell in row.Elements<Cell>())
       {
-        if (string.IsNullOrEmpty(cell.CellValue.Text))
+        if (string.IsNullOrEmpty(cell.CellValue?.Text))
         {
           tabStruc.Add(AsciiColumnInfo.DBNull);
           continue;
