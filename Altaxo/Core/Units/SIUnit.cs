@@ -214,87 +214,108 @@ namespace Altaxo.Units
         if (_metre != 0)
         {
           if (stb.Length != 0)
-            stb.Append(" ");
-          stb.Append("m");
+            stb.Append('·');
+          stb.Append('m');
           if (_metre != 1)
           {
-            stb.Append("^");
-            stb.Append(_metre.ToString(invCult));
+            AppendSuperscript(_metre, stb);
           }
         }
 
         if (_kilogram != 0)
         {
           if (stb.Length != 0)
-            stb.Append(" ");
+            stb.Append('·');
           stb.Append("kg");
           if (_kilogram != 1)
           {
-            stb.Append("^");
-            stb.Append(_kilogram.ToString(invCult));
+            AppendSuperscript(_kilogram, stb);
           }
         }
 
         if (_second != 0)
         {
           if (stb.Length != 0)
-            stb.Append(" ");
-          stb.Append("s");
+            stb.Append('·');
+          stb.Append('s');
           if (_second != 1)
           {
-            stb.Append("^");
-            stb.Append(_second.ToString(invCult));
+            AppendSuperscript(_second, stb);
           }
         }
 
         if (_ampere != 0)
         {
           if (stb.Length != 0)
-            stb.Append(" ");
-          stb.Append("A");
+            stb.Append('·');
+          stb.Append('A');
           if (_ampere != 1)
           {
-            stb.Append("^");
-            stb.Append(_ampere.ToString(invCult));
+            AppendSuperscript(_ampere, stb);
           }
         }
 
         if (_kelvin != 0)
         {
           if (stb.Length != 0)
-            stb.Append(" ");
-          stb.Append("K");
+            stb.Append('·');
+          stb.Append('K');
           if (_kelvin != 1)
           {
-            stb.Append("^");
-            stb.Append(_kelvin.ToString(invCult));
+            AppendSuperscript(_kelvin, stb);
           }
         }
 
         if (_mole != 0)
         {
           if (stb.Length != 0)
-            stb.Append(" ");
+            stb.Append('·');
           stb.Append("mol");
           if (_mole != 1)
           {
-            stb.Append("^");
-            stb.Append(_mole.ToString(invCult));
+            AppendSuperscript(_mole, stb);
           }
         }
 
         if (_candela != 0)
         {
           if (stb.Length != 0)
-            stb.Append(" ");
+            stb.Append('·');
           stb.Append("cd");
           if (_candela != 1)
           {
-            stb.Append("^");
-            stb.Append(_candela.ToString(invCult));
+            AppendSuperscript(_candela, stb);
           }
         }
         return stb.ToString();
+      }
+    }
+
+    private static void AppendSuperscript(int n, StringBuilder sb)
+    {
+      if (n == 0)
+      {
+        return;
+      }
+      else
+      {
+        foreach (var c in n.ToString(System.Globalization.CultureInfo.InvariantCulture))
+        {
+          switch (c)
+          {
+            case '-': sb.Append('⁻'); break;
+            case '0': sb.Append('⁰'); break;
+            case '1': sb.Append('¹'); break;
+            case '2': sb.Append('²'); break;
+            case '3': sb.Append('³'); break;
+            case '4': sb.Append('⁴'); break;
+            case '5': sb.Append('⁵'); break;
+            case '6': sb.Append('⁶'); break;
+            case '7': sb.Append('⁷'); break;
+            case '8': sb.Append('⁸'); break;
+            case '9': sb.Append('⁹'); break;
+          }
+        }
       }
     }
 
