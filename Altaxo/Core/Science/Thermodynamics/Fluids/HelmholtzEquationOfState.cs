@@ -1602,6 +1602,70 @@ namespace Altaxo.Science.Thermodynamics.Fluids
     }
 
     /// <summary>
+    /// Get the Joule-Thomson coefficient from a given density and temperature.
+    /// Attention - unchecked function: it is presumed, but not checked (!), that the given parameter combination describes a single phase fluid!.
+    /// </summary>
+    /// <param name="moleDensity">The density in mol/m³.</param>
+    /// <param name="temperature">The temperature in Kelvin.</param>
+    /// <returns>The Joule-Thomson coefficient in K/Pa.</returns>
+    public double JouleThomsonCoefficient_FromMoleDensityAndTemperature(double moleDensity, double temperature)
+    {
+      double delta = GetDeltaFromMoleDensity(moleDensity); // reduced density
+      double tau = GetTauFromTemperature(temperature); // reduced inverse temperature
+
+      double phir_delta = PhiR_delta_OfReducedVariables(delta, tau); // 1st derivative of PhiR with respect to delta
+      double phir_deltadelta = PhiR_deltadelta_OfReducedVariables(delta, tau); // 2nd derivative of PhiR with respect to delta
+      double phir_deltatau = PhiR_deltatau_OfReducedVariables(delta, tau); // derivative of PhiR with respect to delta and tau
+      double phir_tautau = PhiR_tautau_OfReducedVariables(delta, tau); // 2nd derivative of PhiR with respect to tau
+      double phi0_tautau = Phi0_tautau_OfReducedVariables(delta, tau);
+
+      double µRrho = -(delta * phir_delta + Pow2(delta) * phir_deltadelta + delta * tau * phir_deltatau) /
+                      (Pow2(1 + delta * phir_delta - delta * tau * phir_deltatau) - Pow2(tau) * (phi0_tautau + phir_tautau) * (1 + 2 * delta * phir_delta + Pow2(delta) * phir_deltadelta));
+
+      return µRrho / (WorkingUniversalGasConstant * moleDensity);
+    }
+
+    /// <summary>
+    /// Get the Joule-Thomson coefficient from a given mole density and temperature.
+    /// Attention - unchecked function: it is presumed, but not checked (!), that the given parameter combination describes a single phase fluid!.
+    /// </summary>
+    /// <param name="moleDensity">The density (compatible with mol/m³).</param>
+    /// <param name="temperature">The temperature (compatible with Kelvin).</param>
+    /// <returns>The Joule-Thomson coefficient  (SIUnit: K/Pa).</returns>
+    public DimensionfulQuantity JouleThomsonCoefficient_FromMoleDensityAndTemperature(DimensionfulQuantity moleDensity, DimensionfulQuantity temperature)
+    {
+      moleDensity.CheckUnitCompatibleWith(Altaxo.Units.VolumetricMolarDensity.MolePerCubicMeter.Instance, nameof(moleDensity));
+      temperature.CheckUnitCompatibleWith(Altaxo.Units.Temperature.Kelvin.Instance, nameof(temperature));
+      return new DimensionfulQuantity(JouleThomsonCoefficient_FromMoleDensityAndTemperature(moleDensity.AsValueInSIUnits, temperature.AsValueInSIUnits), new SIUnit(1, -1, 2, 0, 1, 0, 0));
+    }
+
+    /// <summary>
+    /// Get the Joule-Thomson coefficient from a given density and temperature.
+    /// Attention - unchecked function: it is presumed, but not checked (!), that the given parameter combination describes a single phase fluid!.
+    /// </summary>
+    /// <param name="massDensity">The density in kg/m³.</param>
+    /// <param name="temperature">The temperature in Kelvin.</param>
+    /// <returns>The Joule-Thomson coefficient in K/Pa.</returns>
+    public double JouleThomsonCoefficient_FromMassDensityAndTemperature(double massDensity, double temperature)
+    {
+      return JouleThomsonCoefficient_FromMoleDensityAndTemperature(massDensity / MolecularWeight, temperature);
+    }
+
+    /// <summary>
+    /// Get the Joule-Thomson coefficient from a given density and temperature.
+    /// Attention - unchecked function: it is presumed, but not checked (!), that the given parameter combination describes a single phase fluid!.
+    /// </summary>
+    /// <param name="massDensity">The density (comatible with kg/m³).</param>
+    /// <param name="temperature">The temperature (compatible with Kelvin).</param>
+    /// <returns>The Joule-Thomson coefficient  (SIUnit: K/Pa).</returns>
+    public DimensionfulQuantity JouleThomsonCoefficient_FromMassDensityAndTemperature(DimensionfulQuantity massDensity, DimensionfulQuantity temperature)
+    {
+      massDensity.CheckUnitCompatibleWith(Altaxo.Units.VolumetricMassDensity.KilogramPerCubicMeter.Instance, nameof(massDensity));
+      temperature.CheckUnitCompatibleWith(Altaxo.Units.Temperature.Kelvin.Instance, nameof(temperature));
+      return new DimensionfulQuantity(JouleThomsonCoefficient_FromMassDensityAndTemperature(massDensity.AsValueInSIUnits, temperature.AsValueInSIUnits), new SIUnit(1, -1, 2, 0, 1, 0, 0));
+    }
+
+    /// <summary>
     /// Gets the isentropic (adiabatic) derivative of the mass specific volume w.r.t. pressure from mole density and temperature.
     /// </summary>
     /// <param name="moleDensity">The mole density.</param>
