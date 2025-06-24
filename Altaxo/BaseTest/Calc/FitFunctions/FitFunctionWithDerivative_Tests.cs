@@ -118,6 +118,7 @@ namespace Altaxo.Calc.FitFunctions
         (() => new Diffusion.MassChangeAfterStepForPlaneSheet(){ Thickness = 3 }, 1/1024d + 1 / 2048d, new double[]{1 / 1024d, 7, 11, 5 }, 7.4088617766183434),
         (() => new Diffusion.MassChangeAfterStepForPlaneSheet(){ Thickness = 3 }, 1/1024d + 60 / 2048d, new double[]{1 / 1024d, 7, 11, 5 }, 10.1670296632051528),
         (() => new Diffusion.MassChangeAfterStepForPlaneSheet(){ Thickness = 3 }, 1/1024d - 60 / 2048d, new double[]{1 / 1024d, 7, 11, 5 }, 7),
+        (() => new Diffusion.MassChangeAfterExponentialEquilibrationForPlaneSheet(){ Thickness = 3 }, 1/2048d+1/512d, new double[]{1/2048d, 7, 11, 45, 1/8d }, 7.02539485993683702361100),
       };
     private static DoubleEqualityComparer CompareD = new DoubleEqualityComparer(1E-100, 1E-12);
     private static DoubleEqualityComparer CompareDerivatives = new DoubleEqualityComparer(1E-4, 1E-4);

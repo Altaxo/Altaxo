@@ -34,7 +34,7 @@ namespace Altaxo.Calc.FitFunctions.Diffusion
   /// after a concentration change that is modeled by an exponential equilibration.
   /// </summary>
   [FitFunctionClass]
-  public record MassChangeAfterExponentialEquilibrationForPlaneSheet : IFitFunction, Main.IImmutable
+  public record MassChangeAfterExponentialEquilibrationForPlaneSheet : IFitFunction, Main.IImmutable, IFitFunctionWithDerivative
   {
     /// <summary>
     /// Thickness of the plane sheet (Default value is 1).
@@ -80,7 +80,7 @@ namespace Altaxo.Calc.FitFunctions.Diffusion
 
     #endregion Serialization
 
-    [FitFunctionCreator("Mass change of plane sheet", "Diffusion", 1, 1, 4)]
+    [FitFunctionCreator("Mass change of plane sheet after exponential change", "Diffusion", 1, 1, 5)]
     [System.ComponentModel.Description("${res:Altaxo.Calc.FitFunctions.Diffusion.MassChangePlaneSheet}")]
     public static IFitFunction Create()
     {
@@ -144,6 +144,27 @@ namespace Altaxo.Calc.FitFunctions.Diffusion
       return null;
     }
 
+    /// <summary>
+    /// Evaluates the response of a unit step (M0 = 0, ΔM = 1) at t0 = 0.
+    /// </summary>
+    /// <param name="t">The time t.</param>
+    /// <param name="tau">The time constant of the concentration change tau.</param>
+    /// <param name="rv">The diffusion constand divided by the square of the total thickness of the sheet d.</param>
+    /// <param name="N">The number of terms to sum.</param>
+    /// <returns>The response to a unit step (M0 = 0, ΔM = 1) at t0 = 0.</returns>
+    protected static double EvaluateSumTerm(double t, double tau, double rv, int N)
+    {
+      double sum = 0;
+      for (int n = N; n >= 0; --n)
+      {
+        double sqr2np1 = (2 * n + 1) * Math.PI;
+        sqr2np1 *= sqr2np1; // (2n+1)^2 Pi^2
+        double term = Math.Exp(-t * rv * sqr2np1) / (sqr2np1 * (1 - sqr2np1 * rv * tau));
+        sum += term;
+      }
+      return sum;
+    }
+
 
     /// <summary>
     /// Evaluates the response of a unit step (M0 = 0, ΔM = 1) at t0 = 0.
@@ -167,21 +188,12 @@ namespace Altaxo.Calc.FitFunctions.Diffusion
 
       if (NN < 1000)
       {
-
-        double sum = 0;
-        for (int n = (int)Math.Ceiling(NN); n >= 0; --n)
-        {
-          double sqr2np1 = (2 * n + 1) * Math.PI;
-          sqr2np1 *= sqr2np1; // (2n+1)^2 Pi^2
-          double term = Math.Exp(-t * rv * sqr2np1) / (sqr2np1 * (1 - sqr2np1 * rv * tau));
-          sum += term;
-        }
-
+        double sum = EvaluateSumTerm(t, tau, rv, (int)Math.Ceiling(NN));
         return 1 - Math.Exp(-t / tau) * Math.Sqrt(4 * rv * tau) * Math.Tan(1 / Math.Sqrt(4 * rv * tau)) - 8 * sum;
       }
       else
       {
-        throw new NotImplementedException("Currently we have no approximation for small t");
+        return 0;
       }
     }
 
@@ -217,5 +229,79 @@ namespace Altaxo.Calc.FitFunctions.Diffusion
     {
       return ([null, double.Epsilon, null, double.Epsilon, double.Epsilon], null);
     }
+
+    /// <inheritdoc/>
+    public void EvaluateDerivative(IROMatrix<double> independent, IReadOnlyList<double> parameters, IReadOnlyList<bool>? isFixed, IMatrix<double> DF, IReadOnlyList<bool>? dependentVariableChoice)
+    {
+      double d = Thickness;
+      double t0 = parameters[0];
+      double M0 = parameters[1];
+      double ΔM = parameters[2];
+      double D = parameters[3];
+      double tau = parameters[4];
+
+      double Pow2(double x) => x * x;
+
+      var rv = D / (d * d); // reduced variable
+
+      for (int i = 0; i < independent.RowCount; i++)
+      {
+        double t = independent[i, 0] - t0;
+        var NN = Math.Sqrt(Math.Log(10000)) / (Math.PI * Math.Sqrt(t * rv));
+        if (t > 0 && NN < 1000)
+        {
+          int N = (int)Math.Ceiling(NN);
+          double sqrtRvTau = Math.Sqrt(rv * tau);
+          double termExp = Math.Exp(-t / tau);
+          double termExpTan = termExp * Math.Tan(0.5 / sqrtRvTau);
+
+          double sum0 = 0;
+          double sum1 = 0;
+          double sum2 = 0;
+          double sum3 = 0;
+          for (int n = N; n >= 0; --n)
+          {
+            double sqr2np1 = (2 * n + 1) * Math.PI;
+            sqr2np1 *= sqr2np1; // (2n+1)^2 Pi^2
+            double denom = 1 - sqr2np1 * rv * tau;
+            double term = Math.Exp(-t * rv * sqr2np1) / denom;
+            sum0 += term / sqr2np1; // for the function value
+            sum1 += term; // for the derivative wrt t0
+            sum2 += term / denom; // for the derivative wrt D
+            sum3 += (tau * term / denom) - (t * term);
+          }
+
+          // unit step derivatives
+          var derivWrt_t = 8 * rv * sum1 + termExpTan * 2 * rv / sqrtRvTau;
+          var derivWrt_tau = termExp / (2 * tau * Pow2(Math.Cos(0.5 / sqrtRvTau))) -
+                             8 * rv * sum2 -
+                             rv * termExpTan / sqrtRvTau -
+                             2 * t * sqrtRvTau * termExpTan / (tau * tau);
+
+          var derivWrt_rv = (termExp / (2 * rv * Pow2(Math.Cos(0.5 / sqrtRvTau))) - termExpTan * tau / sqrtRvTau) -
+                            8 * sum3;
+
+          var stepValue = 1 - 2 * termExpTan * sqrtRvTau - 8 * sum0;
+
+
+
+
+          DF[i, 0] = -ΔM * derivWrt_t; // wrt t0 
+          DF[i, 1] = 1; // wrt M0 
+          DF[i, 2] = stepValue; // wrt ΔM, which is the mass change at this time
+          DF[i, 3] = ΔM * derivWrt_rv / (d * d); // wrt D
+          DF[i, 4] = ΔM * derivWrt_tau; // wrt tau
+        }
+        else
+        {
+          DF[i, 0] = 0; // 0 wrt t0, no mass change before t0
+          DF[i, 1] = 1; // 1 wrt M0, initial mass of the sheet
+          DF[i, 2] = 0; // 0 wrt ΔM, no mass change before t0
+          DF[i, 3] = 0; // 0 wrt D, no mass change before t0
+          DF[i, 4] = 0; // 0 wrt tau, no mass change before t0
+        }
+      }
+    }
+
   }
 }
