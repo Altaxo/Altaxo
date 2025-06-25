@@ -64,6 +64,12 @@ namespace Xunit
       Assert.True(Math.Abs(expected - actual) <= delta, $"Expected value: {expected} but actually is: {actual}");
     }
 
+    public static void AreEqual(double expected, double actual, double absError, double relError, string comment)
+    {
+      double delta = Math.Abs(absError) + Math.Abs(relError * expected);
+      Assert.True(Math.Abs(expected - actual) <= delta, $"Expected value: {expected} but actually is: {actual} ({comment})");
+    }
+
     public static void Equal(double expected, double actual, double absError, double relError, string comment)
     {
       double delta = Math.Abs(absError) + Math.Abs(relError * expected);
