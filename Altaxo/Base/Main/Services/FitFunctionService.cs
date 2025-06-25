@@ -113,6 +113,36 @@ namespace Altaxo.Main.Services
     }
 
     /// <summary>
+    /// Gets all fit function creator attributes (search in all already (!) loaded assembly).
+    /// </summary>
+    /// <returns>The fit function creator attributes in all loaded assemblies. The value is a sorted list
+    /// of the attributes together with the method info it is attached to.</returns>
+    public static SortedList<FitFunctionCreatorAttribute, System.Reflection.MethodInfo> GetFitFunctionCreatorAttributes()
+    {
+      IEnumerable<Type> classentries = Altaxo.Main.Services.ReflectionService.GetUnsortedClassTypesHavingAttribute(typeof(FitFunctionClassAttribute), true);
+
+      var list = new SortedList<FitFunctionCreatorAttribute, System.Reflection.MethodInfo>();
+
+      foreach (Type definedtype in classentries)
+      {
+        System.Reflection.MethodInfo[] methods = definedtype.GetMethods(System.Reflection.BindingFlags.Static | System.Reflection.BindingFlags.Public);
+        foreach (System.Reflection.MethodInfo method in methods)
+        {
+          if (method.IsStatic && method.ReturnType != typeof(void) && method.GetParameters().Length == 0)
+          {
+            object[] attribs = method.GetCustomAttributes(typeof(FitFunctionCreatorAttribute), false);
+            foreach (FitFunctionCreatorAttribute creatorattrib in attribs)
+            {
+              list.Add(creatorattrib, method);
+            }
+          }
+        }
+      }
+
+      return list;
+    }
+
+    /// <summary>
     /// This reads a fit function, that is stored in xml format onto disc.
     /// </summary>
     /// <param name="info">The fit function information (only the file name is used from it).</param>
@@ -140,23 +170,7 @@ namespace Altaxo.Main.Services
       [MemberNotNull(nameof(_fitFunctions))]
       private void Initialize()
       {
-        IEnumerable<Type> classentries = Altaxo.Main.Services.ReflectionService.GetUnsortedClassTypesHavingAttribute(typeof(FitFunctionClassAttribute), true);
-
-        var list = new SortedList<FitFunctionCreatorAttribute, System.Reflection.MethodInfo>();
-
-        foreach (Type definedtype in classentries)
-        {
-          System.Reflection.MethodInfo[] methods = definedtype.GetMethods(System.Reflection.BindingFlags.Static | System.Reflection.BindingFlags.Public);
-          foreach (System.Reflection.MethodInfo method in methods)
-          {
-            if (method.IsStatic && method.ReturnType != typeof(void) && method.GetParameters().Length == 0)
-            {
-              object[] attribs = method.GetCustomAttributes(typeof(FitFunctionCreatorAttribute), false);
-              foreach (FitFunctionCreatorAttribute creatorattrib in attribs)
-                list.Add(creatorattrib, method);
-            }
-          }
-        }
+        var list = GetFitFunctionCreatorAttributes();
 
         _fitFunctions = new BuiltinFitFunctionInformation[list.Count];
         int j = 0;
@@ -165,6 +179,8 @@ namespace Altaxo.Main.Services
           _fitFunctions[j++] = new BuiltinFitFunctionInformation(entry.Key, entry.Value);
         }
       }
+
+
 
       /// <summary>
       /// This will get all builtin fit functions.

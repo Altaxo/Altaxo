@@ -25,6 +25,7 @@
 using System;
 using System.Collections.Generic;
 using Altaxo.Calc.Regression.Nonlinear;
+using Altaxo.Main.Services;
 using Xunit;
 
 namespace Altaxo.Calc.FitFunctions
@@ -66,14 +67,22 @@ namespace Altaxo.Calc.FitFunctions
     }
 
     /// <summary>
+    /// Collects all fit function creator attributes by means of the fit function service
+    /// </summary>
+    [Fact]
+    public void TestCreatorAttributesCollection()
+    {
+      var list = FitFunctionService.GetFitFunctionCreatorAttributes();
+      Assert.NotEmpty(list);
+    }
+
+    /// <summary>
     /// Collects all fit function creator attributes. Then creates the fit functions and checks if the number of parameters, of the dependent and independent variables is correct.
     /// </summary>
     [Fact]
     public void TestCreatorNumberOfParameters()
     {
       IEnumerable<Type> classentries = Altaxo.Main.Services.ReflectionService.GetUnsortedClassTypesHavingAttribute(typeof(FitFunctionClassAttribute), true);
-
-      var list = new SortedList<FitFunctionCreatorAttribute, System.Reflection.MethodInfo>();
 
       foreach (Type definedtype in classentries)
       {
