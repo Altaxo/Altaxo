@@ -1785,6 +1785,71 @@ namespace Altaxo.Science.Thermodynamics.Fluids
         Altaxo.Units.Temperature.Kelvin.Instance);
     }
 
+
+    /// <summary>
+    /// Gets the gas temperature after an isenthalpic pressure change in a gas. For example, this is the case if the gas is expanded through a throttle valve.
+    /// ATTENTION UNCHECKED: this function assumes that the
+    /// isenthalpic pressure change happens in single gas phase, i.e., no phase transitions occur.
+    /// </summary>
+    /// <param name="initialPressure">The initial pressure in Pa.</param>
+    /// <param name="initialTemperature">The initial temperature in K.</param>
+    /// <param name="targetPressure">The target pressure in Pa, i.e. the pressure after the adiabatic pressure change.</param>
+    /// <returns>The temperature of the gas in K after the adiabatic pressure change. If no solution is found, <see cref="Double.NaN"/> is returned.</returns>
+    /// <exception cref="System.ArgumentOutOfRangeException">All arguments must be positive.</exception>
+    public double GetTemperatureAfterIsenthalpicPressureChangeInGasPhase(double initialPressure, double initialTemperature, double targetPressure)
+    {
+      if (initialPressure <= 0 || initialTemperature <= 0 || targetPressure <= 0)
+        throw new ArgumentOutOfRangeException("All arguments must be positive.");
+
+      /// <summary>
+      /// Gets the total enthalpy in J/kg) for a given pressure and temperature.
+      /// </summary>
+      /// <param name="pressure">The pressure.</param>
+      /// <param name="temperature">The temperature.</param>
+      /// <returns>Entropy in J/kg</returns>
+      double GetTotalEnthalpy(double pressure, double temperature)
+      {
+        var moleDensity = MoleDensity_FromPressureAndTemperature(pressure, temperature);
+        return MoleSpecificEnthalpy_FromMoleDensityAndTemperature(moleDensity, temperature);
+      }
+
+      var initialEnthalpy = GetTotalEnthalpy(initialPressure, initialTemperature);
+
+      double T1 = initialTemperature;
+      double T2 = initialTemperature + Math.Min(1, initialTemperature / 100); // T2 is always higher that T1 to ensure that it is still a gas
+
+
+      if (Altaxo.Calc.RootFinding.QuickRootFinding.BracketRootByExtensionOnly(T => GetTotalEnthalpy(targetPressure, T) - initialEnthalpy, 0, ref T1, ref T2))
+      {
+        return Altaxo.Calc.RootFinding.QuickRootFinding.ByBrentsAlgorithm(T => GetTotalEnthalpy(targetPressure, T) - initialEnthalpy, T1, T2);
+      }
+      else
+      {
+        return double.NaN; // no solution found
+      }
+    }
+
+    /// <summary>
+    /// Gets the gas temperature after an isenthalpic pressure change in a gas. For example, this is the case if the gas is expanded through a throttle valve.
+    /// ATTENTION UNCHECKED: this function assumes that the
+    /// adiabatic pressure change happens in single gas phase, i.e., no phase transitions occur.
+    /// </summary>
+    /// <param name="initialPressure">The initial pressure in Pa.</param>
+    /// <param name="initialTemperature">The initial temperature in K.</param>
+    /// <param name="targetPressure">The target pressure in Pa, i.e. the pressure after the adiabatic pressure change.</param>
+    /// <returns>The temperature of the gas in K after the adiabatic pressure change. If no solution is found, <see cref="Double.NaN"/> is returned.</returns>
+    /// <exception cref="System.ArgumentOutOfRangeException">All arguments must be positive.</exception>
+    public DimensionfulQuantity GetTemperatureAfterIsenthalpicPressureChangeInGasPhase(DimensionfulQuantity initialPressure, DimensionfulQuantity initialTemperature, DimensionfulQuantity targetPressure)
+    {
+      initialPressure.CheckUnitCompatibleWith(Altaxo.Units.Pressure.Pascal.Instance, nameof(initialPressure));
+      targetPressure.CheckUnitCompatibleWith(Altaxo.Units.Pressure.Pascal.Instance, nameof(targetPressure));
+      initialTemperature.CheckUnitCompatibleWith(Altaxo.Units.Temperature.Kelvin.Instance, nameof(initialTemperature));
+
+      return new DimensionfulQuantity(GetTemperatureAfterIsenthalpicPressureChangeInGasPhase(
+        initialPressure.AsValueInSIUnits, initialTemperature.AsValueInSIUnits, targetPressure.AsValueInSIUnits),
+        Altaxo.Units.Temperature.Kelvin.Instance);
+    }
+
     #region Helper functions
 
     protected static double Pow2(double x)
