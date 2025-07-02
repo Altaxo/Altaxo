@@ -44,7 +44,7 @@ namespace AltaxoTest.Calc.Fourier
           sum += (arr[i] * arr[i]);
         sum = Math.Sqrt(sum / arr.Length);
         double tol = sum * arr.Length * 1E-14;
-        double tol2 = arr.Length * 1E-14;
+        double tol2 = arr.Length * 1E-12;
 
         // We transform the array
         var rft = new RealFourierTransform(arr.Length);

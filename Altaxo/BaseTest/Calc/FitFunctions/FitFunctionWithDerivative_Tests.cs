@@ -122,6 +122,9 @@ namespace Altaxo.Calc.FitFunctions
         (() => new Diffusion.MassChangeAfterStepForSphere(){ Radius = 3 }, 1/1024d + 1 / 2048d, new double[]{1 / 1024d, 7, 11, 5 }, 7.604340842010848),
         (() => new Diffusion.MassChangeAfterStepForSphere(){ Radius = 3 }, 1/1024d + 1000 / 2048d, new double[]{1 / 1024d, 7, 11, 5 }, 17.540228357368257),
         (() => new Diffusion.MassChangeAfterStepForSphere(){ Radius = 3 }, 1/1024d - 1000 / 2048d, new double[]{1 / 1024d, 7, 11, 5 }, 7),
+        (() => new Diffusion.MassChangeAfterExponentialEquilibrationForSphere(){ Radius = 3 }, 1/1024d + 1 / 512d, new double[]{1 / 1024d, 7, 11, 45, 1/8d }, 7.03558765166870772153834),
+        (() => new Diffusion.MassChangeAfterExponentialEquilibrationForSphere(){ Radius = 3 }, 1/1024d + 1 / 32d, new double[]{1 / 1024d, 7, 11, 45, 1/8d }, 8.63051095433848522423421),
+        (() => new Diffusion.MassChangeAfterExponentialEquilibrationForSphere(){ Radius = 3 }, 1/1024d - 1000 / 2048d, new double[]{1 / 1024d, 7, 11, 45, 1 / 8d }, 7),
       };
     private static DoubleEqualityComparer CompareD = new DoubleEqualityComparer(1E-100, 1E-12);
     private static DoubleEqualityComparer CompareDerivatives = new DoubleEqualityComparer(1E-4, 1E-4);
