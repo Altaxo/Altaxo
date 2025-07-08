@@ -33,6 +33,9 @@ namespace Altaxo.Calc.FitFunctions.Diffusion
   /// Describes the mass change of a plane sheet (with given thickness and infinite lateral dimensions) in a diffusion process
   /// after a concentration change that is modeled by an exponential equilibration.
   /// </summary>
+  /// <remarks>
+  /// Ref. [1]: Crank, "The Mathematics of Diffusion", 2nd edition, 1975, Oxford University Press.
+  /// </remarks>
   [FitFunctionClass]
   public record MassChangeAfterExponentialEquilibrationForSphere : IFitFunction, Main.IImmutable, IFitFunctionWithDerivative
   {
@@ -96,7 +99,7 @@ namespace Altaxo.Calc.FitFunctions.Diffusion
 
     #endregion Serialization
 
-    [FitFunctionCreator("Mass change of a sphere after exponential change", "Diffusion", 1, 1, 5)]
+    [FitFunctionCreator("Mass change of a sphere after exponential equilibration concentration change", "Diffusion", 1, 1, 5)]
     [System.ComponentModel.Description("${res:Altaxo.Calc.FitFunctions.Diffusion.MassChangeExponentialEquilibrationForSphere}")]
     public static IFitFunction Create()
     {
@@ -204,6 +207,7 @@ namespace Altaxo.Calc.FitFunctions.Diffusion
       var NN = 4 * Math.Sqrt(Math.Log(10) / (t * rv)) / Math.PI;
       if (NN < 1000)
       {
+        // Evaluate the unit step response, see Ref. [1], p. 92, eq. (6.26)
         double sum = EvaluateSumTerm(t, tau, rv, (int)Math.Ceiling(NN));
         return 1 - 3 * rv * tau * Math.Exp(-t / tau) * (1 - 1 / (Math.Sqrt(rv * tau) * Math.Tan(1 / Math.Sqrt(rv * tau)))) + 6 / (rv * tau) * sum;
       }
