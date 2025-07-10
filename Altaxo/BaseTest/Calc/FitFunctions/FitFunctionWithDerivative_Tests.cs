@@ -128,6 +128,9 @@ namespace Altaxo.Calc.FitFunctions
         (() => new Diffusion.MassChangeAfterStepForCylinder(){ Radius = 3 }, 1/1024d + 1 / 4096d, new double[]{1 / 1024d, 7, 11, 5 }, 7.287613671010323),
         (() => new Diffusion.MassChangeAfterStepForCylinder(){ Radius = 3 }, 1/1024d + 1000 / 2048d, new double[]{1 / 1024d, 7, 11, 5 }, 16.41484914602818),
         (() => new Diffusion.MassChangeAfterStepForCylinder(){ Radius = 3 }, 1/1024d - 1000 / 2048d, new double[]{1 / 1024d, 7, 11, 5 }, 7),
+        (() => new Diffusion.MassChangeAfterExponentialEquilibrationForCylinder(){ Radius = 3 }, 1/1024d + 1 / 512d, new double[]{1 / 1024d, 7, 11, 5, 1/13d }, 7.0135510959042729),
+        (() => new Diffusion.MassChangeAfterExponentialEquilibrationForCylinder(){ Radius = 3 }, 17 +2, new double[]{2, 7, 11, 5, 13 }, 14.972416762220183),
+        (() => new Diffusion.MassChangeAfterExponentialEquilibrationForCylinder(){ Radius = 3 }, 1/1024d - 1 / 512d, new double[]{1 / 1024d, 7, 11, 5, 1/13d }, 7),
       };
     private static DoubleEqualityComparer CompareD = new DoubleEqualityComparer(1E-100, 1E-12);
     private static DoubleEqualityComparer CompareDerivatives = new DoubleEqualityComparer(1E-4, 1E-4);
