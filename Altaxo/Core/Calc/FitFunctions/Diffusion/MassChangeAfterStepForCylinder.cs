@@ -191,21 +191,22 @@ namespace Altaxo.Calc.FitFunctions.Diffusion
     private const double RV_SumTo2 = 929 / 2048d;
     private const double RV_SumTo1 = 2340 / 2048d;
 
-    /// <inheritdoc/>
-    public static double Evaluate(double t, double r, double t0, double M0, double ΔM, double D)
+
+    /// <summary>
+    /// Evaluates the response of a unit step in dependence of the reduced variable.
+    /// </summary>
+    /// <param name="rv">Reduced variable rv = D*t/r², where D is the diffusion coefficient, t is the time and r is the radius of the sphere.</param>
+    /// <returns>The response to a unit step in dependence on rv and rz.</returns>
+    public static double EvaluateUnitStepWrtReducedVariable(double rv)
     {
-      double tDiff = t - t0;
-      if (tDiff <= 0)
+      if (rv <= 0)
       {
-        return M0; // No mass change before t0
+        return 0; // No mass change before t0
       }
-
-      var rv = D * tDiff / (r * r); // reduced variable
-
-      if (rv < RV_SmallApproximation)
+      else if (rv < RV_SmallApproximation)
       {
         // If the reduced variable is very small, we can use a small approximation, see Ref. [1], eq. 5.25
-        return M0 + ΔM * RMath.EvaluatePolynomOrderAscending(Math.Sqrt(rv), _smallApproximationCoefficients);
+        return RMath.EvaluatePolynomOrderAscending(Math.Sqrt(rv), _smallApproximationCoefficients);
       }
       else
       {
@@ -229,8 +230,78 @@ namespace Altaxo.Calc.FitFunctions.Diffusion
           sqbess *= sqbess;
           sum += Math.Exp(-rv * sqbess) / sqbess;
         }
-        return M0 + ΔM * (1 - 4 * sum); // Ref. [1], eq. 5.23
+        return 1 - 4 * sum; // Ref. [1], eq. 5.23
       }
+    }
+
+    /// <summary>
+    /// Evaluates the response of a unit step in dependence of the reduced variables.
+    /// </summary>
+    /// <param name="rv">Reduced variable rv = D*t/r², where D is the diffusion coefficient, t is the time and r is the radius of the sphere.</param>
+    /// <returns>The response to a unit step in dependence on rv and rz, and the derivatives w.r.t. rv and rz.</returns>
+    public static (double functionValue, double derivativeWrtRv) EvaluateUnitStepAndDerivativesWrtReducedVariable(double rv)
+    {
+      if (rv <= 0)
+      {
+        return (0, 0); // No mass change before t0
+      }
+      else if (rv <= RV_SmallApproximation)
+      {
+        var sqrtRV = Math.Sqrt(rv);
+        var stepValue = RMath.EvaluatePolynomOrderAscending(Math.Sqrt(rv), _smallApproximationCoefficients); // Function value for the small approximation
+        var derivWrtRV = RMath.EvaluatePolynom1stDerivativeOrderAscending(sqrtRV, _smallApproximationCoefficients) / (2 * sqrtRV); // Derivative of the small approximation, Crank, eq. 4.22
+        return (stepValue, derivWrtRV);
+      }
+      else
+      {
+        int N = rv switch
+        {
+          >= RV_SumTo1 => 1,
+          >= RV_SumTo2 => 2,
+          >= RV_SumTo3 => 3,
+          >= RV_SumTo4 => 4,
+          >= RV_SumTo5 => 5,
+          >= RV_SumTo6 => 6,
+          >= RV_SumTo7 => 7,
+          >= RV_SumTo8 => 8,
+          >= RV_SumTo9 => 9,
+          _ => (int)Math.Ceiling(0.25 + Math.Sqrt(9 / 16d - Math.Log(1E-18) / (rv * Math.PI * Math.PI))), // Calculate the required number of summands
+        };
+
+        double sum0 = 0;
+        double sum1 = 0;
+        for (int n = N; n >= 1; n--)
+        {
+          double sqbess = BesselRelated.BesselJ0Zero(n);
+          sqbess *= sqbess;
+          double term = Math.Exp(-rv * sqbess);
+          sum0 += term / sqbess; // Sum for the function value
+          sum1 += term;
+        }
+
+        var stepValue = 1 - 4 * sum0; // Function value
+        var derivWrtRV = 4 * sum1;
+
+        return (stepValue, derivWrtRV); // Ref. [1], eq. 5.23
+      }
+    }
+
+    /// <summary>
+    /// Evaluates the response of a unit step (M0 = 0, ΔM = 1) at t0 = 0.
+    /// </summary>
+    /// <param name="t">The time t.</param>
+    /// <param name="d">The total thickness of the sheet d.</param>
+    /// <param name="D">The diffusion constant D.</param>
+    /// <returns>The response to a unit step (M0 = 0, ΔM = 1) at t0 = 0.</returns>
+    public static double EvaluateUnitStep(double t, double d, double D)
+    {
+      return EvaluateUnitStepWrtReducedVariable(D * t / (d * d));
+    }
+
+    /// <inheritdoc/>
+    public static double Evaluate(double t, double r, double t0, double M0, double ΔM, double D)
+    {
+      return M0 + ΔM * EvaluateUnitStepWrtReducedVariable(D * (t - t0) / (r * r));
     }
 
     /// <inheritdoc/>
@@ -265,58 +336,21 @@ namespace Altaxo.Calc.FitFunctions.Diffusion
     {
       double d = Radius;
       double t0 = parameters[0];
-      double M0 = parameters[1];
       double ΔM = parameters[2];
       double D = parameters[3];
 
       for (int i = 0; i < independent.RowCount; i++)
       {
-        double t = independent[i, 0];
-        double tDiff = t - t0;
-        if (tDiff > 0)
-        {
-          var rv = D * tDiff / (d * d); // reduced variable
-          double derivWrtRV; // Derivative with respect to reduced variable
-          double stepValue;
-          if (rv <= RV_SmallApproximation)
-          {
-            var sqrtRV = Math.Sqrt(rv);
-            derivWrtRV = RMath.EvaluatePolynom1stDerivativeOrderAscending(sqrtRV, _smallApproximationCoefficients) / (2 * sqrtRV); // Derivative of the small approximation, Crank, eq. 4.22
-            stepValue = RMath.EvaluatePolynomOrderAscending(Math.Sqrt(rv), _smallApproximationCoefficients); // Function value for the small approximation
-          }
-          else
-          {
-            int N = rv switch
-            {
-              >= RV_SumTo1 => 1,
-              >= RV_SumTo2 => 2,
-              >= RV_SumTo3 => 3,
-              >= RV_SumTo4 => 4,
-              >= RV_SumTo5 => 5,
-              >= RV_SumTo6 => 6,
-              >= RV_SumTo7 => 7,
-              >= RV_SumTo8 => 8,
-              >= RV_SumTo9 => 9,
-              _ => (int)Math.Ceiling(0.25 + Math.Sqrt(9 / 16d - Math.Log(1E-18) / (rv * Math.PI * Math.PI))), // Calculate the required number of summands
-            };
+        double t = independent[i, 0] - t0;
+        var rv = D * t / (d * d); // reduced variable
 
-            double sum0 = 0;
-            double sum1 = 0;
-            for (int n = N; n >= 1; n--)
-            {
-              double sqbess = BesselRelated.BesselJ0Zero(n);
-              sqbess *= sqbess;
-              double term = Math.Exp(-rv * sqbess);
-              sum0 += term / sqbess; // Sum for the function value
-              sum1 += term;
-            }
-            derivWrtRV = 4 * sum1;
-            stepValue = 1 - 4 * sum0; // Function value
-          }
+        if (t > 0)
+        {
+          var (stepValue, derivWrtRV) = EvaluateUnitStepAndDerivativesWrtReducedVariable(rv);
           DF[i, 0] = -ΔM * derivWrtRV * D / (d * d); // wrt t0 
           DF[i, 1] = 1; // wrt M0 
           DF[i, 2] = stepValue; // wrt ΔM, which is the mass change at this time
-          DF[i, 3] = ΔM * derivWrtRV * tDiff / (d * d); // wrt D 
+          DF[i, 3] = ΔM * derivWrtRV * t / (d * d); // wrt D 
         }
         else
         {

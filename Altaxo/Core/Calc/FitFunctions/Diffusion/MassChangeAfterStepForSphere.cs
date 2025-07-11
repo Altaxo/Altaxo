@@ -173,20 +173,20 @@ namespace Altaxo.Calc.FitFunctions.Diffusion
     private const double RV_SumTo2 = 788 / 2048d;
     private const double RV_SumTo1 = 1814 / 2048d;
 
-    /// <inheritdoc/>
-    public static double Evaluate(double t, double d, double t0, double M0, double ΔM, double D)
+    /// <summary>
+    /// Evaluates the response of a unit step in dependence of the reduced variable.
+    /// </summary>
+    /// <param name="rv">Reduced variable rv = D*t/r², where D is the diffusion coefficient, t is the time and r is the radius of the sphere.</param>
+    /// <returns>The response to a unit step in dependence on rv and rz.</returns>
+    public static double EvaluateUnitStepWrtReducedVariable(double rv)
     {
-      double tDiff = t - t0;
-      if (tDiff <= 0)
+      if (rv <= 0)
       {
-        return M0; // No mass change before t0
+        return 0; // No mass change before t0
       }
-
-      var rv = D * tDiff / (d * d); // reduced variable
-
-      if (rv <= RV_SmallApproximation)
+      else if (rv <= RV_SmallApproximation)
       {
-        return M0 + ΔM * (6 * Math.Sqrt(rv / Math.PI) - 3 * rv); // Small approximation, Crank, eq. 6.22, but without ierfc term
+        return 6 * Math.Sqrt(rv / Math.PI) - 3 * rv; // Small approximation, Crank, eq. 6.22, but without ierfc term
       }
       else
       {
@@ -210,8 +210,75 @@ namespace Altaxo.Calc.FitFunctions.Diffusion
           npi *= npi; // n^2 Pi^2
           sum += Math.Exp(-rv * npi) / npi;
         }
-        return M0 + ΔM * (1 - 6 * sum); // Crank, eq. 6.20
+        return 1 - 6 * sum; // Crank, eq. 6.20
       }
+    }
+
+    /// <summary>
+    /// Evaluates the response of a unit step in dependence of the reduced variables.
+    /// </summary>
+    /// <param name="rv">Reduced variable rv = D*t/r², where D is the diffusion coefficient, t is the time and r is the radius of the sphere.</param>
+    /// <returns>The response to a unit step in dependence on rv and rz, and the derivatives w.r.t. rv and rz.</returns>
+    public static (double functionValue, double derivativeWrtRv) EvaluateUnitStepAndDerivativesWrtReducedVariable(double rv)
+    {
+      if (rv <= 0)
+      {
+        return (0, 0); // No mass change before t0
+      }
+      else if (rv <= RV_SmallApproximation)
+      {
+        var stepValue = (6 * Math.Sqrt(rv / Math.PI) - 3 * rv); // Function value for the small approximation
+        var derivWrtRV = 3 / Math.Sqrt(rv * Math.PI) - 3; // Derivative of the small approximation, Crank, eq. 4.22
+        return (stepValue, derivWrtRV);
+      }
+      else
+      {
+        int N = rv switch
+        {
+          >= RV_SumTo1 => 1,
+          >= RV_SumTo2 => 2,
+          >= RV_SumTo3 => 3,
+          >= RV_SumTo4 => 4,
+          >= RV_SumTo5 => 5,
+          >= RV_SumTo6 => 6,
+          >= RV_SumTo7 => 7,
+          >= RV_SumTo8 => 8,
+          >= RV_SumTo9 => 9,
+          _ => 10
+        };
+
+        double sum0 = 0;
+        double sum1 = 0;
+        for (int n = N; n >= 1; n--)
+        {
+          double npi = n * Math.PI;
+          npi *= npi; // n^2 Pi^2
+          double term = Math.Exp(-rv * npi);
+          sum0 += term / npi; // Sum for the function value
+          sum1 += term;
+        }
+
+        return (1 - 6 * sum0, 6 * sum1);
+      }
+    }
+
+    /// <summary>
+    /// Evaluates the response of a unit step (M0 = 0, ΔM = 1) at t0 = 0.
+    /// </summary>
+    /// <param name="t">The time t.</param>
+    /// <param name="d">The total thickness of the sheet d.</param>
+    /// <param name="D">The diffusion constant D.</param>
+    /// <returns>The response to a unit step (M0 = 0, ΔM = 1) at t0 = 0.</returns>
+    public static double EvaluateUnitStep(double t, double d, double D)
+    {
+      return EvaluateUnitStepWrtReducedVariable(D * t / (d * d));
+    }
+
+    /// <inheritdoc/>
+    public static double Evaluate(double t, double d, double t0, double M0, double ΔM, double D)
+    {
+      double tDiff = t - t0;
+      return M0 + ΔM * EvaluateUnitStepWrtReducedVariable(D * tDiff / (d * d));
     }
 
     /// <inheritdoc/>
@@ -246,57 +313,21 @@ namespace Altaxo.Calc.FitFunctions.Diffusion
     {
       double d = Radius;
       double t0 = parameters[0];
-      double M0 = parameters[1];
       double ΔM = parameters[2];
       double D = parameters[3];
 
       for (int i = 0; i < independent.RowCount; i++)
       {
-        double t = independent[i, 0];
-        double tDiff = t - t0;
-        if (tDiff > 0)
+        double t = independent[i, 0] - t0;
+        if (t > 0)
         {
-          var rv = D * tDiff / (d * d); // reduced variable
-          double derivWrtRV; // Derivative with respect to reduced variable
-          double stepValue;
-          if (rv <= RV_SmallApproximation)
-          {
-            derivWrtRV = -3 + 3 / Math.Sqrt(rv * Math.PI); // Derivative of the small approximation, Crank, eq. 4.22
-            stepValue = (6 * Math.Sqrt(rv / Math.PI) - 3 * rv); // Function value for the small approximation
-          }
-          else
-          {
-            int N = rv switch
-            {
-              >= RV_SumTo1 => 1,
-              >= RV_SumTo2 => 2,
-              >= RV_SumTo3 => 3,
-              >= RV_SumTo4 => 4,
-              >= RV_SumTo5 => 5,
-              >= RV_SumTo6 => 6,
-              >= RV_SumTo7 => 7,
-              >= RV_SumTo8 => 8,
-              >= RV_SumTo9 => 9,
-              _ => 10
-            };
+          var rv = D * t / (d * d); // reduced variable
+          var (stepValue, derivWrtRV) = EvaluateUnitStepAndDerivativesWrtReducedVariable(rv);
 
-            double sum0 = 0;
-            double sum1 = 0;
-            for (int n = N; n >= 1; n--)
-            {
-              double npi = n * Math.PI;
-              npi *= npi; // n^2 Pi^2
-              double term = Math.Exp(-rv * npi);
-              sum0 += term / npi; // Sum for the function value
-              sum1 += term;
-            }
-            derivWrtRV = 6 * sum1;
-            stepValue = 1 - 6 * sum0; // Function value
-          }
           DF[i, 0] = -ΔM * derivWrtRV * D / (d * d); // wrt t0 
           DF[i, 1] = 1; // wrt M0 
           DF[i, 2] = stepValue; // wrt ΔM, which is the mass change at this time
-          DF[i, 3] = ΔM * derivWrtRV * tDiff / (d * d); // wrt D 
+          DF[i, 3] = ΔM * derivWrtRV * t / (d * d); // wrt D 
         }
         else
         {

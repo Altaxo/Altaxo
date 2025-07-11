@@ -165,12 +165,11 @@ namespace Altaxo.Calc.FitFunctions.Diffusion
     /// <returns>The response to a unit step in dependence on rv and rz.</returns>
     public static double EvaluateUnitStepWrtReducedVariable(double rv)
     {
-      if (!(rv > 0))
+      if (rv <= 0)
       {
         return 0; // No mass change before t0
       }
-
-      if (rv <= RV_SmallApproximation)
+      else if (rv <= RV_SmallApproximation)
       {
         return Math.Sqrt(rv) * C2BySqrtPi; // Small approximation, Crank, eq. 4.18
       }
@@ -212,13 +211,11 @@ namespace Altaxo.Calc.FitFunctions.Diffusion
     /// <returns>The response to a unit step in dependence on rv and rz, and the derivatives w.r.t. rv and rz.</returns>
     public static (double functionValue, double derivativeWrtRv) EvaluateUnitStepAndDerivativesWrtReducedVariable(double rv)
     {
-
-      if (!(rv > 0))
+      if (rv <= 0)
       {
         return (0, 0); // No mass change before t0
       }
-
-      if (rv <= RV_SmallApproximation)
+      else if (rv <= RV_SmallApproximation)
       {
         return (C2BySqrtPi * Math.Sqrt(rv), 0.5 * C2BySqrtPi / Math.Sqrt(rv)); // Small approximation, Crank, eq. 4.18
       }
@@ -270,11 +267,6 @@ namespace Altaxo.Calc.FitFunctions.Diffusion
     /// <returns>The response to a unit step (M0 = 0, ΔM = 1) at t0 = 0.</returns>
     public static double EvaluateUnitStep(double t, double d, double D)
     {
-      if (!(t > 0))
-      {
-        return 0; // No mass change before t0
-      }
-
       return EvaluateUnitStepWrtReducedVariable(D * t / (d * d));
     }
 
