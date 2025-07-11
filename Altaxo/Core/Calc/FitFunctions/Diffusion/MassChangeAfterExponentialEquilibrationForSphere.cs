@@ -164,27 +164,98 @@ namespace Altaxo.Calc.FitFunctions.Diffusion
     }
 
     /// <summary>
-    /// Evaluates the response of a unit step (M0 = 0, ΔM = 1) at t0 = 0.
+    /// Evaluates the response of a unit step in dependence of the reduced variables.
     /// </summary>
-    /// <param name="t">The time t.</param>
-    /// <param name="tau">The time constant of the concentration change tau.</param>
-    /// <param name="rv">The diffusion constand divided by the square of the total thickness of the sheet d.</param>
-    /// <param name="N">The number of terms to sum.</param>
-    /// <returns>The response to a unit step (M0 = 0, ΔM = 1) at t0 = 0.</returns>
-    protected static double EvaluateSumTerm(double t, double tau, double rv, int N)
+    /// <param name="rv">Reduced variable rv = D*t/r², where D is the diffusion coefficient, t is the time and r is the radius of the cylinder.</param>
+    /// <param name="rz">Reduced variable rz = D*τ/r², where D is the diffusion coefficient, τ is the time constant of the outer concentration change, and r is the radius of the cylinder.</param>
+    /// <returns>The response to a unit step in dependence on rv and rz.</returns>
+    public static double EvaluateUnitStepWrtReducedVariables(double rv, double rz)
     {
-      double OneByRVTau = 1 / (rv * tau);
-      double sum = 0;
-      for (int n = N; n >= 1; --n)
+      if (!(rv > 0))
       {
-        double sqrnpi = n * Math.PI;
-        sqrnpi *= sqrnpi; // n^2 Pi^2
-        double term = Math.Exp(-t * rv * sqrnpi) / (sqrnpi * (sqrnpi - OneByRVTau));
-        sum += term;
+        return 0; // No mass change before t0
       }
-      return sum;
+
+      // Calculate the number of terms to reach the smallest term to be 10^-16
+      var NN = 4 * Math.Sqrt(Math.Log(10) / (rv)) / Math.PI;
+      if (NN < 1000)
+      {
+        double sum = 0;
+        for (int n = (int)NN; n >= 1; --n)
+        {
+          double sqrnpi = n * Math.PI;
+          sqrnpi *= sqrnpi;
+          sum += Math.Exp(-rv * sqrnpi) / (sqrnpi * (1 - rz * sqrnpi));
+        }
+        var oneBySqrtRz = 1 / Math.Sqrt(rz);
+
+        // Evaluate the unit step response, see Ref. [1], p. 75, eq. (5.29)
+        return 1
+               - 3 * rz * Math.Exp(-rv / rz) * (1 - oneBySqrtRz / Math.Tan(oneBySqrtRz))
+               - 6 * sum;
+      }
+      else
+      {
+        return 0;
+      }
     }
 
+    /// <summary>
+    /// Evaluates the response of a unit step in dependence of the reduced variables.
+    /// </summary>
+    /// <param name="rv">Reduced variable rv = D*t/r², where D is the diffusion coefficient, t is the time and r is the radius of the cylinder.</param>
+    /// <param name="rz">Reduced variable rz = D*τ/r², where D is the diffusion coefficient, τ is the time constant of the outer concentration change, and r is the radius of the cylinder.</param>
+    /// <returns>The response to a unit step in dependence on rv and rz, and the derivatives w.r.t. rv and rz.</returns>
+    public static (double functionValue, double derivativeWrtRv, double derivativeWrtRz) EvaluateUnitStepAndDerivativesWrtReducedVariables(double rv, double rz)
+    {
+      if (!(rv > 0))
+      {
+        return (0, 0, 0); // No mass change before t0
+      }
+
+      // Calculate the number of terms to reach the smallest term to be 10^-16
+      var NN = 4 * Math.Sqrt(Math.Log(10) / (rv)) / Math.PI;
+      if (NN < 1000)
+      {
+        double sum0 = 0;
+        double sum1 = 0;
+        double sum2 = 0;
+        for (int n = (int)NN; n >= 1; --n)
+        {
+          double sqrnpi = n * Math.PI;
+          sqrnpi *= sqrnpi;
+          var denom = (1 - rz * sqrnpi);
+          var term = Math.Exp(-rv * sqrnpi) / denom;
+          sum0 += term / sqrnpi; // for the function value
+          sum1 += term; // for the derivative wrt rv
+          sum2 += term / denom; // for the derivative wrt rz
+        }
+        var oneBySqrtRz = 1 / Math.Sqrt(rz);
+        var cot = 1 / Math.Tan(oneBySqrtRz);
+        var csc = 1 / Math.Sin(oneBySqrtRz);
+
+        // Evaluate the unit step response, see Ref. [1], p. 75, eq. (5.29)
+        var fv = 1
+               - 3 * rz * Math.Exp(-rv / rz) * (1 - oneBySqrtRz * cot)
+               - 6 * sum0;
+
+        // derivative w.r.t. rv
+        var dWrtRv =
+          3 * Math.Exp(-rv / rz) * (1 - oneBySqrtRz * cot)
+          + 6 * sum1;
+
+        // derivative w.r.t. rz
+        var dWrtRz =
+          1.5 * Math.Exp(-rv / rz) / rz * ((2 * rv + rz) * cot * oneBySqrtRz - 2 * (rv + rz) + csc * csc)
+          - 6 * sum2;
+
+        return (fv, dWrtRv, dWrtRz);
+      }
+      else
+      {
+        return (0, 0, 0);
+      }
+    }
 
     /// <summary>
     /// Evaluates the response of a unit step (M0 = 0, ΔM = 1) at t0 = 0.
@@ -200,21 +271,7 @@ namespace Altaxo.Calc.FitFunctions.Diffusion
       {
         return 0; // No mass change before t0
       }
-
-      var rv = D / (r * r); // reduced variable
-
-      // Calculate the number of terms to reach the smallest term to be 10^-16
-      var NN = 4 * Math.Sqrt(Math.Log(10) / (t * rv)) / Math.PI;
-      if (NN < 1000)
-      {
-        // Evaluate the unit step response, see Ref. [1], p. 92, eq. (6.26)
-        double sum = EvaluateSumTerm(t, tau, rv, (int)Math.Ceiling(NN));
-        return 1 - 3 * rv * tau * Math.Exp(-t / tau) * (1 - 1 / (Math.Sqrt(rv * tau) * Math.Tan(1 / Math.Sqrt(rv * tau)))) + 6 / (rv * tau) * sum;
-      }
-      else
-      {
-        return 0;
-      }
+      return EvaluateUnitStepWrtReducedVariables(D * t / (r * r), D * tau / (r * r));
     }
 
     /// <inheritdoc/>
@@ -260,59 +317,21 @@ namespace Altaxo.Calc.FitFunctions.Diffusion
       double D = parameters[3];
       double tau = parameters[4];
 
-      double Pow2(double x) => x * x;
-
-      var rv = D / (r * r); // reduced variable
+      var rz = D * tau / (r * r); // reduced variable
 
       for (int i = 0; i < independent.RowCount; i++)
       {
         double t = independent[i, 0] - t0;
-        // Calculate the number of terms to reach the smallest term to be 10^-16
-        var NN = 4 * Math.Sqrt(Math.Log(10) / (t * rv)) / Math.PI;
-
-        if (t > 0 && NN < 1000)
+        var rv = D * t / (r * r); // reduced variable
+        if (!(rv <= 0))
         {
-          int N = (int)Math.Ceiling(NN);
-          double sqrtRvTau = Math.Sqrt(rv * tau);
-          double oneBySqrtRvTau = 1 / sqrtRvTau;
-          double termExp = Math.Exp(-t / tau);
-
-          double sum0 = 0;
-          double sum1 = 0;
-          double sum4 = 0;
-          double sum5 = 0;
-          for (int n = N; n >= 1; --n)
-          {
-            double sqrnpi = n * Math.PI;
-            sqrnpi *= sqrnpi; // n^2 Pi^2
-            double denom = sqrnpi - 1 / (rv * tau);
-            double term = Math.Exp(-t * rv * sqrnpi) / denom;
-            sum0 += term / sqrnpi; // for the function value
-            sum1 += term; // for the derivative wrt t0
-            sum4 += term * (1 + 1 / (rv * tau * denom)) / sqrnpi; // for the derivative wrt tau
-            sum5 += term / sqrnpi + term * t * rv + term / (denom * sqrnpi * rv * tau); // for the derivative wrt rv
-          }
-
-          // unit step derivatives
-          var derivWrt_t = 3 * rv * termExp * (1 - 1 / (Math.Tan(oneBySqrtRvTau) * sqrtRvTau)) - 6 * sum1 / tau;
-
-          var derivWrt_tau =
-            0.5 * termExp / (tau * tau) * (3 * sqrtRvTau * (2 * t + tau) / Math.Tan(oneBySqrtRvTau) + 3 * tau * (-2 * rv * (t + tau) + Pow2(1 / Math.Sin(oneBySqrtRvTau))))
-            - 6 * sum4 / (tau * tau * rv);
-
-          var derivWrt_rv =
-            1.5 * termExp / rv * (-2 * rv * tau + sqrtRvTau / Math.Tan(oneBySqrtRvTau) + RMath.Pow2(1 / Math.Sin(oneBySqrtRvTau)))
-            - 6 * sum5 / (rv * rv * tau);
-
-
-          var stepValue =
-            1 - 3 * rv * tau * termExp * (1 - oneBySqrtRvTau / Math.Tan(oneBySqrtRvTau)) + 6 / (rv * tau) * sum0;
-
-          DF[i, 0] = -ΔM * derivWrt_t; // wrt t0 
-          DF[i, 1] = 1; // wrt M0 
-          DF[i, 2] = stepValue; // wrt ΔM, which is the mass change at this time
-          DF[i, 3] = ΔM * derivWrt_rv / (r * r); // wrt D
-          DF[i, 4] = ΔM * derivWrt_tau; // wrt tau
+          // Evaluate the derivatives
+          var (fv, derivWrtRv, derivWrtRz) = EvaluateUnitStepAndDerivativesWrtReducedVariables(rv, rz);
+          DF[i, 0] = -ΔM * derivWrtRv * D / (r * r); // wrt t0
+          DF[i, 1] = 1; // wrt M0
+          DF[i, 2] = fv; // wrt ΔM, which is the mass change at this time
+          DF[i, 3] = ΔM * (derivWrtRv * t / (r * r) + derivWrtRz * tau / (r * r)); // wrt D
+          DF[i, 4] = ΔM * derivWrtRz * D / (r * r); // wrt tau
         }
         else
         {

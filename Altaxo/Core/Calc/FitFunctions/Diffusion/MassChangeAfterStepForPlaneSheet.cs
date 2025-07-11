@@ -30,7 +30,7 @@ using Altaxo.Calc.Regression.Nonlinear;
 namespace Altaxo.Calc.FitFunctions.Diffusion
 {
   /// <summary>
-  /// Describes the mass change of a plane sheet (with given thickness and infinite lateral dimensions) in a diffusion process.
+  /// Describes the mass change of a plane sheet (with given thickness and infinite lateral dimensions) in a diffusion process. The diffusion takes place on both sides of the sheet.
   /// </summary>
   [FitFunctionClass]
   public record MassChangeAfterStepForPlaneSheet : IFitFunction, IFitFunctionWithDerivative, Main.IImmutable
@@ -142,33 +142,37 @@ namespace Altaxo.Calc.FitFunctions.Diffusion
     }
 
 
-    private const double RV_SmallApproximation = 15 / 2048d; // Reduced variable small approximation threshold
-    private const double RV_SumTo9 = 16 / 2048d;
-    private const double RV_SumTo8 = 19 / 2048d;
-    private const double RV_SumTo7 = 24 / 2048d;
-    private const double RV_SumTo6 = 30 / 2048d;
-    private const double RV_SumTo5 = 41 / 2048d;
-    private const double RV_SumTo4 = 57 / 2048d;
-    private const double RV_SumTo3 = 85 / 2048d;
-    private const double RV_SumTo2 = 141 / 2048d;
-    private const double RV_SumTo1 = 280 / 2048d;
-    private const double RV_SumTo0 = 795 / 2048d;
-    private const double C4BySqrtPi = 2.25675833419102514779232; // 4 / Math.Sqrt(Math.PI);
+    private const double RV_SmallApproximation = 54 / 2048d; // Reduced variable small approximation threshold
+    private const double RV_SumTo10 = 57 / 2048d;
+    private const double RV_SumTo9 = 69 / 2048d;
+    private const double RV_SumTo8 = 84 / 2048d;
+    private const double RV_SumTo7 = 106 / 2048d;
+    private const double RV_SumTo6 = 136 / 2048d;
+    private const double RV_SumTo5 = 182 / 2048d;
+    private const double RV_SumTo4 = 255 / 2048d;
+    private const double RV_SumTo3 = 382 / 2048d;
+    private const double RV_SumTo2 = 638 / 2048d;
+    private const double RV_SumTo1 = 1275 / 2048d;
+    private const double RV_SumTo0 = 3830 / 2048d;
+    private const double C2BySqrtPi = 1.12837916709551257389616; // 2 / Math.Sqrt(Math.PI);
 
-    /// <inheritdoc/>
-    public static double Evaluate(double t, double d, double t0, double M0, double ΔM, double D)
+    private const double _accuracy = 1E-20;
+
+    /// <summary>
+    /// Evaluates the response of a unit step in dependence of the reduced variable.
+    /// </summary>
+    /// <param name="rv">Reduced variable rv = D*t/d², where D is the diffusion coefficient, t is the time and d is the total thickness of the plane sheet.</param>
+    /// <returns>The response to a unit step in dependence on rv and rz.</returns>
+    public static double EvaluateUnitStepWrtReducedVariable(double rv)
     {
-      double tDiff = t - t0;
-      if (tDiff <= 0)
+      if (!(rv > 0))
       {
-        return M0; // No mass change before t0
+        return 0; // No mass change before t0
       }
-
-      var rv = D * tDiff / (d * d); // reduced variable
 
       if (rv <= RV_SmallApproximation)
       {
-        return M0 + ΔM * Math.Sqrt(rv) * C4BySqrtPi; // Small approximation, Crank, eq. 4.18
+        return Math.Sqrt(rv) * C2BySqrtPi; // Small approximation, Crank, eq. 4.18
       }
       else
       {
@@ -184,18 +188,101 @@ namespace Altaxo.Calc.FitFunctions.Diffusion
           >= RV_SumTo7 => 7,
           >= RV_SumTo8 => 8,
           >= RV_SumTo9 => 9,
-          _ => 10
+          >= RV_SumTo10 => 10,
+          _ => 11
         };
+
         double sum = 0;
-        for (int n = N; n >= 0; n--)
+        for (int n = N; n >= 0; --n)
         {
-          double sqr2np1 = (2 * n + 1) * Math.PI;
-          sqr2np1 *= sqr2np1; // (2n+1)^2 Pi^2
-          double term = Math.Exp(-rv * sqr2np1) / sqr2np1;
-          sum += term;
+          double sqrnpi = (n + 0.5) * Math.PI;
+          sqrnpi *= sqrnpi;
+          sum += Math.Exp(-rv * sqrnpi) / sqrnpi;
         }
-        return M0 + ΔM * (1 - 8 * sum); // Crank, eq. 4.18
+
+        // Evaluate the unit step response, see Ref. [1], p. 75, eq. (5.29)
+        return 1 - 2 * sum;
       }
+    }
+
+    /// <summary>
+    /// Evaluates the response of a unit step in dependence of the reduced variables.
+    /// </summary>
+    /// <param name="rv">Reduced variable rv = D*t/l², where D is the diffusion coefficient, t is the time and l is the total thickness of the plane sheet.</param>
+    /// <returns>The response to a unit step in dependence on rv and rz, and the derivatives w.r.t. rv and rz.</returns>
+    public static (double functionValue, double derivativeWrtRv) EvaluateUnitStepAndDerivativesWrtReducedVariable(double rv)
+    {
+
+      if (!(rv > 0))
+      {
+        return (0, 0); // No mass change before t0
+      }
+
+      if (rv <= RV_SmallApproximation)
+      {
+        return (C2BySqrtPi * Math.Sqrt(rv), 0.5 * C2BySqrtPi / Math.Sqrt(rv)); // Small approximation, Crank, eq. 4.18
+      }
+      else
+      {
+        int N = rv switch
+        {
+          >= RV_SumTo0 => 0,
+          >= RV_SumTo1 => 1,
+          >= RV_SumTo2 => 2,
+          >= RV_SumTo3 => 3,
+          >= RV_SumTo4 => 4,
+          >= RV_SumTo5 => 5,
+          >= RV_SumTo6 => 6,
+          >= RV_SumTo7 => 7,
+          >= RV_SumTo8 => 8,
+          >= RV_SumTo9 => 9,
+          >= RV_SumTo10 => 10,
+          _ => 11
+        };
+
+        double sum0 = 0;
+        double sum1 = 0;
+        for (int n = N; n >= 0; --n)
+        {
+          double sqrnpi = (n + 0.5) * Math.PI;
+          sqrnpi *= sqrnpi;
+          var term = Math.Exp(-rv * sqrnpi);
+          sum0 += term / sqrnpi; // for the function value
+          sum1 += term; // for the derivative wrt rv
+        }
+
+        // Evaluate the unit step response, see Ref. [1], p. 75, eq. (5.29)
+        var fv = 1 - 2 * sum0;
+
+        // derivative w.r.t. rv
+        var dWrtRv = 2 * sum1;
+
+        return (fv, dWrtRv);
+      }
+    }
+
+    /// <summary>
+    /// Evaluates the response of a unit step (M0 = 0, ΔM = 1) at t0 = 0.
+    /// </summary>
+    /// <param name="t">The time t.</param>
+    /// <param name="d">The total thickness of the sheet d.</param>
+    /// <param name="D">The diffusion constant D.</param>
+    /// <returns>The response to a unit step (M0 = 0, ΔM = 1) at t0 = 0.</returns>
+    public static double EvaluateUnitStep(double t, double d, double D)
+    {
+      if (!(t > 0))
+      {
+        return 0; // No mass change before t0
+      }
+
+      return EvaluateUnitStepWrtReducedVariable(D * t / (d * d));
+    }
+
+
+    /// <inheritdoc/>
+    public static double Evaluate(double t, double d, double t0, double M0, double ΔM, double D)
+    {
+      return M0 + ΔM * EvaluateUnitStepWrtReducedVariable(D * (t - t0) / (d * d));
     }
 
     /// <inheritdoc/>
@@ -230,52 +317,21 @@ namespace Altaxo.Calc.FitFunctions.Diffusion
     {
       double d = Thickness;
       double t0 = parameters[0];
-      double M0 = parameters[1];
       double ΔM = parameters[2];
       double D = parameters[3];
 
       for (int i = 0; i < independent.RowCount; i++)
       {
-        double t = independent[i, 0];
-        double tDiff = t - t0;
-        if (tDiff > 0)
+        double t = independent[i, 0] - t0;
+        var rv = D * t / (d * d); // reduced variable
+        if (!(rv <= 0))
         {
-          var rv = D * tDiff / (d * d); // reduced variable
-          double derivWrtRV; // Derivative with respect to reduced variable
-          if (rv <= RV_SmallApproximation)
-          {
-            derivWrtRV = 0.5 * C4BySqrtPi / Math.Sqrt(rv);
-          }
-          else
-          {
-            int N = rv switch
-            {
-              >= RV_SumTo0 => 0,
-              >= RV_SumTo1 => 1,
-              >= RV_SumTo2 => 2,
-              >= RV_SumTo3 => 3,
-              >= RV_SumTo4 => 4,
-              >= RV_SumTo5 => 5,
-              >= RV_SumTo6 => 6,
-              >= RV_SumTo7 => 7,
-              >= RV_SumTo8 => 8,
-              >= RV_SumTo9 => 9,
-              _ => 10
-            };
-            double sum = 0;
-            for (int n = N; n >= 0; n--)
-            {
-              double sqr2np1 = (2 * n + 1) * Math.PI;
-              sqr2np1 *= sqr2np1; // (2n+1)^2
-              double term = Math.Exp(-rv * sqr2np1);
-              sum += term;
-            }
-            derivWrtRV = 8 * sum;
-          }
-          DF[i, 0] = -ΔM * derivWrtRV * D / (d * d); // wrt t0 
-          DF[i, 1] = 1; // wrt M0 
-          DF[i, 2] = Evaluate(t, d, t0, 0, 1, D); // wrt ΔM, which is the mass change at this time
-          DF[i, 3] = ΔM * derivWrtRV * tDiff / (d * d); // wrt D 
+          // Evaluate the derivatives
+          var (fv, derivWrtRv) = EvaluateUnitStepAndDerivativesWrtReducedVariable(rv);
+          DF[i, 0] = -ΔM * derivWrtRv * D / (d * d); // wrt t0
+          DF[i, 1] = 1; // wrt M0
+          DF[i, 2] = fv; // wrt ΔM, which is the mass change at this time
+          DF[i, 3] = ΔM * (derivWrtRv * t / (d * d)); // wrt D
         }
         else
         {

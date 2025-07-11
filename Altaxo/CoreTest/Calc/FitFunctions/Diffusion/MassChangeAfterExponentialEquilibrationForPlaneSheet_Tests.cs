@@ -30,10 +30,35 @@ namespace Altaxo.Calc.FitFunctions.Diffusion
   public class MassChangeAfterExponentialEquilibrationForPlaneSheet_Tests
   {
     [Fact]
+    public void TestFunctionReducedVariables()
+    {
+      var (rv, rz) = (1 / 256d, 1 / 7d);
+      var fn = MassChangeAfterExponentialEquilibrationForPlaneSheet.EvaluateUnitStepWrtReducedVariables(rv, rz);
+      var result = MassChangeAfterExponentialEquilibrationForPlaneSheet.EvaluateUnitStepAndDerivativesWrtReducedVariables(rv, rz);
+      AssertEx.AreEqual(fn, result.functionValue, 0, 1E-12);
+      AssertEx.AreEqual(0.00127163631065417166, result.functionValue, 0, 1E-8);
+      AssertEx.AreEqual(0.484764431429707549, result.derivativeWrtRv, 0, 1E-8);
+      AssertEx.AreEqual(-0.00880455033461646500, result.derivativeWrtRz, 0, 1E-8);
+
+      (rv, rz) = (1 / 7d, 1 / 37d);
+      fn = MassChangeAfterExponentialEquilibrationForPlaneSheet.EvaluateUnitStepWrtReducedVariables(rv, rz);
+      result = MassChangeAfterExponentialEquilibrationForPlaneSheet.EvaluateUnitStepAndDerivativesWrtReducedVariables(rv, rz);
+      AssertEx.AreEqual(fn, result.functionValue, 0, 1E-12);
+      AssertEx.AreEqual(0.380245010672382679, result.functionValue, 0, 1E-8);
+      AssertEx.AreEqual(1.70923931140624026, result.derivativeWrtRv, 0, 1E-8);
+      AssertEx.AreEqual(-2.00515608854099045, result.derivativeWrtRz, 0, 1E-8);
+    }
+
+
+    [Fact]
     public void TestFunctionValues()
     {
-      var result = MassChangeAfterExponentialEquilibrationForPlaneSheet.EvaluateUnitStep(1 / 2048d, 1, 1, 1 / 2d);
-      AssertEx.AreEqual(0.0000324533, result, 0, 1E-5);
+      var result = MassChangeAfterExponentialEquilibrationForPlaneSheet.EvaluateUnitStep(1 / 4096d, 3, 5, 1 / 7d);
+      AssertEx.AreEqual(0.0000149619716761694856, result, 0, 1E-8);
+
+      result = MassChangeAfterExponentialEquilibrationForPlaneSheet.EvaluateUnitStep(17, 3, 5, 13);
+      AssertEx.AreEqual(0.716342200214270606, result, 0, 1E-8);
+
     }
 
     [Fact]
@@ -46,32 +71,45 @@ namespace Altaxo.Calc.FitFunctions.Diffusion
       var FV = Vector<double>.Build.Dense(1);
       var DY = Matrix<double>.Build.Dense(1, 5);
 
-      var (t, t0, D, tau) = (2 + 1 / 512d, 2d, 45d, 1 / 8d);
-      parameters = new double[] { t0, 0, 1, D, tau }; // t0, M0, ΔM, D
+      var (t, t0, M0, DM, D, tau) = (1 / 4096d + 2, 2, 0, 1, 5, 1 / 7d);
+      parameters = new double[] { t0, M0, DM, D, tau }; // t0, M0, ΔM, D
       X[0, 0] = t; // t
       v.Evaluate(X, parameters, FV, null);
       v.EvaluateDerivative(X, parameters, null, DY, null);
 
-      AssertEx.AreEqual(0.00230862363062154760100015, FV[0], 0, 1E-12);
-      AssertEx.AreEqual(-1.76565512710729598783703, DY[0, 0], 0, 1E-12);
-      AssertEx.AreEqual(1, DY[0, 1], 0, 1E-12);
-      AssertEx.AreEqual(0.00230862363062154760100015, DY[0, 2], 0, 1E-12);
-      AssertEx.AreEqual(0.0000256513736735520724597153, DY[0, 3], 0, 1E-12);
-      AssertEx.AreEqual(-0.0183538668385727537244560, DY[0, 4], 0, 1E-12);
+      AssertEx.AreEqual(0.0000149619716761694856, FV[0], 0, 1E-8);
+      AssertEx.AreEqual(-0.091884472730251815, DY[0, 0], 0, 1E-8);
+      AssertEx.AreEqual(1, DY[0, 1], 0, 1E-8);
+      AssertEx.AreEqual(0.000014961971676169486, DY[0, 2], 0, 1E-8);
+      AssertEx.AreEqual(1.4961971676169486E-6, DY[0, 3], 0, 1E-8);
+      AssertEx.AreEqual(-0.00010466222733452074, DY[0, 4], 0, 1E-8);
 
-      (t, t0, D, tau) = (2 + 1 / 512d, 2d, 45d, 1 / 8d);
-      parameters = new double[] { t0, 7, 11, D, tau }; // t0, M0, ΔM, D
+      (t, t0, M0, DM, D, tau) = (1 / 512d + 2, 2, 7, 11, 5, 1 / 13d);
+      parameters = new double[] { t0, M0, DM, D, tau }; // t0, M0, ΔM, D
       X[0, 0] = t; // t
       v.Evaluate(X, parameters, FV, null);
       v.EvaluateDerivative(X, parameters, null, DY, null);
 
-      AssertEx.AreEqual(7.02539485993683702361100, FV[0], 0, 1E-12);
-      AssertEx.AreEqual(-19.4222063981802558662073, DY[0, 0], 0, 1E-12);
+      AssertEx.AreEqual(7.00685105466077106, FV[0], 0, 1E-8);
+      AssertEx.AreEqual(-5.22613938544844022, DY[0, 0], 0, 1E-8);
       AssertEx.AreEqual(1, DY[0, 1], 0, 1E-12);
-      AssertEx.AreEqual(0.00230862363062154760100015, DY[0, 2], 0, 1E-12);
-      AssertEx.AreEqual(0.000282165110409072797056869, DY[0, 3], 0, 1E-12);
-      AssertEx.AreEqual(-0.201892535224300290969016, DY[0, 4], 0, 1E-12);
+      AssertEx.AreEqual(0.000622823150979186924, DY[0, 2], 0, 1E-8);
+      AssertEx.AreEqual(0.000685105466077105617, DY[0, 3], 0, 1E-8);
+      AssertEx.AreEqual(-0.0881630900386399373, DY[0, 4], 0, 1E-8);
 
+
+      (t, t0, M0, DM, D, tau) = (17 + 2, 2, 7, 11, 5, 13d);
+      parameters = new double[] { t0, M0, DM, D, tau }; // t0, M0, ΔM, D
+      X[0, 0] = t; // t
+      v.Evaluate(X, parameters, FV, null);
+      v.EvaluateDerivative(X, parameters, null, DY, null);
+
+      AssertEx.AreEqual(14.8797642023569767, FV[0], 0, 1E-8);
+      AssertEx.AreEqual(-0.240018138228259988, DY[0, 0], 0, 1E-8);
+      AssertEx.AreEqual(1, DY[0, 1], 0, 1E-12);
+      AssertEx.AreEqual(0.716342200214270606, DY[0, 2], 0, 1E-8);
+      AssertEx.AreEqual(0.0307784565163145374, DY[0, 3], 0, 1E-8);
+      AssertEx.AreEqual(-0.302032005176834394, DY[0, 4], 0, 1E-8);
 
     }
 

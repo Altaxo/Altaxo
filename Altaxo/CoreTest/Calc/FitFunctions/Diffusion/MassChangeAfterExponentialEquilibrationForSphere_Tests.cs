@@ -30,6 +30,23 @@ namespace Altaxo.Calc.FitFunctions.Diffusion
   public class MassChangeAfterExponentialEquilibrationForSphere_Tests
   {
     [Fact]
+    public void TestFunctionReducedVariables()
+    {
+      var (rv, rz) = (1 / 256d, 1 / 7d);
+      var result = MassChangeAfterExponentialEquilibrationForSphere.EvaluateUnitStepAndDerivativesWrtReducedVariables(rv, rz);
+      AssertEx.AreEqual(0.00365614203233400982, result.functionValue, 0, 1E-8);
+      AssertEx.AreEqual(1.37337341258652218, result.derivativeWrtRv, 0, 1E-8);
+      AssertEx.AreEqual(-0.0253123662859434496, result.derivativeWrtRz, 0, 1E-8);
+
+      (rv, rz) = (1 / 7d, 1 / 37d);
+      result = MassChangeAfterExponentialEquilibrationForSphere.EvaluateUnitStepAndDerivativesWrtReducedVariables(rv, rz);
+      AssertEx.AreEqual(0.792933848978149510, result.functionValue, 0, 1E-8);
+      AssertEx.AreEqual(2.14955728039248354, result.derivativeWrtRv, 0, 1E-8);
+      AssertEx.AreEqual(-3.11342154872842377, result.derivativeWrtRz, 0, 1E-8);
+    }
+
+
+    [Fact]
     public void TestFunctionValues()
     {
       var result = MassChangeAfterExponentialEquilibrationForSphere.EvaluateUnitStep(1 / 512d, 1, 5, 1 / 8d);
