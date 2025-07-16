@@ -1,0 +1,628 @@
+﻿
+<topic id="D3DE4F0F5AD518E85FF95AB60594EE2A" revisionNumber="1">
+
+<developerConceptualDocument xmlns="http://ddue.schemas.microsoft.com/authoring/2003/5" xmlns:xlink="http://www.w3.org/1999/xlink">
+
+<introduction>
+
+<para>
+Previous section: <link xlink:href="C217D5E95E222A9979E190190DB7F706">Built-in fit functions</link></para>
+<autoOutline />
+<markup><hr/></markup></introduction>
+
+<section address="DF34714719286C3CAA88839A157ABE7B">
+<title>Mass change of a cylinder after a concentration step
+</title>
+<content>
+
+<para>
+This function evaluates the mass change of a cylinder with radius <markup><a href="ACAC6A80-7CE0-4CB9-B36C-B2FB6ACAB027.htm#E31C82EC5FD9EDBF47CF6F633A629E69"><img src="../media/E31C82EC5FD9EDBF47CF6F633A629E69.png" width="7" height="8" align="middle"></img></a></markup> after a step of the outer concentration in dependence of the time <markup><a href="ACAC6A80-7CE0-4CB9-B36C-B2FB6ACAB027.htm#3D7F2B1F5473D76B654A0F2CE4C035BF"><img src="../media/3D7F2B1F5473D76B654A0F2CE4C035BF.png" width="5" height="11" align="middle"></img></a></markup>. The length of the cylinder is considered infinite, i.e. diffusion from the end faces of the cylinder is neglected.
+</para>
+<markup><a href="ACAC6A80-7CE0-4CB9-B36C-B2FB6ACAB027.htm#6A18543619BA922723427DFD6D4D776A"><img src="../media/6A18543619BA922723427DFD6D4D776A.png" width="331" height="46"></img></a></markup>
+
+<para>
+in which:
+</para>
+
+<list class="bullet">
+
+<listItem>
+
+<para>
+<markup><a href="ACAC6A80-7CE0-4CB9-B36C-B2FB6ACAB027.htm#AD59F779B819D3A3340F710F6ADA1752"><img src="../media/AD59F779B819D3A3340F710F6ADA1752.png" width="14" height="8" align="middle"></img></a></markup> is the dimensionless reduced variable: <markup><a href="ACAC6A80-7CE0-4CB9-B36C-B2FB6ACAB027.htm#36485AE6F432C510FCD779C44A448462"><img src="../media/36485AE6F432C510FCD779C44A448462.png" width="93" height="35" align="middle"></img></a></markup>, <markup><a href="ACAC6A80-7CE0-4CB9-B36C-B2FB6ACAB027.htm#EED9FAFE1C21977355EBC34570D461D5"><img src="../media/EED9FAFE1C21977355EBC34570D461D5.png" width="36" height="13" align="middle"></img></a></markup>
+</para>
+</listItem>
+
+<listItem>
+
+<para>
+<markup><a href="ACAC6A80-7CE0-4CB9-B36C-B2FB6ACAB027.htm#A4D3BB3E419A4A728B33551A9513EB08"><img src="../media/A4D3BB3E419A4A728B33551A9513EB08.png" width="43" height="16" align="bottom"></img></a></markup> is the n<superscript>th</superscript> zero point of the Bessel function <markup><a href="ACAC6A80-7CE0-4CB9-B36C-B2FB6ACAB027.htm#19D5A22B6E18152D5F2C6E2931178F72"><img src="../media/19D5A22B6E18152D5F2C6E2931178F72.png" width="14" height="13" align="middle"></img></a></markup>
+</para>
+</listItem>
+
+<listItem>
+
+<para>
+<markup><a href="ACAC6A80-7CE0-4CB9-B36C-B2FB6ACAB027.htm#3D7F2B1F5473D76B654A0F2CE4C035BF"><img src="../media/3D7F2B1F5473D76B654A0F2CE4C035BF.png" width="5" height="11" align="middle"></img></a></markup> is the time (independent variable)
+</para>
+</listItem>
+
+<listItem>
+
+<para>
+<markup><a href="ACAC6A80-7CE0-4CB9-B36C-B2FB6ACAB027.htm#FA84D8BFC85F6B60A876F88B2E46CBC0"><img src="../media/FA84D8BFC85F6B60A876F88B2E46CBC0.png" width="11" height="13" align="middle"></img></a></markup> is the time where the concentration step occurs, i.e. the beginning of the diffusion process (parameter)
+</para>
+</listItem>
+
+<listItem>
+
+<para>
+<markup><a href="ACAC6A80-7CE0-4CB9-B36C-B2FB6ACAB027.htm#EF938FBB90E9B2A8543C6E9663866216"><img src="../media/EF938FBB90E9B2A8543C6E9663866216.png" width="12" height="13" align="middle"></img></a></markup> is the diffusion coefficient (parameter)
+</para>
+</listItem>
+
+<listItem>
+
+<para>
+<markup><a href="ACAC6A80-7CE0-4CB9-B36C-B2FB6ACAB027.htm#5A86C002C48D07CDC17F5AA3F906A7B4"><img src="../media/5A86C002C48D07CDC17F5AA3F906A7B4.png" width="20" height="13" align="middle"></img></a></markup> is the mass of the plane sheet before the concentration step, i.e. for <markup><a href="ACAC6A80-7CE0-4CB9-B36C-B2FB6ACAB027.htm#92559C9AC09A05B9D86BD9DDECF4DC70"><img src="../media/92559C9AC09A05B9D86BD9DDECF4DC70.png" width="36" height="13" align="middle"></img></a></markup> (parameter)
+</para>
+</listItem>
+
+<listItem>
+
+<para>
+<markup><a href="ACAC6A80-7CE0-4CB9-B36C-B2FB6ACAB027.htm#B26089E98F34BD386FC005AAAEA39A42"><img src="../media/B26089E98F34BD386FC005AAAEA39A42.png" width="27" height="13" align="middle"></img></a></markup> is the mass change due to the concentration step (parameter)
+</para>
+</listItem>
+
+<listItem>
+
+<para>
+<markup><a href="ACAC6A80-7CE0-4CB9-B36C-B2FB6ACAB027.htm#E31C82EC5FD9EDBF47CF6F633A629E69"><img src="../media/E31C82EC5FD9EDBF47CF6F633A629E69.png" width="7" height="8" align="middle"></img></a></markup> is the radius of the cylinder (property of the fit function)
+</para>
+</listItem>
+</list>
+
+<para>
+The radius of the cylinder <markup><a href="ACAC6A80-7CE0-4CB9-B36C-B2FB6ACAB027.htm#E31C82EC5FD9EDBF47CF6F633A629E69"><img src="../media/E31C82EC5FD9EDBF47CF6F633A629E69.png" width="7" height="8" align="middle"></img></a></markup> can be changed by double-clicking on the fit function. The default value is <markup><a href="ACAC6A80-7CE0-4CB9-B36C-B2FB6ACAB027.htm#BF0C9952599BE4F44B369301010BA839"><img src="../media/BF0C9952599BE4F44B369301010BA839.png" width="34" height="12" align="middle"></img></a></markup>.
+</para>
+
+<para>
+The domain of the independent variable <markup><a href="ACAC6A80-7CE0-4CB9-B36C-B2FB6ACAB027.htm#3D7F2B1F5473D76B654A0F2CE4C035BF"><img src="../media/3D7F2B1F5473D76B654A0F2CE4C035BF.png" width="5" height="11" align="middle"></img></a></markup> is <markup><a href="ACAC6A80-7CE0-4CB9-B36C-B2FB6ACAB027.htm#5DBB05B18DFFC630066AB7652CED49EA"><img src="../media/5DBB05B18DFFC630066AB7652CED49EA.png" width="87" height="13" align="middle"></img></a></markup>.
+</para>
+
+<para>
+<markup><a href="ACAC6A80-7CE0-4CB9-B36C-B2FB6ACAB027.htm#D295A7B0EA712452A31EB16E63AD7B8B"><img src="../media/D295A7B0EA712452A31EB16E63AD7B8B.png" width="567"></img></a></markup>
+</para>
+
+<para>
+Fig. 1: Mass change of a cylinder after a concentration step with <markup><a href="ACAC6A80-7CE0-4CB9-B36C-B2FB6ACAB027.htm#CEF22D1384516EB997B612F9DA2C37F2"><img src="../media/CEF22D1384516EB997B612F9DA2C37F2.png" width="48" height="13" align="middle"></img></a></markup>, <markup><a href="ACAC6A80-7CE0-4CB9-B36C-B2FB6ACAB027.htm#76E065E99B1495BB9B367255319760BD"><img src="../media/76E065E99B1495BB9B367255319760BD.png" width="55" height="13" align="middle"></img></a></markup>, <markup><a href="ACAC6A80-7CE0-4CB9-B36C-B2FB6ACAB027.htm#29665FE61CCD4B32885AF24C7BC0C9AB"><img src="../media/29665FE61CCD4B32885AF24C7BC0C9AB.png" width="39" height="13" align="middle"></img></a></markup>, <markup><a href="ACAC6A80-7CE0-4CB9-B36C-B2FB6ACAB027.htm#BF0C9952599BE4F44B369301010BA839"><img src="../media/BF0C9952599BE4F44B369301010BA839.png" width="34" height="12" align="middle"></img></a></markup> and <markup><a href="ACAC6A80-7CE0-4CB9-B36C-B2FB6ACAB027.htm#304DFE6F90AF2E7E588CD55D0796EEB9"><img src="../media/304DFE6F90AF2E7E588CD55D0796EEB9.png" width="40" height="13" align="middle"></img></a></markup> (green curve), <markup><a href="ACAC6A80-7CE0-4CB9-B36C-B2FB6ACAB027.htm#D1A388F09059D679476ACDF827254377"><img src="../media/D1A388F09059D679476ACDF827254377.png" width="52" height="13" align="middle"></img></a></markup> (orange curve), and <markup><a href="ACAC6A80-7CE0-4CB9-B36C-B2FB6ACAB027.htm#128368CBD5925C718D3FC10E80E23196"><img src="../media/128368CBD5925C718D3FC10E80E23196.png" width="59" height="13" align="middle"></img></a></markup> (cyan curve).
+</para>
+
+<para>
+Ref. [1 ]: Crank, &quot;The Mathematics of Diffusion&quot;, 2<superscript>nd</superscript> edition, 1975, Oxford University Press, p. 73
+</para>
+</content>
+</section>
+
+<section address="C90C4D72D69F1D04E882D5CFB346935C">
+<title>Mass change of a cylinder after an exponential equilibration concentration change
+</title>
+<content>
+
+<para>
+This function evaluates the mass change of a cylinder with the radius <markup><a href="ACAC6A80-7CE0-4CB9-B36C-B2FB6ACAB027.htm#E31C82EC5FD9EDBF47CF6F633A629E69"><img src="../media/E31C82EC5FD9EDBF47CF6F633A629E69.png" width="7" height="8" align="middle"></img></a></markup> after an exponential equilibration concentration change  of the outer concentration in dependence of the time <markup><a href="ACAC6A80-7CE0-4CB9-B36C-B2FB6ACAB027.htm#3D7F2B1F5473D76B654A0F2CE4C035BF"><img src="../media/3D7F2B1F5473D76B654A0F2CE4C035BF.png" width="5" height="11" align="middle"></img></a></markup>, i.e. the concentration varies with a characteristic time constant <markup><a href="ACAC6A80-7CE0-4CB9-B36C-B2FB6ACAB027.htm#BFA313332602014B62FEEF342DFA23F5"><img src="../media/BFA313332602014B62FEEF342DFA23F5.png" width="7" height="8" align="middle"></img></a></markup> according to:
+</para>
+<markup><a href="ACAC6A80-7CE0-4CB9-B36C-B2FB6ACAB027.htm#76F85ED8373697AE97016122CF44D1FB"><img src="../media/76F85ED8373697AE97016122CF44D1FB.png" width="251" height="16"></img></a></markup>
+
+<para>
+The length of the cylinder is considered infinite, i.e. diffusion from the end faces of the cylinder is neglected. The mass <markup><a href="ACAC6A80-7CE0-4CB9-B36C-B2FB6ACAB027.htm#1661943E84B01B6EDD6C539929DBC5BA"><img src="../media/1661943E84B01B6EDD6C539929DBC5BA.png" width="32" height="16" align="bottom"></img></a></markup> is then:
+</para>
+<markup><a href="ACAC6A80-7CE0-4CB9-B36C-B2FB6ACAB027.htm#3DE3E7E3C4E579A461E343B4F0C5546D"><img src="../media/3DE3E7E3C4E579A461E343B4F0C5546D.png" width="545" height="46"></img></a></markup>
+
+<para>
+in which:
+</para>
+
+<list class="bullet">
+
+<listItem>
+
+<para>
+<markup><a href="ACAC6A80-7CE0-4CB9-B36C-B2FB6ACAB027.htm#AD59F779B819D3A3340F710F6ADA1752"><img src="../media/AD59F779B819D3A3340F710F6ADA1752.png" width="14" height="8" align="middle"></img></a></markup> is the dimensionless reduced variable: <markup><a href="ACAC6A80-7CE0-4CB9-B36C-B2FB6ACAB027.htm#36485AE6F432C510FCD779C44A448462"><img src="../media/36485AE6F432C510FCD779C44A448462.png" width="93" height="35" align="middle"></img></a></markup>, <markup><a href="ACAC6A80-7CE0-4CB9-B36C-B2FB6ACAB027.htm#EED9FAFE1C21977355EBC34570D461D5"><img src="../media/EED9FAFE1C21977355EBC34570D461D5.png" width="36" height="13" align="middle"></img></a></markup>
+</para>
+</listItem>
+
+<listItem>
+
+<para>
+<markup><a href="ACAC6A80-7CE0-4CB9-B36C-B2FB6ACAB027.htm#C6F1305962C5C6C0F0E36DDFD0C7259D"><img src="../media/C6F1305962C5C6C0F0E36DDFD0C7259D.png" width="14" height="8" align="middle"></img></a></markup> is the dimensionless reduced time constant: <markup><a href="ACAC6A80-7CE0-4CB9-B36C-B2FB6ACAB027.htm#973D37EDE3560E358621F8489DE8A384"><img src="../media/973D37EDE3560E358621F8489DE8A384.png" width="53" height="33" align="middle"></img></a></markup>
+</para>
+</listItem>
+
+<listItem>
+
+<para>
+<markup><a href="ACAC6A80-7CE0-4CB9-B36C-B2FB6ACAB027.htm#A4D3BB3E419A4A728B33551A9513EB08"><img src="../media/A4D3BB3E419A4A728B33551A9513EB08.png" width="43" height="16" align="bottom"></img></a></markup> is the n<superscript>th</superscript> zero point of the Bessel function <markup><a href="ACAC6A80-7CE0-4CB9-B36C-B2FB6ACAB027.htm#19D5A22B6E18152D5F2C6E2931178F72"><img src="../media/19D5A22B6E18152D5F2C6E2931178F72.png" width="14" height="13" align="middle"></img></a></markup>
+</para>
+</listItem>
+
+<listItem>
+
+<para>
+<markup><a href="ACAC6A80-7CE0-4CB9-B36C-B2FB6ACAB027.htm#3D7F2B1F5473D76B654A0F2CE4C035BF"><img src="../media/3D7F2B1F5473D76B654A0F2CE4C035BF.png" width="5" height="11" align="middle"></img></a></markup> is the time (independent variable)
+</para>
+</listItem>
+
+<listItem>
+
+<para>
+<markup><a href="ACAC6A80-7CE0-4CB9-B36C-B2FB6ACAB027.htm#FA84D8BFC85F6B60A876F88B2E46CBC0"><img src="../media/FA84D8BFC85F6B60A876F88B2E46CBC0.png" width="11" height="13" align="middle"></img></a></markup> is the time where the concentration change starts, i.e. the beginning of the diffusion process (parameter)
+</para>
+</listItem>
+
+<listItem>
+
+<para>
+<markup><a href="ACAC6A80-7CE0-4CB9-B36C-B2FB6ACAB027.htm#EF938FBB90E9B2A8543C6E9663866216"><img src="../media/EF938FBB90E9B2A8543C6E9663866216.png" width="12" height="13" align="middle"></img></a></markup> is the diffusion coefficient (parameter)
+</para>
+</listItem>
+
+<listItem>
+
+<para>
+<markup><a href="ACAC6A80-7CE0-4CB9-B36C-B2FB6ACAB027.htm#5A86C002C48D07CDC17F5AA3F906A7B4"><img src="../media/5A86C002C48D07CDC17F5AA3F906A7B4.png" width="20" height="13" align="middle"></img></a></markup> is the mass of the plane sheet before the concentration step, i.e. for <markup><a href="ACAC6A80-7CE0-4CB9-B36C-B2FB6ACAB027.htm#92559C9AC09A05B9D86BD9DDECF4DC70"><img src="../media/92559C9AC09A05B9D86BD9DDECF4DC70.png" width="36" height="13" align="middle"></img></a></markup> (parameter)
+</para>
+</listItem>
+
+<listItem>
+
+<para>
+<markup><a href="ACAC6A80-7CE0-4CB9-B36C-B2FB6ACAB027.htm#B26089E98F34BD386FC005AAAEA39A42"><img src="../media/B26089E98F34BD386FC005AAAEA39A42.png" width="27" height="13" align="middle"></img></a></markup> is the mass change due to the concentration step (parameter)
+</para>
+</listItem>
+
+<listItem>
+
+<para>
+<markup><a href="ACAC6A80-7CE0-4CB9-B36C-B2FB6ACAB027.htm#BFA313332602014B62FEEF342DFA23F5"><img src="../media/BFA313332602014B62FEEF342DFA23F5.png" width="7" height="8" align="middle"></img></a></markup> is the characteristic time constant of the concentration change
+</para>
+</listItem>
+
+<listItem>
+
+<para>
+<markup><a href="ACAC6A80-7CE0-4CB9-B36C-B2FB6ACAB027.htm#E31C82EC5FD9EDBF47CF6F633A629E69"><img src="../media/E31C82EC5FD9EDBF47CF6F633A629E69.png" width="7" height="8" align="middle"></img></a></markup> is the radius of the cylinder (property of the fit function)
+</para>
+</listItem>
+</list>
+
+<para>
+The radius of the cylinder <markup><a href="ACAC6A80-7CE0-4CB9-B36C-B2FB6ACAB027.htm#E31C82EC5FD9EDBF47CF6F633A629E69"><img src="../media/E31C82EC5FD9EDBF47CF6F633A629E69.png" width="7" height="8" align="middle"></img></a></markup> can be changed by double-clicking on the fit function. The default value is <markup><a href="ACAC6A80-7CE0-4CB9-B36C-B2FB6ACAB027.htm#BF0C9952599BE4F44B369301010BA839"><img src="../media/BF0C9952599BE4F44B369301010BA839.png" width="34" height="12" align="middle"></img></a></markup>.
+</para>
+
+<para>
+The domain of the independent variable <markup><a href="ACAC6A80-7CE0-4CB9-B36C-B2FB6ACAB027.htm#3D7F2B1F5473D76B654A0F2CE4C035BF"><img src="../media/3D7F2B1F5473D76B654A0F2CE4C035BF.png" width="5" height="11" align="middle"></img></a></markup> is <markup><a href="ACAC6A80-7CE0-4CB9-B36C-B2FB6ACAB027.htm#5DBB05B18DFFC630066AB7652CED49EA"><img src="../media/5DBB05B18DFFC630066AB7652CED49EA.png" width="87" height="13" align="middle"></img></a></markup>.
+</para>
+
+<para>
+<markup><a href="ACAC6A80-7CE0-4CB9-B36C-B2FB6ACAB027.htm#E1F5C9B250C60132EF6E6B0C58AA8C31"><img src="../media/E1F5C9B250C60132EF6E6B0C58AA8C31.png" width="567"></img></a></markup>
+</para>
+
+<para>
+Fig. 1: Mass change of a cylinder after an exponential concentration change with <markup><a href="ACAC6A80-7CE0-4CB9-B36C-B2FB6ACAB027.htm#CEF22D1384516EB997B612F9DA2C37F2"><img src="../media/CEF22D1384516EB997B612F9DA2C37F2.png" width="48" height="13" align="middle"></img></a></markup>, <markup><a href="ACAC6A80-7CE0-4CB9-B36C-B2FB6ACAB027.htm#76E065E99B1495BB9B367255319760BD"><img src="../media/76E065E99B1495BB9B367255319760BD.png" width="55" height="13" align="middle"></img></a></markup>, <markup><a href="ACAC6A80-7CE0-4CB9-B36C-B2FB6ACAB027.htm#29665FE61CCD4B32885AF24C7BC0C9AB"><img src="../media/29665FE61CCD4B32885AF24C7BC0C9AB.png" width="39" height="13" align="middle"></img></a></markup>, <markup><a href="ACAC6A80-7CE0-4CB9-B36C-B2FB6ACAB027.htm#BF0C9952599BE4F44B369301010BA839"><img src="../media/BF0C9952599BE4F44B369301010BA839.png" width="34" height="12" align="middle"></img></a></markup>, <markup><a href="ACAC6A80-7CE0-4CB9-B36C-B2FB6ACAB027.htm#4A860F79FDA92746A0709BCF1B5F1309"><img src="../media/4A860F79FDA92746A0709BCF1B5F1309.png" width="34" height="12" align="middle"></img></a></markup> and <markup><a href="ACAC6A80-7CE0-4CB9-B36C-B2FB6ACAB027.htm#304DFE6F90AF2E7E588CD55D0796EEB9"><img src="../media/304DFE6F90AF2E7E588CD55D0796EEB9.png" width="40" height="13" align="middle"></img></a></markup> (green curve), <markup><a href="ACAC6A80-7CE0-4CB9-B36C-B2FB6ACAB027.htm#D1A388F09059D679476ACDF827254377"><img src="../media/D1A388F09059D679476ACDF827254377.png" width="52" height="13" align="middle"></img></a></markup> (orange curve), and <markup><a href="ACAC6A80-7CE0-4CB9-B36C-B2FB6ACAB027.htm#128368CBD5925C718D3FC10E80E23196"><img src="../media/128368CBD5925C718D3FC10E80E23196.png" width="59" height="13" align="middle"></img></a></markup> (cyan curve).
+</para>
+
+<para>
+Ref. [1 ]: Crank, &quot;The Mathematics of Diffusion&quot;, 2<superscript>nd</superscript> edition, 1975, Oxford University Press, p. 75
+</para>
+</content>
+</section>
+
+<section address="DB20C85F0F11A132296E84DC6DF5F8AA">
+<title>Mass change of a plane sheet after a concentration step
+</title>
+<content>
+
+<para>
+This function evaluates the mass change of a plane sheet of the total thickness <markup><a href="ACAC6A80-7CE0-4CB9-B36C-B2FB6ACAB027.htm#DBF2B0BCFEAC62B0EE393ED227C2F67C"><img src="../media/DBF2B0BCFEAC62B0EE393ED227C2F67C.png" width="4" height="13" align="middle"></img></a></markup> after a step of the outer concentration in dependence of the time <markup><a href="ACAC6A80-7CE0-4CB9-B36C-B2FB6ACAB027.htm#3D7F2B1F5473D76B654A0F2CE4C035BF"><img src="../media/3D7F2B1F5473D76B654A0F2CE4C035BF.png" width="5" height="11" align="middle"></img></a></markup>. The diffusion takes place from both sides of the plane sheet. The lateral dimensions of the sheet are considered infinite, i.e. diffusion from the edges of the sheet is neglected.
+</para>
+<markup><a href="ACAC6A80-7CE0-4CB9-B36C-B2FB6ACAB027.htm#3F7DE202001B12A641402F22D24E03F6"><img src="../media/3F7DE202001B12A641402F22D24E03F6.png" width="361" height="46"></img></a></markup>
+
+<para>
+in which:
+</para>
+
+<list class="bullet">
+
+<listItem>
+
+<para>
+<markup><a href="ACAC6A80-7CE0-4CB9-B36C-B2FB6ACAB027.htm#AD59F779B819D3A3340F710F6ADA1752"><img src="../media/AD59F779B819D3A3340F710F6ADA1752.png" width="14" height="8" align="middle"></img></a></markup> is the dimensionless reduced variable: <markup><a href="ACAC6A80-7CE0-4CB9-B36C-B2FB6ACAB027.htm#C7635FEA1C9BC41DECF602B0071B810D"><img src="../media/C7635FEA1C9BC41DECF602B0071B810D.png" width="93" height="35" align="middle"></img></a></markup>, <markup><a href="ACAC6A80-7CE0-4CB9-B36C-B2FB6ACAB027.htm#EED9FAFE1C21977355EBC34570D461D5"><img src="../media/EED9FAFE1C21977355EBC34570D461D5.png" width="36" height="13" align="middle"></img></a></markup>
+</para>
+</listItem>
+
+<listItem>
+
+<para>
+<markup><a href="ACAC6A80-7CE0-4CB9-B36C-B2FB6ACAB027.htm#3D7F2B1F5473D76B654A0F2CE4C035BF"><img src="../media/3D7F2B1F5473D76B654A0F2CE4C035BF.png" width="5" height="11" align="middle"></img></a></markup> is the time (independent variable)
+</para>
+</listItem>
+
+<listItem>
+
+<para>
+<markup><a href="ACAC6A80-7CE0-4CB9-B36C-B2FB6ACAB027.htm#FA84D8BFC85F6B60A876F88B2E46CBC0"><img src="../media/FA84D8BFC85F6B60A876F88B2E46CBC0.png" width="11" height="13" align="middle"></img></a></markup> is the time where the concentration step occurs, i.e. the beginning of the diffusion process (parameter)
+</para>
+</listItem>
+
+<listItem>
+
+<para>
+<markup><a href="ACAC6A80-7CE0-4CB9-B36C-B2FB6ACAB027.htm#EF938FBB90E9B2A8543C6E9663866216"><img src="../media/EF938FBB90E9B2A8543C6E9663866216.png" width="12" height="13" align="middle"></img></a></markup> is the diffusion coefficient (parameter)
+</para>
+</listItem>
+
+<listItem>
+
+<para>
+<markup><a href="ACAC6A80-7CE0-4CB9-B36C-B2FB6ACAB027.htm#5A86C002C48D07CDC17F5AA3F906A7B4"><img src="../media/5A86C002C48D07CDC17F5AA3F906A7B4.png" width="20" height="13" align="middle"></img></a></markup> is the mass of the plane sheet before the concentration step, i.e. for <markup><a href="ACAC6A80-7CE0-4CB9-B36C-B2FB6ACAB027.htm#92559C9AC09A05B9D86BD9DDECF4DC70"><img src="../media/92559C9AC09A05B9D86BD9DDECF4DC70.png" width="36" height="13" align="middle"></img></a></markup> (parameter)
+</para>
+</listItem>
+
+<listItem>
+
+<para>
+<markup><a href="ACAC6A80-7CE0-4CB9-B36C-B2FB6ACAB027.htm#B26089E98F34BD386FC005AAAEA39A42"><img src="../media/B26089E98F34BD386FC005AAAEA39A42.png" width="27" height="13" align="middle"></img></a></markup> is the mass change due to the concentration step (parameter)
+</para>
+</listItem>
+
+<listItem>
+
+<para>
+<markup><a href="ACAC6A80-7CE0-4CB9-B36C-B2FB6ACAB027.htm#DBF2B0BCFEAC62B0EE393ED227C2F67C"><img src="../media/DBF2B0BCFEAC62B0EE393ED227C2F67C.png" width="4" height="13" align="middle"></img></a></markup> is the thickness of the plane sheet (property of the fit function)
+</para>
+</listItem>
+</list>
+
+<para>
+The thickness of the plane sheet <markup><a href="ACAC6A80-7CE0-4CB9-B36C-B2FB6ACAB027.htm#DBF2B0BCFEAC62B0EE393ED227C2F67C"><img src="../media/DBF2B0BCFEAC62B0EE393ED227C2F67C.png" width="4" height="13" align="middle"></img></a></markup> can be changed by double-clicking on the fit function. The default value is <markup><a href="ACAC6A80-7CE0-4CB9-B36C-B2FB6ACAB027.htm#4B037E8E6F1D5478EC7EEA382F5FA90F"><img src="../media/4B037E8E6F1D5478EC7EEA382F5FA90F.png" width="32" height="13" align="middle"></img></a></markup>.
+</para>
+
+<para>
+The domain of the independent variable <markup><a href="ACAC6A80-7CE0-4CB9-B36C-B2FB6ACAB027.htm#3D7F2B1F5473D76B654A0F2CE4C035BF"><img src="../media/3D7F2B1F5473D76B654A0F2CE4C035BF.png" width="5" height="11" align="middle"></img></a></markup> is <markup><a href="ACAC6A80-7CE0-4CB9-B36C-B2FB6ACAB027.htm#5DBB05B18DFFC630066AB7652CED49EA"><img src="../media/5DBB05B18DFFC630066AB7652CED49EA.png" width="87" height="13" align="middle"></img></a></markup>.
+</para>
+
+<para>
+<markup><a href="ACAC6A80-7CE0-4CB9-B36C-B2FB6ACAB027.htm#ED8D9154C6DBD990C113E3E712C60168"><img src="../media/ED8D9154C6DBD990C113E3E712C60168.png" width="567"></img></a></markup>
+</para>
+
+<para>
+Fig. 1: Mass change of a plane sheet after a concentration step with <markup><a href="ACAC6A80-7CE0-4CB9-B36C-B2FB6ACAB027.htm#CEF22D1384516EB997B612F9DA2C37F2"><img src="../media/CEF22D1384516EB997B612F9DA2C37F2.png" width="48" height="13" align="middle"></img></a></markup>, <markup><a href="ACAC6A80-7CE0-4CB9-B36C-B2FB6ACAB027.htm#76E065E99B1495BB9B367255319760BD"><img src="../media/76E065E99B1495BB9B367255319760BD.png" width="55" height="13" align="middle"></img></a></markup>, <markup><a href="ACAC6A80-7CE0-4CB9-B36C-B2FB6ACAB027.htm#29665FE61CCD4B32885AF24C7BC0C9AB"><img src="../media/29665FE61CCD4B32885AF24C7BC0C9AB.png" width="39" height="13" align="middle"></img></a></markup>, <markup><a href="ACAC6A80-7CE0-4CB9-B36C-B2FB6ACAB027.htm#4B037E8E6F1D5478EC7EEA382F5FA90F"><img src="../media/4B037E8E6F1D5478EC7EEA382F5FA90F.png" width="32" height="13" align="middle"></img></a></markup> and <markup><a href="ACAC6A80-7CE0-4CB9-B36C-B2FB6ACAB027.htm#304DFE6F90AF2E7E588CD55D0796EEB9"><img src="../media/304DFE6F90AF2E7E588CD55D0796EEB9.png" width="40" height="13" align="middle"></img></a></markup> (green curve), <markup><a href="ACAC6A80-7CE0-4CB9-B36C-B2FB6ACAB027.htm#D1A388F09059D679476ACDF827254377"><img src="../media/D1A388F09059D679476ACDF827254377.png" width="52" height="13" align="middle"></img></a></markup> (orange curve), and <markup><a href="ACAC6A80-7CE0-4CB9-B36C-B2FB6ACAB027.htm#128368CBD5925C718D3FC10E80E23196"><img src="../media/128368CBD5925C718D3FC10E80E23196.png" width="59" height="13" align="middle"></img></a></markup> (cyan curve).
+</para>
+
+<para>
+Ref. [1 ]: Crank, &quot;The Mathematics of Diffusion&quot;, 2<superscript>nd</superscript> edition, 1975, Oxford University Press, p. 48
+</para>
+</content>
+</section>
+
+<section address="0AD7487E190880C466BDAF347B81B4FC">
+<title>Mass change of a plane sheet after an exponential equilibration concentration change
+</title>
+<content>
+
+<para>
+This function evaluates the mass change of a plane sheet of the total thickness <markup><a href="ACAC6A80-7CE0-4CB9-B36C-B2FB6ACAB027.htm#DBF2B0BCFEAC62B0EE393ED227C2F67C"><img src="../media/DBF2B0BCFEAC62B0EE393ED227C2F67C.png" width="4" height="13" align="middle"></img></a></markup> after an exponential equilibration concentration change  of the outer concentration in dependence of the time <markup><a href="ACAC6A80-7CE0-4CB9-B36C-B2FB6ACAB027.htm#3D7F2B1F5473D76B654A0F2CE4C035BF"><img src="../media/3D7F2B1F5473D76B654A0F2CE4C035BF.png" width="5" height="11" align="middle"></img></a></markup>, i.e. the concentration varies with a characteristic time constant <markup><a href="ACAC6A80-7CE0-4CB9-B36C-B2FB6ACAB027.htm#BFA313332602014B62FEEF342DFA23F5"><img src="../media/BFA313332602014B62FEEF342DFA23F5.png" width="7" height="8" align="middle"></img></a></markup> according to:
+</para>
+<markup><a href="ACAC6A80-7CE0-4CB9-B36C-B2FB6ACAB027.htm#76F85ED8373697AE97016122CF44D1FB"><img src="../media/76F85ED8373697AE97016122CF44D1FB.png" width="251" height="16"></img></a></markup>
+
+<para>
+The diffusion takes place from both sides of the plane sheet. The lateral dimensions of the sheet are considered infinite, i.e. diffusion from the edges of the sheet is neglected. The mass <markup><a href="ACAC6A80-7CE0-4CB9-B36C-B2FB6ACAB027.htm#1661943E84B01B6EDD6C539929DBC5BA"><img src="../media/1661943E84B01B6EDD6C539929DBC5BA.png" width="32" height="16" align="bottom"></img></a></markup> is then:
+</para>
+<markup><a href="ACAC6A80-7CE0-4CB9-B36C-B2FB6ACAB027.htm#4E2575022AB1920E2A53035AF19731AE"><img src="../media/4E2575022AB1920E2A53035AF19731AE.png" width="642" height="46"></img></a></markup>
+
+<para>
+in which:
+</para>
+
+<list class="bullet">
+
+<listItem>
+
+<para>
+<markup><a href="ACAC6A80-7CE0-4CB9-B36C-B2FB6ACAB027.htm#AD59F779B819D3A3340F710F6ADA1752"><img src="../media/AD59F779B819D3A3340F710F6ADA1752.png" width="14" height="8" align="middle"></img></a></markup> is the dimensionless reduced variable: <markup><a href="ACAC6A80-7CE0-4CB9-B36C-B2FB6ACAB027.htm#C7635FEA1C9BC41DECF602B0071B810D"><img src="../media/C7635FEA1C9BC41DECF602B0071B810D.png" width="93" height="35" align="middle"></img></a></markup>, <markup><a href="ACAC6A80-7CE0-4CB9-B36C-B2FB6ACAB027.htm#EED9FAFE1C21977355EBC34570D461D5"><img src="../media/EED9FAFE1C21977355EBC34570D461D5.png" width="36" height="13" align="middle"></img></a></markup>
+</para>
+</listItem>
+
+<listItem>
+
+<para>
+<markup><a href="ACAC6A80-7CE0-4CB9-B36C-B2FB6ACAB027.htm#C6F1305962C5C6C0F0E36DDFD0C7259D"><img src="../media/C6F1305962C5C6C0F0E36DDFD0C7259D.png" width="14" height="8" align="middle"></img></a></markup> is the dimensionless reduced time constant: <markup><a href="ACAC6A80-7CE0-4CB9-B36C-B2FB6ACAB027.htm#FAFCC44181A429847DFE7EEE456FEDE6"><img src="../media/FAFCC44181A429847DFE7EEE456FEDE6.png" width="53" height="33" align="middle"></img></a></markup>
+</para>
+</listItem>
+
+<listItem>
+
+<para>
+<markup><a href="ACAC6A80-7CE0-4CB9-B36C-B2FB6ACAB027.htm#3D7F2B1F5473D76B654A0F2CE4C035BF"><img src="../media/3D7F2B1F5473D76B654A0F2CE4C035BF.png" width="5" height="11" align="middle"></img></a></markup> is the time (independent variable)
+</para>
+</listItem>
+
+<listItem>
+
+<para>
+<markup><a href="ACAC6A80-7CE0-4CB9-B36C-B2FB6ACAB027.htm#FA84D8BFC85F6B60A876F88B2E46CBC0"><img src="../media/FA84D8BFC85F6B60A876F88B2E46CBC0.png" width="11" height="13" align="middle"></img></a></markup> is the time where the concentration change starts, i.e. the beginning of the diffusion process (parameter)
+</para>
+</listItem>
+
+<listItem>
+
+<para>
+<markup><a href="ACAC6A80-7CE0-4CB9-B36C-B2FB6ACAB027.htm#EF938FBB90E9B2A8543C6E9663866216"><img src="../media/EF938FBB90E9B2A8543C6E9663866216.png" width="12" height="13" align="middle"></img></a></markup> is the diffusion coefficient (parameter)
+</para>
+</listItem>
+
+<listItem>
+
+<para>
+<markup><a href="ACAC6A80-7CE0-4CB9-B36C-B2FB6ACAB027.htm#5A86C002C48D07CDC17F5AA3F906A7B4"><img src="../media/5A86C002C48D07CDC17F5AA3F906A7B4.png" width="20" height="13" align="middle"></img></a></markup> is the mass of the plane sheet before the concentration step, i.e. for <markup><a href="ACAC6A80-7CE0-4CB9-B36C-B2FB6ACAB027.htm#92559C9AC09A05B9D86BD9DDECF4DC70"><img src="../media/92559C9AC09A05B9D86BD9DDECF4DC70.png" width="36" height="13" align="middle"></img></a></markup> (parameter)
+</para>
+</listItem>
+
+<listItem>
+
+<para>
+<markup><a href="ACAC6A80-7CE0-4CB9-B36C-B2FB6ACAB027.htm#B26089E98F34BD386FC005AAAEA39A42"><img src="../media/B26089E98F34BD386FC005AAAEA39A42.png" width="27" height="13" align="middle"></img></a></markup> is the mass change due to the concentration step (parameter)
+</para>
+</listItem>
+
+<listItem>
+
+<para>
+<markup><a href="ACAC6A80-7CE0-4CB9-B36C-B2FB6ACAB027.htm#BFA313332602014B62FEEF342DFA23F5"><img src="../media/BFA313332602014B62FEEF342DFA23F5.png" width="7" height="8" align="middle"></img></a></markup> is the characteristic time constant of the concentration change
+</para>
+</listItem>
+
+<listItem>
+
+<para>
+<markup><a href="ACAC6A80-7CE0-4CB9-B36C-B2FB6ACAB027.htm#DBF2B0BCFEAC62B0EE393ED227C2F67C"><img src="../media/DBF2B0BCFEAC62B0EE393ED227C2F67C.png" width="4" height="13" align="middle"></img></a></markup> is the thickness of the plane sheet (property of the fit function)
+</para>
+</listItem>
+</list>
+
+<para>
+The thickness of the plane sheet <markup><a href="ACAC6A80-7CE0-4CB9-B36C-B2FB6ACAB027.htm#DBF2B0BCFEAC62B0EE393ED227C2F67C"><img src="../media/DBF2B0BCFEAC62B0EE393ED227C2F67C.png" width="4" height="13" align="middle"></img></a></markup> can be changed by double-clicking on the fit function. The default value is <markup><a href="ACAC6A80-7CE0-4CB9-B36C-B2FB6ACAB027.htm#4B037E8E6F1D5478EC7EEA382F5FA90F"><img src="../media/4B037E8E6F1D5478EC7EEA382F5FA90F.png" width="32" height="13" align="middle"></img></a></markup>.
+</para>
+
+<para>
+The domain of the independent variable <markup><a href="ACAC6A80-7CE0-4CB9-B36C-B2FB6ACAB027.htm#3D7F2B1F5473D76B654A0F2CE4C035BF"><img src="../media/3D7F2B1F5473D76B654A0F2CE4C035BF.png" width="5" height="11" align="middle"></img></a></markup> is <markup><a href="ACAC6A80-7CE0-4CB9-B36C-B2FB6ACAB027.htm#5DBB05B18DFFC630066AB7652CED49EA"><img src="../media/5DBB05B18DFFC630066AB7652CED49EA.png" width="87" height="13" align="middle"></img></a></markup>.
+</para>
+
+<para>
+<markup><a href="ACAC6A80-7CE0-4CB9-B36C-B2FB6ACAB027.htm#DADAB7CE7BD8E17AEF2E4E5710710A38"><img src="../media/DADAB7CE7BD8E17AEF2E4E5710710A38.png" width="567"></img></a></markup>
+</para>
+
+<para>
+Fig. 1: Mass change of a plane sheet after an exponential concentration change with <markup><a href="ACAC6A80-7CE0-4CB9-B36C-B2FB6ACAB027.htm#CEF22D1384516EB997B612F9DA2C37F2"><img src="../media/CEF22D1384516EB997B612F9DA2C37F2.png" width="48" height="13" align="middle"></img></a></markup>, <markup><a href="ACAC6A80-7CE0-4CB9-B36C-B2FB6ACAB027.htm#76E065E99B1495BB9B367255319760BD"><img src="../media/76E065E99B1495BB9B367255319760BD.png" width="55" height="13" align="middle"></img></a></markup>, <markup><a href="ACAC6A80-7CE0-4CB9-B36C-B2FB6ACAB027.htm#29665FE61CCD4B32885AF24C7BC0C9AB"><img src="../media/29665FE61CCD4B32885AF24C7BC0C9AB.png" width="39" height="13" align="middle"></img></a></markup>, <markup><a href="ACAC6A80-7CE0-4CB9-B36C-B2FB6ACAB027.htm#4B037E8E6F1D5478EC7EEA382F5FA90F"><img src="../media/4B037E8E6F1D5478EC7EEA382F5FA90F.png" width="32" height="13" align="middle"></img></a></markup>, <markup><a href="ACAC6A80-7CE0-4CB9-B36C-B2FB6ACAB027.htm#4A860F79FDA92746A0709BCF1B5F1309"><img src="../media/4A860F79FDA92746A0709BCF1B5F1309.png" width="34" height="12" align="middle"></img></a></markup> and <markup><a href="ACAC6A80-7CE0-4CB9-B36C-B2FB6ACAB027.htm#304DFE6F90AF2E7E588CD55D0796EEB9"><img src="../media/304DFE6F90AF2E7E588CD55D0796EEB9.png" width="40" height="13" align="middle"></img></a></markup> (green curve), <markup><a href="ACAC6A80-7CE0-4CB9-B36C-B2FB6ACAB027.htm#D1A388F09059D679476ACDF827254377"><img src="../media/D1A388F09059D679476ACDF827254377.png" width="52" height="13" align="middle"></img></a></markup> (orange curve), and <markup><a href="ACAC6A80-7CE0-4CB9-B36C-B2FB6ACAB027.htm#128368CBD5925C718D3FC10E80E23196"><img src="../media/128368CBD5925C718D3FC10E80E23196.png" width="59" height="13" align="middle"></img></a></markup> (cyan curve).
+</para>
+
+<para>
+Ref. [1 ]: Crank, &quot;The Mathematics of Diffusion&quot;, 2<superscript>nd</superscript> edition, 1975, Oxford University Press, p. 53
+</para>
+</content>
+</section>
+
+<section address="ECC2875E8C4045AD5A6714F7BEC8FFB6">
+<title>Mass change of a sphere after a concentration step
+</title>
+<content>
+
+<para>
+This function evaluates the mass change of a sphere of radius <markup><a href="ACAC6A80-7CE0-4CB9-B36C-B2FB6ACAB027.htm#E31C82EC5FD9EDBF47CF6F633A629E69"><img src="../media/E31C82EC5FD9EDBF47CF6F633A629E69.png" width="7" height="8" align="middle"></img></a></markup> after a step of the outer concentration in dependence of the time <markup><a href="ACAC6A80-7CE0-4CB9-B36C-B2FB6ACAB027.htm#3D7F2B1F5473D76B654A0F2CE4C035BF"><img src="../media/3D7F2B1F5473D76B654A0F2CE4C035BF.png" width="5" height="11" align="middle"></img></a></markup>.
+</para>
+<markup><a href="ACAC6A80-7CE0-4CB9-B36C-B2FB6ACAB027.htm#9A534C6BA05EBEC42F65978FB4DA5FB3"><img src="../media/9A534C6BA05EBEC42F65978FB4DA5FB3.png" width="311" height="46"></img></a></markup>
+
+<para>
+in which:
+</para>
+
+<list class="bullet">
+
+<listItem>
+
+<para>
+<markup><a href="ACAC6A80-7CE0-4CB9-B36C-B2FB6ACAB027.htm#AD59F779B819D3A3340F710F6ADA1752"><img src="../media/AD59F779B819D3A3340F710F6ADA1752.png" width="14" height="8" align="middle"></img></a></markup> is the dimensionless reduced variable: <markup><a href="ACAC6A80-7CE0-4CB9-B36C-B2FB6ACAB027.htm#36485AE6F432C510FCD779C44A448462"><img src="../media/36485AE6F432C510FCD779C44A448462.png" width="93" height="35" align="middle"></img></a></markup>, <markup><a href="ACAC6A80-7CE0-4CB9-B36C-B2FB6ACAB027.htm#EED9FAFE1C21977355EBC34570D461D5"><img src="../media/EED9FAFE1C21977355EBC34570D461D5.png" width="36" height="13" align="middle"></img></a></markup>
+</para>
+</listItem>
+
+<listItem>
+
+<para>
+<markup><a href="ACAC6A80-7CE0-4CB9-B36C-B2FB6ACAB027.htm#3D7F2B1F5473D76B654A0F2CE4C035BF"><img src="../media/3D7F2B1F5473D76B654A0F2CE4C035BF.png" width="5" height="11" align="middle"></img></a></markup> is the time (independent variable)
+</para>
+</listItem>
+
+<listItem>
+
+<para>
+<markup><a href="ACAC6A80-7CE0-4CB9-B36C-B2FB6ACAB027.htm#FA84D8BFC85F6B60A876F88B2E46CBC0"><img src="../media/FA84D8BFC85F6B60A876F88B2E46CBC0.png" width="11" height="13" align="middle"></img></a></markup> is the time where the concentration step occurs, i.e. the beginning of the diffusion process (parameter)
+</para>
+</listItem>
+
+<listItem>
+
+<para>
+<markup><a href="ACAC6A80-7CE0-4CB9-B36C-B2FB6ACAB027.htm#EF938FBB90E9B2A8543C6E9663866216"><img src="../media/EF938FBB90E9B2A8543C6E9663866216.png" width="12" height="13" align="middle"></img></a></markup> is the diffusion coefficient (parameter)
+</para>
+</listItem>
+
+<listItem>
+
+<para>
+<markup><a href="ACAC6A80-7CE0-4CB9-B36C-B2FB6ACAB027.htm#5A86C002C48D07CDC17F5AA3F906A7B4"><img src="../media/5A86C002C48D07CDC17F5AA3F906A7B4.png" width="20" height="13" align="middle"></img></a></markup> is the mass of the plane sheet before the concentration step, i.e. for <markup><a href="ACAC6A80-7CE0-4CB9-B36C-B2FB6ACAB027.htm#92559C9AC09A05B9D86BD9DDECF4DC70"><img src="../media/92559C9AC09A05B9D86BD9DDECF4DC70.png" width="36" height="13" align="middle"></img></a></markup> (parameter)
+</para>
+</listItem>
+
+<listItem>
+
+<para>
+<markup><a href="ACAC6A80-7CE0-4CB9-B36C-B2FB6ACAB027.htm#B26089E98F34BD386FC005AAAEA39A42"><img src="../media/B26089E98F34BD386FC005AAAEA39A42.png" width="27" height="13" align="middle"></img></a></markup> is the mass change due to the concentration step (parameter)
+</para>
+</listItem>
+
+<listItem>
+
+<para>
+<markup><a href="ACAC6A80-7CE0-4CB9-B36C-B2FB6ACAB027.htm#E31C82EC5FD9EDBF47CF6F633A629E69"><img src="../media/E31C82EC5FD9EDBF47CF6F633A629E69.png" width="7" height="8" align="middle"></img></a></markup> is the radius of the sphere (property of the fit function)
+</para>
+</listItem>
+</list>
+
+<para>
+The radius of the sphere <markup><a href="ACAC6A80-7CE0-4CB9-B36C-B2FB6ACAB027.htm#E31C82EC5FD9EDBF47CF6F633A629E69"><img src="../media/E31C82EC5FD9EDBF47CF6F633A629E69.png" width="7" height="8" align="middle"></img></a></markup> can be changed by double-clicking on the fit function. The default value is <markup><a href="ACAC6A80-7CE0-4CB9-B36C-B2FB6ACAB027.htm#BF0C9952599BE4F44B369301010BA839"><img src="../media/BF0C9952599BE4F44B369301010BA839.png" width="34" height="12" align="middle"></img></a></markup>.
+</para>
+
+<para>
+The domain of the independent variable <markup><a href="ACAC6A80-7CE0-4CB9-B36C-B2FB6ACAB027.htm#3D7F2B1F5473D76B654A0F2CE4C035BF"><img src="../media/3D7F2B1F5473D76B654A0F2CE4C035BF.png" width="5" height="11" align="middle"></img></a></markup> is <markup><a href="ACAC6A80-7CE0-4CB9-B36C-B2FB6ACAB027.htm#5DBB05B18DFFC630066AB7652CED49EA"><img src="../media/5DBB05B18DFFC630066AB7652CED49EA.png" width="87" height="13" align="middle"></img></a></markup>.
+</para>
+
+<para>
+<markup><a href="ACAC6A80-7CE0-4CB9-B36C-B2FB6ACAB027.htm#A04AD8FEDD3BEC7FEF485268FEF95501"><img src="../media/A04AD8FEDD3BEC7FEF485268FEF95501.png" width="567"></img></a></markup>
+</para>
+
+<para>
+Fig. 1: Mass change of a sphere after a concentration step with <markup><a href="ACAC6A80-7CE0-4CB9-B36C-B2FB6ACAB027.htm#CEF22D1384516EB997B612F9DA2C37F2"><img src="../media/CEF22D1384516EB997B612F9DA2C37F2.png" width="48" height="13" align="middle"></img></a></markup>, <markup><a href="ACAC6A80-7CE0-4CB9-B36C-B2FB6ACAB027.htm#76E065E99B1495BB9B367255319760BD"><img src="../media/76E065E99B1495BB9B367255319760BD.png" width="55" height="13" align="middle"></img></a></markup>, <markup><a href="ACAC6A80-7CE0-4CB9-B36C-B2FB6ACAB027.htm#29665FE61CCD4B32885AF24C7BC0C9AB"><img src="../media/29665FE61CCD4B32885AF24C7BC0C9AB.png" width="39" height="13" align="middle"></img></a></markup>, <markup><a href="ACAC6A80-7CE0-4CB9-B36C-B2FB6ACAB027.htm#BF0C9952599BE4F44B369301010BA839"><img src="../media/BF0C9952599BE4F44B369301010BA839.png" width="34" height="12" align="middle"></img></a></markup> and <markup><a href="ACAC6A80-7CE0-4CB9-B36C-B2FB6ACAB027.htm#304DFE6F90AF2E7E588CD55D0796EEB9"><img src="../media/304DFE6F90AF2E7E588CD55D0796EEB9.png" width="40" height="13" align="middle"></img></a></markup> (green curve), <markup><a href="ACAC6A80-7CE0-4CB9-B36C-B2FB6ACAB027.htm#D1A388F09059D679476ACDF827254377"><img src="../media/D1A388F09059D679476ACDF827254377.png" width="52" height="13" align="middle"></img></a></markup> (orange curve), and <markup><a href="ACAC6A80-7CE0-4CB9-B36C-B2FB6ACAB027.htm#128368CBD5925C718D3FC10E80E23196"><img src="../media/128368CBD5925C718D3FC10E80E23196.png" width="59" height="13" align="middle"></img></a></markup> (cyan curve).
+</para>
+
+<para>
+Ref. [1 ]: Crank, &quot;The Mathematics of Diffusion&quot;, 2<superscript>nd</superscript> edition, 1975, Oxford University Press, p. 91
+</para>
+</content>
+</section>
+
+<section address="2B04B934E6B0CDA445904F7A8FB1A022">
+<title>Mass change of a sphere after an exponential equilibration concentration change
+</title>
+<content>
+
+<para>
+This function evaluates the mass change of a sphere with the radius <markup><a href="ACAC6A80-7CE0-4CB9-B36C-B2FB6ACAB027.htm#E31C82EC5FD9EDBF47CF6F633A629E69"><img src="../media/E31C82EC5FD9EDBF47CF6F633A629E69.png" width="7" height="8" align="middle"></img></a></markup> after an exponential equilibration concentration change  of the outer concentration in dependence of the time <markup><a href="ACAC6A80-7CE0-4CB9-B36C-B2FB6ACAB027.htm#3D7F2B1F5473D76B654A0F2CE4C035BF"><img src="../media/3D7F2B1F5473D76B654A0F2CE4C035BF.png" width="5" height="11" align="middle"></img></a></markup>, i.e. the concentration varies with a characteristic time constant <markup><a href="ACAC6A80-7CE0-4CB9-B36C-B2FB6ACAB027.htm#BFA313332602014B62FEEF342DFA23F5"><img src="../media/BFA313332602014B62FEEF342DFA23F5.png" width="7" height="8" align="middle"></img></a></markup> according to:
+</para>
+<markup><a href="ACAC6A80-7CE0-4CB9-B36C-B2FB6ACAB027.htm#76F85ED8373697AE97016122CF44D1FB"><img src="../media/76F85ED8373697AE97016122CF44D1FB.png" width="251" height="16"></img></a></markup>
+
+<para>
+The mass <markup><a href="ACAC6A80-7CE0-4CB9-B36C-B2FB6ACAB027.htm#1661943E84B01B6EDD6C539929DBC5BA"><img src="../media/1661943E84B01B6EDD6C539929DBC5BA.png" width="32" height="16" align="bottom"></img></a></markup> is then:
+</para>
+<markup><a href="ACAC6A80-7CE0-4CB9-B36C-B2FB6ACAB027.htm#F6E8F0C5C77D0A57139323D426B5C4DB"><img src="../media/F6E8F0C5C77D0A57139323D426B5C4DB.png" width="572" height="46"></img></a></markup>
+
+<para>
+in which:
+</para>
+
+<list class="bullet">
+
+<listItem>
+
+<para>
+<markup><a href="ACAC6A80-7CE0-4CB9-B36C-B2FB6ACAB027.htm#AD59F779B819D3A3340F710F6ADA1752"><img src="../media/AD59F779B819D3A3340F710F6ADA1752.png" width="14" height="8" align="middle"></img></a></markup> is the dimensionless reduced variable: <markup><a href="ACAC6A80-7CE0-4CB9-B36C-B2FB6ACAB027.htm#36485AE6F432C510FCD779C44A448462"><img src="../media/36485AE6F432C510FCD779C44A448462.png" width="93" height="35" align="middle"></img></a></markup>, <markup><a href="ACAC6A80-7CE0-4CB9-B36C-B2FB6ACAB027.htm#EED9FAFE1C21977355EBC34570D461D5"><img src="../media/EED9FAFE1C21977355EBC34570D461D5.png" width="36" height="13" align="middle"></img></a></markup>
+</para>
+</listItem>
+
+<listItem>
+
+<para>
+<markup><a href="ACAC6A80-7CE0-4CB9-B36C-B2FB6ACAB027.htm#C6F1305962C5C6C0F0E36DDFD0C7259D"><img src="../media/C6F1305962C5C6C0F0E36DDFD0C7259D.png" width="14" height="8" align="middle"></img></a></markup> is the dimensionless reduced time constant: <markup><a href="ACAC6A80-7CE0-4CB9-B36C-B2FB6ACAB027.htm#973D37EDE3560E358621F8489DE8A384"><img src="../media/973D37EDE3560E358621F8489DE8A384.png" width="53" height="33" align="middle"></img></a></markup>
+</para>
+</listItem>
+
+<listItem>
+
+<para>
+<markup><a href="ACAC6A80-7CE0-4CB9-B36C-B2FB6ACAB027.htm#A4D3BB3E419A4A728B33551A9513EB08"><img src="../media/A4D3BB3E419A4A728B33551A9513EB08.png" width="43" height="16" align="bottom"></img></a></markup> is the n<superscript>th</superscript> zero point of the Bessel function <markup><a href="ACAC6A80-7CE0-4CB9-B36C-B2FB6ACAB027.htm#19D5A22B6E18152D5F2C6E2931178F72"><img src="../media/19D5A22B6E18152D5F2C6E2931178F72.png" width="14" height="13" align="middle"></img></a></markup>
+</para>
+</listItem>
+
+<listItem>
+
+<para>
+<markup><a href="ACAC6A80-7CE0-4CB9-B36C-B2FB6ACAB027.htm#3D7F2B1F5473D76B654A0F2CE4C035BF"><img src="../media/3D7F2B1F5473D76B654A0F2CE4C035BF.png" width="5" height="11" align="middle"></img></a></markup> is the time (independent variable)
+</para>
+</listItem>
+
+<listItem>
+
+<para>
+<markup><a href="ACAC6A80-7CE0-4CB9-B36C-B2FB6ACAB027.htm#FA84D8BFC85F6B60A876F88B2E46CBC0"><img src="../media/FA84D8BFC85F6B60A876F88B2E46CBC0.png" width="11" height="13" align="middle"></img></a></markup> is the time where the concentration change starts, i.e. the beginning of the diffusion process (parameter)
+</para>
+</listItem>
+
+<listItem>
+
+<para>
+<markup><a href="ACAC6A80-7CE0-4CB9-B36C-B2FB6ACAB027.htm#EF938FBB90E9B2A8543C6E9663866216"><img src="../media/EF938FBB90E9B2A8543C6E9663866216.png" width="12" height="13" align="middle"></img></a></markup> is the diffusion coefficient (parameter)
+</para>
+</listItem>
+
+<listItem>
+
+<para>
+<markup><a href="ACAC6A80-7CE0-4CB9-B36C-B2FB6ACAB027.htm#5A86C002C48D07CDC17F5AA3F906A7B4"><img src="../media/5A86C002C48D07CDC17F5AA3F906A7B4.png" width="20" height="13" align="middle"></img></a></markup> is the mass of the plane sheet before the concentration step, i.e. for <markup><a href="ACAC6A80-7CE0-4CB9-B36C-B2FB6ACAB027.htm#92559C9AC09A05B9D86BD9DDECF4DC70"><img src="../media/92559C9AC09A05B9D86BD9DDECF4DC70.png" width="36" height="13" align="middle"></img></a></markup> (parameter)
+</para>
+</listItem>
+
+<listItem>
+
+<para>
+<markup><a href="ACAC6A80-7CE0-4CB9-B36C-B2FB6ACAB027.htm#B26089E98F34BD386FC005AAAEA39A42"><img src="../media/B26089E98F34BD386FC005AAAEA39A42.png" width="27" height="13" align="middle"></img></a></markup> is the mass change due to the concentration step (parameter)
+</para>
+</listItem>
+
+<listItem>
+
+<para>
+<markup><a href="ACAC6A80-7CE0-4CB9-B36C-B2FB6ACAB027.htm#BFA313332602014B62FEEF342DFA23F5"><img src="../media/BFA313332602014B62FEEF342DFA23F5.png" width="7" height="8" align="middle"></img></a></markup> is the characteristic time constant of the concentration change
+</para>
+</listItem>
+
+<listItem>
+
+<para>
+<markup><a href="ACAC6A80-7CE0-4CB9-B36C-B2FB6ACAB027.htm#E31C82EC5FD9EDBF47CF6F633A629E69"><img src="../media/E31C82EC5FD9EDBF47CF6F633A629E69.png" width="7" height="8" align="middle"></img></a></markup> is the radius of the sphere (property of the fit function)
+</para>
+</listItem>
+</list>
+
+<para>
+The radius of the sphere <markup><a href="ACAC6A80-7CE0-4CB9-B36C-B2FB6ACAB027.htm#E31C82EC5FD9EDBF47CF6F633A629E69"><img src="../media/E31C82EC5FD9EDBF47CF6F633A629E69.png" width="7" height="8" align="middle"></img></a></markup> can be changed by double-clicking on the fit function. The default value is <markup><a href="ACAC6A80-7CE0-4CB9-B36C-B2FB6ACAB027.htm#BF0C9952599BE4F44B369301010BA839"><img src="../media/BF0C9952599BE4F44B369301010BA839.png" width="34" height="12" align="middle"></img></a></markup>.
+</para>
+
+<para>
+The domain of the independent variable <markup><a href="ACAC6A80-7CE0-4CB9-B36C-B2FB6ACAB027.htm#3D7F2B1F5473D76B654A0F2CE4C035BF"><img src="../media/3D7F2B1F5473D76B654A0F2CE4C035BF.png" width="5" height="11" align="middle"></img></a></markup> is <markup><a href="ACAC6A80-7CE0-4CB9-B36C-B2FB6ACAB027.htm#5DBB05B18DFFC630066AB7652CED49EA"><img src="../media/5DBB05B18DFFC630066AB7652CED49EA.png" width="87" height="13" align="middle"></img></a></markup>.
+</para>
+
+<para>
+<markup><a href="ACAC6A80-7CE0-4CB9-B36C-B2FB6ACAB027.htm#F99F795BA31BF2D77AB1553C597CD6A9"><img src="../media/F99F795BA31BF2D77AB1553C597CD6A9.png" width="567"></img></a></markup>
+</para>
+
+<para>
+Fig. 1: Mass change of a sphere after an exponential concentration change with <markup><a href="ACAC6A80-7CE0-4CB9-B36C-B2FB6ACAB027.htm#CEF22D1384516EB997B612F9DA2C37F2"><img src="../media/CEF22D1384516EB997B612F9DA2C37F2.png" width="48" height="13" align="middle"></img></a></markup>, <markup><a href="ACAC6A80-7CE0-4CB9-B36C-B2FB6ACAB027.htm#76E065E99B1495BB9B367255319760BD"><img src="../media/76E065E99B1495BB9B367255319760BD.png" width="55" height="13" align="middle"></img></a></markup>, <markup><a href="ACAC6A80-7CE0-4CB9-B36C-B2FB6ACAB027.htm#29665FE61CCD4B32885AF24C7BC0C9AB"><img src="../media/29665FE61CCD4B32885AF24C7BC0C9AB.png" width="39" height="13" align="middle"></img></a></markup>, <markup><a href="ACAC6A80-7CE0-4CB9-B36C-B2FB6ACAB027.htm#BF0C9952599BE4F44B369301010BA839"><img src="../media/BF0C9952599BE4F44B369301010BA839.png" width="34" height="12" align="middle"></img></a></markup>, <markup><a href="ACAC6A80-7CE0-4CB9-B36C-B2FB6ACAB027.htm#4A860F79FDA92746A0709BCF1B5F1309"><img src="../media/4A860F79FDA92746A0709BCF1B5F1309.png" width="34" height="12" align="middle"></img></a></markup> and <markup><a href="ACAC6A80-7CE0-4CB9-B36C-B2FB6ACAB027.htm#304DFE6F90AF2E7E588CD55D0796EEB9"><img src="../media/304DFE6F90AF2E7E588CD55D0796EEB9.png" width="40" height="13" align="middle"></img></a></markup> (green curve), <markup><a href="ACAC6A80-7CE0-4CB9-B36C-B2FB6ACAB027.htm#D1A388F09059D679476ACDF827254377"><img src="../media/D1A388F09059D679476ACDF827254377.png" width="52" height="13" align="middle"></img></a></markup> (orange curve), and <markup><a href="ACAC6A80-7CE0-4CB9-B36C-B2FB6ACAB027.htm#128368CBD5925C718D3FC10E80E23196"><img src="../media/128368CBD5925C718D3FC10E80E23196.png" width="59" height="13" align="middle"></img></a></markup> (cyan curve).
+</para>
+
+<para>
+Ref. [1 ]: Crank, &quot;The Mathematics of Diffusion&quot;, 2<superscript>nd</superscript> edition, 1975, Oxford University Press, p. 92
+</para>
+</content>
+</section>
+<markup><hr/></markup>
+<section>
+
+<content>
+
+<para>
+Next section: <link xlink:href="DF83DC7D40FD2649BAB5FCA82077D8B5">General fit functions</link></para>
+</content>
+</section>
+</developerConceptualDocument>
+</topic>
