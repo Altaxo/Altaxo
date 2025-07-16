@@ -62,7 +62,7 @@ namespace Altaxo.Calc.FitFunctions.Diffusion
     /// </summary>
     /// <seealso cref="Altaxo.Serialization.Xml.IXmlSerializationSurrogate" />
     [Altaxo.Serialization.Xml.XmlSerializationSurrogateFor(typeof(MassChangeAfterStepForPlaneSheet), 0)]
-    private class XmlSerializationSurrogate1 : Altaxo.Serialization.Xml.IXmlSerializationSurrogate
+    private class XmlSerializationSurrogate0 : Altaxo.Serialization.Xml.IXmlSerializationSurrogate
     {
       public virtual void Serialize(object obj, Altaxo.Serialization.Xml.IXmlSerializationInfo info)
       {
@@ -79,8 +79,8 @@ namespace Altaxo.Calc.FitFunctions.Diffusion
 
     #endregion Serialization
 
-    [FitFunctionCreator("Mass change of plane sheet", "Diffusion", 1, 1, 4)]
-    [System.ComponentModel.Description("${res:Altaxo.Calc.FitFunctions.Diffusion.MassChangePlaneSheet}")]
+    [FitFunctionCreator("Mass change of a plane sheet after a concentration step", "Diffusion", 1, 1, 4)]
+    [System.ComponentModel.Description("${res:Altaxo.Calc.FitFunctions.Diffusion.MassChangeAfterStepForPlaneSheet}")]
     public static IFitFunction Create()
     {
       return new MassChangeAfterStepForPlaneSheet();
@@ -262,19 +262,28 @@ namespace Altaxo.Calc.FitFunctions.Diffusion
     /// Evaluates the response of a unit step (M0 = 0, ΔM = 1) at t0 = 0.
     /// </summary>
     /// <param name="t">The time t.</param>
-    /// <param name="d">The total thickness of the sheet d.</param>
+    /// <param name="l">The total thickness of the sheet.</param>
     /// <param name="D">The diffusion constant D.</param>
     /// <returns>The response to a unit step (M0 = 0, ΔM = 1) at t0 = 0.</returns>
-    public static double EvaluateUnitStep(double t, double d, double D)
+    public static double EvaluateUnitStep(double t, double l, double D)
     {
-      return EvaluateUnitStepWrtReducedVariable(D * t / (d * d));
+      return EvaluateUnitStepWrtReducedVariable(D * t / (l * l));
     }
 
 
-    /// <inheritdoc/>
-    public static double Evaluate(double t, double d, double t0, double M0, double ΔM, double D)
+    /// <summary>
+    /// Evaluates the response of a concentration step at t0.
+    /// </summary>
+    /// <param name="t">The time.</param>
+    /// <param name="l">The thickness of the plane sheet.</param>
+    /// <param name="t0">The time of the concentration step.</param>
+    /// <param name="M0">The initial mass.</param>
+    /// <param name="ΔM">The total change of mass due to the concentration step.</param>
+    /// <param name="D">The diffusion coefficient.</param>
+    /// <returns>The response to a concentration step at t0.</returns>
+    public static double Evaluate(double t, double l, double t0, double M0, double ΔM, double D)
     {
-      return M0 + ΔM * EvaluateUnitStepWrtReducedVariable(D * (t - t0) / (d * d));
+      return M0 + ΔM * EvaluateUnitStepWrtReducedVariable(D * (t - t0) / (l * l));
     }
 
     /// <inheritdoc/>

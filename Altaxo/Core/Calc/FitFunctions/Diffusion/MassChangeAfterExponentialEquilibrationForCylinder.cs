@@ -82,7 +82,7 @@ namespace Altaxo.Calc.FitFunctions.Diffusion
     /// </summary>
     /// <seealso cref="Altaxo.Serialization.Xml.IXmlSerializationSurrogate" />
     [Altaxo.Serialization.Xml.XmlSerializationSurrogateFor(typeof(MassChangeAfterExponentialEquilibrationForCylinder), 0)]
-    private class XmlSerializationSurrogate1 : Altaxo.Serialization.Xml.IXmlSerializationSurrogate
+    private class XmlSerializationSurrogate0 : Altaxo.Serialization.Xml.IXmlSerializationSurrogate
     {
       public virtual void Serialize(object obj, Altaxo.Serialization.Xml.IXmlSerializationInfo info)
       {
@@ -99,7 +99,7 @@ namespace Altaxo.Calc.FitFunctions.Diffusion
 
     #endregion Serialization
 
-    [FitFunctionCreator("Mass change of a cylinder after exponential equilibration concentration change", "Diffusion", 1, 1, 5)]
+    [FitFunctionCreator("Mass change of a cylinder after an exponential equilibration concentration change", "Diffusion", 1, 1, 5)]
     [System.ComponentModel.Description("${res:Altaxo.Calc.FitFunctions.Diffusion.MassChangeAfterExponentialEquilibrationForCylinder}")]
     public static IFitFunction Create()
     {

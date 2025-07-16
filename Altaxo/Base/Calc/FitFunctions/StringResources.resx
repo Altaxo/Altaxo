@@ -117,6 +117,219 @@
   <resheader name="writer">
     <value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
   </resheader>
+  <data name="Diffusion.MassChangeAfterExponentialEquilibrationForCylinder" xml:space="preserve">
+    <value>##### Mass change of a cylinder after an exponential equilibration concentration change
+
+This function evaluates the mass change of a cylinder with the radius $r$ after an exponential equilibration concentration change  of the outer concentration in dependence of the time $t$, i.e. the concentration varies with a characteristic time constant $\tau$ according to:
+
+$$
+c(t) = \Delta c \left [ 1 - \exp(- (t-t_0)/\tau) \right ], \; t&gt;t_0
+$$
+
+The length of the cylinder is considered infinite, i.e. diffusion from the end faces of the cylinder is neglected. The mass $M(t)$ is then:
+
+$$
+M(t) = M_0 + \Delta M \times \left (1 - \frac{2 J_1(rz^{-1/2}) \exp(-rv/rz) }{J_0(rz^{-1/2}) rz^{-1/2}} - 4 \sum_{n=1}^\infty \frac{\exp(-rv  \, \mathrm{J_0Z}(n)^2)}{\mathrm{J_0Z}(n)^2 (1- \mathrm{J_0Z}(n)^2 \, rz)} \right )
+$$
+
+in which:
+
+- $rv$ is the dimensionless reduced variable: $rv=\frac{D (t-t_0)}{r^2}$, $t&gt;t_0$ 
+- $rz$ is the dimensionless reduced time constant: $rz=\frac{D \tau}{r^2}$
+- $\mathrm{J_0Z}(n)$ is the n^th^ zero point of the Bessel function $J_0$
+- $t$ is the time (independent variable)
+- $t_0$ is the time where the concentration change starts, i.e. the beginning of the diffusion process (parameter)
+- $D$ is the diffusion coefficient (parameter)
+- $M_0$ is the mass of the plane sheet before the concentration step, i.e. for $t&lt;t_0$ (parameter)
+- $\Delta M$ is the mass change due to the concentration step (parameter)
+- $\tau$ is the characteristic time constant of the concentration change
+- $r$ is the radius of the cylinder (property of the fit function)
+
+The radius of the cylinder $r$ can be changed by double-clicking on the fit function. The default value is $r=1$.
+
+The domain of the independent variable $t$ is $-\infty \leq t \leq \infty$.
+
+^^^
+![](res:Altaxo.Calc.FitFunctions.Diffusion.MassChangeAfterExponentialEquilibrationForCylinder.Fig1.png){width=15cm}  
+^^^ Fig. 1: Mass change of a cylinder after an exponential concentration change with $M_0=1$, $\Delta M = 5$, $t_0=2$, $r=1$, $\tau=3$ and $D=1$ (green curve), $D=0.1$ (orange curve), and $D=0.01$ (cyan curve).
+
+
+Ref. [1 ]: Crank, "The Mathematics of Diffusion", 2^nd^ edition, 1975, Oxford University Press, p. 75
+</value>
+  </data>
+  <data name="Diffusion.MassChangeAfterExponentialEquilibrationForPlaneSheet" xml:space="preserve">
+    <value>##### Mass change of a plane sheet after an exponential equilibration concentration change
+
+This function evaluates the mass change of a plane sheet of the total thickness $l$ after an exponential equilibration concentration change  of the outer concentration in dependence of the time $t$, i.e. the concentration varies with a characteristic time constant $\tau$ according to:
+
+$$
+c(t) = \Delta c \left [ 1 - \exp(- (t-t_0)/\tau) \right ], \; t&gt;t_0
+$$
+
+The diffusion takes place from both sides of the plane sheet. The lateral dimensions of the sheet are considered infinite, i.e. diffusion from the edges of the sheet is neglected. The mass $M(t)$ is then:
+
+$$
+M(t) = M_0 + \Delta M \times \left (1 - \exp(-rv/rz) \, rz^{1/2} \tan(rz^{-1/2}) - 2 \sum_{n=0}^\infty \frac{\exp(-rv (n+1/2)^2 \pi^2)}{(n+1/2)^2 \pi^2 (1-(n+1/2)^2 \pi^2 rz)} \right )
+$$
+
+in which:
+
+- $rv$ is the dimensionless reduced variable: $rv=\frac{D (t-t_0)}{l^2}$, $t&gt;t_0$ 
+- $rz$ is the dimensionless reduced time constant: $rz=\frac{D \tau}{l^2}$
+- $t$ is the time (independent variable)
+- $t_0$ is the time where the concentration change starts, i.e. the beginning of the diffusion process (parameter)
+- $D$ is the diffusion coefficient (parameter)
+- $M_0$ is the mass of the plane sheet before the concentration step, i.e. for $t&lt;t_0$ (parameter)
+- $\Delta M$ is the mass change due to the concentration step (parameter)
+- $\tau$ is the characteristic time constant of the concentration change
+- $l$ is the thickness of the plane sheet (property of the fit function)
+
+The thickness of the plane sheet $l$ can be changed by double-clicking on the fit function. The default value is $l=1$.
+
+The domain of the independent variable $t$ is $-\infty \leq t \leq \infty$.
+
+^^^
+![](res:Altaxo.Calc.FitFunctions.Diffusion.MassChangeAfterExponentialEquilibrationForPlaneSheet.Fig1.png){width=15cm}  
+^^^ Fig. 1: Mass change of a plane sheet after an exponential concentration change with $M_0=1$, $\Delta M = 5$, $t_0=2$, $l=1$, $\tau=3$ and $D=1$ (green curve), $D=0.1$ (orange curve), and $D=0.01$ (cyan curve).
+
+
+Ref. [1 ]: Crank, "The Mathematics of Diffusion", 2^nd^ edition, 1975, Oxford University Press, p. 53
+</value>
+  </data>
+  <data name="Diffusion.MassChangeAfterExponentialEquilibrationForSphere" xml:space="preserve">
+    <value>##### Mass change of a sphere after an exponential equilibration concentration change
+
+This function evaluates the mass change of a sphere with the radius $r$ after an exponential equilibration concentration change  of the outer concentration in dependence of the time $t$, i.e. the concentration varies with a characteristic time constant $\tau$ according to:
+
+$$
+c(t) = \Delta c \left [ 1 - \exp(- (t-t_0)/\tau) \right ], \; t&gt;t_0
+$$
+
+The mass $M(t)$ is then:
+
+$$
+M(t) = M_0 + \Delta M \times \left (1 - 3 \, rz \exp(-rv/rz) \left [ 1- \frac{rz^{-1/2}}{\tan(rz^{-1/2})}  \right ] - 6 \sum_{n=1}^\infty \frac{\exp(-rv  \, n^2 \pi^2}{n^2 \pi^2 (1- n^2 \pi^2 \, rz)} \right )
+$$
+
+in which:
+
+- $rv$ is the dimensionless reduced variable: $rv=\frac{D (t-t_0)}{r^2}$, $t&gt;t_0$ 
+- $rz$ is the dimensionless reduced time constant: $rz=\frac{D \tau}{r^2}$
+- $\mathrm{J_0Z}(n)$ is the n^th^ zero point of the Bessel function $J_0$
+- $t$ is the time (independent variable)
+- $t_0$ is the time where the concentration change starts, i.e. the beginning of the diffusion process (parameter)
+- $D$ is the diffusion coefficient (parameter)
+- $M_0$ is the mass of the plane sheet before the concentration step, i.e. for $t&lt;t_0$ (parameter)
+- $\Delta M$ is the mass change due to the concentration step (parameter)
+- $\tau$ is the characteristic time constant of the concentration change
+- $r$ is the radius of the sphere (property of the fit function)
+
+The radius of the sphere $r$ can be changed by double-clicking on the fit function. The default value is $r=1$.
+
+The domain of the independent variable $t$ is $-\infty \leq t \leq \infty$.
+
+^^^
+![](res:Altaxo.Calc.FitFunctions.Diffusion.MassChangeAfterExponentialEquilibrationForSphere.Fig1.png){width=15cm}  
+^^^ Fig. 1: Mass change of a sphere after an exponential concentration change with $M_0=1$, $\Delta M = 5$, $t_0=2$, $r=1$, $\tau=3$ and $D=1$ (green curve), $D=0.1$ (orange curve), and $D=0.01$ (cyan curve).
+
+
+Ref. [1 ]: Crank, "The Mathematics of Diffusion", 2^nd^ edition, 1975, Oxford University Press, p. 92
+</value>
+  </data>
+  <data name="Diffusion.MassChangeAfterStepForCylinder" xml:space="preserve">
+    <value>##### Mass change of a cylinder after a concentration step
+
+This function evaluates the mass change of a cylinder with radius $r$ after a step of the outer concentration in dependence of the time $t$. The length of the cylinder is considered infinite, i.e. diffusion from the end faces of the cylinder is neglected. 
+
+$$
+M(t) = M_0 + \Delta M \times \left (1 - 4 \sum_{n=1}^\infty \frac{\exp(-rv  \, \mathrm{J_0Z}(n)^2)}{\mathrm{J_0Z}(n)^2} \right )
+$$
+
+in which:
+
+- $rv$ is the dimensionless reduced variable: $rv=\frac{D (t-t_0)}{r^2}$, $t&gt;t_0$ 
+- $\mathrm{J_0Z}(n)$ is the n^th^ zero point of the Bessel function $J_0$
+- $t$ is the time (independent variable)
+- $t_0$ is the time where the concentration step occurs, i.e. the beginning of the diffusion process (parameter)
+- $D$ is the diffusion coefficient (parameter)
+- $M_0$ is the mass of the plane sheet before the concentration step, i.e. for $t&lt;t_0$ (parameter)
+- $\Delta M$ is the mass change due to the concentration step (parameter)
+- $r$ is the radius of the cylinder (property of the fit function)
+
+The radius of the cylinder $r$ can be changed by double-clicking on the fit function. The default value is $r=1$.
+
+The domain of the independent variable $t$ is $-\infty \leq t \leq \infty$.
+
+^^^
+![](res:Altaxo.Calc.FitFunctions.Diffusion.MassChangeAfterStepForCylinder.Fig1.png){width=15cm}  
+^^^ Fig. 1: Mass change of a cylinder after a concentration step with $M_0=1$, $\Delta M = 5$, $t_0=2$, $r=1$ and $D=1$ (green curve), $D=0.1$ (orange curve), and $D=0.01$ (cyan curve).
+
+
+Ref. [1 ]: Crank, "The Mathematics of Diffusion", 2^nd^ edition, 1975, Oxford University Press, p. 73
+</value>
+  </data>
+  <data name="Diffusion.MassChangeAfterStepForPlaneSheet" xml:space="preserve">
+    <value>##### Mass change of a plane sheet after a concentration step
+
+This function evaluates the mass change of a plane sheet of the total thickness $l$ after a step of the outer concentration in dependence of the time $t$. The diffusion takes place from both sides of the plane sheet. The lateral dimensions of the sheet are considered infinite, i.e. diffusion from the edges of the sheet is neglected. 
+
+$$
+M(t) = M_0 + \Delta M \times \left (1 - 2 \sum_{n=0}^\infty \frac{\exp(-rv (n+1/2)^2 \pi^2)}{(n+1/2)^2 \pi^2} \right )
+$$
+
+in which:
+
+- $rv$ is the dimensionless reduced variable: $rv=\frac{D (t-t_0)}{l^2}$, $t&gt;t_0$ 
+- $t$ is the time (independent variable)
+- $t_0$ is the time where the concentration step occurs, i.e. the beginning of the diffusion process (parameter)
+- $D$ is the diffusion coefficient (parameter)
+- $M_0$ is the mass of the plane sheet before the concentration step, i.e. for $t&lt;t_0$ (parameter)
+- $\Delta M$ is the mass change due to the concentration step (parameter)
+- $l$ is the thickness of the plane sheet (property of the fit function)
+
+The thickness of the plane sheet $l$ can be changed by double-clicking on the fit function. The default value is $l=1$.
+
+The domain of the independent variable $t$ is $-\infty \leq t \leq \infty$.
+
+^^^
+![](res:Altaxo.Calc.FitFunctions.Diffusion.MassChangeAfterStepForPlaneSheet.Fig1.png){width=15cm}  
+^^^ Fig. 1: Mass change of a plane sheet after a concentration step with $M_0=1$, $\Delta M = 5$, $t_0=2$, $l=1$ and $D=1$ (green curve), $D=0.1$ (orange curve), and $D=0.01$ (cyan curve).
+
+
+Ref. [1 ]: Crank, "The Mathematics of Diffusion", 2^nd^ edition, 1975, Oxford University Press, p. 48
+</value>
+  </data>
+  <data name="Diffusion.MassChangeAfterStepForSphere" xml:space="preserve">
+    <value>##### Mass change of a sphere after a concentration step
+
+This function evaluates the mass change of a sphere of radius $r$ after a step of the outer concentration in dependence of the time $t$. 
+
+$$
+M(t) = M_0 + \Delta M \times \left (1 - 6 \sum_{n=1}^\infty \frac{\exp(-rv \, n^2 \pi^2)}{n^2 \pi^2} \right )
+$$
+
+in which:
+
+- $rv$ is the dimensionless reduced variable: $rv=\frac{D (t-t_0)}{r^2}$, $t&gt;t_0$ 
+- $t$ is the time (independent variable)
+- $t_0$ is the time where the concentration step occurs, i.e. the beginning of the diffusion process (parameter)
+- $D$ is the diffusion coefficient (parameter)
+- $M_0$ is the mass of the plane sheet before the concentration step, i.e. for $t&lt;t_0$ (parameter)
+- $\Delta M$ is the mass change due to the concentration step (parameter)
+- $r$ is the radius of the sphere (property of the fit function)
+
+The radius of the sphere $r$ can be changed by double-clicking on the fit function. The default value is $r=1$.
+
+The domain of the independent variable $t$ is $-\infty \leq t \leq \infty$.
+
+^^^
+![](res:Altaxo.Calc.FitFunctions.Diffusion.MassChangeAfterStepForSphere.Fig1.png){width=15cm}  
+^^^ Fig. 1: Mass change of a sphere after a concentration step with $M_0=1$, $\Delta M = 5$, $t_0=2$, $r=1$ and $D=1$ (green curve), $D=0.1$ (orange curve), and $D=0.01$ (cyan curve).
+
+
+Ref. [1 ]: Crank, "The Mathematics of Diffusion", 2^nd^ edition, 1975, Oxford University Press, p. 91
+</value>
+  </data>
   <data name="General.ExponentialDecay" xml:space="preserve">
     <value>##### ExponentialDecay
 
