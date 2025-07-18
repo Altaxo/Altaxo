@@ -27,8 +27,6 @@ using System;
 using System.Collections.Generic;
 using System.Diagnostics.CodeAnalysis;
 using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 using Altaxo.Collections;
 
 namespace Altaxo.Main
@@ -141,6 +139,18 @@ namespace Altaxo.Main
     public AbsoluteDocumentPath(AbsoluteDocumentPath from)
     {
       _pathParts = (string[])from._pathParts.Clone();
+    }
+
+
+    public static AbsoluteDocumentPath FromPathString(string pathString)
+    {
+      if (string.IsNullOrEmpty(pathString))
+        throw new ArgumentNullException(nameof(pathString));
+
+      if (pathString[0] != '/')
+        throw new ArgumentException("Path has to start with a slash character", nameof(pathString));
+
+      return new AbsoluteDocumentPath(pathString[1..].Split('/'));
     }
 
     public int Count { get { return _pathParts.Length; } }
@@ -446,7 +456,7 @@ namespace Altaxo.Main
         AbsoluteDocumentPath path = GetPath(node, int.MaxValue);
         return path;
       }
-      catch(Exception)
+      catch (Exception)
       {
         return null;
       }
