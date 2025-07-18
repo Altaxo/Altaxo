@@ -27,7 +27,7 @@ using System.Collections.Generic;
 namespace Altaxo.Calc.Interpolation
 {
   /// <summary>
-  /// Options for a polynomial interpolation (<see cref="PolynomialInterpolationOptions"/>).
+  /// Options for a polynomial interpolation (<see cref="PolynomialInterpolation"/>).
   /// </summary>
   public record PolynomialInterpolationOptions : IInterpolationFunctionOptions
   {
