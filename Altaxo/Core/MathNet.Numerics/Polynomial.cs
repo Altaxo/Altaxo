@@ -367,7 +367,7 @@ namespace Altaxo.Calc
       double[] p = new double[n];
       for (int i = n - 1, j = 0; i >= 0; i--, j++)
       {
-        p[i] = -Coefficients[i] / aN;
+        p[j] = -Coefficients[i] / aN;
       }
 
       DenseMatrix A0 = DenseMatrix.CreateDiagonal(n - 1, n - 1, 1.0);
