@@ -376,6 +376,23 @@ namespace Altaxo.Units
       return !double.IsNaN(b._value) && a.CompareTo(b) >= 0;
     }
 
+    /// <summary>
+    /// Get the absolute value of this quantity.
+    /// </summary>
+    /// <returns>The absolute value of this quantity.</returns>
+    /// <exception cref="System.ArithmeticException">Can not invert a biased unit</exception>
+    public DimensionfulQuantity Abs()
+    {
+      if (IsEmpty)
+      {
+        return Empty;
+      }
+      if (HasBiasedUnit && _value < 0)
+      {
+        throw new ArithmeticException("Can not invert a biased unit");
+      }
+      return new DimensionfulQuantity(Math.Abs(_value), _prefix, _unit);
+    }
 
     /// <summary>
     /// Gets the quantity as treated as unbiased difference value. If the unit of this quantity is not biased, the
