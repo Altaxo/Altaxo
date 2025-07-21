@@ -103,12 +103,15 @@ namespace Altaxo.AddInItems
   /// <summary>
   /// LoadContextIntoDefault is an assembly load context intended for plugin assemblies with dependencies.
   /// The original plugin assembly is loaded into a newly created instance of this class (this can not be helped?),
-  /// but at least all dependencies of the original plugin dependency are loaded in the default context.
-  /// In this way it can be avoided that we have unintentionally load multiple instances of the same assembly.
+  /// but at least all dependencies of the original plugin dependency are loaded into the same context, which is <see cref="Instance"/>.
+  /// The default context can not be used, because then the resolution of 3rd level assemblies will fail.
+  /// But in this way it can be avoided that we have unintentionally load multiple instances of the same assembly.
   /// </summary>
   /// <seealso cref="System.Runtime.Loader.AssemblyLoadContext" />
   public class LoadContextIntoDefault : AssemblyLoadContext
   {
+    static LoadContextIntoDefault Instance { get; } = new LoadContextIntoDefault(Assembly.GetEntryAssembly().Location);
+
     /// <summary>Resolver for the addin folder</summary>
     private AssemblyDependencyResolver _resolver;
 
@@ -150,7 +153,7 @@ namespace Altaxo.AddInItems
           // note that we load the dependent assemblies into the default load context,
           // and not in this context here
           // by this way we avoid that we load the same assembly in different contexts
-          result = Default.LoadFromAssemblyPath(assemblyPath);
+          result = Instance.LoadFromAssemblyPath(assemblyPath);
         }
         else
         {
@@ -161,7 +164,7 @@ namespace Altaxo.AddInItems
             // note that we load the dependent assemblies into the default load context,
             // and not in this context here
             // by this way we avoid that we load the same assembly in different contexts
-            result = Default.LoadFromAssemblyPath(fileInfo.FullName);
+            result = Instance.LoadFromAssemblyPath(fileInfo.FullName);
           }
         }
       }
