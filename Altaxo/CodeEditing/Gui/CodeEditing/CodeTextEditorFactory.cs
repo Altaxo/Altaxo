@@ -25,8 +25,6 @@
 using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 using System.Windows.Media;
 using Altaxo.CodeEditing;
 using Microsoft.CodeAnalysis;
@@ -125,6 +123,7 @@ namespace Altaxo.Gui.CodeEditing
     public CodeEditorView NewCodeEditorView(string initialText, IEnumerable<System.Reflection.Assembly> referencedAssemblies)
     {
       var workspace = new AltaxoWorkspaceForCSharpRegularDll(RoslynHost, WorkingDirectory, referencedAssemblies);
+      RoslynHost.RegisterWorkspace(workspace);
       return NewCodeEditorView(workspace, initialText);
     }
 
@@ -168,6 +167,7 @@ namespace Altaxo.Gui.CodeEditing
     public CodeEditor NewCodeEditor(string initialText, IEnumerable<System.Reflection.Assembly> referencedAssemblies)
     {
       var workspace = new AltaxoWorkspaceForCSharpRegularDll(RoslynHost, WorkingDirectory, referencedAssemblies);
+      RoslynHost.RegisterWorkspace(workspace);
       return NewCodeEditor(workspace, initialText);
     }
 
@@ -214,6 +214,7 @@ namespace Altaxo.Gui.CodeEditing
     public CodeEditorWithDiagnostics NewCodeEditorWithDiagnostics(string initialText, IEnumerable<System.Reflection.Assembly> referencedAssemblies)
     {
       var workspace = new AltaxoWorkspaceForCSharpRegularDll(RoslynHost, WorkingDirectory, referencedAssemblies);
+      RoslynHost.RegisterWorkspace(workspace);
       return NewCodeEditorWithDiagnostics(workspace, initialText);
     }
 

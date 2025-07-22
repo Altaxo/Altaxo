@@ -50,8 +50,8 @@ using Altaxo.CodeEditing.Completion;
 #endif
 
 #if !NoDiagnostics
-using Microsoft.CodeAnalysis.Diagnostics;
-using Microsoft.CodeAnalysis.Shared.Extensions;
+using Altaxo.CodeEditing.Diagnostics;
+
 #endif
 
 #if !NoReferenceHighlighting
@@ -290,17 +290,19 @@ namespace Altaxo.Gui.CodeEditing
     #region Diagnostics (wriggles under the code text)
 #if !NoDiagnostics
 
-    internal void EhDiagnosticsUpdated(DiagnosticsUpdatedArgs a)
+    internal void EhDiagnosticsUpdated(DiagnosticsChangedArgs a)
     {
       _syncContext.Post(o => ProcessDiagnostics(a), null);
     }
 
-    private void ProcessDiagnostics(DiagnosticsUpdatedArgs args)
+    protected async void ProcessDiagnostics(DiagnosticsChangedArgs args)
     {
-      // Note: I have never seen here args with Kind == DiagnosticsRemoved
-      _textMarkerService.RemoveAll(marker => Equals(args.Id, marker.Tag));
 
-      if (args.DocumentId is null || args.Kind != DiagnosticsUpdatedKind.DiagnosticsCreated)
+
+      // Note: I have never seen here args with Kind == DiagnosticsRemoved
+      _textMarkerService.RemoveAll(d => d.Tag is Altaxo.CodeEditing.Diagnostics.DiagnosticData diagnosticData && args.RemovedDiagnostics.Contains(diagnosticData));
+
+      if (args.DocumentId is null)
       {
         return;
       }
@@ -311,45 +313,38 @@ namespace Altaxo.Gui.CodeEditing
         return;
       }
 
-      foreach (var diagnosticData in args.Diagnostics)
+      foreach (var diagnosticData in args.AddedDiagnostics)
       {
         if (diagnosticData.Severity == DiagnosticSeverity.Hidden || diagnosticData.IsSuppressed)
         {
           continue;
         }
 
-        var textSpan = diagnosticData.DataLocation.MappedFileSpan.GetClampedTextSpan(sourceText);
-        if (textSpan.IsEmpty)
+        var span = diagnosticData.GetTextSpan(sourceText);
+        if (span == null)
         {
           continue;
         }
 
-        var marker = _textMarkerService.TryCreate(textSpan.Start, textSpan.Length);
+        var marker = _textMarkerService.TryCreate(span.Value.Start, span.Value.Length);
         if (marker is not null)
         {
-          marker.Tag = args.Id;
+          marker.Tag = diagnosticData;
           marker.MarkerColor = GetDiagnosticsColor(diagnosticData);
           marker.ToolTip = diagnosticData.Message;
         }
       }
     }
 
-    private static Color GetDiagnosticsColor(Microsoft.CodeAnalysis.Diagnostics.DiagnosticData diagnosticData)
+    private static Color GetDiagnosticsColor(Altaxo.CodeEditing.Diagnostics.DiagnosticData diagnosticData)
     {
-      switch (diagnosticData.Severity)
+      return diagnosticData.Severity switch
       {
-        case DiagnosticSeverity.Info:
-          return Colors.LimeGreen;
-
-        case DiagnosticSeverity.Warning:
-          return Colors.DodgerBlue;
-
-        case DiagnosticSeverity.Error:
-          return Colors.Red;
-
-        default:
-          throw new ArgumentOutOfRangeException();
-      }
+        DiagnosticSeverity.Info => Colors.LimeGreen,
+        DiagnosticSeverity.Warning => Colors.DodgerBlue,
+        DiagnosticSeverity.Error => Colors.Red,
+        _ => throw new ArgumentOutOfRangeException(nameof(diagnosticData)),
+      };
     }
 #endif
     #endregion Diagnostics (wriggles under the code text)

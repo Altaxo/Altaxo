@@ -33,6 +33,7 @@ using Microsoft.CodeAnalysis;
 using Microsoft.CodeAnalysis.Text;
 using System.Collections.Concurrent;
 
+
 #if !NoDiagnostics
 using Microsoft.CodeAnalysis.Diagnostics;
 using Altaxo.CodeEditing.Diagnostics;
@@ -122,16 +123,22 @@ namespace Altaxo.CodeEditing
       StaticReferences = staticReferences.ToImmutableArray();
       PreprocessorSymbols = DefaultPreprocessorSymbols;
 
+      ProjectId = CreateInitialProject();
+
+#if !NoDiagnostics
       // next two lines are neccessary to have diagnostics in the solution
-      var solution = CurrentSolution.AddAnalyzerReferences(roslynHost.GetSolutionAnalyzerReferences());
+      var solution = CurrentSolution.AddAnalyzerReferences(ProjectId, roslynHost.GetSolutionAnalyzerReferences());
       SetCurrentSolution(solution);
 
-      ProjectId = CreateInitialProject();
+#endif
+
     }
 
     protected override void Dispose(bool finalize)
     {
-      DiagnosticProvider.Disable(this);
+#if !NoDiagnostics
+      // DiagnosticProvider.Disable(this);
+#endif
       _sourceTextChangedHandlers.Clear();
 
 #if !NoDiagnostics
@@ -157,6 +164,10 @@ namespace Altaxo.CodeEditing
     {
       var project = CurrentSolution.GetProject(ProjectId);
       var documentId = DocumentId.CreateNewId(ProjectId);
+      if (documentId is not null)
+      {
+        RoslynHost.RegisterDocument(documentId, this);
+      }
       var newSolution = project.Solution.AddDocument(documentId, project.Name, textContainer.CurrentText);
       SetCurrentSolution(newSolution);
       OpenDocument(documentId, textContainer);
@@ -258,7 +269,7 @@ namespace Altaxo.CodeEditing
       }
 
       // enable diagnostics now, if not already enabled
-      DiagnosticProvider.Enable(this);
+      // DiagnosticProvider.Enable(this);
     }
 
 

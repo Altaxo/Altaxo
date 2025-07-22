@@ -10,7 +10,6 @@ using System.Windows.Controls;
 using Altaxo.CodeEditing.Utilities;
 using Altaxo.Gui.CodeEditing;
 using Microsoft.CodeAnalysis;
-using Microsoft.CodeAnalysis.SignatureHelp;
 
 namespace Altaxo.CodeEditing.SignatureHelp
 {
@@ -79,7 +78,7 @@ namespace Altaxo.CodeEditing.SignatureHelp
 
     private void AddParameterSignatureHelp(int index, SignatureHelpParameter param, Panel headerPanel, Panel contentPanel)
     {
-      var isSelected = _signatureHelp.ArgumentIndex == index;
+      var isSelected = _signatureHelp.SelectedItemIndex == index;
       headerPanel.Children.Add(ToTextBlock(param.DisplayParts, bold: isSelected));
       if (index != _item.Parameters.Length - 1)
       {

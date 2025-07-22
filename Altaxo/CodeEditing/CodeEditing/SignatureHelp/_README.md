@@ -20,3 +20,8 @@ which exports the signature help provider interface and thus would be aggregated
 which needs a  Lazy<IPythiaSignatureHelpProviderImplementation> type. But this type is 
 not exported anywhere in Roslyn 3.6.0, and thus the construction of `AggregateSignatureHelpProvider'
 failed. The solution was to implement a dummy class `LazyPhythiaSignatureHelpProviderImplementationDummy` which exports the required interface.
+
+## Roslyn 3.14.0:
+
+`Lazy<IPythiaSignatureHelpProviderImplementation>` is no longer needed, and therefore
+was deleted.

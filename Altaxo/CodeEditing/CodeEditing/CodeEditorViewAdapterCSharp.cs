@@ -43,7 +43,6 @@ using Altaxo.CodeEditing.Completion;
 #endif
 
 #if !NoDiagnostics
-using Microsoft.CodeAnalysis.Diagnostics;
 #endif
 
 #if !NoFolding
@@ -56,8 +55,12 @@ using Microsoft.CodeAnalysis.Editor.CSharp.GoToDefinition;
 
 #if !NoLiveDocumentFormatting
 using Altaxo.CodeEditing.LiveDocumentFormatting;
+using Altaxo.CodeEditing.Diagnostics;
 using Microsoft.CodeAnalysis.Editor;
 using System.Linq;
+
+
+
 #endif
 
 #if !NoQuickInfo
@@ -208,12 +211,12 @@ namespace Altaxo.CodeEditing
     public event Action<ExternalHelp.ExternalHelpItem> ExternalHelpRequired;
 
 #if !NoDiagnostics
-    private Action<DiagnosticsUpdatedArgs> _diagnosticsUpdated;
+    private Action<DiagnosticsChangedArgs> _diagnosticsUpdated;
     /// <summary>
     /// Occurs when the diagnostics was updated and new diagnostics is available (diagnostics is responsible for the wriggles under the text
     /// that show in advance the errors in code).
     /// </summary>
-    event Action<DiagnosticsUpdatedArgs> ICodeEditorViewAdapter.DiagnosticsUpdated
+    event Action<DiagnosticsChangedArgs> ICodeEditorViewAdapter.DiagnosticsUpdated
     {
       add
       {
@@ -274,7 +277,8 @@ namespace Altaxo.CodeEditing
 #endif
 
 #if !NoDiagnostics
-      Workspace.SubscribeToDiagnosticsUpdateNotification(DocumentId, EhDiagnosticsUpdated);
+      var diagnosticsUpdater = _roslynHost.GetWorkspaceService<IDiagnosticsUpdater>(DocumentId);
+      diagnosticsUpdater.DiagnosticsChanged += EhDiagnosticsUpdated;
 #endif
       StartBackgroundEvaluationOfSyntaxTreeAndSemanticModel();
     }
@@ -466,7 +470,7 @@ namespace Altaxo.CodeEditing
     /// Called from the roslyn host when diagnostics was updated.
     /// </summary>
     /// <param name="a">a.</param>
-    internal void EhDiagnosticsUpdated(DiagnosticsUpdatedArgs a)
+    internal void EhDiagnosticsUpdated(DiagnosticsChangedArgs a)
     {
       _diagnosticsUpdated?.Invoke(a);
     }
@@ -614,7 +618,8 @@ namespace Altaxo.CodeEditing
         _goToDefinitionService = new CSharpGoToDefinitionService();
 
       var document = Workspace.CurrentSolution.GetDocument(DocumentId);
-      var definitions = _goToDefinitionService.FindDefinitionsAsync(document, caretOffset, CancellationToken.None).Result;
+      var semanticModel = document.GetSemanticModelAsync().Result;
+      var definitions = _goToDefinitionService.FindDefinitionsAsync(document, semanticModel, caretOffset, CancellationToken.None).Result;
       var location = definitions.FirstOrDefault();
 
       return location?.SourceSpan.Start;

@@ -37,7 +37,8 @@ using Altaxo.CodeEditing.BraceMatching;
 
 
 #if !NoDiagnostics
-using Microsoft.CodeAnalysis.Diagnostics;
+using Altaxo.CodeEditing.Diagnostics;
+
 #endif
 
 #if !NoReferenceHighlighting
@@ -58,7 +59,7 @@ namespace Altaxo.CodeEditing
     /// <value>
     /// The workspace.
     /// </value>
-    AltaxoWorkspaceBase Workspace { get; }
+    public AltaxoWorkspaceBase Workspace { get; }
 
     /// <summary>
     /// Gets the document identifier of the underlying document.
@@ -66,22 +67,22 @@ namespace Altaxo.CodeEditing
     /// <value>
     /// The document identifier.
     /// </value>
-    DocumentId DocumentId { get; }
+    public DocumentId DocumentId { get; }
 
     /// <summary>
     /// Occurs after the source text has changed. This event is routed from the <see cref="SourceTextAdapter"/>.
     /// </summary>
-    event EventHandler<Microsoft.CodeAnalysis.Text.TextChangeEventArgs> SourceTextChanged;
+    public event EventHandler<Microsoft.CodeAnalysis.Text.TextChangeEventArgs> SourceTextChanged;
 
     /// <summary>
     /// Occurs when the syntax tree changed has been evaluated after the document changed.
     /// </summary>
-    event Action<Document, SyntaxTree> SyntaxTreeChanged;
+    public event Action<Document, SyntaxTree> SyntaxTreeChanged;
 
     /// <summary>
     /// Gets the syntax tree of the document.
     /// </summary>
-    Task<SyntaxTree> GetDocumentSyntaxTreeAsync();
+    public Task<SyntaxTree> GetDocumentSyntaxTreeAsync();
 
 #if !NoSemanticHighlighting
     /// <summary>
@@ -90,7 +91,7 @@ namespace Altaxo.CodeEditing
     /// <value>
     /// The highlighting colorizer.
     /// </value>
-    ICSharpCode.AvalonEdit.Highlighting.HighlightingColorizer HighlightingColorizer { get; }
+    public ICSharpCode.AvalonEdit.Highlighting.HighlightingColorizer HighlightingColorizer { get; }
 #endif
 
 #if !NoQuickInfo
@@ -99,7 +100,7 @@ namespace Altaxo.CodeEditing
     /// </summary>
     /// <param name="cursorPosition">The cursor position.</param>
     /// <returns>The quick info tool tip, or null.</returns>
-    Task<QuickInfo.QuickInfoItem> GetToolTipAsync(int cursorPosition);
+    public Task<QuickInfo.QuickInfoItem> GetToolTipAsync(int cursorPosition);
 #endif
 
 #if !NoFolding
@@ -108,7 +109,7 @@ namespace Altaxo.CodeEditing
     /// to calculate all folding positions.
     /// </summary>
     /// <returns>Enumeration of foldings.</returns>
-    IEnumerable<NewFolding> GetNewFoldings();
+    public IEnumerable<NewFolding> GetNewFoldings();
 #endif
 
 #if !NoBraceMatching
@@ -118,7 +119,7 @@ namespace Altaxo.CodeEditing
     /// <param name="position">The cursor position.</param>
     /// <param name="cancellationToken">The cancellation token.</param>
     /// <returns>Matching braces</returns>
-    Task<BraceMatchingResult?> GetMatchingBracesAsync(int position, CancellationToken cancellationToken = default(CancellationToken));
+    public Task<BraceMatchingResult?> GetMatchingBracesAsync(int position, CancellationToken cancellationToken = default(CancellationToken));
 #endif
 
 #if !NoDiagnostics
@@ -126,7 +127,7 @@ namespace Altaxo.CodeEditing
     /// Occurs when the diagnostics was updated and new diagnostics is available (diagnostics is responsible for the wriggles under the text
     /// that show in advance the errors in code).
     /// </summary>
-    internal event Action<DiagnosticsUpdatedArgs> DiagnosticsUpdated;
+    internal event Action<DiagnosticsChangedArgs> DiagnosticsUpdated;
 #endif
 
 #if !NoReferenceHighlighting
@@ -137,7 +138,7 @@ namespace Altaxo.CodeEditing
 #endif
 
 #if !NoCompletion
-    Task<Completion.CompletionResult> GetCompletionData(int position, char? triggerChar, bool useSignatureHelp);
+    public Task<Completion.CompletionResult> GetCompletionData(int position, char? triggerChar, bool useSignatureHelp);
 #endif
 
     /// <summary>
@@ -146,7 +147,7 @@ namespace Altaxo.CodeEditing
     /// <value>
     /// The indentation strategy.
     /// </value>
-    IIndentationStrategy IndentationStrategy { get; }
+    public IIndentationStrategy IndentationStrategy { get; }
 
 
 
@@ -154,7 +155,7 @@ namespace Altaxo.CodeEditing
     /// Formats the complete document.
     /// </summary>
     /// <returns></returns>
-    Task FormatDocument();
+    public Task FormatDocument();
 
 
 #if !NoLiveDocumentFormatting
@@ -165,7 +166,7 @@ namespace Altaxo.CodeEditing
     /// <param name="caretPosition">The caret position after (!) the trigger char.</param>
     /// <param name="triggerChar">The trigger char.</param>
     /// <returns></returns>
-    Task FormatDocumentAfterEnteringTriggerChar(int caretPosition, char triggerChar);
+    public Task FormatDocumentAfterEnteringTriggerChar(int caretPosition, char triggerChar);
 #endif
 
 #if !NoExternalHelp
@@ -173,13 +174,13 @@ namespace Altaxo.CodeEditing
     /// Gets the external help item for the symbol under the caret position, and then fires the <see cref="ExternalHelpRequired"/> event.
     /// </summary>
     /// <param name="caretPosition">The caret position.</param>
-    Task GetExternalHelpItemAndFireHelpEvent(int caretPosition);
+    public Task GetExternalHelpItemAndFireHelpEvent(int caretPosition);
 #endif
 
     /// <summary>
     /// Event that is fired when external help is required.
     /// </summary>
-    event Action<ExternalHelp.ExternalHelpItem> ExternalHelpRequired;
+    public event Action<ExternalHelp.ExternalHelpItem> ExternalHelpRequired;
 
 #if !NoRenaming
     /// <summary>
@@ -187,7 +188,7 @@ namespace Altaxo.CodeEditing
     /// </summary>
     /// <param name="caretPositionOrSelectionStart">The caret position or selection start.</param>
     /// <returns></returns>
-    Task RenameSymbol(int caretPositionOrSelectionStart, object topLevelWindow, Action FocusBackOnEditor);
+    public Task RenameSymbol(int caretPositionOrSelectionStart, object topLevelWindow, Action FocusBackOnEditor);
 #endif
 
 

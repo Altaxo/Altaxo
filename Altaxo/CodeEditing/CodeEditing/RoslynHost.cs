@@ -4,6 +4,7 @@
 
 // Strongly revised for the Altaxo project, Copyright Dr. D. Lellinger, 2017
 using System;
+using System.Collections.Concurrent;
 using System.Collections.Generic;
 using System.Collections.Immutable;
 using System.Composition.Hosting;
@@ -11,6 +12,7 @@ using System.IO;
 using System.Linq;
 using System.Reflection;
 using System.Runtime.InteropServices;
+using Altaxo.CodeEditing.Diagnostics;
 using Microsoft.CodeAnalysis;
 using Microsoft.CodeAnalysis.CSharp;
 using Microsoft.CodeAnalysis.Diagnostics;
@@ -23,6 +25,11 @@ namespace Altaxo.CodeEditing
   public class RoslynHost
   {
     public static RoslynHost Instance { get; private set; }
+
+    private readonly ConcurrentDictionary<DocumentId, AltaxoWorkspaceBase> _workspaces = new();
+
+    public ImmutableHashSet<string> DisabledDiagnostics { get; } = [];
+
 
     internal static readonly ImmutableArray<Assembly> DefaultCompositionAssemblies =
             ImmutableArray.Create(
@@ -39,14 +46,20 @@ namespace Altaxo.CodeEditing
 
     internal static readonly ImmutableArray<Type> DefaultCompositionTypes =
        DefaultCompositionAssemblies.SelectMany(t => t.DefinedTypes).Select(t => t.AsType())
+#if !NoDiagnostics
        .Concat(GetDiagnosticCompositionTypes())
+#endif
        // .Concat(GetEditorFeaturesTypes())
        .ToImmutableArray();
 
+#if !NoDiagnostics
+
     private static IEnumerable<Type> GetDiagnosticCompositionTypes() => MetadataUtil.LoadTypesByNamespaces(
-        typeof(Microsoft.CodeAnalysis.Diagnostics.IDiagnosticService).Assembly,
+        typeof(Microsoft.CodeAnalysis.CodeFixes.ICodeFixService).Assembly,
         "Microsoft.CodeAnalysis.Diagnostics",
         "Microsoft.CodeAnalysis.CodeFixes");
+
+#endif
     /*
     private static IEnumerable<Type> GetEditorFeaturesTypes() => MetadataUtil.LoadTypesBy(
         typeof(CSharpEditorResources).Assembly, t => t.Name.EndsWith("OptionsStorage", StringComparison.Ordinal))
@@ -67,7 +80,7 @@ namespace Altaxo.CodeEditing
     private readonly CompositionHost _compositionContext;
 
 #if !NoDiagnostics
-    private Microsoft.CodeAnalysis.Diagnostics.IDiagnosticService _diagnosticsService;
+    // private Microsoft.CodeAnalysis.Diagnostics.IDiagnosticService _diagnosticsService;
 #endif
 
     public MefHostServices MefHost { get; }
@@ -121,7 +134,7 @@ namespace Altaxo.CodeEditing
 #endif
 
 #if !NoDiagnostics
-
+      /*
       _diagnosticsService = GetService<Microsoft.CodeAnalysis.Diagnostics.IDiagnosticService>(); // instantiate diagnostics service to get it working
       // Note that diagnosticsService must be enabled for the workspace by using DiagnosticProvider.Enable(..)
 
@@ -132,9 +145,11 @@ namespace Altaxo.CodeEditing
           (diagnosticArg.Workspace as Altaxo.CodeEditing.Diagnostics.IDiagnosticsEventSink)?.OnDiagnosticsUpdated(s, diagnosticArg);
         }
       };
+      */
 #endif
     }
 
+#if !NoDiagnostics
     public virtual IEnumerable<AnalyzerReference> GetSolutionAnalyzerReferences()
     {
       var loader = GetService<IAnalyzerAssemblyLoader>();
@@ -143,6 +158,7 @@ namespace Altaxo.CodeEditing
       yield return new AnalyzerFileReference(typeof(FeaturesResources).Assembly.Location, loader);
       yield return new AnalyzerFileReference(typeof(CSharpFeaturesResources).Assembly.Location, loader);
     }
+#endif
 
     protected virtual IEnumerable<Assembly> GetDefaultCompositionAssemblies() =>
             DefaultCompositionAssemblies;
@@ -232,6 +248,40 @@ namespace Altaxo.CodeEditing
     {
       return _compositionContext.GetExport<TService>();
     }
+
+    public TService GetWorkspaceService<TService>(DocumentId documentId) where TService : IWorkspaceService =>
+        _workspaces[documentId].Services.GetRequiredService<TService>();
+
+    public void CloseWorkspace(Workspace workspace)
+    {
+      if (workspace is null)
+        throw new ArgumentNullException(nameof(workspace));
+
+      foreach (var documentId in workspace.CurrentSolution.Projects.SelectMany(p => p.DocumentIds))
+      {
+        _workspaces.TryRemove(documentId, out _);
+      }
+
+      workspace.Dispose();
+    }
+
+    public virtual T RegisterWorkspace<T>(T workspace) where T : AltaxoWorkspaceBase
+    {
+      // create the updater before any document is opened
+      var diagnosticsUpdater = workspace.Services.GetRequiredService<IDiagnosticsUpdater>();
+      diagnosticsUpdater.DisabledDiagnostics = DisabledDiagnostics;
+      return workspace;
+    }
+
+    public void RegisterDocument(DocumentId documentId, AltaxoWorkspaceBase workspace)
+    {
+      if (documentId is null)
+        throw new ArgumentNullException(nameof(documentId));
+      if (workspace is null)
+        throw new ArgumentNullException(nameof(workspace));
+      _workspaces[documentId] = workspace;
+    }
+
   }
 
   internal class MetadataUtil

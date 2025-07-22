@@ -92,7 +92,7 @@ namespace Altaxo.CodeEditing
     private CSharpParseOptions CreateParseOptions()
     {
       return new CSharpParseOptions(
-                  languageVersion: LanguageVersion.Latest,
+                  languageVersion: LanguageVersion.Preview,
                   kind: SourceCodeKind.Regular,
                   preprocessorSymbols: PreprocessorSymbols
                   );

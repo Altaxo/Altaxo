@@ -23,7 +23,6 @@
 #endregion Copyright
 
 #if !NoCompletion && !NoSignatureHelp
-using System;
 using System.Collections.Immutable;
 using System.Composition;
 using System.Threading;
@@ -32,24 +31,14 @@ using Microsoft.CodeAnalysis;
 using Microsoft.CodeAnalysis.CSharp.Syntax;
 using Microsoft.CodeAnalysis.ExternalAccess.Pythia.Api;
 
-namespace Altaxo.CodeEditing.SignatureHelp
+namespace Altaxo.CodeEditing.SignatureHelp;
+
+[Export(typeof(IPythiaSignatureHelpProviderImplementation))]
+internal class PythiaSignatureHelpProviderImplementation : IPythiaSignatureHelpProviderImplementation
 {
-  [Export(typeof(Lazy<IPythiaSignatureHelpProviderImplementation>)), Shared]
-  internal class LazyPhythiaSignatureHelpProviderImplementationDummy : Lazy<IPythiaSignatureHelpProviderImplementation>
+  public Task<(ImmutableArray<PythiaSignatureHelpItemWrapper> items, int? selectedItemIndex)> GetMethodGroupItemsAndSelectionAsync(ImmutableArray<IMethodSymbol> accessibleMethods, Document document, InvocationExpressionSyntax invocationExpression, SemanticModel semanticModel, SymbolInfo currentSymbol, CancellationToken cancellationToken)
   {
-
-    public LazyPhythiaSignatureHelpProviderImplementationDummy()
-      : base(() => new PhythiaSignatureHelpProviderImplementationDummy())
-    {
-    }
-  }
-
-  internal class PhythiaSignatureHelpProviderImplementationDummy : IPythiaSignatureHelpProviderImplementation
-  {
-    Task<(ImmutableArray<PythiaSignatureHelpItemWrapper> items, int? selectedItemIndex)> IPythiaSignatureHelpProviderImplementation.GetMethodGroupItemsAndSelectionAsync(ImmutableArray<IMethodSymbol> accessibleMethods, Document document, InvocationExpressionSyntax invocationExpression, SemanticModel semanticModel, SymbolInfo currentSymbol, CancellationToken cancellationToken)
-    {
-      return Task.FromResult((ImmutableArray<PythiaSignatureHelpItemWrapper>.Empty, (int?)null));
-    }
+    return Task.FromResult((ImmutableArray<PythiaSignatureHelpItemWrapper>.Empty, (int?)null));
   }
 }
 #endif

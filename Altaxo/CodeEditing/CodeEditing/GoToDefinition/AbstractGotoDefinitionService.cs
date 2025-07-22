@@ -8,6 +8,7 @@ using System.Collections.Immutable;
 using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
+using Microsoft.CodeAnalysis.GoToDefinition;
 using Microsoft.CodeAnalysis.LanguageService;
 using Microsoft.CodeAnalysis.Navigation;
 using Microsoft.CodeAnalysis.Shared.Extensions;
@@ -29,10 +30,10 @@ namespace Microsoft.CodeAnalysis.Editor.GoToDefinition
     }
 #endif
 
-    public async Task<IEnumerable<INavigableItem>> FindDefinitionsAsync(Document document, int position, CancellationToken cancellationToken)
+    public async Task<IEnumerable<INavigableItem>> FindDefinitionsAsync(Document document, SemanticModel semanticModel, int position, CancellationToken cancellationToken)
     {
       var symbolService = document.GetLanguageService<IGoToDefinitionSymbolService>();
-      var (symbol, span) = await symbolService.GetSymbolAndBoundSpanAsync(document, position, includeType: true, cancellationToken).ConfigureAwait(false);
+      var (symbol, project, span) = await symbolService.GetSymbolProjectAndBoundSpanAsync(document, semanticModel, position, cancellationToken).ConfigureAwait(false);
 
       // Try to compute source definitions from symbol.
       var items = symbol != null
@@ -44,11 +45,11 @@ namespace Microsoft.CodeAnalysis.Editor.GoToDefinition
       return items.ToList();
     }
 
-    public bool TryGoToDefinition(Document document, int position, CancellationToken cancellationToken)
+    public bool TryGoToDefinition(Document document, SemanticModel semanticModel, int position, CancellationToken cancellationToken)
     {
       // Try to compute the referenced symbol and attempt to go to definition for the symbol.
       var symbolService = document.GetLanguageService<IGoToDefinitionSymbolService>();
-      var (symbol, _) = symbolService.GetSymbolAndBoundSpanAsync(document, position, includeType: true, cancellationToken).WaitAndGetResult(cancellationToken);
+      var (symbol, _, _) = symbolService.GetSymbolProjectAndBoundSpanAsync(document, semanticModel, position, cancellationToken).WaitAndGetResult(cancellationToken);
       if (symbol is null)
       {
         return false;

@@ -6,18 +6,23 @@
 
 #endregion Copyright
 
+#if !NoDiagnostics
 
+using System;
 using Microsoft.CodeAnalysis.Diagnostics;
 
-namespace Altaxo.CodeEditing.Diagnostics
-{
-  [System.Composition.Export(typeof(IDiagnosticsRefresher))]
-  internal class NullDiagnosticsRefresher : IDiagnosticsRefresher
-  {
-    public int GlobalStateVersion { get; }
+namespace Altaxo.CodeEditing.Diagnostics;
 
-    public void RequestWorkspaceRefresh()
-    {
-    }
+[System.Composition.Export(typeof(IDiagnosticsRefresher))]
+internal class NullDiagnosticsRefresher : IDiagnosticsRefresher
+{
+  public int GlobalStateVersion { get; }
+
+  public event Action? WorkspaceRefreshRequested;
+
+  public void RequestWorkspaceRefresh()
+  {
+    WorkspaceRefreshRequested?.Invoke();
   }
 }
+#endif

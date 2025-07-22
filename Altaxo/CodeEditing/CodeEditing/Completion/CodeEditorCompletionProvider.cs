@@ -32,7 +32,6 @@ using Altaxo.CodeEditing.SignatureHelp;
 using Altaxo.CodeEditing.SnippetHandling;
 using Microsoft.CodeAnalysis;
 using Microsoft.CodeAnalysis.Completion;
-using Microsoft.CodeAnalysis.SignatureHelp;
 using Microsoft.CodeAnalysis.Text;
 
 namespace Altaxo.CodeEditing.Completion
@@ -67,7 +66,7 @@ namespace Altaxo.CodeEditing.Completion
 
         if (useSignatureHelp || triggerChar != null)
         {
-          IAxoSignatureHelpProvider signatureHelpProvider = _roslynHost.GetService<IAxoSignatureHelpProvider>();
+          var signatureHelpProvider = _roslynHost.GetService<SignatureHelp.ISignatureHelpProvider>();
 
           var isSignatureHelp = useSignatureHelp || signatureHelpProvider.IsTriggerCharacter(triggerChar.Value);
           if (isSignatureHelp)
@@ -75,10 +74,10 @@ namespace Altaxo.CodeEditing.Completion
             var signatureHelp = await signatureHelpProvider.GetItemsAsync(
                 document,
                 position,
-                new SignatureHelpTriggerInfo(
+                new SignatureHelp.SignatureHelpTriggerInfo(
                     useSignatureHelp
-                        ? SignatureHelpTriggerReason.InvokeSignatureHelpCommand
-                        : SignatureHelpTriggerReason.TypeCharCommand, triggerChar),
+                        ? SignatureHelp.SignatureHelpTriggerReason.InvokeSignatureHelpCommand
+                        : SignatureHelp.SignatureHelpTriggerReason.TypeCharCommand, triggerChar),
                 CancellationToken.None)
                 .ConfigureAwait(false);
             if (signatureHelp != null)
@@ -88,9 +87,9 @@ namespace Altaxo.CodeEditing.Completion
           }
         }
       }
-      catch (Exception)
+      catch (Exception ex)
       {
-
+        System.Diagnostics.Debug.WriteLine($"Error in signature help: {ex}");
       }
 #endif
 
