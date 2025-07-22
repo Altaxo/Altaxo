@@ -6,7 +6,7 @@
   </PropertyGroup>
 
   <ItemGroup Condition=" '$(TargetFramework)' == 'net48' ">
-    <PackageReference Include="System.Memory" Version="4.6.0" />
+    <PackageReference Include="System.Memory" Version="4.6.3" />
   </ItemGroup>
 
 

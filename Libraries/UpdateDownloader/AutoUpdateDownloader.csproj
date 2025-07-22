@@ -43,7 +43,7 @@
   </ItemGroup>
 
   <ItemGroup Condition=" '$(TargetFramework)' == 'net48' ">
-    <PackageReference Include="System.Text.Json" Version="9.0.0" />
+    <PackageReference Include="System.Text.Json" Version="9.0.7" />
   </ItemGroup>
  
   <UsingTask TaskName="GitVersionFile" AssemblyFile="..\..\MSBuildVersioning.dll" />
