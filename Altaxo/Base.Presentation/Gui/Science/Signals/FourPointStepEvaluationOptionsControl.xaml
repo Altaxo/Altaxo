@@ -77,7 +77,8 @@
     <axogc:DoubleUpDown Grid.Row="10"
                        Grid.Column="2"
                        Value="{Binding  IndexLeftOuter, Mode=TwoWay}"
-                       Minimum="0" />
+                       Minimum="0"
+                       Maximum="1E200"/>
 
     <Label Grid.Row="12"
            Grid.Column="0"
@@ -85,7 +86,8 @@
     <axogc:DoubleUpDown Grid.Row="12"
                        Grid.Column="2"
                        Value="{Binding  IndexLeftInner, Mode=TwoWay}"
-                       Minimum="0" />
+                       Minimum="0"
+                       Maximum="1E200"/>
 
     <Label Grid.Row="14"
            Grid.Column="0"
@@ -93,7 +95,8 @@
     <axogc:DoubleUpDown Grid.Row="14"
                        Grid.Column="2"
                        Value="{Binding  IndexRightInner, Mode=TwoWay}"
-                       Minimum="0" />
+                       Minimum="0"
+                        Maximum="1E200"/>
 
     <Label Grid.Row="16"
            Grid.Column="0"
@@ -101,6 +104,7 @@
     <axogc:DoubleUpDown Grid.Row="16"
                        Grid.Column="2"
                        Value="{Binding  IndexRightOuter, Mode=TwoWay}"
-                       Minimum="0" />
+                       Minimum="0"
+                        Maximum="1E200"/>
   </Grid>
 </UserControl>
