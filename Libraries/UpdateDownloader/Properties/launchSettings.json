@@ -1,0 +1,8 @@
+{
+  "profiles": {
+    "AutoUpdateDownloader": {
+      "commandName": "Project",
+      "commandLineArgs": "Unstable 1.2.3.4"
+    }
+  }
+}
