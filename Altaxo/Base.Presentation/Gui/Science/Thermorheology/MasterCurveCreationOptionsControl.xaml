@@ -61,7 +61,7 @@
                        Grid.Column="2"
                        Value="{Binding NumberOfGroups}"
                        Minimum="1"
-                       Maximum="2"
+                       Maximum="10"
                        ToolTip="Number of curve groups. Choose 1 if you want to shift real valued curves. Choose 2 if you want to shift complex valued curves." />
 
     <Label Grid.Row="2"
