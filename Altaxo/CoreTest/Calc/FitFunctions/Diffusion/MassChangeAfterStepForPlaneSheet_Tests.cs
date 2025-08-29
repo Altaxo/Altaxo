@@ -72,28 +72,28 @@ namespace Altaxo.Calc.FitFunctions.Diffusion
     [Fact]
     public void TestFunctionValues()
     {
-      var ff = new MassChangeAfterStepForPlaneSheet() { Thickness = 3 };
+      var ff = new MassChangeAfterStepForPlaneSheet() { HalfThickness = 3 };
       var (t, t0, M0, DM, D) = (50 / 2048d + 2, 2d, 0d, 1d, 5d);
-      var result = MassChangeAfterStepForPlaneSheet.Evaluate(t, ff.Thickness, t0, M0, DM, D);
+      var result = MassChangeAfterStepForPlaneSheet.Evaluate(t, ff.HalfThickness, t0, M0, DM, D);
       AssertEx.AreEqual(0.131413152188550003, result, 0, 1E-15);
 
       (t, t0, M0, DM, D) = (50 / 2048d + 2, 2d, 7, 11, 5d);
-      result = MassChangeAfterStepForPlaneSheet.Evaluate(t, ff.Thickness, t0, M0, DM, D);
+      result = MassChangeAfterStepForPlaneSheet.Evaluate(t, ff.HalfThickness, t0, M0, DM, D);
       AssertEx.AreEqual(8.44554467407405003, result, 0, 1E-15);
 
       (t, t0, M0, DM, D) = (200 / 2048d + 2, 2d, 7, 11, 5d);
-      result = MassChangeAfterStepForPlaneSheet.Evaluate(t, ff.Thickness, t0, M0, DM, D);
+      result = MassChangeAfterStepForPlaneSheet.Evaluate(t, ff.HalfThickness, t0, M0, DM, D);
       AssertEx.AreEqual(9.89108934670896301, result, 0, 1E-15);
 
       (t, t0, M0, DM, D) = (7500 / 2048d + 2, 2d, 7, 11, 5d);
-      result = MassChangeAfterStepForPlaneSheet.Evaluate(t, ff.Thickness, t0, M0, DM, D);
+      result = MassChangeAfterStepForPlaneSheet.Evaluate(t, ff.HalfThickness, t0, M0, DM, D);
       AssertEx.AreEqual(17.9411087847773778, result, 0, 1E-15);
     }
 
     [Fact]
     public void TestDerivatives()
     {
-      var v = new MassChangeAfterStepForPlaneSheet() { Thickness = 3 };
+      var v = new MassChangeAfterStepForPlaneSheet() { HalfThickness = 3 };
 
       var parameters = new double[4];
       var X = Matrix<double>.Build.Dense(1, 1);

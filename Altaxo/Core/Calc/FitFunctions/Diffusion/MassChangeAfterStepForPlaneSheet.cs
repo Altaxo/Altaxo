@@ -31,12 +31,13 @@ namespace Altaxo.Calc.FitFunctions.Diffusion
 {
   /// <summary>
   /// Describes the mass change of a plane sheet (with given thickness and infinite lateral dimensions) in a diffusion process. The diffusion takes place on both sides of the sheet.
+  /// The diffusion process occurs on both planes of the plane sheet.
   /// </summary>
   [FitFunctionClass]
   public record MassChangeAfterStepForPlaneSheet : IFitFunction, IFitFunctionWithDerivative, Main.IImmutable
   {
     /// <summary>
-    /// Thickness of the plane sheet (Default value is 1).
+    /// Thickness of the plane sheet (Default value is 2). Note that the diffusion process occurs on both planes of the plane sheet.
     /// The resulting diffusion coefficent is then in units of the square of the thickness unit by the time unit that is used by the fit.
     /// </summary>
     public double Thickness
@@ -50,7 +51,24 @@ namespace Altaxo.Calc.FitFunctions.Diffusion
         }
         field = value;
       }
-    } = 1;
+    } = 2;
+
+    /// <summary>
+    /// Half the thickness of the plane sheet (Default value is 1). Note that the diffusion process occurs on both planes of the plane sheet.
+    /// The resulting diffusion coefficent is then in units of the square of the thickness unit by the time unit that is used by the fit.
+    /// </summary>
+    public double HalfThickness
+    {
+      get => Thickness / 2;
+      init
+      {
+        if (!(value > 0))
+        {
+          throw new ArgumentOutOfRangeException(nameof(value), "HalfThickness must be positive.");
+        }
+        Thickness = value * 2;
+      }
+    }
 
     /// <inheritdoc/>
     public event EventHandler? Changed;
@@ -161,7 +179,7 @@ namespace Altaxo.Calc.FitFunctions.Diffusion
     /// <summary>
     /// Evaluates the response of a unit step in dependence of the reduced variable.
     /// </summary>
-    /// <param name="rv">Reduced variable rv = D*t/d², where D is the diffusion coefficient, t is the time and d is the total thickness of the plane sheet.</param>
+    /// <param name="rv">Reduced variable rv = D*t/l², where D is the diffusion coefficient, t is the time and l is the half thickness of the plane sheet.</param>
     /// <returns>The response to a unit step in dependence on rv and rz.</returns>
     public static double EvaluateUnitStepWrtReducedVariable(double rv)
     {
@@ -207,7 +225,7 @@ namespace Altaxo.Calc.FitFunctions.Diffusion
     /// <summary>
     /// Evaluates the response of a unit step in dependence of the reduced variables.
     /// </summary>
-    /// <param name="rv">Reduced variable rv = D*t/l², where D is the diffusion coefficient, t is the time and l is the total thickness of the plane sheet.</param>
+    /// <param name="rv">Reduced variable rv = D*t/l², where D is the diffusion coefficient, t is the time and l is the half thickness of the plane sheet.</param>
     /// <returns>The response to a unit step in dependence on rv and rz, and the derivatives w.r.t. rv and rz.</returns>
     public static (double functionValue, double derivativeWrtRv) EvaluateUnitStepAndDerivativesWrtReducedVariable(double rv)
     {
@@ -262,7 +280,7 @@ namespace Altaxo.Calc.FitFunctions.Diffusion
     /// Evaluates the response of a unit step (M0 = 0, ΔM = 1) at t0 = 0.
     /// </summary>
     /// <param name="t">The time t.</param>
-    /// <param name="l">The total thickness of the sheet.</param>
+    /// <param name="l">The half thickness of the plane sheet.</param>
     /// <param name="D">The diffusion constant D.</param>
     /// <returns>The response to a unit step (M0 = 0, ΔM = 1) at t0 = 0.</returns>
     public static double EvaluateUnitStep(double t, double l, double D)
@@ -275,7 +293,7 @@ namespace Altaxo.Calc.FitFunctions.Diffusion
     /// Evaluates the response of a concentration step at t0.
     /// </summary>
     /// <param name="t">The time.</param>
-    /// <param name="l">The thickness of the plane sheet.</param>
+    /// <param name="l">The half thickness of the plane sheet.</param>
     /// <param name="t0">The time of the concentration step.</param>
     /// <param name="M0">The initial mass.</param>
     /// <param name="ΔM">The total change of mass due to the concentration step.</param>
@@ -289,7 +307,7 @@ namespace Altaxo.Calc.FitFunctions.Diffusion
     /// <inheritdoc/>
     public void Evaluate(double[] independent, double[] parameters, double[] FV)
     {
-      FV[0] = Evaluate(independent[0], Thickness, parameters[0], parameters[1], parameters[2], parameters[3]);
+      FV[0] = Evaluate(independent[0], HalfThickness, parameters[0], parameters[1], parameters[2], parameters[3]);
     }
 
     /// <inheritdoc/>
@@ -297,7 +315,7 @@ namespace Altaxo.Calc.FitFunctions.Diffusion
     {
       for (int i = 0; i < independent.RowCount; i++)
       {
-        FV[i] = Evaluate(independent[i, 0], Thickness, parameters[0], parameters[1], parameters[2], parameters[3]);
+        FV[i] = Evaluate(independent[i, 0], HalfThickness, parameters[0], parameters[1], parameters[2], parameters[3]);
       }
     }
 
@@ -316,7 +334,7 @@ namespace Altaxo.Calc.FitFunctions.Diffusion
     /// <inheritdoc/>
     public void EvaluateDerivative(IROMatrix<double> independent, IReadOnlyList<double> parameters, IReadOnlyList<bool>? isFixed, IMatrix<double> DF, IReadOnlyList<bool>? dependentVariableChoice)
     {
-      double d = Thickness;
+      double l = HalfThickness;
       double t0 = parameters[0];
       double ΔM = parameters[2];
       double D = parameters[3];
@@ -324,15 +342,15 @@ namespace Altaxo.Calc.FitFunctions.Diffusion
       for (int i = 0; i < independent.RowCount; i++)
       {
         double t = independent[i, 0] - t0;
-        var rv = D * t / (d * d); // reduced variable
+        var rv = D * t / (l * l); // reduced variable
         if (!(rv <= 0))
         {
           // Evaluate the derivatives
           var (fv, derivWrtRv) = EvaluateUnitStepAndDerivativesWrtReducedVariable(rv);
-          DF[i, 0] = -ΔM * derivWrtRv * D / (d * d); // wrt t0
+          DF[i, 0] = -ΔM * derivWrtRv * D / (l * l); // wrt t0
           DF[i, 1] = 1; // wrt M0
           DF[i, 2] = fv; // wrt ΔM, which is the mass change at this time
-          DF[i, 3] = ΔM * (derivWrtRv * t / (d * d)); // wrt D
+          DF[i, 3] = ΔM * (derivWrtRv * t / (l * l)); // wrt D
         }
         else
         {

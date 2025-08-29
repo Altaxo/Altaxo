@@ -64,7 +64,7 @@ namespace Altaxo.Calc.FitFunctions.Diffusion
     [Fact]
     public void TestDerivatives()
     {
-      var v = new MassChangeAfterExponentialEquilibrationForPlaneSheet { Thickness = 3 };
+      var v = new MassChangeAfterExponentialEquilibrationForPlaneSheet { HalfThickness = 3 };
 
       var parameters = new double[4];
       var X = Matrix<double>.Build.Dense(1, 1);
