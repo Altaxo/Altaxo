@@ -24,6 +24,8 @@
 
 #nullable disable
 using System;
+using System.Threading;
+using System.Threading.Tasks;
 using Altaxo.Scripting;
 
 namespace Altaxo.Gui.Scripting
@@ -488,9 +490,9 @@ namespace Altaxo.Gui.Scripting
       _scriptController.SetText(text);
     }
 
-    public void Compile()
+    public Task Compile(CancellationToken cancellationToken)
     {
-      _scriptController.Compile();
+      return _scriptController.Compile(cancellationToken);
     }
 
     public void Update()

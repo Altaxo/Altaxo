@@ -27,9 +27,11 @@ using System.Collections.Generic;
 using System.Collections.Immutable;
 using System.Linq;
 using System.Text;
+using System.Threading;
 using System.Threading.Tasks;
 using System.Windows;
 using System.Windows.Controls;
+using Altaxo.CodeEditing;
 using Altaxo.CodeEditing.CompilationHandling;
 
 namespace Altaxo.Gui.CodeEditing
@@ -84,11 +86,11 @@ namespace Altaxo.Gui.CodeEditing
       }
     }
 
-    public AltaxoCompilationResultWithAssembly Compile(Func<IEnumerable<string>, string> GetAssemblyNameFromCodeText, IEnumerable<System.Reflection.Assembly> references)
+    public async Task<AltaxoCompilationResultWithAssembly> Compile(Func<IEnumerable<string>, string> GetAssemblyNameFromCodeText, IEnumerable<System.Reflection.Assembly> references, CancellationToken cancellationToken)
     {
       var scriptTexts = new string[] { Document.Text };
       var assemblyName = GetAssemblyNameFromCodeText(scriptTexts);
-      var result = Altaxo.CodeEditing.CompilationHandling.CompilationServiceStatic.GetCompilation(scriptTexts, assemblyName, references);
+      var result = await Altaxo.CodeEditing.CompilationHandling.CompilationServiceStatic.GetCompilation(scriptTexts, assemblyName, references,cancellationToken).ConfigureAwait(false);
 
       if (result.CompiledAssembly != null) // Success
       {

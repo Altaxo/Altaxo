@@ -1,11 +1,10 @@
 ﻿// Copyright Eli Arbel (no explicit copyright notice in original file)
 
-// Originated from: RoslynPad, RoslynPad.Roslyn.Windows, RoslynCompletionData.cs
+// Originated from: RoslynPad, RoslynPad.Editor.Shared, RoslynCompletionData.cs
 
 #if !NoCompletion
 using System;
 using System.ComponentModel;
-using System.Diagnostics;
 using System.Runtime.CompilerServices;
 using System.Windows.Input;
 using System.Windows.Media;
@@ -16,6 +15,8 @@ using Microsoft.CodeAnalysis.Completion;
 
 namespace Altaxo.CodeEditing.Completion
 {
+  using System.Threading.Tasks;
+  using System.Windows.Controls;
   using Altaxo.Gui.CodeEditing;
   using SnippetHandling;
 
@@ -25,24 +26,26 @@ namespace Altaxo.CodeEditing.Completion
   /// <seealso cref="ICSharpCode.AvalonEdit.CodeCompletion.ICompletionData" />
   /// <seealso cref="Altaxo.CodeEditing.ICompletionDataEx" />
   /// <seealso cref="System.ComponentModel.INotifyPropertyChanged" />
-  internal sealed class AvalonEditCompletionItem : ICompletionDataEx, INotifyPropertyChanged
+  internal sealed class RoslynCompletionData : ICompletionDataEx, INotifyPropertyChanged
   {
     private readonly Document _document;
     private readonly CompletionItem _item;
     private readonly char? _completionChar;
     private readonly SnippetManager _snippetManager;
     private readonly Glyph? _glyph;
+    private readonly Lazy<Task> _descriptionTask;
     private object _description;
 
-    public AvalonEditCompletionItem(Document document, CompletionItem item, char? completionChar, SnippetManager snippetManager)
+    public RoslynCompletionData(Document document, CompletionItem item, char? completionChar, SnippetManager snippetManager)
     {
       _document = document;
       _item = item;
       _completionChar = completionChar;
       _snippetManager = snippetManager;
-      Text = item.DisplayText;
-      Content = item.DisplayText;
+      Text = item.DisplayTextPrefix + item.DisplayText + item.DisplayTextSuffix;
+      Content = Text;
       _glyph = item.GetGlyph();
+      _descriptionTask = new Lazy<Task>(RetrieveDescription);
       if (_glyph.HasValue)
       {
         Image = Altaxo.CodeEditing.Common.GlyphExtensions.ToImageSource(_glyph.Value);
@@ -60,13 +63,13 @@ namespace Altaxo.CodeEditing.Completion
     /// the insertion was triggered.</param>
     public async void Complete(TextArea textArea, ISegment completionSegment, EventArgs e)
     {
-      if (_glyph == Glyph.Snippet && CompleteSnippet(textArea, completionSegment, e))
+      if (_glyph == Glyph.Snippet && CompleteSnippet(textArea, completionSegment, e) ||
+          CompletionService.GetService(_document) is not { } completionService)
       {
         return; // if this was a snippet and the snippet replacement was successfull, then return
       }
 
-      var changes = await CompletionService.GetService(_document)
-          .GetChangeAsync(_document, _item, _completionChar).ConfigureAwait(true);
+      var changes = await completionService.GetChangeAsync(_document, _item, _completionChar).ConfigureAwait(true);
       var textChange = changes.TextChange;
       var document = textArea.Document;
       using (document.RunUpdate())
@@ -95,26 +98,32 @@ namespace Altaxo.CodeEditing.Completion
       char? completionChar = null;
       var txea = e as TextCompositionEventArgs;
       var kea = e as KeyEventArgs;
-      if (txea != null && txea.Text.Length > 0)
+      if (txea is not null && txea.Text.Length > 0)
+      {
         completionChar = txea.Text[0];
-      else if (kea != null && kea.Key == Key.Tab)
+      }
+      else if (kea is not null && kea.Key == Key.Tab)
+      {
         completionChar = '\t';
+      }
 
       if (completionChar == '\t')
       {
         var snippet = _snippetManager.FindSnippet(_item.DisplayText);
-        Debug.Assert(snippet != null, "snippet != null");
-        var editorSnippet = snippet.CreateAvalonEditSnippet();
-        using (textArea.Document.RunUpdate())
+        if (snippet is not null)
         {
-          textArea.Document.Remove(completionSegment.Offset, completionSegment.Length);
-          editorSnippet.Insert(textArea);
+          var editorSnippet = snippet.CreateAvalonEditSnippet();
+          using (textArea.Document.RunUpdate())
+          {
+            textArea.Document.Remove(completionSegment.Offset, completionSegment.Length);
+            editorSnippet.Insert(textArea);
+          }
+          if (txea != null)
+          {
+            txea.Handled = true;
+          }
+          return true;
         }
-        if (txea != null)
-        {
-          txea.Handled = true;
-        }
-        return true;
       }
       return false;
     }
@@ -144,24 +153,31 @@ namespace Altaxo.CodeEditing.Completion
       {
         if (_description is null)
         {
-          RetrieveDescription();
+          var descriptionTb = new Decorator();
+          descriptionTb.Loaded += (o, e) => { var task = _descriptionTask.Value; };
+          _description = descriptionTb;
         }
         return _description;
       }
     }
 
-    private async void RetrieveDescription()
+    private async Task RetrieveDescription()
     {
-      var description = await CompletionService.GetService(_document).GetDescriptionAsync(_document, _item).ConfigureAwait(true);
-      _description = description.TaggedParts.ToTextBlock();
-      OnPropertyChanged(nameof(Description));
+      if (_description == null ||
+            CompletionService.GetService(_document) is not { } completionService)
+      {
+        return;
+      }
+
+      var description = await Task.Run(() => completionService.GetDescriptionAsync(_document, _item)).ConfigureAwait(true);
+      ((Decorator)_description).Child = description?.TaggedParts.ToTextBlock();
     }
 
     /// <summary>
     /// Gets the priority. This property is used in the selection logic. You can use it to prefer selecting those items
     /// which the user is accessing most frequently.
     /// </summary>
-    public double Priority { get; }
+    public double Priority { get; private set; }
 
     /// <summary>
     /// Gets a value indicating whether this completion item is preselected.

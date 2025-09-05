@@ -24,12 +24,17 @@ namespace Altaxo.CodeEditing
 {
   public class RoslynHost
   {
-    public static RoslynHost Instance { get; private set; }
+    public static RoslynHost Instance
+    {
+      get;
+      private set;
+    }
 
     private readonly ConcurrentDictionary<DocumentId, AltaxoWorkspaceBase> _workspaces = new();
 
-    public ImmutableHashSet<string> DisabledDiagnostics { get; } = [];
+    public ImmutableHashSet<string> DisabledDiagnostics { get; } = ["CS1701", "CS1702", "CS7011", "CS8097"]; // disable warnings about assembly version mismatches, about missing XML documentation for some types, and about #r and #load statements
 
+    public NuGetReferenceResolver NuGetReferenceResolver { get; } = new();
 
     internal static readonly ImmutableArray<Assembly> DefaultCompositionAssemblies =
             ImmutableArray.Create(

@@ -22,16 +22,15 @@
 
 #endregion Copyright
 
-using System;
 using System.Collections.Generic;
 using System.Collections.Immutable;
+using System.Diagnostics.CodeAnalysis;
 using System.IO;
 using System.Linq;
 using System.Reflection;
-using System.Text;
 using System.Threading;
 using System.Threading.Tasks;
-using Altaxo.CodeEditing.CompilationHandling;
+using Altaxo.CodeEditing.ReferenceHandling;
 using Microsoft.CodeAnalysis;
 using Microsoft.CodeAnalysis.CSharp;
 using Microsoft.CodeAnalysis.Scripting.Hosting;
@@ -41,10 +40,11 @@ namespace Altaxo.CodeEditing.CompilationHandling
   public static class CompilationServiceStatic
   {
     private static readonly InteractiveAssemblyLoader _assemblyLoader = new InteractiveAssemblyLoader();
+    private static readonly RoslynHost _roslynHost = new RoslynHost(null);
 
-    public static AltaxoCompilationResultWithAssembly GetCompilation(IEnumerable<string> codes, string assemblyName, IEnumerable<Assembly> referenceAssemblies)
+    public static async Task<AltaxoCompilationResultWithAssembly> GetCompilation(IEnumerable<string> codes, string assemblyName, IEnumerable<Assembly> referenceAssemblies, CancellationToken cancellationToken = default)
     {
-      var compilation = GetCompilationFromCode(codes, assemblyName, referenceAssemblies);
+      var compilation = await GetCompilationFromCode(codes, assemblyName, referenceAssemblies, _roslynHost, cancellationToken).ConfigureAwait(false);
       var diagnosticsBag = new DiagnosticBag();
       var assembly = Build(compilation, diagnosticsBag, CancellationToken.None);
 
@@ -103,14 +103,16 @@ namespace Altaxo.CodeEditing.CompilationHandling
     /// <summary>
     /// Gets a compilation from code. Here the output type is restricted to DynamicallyLinkedLibrary, Platform to AnyCPU.
     /// </summary>
-    /// <param name="codes">The code textes.</param>
+    /// <param name="codes">The code texts.</param>
     /// <param name="assemblyName">Name of the assembly to generate.</param>
     /// <param name="referenceAssemblies">The assemblies that are referenced by the generated assembly.</param>
     /// <returns></returns>
-    public static Compilation GetCompilationFromCode(
+    public static async Task<Compilation> GetCompilationFromCode(
       IEnumerable<string> codes,
       string assemblyName,
-      IEnumerable<Assembly> referenceAssemblies
+      IEnumerable<Assembly> referenceAssemblies,
+      RoslynHost roslynHost,
+      CancellationToken cancellationToken = default
       )
     {
       var parseOptions = new CSharpParseOptions(
@@ -119,7 +121,10 @@ namespace Altaxo.CodeEditing.CompilationHandling
                               preprocessorSymbols: new[] { "DEBUG", "TRACE" }
                               );
 
-      var trees = codes.Select(code => SyntaxFactory.ParseSyntaxTree(code, parseOptions, string.Empty));
+      var treesStillWithReferenceDirectives = codes.Select(code => SyntaxFactory.ParseSyntaxTree(code, parseOptions, string.Empty));
+      var referencesByCode = await ReferenceDirectiveHelper.GetMetadataReferencesAsync(treesStillWithReferenceDirectives, roslynHost, cancellationToken);
+
+
 
       var compilationOptions = new CSharpCompilationOptions(
           OutputKind.DynamicallyLinkedLibrary,
@@ -140,13 +145,65 @@ namespace Altaxo.CodeEditing.CompilationHandling
 
       // var arr = referenceAssemblies.Select(ass => MetadataReference.CreateFromFile(ass.Location)).ToArray();
 
+
+      // remove the reference directives (#r and #load statements) from the tree, otherwise, the compilation will fail
+      var referenceDirectiveRemover = new ReferenceDirectiveFromSyntaxTreeRemover();
+      var treesWithoutReferenceDirectives = treesStillWithReferenceDirectives.Select(tree => referenceDirectiveRemover.RemoveReferenceDirectivesFromSyntaxTree(tree));
+
+
+      // now we should sort out assemblies referenced in the code, but already loaded in the compilation context
+
+      var assemblyIdentitiesAlreadyLoaded = new HashSet<string>();
+
+      foreach(var assName in referenceAssemblies.Where(ass => !string.IsNullOrEmpty(ass.Location)).Select(ass => ass.GetName()))
+      {
+        assemblyIdentitiesAlreadyLoaded.Add(assName.Name);
+        // var version = assName.Version;
+      }
+
+      var list2 = new List<MetadataReference>();
+
+      if (referencesByCode.Any())
+      {
+        // we need to convert the metadataReferences to AssemblyIdentities
+        // this is done by creating a temporary compilation, and then extract them from there
+        var compilationTemp = CSharpCompilation.Create("Temp")
+                                .AddReferences(referencesByCode); // your MetadataReferences
+
+        foreach (var reference in referencesByCode)
+        {
+          var asmSymbol = compilationTemp.GetAssemblyOrModuleSymbol(reference);
+          var asmName = asmSymbol.Name;
+          if (!assemblyIdentitiesAlreadyLoaded.Contains(asmName))
+          {
+            list2.Add(reference);
+          }
+        }
+      }
+
+      // now compile
       var compilation = CSharpCompilation.Create(
         assemblyName, // Assembly name
-        trees,
-        referenceAssemblies.Select(ass => MetadataReference.CreateFromFile(ass.Location)),
+        treesWithoutReferenceDirectives,
+        referenceAssemblies.Where(ass => !string.IsNullOrEmpty(ass.Location)).Select(ass => MetadataReference.CreateFromFile(ass.Location))
+        .Concat(list2),
         compilationOptions);
 
       return compilation;
+    }
+
+  }
+
+  internal class AssemblyIdentityByNameComparer : IEqualityComparer<AssemblyIdentity>
+  {
+    public bool Equals(AssemblyIdentity x, AssemblyIdentity y)
+    {
+      return x.Name == y.Name;
+    }
+
+    public int GetHashCode([DisallowNull] AssemblyIdentity obj)
+    {
+      return obj.Name.GetHashCode();
     }
   }
 }

@@ -23,6 +23,8 @@
 #endregion Copyright
 
 using System.Reflection;
+using System.Threading;
+using System.Threading.Tasks;
 
 namespace Altaxo.Main.Services.ScriptCompilation
 {
@@ -45,6 +47,6 @@ namespace Altaxo.Main.Services.ScriptCompilation
     /// of a freshly compiled assembly.
     /// </summary>
     /// <returns>True if successfully compiles, otherwise false.</returns>
-    IScriptCompilerResult Compile(string[] scriptText);
+    Task<IScriptCompilerResult> Compile(string[] scriptText, CancellationToken cancellationToken);
   }
 }

@@ -28,6 +28,7 @@ using System.Collections.Generic;
 using System.Collections.Immutable;
 using System.Reflection;
 using System.Text;
+using System.Threading;
 using Altaxo.Main.Services.ScriptCompilation;
 
 namespace Altaxo.Scripting
@@ -564,7 +565,7 @@ namespace Altaxo.Scripting
         return true;
 
       var scriptCompilerService = Current.GetRequiredService<IScriptCompilerService>();
-      var scriptCompilerResult = scriptCompilerService.Compile(new string[] { ScriptText });
+      var scriptCompilerResult = scriptCompilerService.Compile(new string[] { ScriptText }, CancellationToken.None).Result;
 
       return SetCompilerResult(scriptCompilerResult);
     }

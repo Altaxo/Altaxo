@@ -25,6 +25,8 @@
 #nullable enable
 using System.Linq;
 using System.Reflection;
+using System.Threading;
+using System.Threading.Tasks;
 
 namespace Altaxo.Main.Services.ScriptCompilation
 {
@@ -36,7 +38,7 @@ namespace Altaxo.Main.Services.ScriptCompilation
   {
     private ConcurrentScriptCompilerResultDictionary _compilerResults = new();
 
-    public IScriptCompilerResult Compile(string[] scriptText)
+    public async Task<IScriptCompilerResult> Compile(string[] scriptText, CancellationToken cancellationToken)
     {
       var scriptTextsWithHash = new CodeTextsWithHash(scriptText);
 
@@ -45,7 +47,7 @@ namespace Altaxo.Main.Services.ScriptCompilation
         return scriptCompilerResult;
       }
 
-      var result = Altaxo.CodeEditing.CompilationHandling.CompilationServiceStatic.GetCompilation(scriptTextsWithHash, scriptTextsWithHash.Hash, Altaxo.Settings.Scripting.ReferencedAssemblies.All);
+      var result = await Altaxo.CodeEditing.CompilationHandling.CompilationServiceStatic.GetCompilation(scriptTextsWithHash, scriptTextsWithHash.Hash, Altaxo.Settings.Scripting.ReferencedAssemblies.All, cancellationToken).ConfigureAwait(false);
 
       if (result.CompiledAssembly is not null)
       {

@@ -58,6 +58,10 @@ using Altaxo.CodeEditing.LiveDocumentFormatting;
 using Altaxo.CodeEditing.Diagnostics;
 using Microsoft.CodeAnalysis.Editor;
 using System.Linq;
+using Altaxo.CodeEditing.ReferenceHandling;
+
+
+
 
 
 
@@ -285,6 +289,25 @@ namespace Altaxo.CodeEditing
 
     private CancellationTokenSource _syntaxTreeCancellationTokenSource;
 
+    /// <summary>Cancels the reference updates (parsing of #r statements).</summary>
+    private CancellationTokenSource _referenceUpdateCancellationTokenSource;
+
+
+    /// <summary>
+    /// Occurs when the syntax tree has been evaluated after the document changed.
+    /// Raises the <see cref="SyntaxTreeChanged"/> event.
+    /// </summary>
+    /// <param name="document">The new document.</param>
+    /// <param name="syntaxTree">The syntax tree that corresponds to the new document.</param>
+    protected virtual void OnSyntaxTreeChanged(Document document, SyntaxTree syntaxTree)
+    {
+      SyntaxTreeChanged?.Invoke(document, syntaxTree);
+
+      _referenceUpdateCancellationTokenSource?.Cancel();
+      _referenceUpdateCancellationTokenSource = new CancellationTokenSource();
+      Task.Run(() => UpdateReferencesAsync(document, syntaxTree, _referenceUpdateCancellationTokenSource.Token));
+    }
+
     /// <summary>
     /// Occurs when the syntax tree has been evaluated after the document changed.
     /// </summary>
@@ -333,10 +356,10 @@ namespace Altaxo.CodeEditing
             return;
           }
 
-          if (null != syntaxTree)
+          if (syntaxTree is not null)
           {
             LastSyntaxTree = (document, syntaxTree);
-            SyntaxTreeChanged?.Invoke(document, syntaxTree);
+            OnSyntaxTreeChanged(document, syntaxTree);
           }
 
           if (token.IsCancellationRequested)
@@ -626,5 +649,29 @@ namespace Altaxo.CodeEditing
     }
 #endif
     #endregion GoToDefinition
+
+    #region Reference Handling
+
+    /// <summary>
+    /// Contains the libraries this document refers to, including
+    /// the indirectly referenced libraries from other source texts referenced
+    /// by the #load directive
+    /// </summary>
+    private SortedSet<LibraryRef> _libraries = new();
+
+
+    private async Task UpdateReferencesAsync(Document document, SyntaxTree syntaxTree, CancellationToken cancellationToken)
+    {
+      var syntaxRoot = await syntaxTree.GetRootAsync(cancellationToken).ConfigureAwait(false);
+      var libraries = ReferenceDirectiveHelper.ParseReferences(syntaxRoot);
+      if (cancellationToken.IsCancellationRequested)
+        return;
+      await Workspace.UpdateLibrariesAsync(DocumentId, libraries, cancellationToken).ConfigureAwait(false);
+    }
+
+
+
+
+    #endregion Reference Handling
   }
 }

@@ -1,20 +1,16 @@
 ﻿// Copyright Eli Arbel (no explicit copyright notice in original file), Apache License Version 2.0, January 2004
 
-// Originated from: RoslynPad, RoslynPad.Editor.Windows, CompletionResult.cs
+// Originated from: RoslynPad, RoslynPad.Editor.Shared, CompletionResult.cs
 
 #if !NoCompletion
-using System;
 using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 using Altaxo.CodeEditing.SignatureHelp;
 
 namespace Altaxo.CodeEditing.Completion
 {
   public sealed class CompletionResult
   {
-    public CompletionResult(IList<ICompletionDataEx> completionData, IOverloadProviderEx overloadProvider, bool useHardSelection)
+    public CompletionResult(IList<ICompletionDataEx>? completionData, IOverloadProviderEx overloadProvider, bool useHardSelection)
     {
       CompletionData = completionData;
       OverloadProvider = overloadProvider;
@@ -23,7 +19,7 @@ namespace Altaxo.CodeEditing.Completion
 
     public bool UseHardSelection { get; }
 
-    public IList<ICompletionDataEx> CompletionData { get; }
+    public IList<ICompletionDataEx>? CompletionData { get; }
 
     public IOverloadProviderEx OverloadProvider { get; }
   }

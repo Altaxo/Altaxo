@@ -26,7 +26,6 @@
 using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Threading;
 using System.Threading.Tasks;
 using Altaxo.CodeEditing.SignatureHelp;
 using Altaxo.CodeEditing.SnippetHandling;
@@ -39,6 +38,8 @@ namespace Altaxo.CodeEditing.Completion
 
   internal sealed class CodeEditorCompletionProvider : ICodeEditorCompletionProvider
   {
+    private static bool s_initialized;
+
     private readonly DocumentId _documentId;
     private readonly Workspace _workspace;
     private readonly RoslynHost _roslynHost;
@@ -52,18 +53,42 @@ namespace Altaxo.CodeEditing.Completion
       _snippetService = (AltaxoSnippetInfoService)_roslynHost.GetService<ICSharpEditSnippetInfoService>();
     }
 
+    // initialize the providers once in the app domain so typing would start faster
+    internal void Warmup()
+    {
+      if (s_initialized)
+      {
+        return;
+      }
+      s_initialized = true;
+
+      Task.Run(() =>
+      {
+        var document = _workspace.CurrentSolution.GetDocument(_documentId);
+        if (document is null)
+        {
+          return;
+        }
+
+        var completionService = CompletionService.GetService(document);
+        completionService?.GetCompletionsAsync(document, 0);
+
+        var signatureHelpProvider = _roslynHost.GetService<ISignatureHelpProvider>();
+        signatureHelpProvider.GetItemsAsync(document, 0,
+            new SignatureHelpTriggerInfo(SignatureHelpTriggerReason.InvokeSignatureHelpCommand));
+      });
+    }
+
     public async Task<CompletionResult> GetCompletionData(int position, char? triggerChar, bool useSignatureHelp)
     {
-      IList<ICompletionDataEx> completionData = null;
-      IOverloadProviderEx overloadProvider = null;
+      IList<ICompletionDataEx>? completionData = null;
+      IOverloadProviderEx? overloadProvider = null;
       var useHardSelection = true;
 
       var document = _workspace.CurrentSolution.GetDocument(_documentId);
 #if !NoSignatureHelp
       try
       {
-
-
         if (useSignatureHelp || triggerChar != null)
         {
           var signatureHelpProvider = _roslynHost.GetService<SignatureHelp.ISignatureHelpProvider>();
@@ -77,8 +102,7 @@ namespace Altaxo.CodeEditing.Completion
                 new SignatureHelp.SignatureHelpTriggerInfo(
                     useSignatureHelp
                         ? SignatureHelp.SignatureHelpTriggerReason.InvokeSignatureHelpCommand
-                        : SignatureHelp.SignatureHelpTriggerReason.TypeCharCommand, triggerChar),
-                CancellationToken.None)
+                        : SignatureHelp.SignatureHelpTriggerReason.TypeCharCommand, triggerChar))
                 .ConfigureAwait(false);
             if (signatureHelp != null)
             {
@@ -101,15 +125,15 @@ namespace Altaxo.CodeEditing.Completion
             position,
             completionTrigger
             ).ConfigureAwait(false);
-        if (data != null && data.Items.Any())
+        if (data != null && data.ItemsList.Any())
         {
           useHardSelection = data.SuggestionModeItem == null;
           var text = await document.GetTextAsync().ConfigureAwait(false);
           var textSpanToText = new Dictionary<TextSpan, string>();
 
-          completionData = data.Items
+          completionData = data.ItemsList
               .Where(item => MatchesFilterText(completionService, document, item, text, textSpanToText))
-              .Select(item => new AvalonEditCompletionItem(document, item, triggerChar, _snippetService.SnippetManager))
+              .Select(item => new RoslynCompletionData(document, item, triggerChar, _snippetService.SnippetManager))
                   .ToArray<ICompletionDataEx>();
         }
         else

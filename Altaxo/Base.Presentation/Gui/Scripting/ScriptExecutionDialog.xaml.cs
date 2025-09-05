@@ -24,6 +24,7 @@
 
 #nullable disable warnings
 using System.ComponentModel;
+using System.Threading;
 using System.Windows;
 using System.Windows.Controls;
 using Altaxo.Gui.Common;
@@ -76,13 +77,15 @@ namespace Altaxo.Gui.Scripting
       }
     }
 
-    private void EhCompile(object sender, RoutedEventArgs e)
+    private async void EhCompile(object sender, RoutedEventArgs e)
     {
       if (_taskCancelController.IsExecutionInProgress)
         return;
 
       if (_controller is not null)
-        _controller.Compile();
+      {
+        await _controller.Compile(CancellationToken.None);
+      }
     }
 
     private void EhUpdate(object sender, RoutedEventArgs e)

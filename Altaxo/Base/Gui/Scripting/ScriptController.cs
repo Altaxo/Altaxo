@@ -27,6 +27,8 @@ using System;
 using System.Collections.Generic;
 using System.Collections.Immutable;
 using System.Text.RegularExpressions;
+using System.Threading;
+using System.Threading.Tasks;
 using Altaxo.Main.Services.ScriptCompilation;
 using Altaxo.Scripting;
 
@@ -57,7 +59,7 @@ namespace Altaxo.Gui.Scripting
   {
     void SetText(string text);
 
-    void Compile();
+    Task Compile(CancellationToken cancellationToken);
 
     void Update();
 
@@ -178,10 +180,10 @@ namespace Altaxo.Gui.Scripting
 
     #region IScriptController Members
 
-    public void Compile()
+    public async Task Compile(CancellationToken cancellationToken)
     {
       var scriptCompilerService = Current.GetRequiredService<IScriptCompilerService>();
-      var result = scriptCompilerService.Compile([_view.ScriptText]);
+      var result = await scriptCompilerService.Compile([_view.ScriptText],cancellationToken).ConfigureAwait(true); // need to return to Gui context
 
       if (result is null) // compilation must be handled by this controller
       {
@@ -332,7 +334,17 @@ namespace Altaxo.Gui.Scripting
       }
       else
       {
-        Compile();
+        var task =  Compile(default);
+
+        while(true)
+        {
+          if(task.IsCanceled)
+            { break; }
+          if(task.IsCompleted)
+            { break; }
+          Thread.Yield();
+        }
+
         if (_compiledDoc is not null)
         {
           _doc = _compiledDoc;

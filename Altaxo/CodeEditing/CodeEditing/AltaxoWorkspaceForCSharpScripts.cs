@@ -30,7 +30,10 @@ using System.Collections.Immutable;
 using System.IO;
 using System.Linq;
 using System.Reflection;
+using System.Threading;
 using System.Threading.Tasks;
+using Altaxo.CodeEditing.ReferenceHandling;
+
 //using MCW::Microsoft.CodeAnalysis;
 //using MCW::Microsoft.CodeAnalysis.Host;
 using Microsoft.CodeAnalysis;
@@ -301,7 +304,14 @@ namespace Altaxo.CodeEditing
           resolver);
     }
 
-    protected class DirectiveInfo
+
+    public override Task UpdateLibrariesAsync(DocumentId documentId, IEnumerable<LibraryRef> libraries, CancellationToken cancellationToken)
+    {
+      return Task.CompletedTask;
+    }
+
+
+  protected class DirectiveInfo
     {
       public MetadataReference MetadataReference { get; }
 

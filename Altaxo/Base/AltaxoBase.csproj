@@ -35,7 +35,7 @@
     <PackageReference Include="System.Data.OleDb" Version="9.0.7" />
     <PackageReference Include="System.Drawing.Common" Version="9.0.7" />
     <PackageReference Include="System.Configuration.ConfigurationManager" Version="9.0.7" />
-    <PackageReference Include="Microsoft.CodeAnalysis.CSharp.Scripting" Version="4.14.0-3.25359.3" />
+    <PackageReference Include="Microsoft.CodeAnalysis.CSharp.Scripting" Version="4.14.0-3.25412.6" />
   </ItemGroup>
   
    <ItemGroup Condition=" '$(TargetFramework)' != 'net48' ">

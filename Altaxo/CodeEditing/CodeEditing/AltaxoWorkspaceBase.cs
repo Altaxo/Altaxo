@@ -32,6 +32,11 @@ using System.Threading.Tasks;
 using Microsoft.CodeAnalysis;
 using Microsoft.CodeAnalysis.Text;
 using System.Collections.Concurrent;
+using Altaxo.CodeEditing.ReferenceHandling;
+using System.Threading;
+
+
+
 
 
 #if !NoDiagnostics
@@ -59,6 +64,8 @@ namespace Altaxo.CodeEditing
     /// The static references.
     /// </value>
     public ImmutableArray<MetadataReference> StaticReferences { get; }
+
+
 
     /// <summary>
     /// Gets the reference to the roslyn host.
@@ -296,6 +303,12 @@ namespace Altaxo.CodeEditing
 
       OnDocumentTextChanged(document, newText, PreservationMode.PreserveIdentity);
     }
+
+    
+
+    public abstract Task UpdateLibrariesAsync(DocumentId documentId, IEnumerable<LibraryRef> libraries, CancellationToken cancellationToken);
+
+
 
     /// <summary>
     /// Gets all references currently references by the project, i.e. the <see cref="StaticReferences"/> plus (only if it is a script workspace) the references
