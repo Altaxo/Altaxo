@@ -237,7 +237,7 @@ internal static class ReferenceDirectiveHelper
     // if the search was not successful, we extend the search to the subdirectories
     if (file is null)
     {
-      System.IO.Directory.EnumerateFiles(path1, name, System.IO.SearchOption.AllDirectories).FirstOrDefault();
+      file = System.IO.Directory.EnumerateFiles(path1, name, System.IO.SearchOption.AllDirectories).FirstOrDefault();
     }
 
     if (file is null && path2 != path1)
