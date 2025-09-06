@@ -43,7 +43,7 @@ namespace Altaxo.CodeEditing
   /// <seealso cref="Microsoft.CodeAnalysis.Workspace" />
   public class AltaxoWorkspaceForCSharpRegularDll : AltaxoWorkspaceBase
   {
-    
+
 
 
 
@@ -153,7 +153,7 @@ namespace Altaxo.CodeEditing
     /// </summary>
     private List<MetadataReference> _lastUsedCodeMetadataReferences { get; set; } = [];
 
-   public override async Task UpdateLibrariesAsync(DocumentId documentId, IEnumerable<LibraryRef> libraries, CancellationToken cancellationToken)
+    public override async Task UpdateLibrariesAsync(DocumentId documentId, IEnumerable<LibraryRef> libraries, CancellationToken cancellationToken)
     {
       var newLibrarySet = libraries.ToImmutableHashSet();
 
@@ -171,7 +171,7 @@ namespace Altaxo.CodeEditing
         newDictionary = newDictionary.Add(documentId, newLibrarySet);
       }
 
-      if (!object.ReferenceEquals(_documentToSetOfLibRefs,newDictionary))
+      if (!object.ReferenceEquals(_documentToSetOfLibRefs, newDictionary))
       {
         await OnLibrariesUpdatedAsync(newDictionary, cancellationToken).ConfigureAwait(false);
       }
@@ -191,42 +191,7 @@ namespace Altaxo.CodeEditing
     {
       // create metadata references from the library references
 
-      var metadataReferences = new List<MetadataReference>();
-
-      foreach (var libset in libraries.Values)
-      {
-        foreach (var lib in libset)
-        {
-          if (lib.Kind == LibraryRef.RefKind.Reference)
-          {
-            if (System.IO.File.Exists(lib.Value))
-            {
-              metadataReferences.Add(RoslynHost.CreateMetadataReference(lib.Value));
-            }
-          }
-          else if (lib.Kind == LibraryRef.RefKind.FrameworkReference)
-          {
-#if NETFRAMEWORK
-            // Try to resolve this from the global assembly cache
-            GlobalAssemblyCache.Instance.ResolvePartialName(lib.Value, out string location);
-            if (location is not null)
-            {
-              metadataReferences.Add(RoslynHost.CreateMetadataReference(location));
-            }
-#else
-            // in .NET, the global assembly cache is not supported, thus we threat it as a package reference
-            var nugetRefs = await RoslynHost.NuGetReferenceResolver.ResolveReferencesAsync(lib.Value, lib.Version, cancellationToken).ConfigureAwait(false);
-            metadataReferences.AddRange(nugetRefs);
-#endif
-          }
-          else if (lib.Kind == LibraryRef.RefKind.PackageReference)
-          {
-            var nugetRefs = await RoslynHost.NuGetReferenceResolver.ResolveReferencesAsync(lib.Value, lib.Version, cancellationToken).ConfigureAwait(false);
-            metadataReferences.AddRange(nugetRefs);
-          }
-        }
-      }
-
+      var metadataReferences = await ReferenceDirectiveHelper.GetMetadataReferencesAsync(libraries.Values.SelectMany(s => s), RoslynHost, cancellationToken).ConfigureAwait(false);
       var lastUsedCodeMetadataReferences = _lastUsedCodeMetadataReferences; // make the variable local to avoid racing conditions
       var (referencesToRemove, referencesToAdd) = ReferenceDirectiveHelper.GetMetadataReferenceDifference(metadataReferences, lastUsedCodeMetadataReferences);
 

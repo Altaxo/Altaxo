@@ -1,4 +1,28 @@
-﻿using System;
+﻿#region Copyright
+
+/////////////////////////////////////////////////////////////////////////////
+//    Altaxo:  a data processing and data plotting program
+//    Copyright (C) 2002-2025 Dr. Dirk Lellinger
+//
+//    This program is free software; you can redistribute it and/or modify
+//    it under the terms of the GNU General Public License as published by
+//    the Free Software Foundation; either version 2 of the License, or
+//    (at your option) any later version.
+//
+//    This program is distributed in the hope that it will be useful,
+//    but WITHOUT ANY WARRANTY; without even the implied warranty of
+//    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+//    GNU General Public License for more details.
+//
+//    You should have received a copy of the GNU General Public License
+//    along with this program; if not, write to the Free Software
+//    Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
+//
+/////////////////////////////////////////////////////////////////////////////
+
+#endregion Copyright
+
+using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
@@ -30,7 +54,6 @@ public class NuGetReferenceResolver
   private readonly string _globalPackagesFolder;
   private readonly List<NuGetFramework> _targetFrameworks;
   private readonly SourceCacheContext _cache;
-  private static readonly NuGetFrameworkFullComparer _fullComparer = new NuGetFrameworkFullComparer();
 
   /// <summary>
   /// Initializes a new instance of the <see cref="NuGetReferenceResolver"/> class,  configured to resolve NuGet package
@@ -117,7 +140,7 @@ public class NuGetReferenceResolver
       FrameworkSpecificGroup group = null;
       foreach (var framework in _targetFrameworks)
       {
-        group = libItems.FirstOrDefault(g => _fullComparer.Equals(framework, g.TargetFramework));
+        group = libItems.FirstOrDefault(g => NuGetFrameworkFullComparer.Instance.Equals(framework, g.TargetFramework));
         if (group is not null)
         {
           break;
@@ -126,22 +149,28 @@ public class NuGetReferenceResolver
 
       group ??= libItems.FirstOrDefault(g => DefaultCompatibilityProvider.Instance.IsCompatible(_targetFrameworks[0], g.TargetFramework));
 
-
-      if (group is null || !group.Items.Any())
+      try
       {
-        // if no suitable package was found in libItems, we try it with reference items
-        var refItems = await reader.GetReferenceItemsAsync(cancellationToken).ConfigureAwait(false);
-
-        foreach (var framework in _targetFrameworks)
+        if (group is null || !group.Items.Any())
         {
-          group = refItems.FirstOrDefault(g => _fullComparer.Equals(framework, g.TargetFramework));
-          if (group is not null)
-          {
-            break;
-          }
-        }
+          // if no suitable package was found in libItems, we try it with reference items
+          var refItems = await reader.GetReferenceItemsAsync(cancellationToken).ConfigureAwait(false);
 
-        group ??= refItems.FirstOrDefault(g => DefaultCompatibilityProvider.Instance.IsCompatible(_targetFrameworks[0], g.TargetFramework));
+          foreach (var framework in _targetFrameworks)
+          {
+            group = refItems.FirstOrDefault(g => NuGetFrameworkFullComparer.Instance.Equals(framework, g.TargetFramework));
+            if (group is not null)
+            {
+              break;
+            }
+          }
+
+          group ??= refItems.FirstOrDefault(g => DefaultCompatibilityProvider.Instance.IsCompatible(_targetFrameworks[0], g.TargetFramework));
+        }
+      }
+      catch (Exception ex)
+      {
+
       }
 
 

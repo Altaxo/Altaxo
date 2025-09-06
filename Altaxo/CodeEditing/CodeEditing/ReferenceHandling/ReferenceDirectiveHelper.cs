@@ -65,16 +65,22 @@ internal static class ReferenceDirectiveHelper
     }
 
     return libraries;
-
-
-
-
   }
 
   private static bool HasPrefix(string prefix, string value) => value.Length > prefix.Length && value.StartsWith(prefix, StringComparison.InvariantCultureIgnoreCase);
 
 
-
+  /// <summary>
+  /// Parses a NuGet package reference string into its package ID and version components.
+  /// </summary>
+  /// <remarks>The input string must conform to the expected format, which includes a prefix followed by the
+  /// package ID, and optionally a version component separated by a delimiter. If the version component is not provided,
+  /// the returned version will be <see langword="null"/>.</remarks>
+  /// <param name="value">The NuGet package reference string to parse. The string is expected to start with a specific prefix and may
+  /// optionally include a version component separated by a delimiter.</param>
+  /// <returns>A tuple containing the package ID and version. The package ID is always non-null and trimmed of whitespace. The
+  /// version is trimmed of whitespace and may be <see langword="null"/> if no version component is specified in the
+  /// input string.</returns>
   public static (string id, string version) ParseNuGetReference(string value)
   {
     string id;
@@ -150,38 +156,68 @@ internal static class ReferenceDirectiveHelper
         }
 #else
         // in .NET, the global assembly cache is not supported, thus we threat it as a package reference
-        await AddPackageReferences(lib, metadataReferences, roslynHost, cancellationToken).ConfigureAwait(false);
+        await AddPackageReferencesAsync(lib, preferNugetFirst: false, metadataReferences, roslynHost, cancellationToken).ConfigureAwait(false);
 #endif
       }
       else if (lib.Kind == LibraryRef.RefKind.PackageReference)
       {
-        await AddPackageReferences(lib, metadataReferences, roslynHost, cancellationToken).ConfigureAwait(false);
+        await AddPackageReferencesAsync(lib, preferNugetFirst: true, metadataReferences, roslynHost, cancellationToken).ConfigureAwait(false);
       }
     }
     return metadataReferences;
   }
 
-  static async Task AddPackageReferences(LibraryRef lib, List<MetadataReference> metadataReferences, RoslynHost roslynHost, CancellationToken cancellationToken)
+  /// <summary>
+  /// Adds package references to the specified metadata references collection, resolving them either from NuGet or from
+  /// local assemblies based on the provided preferences.
+  /// </summary>
+  /// <remarks>If <paramref name="preferNugetFirst"/> is <see langword="true"/> and the package is successfully
+  /// resolved from NuGet, the method returns early without checking local assemblies. If <paramref
+  /// name="preferNugetFirst"/> is <see langword="false"/> or no NuGet references are found, the method attempts to
+  /// resolve the package from local assemblies.</remarks>
+  /// <param name="lib">The library reference containing the package name and version to resolve.</param>
+  /// <param name="preferNugetFirst">A boolean value indicating whether to prioritize resolving the package from NuGet before checking for local
+  /// assemblies. If <see langword="true"/>, NuGet will be checked first; otherwise, local assemblies will be
+  /// prioritized.</param>
+  /// <param name="metadataReferences">The collection of metadata references to which the resolved references will be added.</param>
+  /// <param name="roslynHost">The Roslyn host used to resolve references and manage the compilation environment.</param>
+  /// <param name="cancellationToken">A token to monitor for cancellation requests during the resolution process.</param>
+  /// <returns>A task that is awaitable</returns>
+  private static async Task AddPackageReferencesAsync(LibraryRef lib, bool preferNugetFirst, List<MetadataReference> metadataReferences, RoslynHost roslynHost, CancellationToken cancellationToken)
   {
     // even here: if we find out that the reference is already in the same directory as the application, we rather load this assembly than to
     // get it from nuget
     // this is because it is then highly probable that the version between the lib linked to Altaxo will crash with the version downloaded from nuget
+
+    if (preferNugetFirst)
+    {
+      var nugetRefs = await roslynHost.NuGetReferenceResolver.ResolveReferencesAsync(lib.Value, lib.Version, cancellationToken).ConfigureAwait(false);
+      metadataReferences.AddRange(nugetRefs);
+      if (nugetRefs.Count != 0)
+        return;
+    }
 
     var r = TryGetPresentAssemblyReference(lib.Value, roslynHost);
     if (r is not null)
     {
       metadataReferences.AddRange([r]);
     }
-    else
+    else if (!preferNugetFirst)
     {
       var nugetRefs = await roslynHost.NuGetReferenceResolver.ResolveReferencesAsync(lib.Value, lib.Version, cancellationToken).ConfigureAwait(false);
       metadataReferences.AddRange(nugetRefs);
     }
   }
 
-
-  static MetadataReference? TryGetPresentAssemblyReference(string name, RoslynHost roslynHost)
+  /// <summary>
+  /// Tries to get a assembly that is already present in the app directory.
+  /// </summary>
+  /// <param name="name">The assembly name.</param>
+  /// <param name="roslynHost">The roslyn host.</param>
+  /// <returns>If the assembly was found in the app directory, the corresponding metadata reference is returned. Otherwise, the return value is null.</returns>
+  private static MetadataReference? TryGetPresentAssemblyReference(string name, RoslynHost roslynHost)
   {
+    var displayName = name;
 
     if (!name.ToUpperInvariant().EndsWith(".DLL"))
       name = name + ".dll";
@@ -193,13 +229,13 @@ internal static class ReferenceDirectiveHelper
 
     var file = System.IO.Directory.EnumerateFiles(path1, name, System.IO.SearchOption.TopDirectoryOnly).FirstOrDefault();
 
-    if(file is null && path2 != path1)
+    if (file is null && path2 != path1)
     {
       file = System.IO.Directory.EnumerateFiles(path2, name, System.IO.SearchOption.TopDirectoryOnly).FirstOrDefault();
     }
 
     // if the search was not successful, we extend the search to the subdirectories
-    if(file is null)
+    if (file is null)
     {
       System.IO.Directory.EnumerateFiles(path1, name, System.IO.SearchOption.AllDirectories).FirstOrDefault();
     }
@@ -207,6 +243,18 @@ internal static class ReferenceDirectiveHelper
     if (file is null && path2 != path1)
     {
       file = System.IO.Directory.EnumerateFiles(path2, name, System.IO.SearchOption.AllDirectories).FirstOrDefault();
+    }
+
+    if (file is null)
+    {
+
+
+#if NETFRAMEWORK
+      var assIdentity = GlobalAssemblyCache.Instance.ResolvePartialName(displayName);
+      file = assIdentity is not null ? assIdentity.GetDisplayName() : null;
+#else
+      file = DotNetCoreSdkAssemblyResolver.Instance.Resolve(displayName);
+#endif
     }
 
 
@@ -235,6 +283,12 @@ internal static class ReferenceDirectiveHelper
     return await GetMetadataReferencesAsync(libraryRefs, roslynHost, cancellationToken).ConfigureAwait(false);
   }
 
+  /// <summary>
+  /// Gets the metadata reference differences.
+  /// </summary>
+  /// <param name="newReferences">The new references.</param>
+  /// <param name="oldReferences">The old references.</param>
+  /// <returns>A tuple that contains the references to remove from the project, and the references that needs to be added to the project.</returns>
   public static (List<MetadataReference> toRemove, List<MetadataReference> toAdd) GetMetadataReferenceDifference(List<MetadataReference> newReferences, List<MetadataReference> oldReferences)
   {
     List<MetadataReference> toRemove = new List<MetadataReference>();
