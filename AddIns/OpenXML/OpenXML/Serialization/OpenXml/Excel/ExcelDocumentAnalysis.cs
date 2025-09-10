@@ -25,6 +25,7 @@
 #nullable enable
 using System;
 using System.Collections.Generic;
+using System.Linq;
 using System.Text;
 using Altaxo.Serialization.Ascii;
 using DocumentFormat.OpenXml.Packaging;
@@ -98,7 +99,10 @@ namespace Altaxo.Serialization.OpenXml.Excel
 
       // Analyze each of the first few lines with all possible separation strategies
       _lineAnalysisOfBodyLines = new List<AsciiLineComposition>();
-      foreach (Row row in sheetData.Elements<Row>())
+
+      int numberOfLinesToSkip = importOptions.NumberOfMainHeaderLines.HasValue && importOptions.NumberOfMainHeaderLines.Value > 0 ? importOptions.NumberOfMainHeaderLines.Value : 0;
+
+      foreach (Row row in sheetData.Elements<Row>().Skip(numberOfLinesToSkip))
       {
         _lineAnalysisOfBodyLines.Add(ExcelLineAnalysis.GetStructure(row));
       }
