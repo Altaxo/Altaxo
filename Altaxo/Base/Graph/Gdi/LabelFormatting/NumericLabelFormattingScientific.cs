@@ -26,6 +26,7 @@
 using System;
 using System.Collections.Generic;
 using System.Drawing;
+using Altaxo.Calc;
 using Altaxo.Drawing;
 
 namespace Altaxo.Graph.Gdi.LabelFormatting
@@ -150,13 +151,7 @@ namespace Altaxo.Graph.Gdi.LabelFormatting
         return;
       }
 
-      string sitem1 = ditem.ToString("E");
-      int posOfE = sitem1.IndexOf('E');
-      if (!(posOfE > 0))
-        throw new InvalidProgramException();
-
-      int expo = int.Parse(sitem1.Substring(posOfE + 1));
-      mant = ditem * Calc.RMath.Pow(10, -expo);
+      (mant, var expo) = Rounding.GetDecimalMantissaExponent(ditem);
 
       if (expo != 0 || _showExponentAlways)
       {

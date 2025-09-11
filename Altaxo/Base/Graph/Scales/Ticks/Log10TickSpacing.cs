@@ -700,7 +700,7 @@ namespace Altaxo.Graph.Scales.Ticks
         {
           if (i >= lg10OrgRoundedDown && i <= lg10EndRoundedUp)
           {
-            double tickValue = RMath.Pow(10, i);
+            double tickValue = RMath.TenToThePowerOf(i);
             _majorTicks.Add(tickValue);
           }
         }
@@ -752,7 +752,7 @@ namespace Altaxo.Graph.Scales.Ticks
         {
           if (i >= lg10OrgRoundedDown && i <= lg10EndRoundedUp && 0 == i % decadesPerMinorTick)
           {
-            double tickValue = RMath.Pow(10, i);
+            double tickValue = RMath.TenToThePowerOf(i);
             if (0 != i % decadesPerMajorTick) // add minor tick only if it is not a major tick
               _minorTicks.Add(tickValue);
           }
@@ -772,7 +772,7 @@ namespace Altaxo.Graph.Scales.Ticks
             double lgVal = i + Math.Log10(mantissa[j]);
             if (lgVal >= lg10OrgRoundedDown && lgVal <= lg10EndRoundedUp)
             {
-              double tickValue = mantissa[j] * RMath.Pow(10, i);
+              double tickValue = mantissa[j] * RMath.TenToThePowerOf(i);
               if (j != 0 || decadesPerMajorTick <= 0 || 0 != i % decadesPerMajorTick) // add minor tick only if it is not already a major tick
                 _minorTicks.Add(tickValue);
             }
@@ -999,9 +999,9 @@ namespace Altaxo.Graph.Scales.Ticks
           {
             double rel = Math.Log10(x) / decadesPerMajorTick;
             if (upwards)
-              return RMath.Pow(10, decadesPerMajorTick * (int)Math.Ceiling(rel));
+              return RMath.TenToThePowerOf(decadesPerMajorTick * (int)Math.Ceiling(rel));
             else
-              return RMath.Pow(10, decadesPerMajorTick * (int)Math.Floor(rel));
+              return RMath.TenToThePowerOf(decadesPerMajorTick * (int)Math.Floor(rel));
           }
         case BoundaryTickSnapping.SnapToMinorOnly:
           {
@@ -1014,14 +1014,14 @@ namespace Altaxo.Graph.Scales.Ticks
                 int nrel = decadesPerMinorTick * (int)Math.Ceiling(rel);
                 if (0 == (nrel % decadesPerMajorTick))
                   nrel += decadesPerMinorTick;
-                return RMath.Pow(10, nrel);
+                return RMath.TenToThePowerOf(nrel);
               }
               else
               {
                 int nrel = decadesPerMinorTick * (int)Math.Floor(rel);
                 if (0 == (nrel % decadesPerMajorTick))
                   nrel -= decadesPerMinorTick;
-                return RMath.Pow(10, nrel);
+                return RMath.TenToThePowerOf(nrel);
               }
             }
             else if (minorTicks < 0)
@@ -1033,7 +1033,7 @@ namespace Altaxo.Graph.Scales.Ticks
                 int nrel = (int)Math.Floor(rel);
                 for (int i = 0; i < mantissa.Length; ++i)
                 {
-                  double result = mantissa[i] * RMath.Pow(10, nrel);
+                  double result = mantissa[i] * RMath.TenToThePowerOf(nrel);
                   if (result >= x && (i != 0 || 0 != (nrel % decadesPerMajorTick)))
                     return result;
                 }
@@ -1043,7 +1043,7 @@ namespace Altaxo.Graph.Scales.Ticks
                 int nrel = (int)Math.Ceiling(rel) - 1;
                 for (int i = mantissa.Length - 1; i >= 0; --i)
                 {
-                  double result = mantissa[i] * RMath.Pow(10, (int)(rel));
+                  double result = mantissa[i] * RMath.TenToThePowerOf((int)(rel));
                   if (result <= x && (i != 0 || 0 != (nrel % decadesPerMajorTick)))
                     return result;
                 }
@@ -1053,9 +1053,9 @@ namespace Altaxo.Graph.Scales.Ticks
             {
               double rel = Math.Log10(x) / decadesPerMajorTick;
               if (upwards)
-                return RMath.Pow(10, decadesPerMajorTick * (int)Math.Ceiling(rel));
+                return RMath.TenToThePowerOf(decadesPerMajorTick * (int)Math.Ceiling(rel));
               else
-                return RMath.Pow(10, decadesPerMajorTick * (int)Math.Floor(rel));
+                return RMath.TenToThePowerOf(decadesPerMajorTick * (int)Math.Floor(rel));
             }
           }
           break;
@@ -1067,9 +1067,9 @@ namespace Altaxo.Graph.Scales.Ticks
               int decadesPerMinorTick = decadesPerMajorTick / minorTicks;
               double rel = Math.Log10(x) / decadesPerMinorTick;
               if (upwards)
-                return RMath.Pow(10, decadesPerMinorTick * (int)Math.Ceiling(rel));
+                return RMath.TenToThePowerOf(decadesPerMinorTick * (int)Math.Ceiling(rel));
               else
-                return RMath.Pow(10, decadesPerMinorTick * (int)Math.Floor(rel));
+                return RMath.TenToThePowerOf(decadesPerMinorTick * (int)Math.Floor(rel));
             }
             else if (minorTicks < 0)
             {
@@ -1078,7 +1078,7 @@ namespace Altaxo.Graph.Scales.Ticks
               if (upwards)
               {
                 int nrel = (int)Math.Floor(rel);
-                double basis = RMath.Pow(10, nrel);
+                double basis = RMath.TenToThePowerOf(nrel);
                 for (int i = 0; i < mantissa.Length; ++i)
                 {
                   double result = mantissa[i] * basis;
@@ -1090,7 +1090,7 @@ namespace Altaxo.Graph.Scales.Ticks
               else // downwards
               {
                 int nrel = (int)Math.Ceiling(rel) - 1;
-                double basis = RMath.Pow(10, nrel);
+                double basis = RMath.TenToThePowerOf(nrel);
                 double result = 10 * basis;
                 if (result <= x)
                   return result;
@@ -1106,9 +1106,9 @@ namespace Altaxo.Graph.Scales.Ticks
             {
               double rel = Math.Log10(x) / decadesPerMajorTick;
               if (upwards)
-                return RMath.Pow(10, decadesPerMajorTick * (int)Math.Ceiling(rel));
+                return RMath.TenToThePowerOf(decadesPerMajorTick * (int)Math.Ceiling(rel));
               else
-                return RMath.Pow(10, decadesPerMajorTick * (int)Math.Floor(rel));
+                return RMath.TenToThePowerOf(decadesPerMajorTick * (int)Math.Floor(rel));
             }
           }
           break;

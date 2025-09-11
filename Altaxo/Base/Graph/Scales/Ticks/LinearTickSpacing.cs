@@ -27,8 +27,6 @@ using System;
 using System.Collections.Generic;
 using System.ComponentModel;
 using System.Diagnostics.CodeAnalysis;
-using System.Linq;
-using System.Text;
 using Altaxo.Calc;
 using Altaxo.Data;
 
@@ -1066,7 +1064,7 @@ namespace Altaxo.Graph.Scales.Ticks
       double rawMajorSpan = targetNumberOfMajorTicks >= 1 ? scaleSpan / targetNumberOfMajorTicks : scaleSpan;
       int log10RawMajorSpan = (int)Math.Floor(Math.Log10(rawMajorSpan));
 
-      double normMajorSpan = rawMajorSpan / RMath.Pow(10, log10RawMajorSpan); // number between 1 and 10
+      double normMajorSpan = rawMajorSpan / RMath.TenToThePowerOf(log10RawMajorSpan); // number between 1 and 10
       foreach (double span in _majorSpanValues)
       {
         if (span >= normMajorSpan)
@@ -1095,7 +1093,7 @@ namespace Altaxo.Graph.Scales.Ticks
       double rawMinorSpan = majorSpan / targetNumberOfMinorTicks;
       int log10RawMinorSpan = (int)Math.Floor(Math.Log10(rawMinorSpan));
 
-      double normMinorSpan = rawMinorSpan / RMath.Pow(10, log10RawMinorSpan); // number between 1 and 10
+      double normMinorSpan = rawMinorSpan / RMath.TenToThePowerOf(log10RawMinorSpan); // number between 1 and 10
       for (int i = _minorSpanValues.Length - 1; i >= 0; i--)
       {
         double span = _minorSpanValues[i];
@@ -1105,7 +1103,7 @@ namespace Altaxo.Graph.Scales.Ticks
           break;
         }
       }
-      double minorSpan = normMinorSpan * RMath.Pow(10, log10RawMinorSpan);
+      double minorSpan = normMinorSpan * RMath.TenToThePowerOf(log10RawMinorSpan);
       int result = (int)Math.Round(majorSpan / minorSpan);
       return result < 1 ? 1 : result;
     }

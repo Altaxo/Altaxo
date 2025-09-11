@@ -25,6 +25,7 @@
 using System;
 using System.Collections.Generic;
 using Altaxo.Calc;
+using Altaxo.Collections;
 using Xunit;
 
 namespace AltaxoTest.Calc
@@ -105,6 +106,93 @@ namespace AltaxoTest.Calc
       AssertEx.Equal(0.012, Rounding.RoundToNumberOfSignificantDigits(0.012345678, 2, MidpointRounding.ToEven), 1E-6);
       AssertEx.Equal(1.2, Rounding.RoundToNumberOfSignificantDigits(1.2345678, 2, MidpointRounding.ToEven), 1E-6);
       AssertEx.Equal(120, Rounding.RoundToNumberOfSignificantDigits(123.45678, 2, MidpointRounding.ToEven), 1E-6);
+    }
+
+    [Fact]
+    public void TestSplitIntoDecimalMantissaAndExponent01()
+    {
+      for (int j = 1; j <= 9; ++j)
+      {
+        for (int i = RMath.DoubleMinimalDecimalPowerWithoutPrecisionLoss; i < RMath.DoubleMaximalDecimalPower; ++i)
+        {
+          var mantissaString = j.ToString(System.Globalization.CultureInfo.InvariantCulture);
+          var valueString = mantissaString + "E" + i.ToString(System.Globalization.CultureInfo.InvariantCulture);
+          var x = double.Parse(valueString, System.Globalization.CultureInfo.InvariantCulture);
+          var (m, e) = Rounding.GetDecimalMantissaExponent(x);
+          var mantissaStringNow = m.ToString(System.Globalization.CultureInfo.InvariantCulture);
+          Assert.True(mantissaString == mantissaStringNow, $"Expected: {mantissaString} but is: {mantissaStringNow}");
+          Assert.Equal(e, i);
+        }
+      }
+    }
+
+    [Fact]
+    public void TestSplitIntoDecimalMantissaAndExponent01a()
+    {
+      for (int j = 1; j <= 9; ++j)
+      {
+        for (int i = RMath.DoubleMinimalDecimalPowerWithoutPrecisionLoss; i < RMath.DoubleMaximalDecimalPower; ++i)
+        {
+          var mantissaString = j.ToString(System.Globalization.CultureInfo.InvariantCulture);
+          var x = j * RMath.TenToThePowerOf(i);
+          var (m, e) = Rounding.GetDecimalMantissaExponent(x);
+          var mantissaStringNow = m.ToString(System.Globalization.CultureInfo.InvariantCulture);
+          Assert.True(mantissaString == mantissaStringNow, $"Expected: {mantissaString} but is: {mantissaStringNow}");
+          Assert.Equal(e, i);
+        }
+      }
+    }
+
+    [Fact]
+    public void TestSplitIntoDecimalMantissaAndExponent02()
+    {
+      for (int j = 1; j <= 9; ++j)
+      {
+        for (int i = RMath.DoubleMinimalDecimalPowerWithoutPrecisionLoss; i < RMath.DoubleMaximalDecimalPower; ++i)
+        {
+          var mantissaString = j.ToString(System.Globalization.CultureInfo.InvariantCulture);
+          mantissaString = mantissaString + "." + mantissaString;
+          var valueString = mantissaString + "E" + i.ToString(System.Globalization.CultureInfo.InvariantCulture);
+          var x = double.Parse(valueString, System.Globalization.CultureInfo.InvariantCulture);
+          var (m, e) = Rounding.GetDecimalMantissaExponent(x);
+          var mantissaStringNow = m.ToString(System.Globalization.CultureInfo.InvariantCulture);
+          Assert.True(mantissaString == mantissaStringNow, $"Expected: {mantissaString} but is: {mantissaStringNow}");
+          Assert.Equal(e, i);
+
+        }
+      }
+    }
+
+    [Fact]
+    public void TestSplitIntoDecimalMantissaAndExponent02a()
+    {
+      for (int j = 1; j <= 9; ++j)
+      {
+        for (int i = RMath.DoubleMinimalDecimalPowerWithoutPrecisionLoss; i < RMath.DoubleMaximalDecimalPower; ++i)
+        {
+          var mantissaString = j.ToString(System.Globalization.CultureInfo.InvariantCulture);
+          mantissaString = mantissaString + "." + mantissaString + mantissaString + mantissaString + mantissaString + mantissaString + mantissaString + mantissaString + mantissaString + mantissaString;
+          var valueString = mantissaString + "E" + i.ToString(System.Globalization.CultureInfo.InvariantCulture);
+          var x = double.Parse(valueString, System.Globalization.CultureInfo.InvariantCulture);
+          var (m, e) = Rounding.GetDecimalMantissaExponent(x);
+          var mantissaStringNow = m.ToString(System.Globalization.CultureInfo.InvariantCulture);
+          Assert.True(mantissaString == mantissaStringNow, $"Expected: {mantissaString} but is: {mantissaStringNow}");
+          Assert.Equal(e, i);
+
+        }
+      }
+    }
+
+    [Fact]
+    public void TestSplitIntoDecimalMantissaAndExponent03()
+    {
+      for (int i = RMath.DoubleMinimalDecimalPowerWithoutPrecisionLoss; i <= RMath.DoubleMaximalDecimalPower; ++i)
+      {
+        var x = double.Parse("1.23456789E" + i.ToString(System.Globalization.CultureInfo.InvariantCulture), System.Globalization.CultureInfo.InvariantCulture);
+        var (m, e) = Rounding.GetDecimalMantissaExponent(x);
+        Assert.True("1.23456789" == m.ToString(System.Globalization.CultureInfo.InvariantCulture));
+        Assert.Equal(e, i);
+      }
     }
   }
 }

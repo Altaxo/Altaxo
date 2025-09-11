@@ -123,5 +123,42 @@ namespace Altaxo.Calc
         return xpot * fac;
       }
     }
+
+    /// <summary>
+    /// Decomposes a double-precision floating-point number into its decimal mantissa and exponent.
+    /// </summary>
+    /// <remarks>If the input value is <see cref="double.NaN"/>, <see cref="double.PositiveInfinity"/>,  <see
+    /// cref="double.NegativeInfinity"/>, or zero, the method returns the input value as the  mantissa and 0 as the
+    /// exponent.</remarks>
+    /// <param name="x">The number to decompose. Must be a finite value or zero.</param>
+    /// <returns>A tuple containing the decimal mantissa and exponent. The mantissa is a double-precision  value in the range
+    /// -10 &lt; x &lt; 10, and the exponent is an integer representing the power of 10  such that <c> x == mantissa * 10^exponent</c>
+    /// approximates the input value.</returns>
+    public static (double mantissa, double exponent) GetDecimalMantissaExponent(double x)
+    {
+      if (double.IsNaN(x) || double.IsInfinity(x) || x == 0)
+      {
+        return (x, 0);
+      }
+      else
+      {
+        int lg = Math.Max(RMath.DoubleMinimalDecimalPower, (int)Math.Floor(Math.Log10(Math.Abs(x))));
+
+        double mantissa = Math.Round(x / RMath.TenToThePowerOf(lg), 14);
+
+        if (mantissa == 10)
+        {
+          mantissa = 1;
+          lg++;
+        }
+        else if (mantissa == -10)
+        {
+          mantissa = -1;
+          lg++;
+        }
+
+        return (mantissa, lg);
+      }
+    }
   }
 }

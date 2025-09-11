@@ -25,6 +25,7 @@
 #nullable enable
 using System;
 using System.Collections.Generic;
+using Altaxo.Calc;
 
 namespace Altaxo.Graph.Gdi.LabelFormatting
 {
@@ -118,13 +119,14 @@ namespace Altaxo.Graph.Gdi.LabelFormatting
 
       for (int i = 0; i < majorticks.Length; i++)
       {
-        mtick = majorticks[i].ToString(numinfo);
-        posdecimalseparator = mtick.LastIndexOf(numinfo.NumberDecimalSeparator);
-        posexponent = mtick.LastIndexOf('E');
+        var (mantissaValue, exponentValue) = Rounding.GetDecimalMantissaExponent(majorticks[i]);
+       
 
-        if (posexponent < 0) // no exponent-> count the trailing decimal digits
+        if (exponentValue>=-3 && exponentValue <= 3) // no exponent-> count the trailing decimal digits
         {
           bExponentialForm[i] = false;
+          mtick = majorticks[i].ToString(numinfo);
+          posdecimalseparator = mtick.LastIndexOf(numinfo.NumberDecimalSeparator);
           if (posdecimalseparator > 0)
           {
             digits = mtick.Length - posdecimalseparator - 1;
@@ -137,10 +139,13 @@ namespace Altaxo.Graph.Gdi.LabelFormatting
           bExponentialForm[i] = true;
           // the total digits used for exponential form are the characters until the 'E' of the exponent
           // minus the decimal separator minus the minus sign
-          digits = posexponent;
+
+          var mantissaString = mantissaValue.ToString(numinfo);
+          posdecimalseparator = mantissaString.LastIndexOf(numinfo.NumberDecimalSeparator);
+          digits = mantissaString.Length;
           if (posdecimalseparator >= 0)
             --digits;
-          if (mtick[0] == '-')
+          if (mantissaString[0] == '-')
             --digits; // the digits
           if (digits > maxexponentialdigits)
             maxexponentialdigits = digits;

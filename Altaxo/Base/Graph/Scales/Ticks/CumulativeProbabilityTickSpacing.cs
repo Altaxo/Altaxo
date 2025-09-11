@@ -26,7 +26,6 @@
 using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Text;
 using Altaxo.Calc;
 using Altaxo.Data;
 
@@ -774,12 +773,12 @@ namespace Altaxo.Graph.Scales.Ticks
             useAllMajorTicks1stGen = true;
             for (int i = (int)lgOrg; i > 0; --i)
             {
-              var p = RMath.Pow(10, -i);
+              var p = RMath.TenToThePowerOf(-i);
               list1stGen.Add(p);
             }
             for (int i = (int)lgEnd; i > 0; --i)
             {
-              var p = RMath.Pow(10, -i);
+              var p = RMath.TenToThePowerOf(-i);
               list1stGen.Add(1 - p);
             }
           }
@@ -807,8 +806,8 @@ namespace Altaxo.Graph.Scales.Ticks
             int starti = combFactorLower;
             for (int i = 1; i <= combFactorLower; ++i)
             {
-              var p1 = RMath.Pow(10, -i);
-              var p2 = RMath.Pow(10, -i - combFactorLower);
+              var p1 = RMath.TenToThePowerOf(-i);
+              var p2 = RMath.TenToThePowerOf(-i - combFactorLower);
               p2 = Math.Max(p2, org);
 
               var linp1 = ProbabilityToLinear(p1);
@@ -829,7 +828,7 @@ namespace Altaxo.Graph.Scales.Ticks
 
             for (int i = starti; i <= lgOrg + (combFactorLower - 1); i += combFactorLower)
             {
-              var p = RMath.Pow(10, -i);
+              var p = RMath.TenToThePowerOf(-i);
               list1stGen.Add(p);
             }
 
@@ -837,8 +836,8 @@ namespace Altaxo.Graph.Scales.Ticks
             starti = combFactorUpper;
             for (int i = 1; i <= combFactorUpper; ++i)
             {
-              var p1 = 1 - RMath.Pow(10, -i);
-              var p2 = 1 - RMath.Pow(10, -i - combFactorLower);
+              var p1 = 1 - RMath.TenToThePowerOf(-i);
+              var p2 = 1 - RMath.TenToThePowerOf(-i - combFactorLower);
               p2 = Math.Min(p2, end);
 
               var linp1 = ProbabilityToLinear(p1);
@@ -859,7 +858,7 @@ namespace Altaxo.Graph.Scales.Ticks
 
             for (int i = starti; i <= lgEnd + (combFactorUpper - 1); i += combFactorUpper)
             {
-              var p = RMath.Pow(10, -i);
+              var p = RMath.TenToThePowerOf(-i);
               list1stGen.Add(1 - p);
             }
           }
@@ -888,7 +887,7 @@ namespace Altaxo.Graph.Scales.Ticks
             int numTicks = 0;
             for (int i = starti + lgOrg; i <= lgEnd; i += combFactor)
             {
-              var p = 1 - RMath.Pow(10, -i);
+              var p = 1 - RMath.TenToThePowerOf(-i);
               if (org <= p && p <= end)
                 ++numTicks;
             }
@@ -904,7 +903,7 @@ namespace Altaxo.Graph.Scales.Ticks
 
           for (int i = bestStarti + lgOrg; i <= lgEnd + (combFactor - 1); i += combFactor)
           {
-            var p = 1 - RMath.Pow(10, -i);
+            var p = 1 - RMath.TenToThePowerOf(-i);
             list1stGen.Add(p);
           }
         }
@@ -932,7 +931,7 @@ namespace Altaxo.Graph.Scales.Ticks
             int numTicks = 0;
             for (int i = starti + lgOrg; i <= lgEnd; i += combFactor)
             {
-              var p = RMath.Pow(10, -i);
+              var p = RMath.TenToThePowerOf(-i);
               if (org <= p && p <= end)
                 ++numTicks;
             }
@@ -948,7 +947,7 @@ namespace Altaxo.Graph.Scales.Ticks
 
           for (int i = bestStarti + lgOrg; i <= lgEnd + (combFactor - 1); i += combFactor)
           {
-            var p = RMath.Pow(10, -i);
+            var p = RMath.TenToThePowerOf(-i);
             list1stGen.Add(p);
           }
         }
@@ -1115,7 +1114,7 @@ namespace Altaxo.Graph.Scales.Ticks
         for (int i = list1stGen.StartIdxLower; i <= endIdx; i += list1stGen.SkipStepLower)
         {
           for (int j = 1; j < list1stGen.SkipStepLower; ++j)
-            list2ndGen.Add(RMath.Pow(10, -i - j));
+            list2ndGen.Add(RMath.TenToThePowerOf(-i - j));
         }
       }
 
@@ -1130,7 +1129,7 @@ namespace Altaxo.Graph.Scales.Ticks
         for (int i = list1stGen.StartIdxUpper; i <= endIdx; i += list1stGen.SkipStepUpper)
         {
           for (int j = 1; j < list1stGen.SkipStepUpper; ++j)
-            list2ndGen.Add(1 - RMath.Pow(10, -i - j));
+            list2ndGen.Add(1 - RMath.TenToThePowerOf(-i - j));
         }
       }
     }
@@ -1151,11 +1150,11 @@ namespace Altaxo.Graph.Scales.Ticks
       {
         if (IsLowerDecimalProbability(prob, out var power) && power < -1)
         {
-          list2ndGen.Add(5 * RMath.Pow(10, power));
+          list2ndGen.Add(5 * RMath.TenToThePowerOf(power));
         }
         else if (IsUpperDecimalProbability(prob, out power))
         {
-          list2ndGen.Add(1 - 5 * RMath.Pow(10, -power - 1));
+          list2ndGen.Add(1 - 5 * RMath.TenToThePowerOf(-power - 1));
         }
       }
     }
@@ -1176,13 +1175,13 @@ namespace Altaxo.Graph.Scales.Ticks
       {
         if (IsLowerDecimalProbability(prob, out var power) && power < -1)
         {
-          list3rdGen.Add(2 * RMath.Pow(10, power));
-          list3rdGen.Add(5 * RMath.Pow(10, power));
+          list3rdGen.Add(2 * RMath.TenToThePowerOf(power));
+          list3rdGen.Add(5 * RMath.TenToThePowerOf(power));
         }
         else if (IsUpperDecimalProbability(prob, out power))
         {
-          list3rdGen.Add(1 - 5 * RMath.Pow(10, -power - 1));
-          list3rdGen.Add(1 - 2 * RMath.Pow(10, -power - 1));
+          list3rdGen.Add(1 - 5 * RMath.TenToThePowerOf(-power - 1));
+          list3rdGen.Add(1 - 2 * RMath.TenToThePowerOf(-power - 1));
         }
       }
     }
@@ -1204,12 +1203,12 @@ namespace Altaxo.Graph.Scales.Ticks
         if (IsLowerDecimalProbability(prob, out var power) && power < -1)
         {
           for (int i = 2; i <= 9; ++i)
-            list4thGen.Add(i * RMath.Pow(10, power));
+            list4thGen.Add(i * RMath.TenToThePowerOf(power));
         }
         else if (IsUpperDecimalProbability(prob, out power))
         {
           for (int i = 9; i >= 2; --i)
-            list4thGen.Add(1 - i * RMath.Pow(10, -power - 1));
+            list4thGen.Add(1 - i * RMath.TenToThePowerOf(-power - 1));
         }
       }
     }
