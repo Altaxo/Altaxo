@@ -132,7 +132,7 @@ namespace Altaxo.Gui.Worksheet.Viewing
 
     private static void DoubleColumnStyle_Paint(Altaxo.Worksheet.DoubleColumnStyle thiss, object drawingContext, RectangleD2D cellRect, int nRow, Altaxo.Data.DataColumn data, bool bSelected)
     {
-      string myString = ((Altaxo.Data.DoubleColumn)data)[nRow].ToString();
+      string myString = ((Altaxo.Data.DoubleColumn)data)[nRow].ToString("G15");
       GeneralText_Paint(thiss, drawingContext, cellRect, myString, TextAlignment.Right, bSelected);
     }
 

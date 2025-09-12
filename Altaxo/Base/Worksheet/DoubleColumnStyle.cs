@@ -75,7 +75,7 @@ namespace Altaxo.Worksheet
     public override string GetColumnValueAtRow(int nRow, Altaxo.Data.DataColumn data)
     {
       double val = ((Altaxo.Data.DoubleColumn)data)[nRow];
-      return double.IsNaN(val) ? "" : val.ToString(Altaxo.Settings.GuiCulture.Instance);
+      return double.IsNaN(val) ? "" : val.ToString("G15", Altaxo.Settings.GuiCulture.Instance);
     }
 
     public override void SetColumnValueAtRow(string s, int nRow, Altaxo.Data.DataColumn data)
@@ -89,7 +89,7 @@ namespace Altaxo.Worksheet
     {
       PaintBackground(dc, cellRectangle, bSelected);
 
-      string myString = ((Altaxo.Data.DoubleColumn)data)[nRow].ToString();
+      string myString = ((Altaxo.Data.DoubleColumn)data)[nRow].ToString("G15");
 
       var brush = bSelected ? _defaultSelectedTextBrush : TextBrush;
 
