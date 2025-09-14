@@ -84,7 +84,7 @@ namespace Altaxo.Graph.Gdi.LabelFormatting
 
     public string FormatItem(double tick)
     {
-      return _prefix + tick.ToString() + SuffixText;
+      return _prefix + tick.ToString("G15") + SuffixText;
     }
   }
 }

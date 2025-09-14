@@ -118,7 +118,7 @@ namespace AltaxoTest.Calc
           var mantissaString = j.ToString(System.Globalization.CultureInfo.InvariantCulture);
           var valueString = mantissaString + "E" + i.ToString(System.Globalization.CultureInfo.InvariantCulture);
           var x = double.Parse(valueString, System.Globalization.CultureInfo.InvariantCulture);
-          var (m, e) = Rounding.GetDecimalMantissaExponent(x);
+          var (m, e) = Rounding.SplitIntoDecimalMantissaAndExponent(x);
           var mantissaStringNow = m.ToString(System.Globalization.CultureInfo.InvariantCulture);
           Assert.True(mantissaString == mantissaStringNow, $"Expected: {mantissaString} but is: {mantissaStringNow}");
           Assert.Equal(e, i);
@@ -135,7 +135,7 @@ namespace AltaxoTest.Calc
         {
           var mantissaString = j.ToString(System.Globalization.CultureInfo.InvariantCulture);
           var x = j * RMath.TenToThePowerOf(i);
-          var (m, e) = Rounding.GetDecimalMantissaExponent(x);
+          var (m, e) = Rounding.SplitIntoDecimalMantissaAndExponent(x);
           var mantissaStringNow = m.ToString(System.Globalization.CultureInfo.InvariantCulture);
           Assert.True(mantissaString == mantissaStringNow, $"Expected: {mantissaString} but is: {mantissaStringNow}");
           Assert.Equal(e, i);
@@ -154,7 +154,7 @@ namespace AltaxoTest.Calc
           mantissaString = mantissaString + "." + mantissaString;
           var valueString = mantissaString + "E" + i.ToString(System.Globalization.CultureInfo.InvariantCulture);
           var x = double.Parse(valueString, System.Globalization.CultureInfo.InvariantCulture);
-          var (m, e) = Rounding.GetDecimalMantissaExponent(x);
+          var (m, e) = Rounding.SplitIntoDecimalMantissaAndExponent(x);
           var mantissaStringNow = m.ToString(System.Globalization.CultureInfo.InvariantCulture);
           Assert.True(mantissaString == mantissaStringNow, $"Expected: {mantissaString} but is: {mantissaStringNow}");
           Assert.Equal(e, i);
@@ -174,7 +174,7 @@ namespace AltaxoTest.Calc
           mantissaString = mantissaString + "." + mantissaString + mantissaString + mantissaString + mantissaString + mantissaString + mantissaString + mantissaString + mantissaString + mantissaString;
           var valueString = mantissaString + "E" + i.ToString(System.Globalization.CultureInfo.InvariantCulture);
           var x = double.Parse(valueString, System.Globalization.CultureInfo.InvariantCulture);
-          var (m, e) = Rounding.GetDecimalMantissaExponent(x);
+          var (m, e) = Rounding.SplitIntoDecimalMantissaAndExponent(x);
           var mantissaStringNow = m.ToString(System.Globalization.CultureInfo.InvariantCulture);
           Assert.True(mantissaString == mantissaStringNow, $"Expected: {mantissaString} but is: {mantissaStringNow}");
           Assert.Equal(e, i);
@@ -189,7 +189,7 @@ namespace AltaxoTest.Calc
       for (int i = RMath.DoubleMinimalDecimalPowerWithoutPrecisionLoss; i <= RMath.DoubleMaximalDecimalPower; ++i)
       {
         var x = double.Parse("1.23456789E" + i.ToString(System.Globalization.CultureInfo.InvariantCulture), System.Globalization.CultureInfo.InvariantCulture);
-        var (m, e) = Rounding.GetDecimalMantissaExponent(x);
+        var (m, e) = Rounding.SplitIntoDecimalMantissaAndExponent(x);
         Assert.True("1.23456789" == m.ToString(System.Globalization.CultureInfo.InvariantCulture));
         Assert.Equal(e, i);
       }

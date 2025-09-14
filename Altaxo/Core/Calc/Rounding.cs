@@ -134,7 +134,7 @@ namespace Altaxo.Calc
     /// <returns>A tuple containing the decimal mantissa and exponent. The mantissa is a double-precision  value in the range
     /// -10 &lt; x &lt; 10, and the exponent is an integer representing the power of 10  such that <c> x == mantissa * 10^exponent</c>
     /// approximates the input value.</returns>
-    public static (double mantissa, double exponent) GetDecimalMantissaExponent(double x)
+    public static (double mantissa, int exponent) SplitIntoDecimalMantissaAndExponent(double x)
     {
       if (double.IsNaN(x) || double.IsInfinity(x) || x == 0)
       {

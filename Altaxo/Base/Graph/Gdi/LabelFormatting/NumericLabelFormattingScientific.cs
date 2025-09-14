@@ -151,14 +151,14 @@ namespace Altaxo.Graph.Gdi.LabelFormatting
         return;
       }
 
-      (mant, var expo) = Rounding.GetDecimalMantissaExponent(ditem);
+      (mant, var expo) = Rounding.SplitIntoDecimalMantissaAndExponent(ditem);
 
       if (expo != 0 || _showExponentAlways)
       {
-        firstpart = mant.ToString();
+        firstpart = mant.ToString("G15");
         exponent = expo.ToString();
 
-        if (firstpart == 1.ToString())
+        if (firstpart == 1.ToString("G15"))
         {
           firstpart = string.Empty;
           middelpart = "10";
@@ -170,7 +170,7 @@ namespace Altaxo.Graph.Gdi.LabelFormatting
       }
       else
       {
-        firstpart = mant.ToString();
+        firstpart = mant.ToString("G15");
         middelpart = string.Empty;
         exponent = string.Empty;
       }

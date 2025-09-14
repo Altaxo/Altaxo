@@ -119,13 +119,13 @@ namespace Altaxo.Graph.Gdi.LabelFormatting
 
       for (int i = 0; i < majorticks.Length; i++)
       {
-        var (mantissaValue, exponentValue) = Rounding.GetDecimalMantissaExponent(majorticks[i]);
+        var (mantissaValue, exponentValue) = Rounding.SplitIntoDecimalMantissaAndExponent(majorticks[i]);
        
 
-        if (exponentValue>=-3 && exponentValue <= 3) // no exponent-> count the trailing decimal digits
+        if (exponentValue>=-6 && exponentValue <= 6) // no exponent-> count the trailing decimal digits
         {
           bExponentialForm[i] = false;
-          mtick = majorticks[i].ToString(numinfo);
+          mtick = majorticks[i].ToString("G15", numinfo);
           posdecimalseparator = mtick.LastIndexOf(numinfo.NumberDecimalSeparator);
           if (posdecimalseparator > 0)
           {
