@@ -13,7 +13,7 @@
     <GenerateAssemblyInfo>false</GenerateAssemblyInfo>
     <AppendTargetFrameworkToOutputPath>false</AppendTargetFrameworkToOutputPath>
     <IntermediateOutputPath>obj\$(Configuration)\$(TargetFramework)\</IntermediateOutputPath>
-    <OutputPath>..\..\rt$(TargetFramework)\bin</OutputPath>
+    <OutputPath>..\..\rt$(TargetFrameworkSubdir)\bin</OutputPath>
     <StartupObject>Altaxo.Serialization.AutoUpdates.UpdateInstallerMain</StartupObject>
     <CoreCompileDependsOn>GenAssInfo</CoreCompileDependsOn>
   </PropertyGroup>
