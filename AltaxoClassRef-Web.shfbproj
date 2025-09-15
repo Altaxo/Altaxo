@@ -13,17 +13,17 @@
     <RootNamespace>Documentation</RootNamespace>
     <Name>Documentation</Name>
     <!-- SHFB properties -->
-    <FrameworkVersion>.NET Framework 4.8</FrameworkVersion>
+    <FrameworkVersion>.NET Core/.NET Standard/.NET 5.0+</FrameworkVersion>
     <OutputPath>..\..\AltaxoClassReference\</OutputPath>
     <HtmlHelpName>Documentation</HtmlHelpName>
     <Language>en-US</Language>
     <DocumentationSources>
-      <DocumentationSource sourceFile="rtnet48\bin\AltaxoBase.dll" />
-      <DocumentationSource sourceFile="rtnet48\bin\AltaxoBase.xml" />
-      <DocumentationSource sourceFile="rtnet48\bin\AltaxoCore.dll" />
-      <DocumentationSource sourceFile="rtnet48\bin\AltaxoCore.xml" />
-      <DocumentationSource sourceFile="rtnet48\bin\AltaxoDom.dll" />
-      <DocumentationSource sourceFile="rtnet48\bin\AltaxoDom.xml" />
+      <DocumentationSource sourceFile="rtnet9.0-windows\bin\AltaxoBase.dll" />
+      <DocumentationSource sourceFile="rtnet9.0-windows\bin\AltaxoBase.xml" />
+      <DocumentationSource sourceFile="rtnet9.0-windows\bin\AltaxoCore.dll" />
+      <DocumentationSource sourceFile="rtnet9.0-windows\bin\AltaxoCore.xml" />
+      <DocumentationSource sourceFile="rtnet9.0-windows\bin\AltaxoDom.dll" />
+      <DocumentationSource sourceFile="rtnet9.0-windows\bin\AltaxoDom.xml" />
     </DocumentationSources>
     <HelpFileFormat>Website</HelpFileFormat>
     <SyntaxFilters>C#</SyntaxFilters>
@@ -53,6 +53,7 @@
     <WorkingPath>C:\Temp\SandCastleTemp\</WorkingPath>
     <ContentPlacement>AboveNamespaces</ContentPlacement>
     <MaximumGroupParts>2</MaximumGroupParts>
+    <SaveComponentCacheCapacity>100</SaveComponentCacheCapacity>
   </PropertyGroup>
   <!-- There are no properties for these groups.  AnyCPU needs to appear in order for Visual Studio to perform
 			 the build.  The others are optional common platform types that may appear. -->
