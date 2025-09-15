@@ -103,19 +103,25 @@ namespace Altaxo.Serialization.AutoUpdates
       if (!RuntimeInformation.IsOSPlatform(value.osPlatForm))
         return false;
 
-      if(RuntimeInformation.IsOSPlatform(OSPlatform.Windows))
+      if (RuntimeInformation.IsOSPlatform(OSPlatform.Windows))
       {
-        // in Windows, Environment.OSVersion is lying!!! Thus, we have to use the registy
-        string versionString = (string)Registry.GetValue(@"HKEY_LOCAL_MACHINE\SOFTWARE\Microsoft\Windows NT\CurrentVersion","LCUVer", null);
-        var version = Version.Parse(versionString);
-        return version >= value.osVersion;
+        try
+        {
+          // in Windows, Environment.OSVersion is lying!!! Thus, we have to use the registy and extract the build number from there.
+          string buildNumberString = (string)Registry.GetValue(@"HKEY_LOCAL_MACHINE\SOFTWARE\Microsoft\Windows NT\CurrentVersion", "CurrentBuildNumber", null);
+          var buildNumber = int.Parse(buildNumberString, System.Globalization.CultureInfo.InvariantCulture);
+          return buildNumber >= value.osVersion.Build;
+        }
+        catch (Exception)
+        {
+          // if anything goes wrong, we fall back to the Environment.OSVersion
+          return false;
+        }
       }
       else
       {
         return Environment.OSVersion.Version >= value.osVersion;
       }
-
-        return RuntimeInformation.IsOSPlatform(value.osPlatForm) && Environment.OSVersion.Version >= value.osVersion;
     }
 
     /// <summary>
