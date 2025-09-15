@@ -26,6 +26,7 @@ using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Runtime.InteropServices;
+using Microsoft.Win32;
 
 
 namespace Altaxo.Serialization.AutoUpdates
@@ -99,7 +100,22 @@ namespace Altaxo.Serialization.AutoUpdates
 
     public static bool MeetsOSRequirements((OSPlatform osPlatForm, Version osVersion) value)
     {
-      return RuntimeInformation.IsOSPlatform(value.osPlatForm) && Environment.OSVersion.Version >= value.osVersion;
+      if (!RuntimeInformation.IsOSPlatform(value.osPlatForm))
+        return false;
+
+      if(RuntimeInformation.IsOSPlatform(OSPlatform.Windows))
+      {
+        // in Windows, Environment.OSVersion is lying!!! Thus, we have to use the registy
+        string versionString = (string)Registry.GetValue(@"HKEY_LOCAL_MACHINE\SOFTWARE\Microsoft\Windows NT\CurrentVersion","LCUVer", null);
+        var version = Version.Parse(versionString);
+        return version >= value.osVersion;
+      }
+      else
+      {
+        return Environment.OSVersion.Version >= value.osVersion;
+      }
+
+        return RuntimeInformation.IsOSPlatform(value.osPlatForm) && Environment.OSVersion.Version >= value.osVersion;
     }
 
     /// <summary>

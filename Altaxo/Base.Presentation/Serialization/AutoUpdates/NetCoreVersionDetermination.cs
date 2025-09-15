@@ -89,7 +89,7 @@ namespace Altaxo.Serialization.AutoUpdates
         {
           if (baseKey is not null)
           {
-            foreach (var subKeyName in baseKey.GetSubKeyNames())
+            foreach (var subKeyName in baseKey.GetValueNames())
             {
               if (subKeyName.StartsWith(searchString) && baseKey.GetValue(subKeyName) is int value && value != 0)
                 return true;
