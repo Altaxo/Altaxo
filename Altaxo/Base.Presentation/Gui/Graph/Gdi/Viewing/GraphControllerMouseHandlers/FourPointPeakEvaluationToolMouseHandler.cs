@@ -31,6 +31,7 @@ using Altaxo.Calc;
 using Altaxo.Calc.Regression;
 using Altaxo.Collections;
 using Altaxo.Data;
+using Altaxo.Graph.Gdi;
 using Altaxo.Graph.Gdi.Plot;
 using Altaxo.Graph.Gdi.Plot.Styles;
 using Altaxo.Graph.Plot.Data;
@@ -68,6 +69,10 @@ namespace Altaxo.Gui.Graph.Gdi.Viewing.GraphControllerMouseHandlers
     private string? _destinationTableName;
     private bool _isEvaluationSaved;
 
+    /// <summary>
+    /// Initializes a new instance of the <see cref="FourPointPeakEvaluationToolMouseHandler"/> class.
+    /// </summary>
+    /// <param name="grac">The graph controller.</param>
     public FourPointPeakEvaluationToolMouseHandler(GraphController grac)
       : base(grac, useFourHandles: true, initAllFourHandles: false)
     {
@@ -78,6 +83,68 @@ namespace Altaxo.Gui.Graph.Gdi.Viewing.GraphControllerMouseHandlers
         if (Current.Gui.ShowDialog<FourPointPeakEvaluationToolMouseHandlerOptions>(ref _options, "Options for the Step Evaluation Tool", false))
         {
           Current.PropertyService.UserSettings.SetValue(DefaultOptionsKey, _options);
+        }
+      }
+      Initialize(grac);
+    }
+
+    /// <summary>
+    /// Initializes the peak evaluation tool. This function searches for existing peak evaluations in the graph
+    /// and lets the user choose one of them to edit, or to create a new one.
+    /// </summary>
+    /// <param name="grac">The graph controller.</param>
+    public void Initialize(GraphController grac)
+    {
+      var graph = grac.Doc;
+
+
+      // First step: Find plotItems, which comes from a table that contains a FourPointPeakEvaluationDataSource
+      // then store the x-y source together with the evaluation table
+      var peakDataSources = new Dictionary<XAndYColumn, DataTable>();
+      foreach (var layer in graph.RootLayer.EnumerateFromHereToLeaves().OfType<XYPlotLayer>())
+      {
+        foreach (var plotItem in layer.PlotItems.EnumerateFromHereToLeaves().OfType<XYColumnPlotItem>())
+        {
+          if (plotItem?.XYColumnPlotData?.DataTable?.DataSource is FourPointPeakEvaluationDataSource ds && ds.ProcessData is { } xyCol)
+          {
+            peakDataSources[xyCol] = plotItem.XYColumnPlotData.DataTable;
+          }
+        }
+      }
+
+      // now find all plot items here whose data is a x-y-data like that in peakDataSources
+      // then store this item together with the evaluation table
+      var peakDataPlotItems = new Dictionary<XYColumnPlotItem, DataTable>();
+      foreach (var layer in graph.RootLayer.EnumerateFromHereToLeaves().OfType<XYPlotLayer>())
+      {
+        foreach (var plotItem in layer.PlotItems.EnumerateFromHereToLeaves().OfType<XYColumnPlotItem>())
+        {
+          if (plotItem.XYColumnPlotData is { } pd && peakDataSources.TryGetValue(pd, out var evaluationTable))
+            peakDataPlotItems[plotItem] = evaluationTable;
+        }
+      }
+
+
+      // now let the user choose which item he/she wants to edit
+      if (peakDataPlotItems.Count >= 1)
+      {
+        var list = new List<string>();
+        list.Add("New evaluation");
+        list.AddRange(peakDataPlotItems.Select(kv => $"{kv.Key.GetName(2)} -> {kv.Value.Name}"));
+        var controller = new SingleChoiceController(list.ToArray(), 0);
+        controller.DescriptionText =
+          $"There already exist {peakDataPlotItems.Count} peak evaluations\r\n" +
+          $"If you want to reuse an existing item, choose that;\r\n" +
+          $"otherwise, choose the option to create a new evaluation\r\n";
+
+        if (Current.Gui.ShowDialog(controller, "Choose new or existing evaluation table"))
+        {
+          var selectionIndex = (int)controller.ModelObject;
+          if (selectionIndex > 0)
+          {
+            var selected = peakDataPlotItems.Skip(selectionIndex - 1).First();
+            OnPlotItemSet(selected.Key, selected.Value);
+          }
         }
       }
     }
@@ -129,24 +196,34 @@ namespace Altaxo.Gui.Graph.Gdi.Viewing.GraphControllerMouseHandlers
 
       if (selectedTable is not null)
       {
-        _destinationTableName = tableList[0].Name;
-
-        var ds = (FourPointPeakEvaluationDataSource)selectedTable.DataSource;
-        var maxPlotIndex = plotItem.XYColumnPlotData.GetCommonRowCountFromDataColumns() - 1;
-        _handle[0].PlotIndex = Math.Min(ds.ProcessOptions.IndexLeftOuter, maxPlotIndex);
-        _handle[1].PlotIndex = Math.Min(ds.ProcessOptions.IndexLeftInner, maxPlotIndex);
-        _handle[2].PlotIndex = Math.Min(ds.ProcessOptions.IndexRightInner, maxPlotIndex);
-        _handle[3].PlotIndex = Math.Min(ds.ProcessOptions.IndexRightOuter, maxPlotIndex);
-
-        for (int i = 0; i < _handle.Length; ++i)
-        {
-          (_handle[i].Position, _handle[i].RowIndex) = plotItem.GetPlotPointAt(_handle[i].PlotIndex, this._layer).Value;
-          _handle[i].Position = _layer.TransformCoordinatesFromHereToRoot(_handle[i].Position);
-        }
-        _state = _finalState;
-
-        OnHandlesUpdated();
+        OnPlotItemSet(plotItem, selectedTable);
       }
+    }
+
+    /// <summary>
+    /// Called when the plot item should be set and there is already a destination table with a <see cref="FourPointPeakEvaluationDataSource"/>.
+    /// </summary>
+    /// <param name="plotItem">The plot item.</param>
+    /// <param name="existingDestinationTable">The existing destination table with a <see cref="FourPointPeakEvaluationDataSource"/>.</param>
+    private void OnPlotItemSet(XYColumnPlotItem plotItem, DataTable existingDestinationTable)
+    {
+      _destinationTableName = existingDestinationTable.Name;
+
+      var ds = (FourPointPeakEvaluationDataSource)existingDestinationTable.DataSource;
+      var maxPlotIndex = plotItem.XYColumnPlotData.GetCommonRowCountFromDataColumns() - 1;
+      _handle[0].PlotIndex = Math.Min(ds.ProcessOptions.IndexLeftOuter, maxPlotIndex);
+      _handle[1].PlotIndex = Math.Min(ds.ProcessOptions.IndexLeftInner, maxPlotIndex);
+      _handle[2].PlotIndex = Math.Min(ds.ProcessOptions.IndexRightInner, maxPlotIndex);
+      _handle[3].PlotIndex = Math.Min(ds.ProcessOptions.IndexRightOuter, maxPlotIndex);
+
+      for (int i = 0; i < _handle.Length; ++i)
+      {
+        (_handle[i].Position, _handle[i].RowIndex) = plotItem.GetPlotPointAt(_handle[i].PlotIndex, this._layer).Value;
+        _handle[i].Position = _layer.TransformCoordinatesFromHereToRoot(_handle[i].Position);
+      }
+      _state = _finalState;
+
+      OnHandlesUpdated();
     }
 
     public override void OnLeaveTool(MouseStateHandler newTool)

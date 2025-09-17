@@ -32,6 +32,7 @@ using Altaxo.Calc.Regression;
 using Altaxo.Collections;
 using Altaxo.Data;
 using Altaxo.Data.Selections;
+using Altaxo.Graph.Gdi;
 using Altaxo.Graph.Gdi.Plot;
 using Altaxo.Graph.Gdi.Plot.Styles;
 using Altaxo.Graph.Plot.Data;
@@ -54,7 +55,7 @@ namespace Altaxo.Gui.Graph.Gdi.Viewing.GraphControllerMouseHandlers
     private double[] _yright = new double[100];
     private double[] _xmiddle = new double[100];
     private double[] _ymiddle = new double[100];
-    private string _errorMessage;
+    private string? _errorMessage;
     private bool _showLeftLine => _leftReg is not null && _leftReg.IsValid;
     private bool _showRightLine => _rightReg is not null && _rightReg.IsValid;
     private bool _showMiddleLine => _middleReg is not null && _middleReg.IsValid;
@@ -67,6 +68,10 @@ namespace Altaxo.Gui.Graph.Gdi.Viewing.GraphControllerMouseHandlers
     private string? _destinationTableName;
     private bool _isEvaluationSaved;
 
+    /// <summary>
+    /// Initializes a new instance of the <see cref="FourPointStepEvaluationToolMouseHandler"/> class.
+    /// </summary>
+    /// <param name="grac">The graph controller.</param>
     public FourPointStepEvaluationToolMouseHandler(GraphController grac)
       : base(grac, useFourHandles: true, initAllFourHandles: true)
     {
@@ -77,6 +82,68 @@ namespace Altaxo.Gui.Graph.Gdi.Viewing.GraphControllerMouseHandlers
         if (Current.Gui.ShowDialog<FourPointStepEvaluationToolMouseHandlerOptions>(ref _options, "Options for the Step Evaluation Tool", false))
         {
           Current.PropertyService.UserSettings.SetValue(DefaultOptionsKey, _options);
+        }
+      }
+      Initialize(grac);
+    }
+
+    /// <summary>
+    /// Initializes the step evaluation tool. This function searches for existing step evaluations in the graph
+    /// and lets the user choose one of them to edit, or to create a new one.
+    /// </summary>
+    /// <param name="grac">The graph controller.</param>
+    public void Initialize(GraphController grac)
+    {
+      var graph = grac.Doc;
+
+
+      // First step: Find plotItems, which comes from a table that contains a FourPointStepEvaluationDataSource
+      // then store the x-y source together with the evaluation table
+      var stepDataSources = new Dictionary<XAndYColumn, DataTable>();
+      foreach (var layer in graph.RootLayer.EnumerateFromHereToLeaves().OfType<XYPlotLayer>())
+      {
+        foreach (var plotItem in layer.PlotItems.EnumerateFromHereToLeaves().OfType<XYColumnPlotItem>())
+        {
+          if (plotItem?.XYColumnPlotData?.DataTable?.DataSource is FourPointStepEvaluationDataSource ds && ds.ProcessData is { } xyCol)
+          {
+            stepDataSources[xyCol] = plotItem.XYColumnPlotData.DataTable;
+          }
+        }
+      }
+
+      // now find all plot items here whose data is a x-y-data like that in stepDataSources
+      // then store this item together with the evaluation table
+      var stepDataPlotItems = new Dictionary<XYColumnPlotItem, DataTable>();
+      foreach (var layer in graph.RootLayer.EnumerateFromHereToLeaves().OfType<XYPlotLayer>())
+      {
+        foreach (var plotItem in layer.PlotItems.EnumerateFromHereToLeaves().OfType<XYColumnPlotItem>())
+        {
+          if (plotItem.XYColumnPlotData is { } pd && stepDataSources.TryGetValue(pd, out var evaluationTable))
+            stepDataPlotItems[plotItem] = evaluationTable;
+        }
+      }
+
+
+      // now let the user choose which item he/she wants to edit
+      if (stepDataPlotItems.Count >= 1)
+      {
+        var list = new List<string>();
+        list.Add("New evaluation");
+        list.AddRange(stepDataPlotItems.Select(kv => $"{kv.Key.GetName(2)} -> {kv.Value.Name}"));
+        var controller = new SingleChoiceController(list.ToArray(), 0);
+        controller.DescriptionText =
+          $"There already exist {stepDataPlotItems.Count} step evaluations\r\n" +
+          $"If you want to reuse an existing item, choose that;\r\n" +
+          $"otherwise, choose the option to create a new evaluation\r\n";
+
+        if (Current.Gui.ShowDialog(controller, "Choose new or existing evaluation table"))
+        {
+          var selectionIndex = (int)controller.ModelObject;
+          if (selectionIndex > 0)
+          {
+            var selected = stepDataPlotItems.Skip(selectionIndex - 1).First();
+            OnPlotItemSet(selected.Key, selected.Value);
+          }
         }
       }
     }
@@ -128,24 +195,31 @@ namespace Altaxo.Gui.Graph.Gdi.Viewing.GraphControllerMouseHandlers
 
       if (selectedTable is not null)
       {
-        _destinationTableName = tableList[0].Name;
-
-        var ds = (FourPointStepEvaluationDataSource)selectedTable.DataSource;
-        var maxPlotIndex = plotItem.XYColumnPlotData.GetCommonRowCountFromDataColumns() - 1;
-        _handle[0].PlotIndex = Math.Min(ds.ProcessOptions.IndexLeftOuter, maxPlotIndex);
-        _handle[1].PlotIndex = Math.Min(ds.ProcessOptions.IndexLeftInner, maxPlotIndex);
-        _handle[2].PlotIndex = Math.Min(ds.ProcessOptions.IndexRightInner, maxPlotIndex);
-        _handle[3].PlotIndex = Math.Min(ds.ProcessOptions.IndexRightOuter, maxPlotIndex);
-
-        for (int i = 0; i < _handle.Length; ++i)
-        {
-          (_handle[i].Position, _handle[i].RowIndex) = plotItem.GetPlotPointAt(_handle[i].PlotIndex, this._layer).Value;
-          _handle[i].Position = _layer.TransformCoordinatesFromHereToRoot(_handle[i].Position);
-        }
-        _state = _finalState;
-
-        OnHandlesUpdated();
+        OnPlotItemSet(plotItem, selectedTable);
       }
+    }
+
+    private void OnPlotItemSet(XYColumnPlotItem plotItem, DataTable existingDestinationTable)
+    {
+      _destinationTableName = existingDestinationTable.Name;
+      _layer = Altaxo.Main.AbsoluteDocumentPath.GetRootNodeImplementing<XYPlotLayer>(plotItem);
+      PlotItem = plotItem;
+
+      var ds = (FourPointStepEvaluationDataSource)existingDestinationTable.DataSource;
+      var maxPlotIndex = plotItem.XYColumnPlotData.GetCommonRowCountFromDataColumns() - 1;
+      _handle[0].PlotIndex = Math.Min(ds.ProcessOptions.IndexLeftOuter, maxPlotIndex);
+      _handle[1].PlotIndex = Math.Min(ds.ProcessOptions.IndexLeftInner, maxPlotIndex);
+      _handle[2].PlotIndex = Math.Min(ds.ProcessOptions.IndexRightInner, maxPlotIndex);
+      _handle[3].PlotIndex = Math.Min(ds.ProcessOptions.IndexRightOuter, maxPlotIndex);
+
+      for (int i = 0; i < _handle.Length; ++i)
+      {
+        (_handle[i].Position, _handle[i].RowIndex) = plotItem.GetPlotPointAt(_handle[i].PlotIndex, this._layer).Value;
+        _handle[i].Position = _layer.TransformCoordinatesFromHereToRoot(_handle[i].Position);
+      }
+      _state = _finalState;
+
+      OnHandlesUpdated();
     }
 
     public override void OnLeaveTool(MouseStateHandler newTool)

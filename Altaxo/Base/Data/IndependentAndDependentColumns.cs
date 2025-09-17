@@ -645,6 +645,9 @@ namespace Altaxo.Data
       }
     }
 
+
+
+    /// <inheritdoc/>
     public bool Equals(IndependentAndDependentColumns? other)
     {
       if (other is null)
@@ -678,6 +681,28 @@ namespace Altaxo.Data
         return false;
 
       return true;
+    }
+
+    /// <inheritdoc/>
+    public override bool Equals(object? obj)
+    {
+      return obj is IndependentAndDependentColumns other ? Equals(other) : base.Equals(obj);
+    }
+
+    /// <inheritdoc/>
+    public override int GetHashCode()
+    {
+      int result = 0;
+      if (DataTable is not null)
+        result = DataTable.GetHashCode();
+      result += 7 * _groupNumber;
+      result += 11 * _independentVariables.Length;
+      result += 13 * _dependentVariables.Length;
+      if (_independentVariables.Length > 0 && _independentVariables[0]?.Document() is { } x)
+        result += 17 * x.GetHashCode();
+      if (_dependentVariables.Length > 0 && _dependentVariables[0]?.Document() is { } y)
+        result += 19 * y.GetHashCode();
+      return result;
     }
   }
 }
