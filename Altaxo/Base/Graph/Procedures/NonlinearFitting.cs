@@ -28,8 +28,10 @@ using System.Linq;
 using Altaxo.Calc.Regression.Nonlinear;
 using Altaxo.Collections;
 using Altaxo.Data;
+using Altaxo.Data.Selections;
 using Altaxo.Graph.Gdi;
 using Altaxo.Graph.Gdi.Plot;
+using Altaxo.Gui.Graph.Gdi.Viewing;
 
 namespace Altaxo.Graph.Procedures
 {
@@ -91,9 +93,18 @@ namespace Altaxo.Graph.Procedures
     private static (string? Error, NonlinearFitDocument? FitDocument, string? FitDocumentIdentifier, XYPlotLayer? ActiveLayer) SelectFitDocument(Altaxo.Gui.Graph.Gdi.Viewing.IGraphController ctrl)
     {
       XYPlotLayer? activeLayer = null;
+      XYColumnPlotItem? columnPlotItem = null;
 
-      // is a nonlinear fit function plot item selected ?
-      var funcPlotItem = ctrl.SelectedRealObjects.OfType<XYNonlinearFitFunctionPlotItem>().FirstOrDefault();
+
+      // is the two point tool currently active? Then we use that plot item
+      if(ctrl.GraphTool is IToolTwoPointsOnCurve tpTool && tpTool.IsReadyToBeUsed && tpTool.PlotItem is not null)
+      {
+        return SelectFitDocument(ctrl, tpTool.PlotItem);
+
+      }
+      
+        // is a nonlinear fit function plot item selected ?
+        var funcPlotItem = ctrl.SelectedRealObjects.OfType<XYNonlinearFitFunctionPlotItem>().FirstOrDefault();
       if (funcPlotItem is not null)
       {
         activeLayer = Altaxo.Main.AbsoluteDocumentPath.GetRootNodeImplementing<XYPlotLayer>(funcPlotItem);
@@ -102,7 +113,7 @@ namespace Altaxo.Graph.Procedures
 
       // is a normal plot item selected ?
       // ------------------------------------------------------------------------------------
-      var columnPlotItem = ctrl.SelectedRealObjects.OfType<XYColumnPlotItem>().FirstOrDefault();
+      columnPlotItem = ctrl.SelectedRealObjects.OfType<XYColumnPlotItem>().FirstOrDefault();
       if (columnPlotItem is not null)
       {
         return SelectFitDocument(ctrl, columnPlotItem);
@@ -231,12 +242,22 @@ namespace Altaxo.Graph.Procedures
                       (Altaxo.Calc.Regression.Nonlinear.NonlinearFitDocument?)_lastFitDocument?.Clone() ??
                       new Altaxo.Calc.Regression.Nonlinear.NonlinearFitDocument();
 
+      // restrict the data row selection if the two point tool is currently active
+      var xyPlotItem_Data_DataRowSelection = xyPlotItem.Data.DataRowSelection;
+      if (ctrl.GraphTool is IToolTwoPointsOnCurve tpTool && tpTool.IsReadyToBeUsed && object.ReferenceEquals(xyPlotItem, tpTool.PlotItem))
+      {
+        int minimalRowIndex = (int)Math.Floor(Math.Min(tpTool.OuterLeftPoint.RowIndex, tpTool.OuterRightPoint.RowIndex));
+        int maximalRowIndex = (int)Math.Ceiling(Math.Max(tpTool.OuterLeftPoint.RowIndex, tpTool.OuterRightPoint.RowIndex));
+        xyPlotItem_Data_DataRowSelection = IntersectionOfRowSelections.IntersectWithRowRange(xyPlotItem_Data_DataRowSelection, minimalRowIndex, maximalRowIndex);
+      }
+
+
       if (localdoc.FitEnsemble.Count == 0) // if there was no fit before
       {
         var fitele = new Altaxo.Calc.Regression.Nonlinear.FitElement(
           xyPlotItem.Data.DataTable!,
           xyPlotItem.Data.GroupNumber,
-          xyPlotItem.Data.DataRowSelection,
+          xyPlotItem_Data_DataRowSelection,
           xColumn,
           yColumn);
 
@@ -256,7 +277,7 @@ namespace Altaxo.Graph.Procedures
 
         if (hasColumnsChanged) // if some of the columns has changed, take the data row selection of the plot item
         {
-          localdoc.FitEnsemble[0].DataRowSelection = xyPlotItem.Data.DataRowSelection;
+          localdoc.FitEnsemble[0].DataRowSelection = xyPlotItem_Data_DataRowSelection;
         }
       }
 

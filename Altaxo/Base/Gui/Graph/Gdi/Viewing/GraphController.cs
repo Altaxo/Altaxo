@@ -315,6 +315,22 @@ namespace Altaxo.Gui.Graph.Gdi.Viewing
       get { return _doc.RootLayer; }
     }
 
+    /// <summary>
+    /// Gets or sets the graph tool. (Setting is done via binding from the control).
+    /// </summary>
+    public ITool? GraphTool
+    {
+      get => field;
+      set
+      {
+        if (!object.ReferenceEquals(field, value))
+        {
+          field = value;
+          OnPropertyChanged(nameof(CurrentGraphTool));
+        }
+      }
+    }
+
     #region Size
 
     /// <summary>Gets the size (in points = 1/72 inch) of the graph with margin (without zoom).</summary>

@@ -245,6 +245,7 @@ namespace Altaxo.Gui.Graph.Gdi.Viewing
 
           FocusOnGraphPanel();
 
+          Controller?.GraphTool = _mouseState;
           Controller?.EhView_CurrentGraphToolChanged();
 
           EhGraphToolChanged();

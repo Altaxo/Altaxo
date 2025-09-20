@@ -33,6 +33,7 @@ using Altaxo.Graph.Gdi;
 using Altaxo.Graph.Gdi.Plot;
 using Altaxo.Graph.Gdi.Plot.Styles;
 using Altaxo.Graph.Plot.Data;
+using Altaxo.Gui.Graph.Gdi.Viewing;
 
 namespace Altaxo.Graph.Procedures
 {
@@ -52,18 +53,28 @@ namespace Altaxo.Graph.Procedures
     {
       var xlist = new List<double>();
       var ylist = new List<double>();
-
       xarr = yarr = new double[0];
 
-      ctrl.EnsureValidityOfCurrentLayerNumber();
-      ctrl.EnsureValidityOfCurrentPlotNumber();
-      var xylayer = ctrl.ActiveLayer as XYPlotLayer;
-      if (xylayer is null || ctrl.CurrentPlotNumber < 0)
-        return "No active plot available";
+      XYColumnPlotItem? xyPlotItem = null;
+      int minimalRowIndex = 0;
+      int maximalRowIndex = int.MaxValue;
 
-      IGPlotItem plotItem = xylayer.PlotItems.Flattened[ctrl.CurrentPlotNumber];
-
-      var xyPlotItem = plotItem as XYColumnPlotItem;
+      if (ctrl.GraphTool is IToolTwoPointsOnCurve tool && tool.IsReadyToBeUsed)
+      {
+        xyPlotItem = tool.PlotItem;
+        minimalRowIndex = (int)Math.Floor(Math.Min(tool.OuterLeftPoint.RowIndex, tool.OuterRightPoint.RowIndex));
+        maximalRowIndex = (int)Math.Ceiling(Math.Max(tool.OuterLeftPoint.RowIndex, tool.OuterRightPoint.RowIndex));
+      }
+      else
+      {
+        ctrl.EnsureValidityOfCurrentLayerNumber();
+        ctrl.EnsureValidityOfCurrentPlotNumber();
+        var xylayer = ctrl.ActiveLayer as XYPlotLayer;
+        if (xylayer is null || ctrl.CurrentPlotNumber < 0)
+          return "No active plot available";
+        IGPlotItem plotItem = xylayer.PlotItems.Flattened[ctrl.CurrentPlotNumber];
+        xyPlotItem = plotItem as XYColumnPlotItem;
+      }
 
       if (xyPlotItem is null)
         return "No active plot!";
@@ -78,9 +89,9 @@ namespace Altaxo.Graph.Procedures
       var xcol = (Altaxo.Data.INumericColumn)data.XColumn;
       var ycol = (Altaxo.Data.INumericColumn)data.YColumn;
 
-      int maxRowIndex = data.GetMaximumRowIndexFromDataColumns();
+      maximalRowIndex = Math.Min(maximalRowIndex, data.GetMaximumRowIndexFromDataColumns());
 
-      foreach (int i in data.DataRowSelection.GetSelectedRowIndicesFromTo(0, maxRowIndex, data.DataTable?.DataColumns, maxRowIndex))
+      foreach (int i in data.DataRowSelection.GetSelectedRowIndicesFromTo(minimalRowIndex, maximalRowIndex, data.DataTable?.DataColumns, maximalRowIndex))
       {
         double x = xcol[i];
         double y = ycol[i];

@@ -36,7 +36,7 @@ namespace Altaxo.Gui.Graph.Gdi.Viewing.GraphControllerMouseHandlers
   /// </summary>
   /// <remarks>The mouse state handler are used to handle the mouse events of the graph view in different contexts,
   /// depending on which GraphTool is choosen by the user.</remarks>
-  public abstract class MouseStateHandler
+  public abstract class MouseStateHandler : ITool
   {
     protected struct POINT
     {

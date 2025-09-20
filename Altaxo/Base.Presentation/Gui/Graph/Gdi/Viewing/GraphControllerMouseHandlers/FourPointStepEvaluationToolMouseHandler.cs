@@ -65,7 +65,7 @@ namespace Altaxo.Gui.Graph.Gdi.Viewing.GraphControllerMouseHandlers
 
     private QuickLinearRegression? _leftReg, _rightReg, _middleReg;
 
-    private string? _destinationTableName;
+    
     private bool _isEvaluationSaved;
 
     /// <summary>
@@ -199,11 +199,9 @@ namespace Altaxo.Gui.Graph.Gdi.Viewing.GraphControllerMouseHandlers
       }
     }
 
-    private void OnPlotItemSet(XYColumnPlotItem plotItem, DataTable existingDestinationTable)
+    protected override void OnPlotItemSet(XYColumnPlotItem plotItem, DataTable existingDestinationTable)
     {
-      _destinationTableName = existingDestinationTable.Name;
-      _layer = Altaxo.Main.AbsoluteDocumentPath.GetRootNodeImplementing<XYPlotLayer>(plotItem);
-      PlotItem = plotItem;
+      base.OnPlotItemSet(plotItem, existingDestinationTable);
 
       var ds = (FourPointStepEvaluationDataSource)existingDestinationTable.DataSource;
       var maxPlotIndex = plotItem.XYColumnPlotData.GetCommonRowCountFromDataColumns() - 1;

@@ -25,6 +25,7 @@
 using System;
 using System.Drawing;
 using System.Windows.Input;
+using Altaxo.Data;
 using Altaxo.Calc;
 using Altaxo.Geometry;
 using Altaxo.Graph.Gdi;
@@ -34,11 +35,12 @@ using Altaxo.Graph.Plot.Data;
 
 namespace Altaxo.Gui.Graph.Gdi.Viewing.GraphControllerMouseHandlers
 {
-  /// <summary>
-  /// A mouse handler that creates either 2 or 4 points on a curve, that can be used to evaluate the area under the line that is
-  /// created by the points, or to evaluate step positions.
-  /// </summary>
-  public class FourPointsOnCurveMouseHandler : MouseStateHandler
+ 
+    /// <summary>
+    /// A mouse handler that creates either 2 or 4 points on a curve, that can be used to evaluate the area under the line that is
+    /// created by the points, or to evaluate step positions.
+    /// </summary>
+    public class FourPointsOnCurveMouseHandler : MouseStateHandler, IToolFourPointsOnCurve
   {
     // Working thesis:
     // 1. The user uses the cross cursor to set the first mark on a curve.
@@ -131,6 +133,8 @@ namespace Altaxo.Gui.Graph.Gdi.Viewing.GraphControllerMouseHandlers
 
     public Handle RightHandle => _handle[^1];
 
+    protected string? _destinationTableName;
+
     /// <summary>
     /// Gets a value that indicated whether the handle positions now can be used for other tools or operations.
     /// </summary>
@@ -166,6 +170,14 @@ namespace Altaxo.Gui.Graph.Gdi.Viewing.GraphControllerMouseHandlers
     }
 
     public override GraphToolType GraphToolType => GraphToolType.FourPointsOnCurve;
+
+    (double PlotIndex, double RowIndex) IToolFourPointsOnCurve.InnerLeftPoint => _handle.Length==4 ? ((_handle[1].PlotIndex, _handle[1].RowIndex)) : (-1, -1);
+
+    (double PlotIndex, double RowIndex) IToolFourPointsOnCurve.InnerRightPoint => _handle.Length == 4 ? ((_handle[^2].PlotIndex, _handle[^2].RowIndex)) : (-1, -1);
+
+    (double PlotIndex, double RowIndex) IToolTwoPointsOnCurve.OuterLeftPoint => (_handle[0].PlotIndex, _handle[0].RowIndex);
+
+    (double PlotIndex, double RowIndex) IToolTwoPointsOnCurve.OuterRightPoint => (_handle[^1].PlotIndex, _handle[^1].RowIndex);
 
 
     /// <summary>
@@ -242,6 +254,21 @@ namespace Altaxo.Gui.Graph.Gdi.Viewing.GraphControllerMouseHandlers
     /// <param name="plotItem">The plot item.</param>
     protected virtual void OnPlotItemSet(XYColumnPlotItem plotItem)
     {
+      _layer = Altaxo.Main.AbsoluteDocumentPath.GetRootNodeImplementing<XYPlotLayer>(plotItem);
+      PlotItem = plotItem;
+      PlotItemNumber = GetPlotItemNumber(_layer, PlotItem);
+      _grac.CurrentPlotNumber = PlotItemNumber;
+    }
+
+    /// <summary>
+    /// If called when the plotitem that should be evaluated is known, and the destination evaluation table is known, too.
+    /// </summary>
+    /// <param name="plotItem">The plot item.</param>
+    /// <param name="existingDestinationTable">The (existing) destination evaluation table.</param>
+    protected virtual void OnPlotItemSet(XYColumnPlotItem plotItem, DataTable existingDestinationTable)
+    {
+      _destinationTableName = existingDestinationTable.Name;
+      OnPlotItemSet(plotItem);
     }
 
     /// <summary>

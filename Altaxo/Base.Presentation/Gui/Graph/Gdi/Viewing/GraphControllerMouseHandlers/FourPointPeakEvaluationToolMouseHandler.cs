@@ -66,7 +66,6 @@ namespace Altaxo.Gui.Graph.Gdi.Viewing.GraphControllerMouseHandlers
 
     private QuickLinearRegression? _lineRegression;
 
-    private string? _destinationTableName;
     private bool _isEvaluationSaved;
 
     /// <summary>
@@ -205,9 +204,9 @@ namespace Altaxo.Gui.Graph.Gdi.Viewing.GraphControllerMouseHandlers
     /// </summary>
     /// <param name="plotItem">The plot item.</param>
     /// <param name="existingDestinationTable">The existing destination table with a <see cref="FourPointPeakEvaluationDataSource"/>.</param>
-    private void OnPlotItemSet(XYColumnPlotItem plotItem, DataTable existingDestinationTable)
+    protected override void OnPlotItemSet(XYColumnPlotItem plotItem, DataTable existingDestinationTable)
     {
-      _destinationTableName = existingDestinationTable.Name;
+      base.OnPlotItemSet(plotItem, existingDestinationTable);
 
       var ds = (FourPointPeakEvaluationDataSource)existingDestinationTable.DataSource;
       var maxPlotIndex = plotItem.XYColumnPlotData.GetCommonRowCountFromDataColumns() - 1;

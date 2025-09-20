@@ -178,6 +178,11 @@ namespace Altaxo.Gui.Graph.Gdi.Viewing
     int CurrentPlotNumber { get; set; }
 
     /// <summary>
+    /// Gets the current graph tool.
+    /// </summary>
+    ITool? GraphTool { get; }
+
+    /// <summary>
     /// check the validity of the CurrentLayerNumber and correct it
     /// </summary>
     /// <returns>The currently active layer.</returns>

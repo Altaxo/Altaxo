@@ -301,5 +301,32 @@ BreakEnumeration:
 
       return true;
     }
+
+    /// <summary>
+    /// Intersects a given row selection with a new row range.
+    /// </summary>
+    /// <param name="original">The original row selection.</param>
+    /// <param name="startIndex">The start index of the new row range.</param>
+    /// <param name="endIndexInclusive">The end index (inclusive) of the new row range.</param>
+    /// <returns>A new row selection that is the intersection of the original row selection and the new row range.</returns>
+    /// <exception cref="ArgumentNullException">nameof(original)</exception>
+    public static IRowSelection IntersectWithRowRange(IRowSelection original, int startIndex, int endIndexInclusive)
+    {
+      if(original is null)
+        throw new ArgumentNullException(nameof(original));
+
+      var newRange = RangeOfRowIndices.FromStartAndEndInclusive(startIndex, endIndexInclusive);
+
+      if(original is IntersectionOfRowSelections originalSelection)
+      {
+        originalSelection._rowSelections.Insert(0, newRange);
+        return originalSelection;
+      }
+      else
+      {
+        return new IntersectionOfRowSelections([newRange, original]);
+      }
+    }
+      
   }
 }
