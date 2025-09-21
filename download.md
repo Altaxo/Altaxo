@@ -8,10 +8,10 @@ permalink: /download.html
 The current officially released version of Altaxo can be found
 in the stable folder, which is
 [here at SourceForge](https://sourceforge.net/projects/altaxo/files/Altaxo/Altaxo-Latest-Stable/).
-For the .msi installer files, you need .NET-Framework 4.8 on your computer prior to 
-the installation. On most systems, it is already installed. Furthermore, you need admin rights for the installation.
+For the .msi installer files, you need Windows 10 22H2 (64 bit) or later on your computer prior to 
+the installation. Most actual systems fullfil this requirement. Furthermore, you need admin rights for the installation.
 Double-click on the .msi file in order to install Altaxo.
-Alternatively, you can download the .zip file with the binaries. Admin rights are not needed here - 
+Alternatively, you can download one of the .zip file with the binaries. Admin rights are not needed here - 
 see the text below how to handle this.
 
 Altaxo will not register itself in the registry. This is e.g. neccessary for embedding Altaxo graphs as an editable object in Word, Excel, or Powerpoint.
@@ -22,14 +22,15 @@ if you are logged on as user only, Altaxo is registered only for you (the curren
 ### If you always want to use the newest release, use one of the binary .ZIP files
 
 You can also use a binary .zip file to make a copy-paste installation of Altaxo.
-Starting from December 2024, there are three binary .zip files:
+Starting from September 2025, there are three binary .zip files:
 
-- `AltaxoBinaries-4.8.xxxx.0.zip`: This file contains the Altaxo version that requires the .NET Framework 4.8. The framework should be installed on
- all recent Windows systems by default, so this is the safest option but after January 2025, it is no longer updated.
-- `AltaxoBinaries-4.8.xxxx.0-WINDOWS-DotNet9.0.zip`: This file contains the Altaxo version that requires the .NET 9.0 desktop runtime installed on your computer.
-  .NET 9.0 desktop runtime can be downloaded [here](https://dotnet.microsoft.com/en-us/download/dotnet/9.0). The installation of it requires adminstrative rights.
+- `AltaxoBinaries-4.8.3351.0.zip`: This file contains the Altaxo version that requires the .NET Framework 4.8. The framework should be installed on
+ all recent Windows systems by default, so this is the safest option, but after September 2025, it is no longer updated.
+- `AltaxoBinaries-4.8.xxxx.0-WINDOWS-DotNet9.0.zip`: This file contains the Altaxo version that requires the .NET 9.0.x Desktop Runtime installed on your computer.
+  .NET 9.0.x Desktop Runtime can be downloaded [here](https://dotnet.microsoft.com/en-us/download/dotnet/9.0).
+  Note that the installation of .NET Desktop Runtime requires adminstrative rights.
 - `AltaxoBinaries-4.8.xxxx.0-WINDOWS-X64.zip`: This file contains the Altaxo version that is self-contained, i.e. it comes with the neccessary files of .NET 9.0. It requires
-  a Windows 64 bit operating system, but nothing more.
+  a Windows 64 bit operating system (Windows 10 22H2 or later), but nothing more.
 
 You can download either the stable or the unstable version.
 Navigate either to the folder
