@@ -16,7 +16,18 @@
 		</ObjectDataProvider>
 	</UserControl.Resources>
 	<StackPanel Orientation="Vertical">
-		<GroupBox Header="Analyzing options" Padding="0,4,0,4">
+    <CheckBox Content="Detect encoding from byte order marks"
+              IsChecked="{Binding DetectEncodingFromByteOrderMarks, Mode=TwoWay}"
+              ToolTip="If checked, the encoding is detected from byte order marks (if any). If unchecked, or if there aren't byte order marks the encoding selected below is used."
+              Margin="4,0,0,0"/>
+    <DockPanel>
+      <Label Content="Encoding: "  DockPanel.Dock="Left"/>
+      <ComboBox ItemsSource="{Binding CodePage.Items}"
+                SelectedItem="{Binding CodePage.SelectedItem, Mode=TwoWay}"
+                ToolTip="The encoding is used if the ASCII document not has byte order marks or if you have unchecked the checkbox 'Detect encoding from byte order marks'"/>
+    </DockPanel>
+    
+    <GroupBox Header="Analyzing options" Padding="0,4,0,4">
 			<local:AsciiDocumentAnalysisOptionsControl x:Name="_guiAnalysisControl" />
 		</GroupBox>
 		<Button x:Name="_guiAnalyzeAscii"  Content="Analyze!" Click="EhAnalyzeAscii" Margin="4" />

@@ -28,47 +28,48 @@ using System.Collections.Generic;
 using System.Globalization;
 using System.Linq;
 using Altaxo.Collections;
+using Altaxo.Gui.Common;
 using Altaxo.Serialization.Ascii;
 
 namespace Altaxo.Gui.Serialization.Ascii
 {
-  public interface IAsciiImportOptionsView
+  public interface IAsciiImportOptionsView : IDataContextAwareView
   {
-    event Action DoAnalyze;
+    public event Action DoAnalyze;
 
-    event Action SeparationStrategyChanged;
+    public event Action SeparationStrategyChanged;
 
-    int? NumberOfMainHeaderLines { get; set; }
+    public int? NumberOfMainHeaderLines { get; set; }
 
-    int? IndexOfCaptionLine { get; set; }
+    public int? IndexOfCaptionLine { get; set; }
 
-    void SetGuiSeparationStrategy(SelectableListNodeList list);
+    public void SetGuiSeparationStrategy(SelectableListNodeList list);
 
-    bool GuiSeparationStrategyIsKnown { get; set; }
+    public bool GuiSeparationStrategyIsKnown { get; set; }
 
-    void SetNumberFormatCulture(SelectableListNodeList list);
+    public void SetNumberFormatCulture(SelectableListNodeList list);
 
-    bool NumberFormatCultureIsKnowm { get; set; }
+    public bool NumberFormatCultureIsKnowm { get; set; }
 
-    void SetDateTimeFormatCulture(SelectableListNodeList list);
+    public void SetDateTimeFormatCulture(SelectableListNodeList list);
 
-    bool DateTimeFormatCultureIsKnown { get; set; }
+    public bool DateTimeFormatCultureIsKnown { get; set; }
 
-    bool TableStructureIsKnown { get; set; }
+    public bool TableStructureIsKnown { get; set; }
 
-    System.Collections.ObjectModel.ObservableCollection<Boxed<AsciiColumnType>> TableStructure { set; }
+    public System.Collections.ObjectModel.ObservableCollection<Boxed<AsciiColumnType>> TableStructure { set; }
 
-    bool RenameColumnsWithHeaderNames { get; set; }
+    public bool RenameColumnsWithHeaderNames { get; set; }
 
-    bool RenameWorksheetWithFileName { get; set; }
+    public bool RenameWorksheetWithFileName { get; set; }
 
-    SelectableListNodeList HeaderLinesDestination { set; }
+    public SelectableListNodeList HeaderLinesDestination { set; }
 
-    object AsciiSeparationStrategyDetailView { set; }
+    public object AsciiSeparationStrategyDetailView { set; }
 
-    object AsciiDocumentAnalysisOptionsView { get; }
+    public object AsciiDocumentAnalysisOptionsView { get; }
 
-    bool ImportMultipleAsciiVertically { get; set; }
+    public bool ImportMultipleAsciiVertically { get; set; }
   }
 
   /// <summary>
@@ -81,7 +82,7 @@ namespace Altaxo.Gui.Serialization.Ascii
     /// Gets a stream for analysis of the ASCII file. If the stream could not be opened (file unavailable), this function will return null without throwinga an exception.
     /// </summary>
     /// <returns></returns>
-    System.IO.Stream GetStreamForAnalysis();
+    public System.IO.Stream GetStreamForAnalysis();
   }
 
   [ExpectedTypeOfView(typeof(IAsciiImportOptionsView))]
@@ -110,6 +111,39 @@ namespace Altaxo.Gui.Serialization.Ascii
       yield return new ControllerAndSetNullMethod(_asciiDocumentAnalysisOptionsController, () => _asciiDocumentAnalysisOptionsController = null);
     }
 
+    #region Bindings
+
+    public bool DetectEncodingFromByteOrderMarks
+    {
+      get => field;
+      set
+      {
+        if (!(field == value))
+        {
+          field = value;
+          OnPropertyChanged(nameof(DetectEncodingFromByteOrderMarks));
+        }
+      }
+    }
+
+    public ItemsController<int> CodePage
+    {
+      get => field;
+
+      set
+      {
+        if (!(field == value))
+        {
+          field?.Dispose();
+          field = value;
+          OnPropertyChanged(nameof(CodePage));
+        }
+      }
+    }
+
+
+    #endregion
+
     public override bool InitializeDocument(params object[] args)
     {
       if (args is not null && args.Length >= 2 && args[1] is System.IO.Stream)
@@ -131,6 +165,18 @@ namespace Altaxo.Gui.Serialization.Ascii
 
       if (initData)
       {
+        DetectEncodingFromByteOrderMarks = _doc.DetectEncodingFromByteOrderMarks;
+
+
+        var encodingsAvailable = new List<(int CodePage, string DisplayString)>();
+        encodingsAvailable.Add((0, "Default (0)"));
+        encodingsAvailable.AddRange(System.Text.Encoding.GetEncodings().Select(e => (e.CodePage, $"{e.DisplayName} ({e.CodePage})")));
+        encodingsAvailable.Sort((x, y) => Comparer<int>.Default.Compare(x.CodePage, y.CodePage));
+        var listEncodings = new SelectableListNodeList(encodingsAvailable.Select(e => new SelectableListNode(e.DisplayString, e.CodePage, e.CodePage == _doc.CodePage)));
+
+        CodePage = new ItemsController<int>(listEncodings);
+        CodePage.SelectedValue = _doc.CodePage;
+
         _asciiDocumentAnalysisOptionsController = (IMVCANController)Current.Gui.GetController(new object[] { _analysisOptions }, typeof(IMVCANController), UseDocument.Directly);
 
         _separationStrategyInstances.Clear();
@@ -190,6 +236,9 @@ namespace Altaxo.Gui.Serialization.Ascii
 
     private bool ApplyWithoutClosing()
     {
+      _doc.DetectEncodingFromByteOrderMarks = DetectEncodingFromByteOrderMarks;
+      _doc.CodePage = CodePage.SelectedValue;
+
       if (_separationStrategyInstanceController is not null)
         if (_separationStrategyInstanceController.Apply(false))
           _doc.SeparationStrategy = (IAsciiSeparationStrategy)_separationStrategyInstanceController.ModelObject;

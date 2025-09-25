@@ -78,7 +78,7 @@ namespace Altaxo.Serialization.Ascii
 
       string? sLine;
       stream.Position = 0; // rewind the stream to the beginning
-      var sr = new StreamReader(stream, System.Text.Encoding.Default, true);
+      var sr = new StreamReader(stream, importOptions.Encoding, importOptions.DetectEncodingFromByteOrderMarks);
       var newcols = new DataColumnCollection();
 
       var newpropcols = new DataColumnCollection();

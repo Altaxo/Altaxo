@@ -125,7 +125,7 @@ namespace Altaxo.Serialization.Ascii
         throw new ArgumentNullException(nameof(importOptions));
 
       // Read-in the lines into _bodyLines. If the number of header lines is already known, those header lines are read into _headerLines
-      ReadLinesToAnalyze(stream, analysisOptions.NumberOfLinesToAnalyze, importOptions.NumberOfMainHeaderLines);
+      ReadLinesToAnalyze(stream, analysisOptions.NumberOfLinesToAnalyze, importOptions.NumberOfMainHeaderLines, importOptions.Encoding, importOptions.DetectEncodingFromByteOrderMarks);
 
       if (_bodyLines.Count == 0)
         return; // there is nothing to analyze
@@ -173,12 +173,12 @@ namespace Altaxo.Serialization.Ascii
     }
 
     [MemberNotNull(nameof(_headerLines), nameof(_bodyLines))]
-    private void ReadLinesToAnalyze(System.IO.Stream stream, int numberOfLinesToAnalyze, int? numberOfMainHeaderLines)
+    private void ReadLinesToAnalyze(System.IO.Stream stream, int numberOfLinesToAnalyze, int? numberOfMainHeaderLines, System.Text.Encoding encoding, bool detectEncodingFromByteOrderMarks)
     {
       string? sLine;
 
       stream.Position = 0;
-      var sr = new System.IO.StreamReader(stream, System.Text.Encoding.Default, true);
+      using var sr = new System.IO.StreamReader(stream, encoding, detectEncodingFromByteOrderMarks, bufferSize: 16 * 1024, leaveOpen: true);
 
       bool reachingEOF = false;
       _headerLines = new List<string>();

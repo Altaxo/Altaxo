@@ -24,6 +24,8 @@
 
 #nullable enable
 using System;
+using System.Linq;
+using System.Text;
 
 namespace Altaxo.Serialization.Ascii
 {
@@ -99,6 +101,39 @@ namespace Altaxo.Serialization.Ascii
     /// <summary>Structur of the main part of the file (which data type is placed in which column).</summary>
     protected AsciiLineComposition? _recognizedStructure;
 
+    /// <summary>
+    /// If true, the encoding is detected from the byte order marks (BOM). If no BOM is present, the encoding according to the <see cref="CodePage"/> property is used,
+    /// or, if also not available, the standard encoding.
+    /// </summary>
+    public bool DetectEncodingFromByteOrderMarks { get; set; } = true;
+
+    /// <summary>
+    /// Gets or sets the code page that is used to recognize the Ascii data. To use the system default code page, set this property to 0.
+    /// </summary>
+    public int CodePage { get; set; }
+
+    /// <summary>
+    /// Gets the encoding. You can set the Encoding setting the CodePage (see <see cref="CodePage"/>).
+    /// </summary>
+    public Encoding Encoding
+    {
+      get
+      {
+        var result = System.Text.Encoding.Default;
+        if (CodePage != 0)
+        {
+          var cp = System.Text.Encoding.GetEncodings().Where(ei => ei.CodePage == CodePage).FirstOrDefault();
+          if (cp is not null)
+          {
+            result = cp.GetEncoding();
+          }
+        }
+        return result;
+      }
+    }
+
+
+
     #region Serialization
 
     #region Version 0
@@ -106,7 +141,7 @@ namespace Altaxo.Serialization.Ascii
     /// <summary>
     /// 2014-08-03 initial version.
     /// </summary>
-    [Altaxo.Serialization.Xml.XmlSerializationSurrogateFor(typeof(AsciiImportOptions), 0)]
+    [Altaxo.Serialization.Xml.XmlSerializationSurrogateFor("AltaxoBase", "Altaxo.Serialization.Ascii.AsciiImportOptions", 0)]
     private class XmlSerializationSurrogate0 : Altaxo.Serialization.Xml.IXmlSerializationSurrogate
     {
       public virtual void Serialize(object obj, Altaxo.Serialization.Xml.IXmlSerializationInfo info)
@@ -152,6 +187,63 @@ namespace Altaxo.Serialization.Ascii
     }
 
     #endregion Version 0
+
+    #region Version 1
+
+    /// <summary>
+    /// 2025-09-25: add CodePage property and DetectEncodingFromByteOrderMarks
+    /// </summary>
+    [Altaxo.Serialization.Xml.XmlSerializationSurrogateFor(typeof(AsciiImportOptions), 1)]
+    private class XmlSerializationSurrogate1 : Altaxo.Serialization.Xml.IXmlSerializationSurrogate
+    {
+      public virtual void Serialize(object obj, Altaxo.Serialization.Xml.IXmlSerializationInfo info)
+      {
+        var s = (AsciiImportOptions)obj;
+
+        info.AddValue("RenameWorksheet", s.RenameWorksheet);
+        info.AddValue("RenameColumns", s.RenameColumns);
+        info.AddValue("IndexOfCaptionLine", s.IndexOfCaptionLine);
+        info.AddValue("NumberOfMainHeaderLines", s.NumberOfMainHeaderLines);
+        info.AddEnum("HeaderLinesDestination", s.HeaderLinesDestination);
+        info.AddValueOrNull("SeparationStrategy", s.SeparationStrategy);
+        info.AddValue("NumberFormatCultureLCID", s.NumberFormatCulture?.LCID ?? -1);
+        info.AddValue("DateTimeFormatCultureLCID", s.DateTimeFormatCulture?.LCID ?? -1);
+        info.AddValueOrNull("RecognizedStructure", s.RecognizedStructure);
+        info.AddValue("ImportMultipleStreamsVertically", s.ImportMultipleStreamsVertically);
+        info.AddValue("DetectEncodingFromByteOrderMarks", s.DetectEncodingFromByteOrderMarks);
+        info.AddValue("CodePage", s.CodePage);
+      }
+
+      protected virtual AsciiImportOptions SDeserialize(object? o, Altaxo.Serialization.Xml.IXmlDeserializationInfo info, object? parent)
+      {
+        var s = (o is null ? new AsciiImportOptions() : (AsciiImportOptions)o);
+
+        s.RenameWorksheet = info.GetBoolean("RenameWorksheet");
+        s.RenameColumns = info.GetBoolean("RenameColumns");
+        s.IndexOfCaptionLine = info.GetNullableInt32("IndexOfCaptionLine");
+        s.NumberOfMainHeaderLines = info.GetNullableInt32("NumberOfMainHeaderLines");
+        s.HeaderLinesDestination = (AsciiHeaderLinesDestination)info.GetEnum("HeaderLinesDestination", typeof(AsciiHeaderLinesDestination));
+        s.SeparationStrategy = (IAsciiSeparationStrategy?)info.GetValueOrNull("SeparationStrategy", s);
+        var numberLCID = info.GetInt32("NumberFormatCultureLCID");
+        s.NumberFormatCulture = -1 == numberLCID ? null : System.Globalization.CultureInfo.GetCultureInfo(numberLCID);
+        var dateLCID = info.GetInt32("DateTimeFormatCultureLCID");
+        s.DateTimeFormatCulture = -1 == dateLCID ? null : System.Globalization.CultureInfo.GetCultureInfo(dateLCID);
+        s.RecognizedStructure = (AsciiLineComposition?)info.GetValueOrNull("AsciiLineStructure", s);
+        s.ImportMultipleStreamsVertically = info.GetBoolean("ImportMultipleStreamsVertically");
+        s.DetectEncodingFromByteOrderMarks = info.GetBoolean("DetectEncodingFromByteOrderMarks");
+        s.CodePage = info.GetInt32("CodePage");
+        return s;
+      }
+
+      public object Deserialize(object? o, Altaxo.Serialization.Xml.IXmlDeserializationInfo info, object? parent)
+      {
+        var s = SDeserialize(o, info, parent);
+        return s;
+      }
+    }
+
+    #endregion Version 1
+
 
     #endregion Serialization
 
@@ -229,6 +321,9 @@ namespace Altaxo.Serialization.Ascii
       {
         using (var suspendToken = SuspendGetToken())
         {
+          DetectEncodingFromByteOrderMarks = from.DetectEncodingFromByteOrderMarks;
+          CodePage = from.CodePage;
+
           RenameColumns = from.RenameColumns;
           RenameWorksheet = from.RenameWorksheet;
           HeaderLinesDestination = from.HeaderLinesDestination;
