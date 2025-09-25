@@ -25,6 +25,7 @@
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using Altaxo.Calc.FitFunctions.Chemistry;
 using Altaxo.Calc.FitFunctions.General;
 using Altaxo.Calc.FitFunctions.Peaks;
 using Altaxo.Calc.FitFunctions.Probability;
@@ -99,6 +100,7 @@ namespace Altaxo.Calc.FitFunctions
         (() => new VoigtArea(1,1), 4, new double[]{17,2,3,5,1,3 }, 13.809882936322777226),
         (() => new VoigtAreaParametrizationNu(1,1), 3, new double[]{17,1,3,5/7d,4,-1 }, 1.72519653836887579809275+4-1*3),
         (() => new PearsonIVArea(1,1), 4, new double[]{17E6,2,3,5,11,1,3 }, 5.94700744472337464654413 + 1 + 3*4),
+        (() => new MassBasedFloryDistribution(1, 1){ MolecularWeightOfMonomerUnit=3}, 32787, new double[]{7,1/2047d,5,-1/5000d}, 0.64819841810231585472),
         (() => new LogisticDecreasing(1,1), 0.5, new double[]{2,3,5,1,3}, 1+3*0.5+2/(1+Math.Exp((0.5-3)/5))),
         (() => new LogisticIncreasing(1,1), 0.5, new double[]{2,3,5,1,3}, 1+3*0.5+2/(1+Math.Exp(-(0.5-3)/5))),
         (() => new GeneralizedLogisticDecreasing(1,1), 0.5, new double[]{2,3,5,0.4, 0.3, 1,3}, 1+3*0.5+2/Math.Pow(1+Math.Pow(Math.Exp((0.5-3)/5),0.4),0.3/0.4)),
