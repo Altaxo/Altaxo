@@ -42,25 +42,32 @@ namespace Altaxo.Science.Spectroscopy.BaselineEstimation
     /// <summary>
     /// Determines how the smoothness of the spline is specified, together with <see cref="SmoothnessValue"/>.
     /// </summary>
-    public SmoothnessSpecification SmoothnessSpecifiedBy { get; init; } = SmoothnessSpecification.ByNumberOfFeatures;
+    public SmoothnessSpecification SmoothnessSpecifiedBy
+    {
+      get => field;
+      init
+      {
+        if (value == SmoothnessSpecification.Direct)
+          throw new ArgumentException("Direct specification of smoothness is not supported in SSProb.");
 
-
-    private double _smoothnessValue = 15;
+        field = value;
+      }
+    } = SmoothnessSpecification.ByNumberOfFeatures;
 
     /// <summary>
     /// Determines the smoothness of the spline. This value has different meaning depending on the value of <see cref="SmoothnessSpecifiedBy"/>.
     /// </summary>
     public double SmoothnessValue
     {
-      get => _smoothnessValue;
+      get => field;
       init
       {
         if (!(value > 0))
           throw new ArgumentOutOfRangeException("Number of features must be a value > 0", nameof(SmoothnessValue));
 
-        _smoothnessValue = value;
+        field = value;
       }
-    }
+    } = 15;
 
     private Altaxo.Calc.Interpolation.IInterpolationFunctionOptions _interpolationFunctionOptions = new Altaxo.Calc.Interpolation.SmoothingCubicSplineOptions();
 
@@ -297,7 +304,7 @@ namespace Altaxo.Science.Spectroscopy.BaselineEstimation
     public void Export(XmlWriter writer)
     {
       writer.WriteStartElement("SSProb");
-      writer.WriteElementString("NumberOfFeatures", XmlConvert.ToString(_smoothnessValue));
+      writer.WriteElementString("NumberOfFeatures", XmlConvert.ToString(SmoothnessValue));
       writer.WriteEndElement();
     }
 

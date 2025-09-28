@@ -24,6 +24,7 @@
 
 using System;
 using System.Collections.Generic;
+using Altaxo.Calc.Interpolation;
 using Altaxo.Science.Spectroscopy.BaselineEstimation;
 
 namespace Altaxo.Gui.Science.Spectroscopy.BaselineEstimation
@@ -58,16 +59,14 @@ namespace Altaxo.Gui.Science.Spectroscopy.BaselineEstimation
       }
     }
 
-    private SmoothnessSpecification _smoothnessSpecificiedBy;
-
     public SmoothnessSpecification SmoothnessSpecificiedBy
     {
-      get => _smoothnessSpecificiedBy;
+      get => field;
       set
       {
-        if (!(_smoothnessSpecificiedBy == value))
+        if (!(field == value))
         {
-          _smoothnessSpecificiedBy = value;
+          field = value;
           OnPropertyChanged(nameof(SmoothnessSpecificiedBy));
           OnPropertyChanged(nameof(IsSpecifiedNumberOfFeatures));
           OnPropertyChanged(nameof(IsSpecifiedNumberOfPoints));

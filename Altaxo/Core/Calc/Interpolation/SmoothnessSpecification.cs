@@ -2,7 +2,7 @@
 
 /////////////////////////////////////////////////////////////////////////////
 //    Altaxo:  a data processing and data plotting program
-//    Copyright (C) 2002-2024 Dr. Dirk Lellinger
+//    Copyright (C) 2002-2025 Dr. Dirk Lellinger
 //
 //    This program is free software; you can redistribute it and/or modify
 //    it under the terms of the GNU General Public License as published by
@@ -22,7 +22,7 @@
 
 #endregion Copyright
 
-namespace Altaxo.Science.Spectroscopy.BaselineEstimation
+namespace Altaxo.Calc.Interpolation
 {
   /// <summary>
   /// Specification how the smoothness of the spline is specified.
@@ -30,23 +30,26 @@ namespace Altaxo.Science.Spectroscopy.BaselineEstimation
   public enum SmoothnessSpecification
   {
     /// <summary>
-    /// The by number of features, i.e. it depends additionally on the number of points.
-    /// For instance, if we have 4000 points in the spectrum and NumberOfFeatures=10, then the points in one period=4000/10 = 400.
+    /// The smoothness value is used as it is, without modification.
     /// </summary>
-    ByNumberOfFeatures = 0,
+    Direct = 0,
 
     /// <summary>
-    /// Smoothness defined by the number of points in a period. If the spectrum is a sine signal with a period of this,
-    /// the spline is expected to smooth the sine signal down to an amplitude of 1/e of the original amplitude.
+    /// The smoothness value designates the number of features, i.e. it depends also on the number of points.
+    /// For instance, if one have 4000 points in the spectrum and NumberOfFeatures=10, then the points in one period=4000/10 = 400.
     /// </summary>
-    ByNumberOfPoints = 1,
+    ByNumberOfFeatures = 1,
 
     /// <summary>
-    /// Smoothness defined by the x-span in a period. If the spectrum is a sine signal with a period of this,
+    /// The smoothness value designates the number of points in a feature span. If the spectrum is a sine signal with a period of this,
     /// the spline is expected to smooth the sine signal down to an amplitude of 1/e of the original amplitude.
     /// </summary>
-    ByXSpan = 2,
+    ByNumberOfPoints = 2,
+
+    /// <summary>
+    /// The smoothness value designates the x-span of a feature. If the spectrum is a sine signal with a period of this,
+    /// the spline is expected to smooth the sine signal down to an amplitude of 1/e of the original amplitude.
+    /// </summary>
+    ByXSpan = 3,
   }
-
 }
-

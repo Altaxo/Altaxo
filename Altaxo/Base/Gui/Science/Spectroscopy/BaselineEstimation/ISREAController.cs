@@ -24,6 +24,7 @@
 
 using System;
 using System.Collections.Generic;
+using Altaxo.Calc.Interpolation;
 using Altaxo.Science.Spectroscopy.BaselineEstimation;
 
 namespace Altaxo.Gui.Science.Spectroscopy.BaselineEstimation
@@ -43,31 +44,30 @@ namespace Altaxo.Gui.Science.Spectroscopy.BaselineEstimation
 
     #region Bindings
 
-    private double _smoothnessValue;
-
     public double SmoothnessValue
     {
-      get => _smoothnessValue;
+      get => field;
       set
       {
-        if (!(_smoothnessValue == value))
+        if (!(field == value))
         {
-          _smoothnessValue = value;
+          field = value;
           OnPropertyChanged(nameof(SmoothnessValue));
         }
       }
     }
 
-    private SmoothnessSpecification _smoothnessSpecificiedBy;
-
     public SmoothnessSpecification SmoothnessSpecificiedBy
     {
-      get => _smoothnessSpecificiedBy;
+      get => field;
       set
       {
-        if (!(_smoothnessSpecificiedBy == value))
+        if (value == SmoothnessSpecification.Direct)
+          throw new ArgumentException("Direct specification of smoothness is not supported in ISREA.");
+
+        if (!(field == value))
         {
-          _smoothnessSpecificiedBy = value;
+          field = value;
           OnPropertyChanged(nameof(SmoothnessSpecificiedBy));
           OnPropertyChanged(nameof(IsSpecifiedNumberOfFeatures));
           OnPropertyChanged(nameof(IsSpecifiedNumberOfPoints));

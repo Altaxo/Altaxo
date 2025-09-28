@@ -24,9 +24,6 @@
 
 using System;
 using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using Altaxo.Calc.LinearAlgebra;
 
 namespace Altaxo.Calc.Interpolation
 {
@@ -35,21 +32,47 @@ namespace Altaxo.Calc.Interpolation
   /// </summary>
   public record SmoothingCubicSplineOptions : IInterpolationFunctionOptions
   {
-    private double _smoothness = 1;
-    private double _errorStandardDeviation=-1;
+
+
+    private double _errorStandardDeviation = -1;
+
+    /// <summary>
+    /// Determines how the smoothness of the spline is specified, together with <see cref="Smoothness"/> value.
+    /// </summary>
+    public SmoothnessSpecification SmoothnessSpecifiedBy { get; init; } = SmoothnessSpecification.Direct;
+
+    /// <summary>
+    /// Get/sets the smoothness parameter. Must be in the interval [0, PositiveInfinity], where a
+    /// value of 0 means no smoothing (evaluation of a cubic spline), while a value of Infinity
+    /// means evaluation of a regression.
+    /// </summary>
+    /// <remarks>The <see cref="SmoothingCubicSplineBase.SmoothingParameter"/> is calculated by
+    /// SmoothingParameter = Smoothness/(1+Smoothness).</remarks>
+    public double Smoothness
+    {
+      get => field;
+      init
+      {
+        if (!(value >= 0 && value <= double.PositiveInfinity))
+          throw new ArgumentOutOfRangeException(nameof(Smoothness));
+
+        field = value;
+      }
+    } = 1;
+
 
     #region Serialization
 
     /// <summary>
-    /// 2022-08-14 initial version
+    /// V0: 2022-08-14 initial version
     /// </summary>
-    [Altaxo.Serialization.Xml.XmlSerializationSurrogateFor(typeof(SmoothingCubicSplineOptions), 0)]
+    [Altaxo.Serialization.Xml.XmlSerializationSurrogateFor("AltaxoCore", "Altaxo.Calc.Interpolation.SmoothingCubicSplineOptions", 0)]
     public class SerializationSurrogate0 : Altaxo.Serialization.Xml.IXmlSerializationSurrogate
     {
       public void Serialize(object obj, Altaxo.Serialization.Xml.IXmlSerializationInfo info)
       {
         var s = (SmoothingCubicSplineOptions)obj;
-        info.AddValue("Smoothness", s._smoothness);
+        info.AddValue("Smoothness", s.Smoothness);
         info.AddValue("ErrorStandardDeviation", s._errorStandardDeviation);
       }
 
@@ -61,31 +84,35 @@ namespace Altaxo.Calc.Interpolation
       }
     }
 
-    #endregion
-
     /// <summary>
-    /// Get/sets the smoothness parameter. Must be in the interval [0, PositiveInfinity], where a
-    /// value of 0 means no smoothing (evaluation of a cubic spline), while a value of Infinity
-    /// means evaluation of a regression.
+    /// V1: 2025-09-26 add smoothness specification
     /// </summary>
-    /// <remarks>The <see cref="SmoothingCubicSplineBase.SmoothingParameter"/> is calculated by
-    /// SmoothingParameter = Smoothness/(1+Smoothness).</remarks>
-    public double Smoothness
+    [Altaxo.Serialization.Xml.XmlSerializationSurrogateFor(typeof(SmoothingCubicSplineOptions), 1)]
+    public class SerializationSurrogate1 : Altaxo.Serialization.Xml.IXmlSerializationSurrogate
     {
-      get => _smoothness;
-      init
+      public void Serialize(object obj, Altaxo.Serialization.Xml.IXmlSerializationInfo info)
       {
-        if (!(value >=0 && value <= double.PositiveInfinity))
-          throw new ArgumentOutOfRangeException(nameof(Smoothness));
+        var s = (SmoothingCubicSplineOptions)obj;
+        info.AddValue("Smoothness", s.Smoothness);
+        info.AddEnum("SmoothnessSpecifiedBy", s.SmoothnessSpecifiedBy);
+        info.AddValue("ErrorStandardDeviation", s._errorStandardDeviation);
+      }
 
-        _smoothness = value;
+      public object Deserialize(object? o, Altaxo.Serialization.Xml.IXmlDeserializationInfo info, object? parent)
+      {
+        var smoothing = info.GetDouble("Smoothness");
+        var smoothnessSpec = info.GetEnum<SmoothnessSpecification>("SmoothnessSpecifiedBy");
+        var stddev = info.GetDouble("ErrorStandardDeviation");
+        return new SmoothingCubicSplineOptions() { Smoothness = smoothing, SmoothnessSpecifiedBy = smoothnessSpec, _errorStandardDeviation = stddev };
       }
     }
+
+    #endregion
 
     /// <inheritdoc/>
     public IInterpolationFunction Interpolate(IReadOnlyList<double> xvec, IReadOnlyList<double> yvec, IReadOnlyList<double>? yStdDev = null)
     {
-      var spline = new SmoothingCubicSpline() { Smoothness = Smoothness, ErrorStandardDeviation =  _errorStandardDeviation, CombineNeighbouringPoints=true, };
+      var spline = new SmoothingCubicSpline() { Smoothness = Smoothness, SmoothnessSpecifiedBy = SmoothnessSpecifiedBy, ErrorStandardDeviation = _errorStandardDeviation, CombineNeighbouringPoints = true, };
       if (yStdDev is null)
         spline.Interpolate(xvec, yvec);
       else
@@ -106,7 +133,31 @@ namespace Altaxo.Calc.Interpolation
   /// </summary>
   public class SmoothingCubicSpline : SmoothingCubicSplineBase, IInterpolationFunction
   {
-    protected double _smoothness = 1;
+    /// <summary>
+    /// Get/sets the smoothness parameter. Must be in the interval [0,Infinity], where a
+    /// value of 0 means no smoothing (evaluation of a cubic spline), while a value of Infinity
+    /// means evaluation of a regression.
+    /// </summary>
+    /// <remarks>The <see cref="SmoothingCubicSplineBase.SmoothingParameter"/> is calculated by
+    /// SmoothingParameter = Smoothness/(1+Smoothness).</remarks>
+    public double Smoothness
+    {
+      get
+      {
+        return field;
+      }
+      set
+      {
+        if (!(0 <= value))
+          throw new ArgumentOutOfRangeException("Must be a value >=0", nameof(value));
+        field = value;
+      }
+    } = 1;
+
+    /// <summary>
+    /// Determines how the smoothness of the spline is specified, together with <see cref="Smoothness"/> value.
+    /// </summary>
+    public SmoothnessSpecification SmoothnessSpecifiedBy { get; set; } = SmoothnessSpecification.Direct;
 
     /// <summary>
     /// Create an instance of <see cref="SmoothingCubicSpline"/> with a default value for <see cref="Smoothness"/> of 1.
@@ -114,6 +165,26 @@ namespace Altaxo.Calc.Interpolation
     public SmoothingCubicSpline()
     {
       _standardDeviation = -1.0; // unknown standard deviation
+    }
+
+    public static double GetModifiedSmoothnessValue(double smoothnessValue, SmoothnessSpecification smoothnessSpecifiedBy, double[] x, double numberOfPoints)
+    {
+      double GetSmoothnessFromPointsPerPeriod(double pointsPerPeriod)
+      {
+        pointsPerPeriod *= pointsPerPeriod;
+        pointsPerPeriod *= pointsPerPeriod;
+        return 0.00219146043349633 * pointsPerPeriod;
+      }
+
+      var modifiedSmoothnessValue = smoothnessSpecifiedBy switch
+      {
+        SmoothnessSpecification.ByNumberOfPoints => GetSmoothnessFromPointsPerPeriod(smoothnessValue),// smoothnessValue is number of points in a feature span
+        SmoothnessSpecification.ByNumberOfFeatures => GetSmoothnessFromPointsPerPeriod(numberOfPoints / smoothnessValue),// smoothnessValue is number of features
+        SmoothnessSpecification.ByXSpan => GetSmoothnessFromPointsPerPeriod(smoothnessValue / Science.Signals.SignalMath.GetMeanIncrement(x)),// smoothnessValue is the x-span of one feature
+        SmoothnessSpecification.Direct => smoothnessValue,// the smoothness value is used directly
+        _ => throw new NotImplementedException($"SmoothnessSpecification {smoothnessSpecifiedBy} is not implemented here!")
+      };
+      return modifiedSmoothnessValue;
     }
 
     protected override void InterpolationKernel(
@@ -142,7 +213,9 @@ namespace Altaxo.Calc.Interpolation
       double gf1;
       int i;
 
-      double r1 = _smoothness;
+      // Now adjust the smoothness value according to the specification
+      double r1 = GetModifiedSmoothnessValue(Smoothness, SmoothnessSpecifiedBy, x, n);
+
       spint1(x, out avh, f, df, out avdf, n, y, C, ic, WK0, WK1, ref ier);
 
       avar = var;
@@ -175,25 +248,6 @@ namespace Altaxo.Calc.Interpolation
       WK3[0] = avdf * avdf;
     }
 
-    /// <summary>
-    /// Get/sets the smoothness parameter. Must be in the interval [0,Infinity], where a
-    /// value of 0 means no smoothing (evaluation of a cubic spline), while a value of Infinity
-    /// means evaluation of a regression.
-    /// </summary>
-    /// <remarks>The <see cref="SmoothingCubicSplineBase.SmoothingParameter"/> is calculated by
-    /// SmoothingParameter = Smoothness/(1+Smoothness).</remarks>
-    public double Smoothness
-    {
-      get
-      {
-        return _smoothness;
-      }
-      set
-      {
-        if (!(0 <= value))
-          throw new ArgumentOutOfRangeException("Must be a value >=0", nameof(value));
-        _smoothness = value;
-      }
-    }
+
   }
 }
