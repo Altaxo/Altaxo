@@ -23,47 +23,107 @@
 #endregion Copyright
 
 #nullable disable
+using System;
+using System.Collections.Generic;
 using Altaxo.Calc.Interpolation;
-using Altaxo.Gui.Common.PropertyGrid;
+using Altaxo.Gui.Common;
 
 namespace Altaxo.Gui.Calc.Interpolation
 {
+  public interface ISmoothingCubicSplineOptionsView : IDataContextAwareView
+  {
+  }
+
   /// <summary>
   /// Controls the Smoothing parameter of a rational cubic spline.
   /// </summary>
   [UserControllerForObject(typeof(Altaxo.Calc.Interpolation.SmoothingCubicSplineOptions), 100)]
-  public class SmoothingCubicSplineOptionsController : PropertyGridController
+  [ExpectedTypeOfView(typeof(ISmoothingCubicSplineOptionsView))]
+  public class SmoothingCubicSplineOptionsController : MVCANControllerEditImmutableDocBase<SmoothingCubicSplineOptions, ISmoothingCubicSplineOptionsView>
   {
-    private SmoothingCubicSplineOptions Spline => (SmoothingCubicSplineOptions)_doc;
-
-    protected override void InitializeValueInfos()
+    public override IEnumerable<ControllerAndSetNullMethod> GetSubControllers()
     {
+      yield break;
+    }
 
+    #region Bindings
+
+
+    public double SmoothnessValue
+    {
+      get => field;
+      set
       {
-        var controller = new Altaxo.Gui.Common.BasicTypes.NumericDoubleValueController(Spline.Smoothness);
-        controller.Minimum = 0;
-        controller.IsMinimumValueInclusive = true;
-        Current.Gui.FindAndAttachControlTo(controller);
-        ValueInfos.Add(new ValueInfo("Smoothness (Range: 0 to infinity; 0: cubic spline; infinity: linear regression)  :", controller));
+        if (!(field == value))
+        {
+          field = value;
+          OnPropertyChanged(nameof(SmoothnessValue));
+        }
       }
+    }
+
+
+    public ItemsController<SmoothnessSpecification> SmoothnessSpecifiedBy
+    {
+      get => field;
+      set
+      {
+        if (!(field == value))
+        {
+          field?.Dispose();
+          field = value;
+          OnPropertyChanged(nameof(SmoothnessSpecifiedBy));
+        }
+      }
+    }
+
+    public string SmoothnessValueToolTip
+    {
+      get
+      {
+        return SmoothnessSpecifiedBy.SelectedValue switch
+        {
+          SmoothnessSpecification.Direct => "A value of 0 corresponds to a cubic spline, a value of infinity to a linear interpolation. Note that the smoothing effect not only depends on the smoothing value, but also on the number of points of the signal.",
+          SmoothnessSpecification.ByNumberOfFeatures => "Specify the number of features. For a sine signal with #NumberOfFeature periods, the sine signal is attenuated by a factor of 1/e",
+          SmoothnessSpecification.ByNumberOfPoints => "Specify the number of points in one feature. If the feature is a sine period, the sine signal is attenuated by a factor of 1/e",
+          SmoothnessSpecification.ByXSpan => "Specify the x-width of one feature. If the feature is a sine period, the sine signal is attenuated by a factor of 1/e",
+          _ => throw new NotSupportedException("Unknown SmoothnessSpecification"),
+        };
+      }
+    }
+
+    #endregion Bindings
+
+    protected override void Initialize(bool initData)
+    {
+      base.Initialize(initData);
+      if (initData)
+      {
+        SmoothnessValue = _doc.Smoothness;
+        SmoothnessSpecifiedBy = new ItemsController<SmoothnessSpecification>(new Collections.SelectableListNodeList(_doc.SmoothnessSpecifiedBy), EhSmoothnessSpecificationChanged);
+      }
+    }
+
+    private void EhSmoothnessSpecificationChanged(SmoothnessSpecification specification)
+    {
+      OnPropertyChanged(nameof(SmoothnessValueToolTip));
     }
 
     public override bool Apply(bool disposeController)
     {
-      double smoothness;
-      var controller = ValueInfos[0].Controller;
-
-      if (false == controller.Apply(disposeController))
+      try
       {
+        _doc = _doc with
+        {
+          SmoothnessSpecifiedBy = this.SmoothnessSpecifiedBy.SelectedValue,
+          Smoothness = SmoothnessValue,
+        };
+      }
+      catch (Exception ex)
+      {
+        Current.Gui.ErrorMessageBox(ex.Message);
         return ApplyEnd(false, disposeController);
       }
-      else
-      {
-        smoothness = (double)controller.ModelObject;
-      }
-
-      _doc = Spline with { Smoothness = smoothness };
-
 
       return ApplyEnd(true, disposeController);
     }

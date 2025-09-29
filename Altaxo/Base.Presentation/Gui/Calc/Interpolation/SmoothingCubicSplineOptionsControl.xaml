@@ -1,0 +1,17 @@
+﻿<UserControl x:Class="Altaxo.Gui.Calc.Interpolation.SmoothingCubicSplineOptionsControl"
+             xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
+             xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
+             xmlns:local="clr-namespace:Altaxo.Gui.Calc.Interpolation;assembly=AltaxoBase"
+             xmlns:axogc="clr-namespace:Altaxo.Gui.Common"
+             d:DataContext="{d:DesignInstance Type=local:SmoothingCubicSplineOptionsController}"
+             mc:Ignorable="d" >
+  <StackPanel Orientation="Horizontal">
+    <Label Content="Smoothness specified by:" />
+    <ComboBox ItemsSource="{Binding SmoothnessSpecifiedBy.Items}"
+              SelectedItem="{Binding SmoothnessSpecifiedBy.SelectedItem, Mode=TwoWay}" MinWidth="50" />
+    <Label Content=": " />
+    <axogc:NumericDoubleTextBox SelectedValue="{Binding SmoothnessValue}" MinWidth="50" ToolTip="{Binding SmoothnessValueToolTip}" />
+  </StackPanel>
+</UserControl>
