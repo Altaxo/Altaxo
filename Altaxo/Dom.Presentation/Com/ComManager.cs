@@ -35,6 +35,7 @@ using Microsoft.Win32;
 
 namespace Altaxo.Com
 {
+  using System.IO;
   using Graph;
   using UnmanagedApi.Ole32;
 
@@ -300,14 +301,23 @@ namespace Altaxo.Com
     public void RegisterApplicationForCom()
     {
       var applicationFileNameKind = RegistryValueKind.String; // if Altaxo is in an arbitrary path, use a simple string for the path, otherwise, use ExpandString (see below)
+#if NETFRAMEWORK
       string applicationFileName = System.Reflection.Assembly.GetEntryAssembly().Location;
+#else
+      string applicationFileName = System.Environment.ProcessPath; // have to use ProcessPath since GetEntryAssembly() would report the .DLL instead of the .exe file
+#endif
+      if (Path.GetExtension(applicationFileName).ToLowerInvariant() != ".exe")
+      {
+        throw new InvalidProgramException($"Unexpected extension of the application file name (it should end with .exe), but it is: {applicationFileName}");
+      }
+
       var p = System.IO.Path.GetFileNameWithoutExtension(applicationFileName);
       if (p.EndsWith("32") || p.EndsWith("64")) // strip 32 if registering from the 32-bit version, or 64 if registering from the 64 bit version
       {
         p = p.Substring(0, p.Length - 2);
       }
 
-      bool is64BitSystem = Environment.Is64BitOperatingSystem;
+     
 
       var applicationFileName32 = System.IO.Path.Combine(System.IO.Path.GetDirectoryName(applicationFileName), p + "32.exe");
       var applicationFileName64 = System.IO.Path.Combine(System.IO.Path.GetDirectoryName(applicationFileName), p + "64.exe");
@@ -321,6 +331,7 @@ namespace Altaxo.Com
         applicationFileName64 = "%ProgramFiles%" + applicationFileName64.Substring(programFilesPath.Length);
       }
 
+      bool is64BitSystem = Environment.Is64BitOperatingSystem;
       try
       {
         {
@@ -332,6 +343,7 @@ namespace Altaxo.Com
         }
 
         RegisterProject(Registry.LocalMachine, WOW_Mode.None, applicationFileName, applicationFileNameKind);
+        
         RegisterGraphClass(Registry.LocalMachine, WOW_Mode.Reg64, is64BitSystem? applicationFileName64 : applicationFileName32, applicationFileNameKind);
         RegisterGraphClassID(Registry.LocalMachine, WOW_Mode.Reg64, is64BitSystem? applicationFileName64 : applicationFileName32, applicationFileNameKind);
 
