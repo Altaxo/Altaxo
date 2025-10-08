@@ -9,7 +9,6 @@
     <GenerateAssemblyInfo>false</GenerateAssemblyInfo>
     <DefineConstants>PUBLICINTERPROCESS</DefineConstants>
     <CoreCompileDependsOn>GenAssInfo</CoreCompileDependsOn>
-    <PlatformTarget>x64</PlatformTarget>
   </PropertyGroup>
   <ItemGroup>
     <Compile Remove="Properties\AssemblyInfo.cs" Visible="true" />

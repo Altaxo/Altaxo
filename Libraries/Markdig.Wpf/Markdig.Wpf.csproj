@@ -1,7 +1,6 @@
 ﻿<Project Sdk="Microsoft.NET.Sdk">
   <PropertyGroup>
     <TargetFramework>net9.0-windows</TargetFramework>
-      <PlatformTarget>x64</PlatformTarget>
       <LangVersion>preview</LangVersion>
     <UseWPF>true</UseWPF>
     <RootNamespace>Markdig.Wpf</RootNamespace>

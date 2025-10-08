@@ -3,7 +3,6 @@
     <AssemblyName>AltaxoUpdateInstaller</AssemblyName>
     <RootNamespace>Altaxo.Serialization.AutoUpdates</RootNamespace>
     <TargetFramework>net9.0-windows</TargetFramework>
-    <PlatformTarget>x64</PlatformTarget>
     <LangVersion>preview</LangVersion>
     <nullable>enable</nullable>
     <OutputType>WinExe</OutputType>

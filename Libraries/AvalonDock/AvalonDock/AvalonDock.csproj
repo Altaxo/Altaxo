@@ -2,7 +2,6 @@
   <PropertyGroup>
     <RootNamespace>AvalonDock</RootNamespace>
     <TargetFramework>net9.0-windows</TargetFramework>
-		<PlatformTarget>x64</PlatformTarget>
 		<UseWPF>true</UseWPF>
     <SignAssembly>true</SignAssembly>
     <AssemblyOriginatorKeyFile>sn.snk</AssemblyOriginatorKeyFile>

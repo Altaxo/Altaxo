@@ -8,7 +8,6 @@
     <GenerateAssemblyInfo>false</GenerateAssemblyInfo>
     <ApplicationIcon>Altaxo.ico</ApplicationIcon>
     <OutputType>WinExe</OutputType>
-    <PlatformTarget>x64</PlatformTarget>
     <StartupObject />
     <AppendTargetFrameworkToOutputPath>false</AppendTargetFrameworkToOutputPath>
     <OutputPath>..\..\rtNet\bin</OutputPath>

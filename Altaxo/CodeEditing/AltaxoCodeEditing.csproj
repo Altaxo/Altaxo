@@ -1,7 +1,6 @@
 ﻿<Project Sdk="Microsoft.NET.Sdk" InitialTargets="GenAssInfo">
   <PropertyGroup>
     <TargetFramework>net9.0-windows</TargetFramework>
-    <PlatformTarget>x64</PlatformTarget>
     <AssemblyName>AltaxoCodeEditing</AssemblyName>
     <LangVersion>latest</LangVersion>
     <UseWPF>true</UseWPF>
