@@ -12,6 +12,6 @@
     <PackageReference Include="Microsoft.ML.TimeSeries" Version="4.0.2" />   
   </ItemGroup>
   <Target Name="PostBuild" AfterTargets="PostBuildEvent">
-    <Exec Command="IF NOT EXIST $(SolutionDir)rtNet\AddIns\ML.Net\ mkdir $(SolutionDir)rtNet\AddIns\ML.Net\&#xD;&#xA;del $(TargetDir)zzIsNotNeeded.*&#xD;&#xA;copy $(TargetDir)*.dll $(SolutionDir)rtNet\AddIns\ML.Net\&#xD;&#xA;" />
+    <Exec Command="IF NOT EXIST $(SolutionDir)rtNet\AddIns\ML.Net\ mkdir $(SolutionDir)rtNet\AddIns\ML.Net\&#xD;&#xA;del $(TargetDir)zzIsNotNeeded.dll&#xD;&#xA;copy $(TargetDir)*.dll $(SolutionDir)rtNet\AddIns\ML.Net\&#xD;&#xA;xcopy $(TargetDir)runtimes\win-x64 $(SolutionDir)rtNet\AddIns\ML.Net\runtimes\win-x64 /S /I /Y&#xD;&#xA;" />
   </Target>
 </Project>
