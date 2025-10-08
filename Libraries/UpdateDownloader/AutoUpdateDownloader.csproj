@@ -1,6 +1,7 @@
 ﻿<Project Sdk="Microsoft.NET.Sdk" InitialTargets="GenAssInfo">
   <PropertyGroup>
-    <TargetFrameworks>net48;net9.0</TargetFrameworks>
+    <TargetFramework>net9.0</TargetFramework>
+    <PlatformTarget>x64</PlatformTarget>
     <LangVersion>preview</LangVersion>
     <nullable>enable</nullable>
     <OutputType>Exe</OutputType>
@@ -9,8 +10,7 @@
     <GenerateDocumentationFile>true</GenerateDocumentationFile>
     <GenerateAssemblyInfo>false</GenerateAssemblyInfo>
     <AppendTargetFrameworkToOutputPath>false</AppendTargetFrameworkToOutputPath>
-    <IntermediateOutputPath>obj\$(Configuration)\$(TargetFramework)\</IntermediateOutputPath>
-    <OutputPath>..\..\rt$(TargetFrameworkSubdir)\bin</OutputPath>
+    <OutputPath>..\..\rtNet\bin</OutputPath>
     <CoreCompileDependsOn>GenAssInfo</CoreCompileDependsOn>
     <CopyLocalLockFileAssemblies>true</CopyLocalLockFileAssemblies>
     <DefineConstants>$(DefineConstants);AutoUpdateDownloader</DefineConstants>
@@ -35,15 +35,11 @@
       <Link>SystemRequirements.cs</Link>
     </Compile>
   </ItemGroup>
-
-  <ItemGroup Condition=" '$(TargetFramework)' != 'net48' ">
+  
+  <ItemGroup>
     <PackageReference Include="Microsoft.Win32.Registry" Version="5.0.0" />
     <PackageReference Include="System.Security.Principal" Version="4.3.0" />
     <PackageReference Include="System.IO.FileSystem.AccessControl" Version="5.0.0" />
-  </ItemGroup>
-
-  <ItemGroup Condition=" '$(TargetFramework)' == 'net48' ">
-    <PackageReference Include="System.Text.Json" Version="9.0.7" />
   </ItemGroup>
  
   <UsingTask TaskName="GitVersionFile" AssemblyFile="..\..\MSBuildVersioning.dll" />

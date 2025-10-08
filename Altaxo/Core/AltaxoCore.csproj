@@ -1,6 +1,7 @@
 ﻿<Project Sdk="Microsoft.NET.Sdk" InitialTargets="GenAssInfo">
   <PropertyGroup>
-    <TargetFrameworks>net48;net9.0</TargetFrameworks>
+    <TargetFramework>net9.0</TargetFramework>
+    <PlatformTarget>x64</PlatformTarget>
     <LangVersion>preview</LangVersion>
     <RootNamespace>Altaxo</RootNamespace>
     <GenerateDocumentationFile>true</GenerateDocumentationFile>
@@ -9,12 +10,6 @@
     <TransformOnBuild>true</TransformOnBuild>
     <nullable>enable</nullable>
     <NoWarn>1701;1702;1573;1591;3001;3008;</NoWarn>
-  </PropertyGroup>
-  <PropertyGroup Condition=" '$(TargetFramework)' == 'net48' ">
-    <NoWarn>
-      1701;1702;1591;3001;3008;
-      8600;8601;8603;8604;8625;8767
-    </NoWarn>
     <CoreCompileDependsOn>GenAssInfo</CoreCompileDependsOn>
   </PropertyGroup>
   <ItemGroup>
@@ -22,12 +17,6 @@
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\..\Analyzer\NullComparisonAnalyzer\NullComparisonAnalyzer.csproj" PrivateAssets="all" ReferenceOutputAssembly="false" OutputItemType="Analyzer" />
-  </ItemGroup>
-
-  <ItemGroup Condition=" '$(TargetFramework)' == 'net48' ">
-    <PackageReference Include="System.Collections.Immutable" Version="9.0.7" />
-    <PackageReference Include="IndexRange" Version="1.1.0" />
-    <PackageReference Include="System.Text.Encoding.CodePages" Version="9.0.7" />
   </ItemGroup>
   
   <ItemGroup>

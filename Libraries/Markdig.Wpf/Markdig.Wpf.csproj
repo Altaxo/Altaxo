@@ -1,7 +1,8 @@
-﻿<Project Sdk="Microsoft.NET.Sdk.WindowsDesktop">
+﻿<Project Sdk="Microsoft.NET.Sdk">
   <PropertyGroup>
-    <TargetFrameworks>net48;net9.0-windows</TargetFrameworks>
-    <LangVersion>preview</LangVersion>
+    <TargetFramework>net9.0-windows</TargetFramework>
+      <PlatformTarget>x64</PlatformTarget>
+      <LangVersion>preview</LangVersion>
     <UseWPF>true</UseWPF>
     <RootNamespace>Markdig.Wpf</RootNamespace>
     <AssemblyName>Markdig.Wpf</AssemblyName>

@@ -1,8 +1,9 @@
-<Project Sdk="Microsoft.NET.Sdk.WindowsDesktop">
+<Project Sdk="Microsoft.NET.Sdk">
   <PropertyGroup>
     <RootNamespace>AvalonDock</RootNamespace>
-    <TargetFrameworks>net48;net9.0-windows</TargetFrameworks>
-    <UseWPF>true</UseWPF>
+    <TargetFramework>net9.0-windows</TargetFramework>
+		<PlatformTarget>x64</PlatformTarget>
+		<UseWPF>true</UseWPF>
     <SignAssembly>true</SignAssembly>
     <AssemblyOriginatorKeyFile>sn.snk</AssemblyOriginatorKeyFile>
     <GeneratePackageOnBuild>true</GeneratePackageOnBuild>
@@ -20,14 +21,11 @@
     <Authors>https://github.com/Dirkster99/AvalonDock</Authors>
     <PackageLicenseFile>LICENSE</PackageLicenseFile>
   </PropertyGroup>
-	<PropertyGroup Condition="'$(TargetFramework)'!='net48'">
+	<PropertyGroup>
 		<NoWarn>SYSLIB0003;SYSLIB0004</NoWarn>
     <DefineConstants />
   </PropertyGroup>
-  <PropertyGroup Condition="'$(Configuration)|$(TargetFramework)|$(Platform)'=='Debug|net48|AnyCPU'">
-    <DefineConstants />
-  </PropertyGroup>
-
+ 
   <ItemGroup>
     <Resource Include="**\*.png" />
   </ItemGroup>

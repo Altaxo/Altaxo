@@ -1,8 +1,9 @@
-﻿<Project Sdk="Microsoft.NET.Sdk.WindowsDesktop">
+﻿<Project Sdk="Microsoft.NET.Sdk">
 
     <PropertyGroup>
-        <TargetFrameworks>net48;net9.0-windows</TargetFrameworks>
-        <UseWpf>true</UseWpf>
+        <TargetFramework>net9.0-windows</TargetFramework>
+      <PlatformTarget>x64</PlatformTarget>
+      <UseWpf>true</UseWpf>
         <OutputType>Library</OutputType>
         <EnableWindowsTargeting>true</EnableWindowsTargeting>
         <LangVersion>preview</LangVersion>

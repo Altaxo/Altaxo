@@ -57,7 +57,6 @@
   <Project Path="AddIns/MLNET/MLNET/MLNet.csproj">
   </Project>
   <Project Path="AddIns/MLNET/MLNetDependencies/MLNetDependencies.csproj">
-    <Platform Project="x64" />
   </Project>
   <Project Path="AddIns/OpenXML/OpenXML.Presentation/OpenXML.Presentation.csproj">
   </Project>
@@ -92,7 +91,6 @@
   </Project>
  
   <Project Path="Altaxo/Startup32/AltaxoStartup32.csproj">
-    <Platform Project="x86" />
   </Project>
   <Project Path="Altaxo/Startup64/AltaxoStartup64.csproj">
   </Project>

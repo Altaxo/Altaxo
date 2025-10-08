@@ -1,10 +1,11 @@
 ﻿<Project Sdk="Microsoft.NET.Sdk">
   <PropertyGroup>
-    <TargetFrameworks>net48;net9.0-windows</TargetFrameworks>
+    <TargetFramework>net9.0-windows</TargetFramework>
+    <PlatformTarget>x64</PlatformTarget>
     <LangVersion>latest</LangVersion>
     <nullable>enable</nullable>
   </PropertyGroup>
   <Target Name="PostBuild" AfterTargets="PostBuildEvent">
-    <Exec Command="xcopy $(SolutionDir)Content\data\*.* $(SolutionDir)rt$(TargetFramework)\data /E /I /Y&#xD;&#xA;xcopy $(SolutionDir)Content\doc\*.* $(SolutionDir)rt$(TargetFramework)\doc /E /I /Y" />
+    <Exec Command="xcopy $(SolutionDir)Content\data\*.* $(SolutionDir)rtNet\data /E /I /Y&#xD;&#xA;xcopy $(SolutionDir)Content\doc\*.* $(SolutionDir)rtNet\doc /E /I /Y" />
   </Target>
 </Project>

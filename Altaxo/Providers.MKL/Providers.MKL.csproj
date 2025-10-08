@@ -2,7 +2,8 @@
 <Project Sdk="Microsoft.NET.Sdk">
     <PropertyGroup>
         <OutputType>Library</OutputType>
-        <TargetFrameworks>net9.0;net48</TargetFrameworks>
+        <TargetFramework>net9.0</TargetFramework>
+        <PlatformTarget>x64</PlatformTarget>
         <CopyLocalLockFileAssemblies>true</CopyLocalLockFileAssemblies>
         <LangVersion>7.3</LangVersion>
         <AssemblyName>AltaxoCore.Providers.MKL</AssemblyName>
@@ -28,13 +29,9 @@ many contributions, proper release notes with attributions will follow. thank yo
             <PrivateAssets>all</PrivateAssets>
             <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
         </PackageReference>
-        <PackageReference Include="Microsoft.NETFramework.ReferenceAssemblies" Version="1.0.3">
-            <PrivateAssets>all</PrivateAssets>
-            <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
-        </PackageReference>
       <PackageReference Include="MathNet.Numerics.MKL.Win" Version="3.0.0" />
     </ItemGroup>
   <Target Name="PostBuild" AfterTargets="PostBuildEvent">
-    <Exec Command="IF NOT EXIST $(SolutionDir)rt$(TargetFrameworkSubdir)\bin mkdir $(SolutionDir)rt$(TargetFrameworkSubdir)\bin&#xD;&#xA;copy $(TargetDir)AltaxoCore.Providers.MKL.* $(SolutionDir)rt$(TargetFrameworkSubdir)\bin\&#xD;&#xA;xcopy $(TargetDir)runtimes $(SolutionDir)rt$(TargetFrameworkSubdir)\bin\runtimes /S /I /Y&#xD;&#xA;" />
+    <Exec Command="IF NOT EXIST $(SolutionDir)rtNet\bin mkdir $(SolutionDir)rtNet\bin&#xD;&#xA;copy $(TargetDir)AltaxoCore.Providers.MKL.* $(SolutionDir)rtNet\bin\&#xD;&#xA;xcopy $(TargetDir)runtimes $(SolutionDir)rtNet\bin\runtimes /S /I /Y&#xD;&#xA;" />
   </Target>
 </Project>

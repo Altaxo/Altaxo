@@ -18,12 +18,12 @@
     <HtmlHelpName>Documentation</HtmlHelpName>
     <Language>en-US</Language>
     <DocumentationSources>
-      <DocumentationSource sourceFile="rtnet9.0-windows\bin\AltaxoBase.dll" />
-      <DocumentationSource sourceFile="rtnet9.0-windows\bin\AltaxoBase.xml" />
-      <DocumentationSource sourceFile="rtnet9.0-windows\bin\AltaxoCore.dll" />
-      <DocumentationSource sourceFile="rtnet9.0-windows\bin\AltaxoCore.xml" />
-      <DocumentationSource sourceFile="rtnet9.0-windows\bin\AltaxoDom.dll" />
-      <DocumentationSource sourceFile="rtnet9.0-windows\bin\AltaxoDom.xml" />
+      <DocumentationSource sourceFile="rtnet\bin\AltaxoBase.dll" />
+      <DocumentationSource sourceFile="rtnet\bin\AltaxoBase.xml" />
+      <DocumentationSource sourceFile="rtnet\bin\AltaxoCore.dll" />
+      <DocumentationSource sourceFile="rtnet\bin\AltaxoCore.xml" />
+      <DocumentationSource sourceFile="rtnet\bin\AltaxoDom.dll" />
+      <DocumentationSource sourceFile="rtnet\bin\AltaxoDom.xml" />
     </DocumentationSources>
     <HelpFileFormat>Website</HelpFileFormat>
     <SyntaxFilters>C#</SyntaxFilters>

@@ -1,8 +1,9 @@
-<Project Sdk="Microsoft.NET.Sdk.WindowsDesktop">
+<Project Sdk="Microsoft.NET.Sdk">
   <PropertyGroup>
     <RootNamespace>AvalonDock.Themes</RootNamespace>
-    <TargetFrameworks>net48;net9.0-windows</TargetFrameworks>
-    <UseWPF>true</UseWPF>
+    <TargetFramework>net9.0-windows</TargetFramework>
+		<PlatformTarget>x64</PlatformTarget>
+		<UseWPF>true</UseWPF>
     <AssemblyOriginatorKeyFile>sn.snk</AssemblyOriginatorKeyFile>
     <SignAssembly>true</SignAssembly>
     <GeneratePackageOnBuild>true</GeneratePackageOnBuild>

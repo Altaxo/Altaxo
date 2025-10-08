@@ -2,10 +2,9 @@
   <PropertyGroup>
     <AssemblyName>ZzIsNotNeeded</AssemblyName>
     <OutputType>Exe</OutputType>
-    <TargetFrameworks>net48;net9.0-windows</TargetFrameworks>
-    <CopyLocalLockFileAssemblies>true</CopyLocalLockFileAssemblies>
-    <Platforms>x64</Platforms>
+    <TargetFramework>net9.0-windows</TargetFramework>
     <PlatformTarget>x64</PlatformTarget>
+    <CopyLocalLockFileAssemblies>true</CopyLocalLockFileAssemblies>
   </PropertyGroup>
   <ItemGroup>
     <!-- Make sure this versions always match that of the MLNet project -->
@@ -13,6 +12,6 @@
     <PackageReference Include="Microsoft.ML.TimeSeries" Version="4.0.2" />   
   </ItemGroup>
   <Target Name="PostBuild" AfterTargets="PostBuildEvent">
-    <Exec Command="IF NOT EXIST $(SolutionDir)rt$(TargetFramework)\AddIns\ML.Net\ mkdir $(SolutionDir)rt$(TargetFramework)\AddIns\ML.Net\&#xD;&#xA;del $(TargetDir)zzIsNotNeeded.*&#xD;&#xA;copy $(TargetDir)*.dll $(SolutionDir)rt$(TargetFramework)\AddIns\ML.Net\&#xD;&#xA;" />
+    <Exec Command="IF NOT EXIST $(SolutionDir)rtNet\AddIns\ML.Net\ mkdir $(SolutionDir)rtNet\AddIns\ML.Net\&#xD;&#xA;del $(TargetDir)zzIsNotNeeded.*&#xD;&#xA;copy $(TargetDir)*.dll $(SolutionDir)rtNet\AddIns\ML.Net\&#xD;&#xA;" />
   </Target>
 </Project>
