@@ -598,9 +598,7 @@ namespace Altaxo.Serialization.AutoUpdates
             var warr = varr[i].Split(['_'], 2);
             var osPlatform = warr[0].ToLowerInvariant() switch
             {
-#if !NETFRAMEWORK
               "freebsd" => OSPlatform.FreeBSD,
-#endif
               "linux" => OSPlatform.Linux,
               "osx" => OSPlatform.OSX,
               "windows" => OSPlatform.Windows,

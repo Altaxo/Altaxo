@@ -71,10 +71,6 @@ public class NuGetReferenceResolver
     _cache = new SourceCacheContext();
     _targetFrameworks = new List<NuGetFramework>
     {
-#if NETFRAMEWORK
-      new NuGetFramework(FrameworkIdentifiers.Net, new Version(4, 5, 0, 0)),
-      new NuGetFramework(FrameworkConstants.CommonFrameworks.NetStandard20)
-#else
 #if NET9_0
       new NuGetFramework(FrameworkIdentifiers.Net, new Version(9, 0, 0, 0)),
 #else
@@ -82,7 +78,6 @@ public class NuGetReferenceResolver
 #endif
       new NuGetFramework(FrameworkIdentifiers.Net, new Version(8, 0, 0, 0)),
       new NuGetFramework(FrameworkConstants.CommonFrameworks.NetStandard20)
-#endif
     };
   }
 

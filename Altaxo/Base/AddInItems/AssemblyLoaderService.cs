@@ -84,18 +84,12 @@ namespace Altaxo.AddInItems
     /// <returns>The assembly that was loaded, or null if the assembly was not found.</returns>
     public Assembly LoadAssemblyFromFullySpecifiedName(string fullName)
     {
-#if NETFRAMEWORK
-      return System.Reflection.Assembly.LoadFrom(fullName);
-#else
       var context = new LoadContextIntoDefault(fullName);
       return context.LoadFromAssemblyPath(fullName);
-#endif
     }
   }
 }
 
-
-#if !NETFRAMEWORK
 namespace Altaxo.AddInItems
 {
   using System.Runtime.Loader;
@@ -193,5 +187,4 @@ namespace Altaxo.AddInItems
   }
 
 }
-#endif
 

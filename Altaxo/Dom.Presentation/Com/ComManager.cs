@@ -301,11 +301,7 @@ namespace Altaxo.Com
     public void RegisterApplicationForCom()
     {
       var applicationFileNameKind = RegistryValueKind.String; // if Altaxo is in an arbitrary path, use a simple string for the path, otherwise, use ExpandString (see below)
-#if NETFRAMEWORK
-      string applicationFileName = System.Reflection.Assembly.GetEntryAssembly().Location;
-#else
       string applicationFileName = System.Environment.ProcessPath; // have to use ProcessPath since GetEntryAssembly() would report the .DLL instead of the .exe file
-#endif
       if (Path.GetExtension(applicationFileName).ToLowerInvariant() != ".exe")
       {
         throw new InvalidProgramException($"Unexpected extension of the application file name (it should end with .exe), but it is: {applicationFileName}");
@@ -317,7 +313,7 @@ namespace Altaxo.Com
         p = p.Substring(0, p.Length - 2);
       }
 
-     
+
 
       var applicationFileName32 = System.IO.Path.Combine(System.IO.Path.GetDirectoryName(applicationFileName), p + "32.exe");
       var applicationFileName64 = System.IO.Path.Combine(System.IO.Path.GetDirectoryName(applicationFileName), p + "64.exe");
@@ -343,11 +339,11 @@ namespace Altaxo.Com
         }
 
         RegisterProject(Registry.LocalMachine, WOW_Mode.None, applicationFileName, applicationFileNameKind);
-        
-        RegisterGraphClass(Registry.LocalMachine, WOW_Mode.Reg64, is64BitSystem? applicationFileName64 : applicationFileName32, applicationFileNameKind);
-        RegisterGraphClassID(Registry.LocalMachine, WOW_Mode.Reg64, is64BitSystem? applicationFileName64 : applicationFileName32, applicationFileNameKind);
 
-        if(is64BitSystem)
+        RegisterGraphClass(Registry.LocalMachine, WOW_Mode.Reg64, is64BitSystem ? applicationFileName64 : applicationFileName32, applicationFileNameKind);
+        RegisterGraphClassID(Registry.LocalMachine, WOW_Mode.Reg64, is64BitSystem ? applicationFileName64 : applicationFileName32, applicationFileNameKind);
+
+        if (is64BitSystem)
         {
           RegisterGraphClass(Registry.LocalMachine, WOW_Mode.Reg32, applicationFileName32, applicationFileNameKind);
           RegisterGraphClassID(Registry.LocalMachine, WOW_Mode.Reg32, applicationFileName32, applicationFileNameKind);
@@ -364,7 +360,7 @@ namespace Altaxo.Com
       {
         RegisterProject(Registry.CurrentUser, WOW_Mode.None, applicationFileName, applicationFileNameKind);
 
-        if(is64BitSystem)
+        if (is64BitSystem)
         {
           // in a 64 bit operating system, we install the 64 bit exe in the normal registry ...
           // (it is important not to register the AnyCPU .exe file, but the .exe with predefined 64 bit bitness)
@@ -379,7 +375,7 @@ namespace Altaxo.Com
         {
           // in a 32 bit operating system, it is enough to register the 32 bit .exe
           RegisterGraphClass(Registry.CurrentUser, WOW_Mode.None, applicationFileName32, applicationFileNameKind);
-          RegisterGraphClassID(Registry.CurrentUser, WOW_Mode.None,  applicationFileName32, applicationFileNameKind);
+          RegisterGraphClassID(Registry.CurrentUser, WOW_Mode.None, applicationFileName32, applicationFileNameKind);
         }
 
       }

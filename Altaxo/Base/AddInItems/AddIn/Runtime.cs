@@ -136,12 +136,6 @@ namespace Altaxo.AddInItems
 
             // register all resources that are directly included into the assembly
             Current.GetRequiredService<IResourceService>().RegisterAssemblyResources(_loadedAssembly);
-
-#if DEBUG && NETFRAMEWORK
-            // preload assembly to provoke FileLoadException if dependencies are missing
-            // this test can be done on NetFramework only, since NetCore uses an AssemblyLoader to resolve dependencies
-            _loadedAssembly.GetExportedTypes();
-#endif
           }
           catch (FileNotFoundException ex)
           {
@@ -248,7 +242,7 @@ namespace Altaxo.AddInItems
     internal static Runtime Read(AddIn addIn, XmlReader reader, string? hintPath, Stack<ICondition> conditionStack)
     {
       var assemblyAttr = reader.GetAttribute("assembly");
-      if(string.IsNullOrEmpty(assemblyAttr))
+      if (string.IsNullOrEmpty(assemblyAttr))
       {
         throw new AddInLoadException("Import node requires at least the 'assembly' attribute.");
       }
@@ -311,11 +305,7 @@ namespace Altaxo.AddInItems
 
     protected virtual Assembly LoadAssembly(string assemblyString)
     {
-#if NETFRAMEWORK
-      var assembly = System.Reflection.Assembly.Load(assemblyString);
-#else
       var assembly = AssemblyLoaderService.Instance.LoadAssemblyFromPartialName(assemblyString, this._hintPath ?? string.Empty);
-#endif
 
 #if VerboseInfo_AssemblyLoading
       System.Diagnostics.Debug.WriteLine($"AssemblyLoader called with assemblyString={assemblyString}, result is {assembly.Location}");

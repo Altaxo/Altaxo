@@ -137,13 +137,6 @@ namespace Altaxo.Serialization.Origin.Tests
           line = line.Trim();
           if (!string.IsNullOrEmpty(line) && line[0] != '#')
           {
-#if NETFRAMEWORK
-            if (!line.StartsWith(@"\\?\"))
-            {
-              line = @"\\?\" + line;
-            }
-#endif
-
             var file = new FileInfo(line.Trim().Trim('"'));
             if (file.Exists)
             {

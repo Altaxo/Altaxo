@@ -147,17 +147,8 @@ internal static class ReferenceDirectiveHelper
       }
       else if (lib.Kind == LibraryRef.RefKind.FrameworkReference)
       {
-#if NETFRAMEWORK
-        // Try to resolve this from the global assembly cache
-        GlobalAssemblyCache.Instance.ResolvePartialName(lib.Value, out string location);
-        if (location is not null)
-        {
-          metadataReferences.Add(roslynHost.CreateMetadataReference(location));
-        }
-#else
         // in .NET, the global assembly cache is not supported, thus we threat it as a package reference
         await AddPackageReferencesAsync(lib, preferNugetFirst: false, metadataReferences, roslynHost, cancellationToken).ConfigureAwait(false);
-#endif
       }
       else if (lib.Kind == LibraryRef.RefKind.PackageReference)
       {
@@ -247,14 +238,7 @@ internal static class ReferenceDirectiveHelper
 
     if (file is null)
     {
-
-
-#if NETFRAMEWORK
-      var assIdentity = GlobalAssemblyCache.Instance.ResolvePartialName(displayName);
-      file = assIdentity is not null ? assIdentity.GetDisplayName() : null;
-#else
       file = DotNetCoreSdkAssemblyResolver.Instance.Resolve(displayName);
-#endif
     }
 
 

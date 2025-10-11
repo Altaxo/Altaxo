@@ -34,7 +34,7 @@ namespace Altaxo.Main
   /// </summary>
   public interface IProject : IDocumentNode, ICanBeDirty
   {
-    new bool IsDirty { get; set; }
+    public new bool IsDirty { get; set; }
 
     /// <summary>
     /// Clears the <see cref="IsDirty"/> flag in a more advanced manner,
@@ -43,7 +43,7 @@ namespace Altaxo.Main
     /// </summary>
     /// <param name="archiveManager">The archive manager that currently manages the archive in which the project is stored.</param>
     /// <param name="entryNameToItemDictionary">A dictionary where the keys are the archive entry names that where used to store the project items that are the values. The dictionary contains only those project items that need further handling (e.g. late load handling).</param>
-    void ClearIsDirty(Services.IProjectArchiveManager archiveManager, IDictionary<string, IProjectItem>? entryNameToItemDictionary);
+    public void ClearIsDirty(Services.IProjectArchiveManager archiveManager, IDictionary<string, IProjectItem>? entryNameToItemDictionary);
 
     /// <summary>
     /// Gets the types of project items currently supported in the project.
@@ -51,7 +51,7 @@ namespace Altaxo.Main
     /// <value>
     /// The project item types.
     /// </value>
-    IEnumerable<System.Type> ProjectItemTypes
+    public IEnumerable<System.Type> ProjectItemTypes
     {
       get;
     }
@@ -62,7 +62,7 @@ namespace Altaxo.Main
     /// <param name="type">The type (must be a type that implements <see cref="Altaxo.Main.IProjectItem"/>).</param>
     /// <returns>The collection in which items of this type are stored.</returns>
     /// <exception cref="ArgumentOutOfRangeException"></exception>
-    IProjectItemCollection GetCollectionForProjectItemType(System.Type type);
+    public IProjectItemCollection GetCollectionForProjectItemType(System.Type type);
 
     /// <summary>
     /// Enumerates the collections of all project items.
@@ -70,7 +70,7 @@ namespace Altaxo.Main
     /// <value>
     /// The collections of all project items.
     /// </value>
-    IEnumerable<IProjectItemCollection> ProjectItemCollections { get; }
+    public IEnumerable<IProjectItemCollection> ProjectItemCollections { get; }
 
 
     /// <summary>
@@ -78,7 +78,7 @@ namespace Altaxo.Main
     /// </summary>
     /// <param name="type">The type of project item.</param>
     /// <returns>The root path of this type of item.</returns>
-    AbsoluteDocumentPath GetRootPathForProjectItemType(System.Type type);
+    public AbsoluteDocumentPath GetRootPathForProjectItemType(System.Type type);
 
     /// <summary>
     /// Gets the document path for project item, using its type and name. It is not neccessary that the item is part of the project yet.
@@ -87,16 +87,12 @@ namespace Altaxo.Main
     /// <returns>The document part for the project item, deduces from its type and its name.</returns>
     /// <exception cref="System.ArgumentNullException">item</exception>
     public AbsoluteDocumentPath GetDocumentPathForProjectItem(IProjectItem item)
-#if NETFRAMEWORK
-      ;
-#else
- {
+    {
       if (item is null)
         throw new ArgumentNullException(nameof(item));
 
       return GetRootPathForProjectItemType(item.GetType()).Append(item.Name);
     }
-#endif
 
     /// <summary>
     /// Tests if the project item given in the argument is already contained in this document.
@@ -106,18 +102,13 @@ namespace Altaxo.Main
     /// <exception cref="System.ArgumentNullException">item</exception>
     /// <exception cref="System.ArgumentOutOfRangeException">The type of item is not yet considered here.</exception>
     public bool ContainsItem(IProjectItem item)
-#if NETFRAMEWORK
-      ;
-#else
- {
-      if (item is null)
-        throw new ArgumentNullException(nameof(item));
+    {
+      ArgumentNullException.ThrowIfNull(item);
 
       var coll = GetCollectionForProjectItemType(item.GetType());
 
       return coll.TryGetValue(item.Name, out var foundItem) && object.ReferenceEquals(foundItem, item);
     }
-#endif
 
     /// <summary>
     /// Tries to get an existing project item with the same type and name as the provided item.
@@ -127,7 +118,7 @@ namespace Altaxo.Main
     /// <returns>True if an item with the same type and name as the provided item exists in the project; otherwise, false.</returns>
     /// <exception cref="System.ArgumentNullException">item</exception>
     /// <exception cref="System.ArgumentOutOfRangeException"></exception>
-    bool TryGetExistingItemWithSameTypeAndName(IProjectItem item, [MaybeNullWhen(false)] out IProjectItem existingItem);
+    public bool TryGetExistingItemWithSameTypeAndName(IProjectItem item, [MaybeNullWhen(false)] out IProjectItem existingItem);
 
     /// <summary>
     /// Adds the provided project item to the Altaxo project, for instance a table or a graph, to the project. For <see cref="T:Altaxo.Main.Properties.ProjectFolderPropertyDocument"/>s,
@@ -136,7 +127,7 @@ namespace Altaxo.Main
     /// <param name="item">The item to add.</param>
     /// <exception cref="System.ArgumentNullException">item</exception>
     /// <exception cref="System.ArgumentOutOfRangeException">The type of item is not yet considered here.</exception>
-    void AddItem(IProjectItem item);
+    public void AddItem(IProjectItem item);
 
     /// <summary>
     /// Adds the provided project item to the Altaxo project, for instance a table or a graph, to the project. If another project item with the same name already exists,
@@ -146,7 +137,7 @@ namespace Altaxo.Main
     /// <param name="item">The item to add.</param>
     /// <exception cref="System.ArgumentNullException">item</exception>
     /// <exception cref="System.ArgumentOutOfRangeException">The type of item is not yet considered here.</exception>
-    void AddItemWithThisOrModifiedName(IProjectItem item);
+    public void AddItemWithThisOrModifiedName(IProjectItem item);
 
     /// <summary>
     /// Removes the provided project item to the Altaxo project, for instance a table or a graph, to the project.
@@ -154,17 +145,17 @@ namespace Altaxo.Main
     /// <param name="item">The item to remove.</param>
     /// <exception cref="System.ArgumentNullException">item</exception>
     /// <exception cref="System.ArgumentOutOfRangeException">The type of item is not yet considered here.</exception>
-    bool RemoveItem(IProjectItem item);
+    public bool RemoveItem(IProjectItem item);
 
     /// <summary>
     /// The properties associated with the project folders. Please note that the properties of the project are also stored inside this collection, with the name being an empty string (root folder node).
     /// </summary>
-    Altaxo.Main.Properties.ProjectFolderPropertyDocumentCollection ProjectFolderProperties { get; }
+    public Altaxo.Main.Properties.ProjectFolderPropertyDocumentCollection ProjectFolderProperties { get; }
 
     /// <summary>
     /// Get information about the folders in this project.
     /// </summary>
-    Altaxo.Main.ProjectFolders Folders { get; }
+    public Altaxo.Main.ProjectFolders Folders { get; }
 
   }
 }

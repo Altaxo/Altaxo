@@ -22,8 +22,6 @@
 
 #endregion Copyright
 
-#if !NETFRAMEWORK
-
 using System;
 using System.Collections.Generic;
 using System.IO;
@@ -129,4 +127,3 @@ public class DotNetCoreSdkAssemblyResolver
         Path.GetFileNameWithoutExtension(f).Contains(partialName, StringComparison.OrdinalIgnoreCase));
   }
 }
-#endif
