@@ -47,6 +47,7 @@
     <PackageReference Include="System.ComponentModel.Composition" Version="9.0.9" />
     <PackageReference Include="System.Runtime" Version="4.3.1" />
     <PackageReference Include="NuGet.Protocol" Version="6.14.0" />
+    <PackageReference Include="System.Formats.Asn1" Version="9.0.9" />  <!-- Nuget.Protocol 6.14.0 pulls in System.Format.Asn1 6.x.x, which is marked as vulnerable, so we overwrite this -->
   </ItemGroup>
 
   <ItemGroup>
