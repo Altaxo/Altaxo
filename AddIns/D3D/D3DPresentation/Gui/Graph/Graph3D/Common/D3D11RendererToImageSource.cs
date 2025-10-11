@@ -122,7 +122,7 @@ namespace Altaxo.Gui.Graph.Graph3D.Common
       }
 
       Scene?.SetHostSize(new PointD2D(sizeX, sizeY));
-      CreateAndBindTargets(sizeX, sizeY);
+      CreateAndBindTargets((uint)sizeX, (uint)sizeY);
     }
 
     /// <summary>
@@ -158,7 +158,7 @@ namespace Altaxo.Gui.Graph.Graph3D.Common
       D3D11DeviceFactory.Instance.PassbackDevice(ref _device);
     }
 
-    private void CreateAndBindTargets(int sizeX, int sizeY)
+    private void CreateAndBindTargets(uint sizeX, uint sizeY)
     {
       _d3dImageSource.SetRenderTargetDX11(null);
 
@@ -251,8 +251,8 @@ namespace Altaxo.Gui.Graph.Graph3D.Common
       if (renderTarget is null)
         throw new InvalidOperationException("Rendering failed because renderTarget is null");
 
-      int targetWidth = renderTarget.Description.Width;
-      int targetHeight = renderTarget.Description.Height;
+      var targetWidth = renderTarget.Description.Width;
+      var targetHeight = renderTarget.Description.Height;
 
       if (!(targetWidth > 0 && targetHeight > 0))
         throw new InvalidOperationException("Rendering failed because targetWidth or targetHeight is 0");

@@ -141,8 +141,8 @@ namespace Altaxo.Gui.Graph.Graph3D.Common
         //device = new Device(DriverType.Hardware, DeviceCreationFlags.BgraSupport, FeatureLevel.Level_10_0);
         device = D3D11DeviceFactory.Instance.BorrowDevice();
         // try to get the highest MSAA level with the highest quality
-        int sampleCount = 32;
-        int qlevel_sampleCount = 0;
+        uint sampleCount = 32;
+        uint qlevel_sampleCount = 0;
 
         for (; sampleCount >= 0; sampleCount /= 2)
         {
@@ -154,8 +154,8 @@ namespace Altaxo.Gui.Graph.Graph3D.Common
         {
           BindFlags = BindFlags.RenderTarget | BindFlags.ShaderResource,
           Format = Format.B8G8R8A8_UNorm_SRgb,
-          Width = sizeX,
-          Height = sizeY,
+          Width = (uint)sizeX,
+          Height = (uint)sizeY,
           MipLevels = 1,
           SampleDescription = new SampleDescription(sampleCount, qlevel_sampleCount - 1),
           Usage = ResourceUsage.Default,
@@ -168,8 +168,8 @@ namespace Altaxo.Gui.Graph.Graph3D.Common
         {
           BindFlags = BindFlags.DepthStencil,
           Format = Format.D32_Float_S8X24_UInt,
-          Width = sizeX,
-          Height = sizeY,
+          Width = (uint)sizeX,
+          Height = (uint)sizeY,
           MipLevels = 1,
           SampleDescription = new SampleDescription(sampleCount, qlevel_sampleCount - 1),
           Usage = ResourceUsage.Default,
@@ -208,8 +208,8 @@ namespace Altaxo.Gui.Graph.Graph3D.Common
           {
             BindFlags = BindFlags.RenderTarget | BindFlags.ShaderResource,
             Format = Format.B8G8R8A8_UNorm_SRgb,
-            Width = sizeX,
-            Height = sizeY,
+            Width = (uint)sizeX,
+            Height = (uint)sizeY,
             MipLevels = 1,
             SampleDescription = new SampleDescription(1, 0), // non MSAA
             Usage = ResourceUsage.Default,

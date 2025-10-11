@@ -107,7 +107,7 @@ namespace Altaxo.Gui.Graph.Graph3D.Common
         using (var bitmapFrameEncode = bitmapEncoder.CreateNewFrame(out var encoderOptions))
         {
           bitmapFrameEncode.Initialize();
-          bitmapFrameEncode.SetSize(bitmap.Size.Width, bitmap.Size.Height);
+          bitmapFrameEncode.SetSize((uint)bitmap.Size.Width, (uint)bitmap.Size.Height);
           var pixelFormat = PixelFormat.FormatDontCare;
           bitmapFrameEncode.SetPixelFormat(ref pixelFormat);
           bitmapFrameEncode.SetResolution(imageResolutionInDpi, imageResolutionInDpi);
