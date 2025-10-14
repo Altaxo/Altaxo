@@ -10,6 +10,8 @@
     <GenerateAssemblyInfo>false</GenerateAssemblyInfo>
     <NoWarn>CA1416</NoWarn>
     <CoreCompileDependsOn>GenAssInfo</CoreCompileDependsOn>
+    <AppendTargetFrameworkToOutputPath>false</AppendTargetFrameworkToOutputPath>
+    <OutputPath>..\..\rtNet\bin</OutputPath>
   </PropertyGroup>
 
   <ItemGroup>

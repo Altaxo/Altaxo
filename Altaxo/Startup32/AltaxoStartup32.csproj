@@ -19,9 +19,8 @@
   </ItemGroup>
   <ItemGroup>
     <None Include="..\Startup\app.config" Link="app.config" />
-  </ItemGroup>
-  <ItemGroup>
-    <ProjectReference Include="..\Workbench\Workbench.csproj" />
+    <Compile Include="..\Startup\Program.cs" Link="Program.cs" />
+    <Compile Include="..\Startup\StartupAssemblyLoadContext.cs" Link="StartupAssemblyLoadContext.cs" />
   </ItemGroup>
   <UsingTask TaskName="GitVersionFile" AssemblyFile="..\..\MSBuildVersioning.dll" />
   <Target Name="GenAssInfo">
