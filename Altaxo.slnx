@@ -15,6 +15,7 @@
     <BuildDependency Project="Altaxo/Base/AltaxoBase.csproj" />
     <BuildDependency Project="Altaxo/Core/AltaxoCore.csproj" />
     <BuildDependency Project="Altaxo/Dom.Presentation/AltaxoDom.Presentation.csproj" />
+     <BuildDependency Project="Altaxo/Workbench/Workbench.csproj" />
     <BuildDependency Project="Content/Content.csproj" />
      <BuildDependency Project="Libraries/UpdateDownloader/AutoUpdateDownloader.csproj" />
      <BuildDependency Project="Libraries/UpdateInstaller/AutoUpdateInstaller.csproj" />
@@ -91,8 +92,10 @@
   </Project>
  
   <Project Path="Altaxo/Startup32/AltaxoStartup32.csproj">
+    <BuildDependency Project="Altaxo/Workbench/Workbench.csproj" />
   </Project>
   <Project Path="Altaxo/Startup64/AltaxoStartup64.csproj">
+    <BuildDependency Project="Altaxo/Workbench/Workbench.csproj" />
   </Project>
   <Project Path="Altaxo/Workbench/Workbench.csproj">
   </Project>

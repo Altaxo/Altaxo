@@ -23,6 +23,7 @@ using System.IO;
 using System.Linq;
 using System.Reflection;
 using System.Resources;
+using System.Runtime.Loader;
 using System.Windows.Forms;
 using System.Windows.Input;
 using Altaxo.AddInItems;
@@ -31,7 +32,6 @@ using Altaxo.Gui.Workbench;
 using Altaxo.Gui.Workbench.Commands;
 using Altaxo.Main.Services;
 using Altaxo.Main.Services.ExceptionHandling;
-using Markdig.Wpf;
 
 namespace Altaxo.Gui.Startup
 {
@@ -91,8 +91,14 @@ namespace Altaxo.Gui.Startup
     /// Starts the application.
     /// </summary>
     [STAThread()]
-    public static void Main(string[] args)
+    public static void Main(string[] args, AssemblyLoadContext? loadContext)
     {
+      if (loadContext is not null)
+      {
+        // to avoid loading multiple instances of the same assembly, we use the load context of the top-most assembly (which should be Workbench)
+        LoadContextIntoDefault.SetDefaultInstance(loadContext);
+      }
+
       // Make sure to use nothing except from this Assembly (event not derived from another assembly)
       // until the splash screen is shown
       // otherwise other assemblies will be loaded before the splash screen is visible
