@@ -1037,6 +1037,22 @@ namespace Altaxo.Main
       return problemsDetected;
     }
 
+    public static bool ReportAssemblyLoadedTwiceProblems()
+    {
+      bool problemsDetected = false;
+      var hash = new HashSet<string>();
+      foreach (var assembly in AppDomain.CurrentDomain.GetAssemblies())
+      {
+        if (hash.Contains(assembly.FullName) && !string.IsNullOrEmpty(assembly.Location))
+        {
+          Current.InfoTextMessageService.WriteLine(MessageLevel.Error, "ReportAssemblyLoadingProblems", $"Assembly loaded twice: {assembly.FullName}, Location: {assembly.Location}");
+          problemsDetected = true;
+        }
+        hash.Add(assembly.FullName);
+      }
+      return problemsDetected;
+    }
+
 #if DEBUG && TRACEDOCUMENTNODES
 
 		public static bool ReportChildListProblems()
