@@ -31,6 +31,7 @@ using Altaxo.Gui.Workbench;
 using Altaxo.Gui.Workbench.Commands;
 using Altaxo.Main.Services;
 using Altaxo.Main.Services.ExceptionHandling;
+using Markdig.Wpf;
 
 namespace Altaxo.Gui.Startup
 {
@@ -425,6 +426,11 @@ namespace Altaxo.Gui.Startup
         startup.ConfigureUserAddIns(Path.Combine(configDirectory, "AddInInstallTemp"),
             Path.Combine(configDirectory, "AddIns"));
       }
+
+      // FORCE LOADING OF WORKBENCHBASE before WORKBENCHBASE is loaded dynamically
+      var artefact1 = new WorkbenchBaseDummyClass();
+      var artefact2 = new MarkdigWpfDummyClass();
+
 
       Current.Log.Info("Loading AddInTree...");
       startup.RunInitialization();
