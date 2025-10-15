@@ -83,9 +83,8 @@ namespace Altaxo
 
       var startupMethod = startupClassType.GetMethod(entryMethodName, BindingFlags.Static | BindingFlags.Public);
 
-      var startupMethodArgs = new object[2];
+      var startupMethodArgs = new object[1];
       startupMethodArgs[0] = args;
-      startupMethodArgs[1] = context;
       startupMethod.Invoke(null, startupMethodArgs);
     }
 

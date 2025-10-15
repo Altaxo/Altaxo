@@ -104,32 +104,7 @@ namespace Altaxo.AddInItems
   /// <seealso cref="System.Runtime.Loader.AssemblyLoadContext" />
   public class LoadContextIntoDefault : AssemblyLoadContext
   {
-    private static AssemblyLoadContext Instance
-    {
-      get
-      {
-        field ??= new LoadContextIntoDefault(Assembly.GetEntryAssembly().Location);
-        return field;
-      }
-      set
-      {
-        if (value is null)
-          throw new ArgumentNullException(nameof(value));
-        if (field is not null)
-          throw new InvalidOperationException("Instance can only be set once!");
-
-        field = value;
-      }
-    }
-
-    /// <summary>
-    /// Sets the default instance. If possible, this should be the load context of the top-most assembly, at the time being this is the assembly Workbench.
-    /// </summary>
-    /// <param name="instance">The instance.</param>
-    public static void SetDefaultInstance(AssemblyLoadContext instance)
-    {
-      Instance = instance;
-    }
+    static LoadContextIntoDefault Instance { get; } = new LoadContextIntoDefault(Assembly.GetEntryAssembly().Location);
 
     /// <summary>Resolver for the addin folder</summary>
     private AssemblyDependencyResolver _resolver;
