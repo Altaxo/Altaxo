@@ -427,6 +427,11 @@ namespace Altaxo.Gui.Startup
             Path.Combine(configDirectory, "AddIns"));
       }
 
+      // FORCE LOADING OF WORKBENCHBASE before WORKBENCHBASE is loaded dynamically
+      var artefact1 = new WorkbenchBaseDummyClass();
+      var artefact2 = new MarkdigWpfDummyClass();
+
+
       Current.Log.Info("Loading AddInTree...");
       startup.RunInitialization();
 
