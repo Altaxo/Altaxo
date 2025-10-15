@@ -104,16 +104,6 @@ namespace Altaxo.AddInItems
   /// <seealso cref="System.Runtime.Loader.AssemblyLoadContext" />
   public class LoadContextIntoDefault : AssemblyLoadContext
   {
-    /// <summary>
-    /// Gets or sets the instance that is used as default assembly
-    /// load context.
-    /// If possible, this should be the load context of the top-most assembly, at the time being this is the assembly Workbench.
-    /// </summary>
-    /// <value>
-    /// The instance.
-    /// </value>
-    /// <exception cref="Markdig.Helpers.ThrowHelper.ArgumentNullException(System.String)">value</exception>
-    /// <exception cref="Markdig.Helpers.ThrowHelper.InvalidOperationException(System.String)">Instance can only be set once!</exception>
     private static AssemblyLoadContext Instance
     {
       get

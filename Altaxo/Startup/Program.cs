@@ -26,7 +26,6 @@ using System;
 using System.IO;
 using System.Linq;
 using System.Reflection;
-using System.Windows;
 
 namespace Altaxo
 {
@@ -64,54 +63,29 @@ namespace Altaxo
         }
       }
 
-      MethodInfo? startupMethod = null;
+      string entryAssemblyName = "Workbench.dll";
+      string entryClassName = "Altaxo.Gui.Startup.StartupMain";
+      string entryMethodName = "Main";
+
+      var entryAssemblyDirectoryName = Path.GetDirectoryName(Assembly.GetEntryAssembly().Location);
+      var dirInfo = new DirectoryInfo(entryAssemblyDirectoryName);
+      var resolvedFile = dirInfo.GetFiles(entryAssemblyName, SearchOption.AllDirectories).FirstOrDefault();
+
+      if (resolvedFile is null)
+      {
+        throw new ApplicationException($"Can not find start assembly {entryAssemblyName} in folder {entryAssemblyDirectoryName}!");
+      }
+
+      var context = new StartupAssemblyLoadContext(entryAssemblyName);
+      var startupAssembly = context.LoadFromAssemblyPath(resolvedFile.FullName);
+
+      var startupClassType = startupAssembly.GetType(entryClassName);
+
+      var startupMethod = startupClassType.GetMethod(entryMethodName, BindingFlags.Static | BindingFlags.Public);
+
       var startupMethodArgs = new object[2];
-      try
-      {
-        string entryAssemblyName = "Workbench.dll";
-        string entryClassName = "Altaxo.Gui.Startup.StartupMain";
-        string entryMethodName = "Main";
-
-        var entryAssemblyDirectoryName = Path.GetDirectoryName(Assembly.GetEntryAssembly().Location);
-        var dirInfo = new DirectoryInfo(entryAssemblyDirectoryName);
-        var resolvedFile = dirInfo.GetFiles(entryAssemblyName, SearchOption.AllDirectories).FirstOrDefault();
-
-        if (resolvedFile is null)
-        {
-          throw new ApplicationException($"Can not locate start assembly {entryAssemblyName} in folder {entryAssemblyDirectoryName}!");
-        }
-
-        var context = new StartupAssemblyLoadContext(entryAssemblyName);
-        var startupAssembly = context.LoadFromAssemblyPath(resolvedFile.FullName);
-        if (startupAssembly is null)
-        {
-          throw new ApplicationException($"Can not load start assembly {entryAssemblyName} from file {resolvedFile.FullName}!");
-        }
-
-        var startupClassType = startupAssembly.GetType(entryClassName);
-        if (startupClassType is null)
-        {
-          throw new ApplicationException($"Can not locate class that contains the entry point ({entryClassName}) in assembly {startupAssembly.FullName}!");
-        }
-
-        startupMethod = startupClassType.GetMethod(entryMethodName, BindingFlags.Static | BindingFlags.Public);
-        if (startupMethod is null)
-        {
-          throw new ApplicationException($"Can not locate entry point ({entryMethodName}) in class {startupClassType.FullName} in assembly {startupAssembly.FullName}!");
-        }
-
-        startupMethodArgs[0] = args;
-        startupMethodArgs[1] = context;
-      }
-      catch (Exception ex)
-      {
-        string msg = "Fatal error during startup of Altaxo: " + ex.Message;
-        if (ex.InnerException is not null)
-          msg += "\nInner exception: " + ex.InnerException.Message;
-        MessageBox.Show(msg, "Fatal Error", MessageBoxButton.OK, MessageBoxImage.Error, MessageBoxResult.None);
-        return;
-      }
-
+      startupMethodArgs[0] = args;
+      startupMethodArgs[1] = context;
       startupMethod.Invoke(null, startupMethodArgs);
     }
 

@@ -32,9 +32,11 @@ using System.Runtime.Loader;
 namespace Altaxo
 {
   /// <summary>
-  /// Assembly load context intended to be used with the topmost assembly of the application (at this time it is the assembly 'Workbench').
-  /// By using this context for workbench, all assemblies that Workbench depends on are loaded into the same (this) context.
-  /// We also transfer this context to the startup in assembly Workbench, so that all other main assemblies are loaded into this context, too.
+  /// LoadContextIntoDefault is an assembly load context intended for plugin assemblies with dependencies.
+  /// The original plugin assembly is loaded into a newly created instance of this class (this can not be helped?),
+  /// but at least all dependencies of the original plugin dependency are loaded into the same context, which is <see cref="Instance"/>.
+  /// The default context can not be used, because then the resolution of 3rd level assemblies will fail.
+  /// But in this way it can be avoided that we have unintentionally load multiple instances of the same assembly.
   /// </summary>
   /// <seealso cref="System.Runtime.Loader.AssemblyLoadContext" />
   public class StartupAssemblyLoadContext : AssemblyLoadContext
@@ -43,19 +45,18 @@ namespace Altaxo
     private AssemblyDependencyResolver _resolver;
 
     /// <summary>
-    /// The assembly file name of the main app (currently this is Workbench).
-    /// For debugging purposes only.
+    /// The plugin assembly file name (for debugging purposes only).
     /// </summary>
-    private string _mainAppAssemblyFileName;
+    private string _pluginAssemblyFileName;
 
     /// <summary>
     /// Initializes a new instance of the <see cref="StartupAssemblyLoadContext"/> class.
     /// </summary>
-    /// <param name="mainAppAssemblyFileName">The full file name of the original plugin assembly file.</param>
-    public StartupAssemblyLoadContext(string mainAppAssemblyFileName)
+    /// <param name="pluginAssemblyFileName">The full file name of the original plugin assembly file.</param>
+    public StartupAssemblyLoadContext(string pluginAssemblyFileName)
     {
-      _mainAppAssemblyFileName = mainAppAssemblyFileName;
-      _resolver = new AssemblyDependencyResolver(mainAppAssemblyFileName);
+      _pluginAssemblyFileName = pluginAssemblyFileName;
+      _resolver = new AssemblyDependencyResolver(pluginAssemblyFileName);
     }
 
     /// <summary>
@@ -114,7 +115,7 @@ namespace Altaxo
     protected override IntPtr LoadUnmanagedDll(string unmanagedDllName)
     {
       var libraryPath = _resolver.ResolveUnmanagedDllToPath(unmanagedDllName);
-      if (libraryPath is not null)
+      if (!(libraryPath is null))
       {
         return LoadUnmanagedDllFromPath(libraryPath);
       }
