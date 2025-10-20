@@ -99,7 +99,7 @@ namespace Altaxo.Serialization.OpenXml.Excel
         var includeFilePathAsProperty = info.GetBoolean("IncludeFilePathAsProperty");
         var includeSheetNameAsProperty = info.GetBoolean("IncludeSheetNameAsProperty");
         var headerLinesDestination = info.GetEnum<AsciiHeaderLinesDestination>("HeaderLinesDestination");
-        var indicesOfImportedSheets = info.GetArrayOfValues<int>("IndicesOfImportedSheets", null);
+        info.GetArray("IndicesOfImportedSheets", out int[] indicesOfImportedSheets);
         var numberOfMainHeaderLines = info.GetNullableInt32("NumberOfMainHeaderLines");
         var indexOfCaptionLine = info.GetNullableInt32("IndexOfCaptionLine");
         var recognizedStructure = info.GetValueOrNull<AsciiLineComposition>("RecognizedStructure", null);
