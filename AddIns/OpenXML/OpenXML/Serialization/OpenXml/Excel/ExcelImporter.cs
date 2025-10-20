@@ -297,6 +297,9 @@ namespace Altaxo.Serialization.OpenXml.Excel
           {
             ++idxColumn;
 
+            if (idxColumn >= docAnalysis.HighestScoredLineStructure.Count)
+              break;
+
             switch (docAnalysis.HighestScoredLineStructure[idxColumn].ColumnType)
             {
               case Ascii.AsciiColumnType.Int64:
