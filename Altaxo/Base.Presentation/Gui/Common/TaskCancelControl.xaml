@@ -32,11 +32,6 @@
             Content="Abandon task.." 
             HorizontalAlignment="Center"  />
     <Button Grid.Row="6" 
-            Command="{Binding CmdAbort}"
-            Visibility="{Binding IsAbortVisible, Converter={x:Static axogcc:FalseToVisibilityHiddenConverter.Instance}}"
-            Content="Abort" 
-            HorizontalAlignment="Center"  />
-    <Button Grid.Row="6" 
             Command="{Binding CmdInterrupt}"
             Visibility="{Binding IsInterruptVisible, Converter={x:Static axogcc:FalseToVisibilityHiddenConverter.Instance}}"
             Content="Interrupt"

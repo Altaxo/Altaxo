@@ -28,14 +28,13 @@ namespace Altaxo.Gui.Common
       CancellationSoftRequested = 1,
       CancellationHardRequested = 2,
       InterruptRequested = 3,
-      AbortRequested = 4,
       AbandonRequested = 5,
     };
 
     protected Timer? _timer;
     protected int _delayMilliseconds;
-    Task? _task;
-    Thread? _thread;
+    private Task? _task;
+    private Thread? _thread;
     public event PropertyChangedEventHandler? PropertyChanged;
 
     public TaskCancelController()
@@ -43,7 +42,6 @@ namespace Altaxo.Gui.Common
       CmdCancellationSoft = new RelayCommand(EhCancellationSoft);
       CmdCancellationHard = new RelayCommand(EhCancellationHard);
       CmdInterrupt = new RelayCommand(EhInterrupt);
-      CmdAbort = new RelayCommand(EhAbort);
       CmdAbandon = new RelayCommand(EhAbandon);
     }
 
@@ -83,8 +81,6 @@ namespace Altaxo.Gui.Common
 
     public ICommand CmdInterrupt { get; }
 
-    public ICommand CmdAbort { get; }
-
     public ICommand CmdAbandon { get; }
 
     private State _stateOfCancelling;
@@ -102,7 +98,6 @@ namespace Altaxo.Gui.Common
           OnPropertyChanged(nameof(IsCancellationSoftVisible));
           OnPropertyChanged(nameof(IsCancellationHardVisible));
           OnPropertyChanged(nameof(IsInterruptVisible));
-          OnPropertyChanged(nameof(IsAbortVisible));
           OnPropertyChanged(nameof(IsAbandonVisible));
         }
       }
@@ -111,8 +106,7 @@ namespace Altaxo.Gui.Common
     public bool IsCancellationSoftVisible => _stateOfCancelling == State.Running;
     public bool IsCancellationHardVisible => _stateOfCancelling == State.CancellationSoftRequested;
     public bool IsInterruptVisible => IsThread ? _stateOfCancelling == State.CancellationHardRequested : false;
-    public bool IsAbortVisible => IsThread ? _stateOfCancelling == State.InterruptRequested : false;
-    public bool IsAbandonVisible => ((int)_stateOfCancelling) >= (IsThread ? (int)State.AbortRequested : (int)State.CancellationHardRequested);
+    public bool IsAbandonVisible => ((int)_stateOfCancelling) >= (IsThread ? (int)State.InterruptRequested : (int)State.CancellationHardRequested);
 
 
     private IProgressMonitor? _monitor;
@@ -146,7 +140,7 @@ namespace Altaxo.Gui.Common
       }
     }
 
-    bool _isWindowVisible;
+    private bool _isWindowVisible;
 
     public bool IsWindowVisible
     {
@@ -162,7 +156,7 @@ namespace Altaxo.Gui.Common
     }
 
 
-    double _progressValue;
+    private double _progressValue;
     public double ProgressValue
     {
       get
@@ -185,7 +179,7 @@ namespace Altaxo.Gui.Common
       }
     }
 
-    string _progressText = "An operation has not yet finished. If you feel that the operation takes unusual long time, you can interrupt it.";
+    private string _progressText = "An operation has not yet finished. If you feel that the operation takes unusual long time, you can interrupt it.";
     public string ProgressText
     {
       get
@@ -263,26 +257,11 @@ namespace Altaxo.Gui.Common
       }
       else
       {
-        StateOfCancelling = State.AbortRequested;
+        StateOfCancelling = State.AbandonRequested;
       }
     }
 
-    protected void EhAbort()
-    {
-      if (_thread is not null)
-      {
-        StateOfCancelling = State.AbortRequested;
 
-        if (_thread.IsAlive)
-        {
-          _thread.Abort();
-        }
-      }
-      else
-      {
-        StateOfCancelling = State.AbortRequested;
-      }
-    }
 
     protected void EhAbandon()
     {
