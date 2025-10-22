@@ -35,8 +35,35 @@ namespace Altaxo.Calc.Interpolation
     private double _xMean = 0;
     private double _xScale = 1;
 
-    public int RegressionOrder { get; set; }
+    public int RegressionOrder { get; init; }
 
+    /// <summary>
+    /// Gets the fit. This property is only valid after the <see cref="Interpolate(IReadOnlyList{double}, IReadOnlyList{double})"/> function has been called.
+    /// Note that the x-values of the fit were transformed, using <see cref="XMean"/> and <see cref="XScale"/> in the manner of <c>xt = (x - XMean) * XScale</c>, see <see cref="TransformXToInternalRepresentation(double)"/>."/>
+    /// </summary>
+    public Regression.LinearFitBySvd? Fit => _fit;
+
+    /// <summary>
+    /// Gets the mean of the set of x-values used for the fit.
+    /// </summary>
+    public double XMean => _xMean;
+
+    /// <summary>
+    /// Gets the inverse of the half span of the set of x-values used for the fit.
+    /// </summary>
+    public double XScale => _xScale;
+
+    /// <summary>
+    /// Transforms the x-value to the internal x-value, that can be used in conjunction with the fit parameters to get the y-value.
+    /// </summary>
+    /// <param name="x">The (external) x-value.</param>
+    /// <returns>The transformed x-value.</returns>
+    public double TransformXToInternalRepresentation(double x) => (x - _xMean) * _xScale;
+
+    /// <summary>
+    /// Initializes a new instance of the <see cref="PolynomialRegressionAsInterpolation"/> class.
+    /// The default regression order is 2.
+    /// </summary>
     public PolynomialRegressionAsInterpolation()
     {
       RegressionOrder = 2;
