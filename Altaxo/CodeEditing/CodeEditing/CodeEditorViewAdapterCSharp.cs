@@ -305,7 +305,9 @@ namespace Altaxo.CodeEditing
 
       _referenceUpdateCancellationTokenSource?.Cancel();
       _referenceUpdateCancellationTokenSource = new CancellationTokenSource();
-      Task.Run(() => UpdateReferencesAsync(document, syntaxTree, _referenceUpdateCancellationTokenSource.Token));
+      var cancellationToken = _referenceUpdateCancellationTokenSource.Token;
+
+      Task.Run(() => UpdateReferencesAsync(document, syntaxTree, cancellationToken), cancellationToken);
     }
 
     /// <summary>
@@ -339,51 +341,56 @@ namespace Altaxo.CodeEditing
       _syntaxTreeCancellationTokenSource?.Dispose();
 
       _syntaxTreeCancellationTokenSource = new CancellationTokenSource();
-      var token = _syntaxTreeCancellationTokenSource.Token;
+      var cancellationToken = _syntaxTreeCancellationTokenSource.Token;
 
-
-      Task.Run(
-        () =>
-        {
-          var document = Workspace.CurrentSolution.GetDocument(DocumentId);
-          SyntaxTree syntaxTree = null;
-          try
-          {
-            syntaxTree = document.GetSyntaxTreeAsync(token).Result;
-          }
-          catch (Exception)
-          {
-            return;
-          }
-
-          if (syntaxTree is not null)
-          {
-            LastSyntaxTree = (document, syntaxTree);
-            OnSyntaxTreeChanged(document, syntaxTree);
-          }
-
-          if (token.IsCancellationRequested)
-            return;
-
-          SemanticModel semanticModel = null;
-          try
-          {
-            semanticModel = document.GetSemanticModelAsync(token).Result;
-          }
-          catch (Exception)
-          {
-            return;
-          }
-
-          if (null != semanticModel)
-          {
-            LastSemanticModel = (document, semanticModel);
-            SemanticModelChanged?.Invoke(document, semanticModel);
-          }
-        },
-        token
-        );
+      Task.Run(() => BackgroundEvaluationOfSyntaxTreeAndSemanticModelAsync(cancellationToken), cancellationToken);
     }
+
+    private async Task BackgroundEvaluationOfSyntaxTreeAndSemanticModelAsync(CancellationToken token)
+    {
+      var document = Workspace.CurrentSolution.GetDocument(DocumentId);
+      if (document is null)
+      {
+        System.Diagnostics.Debug.WriteLine("CodeEditorViewAdapterCSharp.BackgroundEvaluationOfSyntaxTreeAndSemanticModelAsync: document is null (probably the dialog was closed before)");
+        return;
+      }
+
+      SyntaxTree syntaxTree = null;
+      try
+      {
+        syntaxTree = await document.GetSyntaxTreeAsync(token).ConfigureAwait(false);
+      }
+      catch (Exception)
+      {
+        return;
+      }
+
+      if (syntaxTree is not null)
+      {
+        LastSyntaxTree = (document, syntaxTree);
+        OnSyntaxTreeChanged(document, syntaxTree);
+      }
+
+      if (token.IsCancellationRequested)
+        return;
+
+      SemanticModel semanticModel = null;
+      try
+      {
+        semanticModel = await document.GetSemanticModelAsync(token).ConfigureAwait(false);
+      }
+      catch (Exception)
+      {
+        return;
+      }
+
+      if (null != semanticModel)
+      {
+        LastSemanticModel = (document, semanticModel);
+        SemanticModelChanged?.Invoke(document, semanticModel);
+      }
+    }
+    
 
     private void EhSourceTextAdapter_TextChanged(object sender, TextChangeEventArgs e)
     {
@@ -664,9 +671,10 @@ namespace Altaxo.CodeEditing
     {
       var syntaxRoot = await syntaxTree.GetRootAsync(cancellationToken).ConfigureAwait(false);
       var libraries = ReferenceDirectiveHelper.ParseReferences(syntaxRoot);
-      if (cancellationToken.IsCancellationRequested)
-        return;
-      await Workspace.UpdateLibrariesAsync(DocumentId, libraries, cancellationToken).ConfigureAwait(false);
+      if (!cancellationToken.IsCancellationRequested)
+      {
+        await Workspace.UpdateLibrariesAsync(DocumentId, libraries, cancellationToken).ConfigureAwait(false);
+      }
     }
 
 

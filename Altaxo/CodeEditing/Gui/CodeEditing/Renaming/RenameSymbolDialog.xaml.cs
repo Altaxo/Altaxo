@@ -63,6 +63,19 @@ namespace Altaxo.Gui.CodeEditing.Renaming
       }
     }
 
+    protected override void OnPreviewKeyDown(KeyEventArgs e)
+    {
+      if (e.Key == Key.Enter)
+      {
+        e.Handled = true; // Prevents bubbling of the ENTER key to host dialogs (i.e. to dialogs below)
+        ShouldRename = true;
+        Close();
+      }
+
+      base.OnPreviewKeyDown(e);
+    }
+
+
     private void Rename_Click(object sender, RoutedEventArgs e)
     {
       ShouldRename = true;
