@@ -322,6 +322,23 @@ namespace Altaxo.Calc
     /// <param name="x">The x value.</param>
     /// <param name="coefficients">The polynomial coefficients in ascending order.</param>
     /// <returns>The value of the evaluated polynom.</returns>
+    public static double EvaluatePolynomOrderAscending(double x, ReadOnlySpan<double> coefficients)
+    {
+      double sum = 0;
+      for (int i = coefficients.Length - 1; i >= 0; --i)
+      {
+        sum *= x;
+        sum += coefficients[i];
+      }
+      return sum;
+    }
+
+    /// <summary>
+    /// Evaluates the polynom. The polynomial coefficients are given in ascending order.
+    /// </summary>
+    /// <param name="x">The x value.</param>
+    /// <param name="coefficients">The polynomial coefficients in ascending order.</param>
+    /// <returns>The value of the evaluated polynom.</returns>
     public static double EvaluatePolynomOrderAscending(double x, IReadOnlyList<double> coefficients)
     {
       double sum = 0;
@@ -340,6 +357,24 @@ namespace Altaxo.Calc
     /// <param name="x">The x value.</param>
     /// <param name="coefficients">The polynomial coefficients in ascending order.</param>
     /// <returns>The value of the 1st derivative of the polynom.</returns>
+    public static double EvaluatePolynom1stDerivativeOrderAscending(double x, ReadOnlySpan<double> coefficients)
+    {
+      double sum = 0;
+      for (int i = coefficients.Length - 1; i >= 1; --i)
+      {
+        sum *= x;
+        sum += coefficients[i] * i;
+      }
+      return sum;
+    }
+
+    /// <summary>
+    /// Evaluates the 1st derivative of a polynom. The polynomial coefficients are given in ascending order,
+    /// thus a0 is the first element in the array of coefficients.
+    /// </summary>
+    /// <param name="x">The x value.</param>
+    /// <param name="coefficients">The polynomial coefficients in ascending order.</param>
+    /// <returns>The value of the 1st derivative of the polynom.</returns>
     public static double EvaluatePolynom1stDerivativeOrderAscending(double x, IReadOnlyList<double> coefficients)
     {
       double sum = 0;
@@ -347,6 +382,23 @@ namespace Altaxo.Calc
       {
         sum *= x;
         sum += coefficients[i] * i;
+      }
+      return sum;
+    }
+
+    /// <summary>
+    /// Evaluates the polynom. The polynomial coefficients are given in ascending order.
+    /// </summary>
+    /// <param name="x">The x value.</param>
+    /// <param name="coefficients">The polynomila coefficients in ascending order.</param>
+    /// <returns>The value of the evaluated polynom.</returns>
+    public static double EvaluatePolynomOrderDescending(double x, ReadOnlySpan<double> coefficients)
+    {
+      double sum = 0;
+      for (int i = 0; i < coefficients.Length; ++i)
+      {
+        sum *= x;
+        sum += coefficients[i];
       }
       return sum;
     }
