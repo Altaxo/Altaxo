@@ -115,8 +115,13 @@ namespace Altaxo.Data
     {
       public EventHandler ChildChanged;
       protected int _CallCount = 0;
-
+      protected string _identifier;
       private Altaxo.Main.ISuspendToken _suspendToken;
+
+      public MyColumnParent(string identifier)
+      {
+        _identifier = identifier;
+      }
 
       public void Reset()
       {
@@ -137,6 +142,9 @@ namespace Altaxo.Data
 
       public void EhChildChanged(object sender, EventArgs e)
       {
+        if (ChildChanged is null && sender is SuspendableDocumentLeafNode n && n.IsDisposeInProgress)
+          return; // ignore Dispose messages coming from the Column after the test has finished
+
         Assert.NotNull(ChildChanged); // "Test redirector for OnChildChange must not be null!");
         ChildChanged(sender, e);
       }
@@ -193,8 +201,10 @@ namespace Altaxo.Data
         Assert.True(sender is not null, "Sender must be the column");
         Assert.Equal(typeof(Altaxo.Data.DoubleColumn), sender.GetType());
         Assert.True(e is not null, "Awaiting valid data change event args");
-        Assert.Equal(typeof(Altaxo.Data.DataColumnChangedEventArgs), e.GetType());
-        var ea = (Altaxo.Data.DataColumnChangedEventArgs)e;
+        if (e is not Altaxo.Data.DataColumnChangedEventArgs ea)
+        {
+          throw new Xunit.Sdk.XunitException("Expected DataColumnChangedEventArgs");
+        }
         Assert.Equal(5, ea.MinRowChanged);
         Assert.Equal(6, ea.MaxRowChanged);
         Assert.False(ea.HasRowCountDecreased);
@@ -207,8 +217,10 @@ namespace Altaxo.Data
         Assert.True(sender is not null, "Sender must be the column");
         Assert.Equal(typeof(Altaxo.Data.DoubleColumn), sender.GetType());
         Assert.True(e is not null, "Awaiting valid data change event args");
-        Assert.Equal(typeof(Altaxo.Data.DataColumnChangedEventArgs), e.GetType());
-        var ea = (Altaxo.Data.DataColumnChangedEventArgs)e;
+        if (e is not Altaxo.Data.DataColumnChangedEventArgs ea)
+        {
+          throw new Xunit.Sdk.XunitException("Expected DataColumnChangedEventArgs");
+        }
         Assert.Equal(5, ea.MinRowChanged);
         Assert.Equal(6, ea.MaxRowChanged);
         Assert.True(ea.HasRowCountDecreased);
@@ -221,8 +233,10 @@ namespace Altaxo.Data
         Assert.True(sender is not null, "Sender must be the column");
         Assert.Equal(typeof(Altaxo.Data.DoubleColumn), sender.GetType());
         Assert.True(e is not null, "Awaiting valid data change event args");
-        Assert.Equal(typeof(Altaxo.Data.DataColumnChangedEventArgs), e.GetType());
-        var ea = (Altaxo.Data.DataColumnChangedEventArgs)e;
+        if (e is not Altaxo.Data.DataColumnChangedEventArgs ea)
+        {
+          throw new Xunit.Sdk.XunitException("Expected DataColumnChangedEventArgs");
+        }
         Assert.Equal(7, ea.MinRowChanged);
         Assert.Equal(8, ea.MaxRowChanged);
         Assert.False(ea.HasRowCountDecreased);
@@ -236,8 +250,10 @@ namespace Altaxo.Data
         Assert.True(sender is not null, "Sender must be the column");
         Assert.Equal(typeof(Altaxo.Data.DoubleColumn), sender.GetType());
         Assert.True(e is not null, "Awaiting valid data change event args");
-        Assert.Equal(typeof(Altaxo.Data.DataColumnChangedEventArgs), e.GetType());
-        var ea = (Altaxo.Data.DataColumnChangedEventArgs)e;
+        if (e is not Altaxo.Data.DataColumnChangedEventArgs ea)
+        {
+          throw new Xunit.Sdk.XunitException("Expected DataColumnChangedEventArgs");
+        }
         Assert.Equal(0, ea.MinRowChanged);
         Assert.Equal(13, ea.MaxRowChanged);
         Assert.True(ea.HasRowCountDecreased);
@@ -250,8 +266,10 @@ namespace Altaxo.Data
         Assert.True(sender is not null, "Sender must be the column");
         Assert.Equal(typeof(Altaxo.Data.DoubleColumn), sender.GetType());
         Assert.True(e is not null, "Awaiting valid data change event args");
-        Assert.Equal(typeof(Altaxo.Data.DataColumnChangedEventArgs), e.GetType());
-        var ea = (Altaxo.Data.DataColumnChangedEventArgs)e;
+        if (e is not Altaxo.Data.DataColumnChangedEventArgs ea)
+        {
+          throw new Xunit.Sdk.XunitException("Expected DataColumnChangedEventArgs");
+        }
         Assert.Equal(5, ea.MinRowChanged);
         Assert.Equal(13, ea.MaxRowChanged);
         Assert.False(ea.HasRowCountDecreased);
@@ -264,8 +282,10 @@ namespace Altaxo.Data
         Assert.True(sender is not null, "Sender must be the column");
         Assert.Equal(typeof(Altaxo.Data.DoubleColumn), sender.GetType());
         Assert.True(e is not null, "Awaiting valid data change event args");
-        Assert.Equal(typeof(Altaxo.Data.DataColumnChangedEventArgs), e.GetType());
-        var ea = (Altaxo.Data.DataColumnChangedEventArgs)e;
+        if (e is not Altaxo.Data.DataColumnChangedEventArgs ea)
+        {
+          throw new Xunit.Sdk.XunitException("Expected DataColumnChangedEventArgs");
+        }
         Assert.Equal(0, ea.MinRowChanged);
         Assert.Equal(13, ea.MaxRowChanged);
         Assert.False(ea.HasRowCountDecreased);
@@ -278,8 +298,10 @@ namespace Altaxo.Data
         Assert.True(sender is not null, "Sender must be the column");
         Assert.Equal(typeof(Altaxo.Data.DoubleColumn), sender.GetType());
         Assert.True(e is not null, "Awaiting valid data change event args");
-        Assert.Equal(typeof(Altaxo.Data.DataColumnChangedEventArgs), e.GetType());
-        var ea = (Altaxo.Data.DataColumnChangedEventArgs)e;
+        if (e is not Altaxo.Data.DataColumnChangedEventArgs ea)
+        {
+          throw new Xunit.Sdk.XunitException("Expected DataColumnChangedEventArgs");
+        }
         Assert.Equal(9, ea.MinRowChanged);
         Assert.Equal(13, ea.MaxRowChanged);
         Assert.False(ea.HasRowCountDecreased);
@@ -375,7 +397,7 @@ namespace Altaxo.Data
       Assert.False(d.IsDirty);
 
       // testing parent change notification
-      var parent = new MyColumnParent();
+      var parent = new MyColumnParent(nameof(ParentNotification));
       parent.ChildChanged = new EventHandler(parent.TestParentAddNotification);
       d.ParentObject = parent;
       Assert.Equal(1, parent.CallCount); // "There was no parent add notification");
@@ -386,6 +408,8 @@ namespace Altaxo.Data
       d.ParentObject = null;
       Assert.Equal(1, parent.CallCount); // "There was no parent remove notification");
       parent.Reset();
+
+
     }
 
     [Fact]
@@ -396,7 +420,7 @@ namespace Altaxo.Data
       Assert.False(d.IsDirty);
 
       // testing parent change notification
-      var parent = new MyColumnParent();
+      var parent = new MyColumnParent(nameof(DataChangeNotification));
       parent.ChildChanged = new EventHandler(parent.TestParentAddNotification);
       d.ParentObject = parent;
       Assert.Equal(1, parent.CallCount); // "There was no parent add notification");
@@ -467,7 +491,7 @@ namespace Altaxo.Data
       Assert.Equal(10, d.Count);
 
       // testing parent change notification setting the parent
-      var parent = new MyColumnParent();
+      var parent = new MyColumnParent(nameof(RowInsertionAtTheBeginning));
       parent.ChildChanged = new EventHandler(parent.TestParentAddNotification);
       d.ParentObject = parent;
       Assert.Equal(1, parent.CallCount); // "There was no parent add notification");
@@ -489,6 +513,8 @@ namespace Altaxo.Data
         Assert.Equal(i - 3, d[i]);
 
       Assert.Equal(double.NaN, d[13]);
+
+      parent.Reset(); // avoid that Dispose event args are sent
     }
 
     [Fact]
@@ -504,7 +530,7 @@ namespace Altaxo.Data
       Assert.Equal(10, d.Count);
 
       // testing parent change notification setting the parent
-      var parent = new MyColumnParent();
+      var parent = new MyColumnParent(nameof(RowInsertionInTheMiddle));
       parent.ChildChanged = new EventHandler(parent.TestParentAddNotification);
       d.ParentObject = parent;
       Assert.Equal(1, parent.CallCount); // "There was no parent add notification");
@@ -528,6 +554,8 @@ namespace Altaxo.Data
 
       for (int i = 8; i < (8 + 5); i++)
         Assert.Equal(i - 3, d[i]);
+
+      parent.Reset(); // avoid that Dispose event args are sent
     }
 
     [Fact]
@@ -543,7 +571,7 @@ namespace Altaxo.Data
       Assert.Equal(10, d.Count);
 
       // testing parent change notification setting the parent
-      var parent = new MyColumnParent();
+      var parent = new MyColumnParent(nameof(RowInsertionOneBeforeEnd));
       parent.ChildChanged = new EventHandler(parent.TestParentAddNotification);
       d.ParentObject = parent;
       Assert.Equal(1, parent.CallCount); // "There was no parent add notification");
@@ -567,6 +595,8 @@ namespace Altaxo.Data
 
       for (int i = 12; i < 13; i++)
         Assert.Equal(i - 3, d[i]);
+
+      parent.Reset(); // avoid that Dispose event args are sent
     }
 
     [Fact]
@@ -582,7 +612,7 @@ namespace Altaxo.Data
       Assert.Equal(10, d.Count);
 
       // testing parent change notification setting the parent
-      var parent = new MyColumnParent();
+      var parent = new MyColumnParent(nameof(RowInsertionAtTheEnd));
       parent.ChildChanged = new EventHandler(parent.TestParentAddNotification);
       d.ParentObject = parent;
       Assert.Equal(1, parent.CallCount); // "There was no parent add notification");
@@ -600,6 +630,8 @@ namespace Altaxo.Data
         Assert.Equal(i, d[i]);
 
       Assert.Equal(double.NaN, d[10]);
+
+      parent.Reset(); // avoid that Dispose event args are sent
     }
   }
 }
