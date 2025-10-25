@@ -114,8 +114,8 @@ namespace Altaxo.Calc.FitFunctions
               // check if the number of parameters is correct
               for (int i = 0; i < fitfunction.NumberOfParameters; i++)
               {
-                Assert.True(!string.IsNullOrEmpty(fitfunction.ParameterName(i)), $"{o.GetType()} {method} {i}");
-                Assert.True(!double.IsNaN(fitfunction.DefaultParameterValue(i)), $"{o.GetType()} {method} {i}");
+                Assert.False(string.IsNullOrEmpty(fitfunction.ParameterName(i)), $"{o.GetType()} {method} {i}");
+                Assert.False(double.IsNaN(fitfunction.DefaultParameterValue(i)), $"{o.GetType()} {method} {i}");
               }
 
               Exception? exception = null;
@@ -138,7 +138,7 @@ namespace Altaxo.Calc.FitFunctions
               {
                 exception = ex;
               }
-              Assert.True(exception is ArgumentOutOfRangeException, $"DefaultParameterValue does not throw ArgumentOuntOfRangeException {o.GetType()} {method} {exception?.GetType()} {exception?.Message}");
+              Assert.True(exception is ArgumentOutOfRangeException, $"DefaultParameterValue does not throw ArgumentOutOfRangeException {o.GetType()} {method} {exception?.GetType()} {exception?.Message}");
             }
           }
         }

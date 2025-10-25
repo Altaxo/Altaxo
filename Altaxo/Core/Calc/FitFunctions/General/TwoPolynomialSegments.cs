@@ -72,17 +72,31 @@ namespace Altaxo.Calc.FitFunctions.General
     #endregion Serialization
 
 
-
+    /// <summary>
+    /// Initializes a new instance of the <see cref="TwoPolynomialSegments"/> class with linear segments.
+    /// </summary>
     public TwoPolynomialSegments()
     {
       _order_n = 1;
       _order_m = 1;
     }
 
-    public TwoPolynomialSegments(int polynomialOrder_LeftSegment, int polynomialOrder_RightSegment)
+    /// <summary>
+    /// Initializes a new instance of the <see cref="TwoPolynomialSegments"/> class.
+    /// </summary>
+    /// <param name="polynomialOrderLeftSegment">The polynomial order of the left segment.</param>
+    /// <param name="polynomialOrderRightSegment">The polynomial order of the right segment.</param>
+    /// <exception cref="System.ArgumentOutOfRangeException">
+    /// Order for left segment has to be greater than or equal to zero
+    /// or
+    /// Order for right segment has to be greater than or equal to zero
+    /// or
+    /// Order for either the left segment or the right segment has to be greater than zero.
+    /// </exception>
+    public TwoPolynomialSegments(int polynomialOrderLeftSegment, int polynomialOrderRightSegment)
     {
-      _order_n = polynomialOrder_LeftSegment;
-      _order_m = polynomialOrder_RightSegment;
+      _order_n = polynomialOrderLeftSegment;
+      _order_m = polynomialOrderRightSegment;
 
       if (_order_n < 0)
         throw new ArgumentOutOfRangeException("Order for left segment has to be greater than or equal to zero");
@@ -92,6 +106,8 @@ namespace Altaxo.Calc.FitFunctions.General
         throw new ArgumentOutOfRangeException("Order for either the left segment or the right segment has to be greater than zero.");
     }
 
+    /// <summary>Creates a new instance of <see cref="TwoPolynomialSegments"/> with linear segments.</summary>
+    /// <returns>New instance of <see cref="TwoPolynomialSegments"/> with linear segments.</returns>
     [FitFunctionCreator("Two polynomial segments", "General", 1, 1, 4)]
     [System.ComponentModel.Description("${res:Altaxo.Calc.FitFunctions.General.TwoPolynomialSegment}")]
     public static IFitFunction CreateTwoPolynomialSegments_1_1()
@@ -149,8 +165,9 @@ namespace Altaxo.Calc.FitFunctions.General
       }
     }
 
-    #region IFitFunction Members
+    #region IFitFunction Members    
 
+    /// <inheritdoc/>
     public int NumberOfIndependentVariables
     {
       get
@@ -159,6 +176,7 @@ namespace Altaxo.Calc.FitFunctions.General
       }
     }
 
+    /// <inheritdoc/>
     public int NumberOfDependentVariables
     {
       get
@@ -167,6 +185,7 @@ namespace Altaxo.Calc.FitFunctions.General
       }
     }
 
+    /// <inheritdoc/>
     public int NumberOfParameters
     {
       get
@@ -175,16 +194,19 @@ namespace Altaxo.Calc.FitFunctions.General
       }
     }
 
+    /// <inheritdoc/>
     public string IndependentVariableName(int i)
     {
       return "x";
     }
 
+    /// <inheritdoc/>
     public string DependentVariableName(int i)
     {
       return "y";
     }
 
+    /// <inheritdoc/>
     public string ParameterName(int i)
     {
       if (i == 0)
@@ -194,79 +216,79 @@ namespace Altaxo.Calc.FitFunctions.General
       else if (i > 1 && i < 2 + _order_n)
         return FormattableString.Invariant($"a{i - 1}");
       else if (i > 1 && i < 2 + _order_n + _order_m)
-        return FormattableString.Invariant($"b{i - 1 - _order_n}");
+        return FormattableString.Invariant($"b{i - 2 - _order_n}");
       else
-        throw new IndexOutOfRangeException(nameof(i));
+        throw new ArgumentOutOfRangeException(nameof(i));
     }
 
+    /// <inheritdoc/>
     public double DefaultParameterValue(int i)
     {
-      return 0;
+      return i >= 0 && i < NumberOfParameters ? 0 : throw new ArgumentOutOfRangeException(nameof(i));
     }
 
+    /// <inheritdoc/>
     public IVarianceScaling? DefaultVarianceScaling(int i)
     {
-      return null;
+      return i >= 0 && i < NumberOfParameters ? null : throw new ArgumentOutOfRangeException(nameof(i));
     }
 
-    public void Evaluate(double[] X, double[] P, double[] Y)
+    /// <summary>
+    /// Evaluates the function for the specified x value.
+    /// </summary>
+    /// <param name="x">The x value.</param>
+    /// <param name="xc">The xc value which is the x-value of the transition between the two segments.</param>
+    /// <param name="y0">The y0 value of the transition. This is the y-value of the curve at xc if the transition is sharp (sigma == 0).</param>
+    /// <param name="coeffs_left">The polynomial coefficients of the left polynomial (order 1, order 2, ...).</param>
+    /// <param name="coeffs_right">The polynomial coefficients of the right polynomial (order1, order 2, ...).</param>
+    /// <returns>The y value of the function at x.</returns>
+    public static double Evaluate(double x, double xc, double y0, ReadOnlySpan<double> coeffs_left, ReadOnlySpan<double> coeffs_right)
     {
-      // evaluation of terms x^0 .. x^n
-      var arg = X[0] - P[0];
+      var arg = x - xc;
+
       if (arg == 0)
       {
-        Y[0] = P[1];
-      }
-      else if (arg < 0)
-      {
-        double sum = 0;
-        for (int i = 1 + _order_n; i >= 1; --i)
-        {
-          sum *= arg;
-          sum += P[i];
-        }
-        Y[0] = sum;
+        return y0;
       }
       else
       {
+        var coeffs = arg < 0 ? coeffs_left : coeffs_right;
         double sum = 0;
-        for (int i = 1 + _order_n + _order_m; i >= 2 + _order_n; --i)
+        for (int i = coeffs.Length - 1; i >= 0; --i)
         {
+          sum += coeffs[i];
           sum *= arg;
-          sum += P[i];
         }
-        Y[0] = sum * arg + P[1];
+        return sum + y0;
       }
     }
 
 
+    /// <inheritdoc/>
+    public void Evaluate(double[] X, double[] P, double[] Y)
+    {
+      Y[0] = Evaluate(X[0], P[0], P[1], P.AsSpan(2, _order_n), P.AsSpan(2 + _order_n, _order_m));
+    }
+
+
+    /// <inheritdoc/>
     public void Evaluate(IROMatrix<double> independent, IReadOnlyList<double> P, IVector<double> FV, IReadOnlyList<bool>? dependentVariableChoice)
     {
+      var pa = P as double[];
+      var coeffsLeft = _order_n == 0 ? Span<double>.Empty : ((pa is not null) ? pa.AsSpan(2, _order_n) : stackalloc double[_order_n]);
+      var coeffsRight = _order_n == 0 ? Span<double>.Empty : ((pa is not null) ? pa.AsSpan(2 + _order_n, _order_m) : stackalloc double[_order_m]);
+      if (pa is null)
+      {
+        for (int i = 0; i < _order_n; i++)
+          coeffsLeft[i] = P[2 + i];
+        for (int i = 0; i < _order_m; i++)
+          coeffsRight[i] = P[2 + _order_n + i];
+      }
+
       var rowCount = independent.RowCount;
       for (int r = 0; r < rowCount; ++r)
       {
-        var arg = independent[r, 0] - P[0];
-
-        if (arg <= 0)
-        {
-          double sum = 0;
-          for (int i = 1 + _order_n; i >= 1; --i)
-          {
-            sum *= arg;
-            sum += P[i];
-          }
-          FV[r] = sum;
-        }
-        else
-        {
-          double sum = 0;
-          for (int i = 1 + _order_n + _order_m; i >= 2 + _order_n; --i)
-          {
-            sum *= arg;
-            sum += P[i];
-          }
-          FV[r] = sum * arg + P[1];
-        }
+        FV[r] = Evaluate(independent[r, 0], P[0], P[1], coeffsLeft, coeffsRight);
       }
     }
 
@@ -278,13 +300,18 @@ namespace Altaxo.Calc.FitFunctions.General
 
     #endregion IFitFunction Members
 
-    public void EvaluateDerivative(IROMatrix<double> X, IReadOnlyList<double> P, IReadOnlyList<bool>? isParameterFixed, IMatrix<double> DY, IReadOnlyList<bool> dependentVariableChoice)
+    /// <inheritdoc/>
+    public void EvaluateDerivative(IROMatrix<double> X, IReadOnlyList<double> P, IReadOnlyList<bool>? isParameterFixed, IMatrix<double> DY, IReadOnlyList<bool>? dependentVariableChoice)
     {
+      var xc = P[0];
+      var y0 = P[1];
+
       var rowCount = X.RowCount;
       for (int r = 0; r < rowCount; ++r)
       {
         var x = X[r, 0];
-        var arg = x - P[0];
+        var arg = x - xc;
+
 
         if (arg <= 0)
         {
@@ -293,8 +320,8 @@ namespace Altaxo.Calc.FitFunctions.General
           double sum = 0;
           for (int i = 0; i < _order_n; i++)
           {
-            sum += P[i + 2] * prod;
-            prod *= (i + 2) * arg;
+            sum += P[i + 2] * (i + 1) * prod;
+            prod *= arg;
           }
           DY[r, 0] = -sum; // derivative w.r.t. xc
           DY[r, 1] = 1; // derivative wrt y0
@@ -321,18 +348,18 @@ namespace Altaxo.Calc.FitFunctions.General
           int offset = 2 + _order_n;
           for (int i = 0; i < _order_m; i++)
           {
-            sum += P[i + offset] * prod;
-            prod *= (i + 2) * arg;
+            sum += P[i + offset] * (i + 1) * prod;
+            prod *= arg;
           }
           DY[r, 0] = -sum; // derivative w.r.t. xc
           DY[r, 1] = 1; // derivative wrt y0
 
-          for (int i = 0; i < _order_m; i++)
+          for (int i = 0; i < _order_n; i++)
           {
             DY[r, i + 2] = 0; // derivative wrt a_i is zero
           }
 
-          // w.r.t. a_i
+          // w.r.t. b_i
           prod = arg;
           for (int i = 0; i < _order_m; i++)
           {
@@ -354,6 +381,5 @@ namespace Altaxo.Calc.FitFunctions.General
     {
       return (null, null);
     }
-
   }
 }

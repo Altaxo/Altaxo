@@ -72,6 +72,8 @@ namespace Altaxo.Calc.FitFunctions
         (() => new FitFunctions.General.Polynomial(2,0), 0.25, new double[]{1,3,5}, 1+3*0.25 + 5*0.25*0.25),
         (() => new FitFunctions.General.Polynomial(2,1), 0.25, new double[]{1,3,5,7}, 1+3*0.25 + 5*0.25*0.25 + 7/0.25),
         (() => new FitFunctions.General.Polynomial(0,2), 0.25, new double[]{1,3,5}, 1+3/0.25 + 5/(0.25*0.25)),
+        (() => new FitFunctions.General.TwoPolynomialSegments(2,3), 1, new double[]{ 3, 7, 1 / 11d, -1 / 13d, -1 / 17d, 1 / 19d, -1 / 23d}, 6.5104895104895104895),
+        (() => new FitFunctions.General.TwoPolynomialSegments(2,3), 5, new double[]{ 3, 7, 1 / 11d, -1 / 13d, -1 / 17d, 1 / 19d, -1 / 23d}, 6.7450531700094225333),
         (() => new Peaks.PearsonIVAmplitude(1, 1), 9, new double[]{17, 7, 3, 5, 7, 1, 3 }, 2.1808325179027502207687005375167 + 1 + 9*3),
         (() => new Peaks.PearsonIVAmplitudeParametrizationHPW(1, 1), 9, new double[]{17, 7, 3, 5, 7, 1, 3 }, 10.456864176583425249219583024250 + 1 + 9 * 3),
         (() => new Peaks.PearsonVIIAmplitude(1, 1), 9, new double[]{17, 7, 3, 5, 1, 3 }, 40.34477916997976056964787),
