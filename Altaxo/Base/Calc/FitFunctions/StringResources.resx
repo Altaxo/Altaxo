@@ -1,64 +1,5 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
 <root>
-  <!-- 
-    Microsoft ResX Schema 
-    
-    Version 2.0
-    
-    The primary goals of this format is to allow a simple XML format 
-    that is mostly human readable. The generation and parsing of the 
-    various data types are done through the TypeConverter classes 
-    associated with the data types.
-    
-    Example:
-    
-    ... ado.net/XML headers & schema ...
-    <resheader name="resmimetype">text/microsoft-resx</resheader>
-    <resheader name="version">2.0</resheader>
-    <resheader name="reader">System.Resources.ResXResourceReader, System.Windows.Forms, ...</resheader>
-    <resheader name="writer">System.Resources.ResXResourceWriter, System.Windows.Forms, ...</resheader>
-    <data name="Name1"><value>this is my long string</value><comment>this is a comment</comment></data>
-    <data name="Color1" type="System.Drawing.Color, System.Drawing">Blue</data>
-    <data name="Bitmap1" mimetype="application/x-microsoft.net.object.binary.base64">
-        <value>[base64 mime encoded serialized .NET Framework object]</value>
-    </data>
-    <data name="Icon1" type="System.Drawing.Icon, System.Drawing" mimetype="application/x-microsoft.net.object.bytearray.base64">
-        <value>[base64 mime encoded string representing a byte array form of the .NET Framework object]</value>
-        <comment>This is a comment</comment>
-    </data>
-                
-    There are any number of "resheader" rows that contain simple 
-    name/value pairs.
-    
-    Each data row contains a name, and value. The row also contains a 
-    type or mimetype. Type corresponds to a .NET class that support 
-    text/value conversion through the TypeConverter architecture. 
-    Classes that don't support this are serialized and stored with the 
-    mimetype set.
-    
-    The mimetype is used for serialized objects, and tells the 
-    ResXResourceReader how to depersist the object. This is currently not 
-    extensible. For a given mimetype the value must be set accordingly:
-    
-    Note - application/x-microsoft.net.object.binary.base64 is the format 
-    that the ResXResourceWriter will generate, however the reader can 
-    read any of the formats listed below.
-    
-    mimetype: application/x-microsoft.net.object.binary.base64
-    value   : The object must be serialized with 
-            : System.Runtime.Serialization.Formatters.Binary.BinaryFormatter
-            : and then encoded with base64 encoding.
-    
-    mimetype: application/x-microsoft.net.object.soap.base64
-    value   : The object must be serialized with 
-            : System.Runtime.Serialization.Formatters.Soap.SoapFormatter
-            : and then encoded with base64 encoding.
-
-    mimetype: application/x-microsoft.net.object.bytearray.base64
-    value   : The object must be serialized into a byte array 
-            : using a System.ComponentModel.TypeConverter
-            : and then encoded with base64 encoding.
-    -->
   <xsd:schema id="root" xmlns="" xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns:msdata="urn:schemas-microsoft-com:xml-msdata">
     <xsd:import namespace="http://www.w3.org/XML/1998/namespace" />
     <xsd:element name="root" msdata:IsDataSet="true">
@@ -112,11 +53,55 @@
     <value>2.0</value>
   </resheader>
   <resheader name="reader">
-    <value>System.Resources.ResXResourceReader, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+    <value>System.Resources.ResXResourceReader, System.Windows.Forms, Version=9.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
   </resheader>
   <resheader name="writer">
-    <value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+    <value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=9.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
   </resheader>
+  <data name="Chemistry.MassBasedFloryDistribution" xml:space="preserve">
+    <value>##### MassBasedFloryDistribution
+
+The molecular weight $M$ of a polymer which is synthesized in a reactor is often distributed according to a Flory distribution. The only parameter of this distribution (besides the area $A$) is the ratio $\tau$ of the probabilities of the termination step with respect to the chain prolongation step.
+
+This function evaluates a sum of mass based Flory distribution terms, plus a baseline polynomial with one or multiple terms, according to
+
+$$
+y(M) = A_0 \ln(10) \left ( \frac{\tau_0 M}{M_m} \right )^2 \exp\left ( -\frac{\tau_0 M}{M_m} \right ) + ... + A_{n-1} \ln(10) \left ( \frac{\tau_{n-1} M}{M_m} \right )^2 \exp\left ( -\frac{\tau_{n-1} M}{M_m} \right ) + b_0 + b_1 x^1 + ... + b_m x^m 
+$$
+
+in which:
+
+- $A_0 ... A_{n-1}$ are the areas of the Flory terms (ATTENTION: only if integrated over the $log_{10}M$ x-axis!)
+
+- $\tau_{0} ... \tau_{n-1}$ are the probability ratios of the termination reaction with respect to the chain prolongation reaction. The smaller this probability ratio, the longer the chains will become, i.e. the peak position is increased to higher molecular weight.
+
+- $b_0 ... b_m$ are the coefficients of the baseline polynomial of order  $m$
+
+- $n$ is the number of Flory distribution terms ($n \geq 1$)
+
+- $m$ is the order of the baseline polynomial (set $m=-1$ to disable the baseline polynomial)
+
+- $M_m$ is the molecular weight of one monomer unit
+
+The molecular weight of one monomer unit $M_m$, the number of Flory distribution terms $n$ and the order of the baseline polynomial $m$ can be changed by double-clicking on the fit function. The default values are $M=1$, $n=1$ and $m=-1$, corresponding to 1 term and no baseline. 
+
+There is an additional property named `IndependentVariableIsDecadicLogarithm`. If this property is set to true, it is assumed that the x-axis is not the molecular weight, but the decadic logarithm of the molecular weight $\log_{10}(M)$, which is often used in chemistry.
+
+The domain of the function is  $0 \leq M &lt; \infty$ (`IndependentVariableIsDecadicLogarithm == false`) or $-\infty &lt; \log_{10}(M) &lt; \infty$ (`IndependentVariableIsDecadicLogarithm == true`). 
+
+^^^
+![](res:Altaxo.Calc.FitFunctions.Chemistry.MassBasedFloryDistribution.Fig1.png){width=15cm}  
+^^^ Fig. 1: MassBasedFloryDistribution ($n=1$, $m=-1$) with $A_0=5$ and $\tau_{0}=10^{-5}$. $M_m$ was set to 14 (polyethylene).
+---
+
+References:  
+[1] [Flory-Schulz distribution in Wikipedia](https://en.wikipedia.org/wiki/Flory%E2%80%93Schulz_distribution)  
+[2] João B. P. Soares, 'Polyolefin microstructural deconvolution methods: The good, the bad, and the ugly', [ https://doi.org/10.1002/cjce.24833]( https://doi.org/10.1002/cjce.24833)
+
+
+
+</value>
+  </data>
   <data name="Diffusion.MassChangeAfterExponentialEquilibrationForCylinder" xml:space="preserve">
     <value>##### Mass change of a cylinder after an exponential equilibration concentration change
 
@@ -642,6 +627,36 @@ The domain of the function is $-\infty &lt; x &lt; \infty$. The function values 
 ![](res:Altaxo.Calc.FitFunctions.General.StretchedExponentialGrowth.Fig1.png){width=15cm}  
 ^^^ Fig. 1: Stretched exponential growth with $x_0=0$, $y_0=-2$, $a_0=3$, $\tau_0=4$, and $\beta=0.5$ (green) in comparison to a 'normal' exponential growth function with the same parameters (grey). Note that the 'normal' exponential growth has varying function values both for $x&lt;0$ and $x&gt;0$, whereas the stretched exponential growth is constant for $x&lt;x_0$.
 ---
+</value>
+  </data>
+  <data name="General.TwoPolynomialSegments" xml:space="preserve">
+    <value>##### Two polynomial segments
+
+This function evaluates two polynomial segments that are connected at the point $[x_0, y_0]$, according to:
+
+$$
+y(x) = y_0 + \cases{ a_1 (x-x_0)^1 + a_2 (x-x_0)^2 + ... + a_n (x-x_0)^n \thickspace \thickspace (x &lt; x_0) \cr  b_1 (x-x_0)^{1} + b_2 (x-x_0)^{2} + ... + b_m (x-x_0)^{m} \thickspace \thickspace (x \geq x_0) }
+$$
+
+in which:
+
+- $x_0$ is the x-coordinate of the point at which the two polynomial segments are joined
+- $y_0$ is the y-coordinate of the point at which the two polynomial segments are joined
+- $a_1 ... a_n$ are the polynomial coefficients of the left polynomial segment ($x &lt; x_0$)
+- $b_1$ ... $b_{m}$ are the polynomial coefficients of the right polynomial segment ($x \geq x_0$)
+- $n$ is the order of the left polynomial segment ($0 \leq n &lt; \infty$)
+- $m$ is the order of the right polynomial segment ($0 \leq m &lt; \infty$)
+
+The polynomial orders $n$ and $m$ can be changed by double-clicking on the fit function. The default value is $n=1$ and $m=1$, resulting in two straight lines joined at $[x_0, y_0]$. If some of the terms are not needed, set the corresponding coefficients fixed to zero.
+
+The domain of the function is $-\infty &lt; x &lt; \infty$.
+
+^^^
+![](res:Altaxo.Calc.FitFunctions.General.TwoPolynomialSegments.Fig1.png){width=15cm}  
+^^^ Fig. 1: Two polynomial segments ($n=1$, $m=1$) with $x_0=4$, $y_0=3$, $a_1=-0.5$ and $b_1=1$.
+
+
+
 </value>
   </data>
   <data name="Kinetics.ConversionAutocatalytic" xml:space="preserve">

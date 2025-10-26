@@ -109,7 +109,7 @@ namespace Altaxo.Calc.FitFunctions.Chemistry
     }
 
     [FitFunctionCreator("MassBasedFloryDistribution", "Chemistry", 1, 1, NumberOfParametersPerPeak)]
-    [System.ComponentModel.Description("${res:Altaxo.Calc.FitFunctions.Peaks.MassBasedFloryDistribution}")]
+    [System.ComponentModel.Description("${res:Altaxo.Calc.FitFunctions.Chemistry.MassBasedFloryDistribution}")]
     public static IFitFunction Create_1_M1()
     {
       return new MassBasedFloryDistribution(1, -1);

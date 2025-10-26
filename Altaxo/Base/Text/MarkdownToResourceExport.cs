@@ -26,13 +26,7 @@
 using System;
 using System.Collections;
 using System.Collections.Generic;
-using System.IO;
-using System.Linq;
 using System.Resources;
-using System.Text;
-using System.Threading.Tasks;
-using Altaxo.Drawing;
-using Altaxo.Gui;
 
 namespace Altaxo.Text
 {
@@ -226,14 +220,20 @@ namespace Altaxo.Text
         {
           if (!(key.StartsWith(prefixOfResourceFilesWithTrailingDot) && imageDictionary.ContainsKey(key.Substring(prefixOfResourceFilesWithTrailingDot.Length))))
           {
-            imageResourceWriter.AddResource(key, value);
+            if (value is byte[] ba)
+              imageResourceWriter.AddResource(key, ba);
+            else
+              imageResourceWriter.AddResource(key, value);
           }
         }
         else
         {
           if (!(imageDictionary.ContainsKey(key)))
           {
-            imageResourceWriter.AddResource(key, value);
+            if (value is byte[] ba)
+              imageResourceWriter.AddResource(key, ba);
+            else
+              imageResourceWriter.AddResource(key, value);
           }
         }
       }

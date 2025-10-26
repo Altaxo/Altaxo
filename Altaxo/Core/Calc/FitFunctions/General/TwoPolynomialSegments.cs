@@ -109,7 +109,7 @@ namespace Altaxo.Calc.FitFunctions.General
     /// <summary>Creates a new instance of <see cref="TwoPolynomialSegments"/> with linear segments.</summary>
     /// <returns>New instance of <see cref="TwoPolynomialSegments"/> with linear segments.</returns>
     [FitFunctionCreator("Two polynomial segments", "General", 1, 1, 4)]
-    [System.ComponentModel.Description("${res:Altaxo.Calc.FitFunctions.General.TwoPolynomialSegment}")]
+    [System.ComponentModel.Description("${res:Altaxo.Calc.FitFunctions.General.TwoPolynomialSegments}")]
     public static IFitFunction CreateTwoPolynomialSegments_1_1()
     {
       return new TwoPolynomialSegments(1, 1);
@@ -210,7 +210,7 @@ namespace Altaxo.Calc.FitFunctions.General
     public string ParameterName(int i)
     {
       if (i == 0)
-        return "xc";
+        return "x0";
       else if (i == 1)
         return "y0";
       else if (i > 1 && i < 2 + _order_n)
