@@ -2,7 +2,7 @@
 
 /////////////////////////////////////////////////////////////////////////////
 //    Altaxo:  a data processing and data plotting program
-//    Copyright (C) 2014 Dr. Dirk Lellinger
+//    Copyright (C) 2025 Dr. Dirk Lellinger
 //
 //    This program is free software; you can redistribute it and/or modify
 //    it under the terms of the GNU General Public License as published by
@@ -864,6 +864,95 @@ namespace Altaxo.Data
       foreach (var entry in _dataColumnBundles)
         foreach (var proxy in entry.Value.DataColumns)
           yield return proxy;
+    }
+
+    /// <summary>
+    /// Transforms the DataTableMultipleColumnProxy into a ListOfXAndYColumn, using the column identified by <paramref name="ColumnX"/> as x column,
+    /// and the columns identified by <paramref name="ColumnsV"/> as y columns.
+    /// </summary>
+    /// <param name="ColumnX">The column identifier of the x-column.</param>
+    /// <param name="ColumnsV">The column identifier of the y-columns.</param>
+    /// <param name="cloneTheProxies">If <c>true</c>, the proxies in the resulting ListOfXAndYColumn are clones of the proxies in this instance. If <c>false</c>, the proxies are directly used from this instance. ATTENTION: use <c>false</c> only if the <see cref="DataTableMultipleColumnProxy"/> is not needed anymore!</param>
+    /// <returns>A <<see cref="ListOfXAndYColumn"/> list.</returns>
+    public ListOfXAndYColumn TransformToListOfXAndYColumn(string ColumnX, string ColumnsV, bool cloneTheProxies)
+    {
+      if (_isDirty)
+        Update();
+
+      if (string.IsNullOrEmpty(ColumnX))
+        throw new ArgumentNullException();
+      if (!_dataColumnBundles.ContainsKey(ColumnX))
+        throw new InvalidOperationException($"The identifier {ColumnX} is not contained in this collection");
+
+      if (string.IsNullOrEmpty(ColumnsV))
+        throw new ArgumentNullException();
+      if (!_dataColumnBundles.ContainsKey(ColumnsV))
+        throw new InvalidOperationException($"The identifier {ColumnsV} is not contained in this collection");
+
+      var yCols = _dataColumnBundles[ColumnsV].DataColumns;
+      var xCols = _dataColumnBundles[ColumnX].DataColumns;
+
+      var resultList = new List<XAndYColumn>();
+      if (cloneTheProxies)
+      {
+        foreach (var yCol in yCols)
+        {
+          var xy = XAndYColumn.CreateFromProxies((DataTableProxy)_dataTable.Clone(), _groupNumber, (IReadableColumnProxy)xCols[0].Clone(), (IReadableColumnProxy)yCol.Clone());
+          resultList.Add(xy);
+        }
+      }
+      else
+      {
+        foreach (var yCol in yCols)
+        {
+          var xy = XAndYColumn.CreateFromProxies(_dataTable, _groupNumber, xCols[0], yCol);
+          resultList.Add(xy);
+        }
+      }
+      return new ListOfXAndYColumn() { CurveData = resultList };
+    }
+
+    /// <summary>
+    /// Transforms the DataTableMultipleColumnProxy into a ListOfXAndYColumn, using <paramref name="ColumnX"/>  as x column,
+    /// and the columns identified by identifier <paramref name="ColumnsV"/> as y columns.
+    /// </summary>
+    /// <param name="ColumnX">The column identifier of the x-column.</param>
+    /// <param name="ColumnsV">The column identifier of the y-columns.</param>
+    /// <param name="cloneTheProxies">If <c>true</c>, the proxies in the resulting ListOfXAndYColumn are clones of the proxies in this instance. If <c>false</c>, the proxies are directly used from this instance. ATTENTION: use <c>false</c> only if the <see cref="DataTableMultipleColumnProxy"/> is not needed anymore!</param>
+    /// <returns>A <<see cref="ListOfXAndYColumn"/> list.</returns>
+    public ListOfXAndYColumn TransformToListOfXAndYColumn(DataColumn ColumnX, string ColumnsV, bool cloneTheProxies)
+    {
+      if (_isDirty)
+        Update();
+
+      if (ColumnX is null)
+        throw new ArgumentNullException(nameof(ColumnX));
+
+      if (string.IsNullOrEmpty(ColumnsV))
+        throw new ArgumentNullException();
+      if (!_dataColumnBundles.ContainsKey(ColumnsV))
+        throw new InvalidOperationException($"The identifier {ColumnsV} is not contained in this collection");
+
+      var yCols = _dataColumnBundles[ColumnsV].DataColumns;
+
+      var resultList = new List<XAndYColumn>();
+      if (cloneTheProxies)
+      {
+        foreach (var yCol in yCols)
+        {
+          var xy = XAndYColumn.CreateFromProxies((DataTableProxy)_dataTable.Clone(), _groupNumber, ReadableColumnProxyBase.FromColumn(ColumnX), (IReadableColumnProxy)yCol.Clone());
+          resultList.Add(xy);
+        }
+      }
+      else
+      {
+        foreach (var yCol in yCols)
+        {
+          var xy = XAndYColumn.CreateFromProxies(_dataTable, _groupNumber, ReadableColumnProxyBase.FromColumn(ColumnX), yCol);
+          resultList.Add(xy);
+        }
+      }
+      return new ListOfXAndYColumn() { CurveData = resultList };
     }
 
     /// <summary>

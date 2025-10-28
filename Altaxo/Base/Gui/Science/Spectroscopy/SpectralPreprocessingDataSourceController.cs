@@ -2,7 +2,7 @@
 
 /////////////////////////////////////////////////////////////////////////////
 //    Altaxo:  a data processing and data plotting program
-//    Copyright (C) 2002-2022 Dr. Dirk Lellinger
+//    Copyright (C) 2002-2025 Dr. Dirk Lellinger
 //
 //    This program is free software; you can redistribute it and/or modify
 //    it under the terms of the GNU General Public License as published by
@@ -33,7 +33,7 @@ namespace Altaxo.Gui.Science.Spectroscopy
   {
     protected override IMVCANController GetProcessDataController()
     {
-      var ctrl = new SpectralPreprocessingDataController();
+      var ctrl = new ListOfXAndYColumnController();
       ctrl.InitializeDocument(_doc.ProcessData);
       Current.Gui.FindAndAttachControlTo(ctrl);
       return ctrl;

@@ -2,7 +2,7 @@
 
 /////////////////////////////////////////////////////////////////////////////
 //    Altaxo:  a data processing and data plotting program
-//    Copyright (C) 2002-2022 Dr. Dirk Lellinger
+//    Copyright (C) 2002-2025 Dr. Dirk Lellinger
 //
 //    This program is free software; you can redistribute it and/or modify
 //    it under the terms of the GNU General Public License as published by
@@ -186,6 +186,30 @@ namespace Altaxo.Science.Spectroscopy
       return resultList;
     }
 
+    public static List<(DataColumn xCol, DataColumn yCol, double[] xArray, double[] yArray)> GetColumnsAndArrays(ListOfXAndYColumn inputData)
+    {
+      var resultList = new List<(DataColumn xCol, DataColumn yCol, double[] xArray, double[] yArray)>();
+
+      foreach (var curve in inputData.CurveData)
+      {
+        var xCol = curve.XColumn as DataColumn;
+        var yCol = curve.YColumn as DataColumn;
+        if (xCol is null || yCol is null)
+          continue;
+        var len = Math.Min(xCol.Count, yCol.Count);
+
+        var xArr = new double[len];
+        var yArr = new double[len];
+        for (var i = 0; i < len; i++)
+        {
+          xArr[i] = xCol[i];
+          yArr[i] = yCol[i];
+        }
+        resultList.Add((xCol, yCol, xArr, yArr));
+      }
+      return resultList;
+    }
+
     /// <summary>
     /// Executes the spectral preprocessing for one or more than one spectrum
     /// </summary>
@@ -206,7 +230,7 @@ namespace Altaxo.Science.Spectroscopy
       double[] xArray,
       double[] yArray,
       int[]? regions)>
-      ExecuteSpectralPreprocessing(DataTableMultipleColumnProxy inputData, SpectralPreprocessingOptionsBase doc, DataTable dstTable)
+      ExecuteSpectralPreprocessing(ListOfXAndYColumn inputData, SpectralPreprocessingOptionsBase doc, DataTable dstTable)
     {
       var resultList = new List<(
       DataColumn xOrgCol,
@@ -224,7 +248,7 @@ namespace Altaxo.Science.Spectroscopy
       dstTable.DataColumns.RemoveColumnsAll();
       dstTable.PropCols.RemoveColumnsAll();
 
-      foreach (var entry in GetColumnsAndArrays(inputData, out var srcTable))
+      foreach (var entry in GetColumnsAndArrays(inputData))
       {
         ++runningColumnNumber;
         var groupNumberBase = runningColumnNumber * 10;
@@ -239,6 +263,7 @@ namespace Altaxo.Science.Spectroscopy
         (xArr, yArr, regions) = doc.Execute(xArr, yArr, regions);
 
         // Store result
+        var srcTable = DataTable.GetParentDataTableOf(xCol) ?? DataTable.GetParentDataTableOf(yCol) ?? throw new InvalidOperationException($"Neither x-column {xCol} nor y-column {yCol} have a parent data table.");
 
         if (!dictionarySrcXCol_To_DstXCol.ContainsKey(xCol))
         {
@@ -293,7 +318,7 @@ namespace Altaxo.Science.Spectroscopy
       DataColumn xPreprocessedCol,
       DataColumn yPreprocessedCol,
       IReadOnlyList<(IReadOnlyList<PeakFitting.PeakDescription> PeakDescriptions, int StartOfRegion, int EndOfRegion)> fittingResult)>
-      ExecutePeakFindingAndFitting(DataTableMultipleColumnProxy inputData,
+      ExecutePeakFindingAndFitting(ListOfXAndYColumn inputData,
                                     PeakSearchingAndFittingOptions doc,
                                     DataTable peakTable,
                                     IProgress<string>? progressReporter,
@@ -317,7 +342,7 @@ namespace Altaxo.Science.Spectroscopy
       // ***************************************
 
       var numberOfSpectra = spectralPreprocessingResult.Count;
-      var yColumns = inputData.GetDataColumns(ColumnsV);
+      var yColumns = inputData.CurveData.Select(e => e.YColumn as DataColumn).Where(c => c is not null).Cast<DataColumn>().ToArray();
       var columnProperties = new AltaxoVariant[doc.OutputOptions.PropertyNames.Count][];
       var columnPropertyColumns = new DataColumn[doc.OutputOptions.PropertyNames.Count];
       for (int idxProperty = 0; idxProperty < doc.OutputOptions.PropertyNames.Count; idxProperty++)
@@ -346,7 +371,7 @@ namespace Altaxo.Science.Spectroscopy
         }
         if (progressReporter is { } pr)
         {
-          pr.Report($"Peak search+fit column {inputData.DataTable.DataColumns.GetColumnName(entry.yOrgCol)}");
+          pr.Report($"Peak search+fit column {entry.yOrgCol.Name}");
         }
 
 
@@ -842,7 +867,7 @@ namespace Altaxo.Science.Spectroscopy
 
 
         peakTable.DataSource = new PeakSearchingAndFittingDataSource(
-          (DataTableMultipleColumnProxy)dataProxy.Clone(),
+          (ListOfXAndYColumn)dataProxy.Clone(),
           peakSearchingFittingOptions,
           new DataSourceImportOptions());
       }
@@ -1035,30 +1060,25 @@ namespace Altaxo.Science.Spectroscopy
       return (graph, group);
     }
 
-    public static bool TryGetDataProxyForSpectralPreprocessing(WorksheetController ctrl, out DataTableMultipleColumnProxy? proxy)
+    public static bool TryGetDataProxyForSpectralPreprocessing(WorksheetController ctrl, out ListOfXAndYColumn? proxy)
     {
       if (ctrl.SelectedDataColumns.Count == 0)
       {
-        Current.Gui.ErrorMessageBox("Please select one or more data columns from one group!");
+        Current.Gui.ErrorMessageBox("Please select one or more data columns (only the signals/spectra, but not the corresponding x-columns)!");
         proxy = null;
         return false;
       }
 
-      var srcTable = ctrl.DataTable;
-      var col = ctrl.DataTable.DataColumns;
-      var groupNumber = col.GetColumnGroup(col[ctrl.SelectedDataColumns[0]]);
-      var xColumn = col.FindXColumnOfGroup(groupNumber);
+      proxy = new ListOfXAndYColumn();
 
-      if (xColumn is null)
-      {
-        Current.Gui.ErrorMessageBox($"Please designate one column of group {groupNumber} to be the x-column!");
-        proxy = null;
-        return false;
-      }
-
-      proxy = new DataTableMultipleColumnProxy(ColumnsV, srcTable, null, ctrl.SelectedDataColumns);
-      proxy.EnsureExistenceOfIdentifier(ColumnX, 1);
-      proxy.AddDataColumn(ColumnX, xColumn);
+      proxy.SetCurveData(
+        ctrl.SelectedDataColumns.Select(selIndex =>
+        {
+          var yColumn = ctrl.DataTable.DataColumns[selIndex];
+          var xColumn = ctrl.DataTable.DataColumns.FindXColumnOf(yColumn);
+          return (xColumn, yColumn);
+        }).ToList()
+        );
 
       return true;
     }

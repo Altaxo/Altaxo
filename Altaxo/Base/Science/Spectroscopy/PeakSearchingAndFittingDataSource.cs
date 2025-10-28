@@ -2,7 +2,7 @@
 
 /////////////////////////////////////////////////////////////////////////////
 //    Altaxo:  a data processing and data plotting program
-//    Copyright (C) 2002-2022 Dr. Dirk Lellinger
+//    Copyright (C) 2002-2025 Dr. Dirk Lellinger
 //
 //    This program is free software; you can redistribute it and/or modify
 //    it under the terms of the GNU General Public License as published by
@@ -25,8 +25,11 @@
 using System;
 using System.Collections.Generic;
 using System.Diagnostics.CodeAnalysis;
+using System.Linq;
 using System.Threading;
+using System.Transactions;
 using Altaxo.Data;
+using Altaxo.Serialization.Xml;
 
 namespace Altaxo.Science.Spectroscopy
 {
@@ -38,12 +41,72 @@ namespace Altaxo.Science.Spectroscopy
   public class PeakSearchingAndFittingDataSource : TableDataSourceBase, Altaxo.Data.IAltaxoTableDataSource
   {
     private PeakSearchingAndFittingOptionsDocNode _processOptions;
-    private DataTableMultipleColumnProxy _processData;
+    private ListOfXAndYColumn _processData;
     private IDataSourceImportOptions _importOptions;
 
     public Action<IAltaxoTableDataSource>? _dataSourceChanged;
 
     #region Serialization
+
+    /// <summary>
+    /// This resolver is neccessary because in Version 0 and 1 the ProcessData was stored as DataTableMultipleColumnProxy without X column.
+    /// The resolver waits until the deserialization is finished and then tries to resolve the X column from the data table.
+    /// </summary>
+    private class ColumnProxyResolver
+    {
+      private bool _isResolved;
+      private DataTableMultipleColumnProxy _mcp;
+      private PeakSearchingAndFittingDataSource _dataSource;
+
+      public ColumnProxyResolver(DataTableMultipleColumnProxy mcp, PeakSearchingAndFittingDataSource spectralPreprocessingDataSource, IXmlDeserializationInfo info)
+      {
+        this._mcp = mcp;
+        this._dataSource = spectralPreprocessingDataSource;
+
+        info.DeserializationFinished += EhInfo_DeserializationFinished;
+      }
+
+      private void EhInfo_DeserializationFinished(IXmlDeserializationInfo info, object documentRoot, bool isFinalCall)
+      {
+        if (!_isResolved)
+        {
+          DataColumn? xCol = null;
+
+          if (_mcp.DataTable is { } dt)
+          {
+            xCol = dt.DataColumns.FindXColumnOfGroup(_mcp.GroupNumber);
+          }
+
+          if (isFinalCall && xCol is null)
+          {
+            var vColProxies = _mcp.GetDataColumnProxies(SpectroscopyCommands.ColumnsV);
+            var vCol = (DataColumn)vColProxies.FirstOrDefault(p => p.Document() is DataColumn)?.Document();
+            if (vCol is not null)
+            {
+              var dtc = DataColumnCollection.GetParentDataColumnCollectionOf(vCol);
+              if (dtc is not null)
+              {
+                xCol = dtc.FindXColumnOf(vCol) ?? (dtc.ColumnCount > 0 ? dtc[0] : null);
+              }
+            }
+          }
+          if (xCol is not null)
+          {
+            var xyList = _mcp.TransformToListOfXAndYColumn(xCol, SpectroscopyCommands.ColumnsV, false);
+            _dataSource.ChildSetMember(ref _dataSource._processData, xyList);
+
+            _isResolved = true;
+            _mcp = null!;
+            _dataSource = null!;
+          }
+        }
+        
+        if (!_isResolved && isFinalCall)
+        {
+          _dataSource.ChildSetMember(ref _dataSource._processData, new ListOfXAndYColumn());
+        }
+      }
+    }
 
     #region Version 0
 
@@ -79,7 +142,16 @@ namespace Altaxo.Science.Spectroscopy
     [MemberNotNull(nameof(_importOptions), nameof(_processOptions), nameof(_processData))]
     private void DeserializeSurrogate0(Altaxo.Serialization.Xml.IXmlDeserializationInfo info)
     {
-      ChildSetMember(ref _processData, (DataTableMultipleColumnProxy)info.GetValue("ProcessData", this));
+      var mcp = (DataTableMultipleColumnProxy)info.GetValue("ProcessData", this);
+      if (!mcp.ContainsIdentifier(SpectroscopyCommands.ColumnX) && mcp.ContainsIdentifier(SpectroscopyCommands.ColumnsV))
+      {
+        new ColumnProxyResolver(mcp, this, info);
+      }
+      else
+      {
+        ChildSetMember(ref _processData, mcp.TransformToListOfXAndYColumn(SpectroscopyCommands.ColumnX, SpectroscopyCommands.ColumnsV, false));
+      }
+
       ProcessOptions = (PeakSearchingAndFittingOptions)info.GetValue("ProcessOptions", this);
       ChildSetMember(ref _importOptions, (IDataSourceImportOptions)info.GetValue("ImportOptions", this));
     }
@@ -92,7 +164,7 @@ namespace Altaxo.Science.Spectroscopy
     /// 2022-06-08 initial version.
     /// 2022-08-05 change processOptions from PeakFindingAndFittingOptions to PeakFindingAndFittingOptionsDocNode, change namespace from Altaxo.Data to Altaxo.Science.Spectroscopy, change class name from PeakFindingAndFittingDataSource to PeakSearchingAndFittingDataSource
     /// </summary>
-    [Altaxo.Serialization.Xml.XmlSerializationSurrogateFor(typeof(PeakSearchingAndFittingDataSource), 1)]
+    [Altaxo.Serialization.Xml.XmlSerializationSurrogateFor("AltaxoBase", "Altaxo.Science.Spectroscopy.PeakSearchingAndFittingDataSource", 1)]
     private class XmlSerializationSurrogate1 : Altaxo.Serialization.Xml.IXmlSerializationSurrogate
     {
       public virtual void Serialize(object obj, Altaxo.Serialization.Xml.IXmlSerializationInfo info)
@@ -117,12 +189,60 @@ namespace Altaxo.Science.Spectroscopy
     [MemberNotNull(nameof(_importOptions), nameof(_processOptions), nameof(_processData))]
     private void DeserializeSurrogate1(Altaxo.Serialization.Xml.IXmlDeserializationInfo info)
     {
-      ChildSetMember(ref _processData, (DataTableMultipleColumnProxy)info.GetValue("ProcessData", this));
+      var mcp = (DataTableMultipleColumnProxy)info.GetValue("ProcessData", this);
+      if (!mcp.ContainsIdentifier(SpectroscopyCommands.ColumnX) && mcp.ContainsIdentifier(SpectroscopyCommands.ColumnsV))
+      {
+        new ColumnProxyResolver(mcp, this, info);
+      }
+      else
+      {
+        ChildSetMember(ref _processData, mcp.TransformToListOfXAndYColumn(SpectroscopyCommands.ColumnX, SpectroscopyCommands.ColumnsV, false));
+      }
+
       ChildSetMember(ref _processOptions, (PeakSearchingAndFittingOptionsDocNode)info.GetValue("ProcessOptions", this));
       ChildSetMember(ref _importOptions, (IDataSourceImportOptions)info.GetValue("ImportOptions", this));
     }
 
-    #endregion Version 0
+    #endregion Version 1
+
+    #region Version 2
+
+    /// <summary>
+    /// 2022-06-08 initial version.
+    /// 2022-08-05 change processOptions from PeakFindingAndFittingOptions to PeakFindingAndFittingOptionsDocNode, change namespace from Altaxo.Data to Altaxo.Science.Spectroscopy, change class name from PeakFindingAndFittingDataSource to PeakSearchingAndFittingDataSource
+    /// 2025-10-27 Change DataTableMultipleColumnProxy to ListOfXAndYColumn
+    /// </summary>
+    [Altaxo.Serialization.Xml.XmlSerializationSurrogateFor(typeof(PeakSearchingAndFittingDataSource), 2)]
+    private class XmlSerializationSurrogate2 : Altaxo.Serialization.Xml.IXmlSerializationSurrogate
+    {
+      public virtual void Serialize(object obj, Altaxo.Serialization.Xml.IXmlSerializationInfo info)
+      {
+        var s = (PeakSearchingAndFittingDataSource)obj;
+
+        info.AddValue("ProcessData", s._processData);
+        info.AddValue("ProcessOptions", s._processOptions);
+        info.AddValue("ImportOptions", s._importOptions);
+      }
+
+      public object Deserialize(object? o, Altaxo.Serialization.Xml.IXmlDeserializationInfo info, object? parent)
+      {
+        if (o is PeakSearchingAndFittingDataSource s)
+          s.DeserializeSurrogate2(info);
+        else
+          s = new PeakSearchingAndFittingDataSource(info, 2);
+        return s;
+      }
+    }
+
+    [MemberNotNull(nameof(_importOptions), nameof(_processOptions), nameof(_processData))]
+    private void DeserializeSurrogate2(Altaxo.Serialization.Xml.IXmlDeserializationInfo info)
+    {
+      ChildSetMember(ref _processData, (ListOfXAndYColumn)info.GetValue("ProcessData", this));
+      ChildSetMember(ref _processOptions, (PeakSearchingAndFittingOptionsDocNode)info.GetValue("ProcessOptions", this));
+      ChildSetMember(ref _importOptions, (IDataSourceImportOptions)info.GetValue("ImportOptions", this));
+    }
+
+    #endregion Version 2
 
     protected PeakSearchingAndFittingDataSource(Altaxo.Serialization.Xml.IXmlDeserializationInfo info, int version)
     {
@@ -133,6 +253,9 @@ namespace Altaxo.Science.Spectroscopy
           break;
         case 1:
           DeserializeSurrogate1(info);
+          break;
+        case 2:
+          DeserializeSurrogate2(info);
           break;
         default:
           throw new ArgumentOutOfRangeException(nameof(version));
@@ -154,7 +277,7 @@ namespace Altaxo.Science.Spectroscopy
     /// or
     /// importOptions
     /// </exception>
-    public PeakSearchingAndFittingDataSource(DataTableMultipleColumnProxy inputData, PeakSearchingAndFittingOptions dataSourceOptions, IDataSourceImportOptions importOptions)
+    public PeakSearchingAndFittingDataSource(ListOfXAndYColumn inputData, PeakSearchingAndFittingOptions dataSourceOptions, IDataSourceImportOptions importOptions)
     {
       if (inputData is null)
         throw new ArgumentNullException(nameof(inputData));
@@ -188,7 +311,7 @@ namespace Altaxo.Science.Spectroscopy
 
       using (var token = SuspendGetToken())
       {
-        DataTableMultipleColumnProxy? processData = null;
+        ListOfXAndYColumn? processData = null;
         IDataSourceImportOptions? importOptions = null;
 
         CopyHelper.Copy(ref importOptions, from._importOptions);
@@ -276,7 +399,7 @@ namespace Altaxo.Science.Spectroscopy
     /// <value>
     /// The input data.
     /// </value>
-    public DataTableMultipleColumnProxy ProcessData
+    public ListOfXAndYColumn ProcessData
     {
       get
       {
@@ -350,7 +473,7 @@ namespace Altaxo.Science.Spectroscopy
     object IAltaxoTableDataSource.ProcessDataObject
     {
       get => _processData;
-      set => ProcessData = (DataTableMultipleColumnProxy)value;
+      set => ProcessData = (ListOfXAndYColumn)value;
     }
 
     #region Change event handling

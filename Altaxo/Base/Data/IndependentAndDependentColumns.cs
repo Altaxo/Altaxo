@@ -2,7 +2,7 @@
 
 /////////////////////////////////////////////////////////////////////////////
 //    Altaxo:  a data processing and data plotting program
-//    Copyright (C) 2002-2023 Dr. Dirk Lellinger
+//    Copyright (C) 2002-2025 Dr. Dirk Lellinger
 //
 //    This program is free software; you can redistribute it and/or modify
 //    it under the terms of the GNU General Public License as published by
@@ -170,14 +170,26 @@ namespace Altaxo.Data
       {
         ChildCloneToMember(ref _dependentVariables[i], from._dependentVariables[i]);
       }
-
-      /*
-      _dependentVariableTransformations = (IDoubleToDoubleTransformation?[])from._dependentVariableTransformations.Clone();
-
-      _parameterNames = (string[])from._parameterNames.Clone();
-      _parameterNameStart = from._parameterNameStart;
-      */
     }
+
+    /// <summary>
+    /// Initializes a new instance of the <see cref="IndependentAndDependentColumns"/> class from given proxies of DataTable and columns.
+    /// This constructor is intended for internal use only, e.g. for creating copies of existing instances.
+    /// ATTENTION: The proxies are not cloned! 
+    /// </summary>
+    /// <param name="table">The table proxy.</param>
+    /// <param name="groupNumber">The group number of the x- and y-column.</param>
+    /// <param name="xCol">The proxy of the x-column.</param>
+    /// <param name="yCol">The proxy of the y-column.</param>
+    protected IndependentAndDependentColumns(DataTableProxy table, int groupNumber, IReadableColumnProxy xCol, IReadableColumnProxy yCol)
+    {
+      _rangeOfRows = new AllRows() { ParentObject = this };
+      _dataTable = table;
+      _groupNumber = groupNumber;
+      _independentVariables = [xCol];
+      _dependentVariables = [yCol];
+    }
+
 
     /// <summary>
     /// Creates a new object that is a copy of the current instance.

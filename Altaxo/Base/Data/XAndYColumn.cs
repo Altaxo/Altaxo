@@ -2,7 +2,7 @@
 
 /////////////////////////////////////////////////////////////////////////////
 //    Altaxo:  a data processing and data plotting program
-//    Copyright (C) 2002-2023 Dr. Dirk Lellinger
+//    Copyright (C) 2002-2025 Dr. Dirk Lellinger
 //
 //    This program is free software; you can redistribute it and/or modify
 //    it under the terms of the GNU General Public License as published by
@@ -22,6 +22,8 @@
 
 #endregion Copyright
 
+using System;
+using System.Collections.Generic;
 using Altaxo.Serialization.Xml;
 
 namespace Altaxo.Data
@@ -63,16 +65,33 @@ namespace Altaxo.Data
     {
     }
 
-    public XAndYColumn(DataTable table, int groupNumber, Altaxo.Data.IReadableColumn xColumn, Altaxo.Data.IReadableColumn yColumn)
-      : base(table, groupNumber, 1, 1)
+   
+
+    protected XAndYColumn(IXmlDeserializationInfo info, int version) : base(info, version)
+    {
+    }
+
+    protected XAndYColumn(DataTable table, int groupNumber, Altaxo.Data.IReadableColumn xColumn, Altaxo.Data.IReadableColumn yColumn)
+     : base(table, groupNumber, 1, 1)
     {
       XColumn = xColumn;
       YColumn = yColumn;
     }
 
-    protected XAndYColumn(IXmlDeserializationInfo info, int version) : base(info, version)
+    /// <summary>
+    /// Initializes a new instance of the <see cref="IndependentAndDependentColumns"/> class from given proxies of DataTable and columns.
+    /// This constructor is intended for internal use only, e.g. for creating copies of existing instances.
+    /// ATTENTION: The proxies are not cloned! 
+    /// </summary>
+    /// <param name="table">The table proxy.</param>
+    /// <param name="groupNumber">The group number of the x- and y-column.</param>
+    /// <param name="xCol">The proxy of the x-column.</param>
+    /// <param name="yCol">The proxy of the y-column.</param>
+    protected XAndYColumn(DataTableProxy table, int groupNumber, IReadableColumnProxy xCol, IReadableColumnProxy yCol)
+      : base(table, groupNumber, xCol, yCol)
     {
     }
+
 
     public override object Clone()
     {
@@ -201,6 +220,11 @@ namespace Altaxo.Data
       {
         return " (broken)";
       }
+    }
+
+    public static XAndYColumn CreateFromProxies(DataTableProxy table, int groupNumber, IReadableColumnProxy xCol, IReadableColumnProxy yCol)
+    {
+      return new XAndYColumn(table, groupNumber, xCol, yCol);
     }
   }
 }
