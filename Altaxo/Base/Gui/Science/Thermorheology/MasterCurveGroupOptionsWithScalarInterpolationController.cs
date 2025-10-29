@@ -181,11 +181,7 @@ namespace Altaxo.Gui.Science.Thermorheology
       {
         _interpolationFunctionInstance = _doc.InterpolationFunction;
 
-        ShiftX = new ItemsController<ShiftXBy>(new SelectableListNodeList(
-          new[] {
-          new SelectableListNode(ShiftXBy.Factor.ToString(), ShiftXBy.Factor,false),
-          new SelectableListNode(ShiftXBy.Offset.ToString(), ShiftXBy.Factor, false)
-          }));
+        ShiftX = new ItemsController<ShiftXBy>(new SelectableListNodeList(_doc.XShiftBy));
         ShiftX.SelectedValue = _doc.XShiftBy;
 
         LogarithmizeXForInterpolation = _doc.LogarithmizeXForInterpolation;

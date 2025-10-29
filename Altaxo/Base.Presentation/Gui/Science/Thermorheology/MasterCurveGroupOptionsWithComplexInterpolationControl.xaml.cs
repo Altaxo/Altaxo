@@ -29,9 +29,9 @@ namespace Altaxo.Gui.Science.Thermorheology
   /// <summary>
   /// Interaction logic for MasterCurveGroupOptionsWithScalarInterpolationController.xaml
   /// </summary>
-  public partial class MasterCurveGroupOptionsWithScalarInterpolationController : UserControl, IMasterCurveGroupOptionsWithScalarInterpolationView
+  public partial class MasterCurveGroupOptionsWithComplexInterpolationControl : UserControl, IMasterCurveGroupOptionsWithComplexInterpolationView
   {
-    public MasterCurveGroupOptionsWithScalarInterpolationController()
+    public MasterCurveGroupOptionsWithComplexInterpolationControl()
     {
       InitializeComponent();
     }
