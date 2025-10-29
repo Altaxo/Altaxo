@@ -403,13 +403,17 @@ namespace Altaxo.Science.Thermorheology.MasterCurves
         if (doLogY)
           yv = Math.Log(yv);
 
-        if (xv.IsFinite() && yv.IsFinite() && xv.IsInIntervalCC(interpolMin, interpolMax))
+        if (xv.IsFinite() && yv.IsFinite())
         {
           try
           {
-            double diff = yv - interpolation(xv);
-            penaltySum += diff * diff;
-            validPoints++;
+            double yInterpolation = interpolation(xv);
+            if (yInterpolation.IsFinite())
+            {
+              double diff = yv - yInterpolation;
+              penaltySum += diff * diff;
+              validPoints++;
+            }
           }
           catch (Exception)
           {
