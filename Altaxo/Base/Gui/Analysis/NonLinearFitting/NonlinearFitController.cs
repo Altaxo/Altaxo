@@ -2,7 +2,7 @@
 
 /////////////////////////////////////////////////////////////////////////////
 //    Altaxo:  a data processing and data plotting program
-//    Copyright (C) 2002-2022 Dr. Dirk Lellinger
+//    Copyright (C) 2002-2025 Dr. Dirk Lellinger
 //
 //    This program is free software; you can redistribute it and/or modify
 //    it under the terms of the GNU General Public License as published by
@@ -950,7 +950,8 @@ Label_EditScript:
 
           // get the transformation for the plot item
           IVariantToVariantTransformation functionIndepVarPlotItemTransformation = null;
-          IVariantToVariantTransformation functionDepVarPlotItemTransformation = null;
+          IVariantToVariantTransformation functionDepVarPlotItemTransformationAndFitFunctionTransformation = null; // Total transformation include fit function transformation, and transformation of the data column (original and for fitting)
+          IVariantToVariantTransformation functionDepVarPlotItemTransformation = null; // only transformations of the data column (original and for fitting)
           var indepVar = fitEle.IndependentVariables(0);
           var depVar = fitEle.DependentVariables(idxDependentVariable);
           SplitInDataColumnAndTransformation(indepVar, out var indepVarDataColumn, out var indepFitVarTransformation);
@@ -959,7 +960,8 @@ Label_EditScript:
           if (indepVarDataColumn is not null && depVarDataColumn is not null && dataColumnsAndTheirTransformation.TryGetValue((indepVarDataColumn, depVarDataColumn), out var orgTransformations))
           {
             functionIndepVarPlotItemTransformation = GetFitFunctionIndependentTransformation(orgTransformations.xDataTransformation, indepFitVarTransformation);
-            functionDepVarPlotItemTransformation = GetFitFunctionDependentTransformation(orgTransformations.yDataTransformation, depFitVarTransformation, fitEle.GetDependentVariableTransformation(idxDependentVariable));
+            functionDepVarPlotItemTransformationAndFitFunctionTransformation = GetFitFunctionDependentTransformation(orgTransformations.yDataTransformation, depFitVarTransformation, fitEle.GetDependentVariableTransformation(idxDependentVariable)); // Total transformation include fit function transformation, and transformation of the data column (original and for fitting)
+            functionDepVarPlotItemTransformation = GetFitFunctionDependentTransformation(orgTransformations.yDataTransformation, depFitVarTransformation); // only transformations of the data column (original and for fitting)
           }
 
           // Plot items for confidence intervals
@@ -986,7 +988,8 @@ Label_EditScript:
                   doc,
                   idxFitEnsemble,
                   idxDependentVariable,
-                  functionDepVarPlotItemTransformation,
+                  dependentVariableFitFunctionTransformation : fitEle.GetDependentVariableTransformation(idxDependentVariable),
+                  dependentVariableValueTransformationInverse : functionDepVarPlotItemTransformation,
                   0,
                   functionIndepVarPlotItemTransformation,
                   numberOfFitPoints,
@@ -1021,7 +1024,8 @@ Label_EditScript:
                   doc,
                   idxFitEnsemble,
                   idxDependentVariable,
-                  functionDepVarPlotItemTransformation,
+                  dependentVariableFitFunctionTransformation: fitEle.GetDependentVariableTransformation(idxDependentVariable),
+                  dependentVariableValueTransformationInverse: functionDepVarPlotItemTransformation,
                   0,
                   functionIndepVarPlotItemTransformation,
                   numberOfFitPoints,
@@ -1048,7 +1052,7 @@ Label_EditScript:
           }
 
           // New plot item for fit function
-          var newPlotItem = new XYNonlinearFitFunctionPlotItem(newFitDocumentIdentifier, doc, idxFitEnsemble, idxDependentVariable, functionDepVarPlotItemTransformation, 0, functionIndepVarPlotItemTransformation, newPlotStyle);
+          var newPlotItem = new XYNonlinearFitFunctionPlotItem(newFitDocumentIdentifier, doc, idxFitEnsemble, idxDependentVariable, functionDepVarPlotItemTransformationAndFitFunctionTransformation, 0, functionIndepVarPlotItemTransformation, newPlotStyle);
 
           if (oldPlotItem is not null)
           {
@@ -1067,6 +1071,11 @@ Label_EditScript:
     private static IVariantToVariantTransformation GetFitFunctionDependentTransformation(IVariantToVariantTransformation transformationOfOriginalDataColumn, IVariantToVariantTransformation transformationOfFitDependentVariable, IVariantToVariantTransformation transformationOfDependentVariableFitFunctionOutput)
     {
       return CompoundTransformation.TryGetCompoundTransformationWithSimplification(new[] { (transformationOfDependentVariableFitFunctionOutput, false), (transformationOfFitDependentVariable, true), (transformationOfOriginalDataColumn, false) });
+    }
+
+    private static IVariantToVariantTransformation GetFitFunctionDependentTransformation(IVariantToVariantTransformation transformationOfOriginalDataColumn, IVariantToVariantTransformation transformationOfFitDependentVariable)
+    {
+      return CompoundTransformation.TryGetCompoundTransformationWithSimplification(new[] { (transformationOfFitDependentVariable, true), (transformationOfOriginalDataColumn, false) });
     }
 
     private static IVariantToVariantTransformation GetFitFunctionIndependentTransformation(IVariantToVariantTransformation transformationOfOriginalDataColumn, IVariantToVariantTransformation transformationOfFitIndependentVariable)

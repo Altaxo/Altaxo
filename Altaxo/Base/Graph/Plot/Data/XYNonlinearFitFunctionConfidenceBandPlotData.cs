@@ -2,7 +2,7 @@
 
 /////////////////////////////////////////////////////////////////////////////
 //    Altaxo:  a data processing and data plotting program
-//    Copyright (C) 2002-2017 Dr. Dirk Lellinger
+//    Copyright (C) 2002-2025 Dr. Dirk Lellinger
 //
 //    This program is free software; you can redistribute it and/or modify
 //    it under the terms of the GNU General Public License as published by
@@ -33,6 +33,7 @@ namespace Altaxo.Graph.Plot.Data
   using Altaxo.Calc.LinearAlgebra;
   using Altaxo.Calc.Regression.Nonlinear;
   using Altaxo.Data;
+  using Altaxo.Data.Transformations;
 
   /// <summary>
   /// Summary description for XYFunctionPlotData.
@@ -63,7 +64,15 @@ namespace Altaxo.Graph.Plot.Data
     /// </summary>
     private int _dependentVariableIndex;
 
-    private IVariantToVariantTransformation? _dependentVariableTransformation;
+    /// <summary>
+    /// The transformation that was applied to the values of the data column before fitting.
+    /// </summary>
+    private IVariantToVariantTransformation? _dependentVariableValueTransformationInverse;
+
+    /// <summary>
+    /// The transformation that was applied to the output of the fit function.
+    /// </summary>
+    private IVariantToVariantTransformation? _dependentVariableFitFunctionTransformation;
 
     /// <summary>
     /// The number of fit points. Used to calculate the quantile of the student's distribution.
@@ -113,8 +122,81 @@ namespace Altaxo.Graph.Plot.Data
     /// <summary>
     /// Initial version, 2017-11-09.
     /// </summary>
-    [Altaxo.Serialization.Xml.XmlSerializationSurrogateFor(typeof(XYNonlinearFitFunctionConfidenceBandPlotData), 0)]
+    [Altaxo.Serialization.Xml.XmlSerializationSurrogateFor("AltaxoBase", "Altaxo.Graph.Plot.Data.XYNonlinearFitFunctionConfidenceBandPlotData", 0)]
     private class XmlSerializationSurrogate0 : Altaxo.Serialization.Xml.IXmlSerializationSurrogate
+    {
+      public virtual void Serialize(object obj, Altaxo.Serialization.Xml.IXmlSerializationInfo info)
+      {
+        throw new InvalidProgramException("Serialization of old version");
+
+/*
+        var s = (XYNonlinearFitFunctionConfidenceBandPlotData)obj;
+
+        info.AddValue("FitDocumentIdentifier", s._fitDocumentIdentifier);
+        info.AddValue("FitDocument", s._fitDocument);
+        info.AddValue("FitElementIndex", s._fitElementIndex);
+        info.AddValue("IndependentVariableIndex", s._dependentVariableIndex);
+        info.AddValueOrNull("IndependentVariableTransformation", s._independentVariableTransformation);
+        info.AddValue("DependentVariableIndex", s._dependentVariableIndex);
+        info.AddValueOrNull("DependentVariableTransformation", s._dependentVariableTransformation);
+        info.AddValue("NumberOfFitPoints", s._numberOfFitPoints);
+        info.AddValue("SigmaSquare", s._sigmaSquare);
+
+        info.AddValue("IsLowerBand", s.IsLowerBand);
+        info.AddValue("IsPredictionBand", s.IsPredictionBand);
+        info.AddValue("ConfidenceLevel", s._confidenceLevel);
+
+        {
+          info.CreateArray("Covariances", s._cachedIndicesOfVaryingParametersOfThisFitElement.Length * s._cachedIndicesOfVaryingParametersOfThisFitElement.Length);
+          foreach (var i in s._cachedIndicesOfVaryingParametersOfThisFitElement)
+            foreach (var j in s._cachedIndicesOfVaryingParametersOfThisFitElement)
+              info.AddValue("e", s._covarianceMatrix[i, j]);
+          info.CommitArray();
+        }
+*/
+      }
+
+      public virtual object Deserialize(object? o, Altaxo.Serialization.Xml.IXmlDeserializationInfo info, object? parent)
+      {
+        var s = (XYNonlinearFitFunctionConfidenceBandPlotData?)o ?? new XYNonlinearFitFunctionConfidenceBandPlotData(info);
+
+        s._fitDocumentIdentifier = info.GetString("FitDocumentIdentifier");
+        s.ChildSetMember(ref s._fitDocument, (NonlinearFitDocument)info.GetValue("FitDocument", s));
+        s._fitElementIndex = info.GetInt32("FitElementIndex");
+        s._independentVariableIndex = info.GetInt32("IndependentVariableIndex");
+        s._independentVariableTransformation = info.GetValueOrNull<IVariantToVariantTransformation>("IndependentVariableTransformation", null);
+        s._dependentVariableIndex = info.GetInt32("DependentVariableIndex");
+        s._dependentVariableValueTransformationInverse = info.GetValueOrNull<IVariantToVariantTransformation>("DependentVariableTransformation", null);
+        s._dependentVariableFitFunctionTransformation = null; // introduced in serialization V1
+        s._numberOfFitPoints = info.GetInt32("NumberOfFitPoints");
+        s._sigmaSquare = info.GetDouble("SigmaSquare");
+        s.IsLowerBand = info.GetBoolean("IsLowerBand");
+        s.IsPredictionBand = info.GetBoolean("IsPredictionBand");
+        s._confidenceLevel = info.GetDouble("ConfidenceLevel");
+
+        s.CreateCachedMembers();
+
+        { // Deserialize covariances
+          int count = info.OpenArray("Covariances");
+          if (!(count == s._cachedIndicesOfVaryingParametersOfThisFitElement.Length * s._cachedIndicesOfVaryingParametersOfThisFitElement.Length))
+            throw new InvalidOperationException("Number of elements in covariance array does not match the number of varying parameters");
+
+          foreach (var i in s._cachedIndicesOfVaryingParametersOfThisFitElement)
+            foreach (var j in s._cachedIndicesOfVaryingParametersOfThisFitElement)
+              s._covarianceMatrix[i, j] = info.GetDouble("e");
+          info.CloseArray(count);
+        }
+
+        return s;
+      }
+    }
+
+    /// <summary>
+    /// V0: Initial version, 2017-11-09.
+    /// V1: split into _dependentVariableFitFunctionTransformation and _dependentVariableValueTransformationInverse (former _dependentVariableTransformation corresponds to _dependentVariableValueTransformationInverse)
+    /// </summary>
+    [Altaxo.Serialization.Xml.XmlSerializationSurrogateFor(typeof(XYNonlinearFitFunctionConfidenceBandPlotData), 1)]
+    private class XmlSerializationSurrogate1 : Altaxo.Serialization.Xml.IXmlSerializationSurrogate
     {
       public virtual void Serialize(object obj, Altaxo.Serialization.Xml.IXmlSerializationInfo info)
       {
@@ -126,7 +208,8 @@ namespace Altaxo.Graph.Plot.Data
         info.AddValue("IndependentVariableIndex", s._dependentVariableIndex);
         info.AddValueOrNull("IndependentVariableTransformation", s._independentVariableTransformation);
         info.AddValue("DependentVariableIndex", s._dependentVariableIndex);
-        info.AddValueOrNull("DependentVariableTransformation", s._dependentVariableTransformation);
+        info.AddValueOrNull("DependentVariableValueTransformationInverse", s._dependentVariableValueTransformationInverse);
+        info.AddValueOrNull("DependentVariableFitFunctionTransformation", s._dependentVariableFitFunctionTransformation);
         info.AddValue("NumberOfFitPoints", s._numberOfFitPoints);
         info.AddValue("SigmaSquare", s._sigmaSquare);
 
@@ -153,7 +236,8 @@ namespace Altaxo.Graph.Plot.Data
         s._independentVariableIndex = info.GetInt32("IndependentVariableIndex");
         s._independentVariableTransformation = info.GetValueOrNull<IVariantToVariantTransformation>("IndependentVariableTransformation", null);
         s._dependentVariableIndex = info.GetInt32("DependentVariableIndex");
-        s._dependentVariableTransformation = info.GetValueOrNull<IVariantToVariantTransformation>("DependentVariableTransformation", null);
+        s._dependentVariableValueTransformationInverse = info.GetValueOrNull<IVariantToVariantTransformation>("DependentVariableValueTransformationInverse", null);
+        s._dependentVariableFitFunctionTransformation = info.GetValueOrNull<IVariantToVariantTransformation>("DependentVariableFitFunctionTransformation", null);
         s._numberOfFitPoints = info.GetInt32("NumberOfFitPoints");
         s._sigmaSquare = info.GetDouble("SigmaSquare");
         s.IsLowerBand = info.GetBoolean("IsLowerBand");
@@ -252,7 +336,8 @@ namespace Altaxo.Graph.Plot.Data
         NonlinearFitDocument fitDocument,
         int fitElementIndex,
         int dependentVariableIndex,
-        IVariantToVariantTransformation dependentVariableTransformation,
+        IVariantToVariantTransformation dependentVariableFitFunctionTransformation,
+        IVariantToVariantTransformation dependentVariableValueTransformationInverse,
         int independentVariableIndex,
         IVariantToVariantTransformation independentVariableTransformation,
         int numberOfFittedPoints,
@@ -275,7 +360,8 @@ namespace Altaxo.Graph.Plot.Data
       _fitDocumentIdentifier = fitDocumentIdentifier;
       _fitElementIndex = fitElementIndex;
       _dependentVariableIndex = dependentVariableIndex;
-      _dependentVariableTransformation = dependentVariableTransformation;
+      _dependentVariableValueTransformationInverse = dependentVariableValueTransformationInverse;
+      _dependentVariableFitFunctionTransformation = dependentVariableFitFunctionTransformation;
       _independentVariableTransformation = independentVariableTransformation;
       _numberOfFitPoints = numberOfFittedPoints;
 
@@ -319,7 +405,8 @@ namespace Altaxo.Graph.Plot.Data
       _independentVariableIndex = from._independentVariableIndex;
       _independentVariableTransformation = from._independentVariableTransformation;
       _dependentVariableIndex = from._dependentVariableIndex;
-      _dependentVariableTransformation = from._dependentVariableTransformation;
+      _dependentVariableFitFunctionTransformation = from._dependentVariableFitFunctionTransformation;
+      _dependentVariableValueTransformationInverse = from._dependentVariableValueTransformationInverse;
       _numberOfFitPoints = from._numberOfFitPoints;
       _sigmaSquare = from._sigmaSquare;
 
@@ -456,42 +543,83 @@ namespace Altaxo.Graph.Plot.Data
     private const double DBL_EPSILON = 2.2204460492503131e-016;
     private const double SQRT_DBL_EPSILON = 1.490116119384765631426592E-8;
 
+    /// <summary>Matrix that is used to accomodate the x value (if the fit function supports derivatives).</summary>
+    Matrix<double> _cachedXAsMatrix = Matrix<double>.Build.Dense(1, 1); 
+
+    /// <summary>Matrix that is used to accomodate the derivatives of the fit function with respect to the parameters (if the fit function supports derivatives).</summary>
+    Matrix<double> _cachedDFAsMatrix; 
+
     private double EvaluateFunctionValueAndJacobian(double x, double[] jacobian)
     {
-      double y = EvaluateFitFunctionValue(x, _cachedParameters);
+      double yOriginal = EvaluateFitFunctionValue(x, _cachedParameters);
+      double y = _dependentVariableFitFunctionTransformation is null ? yOriginal : _dependentVariableFitFunctionTransformation.Transform(yOriginal);
+
       if (double.IsNaN(y) || double.IsInfinity(y))
         return y; // jacobian needs not to be evaluated if y is not defined or infinity
 
-      double eps = SQRT_DBL_EPSILON;
-
-      foreach (var iParameter in _cachedIndicesOfVaryingParametersOfThisFitElement)
+      // we calculate the jacobian = (derivative of y with respect to the parameters) either directly (provided by the fit function) and taking into account the transformation,
+      // or by numerical differentiation (also taking into account the transformation)
+      if (_cachedFitFunction is IFitFunctionWithDerivative ffwd && (_dependentVariableFitFunctionTransformation is null || _dependentVariableFitFunctionTransformation is IDoubleToDoubleTransformation))
       {
-        var parameter = _cachedParameters[iParameter];
-        var h = eps * Math.Abs(parameter);
-        if (h == 0.0)
-          h = eps;
-        _cachedParametersForJacobianEvaluation[iParameter] = parameter + h;
-        try
+        _cachedXAsMatrix[0, 0] = x;
+        if (_cachedDFAsMatrix is null || _cachedDFAsMatrix.RowCount != 1 || _cachedDFAsMatrix.ColumnCount != _cachedParameters.Length)
+          _cachedDFAsMatrix = Matrix<double>.Build.Dense(1, _cachedParameters.Length);
+        ffwd.EvaluateDerivative(_cachedXAsMatrix, _cachedParameters, null, _cachedDFAsMatrix, null);
+
+        if (_dependentVariableFitFunctionTransformation is IDoubleToDoubleTransformation transformation)
         {
-          var ydev = EvaluateFitFunctionValue(x, _cachedParametersForJacobianEvaluation);
-          if (!double.IsNaN(ydev))
+          foreach (var iParameter in _cachedIndicesOfVaryingParametersOfThisFitElement)
           {
-            jacobian[iParameter] = (ydev - y) / h;
-          }
-          else // if right derivative fails, try left derivative
-          {
-            _cachedParametersForJacobianEvaluation[iParameter] = parameter - h;
-            ydev = EvaluateFitFunctionValue(x, _cachedParametersForJacobianEvaluation);
-            jacobian[iParameter] = (y - ydev) / h;
+            (_, jacobian[iParameter]) = transformation.Derivative(yOriginal, _cachedDFAsMatrix[0, iParameter]);
           }
         }
-        catch (Exception)
+        else
         {
-          jacobian[iParameter] = double.NaN;
+          foreach (var iParameter in _cachedIndicesOfVaryingParametersOfThisFitElement)
+          {
+            jacobian[iParameter] = _cachedDFAsMatrix[0, iParameter];
+          }
         }
-        finally
+      }
+      else // it is a fit function without derivatives
+      {
+
+        double eps = SQRT_DBL_EPSILON;
+
+        foreach (var iParameter in _cachedIndicesOfVaryingParametersOfThisFitElement)
         {
-          _cachedParametersForJacobianEvaluation[iParameter] = _cachedParameters[iParameter];
+          var parameter = _cachedParameters[iParameter];
+          var h = eps * Math.Abs(parameter);
+          if (h == 0.0)
+            h = eps;
+          _cachedParametersForJacobianEvaluation[iParameter] = parameter + h;
+          try
+          {
+            var ydev = EvaluateFitFunctionValue(x, _cachedParametersForJacobianEvaluation);
+            if (_dependentVariableFitFunctionTransformation is not null)
+              ydev = _dependentVariableFitFunctionTransformation.Transform(ydev);
+
+            if (!double.IsNaN(ydev))
+            {
+              jacobian[iParameter] = (ydev - y) / h;
+            }
+            else // if right derivative fails, try left derivative
+            {
+              _cachedParametersForJacobianEvaluation[iParameter] = parameter - h;
+              ydev = EvaluateFitFunctionValue(x, _cachedParametersForJacobianEvaluation);
+              if (_dependentVariableFitFunctionTransformation is not null)
+                ydev = _dependentVariableFitFunctionTransformation.Transform(ydev);
+              jacobian[iParameter] = (y - ydev) / h;
+            }
+          }
+          catch (Exception)
+          {
+            jacobian[iParameter] = double.NaN;
+          }
+          finally
+          {
+            _cachedParametersForJacobianEvaluation[iParameter] = _cachedParameters[iParameter];
+          }
         }
       }
 
@@ -535,12 +663,14 @@ namespace Altaxo.Graph.Plot.Data
       }
 
       var h = _cachedQuantileOfStudentsDistribution * Math.Sqrt(jacCovJac);
+
       var result = IsLowerBand ? y - h : y + h;
 
-      if (_dependentVariableTransformation is not null)
-        return _dependentVariableTransformation.Transform(result);
-      else
-        return result;
+      if (_dependentVariableValueTransformationInverse is not null)
+        result = _dependentVariableValueTransformationInverse.Transform(result);
+
+
+      return result;
     }
 
     #endregion Function Evaluation
