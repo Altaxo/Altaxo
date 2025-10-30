@@ -397,6 +397,34 @@ The domain of the function is $-\infty \leq x \leq \infty$.
 ^^^ Fig. 1: Exponential growth with $y_0=100$, $a_0=3$ and $\tau_0=4$.
 </value>
   </data>
+  <data name="General.ExponentialOfPolynomial" xml:space="preserve">
+    <value>##### Exponential of a polynomial
+
+This function evaluates the exponential function of an polynomial with one or multiple terms, and both positive and negative exponents, according to
+
+$$
+y(x) = offset + \exp \left ( a_0 + a_1 x^1 + ... + a_n x^n + b_1 x^{-1} + ... + b_m x^{-m} \right )
+$$
+
+in which:
+
+- $a_0 ... a_n$ are the polynomial coefficients for positive exponents $ 0...n $
+- $b_1$ ... $b_{m}$ are the polynomial coefficients for negative exponents $-1 .. -m$
+- $n$ is the order of the polynom for positive exponents
+- $m$ is the order of the polynom for negative exponents
+
+The polynomial orders $n$ and $m$ can be changed by double-clicking on the fit function. The default value is $n=2$ and $m=0$. If some of the terms are not needed, set their corresponding coefficients fixed to zero.
+
+The domain of the function is $-\infty \leq x \leq \infty$. If $m \neq 0$, $x=0$ is excluded.
+
+^^^
+![](res:Altaxo.Calc.FitFunctions.General.ExponentialOfPolynomial.Fig1.png){width=15cm}  
+^^^ Fig. 1: Exponential of a polynomial ($n=3$, $m=0$) with $offset=2$, $a_0=1$, $a_1=0$, $a_2=0$ and $a_3=-0.25$.
+
+
+
+</value>
+  </data>
   <data name="General.Polynomial" xml:space="preserve">
     <value>##### Polynomial
 
