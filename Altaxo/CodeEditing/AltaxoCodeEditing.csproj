@@ -41,13 +41,13 @@
     <PackageReference Include="Microsoft.CodeAnalysis.CSharp.Features" Version="4.14.0-3.25412.6" />
     <PackageReference Include="Microsoft.CodeAnalysis.CSharp.Scripting" Version="4.14.0-3.25412.6" />
     <PackageReference Include="Microsoft.CodeAnalysis.CSharp.Workspaces" Version="4.14.0-3.25412.6" />
-    <PackageReference Include="System.Reflection.Metadata" Version="9.0.9" />
-    <PackageReference Include="System.Reflection.MetadataLoadContext" Version="9.0.9" />
-    <PackageReference Include="System.Collections.Immutable" Version="9.0.9" />
-    <PackageReference Include="System.ComponentModel.Composition" Version="9.0.9" />
+    <PackageReference Include="System.Reflection.Metadata" Version="9.0.10" />
+    <PackageReference Include="System.Reflection.MetadataLoadContext" Version="9.0.10" />
+    <PackageReference Include="System.Collections.Immutable" Version="9.0.10" />
+    <PackageReference Include="System.ComponentModel.Composition" Version="9.0.10" />
     <PackageReference Include="System.Runtime" Version="4.3.1" />
     <PackageReference Include="NuGet.Protocol" Version="6.14.0" />
-    <PackageReference Include="System.Formats.Asn1" Version="9.0.9" />  <!-- Nuget.Protocol 6.14.0 pulls in System.Format.Asn1 6.x.x, which is marked as vulnerable, so we overwrite this -->
+    <PackageReference Include="System.Formats.Asn1" Version="9.0.10" />  <!-- Nuget.Protocol 6.14.0 pulls in System.Format.Asn1 6.x.x, which is marked as vulnerable, so we overwrite this -->
   </ItemGroup>
 
   <ItemGroup>
