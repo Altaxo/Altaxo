@@ -300,11 +300,11 @@ namespace Altaxo.Calc.FitFunctions.General
               isum /= x;
             }
           }
-          y = P[0] + Math.Exp(sum + isum);
+          y = Math.Exp(sum + isum); // without offset
         }
         else
         {
-          y = P[0] + Math.Exp(sum);
+          y = Math.Exp(sum); // without offset
         }
 
         DY[r, 0] = 1; // derivative with respect to offset

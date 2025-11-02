@@ -2,7 +2,7 @@
 
 /////////////////////////////////////////////////////////////////////////////
 //    Altaxo:  a data processing and data plotting program
-//    Copyright (C) 2002-2023 Dr. Dirk Lellinger
+//    Copyright (C) 2002-2025 Dr. Dirk Lellinger
 //
 //    This program is free software; you can redistribute it and/or modify
 //    it under the terms of the GNU General Public License as published by
@@ -69,11 +69,12 @@ namespace Altaxo.Calc.FitFunctions
         (() => new ExponentialDecay(2), 0.25, new double[]{1,3,5,7,11}, 1+3*Math.Exp(-0.25/5)+7*Math.Exp(-0.25/11)),
         (() => new ExponentialEquilibration(2), 0.5, new double[]{0.125,1,3,5,7,11}, 1+3*(1-Math.Exp(-(0.5-0.125)/5))+7*(1-Math.Exp(-(0.5-0.125)/11)) ),
         (() => new ExponentialGrowth(2), 0.25, new double[]{1,3,5,7,11}, 1+3*Math.Exp(0.25/5)+7*Math.Exp(0.25/11)),
-        (() => new FitFunctions.General.Polynomial(2,0), 0.25, new double[]{1,3,5}, 1+3*0.25 + 5*0.25*0.25),
-        (() => new FitFunctions.General.Polynomial(2,1), 0.25, new double[]{1,3,5,7}, 1+3*0.25 + 5*0.25*0.25 + 7/0.25),
-        (() => new FitFunctions.General.Polynomial(0,2), 0.25, new double[]{1,3,5}, 1+3/0.25 + 5/(0.25*0.25)),
-        (() => new FitFunctions.General.TwoPolynomialSegments(2,3), 1, new double[]{ 3, 7, 1 / 11d, -1 / 13d, -1 / 17d, 1 / 19d, -1 / 23d}, 6.5104895104895104895),
-        (() => new FitFunctions.General.TwoPolynomialSegments(2,3), 5, new double[]{ 3, 7, 1 / 11d, -1 / 13d, -1 / 17d, 1 / 19d, -1 / 23d}, 6.7450531700094225333),
+        (() => new General.ExponentialOfPolynomial(3,2), 17/19d, new double[]{3,1,1/3d,-1/5d,1/7d,-1/11d,1/13d}, 6.4381869725572211314),
+        (() => new General.Polynomial(2,0), 0.25, new double[]{1,3,5}, 1+3*0.25 + 5*0.25*0.25),
+        (() => new General.Polynomial(2,1), 0.25, new double[]{1,3,5,7}, 1+3*0.25 + 5*0.25*0.25 + 7/0.25),
+        (() => new General.Polynomial(0,2), 0.25, new double[]{1,3,5}, 1+3/0.25 + 5/(0.25*0.25)),
+        (() => new General.TwoPolynomialSegments(2,3), 1, new double[]{ 3, 7, 1 / 11d, -1 / 13d, -1 / 17d, 1 / 19d, -1 / 23d}, 6.5104895104895104895),
+        (() => new General.TwoPolynomialSegments(2,3), 5, new double[]{ 3, 7, 1 / 11d, -1 / 13d, -1 / 17d, 1 / 19d, -1 / 23d}, 6.7450531700094225333),
         (() => new Peaks.PearsonIVAmplitude(1, 1), 9, new double[]{17, 7, 3, 5, 7, 1, 3 }, 2.1808325179027502207687005375167 + 1 + 9*3),
         (() => new Peaks.PearsonIVAmplitudeParametrizationHPW(1, 1), 9, new double[]{17, 7, 3, 5, 7, 1, 3 }, 10.456864176583425249219583024250 + 1 + 9 * 3),
         (() => new Peaks.PearsonVIIAmplitude(1, 1), 9, new double[]{17, 7, 3, 5, 1, 3 }, 40.34477916997976056964787),
