@@ -334,7 +334,7 @@ namespace AltaxoTest.Collections
       try
       {
         evenList.Insert(2, 5);
-        Assert.True(false, "Insertion of an odd item in the even list should cause an exception");
+        Assert.Fail("Insertion of an odd item in the even list should cause an exception");
       }
       catch (Exception)
       {
@@ -373,7 +373,7 @@ namespace AltaxoTest.Collections
       part.Add(new Bloo());
 
       Assert.Single(list);
-      Assert.Equal(1, part.Count);
+      Assert.Single(part);
     }
 
     [Fact]
@@ -383,10 +383,10 @@ namespace AltaxoTest.Collections
       var part = list.CreatePartialView(x => 0 == x % 2);
 
       list.Add(33);
-      Assert.Equal(0, part.Count);
+      Assert.Empty(part);
 
       list[0] = 44;
-      Assert.Equal(1, part.Count);
+      Assert.Single(part);
       Assert.Equal(44, part[0]);
     }
 
@@ -397,11 +397,11 @@ namespace AltaxoTest.Collections
       var part = list.CreatePartialView(x => 0 == x % 2);
 
       list.Add(44);
-      Assert.Equal(1, part.Count);
+      Assert.Single(part);
       Assert.Equal(44, part[0]);
 
       list[0] = 33;
-      Assert.Equal(0, part.Count);
+      Assert.Empty(part);
     }
 
     [Fact]
@@ -415,7 +415,7 @@ namespace AltaxoTest.Collections
       Assert.Equal(2, part.Count);
 
       list[0] = 51;
-      Assert.Equal(1, part.Count);
+      Assert.Single(part);
       Assert.Equal(66, part[0]);
     }
 
@@ -449,10 +449,10 @@ namespace AltaxoTest.Collections
       list.Add(46);
       list.Add(49);
 
-      Assert.Equal(1, part.Count);
+      Assert.Single(part);
 
       list.Move(0, 2);
-      Assert.Equal(1, part.Count);
+      Assert.Single(part);
       Assert.Equal(46, part[0]);
     }
 
@@ -701,7 +701,7 @@ namespace AltaxoTest.Collections
         {
           case ListAction.Clear:
             part1.Clear();
-            Assert.Equal(0, part1.Count);
+            Assert.Empty(part1);
 
             idx = rndIndex.Next(5);
             if (idx == 0)

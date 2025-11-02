@@ -216,6 +216,7 @@ namespace Altaxo.Calc
       return i;
     }
 
+#pragma warning disable CA3002  // Function is not CLS-compliant
     /// <summary>
     /// Return x if x is is a power of two, else return the smallest number &gt;x, which is a power of two.
     /// </summary>
@@ -223,14 +224,13 @@ namespace Altaxo.Calc
     /// <returns>The argument, if it is a power of two. Else the next greater number which is a power of two.</returns>
     public static uint NextPowerOfTwoGreaterOrEqualThan(uint x)
     {
-      if (x > 0x80000000)
-        throw new ArgumentOutOfRangeException("Provided value is too large. Result can not be represented by an UInt32 value.");
+      ArgumentOutOfRangeException.ThrowIfGreaterThan(x, 0x80000000u, "Provided value is too large. Result can not be represented by an UInt32 value.");
       uint i;
       for (i = 1; i < x; i <<= 1)
         ;
       return i;
     }
-
+#pragma warning restore CA3002
     /// <summary>
     /// Return x if x is is a power of two, else return the smallest number &gt;x, which is a power of two.
     /// </summary>
@@ -246,6 +246,7 @@ namespace Altaxo.Calc
       return i;
     }
 
+#pragma warning disable CA3002  // Function is not CLS-compliant
     /// <summary>
     /// Return x if x is is a power of two, else return the smallest number &gt;x, which is a power of two.
     /// </summary>
@@ -253,13 +254,13 @@ namespace Altaxo.Calc
     /// <returns>The argument, if it is a power of two. Else the next greater number which is a power of two.</returns>
     public static ulong NextPowerOfTwoGreaterOrEqualThan(ulong x)
     {
-      if (x > 0x8000000000000000UL)
-        throw new ArgumentOutOfRangeException("Provided value is too large. Result can not be represented by an UInt64 value.");
+      ArgumentOutOfRangeException.ThrowIfGreaterThan(x, 0x8000000000000000UL, "Provided value is too large. Result can not be represented by an UInt64 value.");
       ulong i;
       for (i = 1; i < x; i <<= 1)
         ;
       return i;
     }
+#pragma warning restore CA3002
 
     #endregion NextPowerOfTwoGreaterOrEqualThan
 

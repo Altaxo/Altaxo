@@ -4301,11 +4301,11 @@ namespace Altaxo.Serialization.Origin
     /// <remarks>
     /// <code>
     /// Working hypothesis:
-    /// dataType & 0x800 != 0 => Integer data type (4 byte, 2 byte, or 1 byte)
-    /// dataType & 0x100 != 0 => Combined text and number
-    /// dataType & 0x200 != 0 => Complex
-    /// dataType & 0x002 != 0 => Single instead of double (if floating point number) or short instead of int (if integer type)
-    /// dataType & 0x020 != 0 => Byte instead of int (if integer type) or text (if not an integer type)
+    /// dataType &amp; 0x800 != 0 => Integer data type (4 byte, 2 byte, or 1 byte)
+    /// dataType &amp; 0x100 != 0 => Combined text and number
+    /// dataType &amp; 0x200 != 0 => Complex
+    /// dataType &amp; 0x002 != 0 => Single instead of double (if floating point number) or short instead of int (if integer type)
+    /// dataType &amp; 0x020 != 0 => Byte instead of int (if integer type) or text (if not an integer type)
     /// dataType == 0x6021 => Text
     /// </code>
     /// </remarks>

@@ -24,8 +24,6 @@
 
 using System;
 using System.Collections.Generic;
-using System.Linq;
-using System.Text;
 
 namespace Altaxo.Calc.Probability
 {
@@ -249,6 +247,7 @@ namespace Altaxo.Calc.Probability
       return (int)GetSequenceLengthFromNumberOfStages(stages);
     }
 
+#pragma warning disable CA3002  // Function is not CLS-compliant
     /// <summary>Gets the next possible sequence length that is equal to or greater than the provided <paramref name="sequenceLength"/>.</summary>
     /// <param name="sequenceLength">The minimum length of the binary sequency. </param>
     /// <returns>Next possible sequence length that is equal to or greater than the provided <paramref name="sequenceLength"/>.</returns>
@@ -261,6 +260,7 @@ namespace Altaxo.Calc.Probability
       int stages = 1 + BinaryMath.Ld(sequenceLength);
       return GetSequenceLengthFromNumberOfStages(stages);
     }
+#pragma warning disable CA3002  // Function is not CLS-compliant
 
     private static ulong GetSequenceLengthFromNumberOfStages(int numberOfStages)
     {

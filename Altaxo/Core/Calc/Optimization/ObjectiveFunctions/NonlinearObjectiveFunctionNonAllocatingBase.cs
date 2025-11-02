@@ -195,7 +195,7 @@ namespace Altaxo.Calc.Optimization.ObjectiveFunctions
     /// </summary>
     /// <param name="initialGuess">The initial values of parameters.</param>
     /// <param name="isFixed">The list to the parameters fix or free.</param>
-    public void SetParameters(Vector<double> initialGuess, List<bool> isFixed = null)
+    public void SetParameters(Vector<double> initialGuess, List<bool>? isFixed = null)
     {
       SetParameters((IReadOnlyList<double>)initialGuess, isFixed);
     }
@@ -205,7 +205,7 @@ namespace Altaxo.Calc.Optimization.ObjectiveFunctions
     /// </summary>
     /// <param name="initialGuess">The initial values of parameters.</param>
     /// <param name="isFixed">The list to the parameters fix or free.</param>
-    public virtual void SetParameters(IReadOnlyList<double> initialGuess, IReadOnlyList<bool> isFixed = null)
+    public virtual void SetParameters(IReadOnlyList<double> initialGuess, IReadOnlyList<bool>? isFixed = null)
     {
       _coefficients ??= Vector<double>.Build.Dense(initialGuess.Count);
       for (int i = 0; i < initialGuess.Count; ++i)

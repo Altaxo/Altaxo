@@ -35,7 +35,7 @@ namespace Altaxo.Serialization.PrincetonInstruments
   /// </summary>
   /// <remarks>
   /// <para>References:</para>
-  /// <para>[1]: Python code <see cref="https://github.com/ashirsch/spe2py"/>.</para>
+  /// <para>[1]: Python code <see href="https://github.com/ashirsch/spe2py"/>.</para>
   /// </remarks>
   public class PrincetonInstrumentsSPEReader
   {

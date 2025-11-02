@@ -290,7 +290,7 @@ namespace Altaxo.Calc.FitFunctions.Peaks
       }
     }
 
-    public void EvaluateDerivative(IROMatrix<double> X, IReadOnlyList<double> P, IReadOnlyList<bool>? isParameterFixed, IMatrix<double> DY, IReadOnlyList<bool> dependentVariableChoice)
+    public void EvaluateDerivative(IROMatrix<double> X, IReadOnlyList<double> P, IReadOnlyList<bool>? isParameterFixed, IMatrix<double> DY, IReadOnlyList<bool>? dependentVariableChoice)
     {
       var rowCount = X.RowCount;
       for (int r = 0; r < rowCount; ++r)
@@ -424,7 +424,7 @@ namespace Altaxo.Calc.FitFunctions.Peaks
     private static double SafeSqrt(double x) => Math.Sqrt(Math.Max(0, x));
 
     public (double Position, double PositionStdDev, double Area, double AreaStdDev, double Height, double HeightStdDev, double FWHM, double FWHMStdDev)
-      GetPositionAreaHeightFWHMFromSinglePeakParameters(IReadOnlyList<double> parameters, IROMatrix<double> cv)
+      GetPositionAreaHeightFWHMFromSinglePeakParameters(IReadOnlyList<double> parameters, IROMatrix<double>? cv)
     {
       if (parameters is null || parameters.Count != NumberOfParametersPerPeak)
         throw new ArgumentException(nameof(parameters));

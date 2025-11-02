@@ -629,7 +629,7 @@ namespace Altaxo.Science.Spectroscopy.PeakSearching
     /// <paramref name="wlen"/> in `peak_prominences` for a full description of its effects.</param>
     /// 
     /// <param name="rel_height">Used for calculation of the peaks width, thus it is only used if <paramref name="width"/>
-    /// is given. Default value is 0.5. See argument  `rel_height` in <see cref="_peak_widths(double[], int[], double, double[], int[], int[])"/> for a full
+    /// is given. Default value is 0.5. See argument  `rel_height` in _peak_widths(double[], int[], double, double[], int[], int[]) for a full
     /// description of its effects.</param>
     /// 
     /// <param name="plateau_size">Required size of the flat top of peaks in samples. Either a number or null.
@@ -651,7 +651,7 @@ namespace Altaxo.Science.Spectroscopy.PeakSearching
       double? plateau_size = null
       )
     {
-      return Execute(x, (object)height, (object)threshold, distance, prominence, width, wlen, rel_height, plateau_size);
+      return Execute(x, (object?)height, (object?)threshold, distance, prominence, width, wlen, rel_height, plateau_size);
     }
 
     /// <summary>
@@ -693,7 +693,7 @@ namespace Altaxo.Science.Spectroscopy.PeakSearching
     /// <paramref name="wlen"/> in `peak_prominences` for a full description of its effects.</param>
     /// 
     /// <param name="rel_height">Used for calculation of the peaks width, thus it is only used if `width`
-    /// is given. Default value is 0.5. See argument  `rel_height` in <see cref="_peak_widths(double[], int[], double, double[], int[], int[])"/> for a full
+    /// is given. Default value is 0.5. See argument  `rel_height` in _peak_widths(double[], int[], double, double[], int[], int[]) for a full
     /// description of its effects.</param>
     /// 
     /// <param name="plateau_size">Required size of the flat top of peaks in samples. Either a number,
@@ -710,7 +710,7 @@ namespace Altaxo.Science.Spectroscopy.PeakSearching
       object? height = null,
       object? threshold = null,
       double? distance = null,
-      object prominence = null,
+      object? prominence = null,
       object? width = null,
       int? wlen = null,
       double rel_height = 0.5,
@@ -964,8 +964,8 @@ namespace Altaxo.Science.Spectroscopy.PeakSearching
 
     protected (double[]? pmin, double[]? pmax) _unpack_condition_args(object interval, IReadOnlyList<double> x, int[] peaks)
     {
-      IReadOnlyList<double> imin = null;
-      IReadOnlyList<double> imax = null;
+      IReadOnlyList<double>? imin = null;
+      IReadOnlyList<double>? imax = null;
       if (interval is ValueTuple<int[], int[]> tupleIA)
       {
         double[] d1 = new double[tupleIA.Item1.Length];
@@ -1200,9 +1200,9 @@ namespace Altaxo.Science.Spectroscopy.PeakSearching
     /// <param name="x">A signal with peaks.</param>
     /// <param name="peaks">Indices of peaks in <paramref name="x"/>.</param>
     /// <param name="rel_height"> Chooses the relative height at which the peak width is measured as a percentage of its prominence.</param>
-    /// <param name="prominences">Prominences of each peak in `peaks` as returned by <see cref="_peak_prominences(double[], int[], int)"/>.</param>
-    /// <param name="left_bases">Left bases of each peak in `peaks` as returned by <see cref="_peak_prominences(double[], int[], int)"/>.</param>
-    /// <param name="right_bases">Right bases of each peak in `peaks` as returned by <see cref="_peak_prominences(double[], int[], int)"/>.</param>
+    /// <param name="prominences">Prominences of each peak in `peaks` as returned by _peak_prominences(double[], int[], int).</param>
+    /// <param name="left_bases">Left bases of each peak in `peaks` as returned by _peak_prominences(double[], int[], int).</param>
+    /// <param name="right_bases">Right bases of each peak in `peaks` as returned by _peak_prominences(double[], int[], int).</param>
     /// <returns>Tuple, consisting of widths: The widths for each peak in samples;
     /// width_heights : The height of the contour lines at which the `widths` where evaluated;
     /// left_ips, right_ips :  Interpolated positions of left and right intersection points of a horizontal line at the respective evaluation height.</returns>

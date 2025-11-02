@@ -38,7 +38,7 @@ namespace Altaxo.Science.Spectroscopy
     private double[] _array2;
     private int _windowSize;
     private double _distanceMax;
-    NormalizationMethod _normalization = NormalizationMethod.Variance;
+    private NormalizationMethod _normalization = NormalizationMethod.Variance;
 
     /// <summary>
     /// Designates the normalization method for the points in the windows, just before the correlation value was evaluated.
@@ -108,7 +108,7 @@ namespace Altaxo.Science.Spectroscopy
     /// <exception cref="System.ArgumentException">Window size should be odd - windowSize</exception>
     public CorrelationMatching1D(int windowSize, double maxDistance, double[] array1, double[] array2)
     {
-      if (windowSize <1 || windowSize % 2 == 0)
+      if (windowSize < 1 || windowSize % 2 == 0)
         throw new ArgumentException("Window size should be positive and odd", nameof(windowSize));
 
       _array1 = array1;
@@ -221,7 +221,7 @@ namespace Altaxo.Science.Spectroscopy
       {
         // Get the current point
         int p1 = points1[n1];
-        double sumy = 0, sumyy=0;
+        double sumy = 0, sumyy = 0;
         for (int i = 0; i < windowSize; i++)
         {
           double w = image1[p1 - r + i];
@@ -296,14 +296,14 @@ namespace Altaxo.Science.Spectroscopy
       {
         offset = sy / count;
       }
-      if(normalization.HasFlag(NormalizationMethod.Variance))
+      if (normalization.HasFlag(NormalizationMethod.Variance))
       {
         scale = normalization.HasFlag(NormalizationMethod.Mean) ?
                   1 / Math.Sqrt((syy - sy * sy / count) / count) :
                   1 / Math.Sqrt(syy / count);
 
       }
-      for(int i=0;i<y.Length;++i)
+      for (int i = 0; i < y.Length; ++i)
       {
         y[i] = (y[i] - offset) * scale;
       }
@@ -377,7 +377,7 @@ namespace Altaxo.Science.Spectroscopy
         return indices;
       }
 
-      static int GetLength<T>(T[,] values, int dimension)
+      private static int GetLength<T>(T[,] values, int dimension)
       {
         return dimension == 1 ? values.GetLength(0) : values.GetLength(1);
       }
@@ -427,7 +427,7 @@ namespace Altaxo.Science.Spectroscopy
       ///   Gets a column vector from a matrix.
       /// </summary>
       /// 
-      public static T[] GetColumn<T>(T[,] m, int index, T[] result = null)
+      public static T[] GetColumn<T>(T[,] m, int index, T[]? result = null)
       {
         if (result is null)
           result = new T[Rows(m)];
@@ -443,7 +443,7 @@ namespace Altaxo.Science.Spectroscopy
       ///   Gets a row vector from a matrix.
       /// </summary>
       ///
-      public static T[] GetRow<T>(T[,] m, int index, T[] result = null)
+      public static T[] GetRow<T>(T[,] m, int index, T[]? result = null)
       {
         if (result is null)
           result = new T[m.GetLength(1)];

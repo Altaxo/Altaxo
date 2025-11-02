@@ -100,7 +100,7 @@ namespace AltaxoTest.Calc.Fourier
     }
 
     [Fact]
-    public void Test08_ConcurrencyTest()
+    public async Task Test08_ConcurrencyTest()
     {
       var test1 = new SplittedComplexFFTTests(new SplittedComplexFFTTests.FFTRoutine(FastHartleyTransform.FFT));
       var test2 = new SplittedComplexFFTTests(new SplittedComplexFFTTests.FFTRoutine(FastHartleyTransform.FFT));
@@ -127,7 +127,7 @@ namespace AltaxoTest.Calc.Fourier
         }
       );
 
-      Task.WaitAll(t1, t2);
+      await Task.WhenAll(t1, t2);
     }
 
     [Fact]

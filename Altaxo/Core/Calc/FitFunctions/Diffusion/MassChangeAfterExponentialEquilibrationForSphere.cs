@@ -42,6 +42,7 @@ namespace Altaxo.Calc.FitFunctions.Diffusion
     /// <summary>
     /// Radius of the sphere. The default value is 1.
     /// The resulting diffusion coefficent is then in units of the square of the radius unit by the time unit that is used by the fit.
+    /// </summary>
     public double Radius
     {
       get => field;

@@ -121,7 +121,7 @@ namespace Altaxo.Calc.Interpolation
     }
 
     /// <inheritdoc/>
-    IInterpolationCurve IInterpolationCurveOptions.Interpolate(IReadOnlyList<double> xvec, IReadOnlyList<double> yvec, IReadOnlyList<double>? yStdDev = null)
+    IInterpolationCurve IInterpolationCurveOptions.Interpolate(IReadOnlyList<double> xvec, IReadOnlyList<double> yvec, IReadOnlyList<double>? yStdDev)
     {
       return Interpolate(xvec, yvec, yStdDev);
     }

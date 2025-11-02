@@ -39,7 +39,7 @@ namespace Altaxo.Science.Spectroscopy.PeakSearching
   public partial class PeakFinderCWT
   {
     // https://github.com/scipy/scipy/blob/main/scipy/signal/_peak_finding.py
-   
+
 
     /// <summary>
     /// Ricker wavelet function, also known as the "Mexican hat wavelet".
@@ -80,7 +80,7 @@ namespace Altaxo.Science.Spectroscopy.PeakSearching
       const double Prefactor = 0.29320938945473762851; // 4 / (Pi^0.25 * Sqrt(105))
       var xw = x / w;
       var sqrxw = xw * xw;
-      return Prefactor * (3 - 6*sqrxw + sqrxw*sqrxw) * Math.Exp(-0.5 * sqrxw) / Math.Sqrt(w);
+      return Prefactor * (3 - 6 * sqrxw + sqrxw * sqrxw) * Math.Exp(-0.5 * sqrxw) / Math.Sqrt(w);
     }
 
     /// <summary>
@@ -410,7 +410,7 @@ namespace Altaxo.Science.Spectroscopy.PeakSearching
         {
           return false; // ridge line too short
         }
-        var snr = Math.Abs(cwt[line[line.Count-1].Row, line[line.Count-1].Column] / noises[line[line.Count-1].Row]);
+        var snr = Math.Abs(cwt[line[line.Count - 1].Row, line[line.Count - 1].Column] / noises[line[line.Count - 1].Row]);
         if (snr < min_snr)
         {
           return false;
@@ -449,7 +449,7 @@ namespace Altaxo.Science.Spectroscopy.PeakSearching
     /// </returns>
     public static (List<RidgeLine> RidgeLines, double[,] CwtMatrix) Execute(double[] vector,
                         IEnumerable<double> widths,
-                        Func<double, double, double> wavelet = null,
+                        Func<double, double, double>? wavelet = null,
                         Func<int, int>? max_distances = null,
                         double? gap_thresh = null)
     {

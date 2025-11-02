@@ -111,7 +111,7 @@ namespace Altaxo.Threading
     }
 
     /// <summary>
-    /// Performs an explicit conversion from the value type <see cref="T"/> to <see cref="Interlockable{T}"/>.
+    /// Performs an explicit conversion from the value type T to <see cref="Interlockable{T}"/>.
     /// </summary>
     /// <param name="t">The initial value.</param>
     /// <returns>The <see cref="Interlockable{T}"/> that holds the initial.</returns>

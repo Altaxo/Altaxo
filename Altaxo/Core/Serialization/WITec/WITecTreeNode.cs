@@ -82,7 +82,7 @@ namespace Altaxo.Serialization.WITec
     /// </summary>
     /// <param name="name">The name.</param>
     /// <returns>The child node with the provided name.</returns>
-    /// <exception cref="System.IO.InvalidDataException">Node <{FullName}> is expected to have a child named \"{name}\"</exception>
+    /// <exception cref="System.IO.InvalidDataException">Node FullName is expected to have a child named \"{name}\"</exception>
     public WITecTreeNode GetChild(string name)
     {
       return ChildNodes.TryGetValue(name, out var child)

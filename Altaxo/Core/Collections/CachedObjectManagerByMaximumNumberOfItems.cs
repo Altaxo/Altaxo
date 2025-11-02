@@ -26,7 +26,6 @@ using System;
 using System.Collections.Generic;
 using System.Diagnostics.CodeAnalysis;
 using System.Linq;
-using System.Text;
 
 namespace Altaxo.Collections
 {
@@ -113,15 +112,15 @@ namespace Altaxo.Collections
     /// </summary>
     public void Clear()
     {
-      KeyValuePair<TKey, TValue>[] itemsToDispose;
+      List<IDisposable> itemsToDispose;
       lock (_syncObj)
       {
-        itemsToDispose = _valueList.ToArray();
+        itemsToDispose = _valueList.Select(kv => kv.Value).OfType<IDisposable>().ToList();
         _valueList.Clear();
         _keyDictionary.Clear();
       }
 
-      foreach (var itemToDispose in itemsToDispose.OfType<IDisposable>())
+      foreach (var itemToDispose in itemsToDispose)
         itemToDispose.Dispose();
     }
 

@@ -648,7 +648,7 @@ namespace Altaxo.Calc.Optimization
     /// <param name="objective">The objective.</param>
     /// <param name="parameterValues">The parameters.</param>
     /// <returns>The negative gradient and the Hessian matrix.</returns>
-    protected new (Vector<double> NegativeGradient, Matrix<double> Hessian) EvaluateJacobian(IObjectiveModelNonAllocating objective, IReadOnlyList<double> parameterValues)
+    protected (Vector<double> NegativeGradient, Matrix<double> Hessian) EvaluateJacobian(IObjectiveModelNonAllocating objective, IReadOnlyList<double> parameterValues)
     {
       var negativeGradient = objective.NegativeGradient;
       var hessian = objective.Hessian;

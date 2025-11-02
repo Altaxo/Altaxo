@@ -62,7 +62,6 @@ namespace Altaxo.Science.Spectroscopy.Smoothing
     /// <summary>
     /// Gets the degree. Must be even and at least 2, and less than or equal to <see cref="ModifiedSincSmoother.MAX_DEGREE"/>.
     /// </summary>
-    /// <value>
     public int Degree
     {
       get => _degree;

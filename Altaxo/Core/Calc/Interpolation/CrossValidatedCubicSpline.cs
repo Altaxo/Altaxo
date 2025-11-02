@@ -24,9 +24,6 @@
 
 using System;
 using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using Altaxo.Calc.LinearAlgebra;
 
 namespace Altaxo.Calc.Interpolation
 {
@@ -86,7 +83,7 @@ namespace Altaxo.Calc.Interpolation
         var stddevScaleFactor = ErrorStandardDeviation > 0 ? ErrorStandardDeviation : 1;
         var spline = new CrossValidatedCubicSpline()
         {
-          ErrorStandardDeviation =1, // has no effect, because this parameter is given below
+          ErrorStandardDeviation = 1, // has no effect, because this parameter is given below
           CombineNeighbouringPoints = true,
         };
         spline.Interpolate(xvec, yvec, stddevScaleFactor, yStdDev);
@@ -97,7 +94,7 @@ namespace Altaxo.Calc.Interpolation
         var spline = new CrossValidatedCubicSpline()
         {
           ErrorStandardDeviation = ErrorStandardDeviation,
-          CombineNeighbouringPoints=true
+          CombineNeighbouringPoints = true
         };
         spline.Interpolate(xvec, yvec);
         return spline;
@@ -105,7 +102,7 @@ namespace Altaxo.Calc.Interpolation
     }
 
     /// <inheritdoc/>
-    IInterpolationCurve IInterpolationCurveOptions.Interpolate(IReadOnlyList<double> xvec, IReadOnlyList<double> yvec, IReadOnlyList<double>? yStdDev = null)
+    IInterpolationCurve IInterpolationCurveOptions.Interpolate(IReadOnlyList<double> xvec, IReadOnlyList<double> yvec, IReadOnlyList<double>? yStdDev)
     {
       return Interpolate(xvec, yvec, yStdDev);
     }
@@ -202,7 +199,7 @@ namespace Altaxo.Calc.Interpolation
 #nullable disable
       // Note: cubgcv expects in parameter 'var' the variance (square of std.dev.), or a negative value (if unknown)
       // in order to keep the sign, we provide -1 if the standard deviation is negative, or if positive, the the square of standard deviation
-      cubgcv(_x, _f, _df, n, _y0, _c, n - 1, _standardDeviation < 0 ? -1 : _standardDeviation*_standardDeviation, 1, _se, _wkr, _wkt, _wku, _wkv, out ier);
+      cubgcv(_x, _f, _df, n, _y0, _c, n - 1, _standardDeviation < 0 ? -1 : _standardDeviation * _standardDeviation, 1, _se, _wkr, _wkt, _wku, _wkv, out ier);
 #nullable enable
     }
 

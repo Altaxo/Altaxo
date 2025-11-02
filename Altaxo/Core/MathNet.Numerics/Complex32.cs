@@ -886,7 +886,7 @@ namespace Altaxo.Calc
     /// An <see cref="IFormatProvider"/> that supplies culture-specific
     /// formatting information.
     /// </param>
-    public static Complex32 Parse(string value, IFormatProvider formatProvider = null)
+    public static Complex32 Parse(string value, IFormatProvider? formatProvider = null)
     {
       if (value == null)
       {

@@ -357,7 +357,7 @@ namespace Altaxo.Calc.FitFunctions.Probability
 
     #endregion IFitFunction Members
 
-    public void EvaluateDerivative(IROMatrix<double> X, IReadOnlyList<double> P, IReadOnlyList<bool>? isParameterFixed, IMatrix<double> DY, IReadOnlyList<bool> dependentVariableChoice)
+    public void EvaluateDerivative(IROMatrix<double> X, IReadOnlyList<double> P, IReadOnlyList<bool>? isParameterFixed, IMatrix<double> DY, IReadOnlyList<bool>? dependentVariableChoice)
     {
       var rowCount = X.RowCount;
       for (int r = 0; r < rowCount; ++r)
@@ -414,8 +414,8 @@ namespace Altaxo.Calc.FitFunctions.Probability
       const double Sqrt2Pi = 2.5066282746310005024;
       const double SqrtLog4 = 1.1774100225154746910;
 
-      if (parameters == null || parameters.Count != 3)
-        throw new ArgumentException(nameof(parameters));
+      if (parameters is null || parameters.Count != 3)
+        throw new ArgumentException(null, nameof(parameters));
 
       var area = parameters[0];
       var pos = parameters[1];

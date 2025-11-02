@@ -305,7 +305,7 @@ namespace Altaxo.Science.Spectroscopy.PeakFitting.MultipleSpectra
     /// <param name="cancellationToken">The token to cancel the algorithm.</param>
     /// <param name="cancellationTokenHard">The token to hard cancel the algorithm</param>
     /// <returns>A list of peak descriptions, sorted by position ascending.</returns>
-    public MultipleSpectraPeakFittingResult Execute(IReadOnlyList<(double[] xArray, double[] yArray)> spectra, CancellationToken cancellationToken, CancellationToken cancellationTokenHard, IProgress<double>? numericalProgress = null, IProgress<string> textualProgress = null)
+    public MultipleSpectraPeakFittingResult Execute(IReadOnlyList<(double[] xArray, double[] yArray)> spectra, CancellationToken cancellationToken, CancellationToken cancellationTokenHard, IProgress<double>? numericalProgress = null, IProgress<string>? textualProgress = null)
     {
       var fitFunctionWithOneTerm = FitFunction.WithNumberOfTerms(1).WithOrderOfBaselinePolynomial(-1);
       int numberOfSpectra = spectra.Count;

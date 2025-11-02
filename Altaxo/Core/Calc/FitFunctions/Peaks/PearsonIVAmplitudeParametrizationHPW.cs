@@ -294,7 +294,7 @@ namespace Altaxo.Calc.FitFunctions.Peaks
       }
     }
 
-    public void EvaluateDerivative(IROMatrix<double> X, IReadOnlyList<double> P, IReadOnlyList<bool>? isParameterFixed, IMatrix<double> DY, IReadOnlyList<bool> dependentVariableChoice)
+    public void EvaluateDerivative(IROMatrix<double> X, IReadOnlyList<double> P, IReadOnlyList<bool>? isParameterFixed, IMatrix<double> DY, IReadOnlyList<bool>? dependentVariableChoice)
     {
       const double Log2 = 0.69314718055994530941723212145818; // Math.Log(2)
 

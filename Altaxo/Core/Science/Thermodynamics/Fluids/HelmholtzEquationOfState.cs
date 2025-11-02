@@ -1737,12 +1737,12 @@ namespace Altaxo.Science.Thermodynamics.Fluids
       if (initialPressure <= 0 || initialTemperature <= 0 || targetPressure <= 0)
         throw new ArgumentOutOfRangeException("All arguments must be positive.");
 
-      /// <summary>
-      /// Gets the total entropy in J/kg) for a given pressure and temperature.
-      /// </summary>
-      /// <param name="pressure">The pressure.</param>
-      /// <param name="temperature">The temperature.</param>
-      /// <returns>Entropy in J/kg</returns>
+      // <summary>
+      // Gets the total entropy in J/kg for a given pressure and temperature.
+      // </summary>
+      // <param name="pressure">The pressure.</param>
+      // <param name="temperature">The temperature.</param>
+      // <returns>Entropy in J/kg</returns>
       double GetTotalEntropy(double pressure, double temperature)
       {
         var massDensity = MassDensity_FromPressureAndTemperature(pressure, temperature);
@@ -1801,12 +1801,12 @@ namespace Altaxo.Science.Thermodynamics.Fluids
       if (initialPressure <= 0 || initialTemperature <= 0 || targetPressure <= 0)
         throw new ArgumentOutOfRangeException("All arguments must be positive.");
 
-      /// <summary>
-      /// Gets the total enthalpy in J/kg) for a given pressure and temperature.
-      /// </summary>
-      /// <param name="pressure">The pressure.</param>
-      /// <param name="temperature">The temperature.</param>
-      /// <returns>Entropy in J/kg</returns>
+      // <summary>
+      // Gets the total enthalpy in J/kg) for a given pressure and temperature.
+      // </summary>
+      // <param name="pressure">The pressure.</param>
+      // <param name="temperature">The temperature.</param>
+      // <returns>Entropy in J/kg</returns>
       double GetTotalEnthalpy(double pressure, double temperature)
       {
         var moleDensity = MoleDensity_FromPressureAndTemperature(pressure, temperature);

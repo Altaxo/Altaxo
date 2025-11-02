@@ -498,7 +498,7 @@ namespace Altaxo.Calc.FitFunctions.Probability
 
     private static double Pow2(double x) => x * x;
 
-    public void EvaluateDerivative(IROMatrix<double> X, IReadOnlyList<double> parameters, IReadOnlyList<bool>? isParameterFixed, IMatrix<double> DF, IReadOnlyList<bool> dependentVariableChoice)
+    public void EvaluateDerivative(IROMatrix<double> X, IReadOnlyList<double> parameters, IReadOnlyList<bool>? isParameterFixed, IMatrix<double> DF, IReadOnlyList<bool>? dependentVariableChoice)
     {
       const double Sqrt2 = 1.4142135623730950488016887242097;  // Math.Sqrt(2)
       const double Sqrt2Pi = 2.5066282746310005024157652848110; // Math.Sqrt(2*Math.Pi)

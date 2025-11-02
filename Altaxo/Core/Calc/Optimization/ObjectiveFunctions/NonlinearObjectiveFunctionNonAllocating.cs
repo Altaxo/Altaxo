@@ -16,7 +16,7 @@ namespace Altaxo.Calc.Optimization.ObjectiveFunctions
 
     public NonlinearObjectiveFunctionNonAllocating(
       Action<IROMatrix<double>, IReadOnlyList<double>, IVector<double>, IReadOnlyList<bool>?> function,
-      Action<IROMatrix<double>, IReadOnlyList<double>, IReadOnlyList<bool>?, IMatrix<double>, IReadOnlyList<bool>?> derivative = null,
+      Action<IROMatrix<double>, IReadOnlyList<double>, IReadOnlyList<bool>?, IMatrix<double>, IReadOnlyList<bool>?>? derivative = null,
       int accuracyOrder = 2)
       : base(accuracyOrder)
     {
@@ -56,7 +56,7 @@ namespace Altaxo.Calc.Optimization.ObjectiveFunctions
     /// </summary>
     /// <param name="initialGuess">The initial values of parameters.</param>
     /// <param name="isFixed">The list to the parameters fix or free.</param>
-    public override void SetParameters(IReadOnlyList<double> initialGuess, IReadOnlyList<bool> isFixed = null)
+    public override void SetParameters(IReadOnlyList<double> initialGuess, IReadOnlyList<bool>? isFixed = null)
     {
       base.SetParameters(initialGuess, isFixed);
 
@@ -287,7 +287,7 @@ namespace Altaxo.Calc.Optimization.ObjectiveFunctions
     /// <summary>
     /// Set observed data to fit.
     /// </summary>
-    public void SetObserved(IReadOnlyList<double> observedX, IReadOnlyList<double> observedY, IReadOnlyList<double> weights = null)
+    public void SetObserved(IReadOnlyList<double> observedX, IReadOnlyList<double> observedY, IReadOnlyList<double>? weights = null)
     {
       if (observedX is null || observedY is null)
       {

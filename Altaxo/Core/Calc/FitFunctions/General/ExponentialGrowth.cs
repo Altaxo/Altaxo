@@ -232,7 +232,7 @@ namespace Altaxo.Calc.FitFunctions.General
 
     #endregion IFitFunction Members
 
-    public void EvaluateDerivative(IROMatrix<double> X, IReadOnlyList<double> P, IReadOnlyList<bool>? isParameterFixed, IMatrix<double> DY, IReadOnlyList<bool> dependentVariableChoice)
+    public void EvaluateDerivative(IROMatrix<double> X, IReadOnlyList<double> P, IReadOnlyList<bool>? isParameterFixed, IMatrix<double> DY, IReadOnlyList<bool>? dependentVariableChoice)
     {
       var rowCount = X.RowCount;
       for (int r = 0; r < rowCount; ++r)

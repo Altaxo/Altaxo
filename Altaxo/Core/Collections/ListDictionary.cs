@@ -11,10 +11,10 @@ namespace Altaxo.Collections
   /// <typeparam name="TKey">The type of the key.</typeparam>
   /// <typeparam name="TValue">The type of the value.</typeparam>
   /// <seealso cref="Altaxo.Collections.IReadOnlyListDictionary&lt;TKey, TValue&gt;" />
-  public class ListDictionary<TKey, TValue> : IReadOnlyListDictionary<TKey, TValue>
+  public class ListDictionary<TKey, TValue> : IReadOnlyListDictionary<TKey, TValue> where TKey : notnull
   {
-    List<(TKey Key, TValue Value)> _list = new();
-    Dictionary<TKey, int> _dictionary = new();
+    private List<(TKey Key, TValue Value)> _list = new();
+    private Dictionary<TKey, int> _dictionary = new();
 
     public TValue this[int index] => _list[index].Value;
 
@@ -23,7 +23,7 @@ namespace Altaxo.Collections
     public int Count => _list.Count;
 
     public IEnumerable<TKey> Keys => _list.Select(x => x.Key);
-    
+
 
     public IEnumerable<TValue> Values => _list.Select(x => x.Value);
 
@@ -40,7 +40,7 @@ namespace Altaxo.Collections
 
     public bool TryGetValue(TKey key, out TValue value)
     {
-      if(_dictionary.TryGetValue(key, out int index))
+      if (_dictionary.TryGetValue(key, out int index))
       {
         value = _list[index].Value;
         return true;
@@ -82,7 +82,7 @@ namespace Altaxo.Collections
     public void Add(TKey key, TValue value)
     {
       _dictionary.Add(key, _list.Count);
-      _list.Add((key,value));
+      _list.Add((key, value));
     }
 
     #endregion

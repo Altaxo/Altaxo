@@ -817,9 +817,10 @@ namespace Altaxo.Collections
     }
 
     /// <summary>
-    /// Gets the same element if all elements of the enumeration are the same. If the elements in the enumeration are different, the return value is null or default.
+    /// Gets the same element if all elements of the enumeration (after a transformation) are the same. If the elements in the enumeration are different, the return value is null or default.
     /// </summary>
     /// <typeparam name="T">Type of the enumeration.</typeparam>
+    /// <typeparam name="S">Type of the comparable value. Type T is transformed to type S before comparison.</typeparam>
     /// <param name="seq">The enumeration.</param>
     /// <param name="transform">The transformation function that converts the elements of the enumeration to a comparable value.</param>
     /// <returns>The element if all elements of the enumeration are the same. If the elements in the enumeration are different, the return value is null or default.</returns>

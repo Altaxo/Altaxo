@@ -48,7 +48,7 @@ namespace Altaxo.Science.Spectroscopy.PeakFitting.MultipleSpectra
     /// <summary>The total number of peak parameters (local) = numberOfParametersPerPeakLocal * numberOfPeaks</summary>
     private int _totalNumberOfPeakParametersLocal;
 
-    // <summary>
+    /// <summary>
     /// The number of parameters per peak (global).
     /// </summary>
     private int _numberOfParametersPerPeakLocal;
