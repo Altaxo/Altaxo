@@ -2,7 +2,7 @@
 
 /////////////////////////////////////////////////////////////////////////////
 //    Altaxo:  a data processing and data plotting program
-//    Copyright (C) 2002-2011 Dr. Dirk Lellinger
+//    Copyright (C) 2002-2025 Dr. Dirk Lellinger
 //
 //    This program is free software; you can redistribute it and/or modify
 //    it under the terms of the GNU General Public License as published by
@@ -23,7 +23,6 @@
 #endregion Copyright
 
 #nullable disable warnings
-using System;
 using Altaxo.AddInItems;
 
 namespace Altaxo.Worksheet.Commands
@@ -55,6 +54,9 @@ namespace Altaxo.Worksheet.Commands
         case "one":
           return val == 1;
 
+        case "oneormore":
+          return val >= 1;
+
         case "two":
           return val == 2;
 
@@ -69,12 +71,11 @@ namespace Altaxo.Worksheet.Commands
 
         default:
           {
-            try
+            if (int.TryParse(selectedData, System.Globalization.NumberStyles.Integer, System.Globalization.CultureInfo.InvariantCulture, out int num))
             {
-              int num = int.Parse(selectedData);
               return val == num;
             }
-            catch (Exception)
+            else
             {
               return false;
             }
@@ -110,6 +111,9 @@ namespace Altaxo.Worksheet.Commands
         case "one":
           return val == 1;
 
+        case "oneormore":
+          return val >= 1;
+
         case "two":
           return val == 2;
 
@@ -124,12 +128,11 @@ namespace Altaxo.Worksheet.Commands
 
         default:
           {
-            try
+            if (int.TryParse(selectedData, System.Globalization.NumberStyles.Integer, System.Globalization.CultureInfo.InvariantCulture, out int num))
             {
-              int num = int.Parse(selectedData);
               return val == num;
             }
-            catch (Exception)
+            else
             {
               return false;
             }

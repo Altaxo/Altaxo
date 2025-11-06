@@ -2,7 +2,7 @@
 
 /////////////////////////////////////////////////////////////////////////////
 //    Altaxo:  a data processing and data plotting program
-//    Copyright (C) 2002-2023 Dr. Dirk Lellinger
+//    Copyright (C) 2002-2025 Dr. Dirk Lellinger
 //
 //    This program is free software; you can redistribute it and/or modify
 //    it under the terms of the GNU General Public License as published by
@@ -473,7 +473,7 @@ namespace Altaxo.Science.Thermorheology.MasterCurves
             break;
           case ShiftGroupSorting.ByShiftValueAscending:
           case ShiftGroupSorting.ByShiftValueDescending:
-            col.SortRows(new[] { shiftCol }, processOptions.TableOutputOptions.SortShiftGroupValuesBy == ShiftGroupSorting.ByShiftValueAscending);
+            col.SortRows(new[] { shiftCol }, processOptions.TableOutputOptions.SortShiftGroupValuesBy == ShiftGroupSorting.ByShiftValueAscending, treatEmptyElementsAsLowest: true);
             break;
           case ShiftGroupSorting.ByPropertiesAscending:
           case ShiftGroupSorting.ByPropertiesDescending:
@@ -484,7 +484,7 @@ namespace Altaxo.Science.Thermorheology.MasterCurves
               var colsToSort = new[] { col1, col2 }.Where(x => x is not null).ToArray();
               if (colsToSort.Length > 0)
               {
-                col.SortRows(colsToSort, ascending);
+                col.SortRows(colsToSort, ascending, treatEmptyElementsAsLowest: true);
               }
             }
             break;

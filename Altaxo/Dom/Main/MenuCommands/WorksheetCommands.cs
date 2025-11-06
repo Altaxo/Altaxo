@@ -2,7 +2,7 @@
 
 /////////////////////////////////////////////////////////////////////////////
 //    Altaxo:  a data processing and data plotting program
-//    Copyright (C) 2002-2024 Dr. Dirk Lellinger
+//    Copyright (C) 2002-2025 Dr. Dirk Lellinger
 //
 //    This program is free software; you can redistribute it and/or modify
 //    it under the terms of the GNU General Public License as published by
@@ -23,8 +23,10 @@
 #endregion Copyright
 
 #nullable disable warnings
+using System;
 using Altaxo.Data;
 using Altaxo.Gui;
+using Altaxo.Gui.Data.Sorting;
 using Altaxo.Gui.Scripting;
 using Altaxo.Gui.Workbench;
 using Altaxo.Scripting;
@@ -838,12 +840,63 @@ namespace Altaxo.Worksheet.Commands
 
     public static void Sort(Altaxo.Gui.Worksheet.Viewing.WorksheetController ctrl, bool ascending)
     {
-      if (ctrl.SelectedDataColumns.Count == 1)
-        Altaxo.Data.Sorting.SortDataRows(ctrl.DataTable, ctrl.DataTable.DataColumns[ctrl.SelectedDataColumns[0]], ascending);
+      if (ctrl.SelectedDataColumns.Count == 0 && ctrl.SelectedPropertyColumns.Count == 0)
+      {
+        Current.Gui.ErrorMessageBox("Please select either data columns or property columns for sorting.", "No column selected");
+        return;
+      }
+      else if (ctrl.SelectedDataColumns.Count > 0 && ctrl.SelectedPropertyColumns.Count > 0)
+      {
+        Current.Gui.ErrorMessageBox("Please select either data columns or property columns for sorting, not both.", "Selection not appropriate");
+        return;
+      }
+      else if (ctrl.SelectedDataColumns.Count == 1)
+      {
+        Altaxo.Data.Sorting.SortDataRows(ctrl.DataTable, ctrl.DataTable.DataColumns[ctrl.SelectedDataColumns[0]], ascending, treatEmptyElementsAsLowest: false);
+      }
+      else if (ctrl.SelectedDataColumns.Count > 1)
+      {
+        var model = new SortingDataColumnsModel() { SortingColumnsArePropertyColumns = false };
+        foreach (int colIndex in ctrl.SelectedDataColumns)
+        {
+          model.ColumnsToSort.Add((ctrl.DataTable.DataColumns[colIndex], ascending));
+        }
+        var sortController = new SortingDataColumnsController();
+        sortController.InitializeDocument(model);
+        if (Current.Gui.ShowDialog(sortController, "Sort Data Columns"))
+        {
+          model = (SortingDataColumnsModel)sortController.ModelObject;
+          Altaxo.Data.Sorting.SortRows(ctrl.DataTable.DataColumns, model.ColumnsToSort, treatEmptyElementsAsLowest: model.TreatEmptyElementsAsLowest);
+        }
+      }
       else if (ctrl.SelectedPropertyColumns.Count == 1)
-        Altaxo.Data.Sorting.SortDataColumnsByPropertyColumn(ctrl.DataTable, ctrl.DataTable.PropCols[ctrl.SelectedPropertyColumns[0]], ascending);
+      {
+        Altaxo.Data.Sorting.SortDataColumnsByPropertyColumn(ctrl.DataTable, ctrl.DataTable.PropCols[ctrl.SelectedPropertyColumns[0]], ascending, treatEmptyElementsAsLowest: false);
+      }
+      else if (ctrl.SelectedPropertyColumns.Count > 1)
+      {
+        var model = new SortingDataColumnsModel() { SortingColumnsArePropertyColumns = true };
+        foreach (int colIndex in ctrl.SelectedPropertyColumns)
+        {
+          model.ColumnsToSort.Add((ctrl.DataTable.PropertyColumns[colIndex], ascending));
+        }
+
+        var sortController = new SortingDataColumnsController();
+        sortController.InitializeDocument(model);
+        if (Current.Gui.ShowDialog(sortController, "Sort Data Columns"))
+        {
+          model = (SortingDataColumnsModel)sortController.ModelObject;
+          Altaxo.Data.Sorting.SortDataColumnsByPropertyColumns(ctrl.DataTable, model.ColumnsToSort, model.MoveOnlyDataColumnsThatMatchPropertyColumnGroup, treatEmptyElementsAsLowest: model.TreatEmptyElementsAsLowest);
+        }
+      }
+      else
+      {
+        throw new InvalidProgramException("This case shouldn'nt happen. Please debug!");
+      }
     }
   }
+
+
 
   public class SortTableDescending : AbstractWorksheetControllerCommand
   {
@@ -910,7 +963,7 @@ namespace Altaxo.Worksheet.Commands
       if (0 == ctrl.SelectedPropertyColumns.Count || 0 == selectedDataColumns.Count)
         return;
 
-      Altaxo.Data.Sorting.SortDataColumnsByPropertyColumn(ctrl.DataTable, selectedDataColumns, ctrl.DataTable.PropCols[ctrl.SelectedPropertyColumns[0]], ascending);
+      Altaxo.Data.Sorting.SortDataColumnsByPropertyColumn(ctrl.DataTable, selectedDataColumns, ctrl.DataTable.PropCols[ctrl.SelectedPropertyColumns[0]], ascending, treatEmptyElementsAsLowest: false);
     }
   }
 

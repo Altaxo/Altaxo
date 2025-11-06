@@ -2,7 +2,7 @@
 
 /////////////////////////////////////////////////////////////////////////////
 //    Altaxo:  a data processing and data plotting program
-//    Copyright (C) 2002-2014 Dr. Dirk Lellinger
+//    Copyright (C) 2002-2025 Dr. Dirk Lellinger
 //
 //    This program is free software; you can redistribute it and/or modify
 //    it under the terms of the GNU General Public License as published by
@@ -111,8 +111,21 @@ namespace Altaxo.Collections
     /// <param name="initialEntries">The initial entries of this collection</param>
     public AscendingIntegerCollection(IEnumerable<int> initialEntries)
     {
-      foreach(var entry in initialEntries)
+      foreach (var entry in initialEntries)
         Add(entry);
+    }
+
+    /// <summary>
+    /// Creates a instance froms the start value and the count value.
+    /// </summary>
+    /// <param name="rangestart">The start value.</param>
+    /// <param name="rangecount">The range value.</param>
+    /// <returns>A instance containing all integers from start to (start+count-1).</returns>
+    public static AscendingIntegerCollection FromStartAndCount(int rangestart, int rangecount)
+    {
+      var result = new AscendingIntegerCollection();
+      result.AddRange(rangestart, rangecount);
+      return result;
     }
 
     /// <summary>

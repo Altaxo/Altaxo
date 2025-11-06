@@ -2,7 +2,7 @@
 
 /////////////////////////////////////////////////////////////////////////////
 //    Altaxo:  a data processing and data plotting program
-//    Copyright (C) 2002-2011 Dr. Dirk Lellinger
+//    Copyright (C) 2002-2025 Dr. Dirk Lellinger
 //
 //    This program is free software; you can redistribute it and/or modify
 //    it under the terms of the GNU General Public License as published by
@@ -25,6 +25,7 @@
 #nullable enable
 using System;
 using System.Collections.Generic;
+using System.Linq;
 using Altaxo.Collections;
 
 namespace Altaxo.Data
@@ -130,9 +131,7 @@ namespace Altaxo.Data
       int count = arr.Length;
       for (int i = 0, j = count - 1; i < j; i++, j--)
       {
-        int ai = arr[i];
-        arr[i] = arr[j];
-        arr[j] = ai;
+        (arr[j], arr[i]) = (arr[i], arr[j]);
       }
     }
 
@@ -164,11 +163,10 @@ namespace Altaxo.Data
     private class DataColumnCollectionRowSwapper
     {
       private List<DataColumn> _colsToSwap;
-      private AltaxoVariant _var;
 
       public DataColumnCollectionRowSwapper(DataColumnCollection coll, int forColumnGroup)
       {
-        _colsToSwap = new List<DataColumn>();
+        _colsToSwap = [];
         for (int i = 0; i < coll.ColumnCount; ++i)
         {
           if (coll.GetColumnGroup(i) == forColumnGroup)
@@ -180,9 +178,7 @@ namespace Altaxo.Data
       {
         foreach (DataColumn col in _colsToSwap)
         {
-          _var = col[i];
-          col[i] = col[j];
-          col[j] = _var;
+          (col[j], col[i]) = (col[i], col[j]);
         }
       }
     }
@@ -191,8 +187,6 @@ namespace Altaxo.Data
     {
       private DataTable _table;
       private int _propColumns;
-
-      private AltaxoVariant _var;
 
       public DataTableColumnSwapper(DataTable table)
       {
@@ -206,9 +200,7 @@ namespace Altaxo.Data
         DataColumnCollection prop = _table.PropCols;
         for (int n = 0; n < _propColumns; n++)
         {
-          _var = prop[n][i];
-          prop[n][i] = prop[n][j];
-          prop[n][j] = _var;
+          (prop[n][j], prop[n][i]) = (prop[n][i], prop[n][j]);
         }
       }
     }
@@ -218,8 +210,6 @@ namespace Altaxo.Data
       private DataTable _table;
       private int _propColumns;
       private IAscendingIntegerCollection _selIndices;
-
-      private AltaxoVariant _var;
 
       public DataTableSelectedColumnSwapper(DataTable table, IAscendingIntegerCollection selectedDataColumns)
       {
@@ -237,9 +227,7 @@ namespace Altaxo.Data
         DataColumnCollection prop = _table.PropCols;
         for (int n = 0; n < _propColumns; n++)
         {
-          _var = prop[n][iNew];
-          prop[n][iNew] = prop[n][jNew];
-          prop[n][jNew] = _var;
+          (prop[n][jNew], prop[n][iNew]) = (prop[n][iNew], prop[n][jNew]);
         }
       }
     }
@@ -248,16 +236,30 @@ namespace Altaxo.Data
     {
       private DoubleColumn _col;
       private bool _ascendingOrder;
+      private bool _treatEmptyAsLowest;
 
-      public DoubleColumnComparer(DoubleColumn sortCol, bool ascending)
+      public DoubleColumnComparer(DoubleColumn sortCol, bool ascending, bool treatEmptyElementAsLowest)
       {
         _col = sortCol;
         _ascendingOrder = ascending;
+        _treatEmptyAsLowest = treatEmptyElementAsLowest;
       }
 
       public int Compare(int i, int j)
       {
-        return _ascendingOrder ? _col[i].CompareTo(_col[j]) : _col[j].CompareTo(_col[i]);
+        var ai = _col[i];
+        var aj = _col[j];
+
+        if (ai < aj)
+          return _ascendingOrder ? -1 : 1;
+        else if (ai > aj)
+          return _ascendingOrder ? +1 : -1;
+        else if (double.IsNaN(ai) && !double.IsNaN(aj))
+          return (_ascendingOrder ^ _treatEmptyAsLowest) ? +1 : +1;
+        else if (!double.IsNaN(ai) && double.IsNaN(aj))
+          return (_ascendingOrder ^ _treatEmptyAsLowest) ? -1 : +1;
+        else
+          return 0;
       }
     }
 
@@ -266,19 +268,32 @@ namespace Altaxo.Data
       private DoubleColumn _col;
       private bool _ascendingOrder;
       private IAscendingIntegerCollection _selIndices;
+      private bool _treatEmptyAsLowest;
 
-      public SelectedDoubleColumnComparer(DoubleColumn sortCol, IAscendingIntegerCollection atSelectedIndices, bool ascending)
+
+      public SelectedDoubleColumnComparer(DoubleColumn sortCol, IAscendingIntegerCollection atSelectedIndices, bool ascending, bool treatEmptyElementsAsLowest)
       {
         _col = sortCol;
         _ascendingOrder = ascending;
         _selIndices = atSelectedIndices;
+        _treatEmptyAsLowest = treatEmptyElementsAsLowest;
       }
 
       public int Compare(int i, int j)
       {
-        int iNew = _selIndices[i];
-        int jNew = _selIndices[j];
-        return _ascendingOrder ? _col[iNew].CompareTo(_col[jNew]) : _col[jNew].CompareTo(_col[iNew]);
+        var ai = _col[_selIndices[i]];
+        var aj = _col[_selIndices[j]];
+
+        if (ai < aj)
+          return _ascendingOrder ? -1 : 1;
+        else if (ai > aj)
+          return _ascendingOrder ? +1 : -1;
+        else if (double.IsNaN(ai) && !double.IsNaN(aj))
+          return (_ascendingOrder ^ _treatEmptyAsLowest) ? +1 : +1;
+        else if (!double.IsNaN(ai) && double.IsNaN(aj))
+          return (_ascendingOrder ^ _treatEmptyAsLowest) ? -1 : +1;
+        else
+          return 0;
       }
     }
 
@@ -286,8 +301,9 @@ namespace Altaxo.Data
     {
       private DataColumn _col;
       private bool _ascendingOrder;
+      private bool _treatEmptyAsLowest;
 
-      public DataColumnComparer(DataColumn sortCol, bool ascending)
+      public DataColumnComparer(DataColumn sortCol, bool ascending, bool treatEmptyElementAsLowest)
       {
         _col = sortCol;
         _ascendingOrder = ascending;
@@ -295,12 +311,16 @@ namespace Altaxo.Data
 
       public int Compare(int i, int j)
       {
-        if (_col[i] == _col[j])
-          return 0;
-        else if (_col[i] < _col[j])
+        if (_col[i] < _col[j])
           return _ascendingOrder ? -1 : 1;
-        else
+        else if (_col[i] > _col[j])
           return _ascendingOrder ? +1 : -1;
+        else if (_col.IsElementEmpty(i) && !_col.IsElementEmpty(j))
+          return (_ascendingOrder ^ _treatEmptyAsLowest) ? +1 : +1;
+        else if (!_col.IsElementEmpty(i) && _col.IsElementEmpty(j))
+          return (_ascendingOrder ^ _treatEmptyAsLowest) ? -1 : +1;
+        else
+          return 0;
       }
     }
 
@@ -309,49 +329,116 @@ namespace Altaxo.Data
       private DataColumn _col;
       private bool _ascendingOrder;
       private IAscendingIntegerCollection _selIndices;
+      private bool _treatEmptyAsLowest;
 
-      public SelectedDataColumnComparer(DataColumn sortCol, IAscendingIntegerCollection atSelectedIndices, bool ascending)
+
+      public SelectedDataColumnComparer(DataColumn sortCol, IAscendingIntegerCollection atSelectedIndices, bool ascending, bool treatEmptyElementsAsLowest)
       {
         _col = sortCol;
         _ascendingOrder = ascending;
         _selIndices = atSelectedIndices;
+        _treatEmptyAsLowest = treatEmptyElementsAsLowest;
       }
 
       public int Compare(int i, int j)
       {
-        int iNew = _selIndices[i];
-        int jNew = _selIndices[j];
+        int ii = _selIndices[i];
+        int jj = _selIndices[j];
 
-        if (_col[iNew] == _col[jNew])
-          return 0;
-        else if (_col[iNew] < _col[jNew])
+        if (_col[ii] < _col[jj])
           return _ascendingOrder ? -1 : 1;
-        else
+        else if (_col[ii] > _col[jj])
           return _ascendingOrder ? +1 : -1;
+        else if (_col.IsElementEmpty(ii) && !_col.IsElementEmpty(jj))
+          return (_ascendingOrder ^ _treatEmptyAsLowest) ? +1 : +1;
+        else if (!_col.IsElementEmpty(ii) && _col.IsElementEmpty(jj))
+          return (_ascendingOrder ^ _treatEmptyAsLowest) ? -1 : +1;
+        else
+          return 0;
       }
     }
 
     private class MultipleDataColumnComparer
     {
-      private DataColumn[] _col;
-      private bool _ascendingOrder;
+      /// <summary>
+      /// Represents an array of tuples, where each tuple contains a <see cref="DataColumn"/> and a boolean indicating
+      /// the sort order.
+      /// </summary>
+      /// <remarks>The <see cref="DataColumn"/> in each tuple specifies the column to be sorted, and the
+      /// boolean value indicates the sort order. A value of <see langword="true"/> represents ascending order, while
+      /// <see langword="false"/> represents descending order.</remarks>
+      private (DataColumn col, bool ascendingOrder)[] _cols;
 
-      public MultipleDataColumnComparer(DataColumn[] sortCols, bool ascending)
+      /// <summary>
+      /// Indicates whether empty values should be treated as the lowest possible value in comparisons.
+      /// </summary>
+      /// <remarks>When set to <see langword="true"/>, empty values are considered lower than any other
+      /// value during comparisons.  When set to <see langword="false"/>, empty values are considered higher than any other value.</remarks>
+      private bool _treatEmptyAsLowest;
+
+      /// <summary>
+      /// When the sort criterion are property columns, sometimes not all data columns are sorted, but only a selection of them.
+      /// This collection holds the indices of the data columns to sort.
+      /// </summary>
+      private IAscendingIntegerCollection? _selectedDataColumns;
+
+
+      public MultipleDataColumnComparer(DataColumn[] sortCols, bool ascending, bool treatEmptyElementsAsLowest)
       {
-        _col = sortCols;
-        _ascendingOrder = ascending;
+        _cols = new (DataColumn col, bool ascendingOrder)[sortCols.Length];
+        for (int k = 0; k < sortCols.Length; k++)
+        {
+          _cols[k] = (sortCols[k], ascending);
+        }
+
+        _treatEmptyAsLowest = treatEmptyElementsAsLowest;
+      }
+
+      public MultipleDataColumnComparer(DataColumn[] sortCols, bool[] ascending, bool treatEmptyElementsAsLowest)
+      {
+        if (sortCols.Length != ascending.Length)
+          throw new ArgumentException("sortCols and ascending must have the same length");
+
+        _cols = new (DataColumn col, bool ascendingOrder)[sortCols.Length];
+        for (int k = 0; k < sortCols.Length; k++)
+        {
+          _cols[k] = (sortCols[k], ascending[k]);
+        }
+        _treatEmptyAsLowest = treatEmptyElementsAsLowest;
+      }
+
+      /// <summary>
+      /// Initializes a new instance of the <see cref="MultipleDataColumnComparer"/> class, which compares multiple data
+      /// columns based on specified sorting orders and options.
+      /// </summary>
+      /// <param name="cols">A read-only list of tuples, where each tuple contains a <see cref="DataColumn"/> to compare and a boolean
+      /// indicating whether the comparison for that column should be in ascending order.</param>
+      /// <param name="selectedDataColumns">A collection of integers representing the indices of the data columns to be included in the comparison.</param>
+      /// <param name="treatEmptyElementsAsLowest">A boolean value indicating whether empty elements should be treated as the lowest value during comparison. If
+      /// <see langword="true"/>, empty elements are considered lower than any other value; otherwise, they are treated
+      /// as higher.</param>
+      public MultipleDataColumnComparer(IReadOnlyList<(DataColumn column, bool inAscendingOrder)> cols, IAscendingIntegerCollection selectedDataColumns, bool treatEmptyElementsAsLowest)
+      {
+        _cols = cols.ToArray();
+        _selectedDataColumns = selectedDataColumns;
+        _treatEmptyAsLowest = treatEmptyElementsAsLowest;
       }
 
       public int Compare(int i, int j)
       {
-        for (int k = 0; k < _col.Length; k++)
+        int ii = _selectedDataColumns is null ? i : _selectedDataColumns[i];
+        int jj = _selectedDataColumns is null ? j : _selectedDataColumns[j];
+
+        foreach (var (col, ascendingOrder) in _cols)
         {
-          if (_col[k][i] == _col[k][j])
-            continue;
-          else if (_col[k][i] < _col[k][j])
-            return _ascendingOrder ? -1 : 1;
-          else
-            return _ascendingOrder ? +1 : -1;
+          if (col[ii] < col[jj])
+            return ascendingOrder ? -1 : +1;
+          else if (col[ii] > col[jj])
+            return ascendingOrder ? +1 : -1;
+          else if (col.IsElementEmpty(ii) && !col.IsElementEmpty(jj))
+            return (ascendingOrder ^ _treatEmptyAsLowest) ? +1 : -1;
+          else if (!col.IsElementEmpty(ii) && col.IsElementEmpty(jj))
+            return (ascendingOrder ^ _treatEmptyAsLowest) ? -1 : +1;
         }
         return 0;
       }
@@ -366,9 +453,10 @@ namespace Altaxo.Data
     /// <param name="col">The column which is used for determining the order of the entries.
     /// This column has to belong to the table (otherwise an exception will be thrown). All columns with the same group number than this column will be sorted.</param>
     /// <param name="inAscendingOrder">If true, the table is sorted in ascending order. Otherwise, the table is sorted in descending order.</param>
-    public static void SortDataRows(this DataTable table, DataColumn col, bool inAscendingOrder)
+    /// <param name="treatEmptyElementsAsLowest">If true, empty elements are treated as lower as any other non-empty element. If false, empty elements are treated as higher as any non-empty element.</param>
+    public static void SortDataRows(this DataTable table, DataColumn col, bool inAscendingOrder, bool treatEmptyElementsAsLowest)
     {
-      SortRows(table.DataColumns, col, inAscendingOrder);
+      SortRows(table.DataColumns, col, inAscendingOrder, treatEmptyElementsAsLowest);
     }
 
     /// <summary>
@@ -378,9 +466,10 @@ namespace Altaxo.Data
     /// <param name="cols">The columns which are used for determining the order of the entries. The sorting will be done by cols[0], then cols[1] and so on.
     /// All this columns has to belong to the table and need to have the same column group number (otherwise an exception will be thrown). All columns with the same group number than this columns will be included in the sort process.</param>
     /// <param name="inAscendingOrder">If true, the table is sorted in ascending order. Otherwise, the table is sorted in descending order.</param>
-    public static void SortDataRows(this DataTable table, DataColumn[] cols, bool inAscendingOrder)
+    /// <param name="treatEmptyElementsAsLowest">If true, empty elements are treated as lower as any other non-empty element. If false, empty elements are treated as higher as any non-empty element.</param>
+    public static void SortDataRows(this DataTable table, DataColumn[] cols, bool inAscendingOrder, bool treatEmptyElementsAsLowest)
     {
-      SortRows(table.DataColumns, cols, inAscendingOrder);
+      SortRows(table.DataColumns, cols, inAscendingOrder, treatEmptyElementsAsLowest: treatEmptyElementsAsLowest);
     }
 
     /// <summary>
@@ -390,7 +479,8 @@ namespace Altaxo.Data
     /// <param name="col">The column which is used for determining the order of the entries.
     /// This column has to belong to the table (otherwise an exception will be thrown). All columns with the same group number than this column will be included in the sort process.</param>
     /// <param name="inAscendingOrder">If true, the table is sorted in ascending order. Otherwise, the table is sorted in descending order.</param>
-    public static void SortRows(this DataColumnCollection table, DataColumn col, bool inAscendingOrder)
+    /// <param name="treatEmptyElementsAsLowest">If true, empty elements are treated as lower as any other non-empty element. If false, empty elements are treated as higher as any non-empty element.</param>
+    public static void SortRows(this DataColumnCollection table, DataColumn col, bool inAscendingOrder, bool treatEmptyElementsAsLowest)
     {
       if (!table.ContainsColumn(col))
         throw new ArgumentException("The sorting column provided must be part of the DataColumnCollection (otherwise the swap algorithm can not sort this column)");
@@ -400,11 +490,11 @@ namespace Altaxo.Data
         int columnGroup = table.GetColumnGroup(col);
         if (col is DoubleColumn)
         {
-          HeapSort(col.Count, new DoubleColumnComparer((DoubleColumn)col, inAscendingOrder).Compare, new DataColumnCollectionRowSwapper(table, columnGroup).Swap);
+          HeapSort(col.Count, new DoubleColumnComparer((DoubleColumn)col, inAscendingOrder, treatEmptyElementsAsLowest).Compare, new DataColumnCollectionRowSwapper(table, columnGroup).Swap);
         }
         else
         {
-          HeapSort(col.Count, new DataColumnComparer(col, inAscendingOrder).Compare, new DataColumnCollectionRowSwapper(table, columnGroup).Swap);
+          HeapSort(col.Count, new DataColumnComparer(col, inAscendingOrder, treatEmptyElementsAsLowest).Compare, new DataColumnCollectionRowSwapper(table, columnGroup).Swap);
         }
       }
     }
@@ -414,9 +504,10 @@ namespace Altaxo.Data
     /// </summary>
     /// <param name="table">The DataColumnCollection where the data columns should be sorted.</param>
     /// <param name="cols">The columns which are used for determining the order of the entries. The sorting will be done by cols[0], then cols[1] and so on.
-    /// ll this columns has to belong to the table and need to have the same column group number (otherwise an exception will be thrown). All columns with the same group number than this columns will be included in the sort process.</param>
+    /// All this columns has to belong to the table and need to have the same column group number (otherwise an exception will be thrown). All columns with the same group number than this columns will be included in the sort process.</param>
     /// <param name="inAscendingOrder">If true, the table is sorted in ascending order. Otherwise, the table is sorted in descending order.</param>
-    public static void SortRows(this DataColumnCollection table, DataColumn[] cols, bool inAscendingOrder)
+    /// <param name="treatEmptyElementsAsLowest">If true, empty elements are treated as lower as any other non-empty element. If false, empty elements are treated as higher as any non-empty element.</param>
+    public static void SortRows(this DataColumnCollection table, DataColumn[] cols, bool inAscendingOrder, bool treatEmptyElementsAsLowest)
     {
       if (cols is null || cols.Length == 0)
         throw new ArgumentException("cols is null or empty");
@@ -436,7 +527,44 @@ namespace Altaxo.Data
             throw new ArgumentException("The sorting columnd provided must all be part of the DataColumnCollection (otherwise the swap algorithm can not sort this column)");
         }
 
-        HeapSort(cols[0].Count, new MultipleDataColumnComparer(cols, inAscendingOrder).Compare, new DataColumnCollectionRowSwapper(table, groupNumber).Swap);
+        HeapSort(cols[0].Count, new MultipleDataColumnComparer(cols, inAscendingOrder, treatEmptyElementsAsLowest: treatEmptyElementsAsLowest).Compare, new DataColumnCollectionRowSwapper(table, groupNumber).Swap);
+      }
+    }
+
+    /// <summary>
+    /// Sorts the data rows of a table (more accurate: of all columns belonging to a column group, see below), using multiple specified column.
+    /// </summary>
+    /// <param name="table">The table where the data columns should be sorted.</param>
+    /// <param name="cols">The columns which are used for determining the order of the entries. The sorting will be done by cols[0], then cols[1] and so on.
+    /// All this columns has to belong to the table and need to have the same column group number (otherwise an exception will be thrown). All columns with the same group number than this columns will be included in the sort process.</param>
+    /// <param name="treatEmptyElementsAsLowest">If true, empty elements are treated as lower as any other non-empty element. If false, empty elements are treated as higher as any non-empty element.</param>
+    public static void SortRows(this DataColumnCollection table, IReadOnlyList<(DataColumn column, bool inAscendingOrder)> cols, bool treatEmptyElementsAsLowest)
+    {
+      if (cols is null || cols.Count == 0)
+        throw new ArgumentException("cols is null or empty");
+
+      int groupNumber = table.GetColumnGroup(cols[0].column);
+      for (int i = 1; i < cols.Count; i++)
+      {
+        if (groupNumber != table.GetColumnGroup(cols[i].column))
+          throw new ArgumentException(string.Format("cols[{0}] has a deviating group number from cols[0]. Only columns belonging to the same group can be sorted", i));
+      }
+
+      int rowCount = 0;
+      for (int k = 0; k < cols.Count; k++)
+      {
+        if (!table.ContainsColumn(cols[k].column))
+          throw new ArgumentException("The sorting columnd provided must all be part of the DataColumnCollection (otherwise the swap algorithm can not sort this column)");
+
+        rowCount = Math.Max(rowCount, cols[k].column.Count);
+      }
+
+
+      var dataColumns = cols.Select(c => c.column).ToArray();
+      var inAscendingOrder = cols.Select(c => c.inAscendingOrder).ToArray();
+      using (var token = table.SuspendGetToken())
+      {
+        HeapSort(rowCount, new MultipleDataColumnComparer(dataColumns, inAscendingOrder, treatEmptyElementsAsLowest: treatEmptyElementsAsLowest).Compare, new DataColumnCollectionRowSwapper(table, groupNumber).Swap);
       }
     }
 
@@ -446,7 +574,8 @@ namespace Altaxo.Data
     /// <param name="table">The table where to sort the columns.</param>
     /// <param name="propCol">The property column where the sorting order is based on.</param>
     /// <param name="inAscendingOrder">If true, the sorting is in ascending order. If false, the sorting is in descending order.</param>
-    public static void SortDataColumnsByPropertyColumn(this DataTable table, DataColumn propCol, bool inAscendingOrder)
+    /// <param name="treatEmptyElementsAsLowest">If true, empty elements are treated as lower as any other non-empty element. If false, empty elements are treated as higher as any non-empty element.</param>
+    public static void SortDataColumnsByPropertyColumn(this DataTable table, DataColumn propCol, bool inAscendingOrder, bool treatEmptyElementsAsLowest)
     {
       if (!table.PropCols.ContainsColumn(propCol))
         throw new ArgumentException("The sorting column provided must be part of the table.PropertyColumnCollection (otherwise the swap algorithm can not sort this column)");
@@ -455,11 +584,11 @@ namespace Altaxo.Data
       {
         if (propCol is DoubleColumn)
         {
-          HeapSort(propCol.Count, new DoubleColumnComparer((DoubleColumn)propCol, inAscendingOrder).Compare, new DataTableColumnSwapper(table).Swap);
+          HeapSort(propCol.Count, new DoubleColumnComparer((DoubleColumn)propCol, inAscendingOrder, treatEmptyElementsAsLowest).Compare, new DataTableColumnSwapper(table).Swap);
         }
         else
         {
-          HeapSort(propCol.Count, new DataColumnComparer(propCol, inAscendingOrder).Compare, new DataTableColumnSwapper(table).Swap);
+          HeapSort(propCol.Count, new DataColumnComparer(propCol, inAscendingOrder, treatEmptyElementsAsLowest).Compare, new DataTableColumnSwapper(table).Swap);
         }
       }
     }
@@ -471,7 +600,8 @@ namespace Altaxo.Data
     /// <param name="selectedDataCols">Data columns to sort.</param>
     /// <param name="propCol">The property column where the sorting order is based on.</param>
     /// <param name="inAscendingOrder">If true, the sorting is in ascending order. If false, the sorting is in descending order.</param>
-    public static void SortDataColumnsByPropertyColumn(this DataTable table, IAscendingIntegerCollection selectedDataCols, DataColumn propCol, bool inAscendingOrder)
+    /// <param name="treatEmptyElementsAsLowest">If true, empty elements are treated as lower as any other non-empty element. If false, empty elements are treated as higher as any non-empty element.</param>
+    public static void SortDataColumnsByPropertyColumn(this DataTable table, IAscendingIntegerCollection selectedDataCols, DataColumn propCol, bool inAscendingOrder, bool treatEmptyElementsAsLowest)
     {
       if (!table.PropCols.ContainsColumn(propCol))
         throw new ArgumentException("The sorting column provided must be part of the table.PropertyColumnCollection (otherwise the swap algorithm can not sort this column)");
@@ -480,12 +610,56 @@ namespace Altaxo.Data
       {
         if (propCol is DoubleColumn)
         {
-          HeapSort(selectedDataCols.Count, new SelectedDoubleColumnComparer((DoubleColumn)propCol, selectedDataCols, inAscendingOrder).Compare, new DataTableSelectedColumnSwapper(table, selectedDataCols).Swap);
+          HeapSort(selectedDataCols.Count, new SelectedDoubleColumnComparer((DoubleColumn)propCol, selectedDataCols, inAscendingOrder, treatEmptyElementsAsLowest).Compare, new DataTableSelectedColumnSwapper(table, selectedDataCols).Swap);
         }
         else
         {
-          HeapSort(selectedDataCols.Count, new SelectedDataColumnComparer(propCol, selectedDataCols, inAscendingOrder).Compare, new DataTableSelectedColumnSwapper(table, selectedDataCols).Swap);
+          HeapSort(selectedDataCols.Count, new SelectedDataColumnComparer(propCol, selectedDataCols, inAscendingOrder, treatEmptyElementsAsLowest).Compare, new DataTableSelectedColumnSwapper(table, selectedDataCols).Swap);
         }
+      }
+    }
+
+    /// <summary>
+    /// Sort the order of the data columns (not rows!) of a table based on multiple specified property columns. The relationship of property data to data columns is maintained.
+    /// </summary>
+    /// <param name="table">The table containing the property columns used as sort criteria.</param>
+    /// <param name="cols">List of tuples of property columns and the correpsonding sort direction. The first element has highest priority.</param>
+    /// <param name="sortColumnsOnlyFromPropertyGroup">If true, only those data columns are moved in position, that have the same group number as the property column that are used as sort criterion.</param>
+    /// <param name="treatEmptyElementsAsLowest">If true, empty elements (e.g, NaN) are treated as lower as any other non-empty element. If false, empty elements are treated as higher as any other non-empty element.</param>
+    public static void SortDataColumnsByPropertyColumns(this DataTable table, IReadOnlyList<(DataColumn column, bool inAscendingOrder)> cols, bool sortColumnsOnlyFromPropertyGroup, bool treatEmptyElementsAsLowest)
+    {
+      if (cols is null || cols.Count == 0)
+        throw new ArgumentException("cols is null or empty");
+
+      int groupNumber = table.PropCols.GetColumnGroup(cols[0].column);
+      for (int i = 1; i < cols.Count; i++)
+      {
+        if (groupNumber != table.PropCols.GetColumnGroup(cols[i].column))
+          throw new ArgumentException(string.Format("cols[{0}] has a deviating group number from cols[0]. Only columns belonging to the same group can be sorted", i));
+      }
+
+      var propertyColumns = cols.Select(c => c.column).ToArray();
+      var inAscendingOrder = cols.Select(c => c.inAscendingOrder).ToArray();
+
+      AscendingIntegerCollection selectedDataColumns = new AscendingIntegerCollection();
+      if (sortColumnsOnlyFromPropertyGroup)
+      {
+        for (int i = 0; i < table.DataColumnCount; i++)
+        {
+          if (table.DataColumns.GetColumnGroup(i) == groupNumber)
+          {
+            selectedDataColumns.Add(i);
+          }
+        }
+      }
+      else
+      {
+        selectedDataColumns.AddRange(0, table.DataColumnCount);
+      }
+
+      using (var token = table.SuspendGetToken())
+      {
+        HeapSort(selectedDataColumns.Count, new MultipleDataColumnComparer(cols, selectedDataColumns, treatEmptyElementsAsLowest).Compare, new DataTableSelectedColumnSwapper(table, selectedDataColumns).Swap);
       }
     }
   }
