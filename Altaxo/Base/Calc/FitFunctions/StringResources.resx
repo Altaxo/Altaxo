@@ -102,6 +102,119 @@ References:
 
 </value>
   </data>
+  <data name="Chemistry.SorptionIsotherms.BrunauerEmmettTellerModel" xml:space="preserve">
+    <value>##### Mass uptake according to the Brunauer-Emmett-Teller model (BET model)
+
+The mass uptake of e.g. water by a sample material in dependence of the water activity can be described by the following formula:
+
+$$
+m(x) = offset + \frac{M_0 \times C \times x}{(1 - x)(1 + (C - 1) x)}
+$$
+
+in which:
+
+- $m(x)$ is the sample mass in dependence on the water activity
+- $x$ is the water activity (0 ... 1) (approx. the relative humidity in percent / 100) 
+- $offset$ is sample mass at activity x=0 (dry conditions)
+- $M_0$ is the monolayer moisture content
+- $C$ is a constant (usually much greater than 1)
+
+The domain of the function is  $0 \leq x &lt; 1$. 
+
+^^^
+![](res:Altaxo.Calc.FitFunctions.Chemistry.SorptionIsotherms.BrunauerEmmettTellerModel.Fig1.png){width=15cm}  
+^^^ Fig. 1: Brunauer-Emmett-Teller model with $offset=2$, $M_0=0.3$ and $C=10$.
+---
+
+References:  
+
+[1] S. Brunauer, P.H. Emmett, E. Teller, "Adsorption of Gases in Multimolecular Layers", J. Am. Chem. Soc.  60 (1938), 2, pp. 309–319, DOI: [10.1021/ja01269a023](https://pubs.acs.org/doi/abs/10.1021/ja01269a023)  
+</value>
+  </data>
+  <data name="Chemistry.SorptionIsotherms.GuggenheimAndersonDeBoerModel" xml:space="preserve">
+    <value>##### Mass uptake according to the Guggenheim-Anderson-de Boer model (GAB model)
+
+The mass uptake of e.g. water by a sample material in dependence of the water activity can be described by the following formula:
+
+$$
+m(x) = offset + \frac{M_0 C K x}{(1 - K x)(1 + (C - 1) K x)}
+$$
+
+in which:
+
+- $m(x)$ is the sample mass in dependence on the water activity
+- $x$ is the water activity (0 ... 1) (approx. the relative humidity in percent / 100) 
+- $offset$ is sample mass at activity x=0 (dry conditions)
+- $M_0$ is the monolayer moisture content
+- $C$ is a constant (usually much greater than 1)
+- $K$ is another constant (usually close to 1). If $K=1$, this model is identical to the Brunauer-Emmett-Teller model.
+
+The domain of the function is  $0 \leq x &lt; 1/K$ if $C&gt;1$. 
+
+^^^
+![](res:Altaxo.Calc.FitFunctions.Chemistry.SorptionIsotherms.GuggenheimAndersonDeBoerModel.Fig1.png){width=15cm}  
+^^^ Fig. 1: Guggenheim-Anderson-de Boer function with $offset=2$, $M_0=0.3$, $C=10$ and $K=0.9$.
+---
+
+References:  
+
+[1] R.B. Anderson, "Modification of the Brunauer, Emmett and Teller equation", Journal of the American Chemical Society, 68 (1946), pp. 686–691, DOI: [10.1021/ja01208a049](https://doi.org/10.1021/ja01208a049)
+
+[2] R.B. Anderson, W.K. Hall, "Modification of the Brunauer, Emmett and Teller equation II.", Journal of the American Chemical Society, 70 (1948), pp. 1727–1734, DOI: [doi.org/10.1021/ja01185a017](https://doi.org/10.1021/ja01185a017)
+
+[3] C. van den Berg, S. Bruin, "Water activity and its estimation in food systems: Theoretical aspects", in L. B. Rockland &amp; G. F. Stewart (Eds.), Water Activity: Influences on Food Quality (pp. 1–61). Academic Press 1981, doi: [10.1016/b978-0-12-591350-8.50007-3](https://doi.org/10.1016/B978-0-12-591350-8.50007-3)
+
+[4] R. Andrade, R. Lemus M., C.E.Perez, "Models of sorption isotherms for food: uses and limitations", Vitae, Revista de la Facultad de Quimica Farmaceutica, 18 (2011), pp. 325-334, ISSN 0121-4004
+</value>
+  </data>
+  <data name="Chemistry.SorptionIsotherms.GuggenheimAndersonDeBoerSimplifiedModel" xml:space="preserve">
+    <value>##### Mass uptake according to the Guggenheim-Anderson-de Boer model (GAB model) in simplified parametrization
+
+The mass uptake of e.g. water by a sample material in dependence of the water activity can be described with the following formula:
+
+$$
+m(x) = offset + \frac{a_0 \times x}{(a_1-x)(a_2+x)}
+$$
+
+in which:
+
+- $m(x)$ is the sample mass in dependence on the water activity
+- $x$ is the water activity (0 ... 1) (relative humidity in percent / 100) 
+- $offset$ is mass at x=0 (dry conditions)
+- $a_0$, $a_1$, and $a_2$ are (empirical) parameter 
+
+The domain of the function is  $0 \leq x &lt; a_1$. 
+
+The relation of the simplified parameters ($a_0, a_1, a_2$) to the original parameters ($M_0, C, K$) of the GAB model are:
+
+$$
+a_0 = \frac{C M_0}{(C - 1) K}, a_1 = \frac{1}{K}, a_2 = \frac{1}{(C - 1) K}
+$$
+
+or 
+
+$$
+M_0 = \frac{a_0}{a_1 + a_2}, C=\frac{a_1+a_2}{a_2},  K = \frac{1}{a_1}
+$$
+respectively.
+
+^^^
+![](res:Altaxo.Calc.FitFunctions.Chemistry.SorptionIsotherms.GuggenheimAndersonDeBoerSimplifiedModel.Fig1.png){width=15cm}  
+^^^ Fig. 1: Guggenheim-Anderson-de Boer model (simplified parametrization) with $offset=2$, $a_0=0.37037$, $a_1=1.11111$ and $a_2=, 0.123457$.
+---
+
+References:  
+
+[1] R.B. Anderson, "Modification of the Brunauer, Emmett and Teller equation", Journal of the American Chemical Society, 68 (1946), pp. 686–691, DOI: [10.1021/ja01208a049](https://doi.org/10.1021/ja01208a049)
+
+[2] R.B. Anderson, W.K. Hall, "Modification of the Brunauer, Emmett and Teller equation II.", Journal of the American Chemical Society, 70 (1948), pp. 1727–1734, DOI: [10.1021/ja01185a017](https://doi.org/10.1021/ja01185a017)
+
+[3] C. van den Berg, S. Bruin, "Water activity and its estimation in food systems: Theoretical aspects", in L. B. Rockland &amp; G. F. Stewart (Eds.), Water Activity: Influences on Food Quality (pp. 1–61). Academic Press 1981, DOI: [10.1016/b978-0-12-591350-8.50007-3](https://doi.org/10.1016/B978-0-12-591350-8.50007-3)
+
+[4] R. Andrade, R. Lemus M., C.E. Perez, "Models of sorption isotherms for food: uses and limitations", Vitae, Revista de la Facultad de Quimica Farmaceutica, 18 (2011), pp. 325-334, ISSN 0121-4004
+
+</value>
+  </data>
   <data name="Diffusion.MassChangeAfterExponentialEquilibrationForCylinder" xml:space="preserve">
     <value>##### Mass change of a cylinder after an exponential equilibration concentration change
 

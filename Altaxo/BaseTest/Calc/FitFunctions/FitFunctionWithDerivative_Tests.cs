@@ -66,6 +66,9 @@ namespace Altaxo.Calc.FitFunctions
     private static readonly (Func<IFitFunctionWithDerivative> Creation, double x, double[] parameters, double expectedY)[]
       _fitData = new (Func<IFitFunctionWithDerivative> Creation, double x, double[] parameters, double expectedY)[]
       {
+        (() => new Chemistry.SorptionIsotherms.BrunauerEmmettTellerModel(), 2/3d, new double[]{1/7d,1/5d,11}, 577/805d),
+        (() => new Chemistry.SorptionIsotherms.GuggenheimAndersonDeBoerModel(), 2/3d, new double[]{1/7d,1/5d,11,17/19d}, 194881/319585d),
+        (() => new Chemistry.SorptionIsotherms.GuggenheimAndersonDeBoerSimplifiedModel(), 1/2d, new double[]{1/3d,225/100d,146/100d,112/100d}, 913/864d),
         (() => new ExponentialDecay(2), 0.25, new double[]{1,3,5,7,11}, 1+3*Math.Exp(-0.25/5)+7*Math.Exp(-0.25/11)),
         (() => new ExponentialEquilibration(2), 0.5, new double[]{0.125,1,3,5,7,11}, 1+3*(1-Math.Exp(-(0.5-0.125)/5))+7*(1-Math.Exp(-(0.5-0.125)/11)) ),
         (() => new ExponentialGrowth(2), 0.25, new double[]{1,3,5,7,11}, 1+3*Math.Exp(0.25/5)+7*Math.Exp(0.25/11)),
@@ -155,7 +158,7 @@ namespace Altaxo.Calc.FitFunctions
         Assert.Equal(fitFunction.NumberOfParameters, entry.parameters.Length);
         x[0] = entry.x;
         fitFunction.Evaluate(x, entry.parameters, y);
-        Assert.Equal(entry.expectedY, y[0], CompareD);
+        AssertEx.AreEqual(entry.expectedY, y[0], 1E-100, 1E-12, $"FitFunction {fitFunction.GetType()}");
 
         if (fitFunction is IFitFunctionWithDerivative fg)
         {
