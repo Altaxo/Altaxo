@@ -30,7 +30,7 @@ namespace Altaxo.Calc.Regression
       AssertEx.AreEqual(expectedIntercept + expectedSlope * 2, qlr.GetYOfX(2), 1e-10, 0.0, "Y of X=2 test");
       // Calculate the sum of squared errors
 
-      AssertEx.AreEqual(expectedChiSquared, qlr.ChiSquared(), 1e-10, 0.0, "Chi squared test");
+      AssertEx.AreEqual(expectedChiSquared, qlr.SumChiSquared(), 1e-10, 0.0, "Chi squared test");
       AssertEx.AreEqual(expectedChiSquared / (qlr.N - 2), qlr.SigmaSquared(), 1e-10, 0.0, "Sigma squared test");
 
       AssertEx.AreEqual(0.88105726872246696035242, qlr.RSquared(), 1e-10, 0.0, "Sigma test");
@@ -47,19 +47,20 @@ namespace Altaxo.Calc.Regression
       AssertEx.AreEqual(0.75, qlr.GetYErrorOfX(1, cov), 1E-10, 0);
       AssertEx.AreEqual(Math.Sqrt(1.40625), qlr.GetYErrorOfX(2, cov), 1E-10, 0);
 
-      var cb0 = qlr.GetConfidenceBand(0, cov, 0.95);
+      var cb0 = qlr.GetConfidenceBand(0, 0.95, cov);
       AssertEx.AreEqual(-0.7924588740690616066624, cb0.yLower, 1e-10, 0);
       AssertEx.AreEqual(5.7924588740690616066624, cb0.yUpper, 1e-10, 0);
 
-      var cb1 = qlr.GetConfidenceBand(1, cov, 0.95);
+      var cb1 = qlr.GetConfidenceBand(1, 0.95, cov);
       AssertEx.AreEqual(5.4176661711016542316477, cb1.yLower, 1e-10, 0);
       AssertEx.AreEqual(9.5823338288983457683523, cb1.yUpper, 1e-10, 0);
 
-      var cb2 = qlr.GetConfidenceBand(2, cov, 0.95);
+      var cb2 = qlr.GetConfidenceBand(2, 0.95, cov);
       AssertEx.AreEqual(9.2075411259309383933376, cb2.yLower, 1e-10, 0);
       AssertEx.AreEqual(15.7924588740690616066624, cb2.yUpper, 1e-10, 0);
 
-
+      AssertEx.AreEqual(Math.Sqrt(1.40625), qlr.GetA0Error(), 1e-10, 0);
+      AssertEx.AreEqual(0.91855865354369178682398, qlr.GetA1Error(), 1e-10, 0);
     }
   }
 }

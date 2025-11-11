@@ -192,19 +192,31 @@ namespace Altaxo.Calc.Regression
       return (nom * nom) / denom;
     }
 
+    /// <summary>
+    /// Returns the adjusted squared correlation coeffient.
+    /// </summary>
+    /// <returns>The adjusted squared correlation coeffient.</returns>
     public double AdjustedRSquared()
     {
       var r2 = RSquared();
       return 1 - (1 - r2) * (_n - 1) / (_n - 2);
     }
 
-    public double ChiSquared()
+    /// <summary>
+    /// Returns the sum of squared errors between the original y and the predicted y.
+    /// </summary>
+    /// <returns>Sum of squared errors (differences between original y and predicted y).</returns>
+    public double SumChiSquared()
     {
       var a0 = GetA0();
       var a1 = GetA1();
       return _syy + a0 * a0 * _n + a1 * a1 * _sxx + 2 * a0 * a1 * _sx - 2 * a0 * _sy - 2 * a1 * _syx;
     }
 
+    /// <summary>
+    /// Gets the covariance matrix of the fit.
+    /// </summary>
+    /// <returns>The covariance matrix of the fit.</returns>
     public LinearAlgebra.Matrix<double> GetCovarianceMatrix()
     {
       var sigma2 = SigmaSquared();
@@ -221,13 +233,38 @@ namespace Altaxo.Calc.Regression
     }
 
     /// <summary>
+    /// Gets the error of the parameter A0.
+    /// </summary>
+    /// <returns>Error of the parameter A0.</returns>
+    public double GetA0Error()
+    {
+      var sigma2 = SigmaSquared();
+      var det = GetDeterminant();
+      var varA0 = sigma2 * _sxx / det;
+      return varA0 < 0 ? 0 : Math.Sqrt(varA0);
+    }
+
+    /// <summary>
+    /// Gets the error of the parameter A1.
+    /// </summary>
+    /// <returns>Error of the parameter A1.</returns>
+    public double GetA1Error()
+    {
+      var sigma2 = SigmaSquared();
+      var det = GetDeterminant();
+      var varA1 = sigma2 * _n / det;
+      return varA1 < 0 ? 0 : Math.Sqrt(varA1);
+    }
+
+    /// <summary>
     /// Gets the prediction variance in dependence on x.
     /// </summary>
     /// <param name="x">The x value.</param>
-    /// <param name="covarianceMatrix">The covariance matrix.  Get it from <see cref="GetCovarianceMatrix"/>.</param>
+    /// <param name="covarianceMatrix">The covariance matrix. For repeated calls, get it in from <see cref="GetCovarianceMatrix"/>, otherwise, you can provide null.</param>
     /// <returns>The prediction variance at the value x.</returns>
-    public double GetYVarianceOfX(double x, LinearAlgebra.Matrix<double> covarianceMatrix)
+    public double GetYVarianceOfX(double x, LinearAlgebra.Matrix<double>? covarianceMatrix = null)
     {
+      covarianceMatrix ??= GetCovarianceMatrix();
       return covarianceMatrix[0, 0] + x * covarianceMatrix[0, 1] + x * covarianceMatrix[1, 0] + x * x * covarianceMatrix[1, 1];
     }
 
@@ -235,10 +272,11 @@ namespace Altaxo.Calc.Regression
     /// Gets the mean prediction error of y in dependence on x.
     /// </summary>
     /// <param name="x">The x value.</param>
-    /// <param name="covarianceMatrix">The covariance matrix. Get it from <see cref="GetCovarianceMatrix"/>.</param>
+    /// <param name="covarianceMatrix">The covariance matrix. For repeated calls, get it in from <see cref="GetCovarianceMatrix"/>, otherwise, you can provide null.</param>
     /// <returns>The mean prediction error of y in dependence on x.</returns>
-    public double GetYErrorOfX(double x, LinearAlgebra.Matrix<double> covarianceMatrix)
+    public double GetYErrorOfX(double x, LinearAlgebra.Matrix<double>? covarianceMatrix = null)
     {
+      covarianceMatrix ??= GetCovarianceMatrix();
       var variance = covarianceMatrix[0, 0] + x * covarianceMatrix[0, 1] + x * covarianceMatrix[1, 0] + x * x * covarianceMatrix[1, 1];
       return variance < 0 ? 0 : Math.Sqrt(variance);
     }
@@ -247,15 +285,34 @@ namespace Altaxo.Calc.Regression
     /// Gets the confidence band of the prediction.
     /// </summary>
     /// <param name="x">The x value.</param>
-    /// <param name="covarianceMatrix">The covariance matrix. Get it from <see cref="GetCovarianceMatrix"/>.</param>
+    /// <param name="covarianceMatrix">The covariance matrix. For repeated calls, get it in from <see cref="GetCovarianceMatrix"/>, otherwise, you can provide null.</param>
     /// <param name="confidenceLevel">The confidence level.</param>
     /// <returns>The lower value of the confidence band, the mean value of the prediction, and the upper value of the confidence band.</returns>
-    public (double yLower, double yMean, double yUpper) GetConfidenceBand(double x, LinearAlgebra.Matrix<double> covarianceMatrix, double confidenceLevel)
+    public (double yLower, double yMean, double yUpper) GetConfidenceBand(double x, double confidenceLevel, LinearAlgebra.Matrix<double>? covarianceMatrix = null)
     {
+      covarianceMatrix ??= GetCovarianceMatrix();
       var t = Altaxo.Calc.Probability.StudentsTDistribution.Quantile(1 - (0.5 * (1 - confidenceLevel)), _n - 2);
       var et = t * GetYErrorOfX(x, covarianceMatrix);
       var y = GetYOfX(x);
       return (y - et, y, y + et);
+    }
+
+    /// <summary>
+    /// Gets the confidence band of the prediction for multiple x-values.
+    /// </summary>
+    /// <param name="xdata">The x values.</param>
+    /// <param name="confidenceLevel">The confidence level.</param>
+    /// <returns>Enumeration with the x values, the lower value of the confidence band, the mean value of the prediction, and the upper value of the confidence band.</returns>
+    public IEnumerable<(double x, double yLower, double yMean, double yUpper)> GetConfidenceBand(IEnumerable<double> xdata, double confidenceLevel)
+    {
+      var t = Altaxo.Calc.Probability.StudentsTDistribution.Quantile(1 - (0.5 * (1 - confidenceLevel)), _n - 2);
+      var cov = GetCovarianceMatrix();
+      foreach (var x in xdata)
+      {
+        var et = t * GetYErrorOfX(x, cov);
+        var y = GetYOfX(x);
+        yield return (x, y - et, y, y + et);
+      }
     }
 
     /// <summary>
@@ -266,7 +323,6 @@ namespace Altaxo.Calc.Regression
     {
       var a = GetA0();
       var b = GetA1();
-      //      return (_syy + a * a * _n + b * b * _sxx + 2 * a * b * _sx - 2 * a * _sy - 2 * b * _syx) / (_n - 2);
       return (_syy - a * _sy - b * _syx) / (_n - 2);
     }
 
@@ -311,9 +367,5 @@ namespace Altaxo.Calc.Regression
       var y1 = b.GetYOfX(x);
       return (y - y0) / (y1 - y0);
     }
-
-
-
-
   }
 }
