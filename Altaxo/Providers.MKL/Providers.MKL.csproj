@@ -24,7 +24,7 @@ many contributions, proper release notes with attributions will follow. thank yo
         <ProjectReference Include="..\Core\AltaxoCore.csproj" />
     </ItemGroup>
     <ItemGroup>
-        <PackageReference Include="Microsoft.CodeAnalysis.NetAnalyzers" Version="9.0.0">
+        <PackageReference Include="Microsoft.CodeAnalysis.NetAnalyzers" Version="10.0.100">
             <PrivateAssets>all</PrivateAssets>
             <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
         </PackageReference>

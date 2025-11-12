@@ -8,8 +8,8 @@
   </PropertyGroup>
   <ItemGroup>
     <!-- Make sure this versions always match that of the MLNet project -->
-    <PackageReference Include="Microsoft.ML" Version="4.0.3" />
-    <PackageReference Include="Microsoft.ML.TimeSeries" Version="4.0.3" />   
+    <PackageReference Include="Microsoft.ML" Version="5.0.0" />
+    <PackageReference Include="Microsoft.ML.TimeSeries" Version="5.0.0" />   
   </ItemGroup>
   <Target Name="PostBuild" AfterTargets="PostBuildEvent">
     <Exec Command="IF NOT EXIST $(SolutionDir)rtNet\AddIns\ML.Net\ mkdir $(SolutionDir)rtNet\AddIns\ML.Net\&#xD;&#xA;del $(TargetDir)zzIsNotNeeded.dll&#xD;&#xA;copy $(TargetDir)*.dll $(SolutionDir)rtNet\AddIns\ML.Net\&#xD;&#xA;xcopy $(TargetDir)runtimes\win-x64 $(SolutionDir)rtNet\AddIns\ML.Net\runtimes\win-x64 /S /I /Y&#xD;&#xA;" />
