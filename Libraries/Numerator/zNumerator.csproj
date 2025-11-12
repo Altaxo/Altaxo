@@ -1,6 +1,6 @@
 ﻿<Project Sdk="Microsoft.NET.Sdk" InitialTargets="GenAssInfo">
   <PropertyGroup>
-    <TargetFramework>net9.0</TargetFramework>
+    <TargetFramework>net10.0</TargetFramework>
     <AssemblyName>Numerator</AssemblyName>
     <RootNamespace>Numerator</RootNamespace>
     <LangVersion>preview</LangVersion>

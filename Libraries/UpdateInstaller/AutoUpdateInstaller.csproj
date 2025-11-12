@@ -2,7 +2,7 @@
   <PropertyGroup>
     <AssemblyName>AltaxoUpdateInstaller</AssemblyName>
     <RootNamespace>Altaxo.Serialization.AutoUpdates</RootNamespace>
-    <TargetFramework>net9.0-windows</TargetFramework>
+    <TargetFramework>net10.0-windows</TargetFramework>
     <LangVersion>preview</LangVersion>
     <nullable>enable</nullable>
     <OutputType>WinExe</OutputType>

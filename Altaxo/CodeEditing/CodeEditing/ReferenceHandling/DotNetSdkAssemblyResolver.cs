@@ -33,8 +33,8 @@ public class DotNetCoreSdkAssemblyResolver
 
   private readonly List<string> searchPaths;
 
-#if NET9_0
-  private int highestNetSdkVersion = 9;
+#if NET10_0
+  private int highestNetSdkVersion = 10;
 #else
 #error Target framework changed, please increment highestNetSdkVersion
 #endif

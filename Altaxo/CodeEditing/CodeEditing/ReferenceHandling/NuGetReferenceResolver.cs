@@ -71,11 +71,12 @@ public class NuGetReferenceResolver
     _cache = new SourceCacheContext();
     _targetFrameworks = new List<NuGetFramework>
     {
-#if NET9_0
-      new NuGetFramework(FrameworkIdentifiers.Net, new Version(9, 0, 0, 0)),
+#if NET10_0
+      new NuGetFramework(FrameworkIdentifiers.Net, new Version(10, 0, 0, 0)),
 #else
 #error "Please specify above the framework version that is currently compiled, and then some lesser versions below!"
 #endif
+      new NuGetFramework(FrameworkIdentifiers.Net, new Version(9, 0, 0, 0)),
       new NuGetFramework(FrameworkIdentifiers.Net, new Version(8, 0, 0, 0)),
       new NuGetFramework(FrameworkConstants.CommonFrameworks.NetStandard20)
     };

@@ -1,7 +1,7 @@
 ﻿<Project Sdk="Microsoft.NET.Sdk" InitialTargets="GenAssInfo">
   <PropertyGroup>
     <AssemblyName>OpenXMLAddin</AssemblyName>
-    <TargetFramework>net9.0-windows</TargetFramework>
+    <TargetFramework>net10.0-windows</TargetFramework>
     <LangVersion>preview</LangVersion>
     <nullable>enable</nullable>
     <UseWPF>true</UseWPF>
