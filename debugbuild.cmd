@@ -3,7 +3,17 @@ rmdir /S /Q .\rtnet
 @IF exist .\rtnet GOTO err
 mkdir rtnet
 
-"%ProgramFiles%\Microsoft Visual Studio\2022\Community\MSBuild\Current\Bin\msbuild.exe" /m Altaxo.slnx /t:Restore;Build /p:Configuration=Debug "/p:Platform=Any CPU" -fl -flp:logfile=..\AltaxoBuildLog.txt;verbosity=detailed
+if exist "%ProgramFiles%\Microsoft Visual Studio\18\Professional\MSBuild\Current\Bin\MSBuild.exe" (
+set buildexe="%ProgramFiles%\Microsoft Visual Studio\18\Professional\MSBuild\Current\Bin\MSBuild.exe"
+) else if exist "%ProgramFiles%\Microsoft Visual Studio\18\Community\MSBuild\Current\Bin\MSBuild.exe" (
+set buildexe="%ProgramFiles%\Microsoft Visual Studio\18\Community\MSBuild\Current\Bin\MSBuild.exe"
+) else (
+echo Could not found msbuild.exe on your computer!
+pause
+GOTO err
+)
+
+%buildexe% /m Altaxo.slnx /t:Restore;Build /p:Configuration=Debug "/p:Platform=Any CPU" -fl -flp:logfile=..\AltaxoBuildLog.txt;verbosity=detailed
 IF %ERRORLEVEL% NEQ 0 GOTO err
 @exit /B 0
 :err
