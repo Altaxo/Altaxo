@@ -145,5 +145,90 @@ namespace Altaxo.Calc.FitFunctions
       }
     }
 
+    private IEnumerable<IFitFunction> GetAllFitFunctionsCreatedByCreatorAttributes()
+    {
+      IEnumerable<Type> classentries = Altaxo.Main.Services.ReflectionService.GetUnsortedClassTypesHavingAttribute(typeof(FitFunctionClassAttribute), true);
+
+      foreach (Type definedtype in classentries)
+      {
+        System.Reflection.MethodInfo[] methods = definedtype.GetMethods(System.Reflection.BindingFlags.Static | System.Reflection.BindingFlags.Public);
+        foreach (System.Reflection.MethodInfo method in methods)
+        {
+          if (method.IsStatic && method.ReturnType != typeof(void) && method.GetParameters().Length == 0)
+          {
+            object[] attribs = method.GetCustomAttributes(typeof(FitFunctionCreatorAttribute), false);
+
+            if (attribs.Length == 0)
+            {
+              continue;
+            }
+
+            // now construct the fit function using this method
+            var o = method.Invoke(null, null);
+
+            Assert.IsAssignableFrom<IFitFunction>(o);
+            yield return (IFitFunction)o;
+          }
+        }
+      }
+    }
+
+    [Fact]
+    public void CheckHardAndSoftLimits()
+    {
+      foreach (var ff in GetAllFitFunctionsCreatedByCreatorAttributes())
+      {
+        // Test the hard limits
+        var (lowerBounds, upperBounds) = ff.GetParameterBoundariesHardLimit();
+        if (lowerBounds is not null)
+        {
+          Assert.True(lowerBounds.Count == ff.NumberOfParameters, $"Hard limit lowerbounds of {ff.GetType()} has a length of {lowerBounds.Count}, but number of parameters is {ff.NumberOfParameters}");
+          for (int i = 0; i < ff.NumberOfParameters; ++i)
+          {
+            if (lowerBounds[i].HasValue)
+            {
+              Assert.True(lowerBounds[i].Value <= ff.DefaultParameterValue(i), $"Hard limit lowerbound[{i}] of {ff.GetType()} violated: lowerbound={lowerBounds[i]} but default parameter is {ff.DefaultParameterValue(i)}");
+            }
+          }
+        }
+        if (upperBounds is not null)
+        {
+          Assert.True(lowerBounds.Count == ff.NumberOfParameters, $"Hard limit upperbounds of {ff.GetType()} has a length of {upperBounds.Count}, but number of parameters is {ff.NumberOfParameters}");
+          for (int i = 0; i < ff.NumberOfParameters; ++i)
+          {
+            if (upperBounds[i].HasValue)
+            {
+              Assert.True(upperBounds[i].Value >= ff.DefaultParameterValue(i), $"Hard limit upperbound[{i}] of {ff.GetType()} violated: upperbound={lowerBounds[i]} but default parameter is {ff.DefaultParameterValue(i)}");
+            }
+          }
+        }
+
+        // Test the soft limits
+        (lowerBounds, upperBounds) = ff.GetParameterBoundariesSoftLimit();
+        if (lowerBounds is not null)
+        {
+          Assert.True(lowerBounds.Count == ff.NumberOfParameters, $"Soft limit lowerbounds of {ff.GetType()} has a length of {lowerBounds.Count}, but number of parameters is {ff.NumberOfParameters}");
+          for (int i = 0; i < ff.NumberOfParameters; ++i)
+          {
+            if (lowerBounds[i].HasValue)
+            {
+              Assert.True(lowerBounds[i].Value <= ff.DefaultParameterValue(i), $"Soft limit lowerbound[{i}] of {ff.GetType()} violated: lowerbound={lowerBounds[i]} but default parameter is {ff.DefaultParameterValue(i)}");
+            }
+          }
+        }
+        if (upperBounds is not null)
+        {
+          Assert.True(lowerBounds.Count == ff.NumberOfParameters, $"Soft limit upperbounds of {ff.GetType()} has a length of {upperBounds.Count}, but number of parameters is {ff.NumberOfParameters}");
+          for (int i = 0; i < ff.NumberOfParameters; ++i)
+          {
+            if (upperBounds[i].HasValue)
+            {
+              Assert.True(upperBounds[i].Value >= ff.DefaultParameterValue(i), $"Soft limit upperbound[{i}] of {ff.GetType()} violated: upperbound={lowerBounds[i]} but default parameter is {ff.DefaultParameterValue(i)}");
+            }
+          }
+        }
+      }
+    }
+
   }
 }
