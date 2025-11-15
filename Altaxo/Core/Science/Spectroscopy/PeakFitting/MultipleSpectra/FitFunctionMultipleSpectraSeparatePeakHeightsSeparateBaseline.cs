@@ -232,13 +232,13 @@ namespace Altaxo.Science.Spectroscopy.PeakFitting.MultipleSpectra
     /// <summary>Not implemented.</summary>
     public (IReadOnlyList<double?>? LowerBounds, IReadOnlyList<double?>? UpperBounds) GetParameterBoundariesHardLimit()
     {
-      throw new NotImplementedException();
+      return (null, null);
     }
 
     /// <summary>Not implemented.</summary>
     public (IReadOnlyList<double?>? LowerBounds, IReadOnlyList<double?>? UpperBounds) GetParameterBoundariesSoftLimit()
     {
-      throw new NotImplementedException();
+      return (null, null);
     }
 
     /// <summary>Not implemented.</summary>

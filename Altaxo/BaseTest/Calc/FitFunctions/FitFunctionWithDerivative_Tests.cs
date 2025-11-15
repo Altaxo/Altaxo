@@ -128,8 +128,8 @@ namespace Altaxo.Calc.FitFunctions
         (() => new Viscosity.CarreauYasudaModel(), 3.5, new double[]{53, 5, 0.5, 2.5, 3 }, 180.37360429021057453),
         (() => new Viscosity.CrossModel(), 3.5, new double[]{53, 5, 0.5, 2.5 }, 14.502491711079347792),
         (() => new Viscosity.BinghamPlasticModel(), 3.5, new double[]{53, 3 }, 18.142857142857142857),
-        (() => new Viscosity.HerschelBulkleyModel(), 3.5, new double[]{5, 53, 3 }, 650.67857142857142857),
-        (() => new Viscosity.PowerLawModel(), 3.5, new double[]{53, 3 }, 649.25),
+        (() => new Viscosity.HerschelBulkleyModel(), 3.5, new double[]{5, 53, 0.75 }, 40.17742505114974),
+        (() => new Viscosity.PowerLawModel(), 3.5, new double[]{53, 3/4d }, 38.74885362257831),
         (() => new Diffusion.MassChangeAfterStepForPlaneSheet(){ HalfThickness = 3 }, 50/2048d + 1 / 1024d, new double[]{1 / 1024d, 7, 11, 5 }, 8.44554467407405003),
         (() => new Diffusion.MassChangeAfterStepForPlaneSheet(){ HalfThickness = 3 }, 200/2048d + 1/1024d, new double[]{1 / 1024d, 7, 11, 5 }, 9.89108934670896301),
         (() => new Diffusion.MassChangeAfterStepForPlaneSheet(){ HalfThickness = 3 }, 1/1024d - 60 / 2048d, new double[]{1 / 1024d, 7, 11, 5 }, 7),
@@ -171,6 +171,7 @@ namespace Altaxo.Calc.FitFunctions
         {
           TestGradients(fg, entry.x, entry.parameters);
         }
+        TestHardAndSoftLimits(fitFunction, entry.parameters);
       }
     }
 
@@ -226,6 +227,66 @@ namespace Altaxo.Calc.FitFunctions
         var approximatedDerivative = (y1 - y0) / d;
         AssertEx.AreEqual(approximatedDerivative, actualDerivative[4, i], 1E-4, 1E-4, $"{ff} para[{i}]");
       }
+    }
+
+    private void TestHardAndSoftLimits(IFitFunctionWithDerivative ff, double[] parameters)
+    {
+      Assert.True(ff.NumberOfParameters == parameters.Length, $"Parameter length != ff.NumberOfParameters in {ff.GetType()}");
+
+      // Test the hard limits
+      var (lowerBounds, upperBounds) = ff.GetParameterBoundariesHardLimit();
+      if (lowerBounds is not null)
+      {
+        Assert.True(lowerBounds.Count == ff.NumberOfParameters, $"Hard limit lowerbounds of {ff.GetType()} has a length of {lowerBounds.Count}, but number of parameters is {ff.NumberOfParameters}");
+        for (int i = 0; i < parameters.Length; ++i)
+        {
+          if (lowerBounds[i].HasValue)
+          {
+            Assert.True(lowerBounds[i].Value <= parameters[i], $"Hard limit lowerbound[{i}] of {ff.GetType()} violated: lowerbound={lowerBounds[i]} but parameter is {parameters[i]}");
+            Assert.True(lowerBounds[i].Value <= ff.DefaultParameterValue(i), $"Hard limit lowerbound[{i}] of {ff.GetType()} violated: lowerbound={lowerBounds[i]} but default parameter is {ff.DefaultParameterValue(i)}");
+          }
+        }
+      }
+      if (upperBounds is not null)
+      {
+        Assert.True(lowerBounds.Count == ff.NumberOfParameters, $"Hard limit upperbounds of {ff.GetType()} has a length of {upperBounds.Count}, but number of parameters is {ff.NumberOfParameters}");
+        for (int i = 0; i < parameters.Length; ++i)
+        {
+          if (upperBounds[i].HasValue)
+          {
+            Assert.True(upperBounds[i].Value >= parameters[i], $"Hard limit upperbound[{i}] of {ff.GetType()} violated: upperbound={upperBounds[i]} but parameter is {parameters[i]}");
+            Assert.True(upperBounds[i].Value >= ff.DefaultParameterValue(i), $"Hard limit upperbound[{i}] of {ff.GetType()} violated: upperbound={lowerBounds[i]} but default parameter is {ff.DefaultParameterValue(i)}");
+          }
+        }
+      }
+
+      // Test the soft limits
+      (lowerBounds, upperBounds) = ff.GetParameterBoundariesSoftLimit();
+      if (lowerBounds is not null)
+      {
+        Assert.True(lowerBounds.Count == ff.NumberOfParameters, $"Soft limit lowerbounds of {ff.GetType()} has a length of {lowerBounds.Count}, but number of parameters is {ff.NumberOfParameters}");
+        for (int i = 0; i < parameters.Length; ++i)
+        {
+          if (lowerBounds[i].HasValue)
+          {
+            Assert.True(lowerBounds[i].Value <= parameters[i], $"Soft limit lowerbound[{i}] of {ff.GetType()} violated: lowerbound={lowerBounds[i]} but parameter is {parameters[i]}");
+            Assert.True(lowerBounds[i].Value <= ff.DefaultParameterValue(i), $"Soft limit lowerbound[{i}] of {ff.GetType()} violated: lowerbound={lowerBounds[i]} but default parameter is {ff.DefaultParameterValue(i)}");
+          }
+        }
+      }
+      if (upperBounds is not null)
+      {
+        Assert.True(lowerBounds.Count == ff.NumberOfParameters, $"Soft limit upperbounds of {ff.GetType()} has a length of {upperBounds.Count}, but number of parameters is {ff.NumberOfParameters}");
+        for (int i = 0; i < parameters.Length; ++i)
+        {
+          if (upperBounds[i].HasValue)
+          {
+            Assert.True(upperBounds[i].Value >= parameters[i], $"Soft limit upperbound[{i}] of {ff.GetType()} violated: upperbound={upperBounds[i]} but parameter is {parameters[i]}");
+            Assert.True(upperBounds[i].Value >= ff.DefaultParameterValue(i), $"Soft limit upperbound[{i}] of {ff.GetType()} violated: upperbound={lowerBounds[i]} but default parameter is {ff.DefaultParameterValue(i)}");
+          }
+        }
+      }
+
     }
   }
 }

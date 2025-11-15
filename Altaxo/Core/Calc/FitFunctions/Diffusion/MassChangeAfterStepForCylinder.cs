@@ -328,7 +328,7 @@ namespace Altaxo.Calc.FitFunctions.Diffusion
     /// <inheritdoc/>
     public (IReadOnlyList<double?>? LowerBounds, IReadOnlyList<double?>? UpperBounds) GetParameterBoundariesSoftLimit()
     {
-      return ([null, double.Epsilon, null, double.Epsilon], null);
+      return ([null, 0, null, double.Epsilon], null);
     }
 
     /// <inheritdoc/>

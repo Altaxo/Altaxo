@@ -161,7 +161,7 @@ namespace Altaxo.Calc.FitFunctions.Chemistry.SorptionIsotherms
     /// <inheritdoc/>
     public (IReadOnlyList<double?>? LowerBounds, IReadOnlyList<double?>? UpperBounds) GetParameterBoundariesSoftLimit()
     {
-      return ([null, double.Epsilon, double.Epsilon], null);
+      return ([null, double.Epsilon], null);
     }
 
     /// <inheritdoc/>
