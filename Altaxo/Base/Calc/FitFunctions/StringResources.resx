@@ -53,10 +53,10 @@
     <value>2.0</value>
   </resheader>
   <resheader name="reader">
-    <value>System.Resources.ResXResourceReader, System.Windows.Forms, Version=9.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+    <value>System.Resources.ResXResourceReader, System.Windows.Forms, Version=10.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
   </resheader>
   <resheader name="writer">
-    <value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=9.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+    <value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=10.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
   </resheader>
   <data name="Chemistry.MassBasedFloryDistribution" xml:space="preserve">
     <value>##### MassBasedFloryDistribution
@@ -213,6 +213,219 @@ References:
 
 [4] R. Andrade, R. Lemus M., C.E. Perez, "Models of sorption isotherms for food: uses and limitations", Vitae, Revista de la Facultad de Quimica Farmaceutica, 18 (2011), pp. 325-334, ISSN 0121-4004
 
+</value>
+  </data>
+  <data name="Chemistry.SorptionIsotherms.HalseyModel" xml:space="preserve">
+    <value>##### Mass uptake according to the Halsey model
+
+The mass uptake of e.g. water by a sample material in dependence of the water activity can be described by the following formula:
+
+$$
+m(x) = offset + \left (\frac{-C}{\ln(x)} \right )^{1/n}
+$$
+
+in which:
+
+- $m(x)$ is the relative mass uptake (if $offset=0$) or the sample mass in dependence on the water activity
+- $x$ is the water activity (0 ... 1) (approx. the relative humidity in percent / 100) 
+- $offset$ is sample mass at activity x=0 (dry conditions)
+- $C$ is a constant (usually much greater than 1)
+- $n$ is an exponent
+
+The domain of the function is  $0 \leq x &lt; 1$. 
+
+^^^
+![](res:Altaxo.Calc.FitFunctions.Chemistry.SorptionIsotherms.HalseyModel.Fig1.png){width=15cm}  
+^^^ Fig. 1: Halsey model with $offset=2$, $C=10$ and $n=2.2$.
+---
+
+References:  
+
+[1] R. Andrade, R. Lemus M., C.E.Perez, "Models of sorption isotherms for food: uses and limitations", Vitae, Revista de la Facultad de Quimica Farmaceutica, 18 (2011), pp. 325-334, [ISSN 0121-4004](https://www.redalyc.org/pdf/1698/169822677013.pdf)
+</value>
+  </data>
+  <data name="Chemistry.SorptionIsotherms.HendersonModel" xml:space="preserve">
+    <value>##### Mass uptake according to the Henderson model
+
+The mass uptake of e.g. water by a sample material in dependence of the water activity can be described by the following formula:
+
+$$
+m(x) = offset + \left (-\frac{\ln(1-x)}{C} \right )^{1/n}
+$$
+
+in which:
+
+- $m(x)$ is the relative mass uptake (if $offset=0$) or the sample mass in dependence on the water activity
+- $x$ is the water activity (0 ... 1) (approx. the relative humidity in percent / 100) 
+- $offset$ is sample mass at activity x=0 (dry conditions)
+- $C$ is a constant (usually much greater than 1)
+- $n$ is an exponent
+
+The domain of the function is  $0 \leq x &lt; 1$. 
+
+^^^
+![](res:Altaxo.Calc.FitFunctions.Chemistry.SorptionIsotherms.HendersonModel.Fig1.png){width=15cm}  
+^^^ Fig. 1: Henderson model with $offset=2$, $C=2.16$ and $n=0.591$.
+---
+
+References:  
+
+[1] R. Andrade, R. Lemus M., C.E.Perez, "Models of sorption isotherms for food: uses and limitations", Vitae, Revista de la Facultad de Quimica Farmaceutica, 18 (2011), pp. 325-334, [ISSN 0121-4004](https://www.redalyc.org/pdf/1698/169822677013.pdf)
+</value>
+  </data>
+  <data name="Chemistry.SorptionIsotherms.IglesiasChirifeModel" xml:space="preserve">
+    <value>##### Mass uptake according to the Iglesias-Chirife model
+
+The mass uptake of e.g. water by a sample material in dependence of the water activity can be described by the following formula:
+
+$$
+\ln \left ( M_w + \sqrt{M^2_w + M_{05}}  \right ) = p + b x
+$$
+
+which results in:
+
+$$
+m(x) = offset +
+\frac{1}{2} \left [ \exp(p + b x)-M_{05}
+   \exp(-p -b x) \right ]
+$$
+
+in which:
+
+- $m(x)$ is the relative mass uptake (if $offset=0$) or the sample mass in dependence on the water activity $x$
+- $x$ is the water activity (0 ... 1) (approx. the relative humidity in percent / 100) 
+- $offset$ is a sample mass offset
+- $p,b$ are constants
+- $M_{05}$ is the relative mass uptake at $x=1/2$ (? this is questionable, it doesn't result from the equation ?)
+
+The domain of the function is  $0 \leq x &lt; 1$. 
+
+^^^
+![](res:Altaxo.Calc.FitFunctions.Chemistry.SorptionIsotherms.IglesiasChirifeModel.Fig1.png){width=15cm}  
+^^^ Fig. 1: Iglesias-Chirife model with $offset=2$, $p=-0.843$, $b=1.674$ and $M_{05}=0.29$.
+---
+
+References:  
+
+[1] Iglesias, H.A.; Chirife, J. "An Empirical Equation for Fitting Water Sorption Isotherms of Fruits and Related Products", Canadian Institute of Food Science and Technology Journal, 11(1) 1978, 12-15. doi: [10.1016/S0315-5463(78)73153-6](https://doi.org/10.1016/S0315-5463(78)73153-6) 
+
+[2] R. Andrade, R. Lemus M., C.E.Perez, "Models of sorption isotherms for food: uses and limitations", Vitae, Revista de la Facultad de Quimica Farmaceutica, 18 (2011), pp. 325-334, [ISSN 0121-4004](https://www.redalyc.org/pdf/1698/169822677013.pdf)
+</value>
+  </data>
+  <data name="Chemistry.SorptionIsotherms.LangmuirModel" xml:space="preserve">
+    <value>##### Mass uptake according to the Langmuir model
+
+The mass uptake of e.g. water by a sample material in dependence of the water activity can be described by the following formula:
+
+$$
+m(x) = offset + M_0 \frac{C x}{1 + C x}
+$$
+
+in which:
+
+- $m(x)$ is the relative mass uptake (if $offset=0$) or the sample mass in dependence on the water activity
+- $x$ is the water activity (0 ... 1) (approx. the relative humidity in percent / 100) 
+- $offset$ is sample mass at activity x=0 (dry conditions)
+- $M_0$ is the monolayer mass uptake
+- $C$ is a constant (usually much greater than 1)
+
+The domain of the function is  $0 \leq x &lt; 1$. 
+
+^^^
+![](res:Altaxo.Calc.FitFunctions.Chemistry.SorptionIsotherms.LangmuirModel.Fig1.png){width=15cm}  
+^^^ Fig. 1: Langmuir model with $offset=2$, $M0=3$ and $C=1.5$.
+---
+
+References:  
+
+[1] R. Andrade, R. Lemus M., C.E.Perez, "Models of sorption isotherms for food: uses and limitations", Vitae, Revista de la Facultad de Quimica Farmaceutica, 18 (2011), pp. 325-334, [ISSN 0121-4004](https://www.redalyc.org/pdf/1698/169822677013.pdf)
+</value>
+  </data>
+  <data name="Chemistry.SorptionIsotherms.OswinModel" xml:space="preserve">
+    <value>##### Mass uptake according to the Oswin model
+
+The mass uptake of e.g. water by a sample material in dependence of the water activity can be described by the following formula:
+
+$$
+m(x) = offset + C \left (\frac{x}{1-x} \right )^{n}
+$$
+
+in which:
+
+- $m(x)$ is the relative mass uptake (if $offset=0$) or the sample mass in dependence on the water activity
+- $x$ is the water activity (0 ... 1) (approx. the relative humidity in percent / 100) 
+- $offset$ is sample mass at activity x=0 (dry conditions)
+- $C$ is a constant (usually much greater than 1)
+- $n$ is an exponent
+
+The domain of the function is  $0 \leq x &lt; 1$. 
+
+^^^
+![](res:Altaxo.Calc.FitFunctions.Chemistry.SorptionIsotherms.OswinModel.Fig1.png){width=15cm}  
+^^^ Fig. 1: Oswin model with $offset=2$, $C=0.125$ and $n=0.461$.
+---
+
+References:  
+
+[1] R. Andrade, R. Lemus M., C.E.Perez, "Models of sorption isotherms for food: uses and limitations", Vitae, Revista de la Facultad de Quimica Farmaceutica, 18 (2011), pp. 325-334, [ISSN 0121-4004](https://www.redalyc.org/pdf/1698/169822677013.pdf)
+</value>
+  </data>
+  <data name="Chemistry.SorptionIsotherms.PelegModel" xml:space="preserve">
+    <value>##### Mass uptake according to the Peleg model
+
+The mass uptake of e.g. water by a sample material in dependence of the water activity can be described by the following formula:
+
+$$
+m(x) = offset + C_1 x^{C_3} + C_2 x^{C_4}
+$$
+
+in which:
+
+- $m(x)$ is the relative mass uptake (if $offset=0$) or the sample mass in dependence on the water activity
+- $x$ is the water activity (0 ... 1) (approx. the relative humidity in percent / 100) 
+- $offset$ is sample mass at activity x=0 (dry conditions)
+- $C_1, C_2$ are factors
+- $C_3, C_4$ are exponents (usually one exponent is chosen to be less than one, the other greater than 1)
+
+The domain of the function is  $0 \leq x \leq 1$. 
+
+^^^
+![](res:Altaxo.Calc.FitFunctions.Chemistry.SorptionIsotherms.PelegModel.Fig1.png){width=15cm}  
+^^^ Fig. 1: Peleg model with $offset=2$, $C_1=2.609$ , $C_2=0.507$, $C_3=7.372$ and $C_4=0.635$. 
+---
+
+References:  
+
+[1] R. Andrade, R. Lemus M., C.E.Perez, "Models of sorption isotherms for food: uses and limitations", Vitae, Revista de la Facultad de Quimica Farmaceutica, 18 (2011), pp. 325-334, [ISSN 0121-4004](https://www.redalyc.org/pdf/1698/169822677013.pdf)
+</value>
+  </data>
+  <data name="Chemistry.SorptionIsotherms.SmithModel" xml:space="preserve">
+    <value>##### Mass uptake according to the Smith model
+
+The mass uptake of e.g. water by a sample material in dependence of the water activity can be described by the following formula:
+
+$$
+m(x) = offset + C \ln(1-x)
+$$
+
+in which:
+
+- $m(x)$ is the relative mass uptake (if $offset=0$) or the sample mass in dependence on the water activity
+- $x$ is the water activity (0 ... 1) (approx. the relative humidity in percent / 100) 
+- $offset$ is sample mass at activity x=0 (dry conditions)
+- $C$ is a constant (usually much greater than 1)
+
+The domain of the function is  $0 \leq x &lt; 1$. 
+
+^^^
+![](res:Altaxo.Calc.FitFunctions.Chemistry.SorptionIsotherms.SmithModel.Fig1.png){width=15cm}  
+^^^ Fig. 1: Smith model with $offset=2$ and $C=10$.
+---
+
+References:  
+
+[1] S.E. Smith, “Sorption of water vapor by proteins at high polymers”  J. Am. Chem. Soc., vol. 69, 1947, pp, 646–651, doi: [10.1021/ja01195a053](https://doi.org/10.1021/ja01195a053)  
+[2] R. Andrade, R. Lemus M., C.E.Perez, "Models of sorption isotherms for food: uses and limitations", Vitae, Revista de la Facultad de Quimica Farmaceutica, 18 (2011), pp. 325-334, [ISSN 0121-4004](https://www.redalyc.org/pdf/1698/169822677013.pdf)
 </value>
   </data>
   <data name="Diffusion.MassChangeAfterExponentialEquilibrationForCylinder" xml:space="preserve">

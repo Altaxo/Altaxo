@@ -52,7 +52,7 @@ namespace Altaxo.Calc.FitFunctions.Chemistry.SorptionIsotherms
     /// </summary>
     /// <seealso cref="Altaxo.Serialization.Xml.IXmlSerializationSurrogate" />
     [Altaxo.Serialization.Xml.XmlSerializationSurrogateFor(typeof(GuggenheimAndersonDeBoerSimplifiedModel), 0)]
-    private class XmlSerializationSurrogate1 : Altaxo.Serialization.Xml.IXmlSerializationSurrogate
+    private class XmlSerializationSurrogate0 : Altaxo.Serialization.Xml.IXmlSerializationSurrogate
     {
       public virtual void Serialize(object obj, Altaxo.Serialization.Xml.IXmlSerializationInfo info)
       {
@@ -131,7 +131,8 @@ namespace Altaxo.Calc.FitFunctions.Chemistry.SorptionIsotherms
     }
 
     /// <summary>
-    /// Evaluates the mass uptake according to GAB equation with simplified parametrization.
+    /// Evaluates the mass uptake according to the Guggenheimer-Anderson-de Boer (GAB) model
+    /// with simplified parametrization.
     /// </summary>
     /// <param name="x">The dependent variable. Usually water activity / relative humidity (0..1).</param>
     /// <param name="offset">The mass of the sample at x==0.</param>

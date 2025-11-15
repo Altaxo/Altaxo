@@ -49,7 +49,7 @@ namespace Altaxo.Calc.FitFunctions.Chemistry.SorptionIsotherms
       AssertEx.AreEqual(577 / 805d, Y[0], 0, 1e-14);
 
       var XX = Matrix<double>.Build.Dense(1, 1);
-      var DF = Matrix<double>.Build.Dense(1, 4);
+      var DF = Matrix<double>.Build.Dense(1, 3);
       XX[0, 0] = x;
       f.EvaluateDerivative(XX, P, null, DF, null);
       AssertEx.AreEqual(1, DF[0, 0], 0, 1e14);
