@@ -25,7 +25,7 @@
 using System;
 using Xunit;
 
-namespace Altaxo.Calc.Regression.Foo
+namespace Altaxo.Calc.Regression
 {
   public class QuickQuadraticRegressionTests
   {
