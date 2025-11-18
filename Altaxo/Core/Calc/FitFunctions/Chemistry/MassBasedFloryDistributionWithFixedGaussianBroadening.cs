@@ -35,10 +35,10 @@ namespace Altaxo.Calc.FitFunctions.Chemistry
   /// Mass based Flory distribution based on the decadic logarithm of the molecular weight. It designates the mass based distribution of the molecular
   /// weight after a polymerization reaction. The two parameters are the area A and the probability for a terminal reaction tau.
   /// The Flory distribution is broadened by a Gaussian function, whose sigma is not a parameter, but is dependent on the independent variable (molecular weight).
-  /// The dependency of sigma is a polynomial function of the decadic logarithm of the molecular weight with fixed polymonial coefficients.
+  /// The dependency of sigma is a polynomial function of the decadic logarithm of the molecular weight with fixed polynomial coefficients.
   /// </summary>
   [FitFunctionClass]
-  public record MassBasedFloryDistributionGaussianFixedBroadened : IFitFunctionWithDerivative, IFitFunctionPeak, IImmutable
+  public record MassBasedFloryDistributionWithFixedGaussianBroadening : IFitFunctionWithDerivative, IFitFunctionPeak, IImmutable
   {
     private const double lambda = 2.3025850929940456840; // Log(10)
 
@@ -63,7 +63,7 @@ namespace Altaxo.Calc.FitFunctions.Chemistry
     /// </summary>
     public bool IndependentVariableIsDecadicLogarithm { get; init; }
 
-    private double[] _polynomialCoefficientsForSigma = Array.Empty<double>();
+    private double[] _polynomialCoefficientsForSigma = [0];
 
     /// <summary>
     /// Gets the polynomial coefficients for sigma. The polynomial is evaluated in the decadic logarithm of the molecular weight.
@@ -76,6 +76,9 @@ namespace Altaxo.Calc.FitFunctions.Chemistry
       get => (double[])_polynomialCoefficientsForSigma.Clone();
       init
       {
+        if (value.Length == 0)
+          throw new ArgumentException("Array must not be empty", nameof(PolynomialCoefficientsForSigma));
+
         _polynomialCoefficientsForSigma = (double[])value.Clone();
       }
     }
@@ -93,16 +96,17 @@ namespace Altaxo.Calc.FitFunctions.Chemistry
     /// <summary>
     /// 2025-09-25 Initial version
     /// </summary>
-    [Serialization.Xml.XmlSerializationSurrogateFor(typeof(MassBasedFloryDistributionGaussianFixedBroadened), 0)]
+    [Serialization.Xml.XmlSerializationSurrogateFor(typeof(MassBasedFloryDistributionWithFixedGaussianBroadening), 0)]
     private class XmlSerializationSurrogate0 : Serialization.Xml.IXmlSerializationSurrogate
     {
       public virtual void Serialize(object obj, Serialization.Xml.IXmlSerializationInfo info)
       {
-        var s = (MassBasedFloryDistributionGaussianFixedBroadened)obj;
+        var s = (MassBasedFloryDistributionWithFixedGaussianBroadening)obj;
         info.AddValue("NumberOfTerms", s.NumberOfTerms);
         info.AddValue("OrderOfBackgroundPolynomial", s.OrderOfBaselinePolynomial);
         info.AddValue("MolecularWeightOfMonomerUnit", s.MolecularWeightOfMonomerUnit);
         info.AddValue("IndependentVariableIsDecadicLogarithm", s.IndependentVariableIsDecadicLogarithm);
+        info.AddArray("PolynomialCoefficientsForSigma", s._polynomialCoefficientsForSigma, s._polynomialCoefficientsForSigma.Length);
       }
 
       public virtual object Deserialize(object? o, Serialization.Xml.IXmlDeserializationInfo info, object? parent)
@@ -111,19 +115,25 @@ namespace Altaxo.Calc.FitFunctions.Chemistry
         var orderOfBackgroundPolynomial = info.GetInt32("OrderOfBackgroundPolynomial");
         var molecularWeightOfMonomerUnit = info.GetDouble("MolecularWeightOfMonomerUnit");
         var independentVariableIsDecadicLogarithm = info.GetBoolean("IndependentVariableIsDecadicLogarithm");
-        return new MassBasedFloryDistributionGaussianFixedBroadened(numberOfTerms, orderOfBackgroundPolynomial) { MolecularWeightOfMonomerUnit = molecularWeightOfMonomerUnit, IndependentVariableIsDecadicLogarithm = independentVariableIsDecadicLogarithm };
+        info.GetArray("PolynomialCoefficientsForSigma", out double[] polynomialCoefficientsForSigma);
+        return new MassBasedFloryDistributionWithFixedGaussianBroadening(numberOfTerms, orderOfBackgroundPolynomial)
+        {
+          MolecularWeightOfMonomerUnit = molecularWeightOfMonomerUnit,
+          IndependentVariableIsDecadicLogarithm = independentVariableIsDecadicLogarithm,
+          PolynomialCoefficientsForSigma = polynomialCoefficientsForSigma,
+        };
       }
     }
 
     #endregion Serialization
 
-    public MassBasedFloryDistributionGaussianFixedBroadened()
+    public MassBasedFloryDistributionWithFixedGaussianBroadening()
     {
       NumberOfTerms = 1;
       OrderOfBaselinePolynomial = -1;
     }
 
-    public MassBasedFloryDistributionGaussianFixedBroadened(int numberOfTerms, int orderOfBackgroundPolynomial)
+    public MassBasedFloryDistributionWithFixedGaussianBroadening(int numberOfTerms, int orderOfBackgroundPolynomial)
     {
       NumberOfTerms = numberOfTerms;
       OrderOfBaselinePolynomial = orderOfBackgroundPolynomial;
@@ -135,11 +145,11 @@ namespace Altaxo.Calc.FitFunctions.Chemistry
       return $"{GetType().Name} NumberOfTerms={NumberOfTerms} OrderOfBaseline={OrderOfBaselinePolynomial}";
     }
 
-    [FitFunctionCreator("MassBasedFloryDistribution", "Chemistry", 1, 1, NumberOfParametersPerPeak)]
-    [System.ComponentModel.Description("${res:Altaxo.Calc.FitFunctions.Chemistry.MassBasedFloryDistribution}")]
+    [FitFunctionCreator("Mass based Flory distribution with fixed Gaussian broadening", "Chemistry", 1, 1, NumberOfParametersPerPeak)]
+    [System.ComponentModel.Description("${res:Altaxo.Calc.FitFunctions.Chemistry.MassBasedFloryDistributionWithFixedGaussianBroadening}")]
     public static IFitFunction Create_1_M1()
     {
-      return new MassBasedFloryDistributionGaussianFixedBroadened(1, -1);
+      return new MassBasedFloryDistributionWithFixedGaussianBroadening(1, -1);
     }
 
     /// <summary>
@@ -260,53 +270,110 @@ namespace Altaxo.Calc.FitFunctions.Chemistry
     public event EventHandler? Changed { add { } remove { } }
 
 
+    public (int N, double relativeSigmaEnd) GetNAndRelativeSigmaEnd(double M)
+    {
+      var log10MCenter = Math.Log10(M);
+      var sigmaCenter = Math.Max(0, RMath.EvaluatePolynomOrderAscending(log10MCenter, _polynomialCoefficientsForSigma));
+      if (sigmaCenter == 0)
+      {
+        return (1, 0);
+      }
+      else
+      {
+        int N;
+        double relSigmaEnd = 0;
+        switch (Accuracy)
+        {
+          case <= 3E-5:
+            {
+              N = Math.Max(8, (int)Math.Ceiling(1.7383574575204515 + 36.589049716803025 * sigmaCenter));
+              double x0 = 0.24302070673085596;
+              double y0 = 3.9727767426224503;
+              double a0 = 0.6665996357154224;
+              double τ0 = 0.08617754311624344;
+              double β0 = 0.5499113474841462;
+              relSigmaEnd = sigmaCenter <= x0 ? y0 : y0 + a0 * (1 - Math.Exp(-Math.Pow(sigmaCenter / τ0, β0)));
+            }
+            break;
+          case <= 3E-4:
+            {
+              N = Math.Max(6, (int)Math.Ceiling(1.775 + 27.623529411764707 * sigmaCenter));
+              double x0 = 0.2;
+              double y0 = 3.2430371725696197;
+              double a0 = 0.8842534504852964;
+              double τ0 = 0.09310065101698227;
+              double β0 = 0.6489338265756501;
+              relSigmaEnd = sigmaCenter <= x0 ? y0 : y0 + a0 * (1 - Math.Exp(-Math.Pow(sigmaCenter / τ0, β0)));
+            }
+            break;
+          default:
+            {
+              N = Math.Max(4, (int)Math.Ceiling(1 + 20 * sigmaCenter));
+              double x0 = 0.183133795011144;
+              double y0 = 2.284555517883196;
+              double a0 = 1.3365913543073111;
+              double τ0 = 0.09173291302278766;
+              double β0 = 0.4587167759857299;
+              relSigmaEnd = sigmaCenter <= x0 ? y0 : y0 + a0 * (1 - Math.Exp(-Math.Pow(sigmaCenter / τ0, β0)));
+            }
+            break;
+        }
+
+        return (N, relSigmaEnd);
+      }
+    }
+
+
+    public IEnumerable<(double M, double sigma, double log10Delta)> GetMSigmaLog10Delta(double M, int N, double relSigmaEnd)
+    {
+      var log10MCenter = Math.Log10(M);
+      var sigmaCenter = Math.Max(0, RMath.EvaluatePolynomOrderAscending(log10MCenter, _polynomialCoefficientsForSigma));
+
+      double outer = Math.Max(1, (N % 2 == 0) ? N / 2 - 0.5 : (N - 1) / 2); // outer index for symmetry
+      for (int i = 0, j = N - 1; i <= j; ++i, --j)
+      {
+        double log10Delta = ((i - outer) / outer) * sigmaCenter * relSigmaEnd; // decadic logarithm of the Gaussian shift
+        var log10M = log10MCenter - log10Delta;
+        var sigmaLocal = Math.Max(0, RMath.EvaluatePolynomOrderAscending(log10M, _polynomialCoefficientsForSigma));
+        yield return (Math.Pow(10, log10M), sigmaLocal, log10Delta);
+
+        if (i != j)
+        {
+          log10Delta = ((j - outer) / outer) * sigmaCenter * relSigmaEnd;
+          log10M = log10MCenter - log10Delta;
+          sigmaLocal = Math.Max(0, RMath.EvaluatePolynomOrderAscending(log10M, _polynomialCoefficientsForSigma));
+          yield return (Math.Pow(10, log10M), sigmaLocal, log10Delta);
+        }
+      }
+    }
+
 
     /// <summary>
     /// Evaluates the mass based Flory distribution in dependency of the molecular mass M.
     /// </summary>
     /// <param name="M">The molecular mass.</param>
+    /// <param name="area">The area of the peak.</param>
     /// <param name="tau">The probability for chain termination in every reation step.</param>
-    /// <param name="molecularMassMonomer">The molecular mass of a monomer unit.</param>
-    /// <returns>The distribution function. ATTENTION: the area of the distribution is area only if integrated over Log10(M), not M itself!</returns>
+    /// <returns>The distribution function. ATTENTION: the area of the distribution is meaningful only if integrated over Log10(M), not M itself!</returns>
     public double GetYOfOneTerm(double M, double area, double tau)
     {
-      var log10M = Math.Log10(M);
-      var sigma = Math.Max(0, RMath.EvaluatePolynomOrderAscending(log10M, _polynomialCoefficientsForSigma));
+      double sumFloryGauss = 0;
+      double sumGauss = 0;
 
-      if (sigma == 0)
+      var (N, relSigmaEnd) = GetNAndRelativeSigmaEnd(M);
+      foreach (var (m, sigma, log10Delta) in GetMSigmaLog10Delta(M, N, relSigmaEnd))
       {
-        var xx = tau * M / MolecularWeightOfMonomerUnit;
-        return area * lambda * xx * xx * Math.Exp(-xx);
-      }
-      else
-      {
-        int numberOfGaussianTerms;
-        double maxRelWidthOfGaussian = 0;
-        switch (Accuracy)
-        {
-          case <= 3E-5:
-            {
-              numberOfGaussianTerms = Math.Max(8, (int)Math.Ceiling(1.7383574575204515 + 36.589049716803025 * sigma));
-              maxRelWidthOfGaussian = sigma <= 0.2 ? 4 : 0.628 * (1 - Math.Exp(-sigma / 0.15397919796365173));
-            }
-            break;
-          case <= 3E-4:
-            {
-              numberOfGaussianTerms = Math.Max(6, (int)Math.Ceiling(1.775 + 27.623529411764707 * sigma));
-            }
-            break;
-          default:
-            {
-              numberOfGaussianTerms = Math.Max(4, (int)Math.Ceiling(1 + 20 * sigma));
-            }
-            break;
-        }
+        var gauss = Math.Exp(-0.5 * RMath.Pow2(log10Delta / sigma));
+        var xx = tau * m / MolecularWeightOfMonomerUnit;
+        var flory = lambda * xx * xx * Math.Exp(-xx);
 
-
-        var xx = tau * M / MolecularWeightOfMonomerUnit;
-        return area * lambda * xx * xx * Math.Exp(-xx);
+        sumGauss += gauss;
+        sumFloryGauss += flory * gauss;
       }
+      return area * sumFloryGauss / sumGauss;
     }
+
+
 
     void IFitFunction.Evaluate(double[] independent, double[] parameters, double[] FV)
     {
@@ -366,9 +433,7 @@ namespace Altaxo.Calc.FitFunctions.Chemistry
       var rowCount = X.RowCount;
       for (var r = 0; r < rowCount; ++r)
       {
-        var x = IndependentVariableIsDecadicLogarithm ? Math.Pow(10, X[r, 0]) : X[r, 0];
-        var arg = x / MolecularWeightOfMonomerUnit;
-
+        var M = IndependentVariableIsDecadicLogarithm ? Math.Pow(10, X[r, 0]) : X[r, 0];
 
         // at first, the peak terms
         for (int i = 0, j = 0; i < NumberOfTerms; ++i, j += NumberOfParametersPerPeak)
@@ -380,11 +445,24 @@ namespace Altaxo.Calc.FitFunctions.Chemistry
           var area = P[j];
           var tau = P[j + 1];
 
-          var argtau = arg * tau;
-          var body = lambda * argtau * argtau * Math.Exp(-argtau);
+          double sumFloryGauss = 0;
+          double sumGauss = 0;
+          double sumFloryGauss_dTau = 0;
 
-          DY[r, j + 0] = body;
-          DY[r, j + 1] = area * body * (2 / tau - arg);
+          var (N, relSigmaEnd) = GetNAndRelativeSigmaEnd(M);
+          foreach (var (m, sigma, log10Delta) in GetMSigmaLog10Delta(M, N, relSigmaEnd))
+          {
+            var gauss = Math.Exp(-0.5 * RMath.Pow2(log10Delta / sigma));
+            var xx = tau * m / MolecularWeightOfMonomerUnit;
+            var flory = lambda * xx * xx * Math.Exp(-xx);
+
+            sumGauss += gauss;
+            sumFloryGauss += gauss * flory;
+            sumFloryGauss_dTau += gauss * flory * (2 / tau - m / MolecularWeightOfMonomerUnit);
+          }
+
+          DY[r, j + 0] = sumFloryGauss / sumGauss;
+          DY[r, j + 1] = area * sumFloryGauss_dTau / sumGauss;
         }
 
         // then, the baseline
@@ -394,7 +472,7 @@ namespace Altaxo.Calc.FitFunctions.Chemistry
           for (int i = 0, j = NumberOfParametersPerPeak * NumberOfTerms; i <= OrderOfBaselinePolynomial; ++i, ++j)
           {
             DY[r, j] = xn;
-            xn *= x;
+            xn *= M;
           }
         }
       }
@@ -482,8 +560,6 @@ namespace Altaxo.Calc.FitFunctions.Chemistry
 
       return (position, positionVar, area, areaVar, height, heightVar, width, widthVar);
     }
-
-
 
     #endregion
   }
