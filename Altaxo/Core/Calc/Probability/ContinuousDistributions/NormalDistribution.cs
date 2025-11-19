@@ -391,7 +391,7 @@ namespace Altaxo.Calc.Probability
 
     public static double CDF(double z, double m, double s)
     {
-      return 0.5 * (1 + Altaxo.Calc.ErrorFunction.Erf(_OneBySqrt2 * (z - m) / s));
+      return 0.5 * Altaxo.Calc.ErrorFunction.Erfc(_OneBySqrt2 * (m - z) / s);
     }
 
     public override double PDF(double z)
