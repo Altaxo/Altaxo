@@ -41,6 +41,7 @@ namespace Altaxo.Calc.FitFunctions.Probability
   public record GaussArea : IFitFunctionWithDerivative, IImmutable, IFitFunctionPeak
   {
     private const double SqrtLog4 = 1.1774100225154746910;
+    private const double OneBySqrt2Pi = 0.398942280401432677939946;
 
     /// <summary>The order of the baseline polynomial.</summary>
     private readonly int _orderOfBaselinePolynomial;
@@ -290,10 +291,10 @@ namespace Altaxo.Calc.FitFunctions.Probability
       return null;
     }
 
-    public static double GetYOfOneTerm(double x, double a, double xc, double w)
+    public static double GetYOfOneTerm(double x, double area, double position, double sigma)
     {
-      double arg = (x - xc) / w;
-      return (a / w) * Math.Exp(-0.5 * arg * arg);
+      double arg = (x - position) / sigma;
+      return (area * OneBySqrt2Pi / sigma) * Math.Exp(-0.5 * arg * arg);
     }
 
     public void Evaluate(double[] X, double[] P, double[] Y)
@@ -317,7 +318,7 @@ namespace Altaxo.Calc.FitFunctions.Probability
           sumPolynomial += P[i + offset];
         }
       }
-      Y[0] = sumGauss / Math.Sqrt(2 * Math.PI) + sumPolynomial;
+      Y[0] = sumGauss * OneBySqrt2Pi + sumPolynomial;
     }
 
     public void Evaluate(IROMatrix<double> independent, IReadOnlyList<double> P, IVector<double> FV, IReadOnlyList<bool>? dependentVariableChoice)
@@ -346,7 +347,7 @@ namespace Altaxo.Calc.FitFunctions.Probability
             sumPolynomial += P[i + offset];
           }
         }
-        FV[r] = sumGauss / Math.Sqrt(2 * Math.PI) + sumPolynomial;
+        FV[r] = sumGauss * OneBySqrt2Pi + sumPolynomial;
       }
     }
 

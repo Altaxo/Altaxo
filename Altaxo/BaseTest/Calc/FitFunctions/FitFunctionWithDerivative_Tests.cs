@@ -107,7 +107,7 @@ namespace Altaxo.Calc.FitFunctions
         (() => new StretchedExponentialGrowth(1), 0.5, new double[]{0.125,1,3,5,0.5}, 1+3*(Math.Exp(Math.Pow((0.5-0.125)/5,0.5)))),
         (() => new StretchedExponentialGrowth(1), -0.5, new double[]{0.125,1,3,5,0.5}, 4),
         (() => new GaussAmplitude(1,1), 0.5, new double[]{2,3,5,1,3}, 1+3*0.5+2*Math.Exp(-0.5*RMath.Pow2((0.5-3)/5))),
-        (() => new GaussArea(1,1), 0.5, new double[]{2,3,5,1,3}, 1+3*0.5+(2/(5*Math.Sqrt(2*Math.PI)))*Math.Exp(-0.5*RMath.Pow2((0.5-3)/5))),
+        (() => new GaussArea(1,1), 2, new double[]{3,5,7,1/11d,1/13d}, 1/11d + 1/13d*2 + 0.15597288073520725109),
         (() => new CauchyAmplitude(1,1), 0.5, new double[]{2,3,5,1,3}, 1+3*0.5+2/(1+RMath.Pow2((0.5-3)/5))),
         (() => new CauchyArea(1,1), 0.5, new double[]{2,3,5,1,3}, 1+3*0.5+(2/(5*Math.PI*(1+RMath.Pow2((0.5-3)/5))))),
         (() => new VoigtArea(1,1), 4, new double[]{17,2,3,5,1,3 }, 13.809882936322777226),
@@ -156,17 +156,24 @@ namespace Altaxo.Calc.FitFunctions
     /// test the gradient values.
     /// </summary>
     [Fact]
-    public void Test01()
+    public void TestFunctionValuesGradientsLimits()
     {
       double[] x = new double[1];
       double[] y = new double[1];
+      var X = Matrix<double>.Build.Dense(1, 1);
+      var Y = Vector<double>.Build.Dense(1);
+
       foreach (var entry in _fitData)
       {
         var fitFunction = entry.Creation();
         Assert.Equal(fitFunction.NumberOfParameters, entry.parameters.Length);
+
         x[0] = entry.x;
         fitFunction.Evaluate(x, entry.parameters, y);
-        AssertEx.AreEqual(entry.expectedY, y[0], 1E-100, 1E-12, $"FitFunction {fitFunction.GetType()}");
+        AssertEx.AreEqual(entry.expectedY, y[0], 1E-100, 1E-12, $"FitFunction {fitFunction.GetType()} (array version)");
+        X[0, 0] = entry.x;
+        fitFunction.Evaluate(X, entry.parameters, Y, null);
+        AssertEx.AreEqual(entry.expectedY, Y[0], 1E-100, 1E-12, $"FitFunction {fitFunction.GetType()} (matrix version)");
 
         if (fitFunction is IFitFunctionWithDerivative fg)
         {
