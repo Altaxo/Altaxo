@@ -276,7 +276,7 @@ namespace Altaxo.Calc.FitFunctions.Chemistry
       var sigmaCenter = Math.Max(0, RMath.EvaluatePolynomOrderAscending(log10MCenter, _polynomialCoefficientsForSigma));
       if (sigmaCenter == 0)
       {
-        return (1, 0);
+        return (1, 1);
       }
       else
       {
@@ -329,21 +329,32 @@ namespace Altaxo.Calc.FitFunctions.Chemistry
       var log10MCenter = Math.Log10(M);
       var sigmaCenter = Math.Max(0, RMath.EvaluatePolynomOrderAscending(log10MCenter, _polynomialCoefficientsForSigma));
 
-      double outer = Math.Max(1, (N % 2 == 0) ? N / 2 - 0.5 : (N - 1) / 2); // outer index for symmetry
-      for (int i = 0, j = N - 1; i <= j; ++i, --j)
+      if (sigmaCenter == 0)
       {
-        double log10Delta = ((i - outer) / outer) * sigmaCenter * relSigmaEnd; // decadic logarithm of the Gaussian shift
-        var log10M = log10MCenter - log10Delta;
-        var sigmaLocal = Math.Max(0, RMath.EvaluatePolynomOrderAscending(log10M, _polynomialCoefficientsForSigma));
-        yield return (Math.Pow(10, log10M), sigmaLocal, log10Delta);
-
-        if (i != j)
+        yield return (M, 1, 0);
+      }
+      else if (sigmaCenter > 0)
+      {
+        double outer = Math.Max(1, (N % 2 == 0) ? N / 2 - 0.5 : (N - 1) / 2); // outer index for symmetry
+        for (int i = 0, j = N - 1; i <= j; ++i, --j)
         {
-          log10Delta = ((j - outer) / outer) * sigmaCenter * relSigmaEnd;
-          log10M = log10MCenter - log10Delta;
-          sigmaLocal = Math.Max(0, RMath.EvaluatePolynomOrderAscending(log10M, _polynomialCoefficientsForSigma));
+          double log10Delta = ((i - outer) / outer) * sigmaCenter * relSigmaEnd; // decadic logarithm of the Gaussian shift
+          var log10M = log10MCenter - log10Delta;
+          var sigmaLocal = Math.Max(0, RMath.EvaluatePolynomOrderAscending(log10M, _polynomialCoefficientsForSigma));
           yield return (Math.Pow(10, log10M), sigmaLocal, log10Delta);
+
+          if (i != j)
+          {
+            log10Delta = ((j - outer) / outer) * sigmaCenter * relSigmaEnd;
+            log10M = log10MCenter - log10Delta;
+            sigmaLocal = Math.Max(0, RMath.EvaluatePolynomOrderAscending(log10M, _polynomialCoefficientsForSigma));
+            yield return (Math.Pow(10, log10M), sigmaLocal, log10Delta);
+          }
         }
+      }
+      else
+      {
+        throw new InvalidOperationException($"The evaluation of {nameof(sigmaCenter)} resulted in a value of {sigmaCenter}, which is invalid.");
       }
     }
 
@@ -357,10 +368,10 @@ namespace Altaxo.Calc.FitFunctions.Chemistry
     /// <returns>The distribution function. ATTENTION: the area of the distribution is meaningful only if integrated over Log10(M), not M itself!</returns>
     public double GetYOfOneTerm(double M, double area, double tau)
     {
+      var (N, relSigmaEnd) = GetNAndRelativeSigmaEnd(M);
+
       double sumFloryGauss = 0;
       double sumGauss = 0;
-
-      var (N, relSigmaEnd) = GetNAndRelativeSigmaEnd(M);
       foreach (var (m, sigma, log10Delta) in GetMSigmaLog10Delta(M, N, relSigmaEnd))
       {
         var gauss = Math.Exp(-0.5 * RMath.Pow2(log10Delta / sigma));
