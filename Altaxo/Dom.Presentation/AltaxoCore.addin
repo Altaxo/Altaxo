@@ -401,12 +401,13 @@
             <Condition name = "WindowActive" activewindow="Altaxo.Gui.Graph.Gdi.Viewing.GraphController" action="Exclude">
                 <MenuItem id="GraphCopyPage" label="${res:XML.MainMenu.EditMenu.CopyPage}" icon="Icons.16x16.NewDocumentIcon"
                             description="${res:XML.MainMenu.EditMenu.CopyPage.Description}" class="Altaxo.Main.Commands.CopyDocumentAsComObjectToClipboard" />
-                <MenuItem id="CopyPageAsBitmap" label="${res:XML.MainMenu.EditMenu.CopyPageAsBitmap}"  type="Menu">
-                    <MenuItem id="SetCopyPageOptions"
+                <MenuItem id="SetCopyPageOptions"
                                                   label="${res:XML.MainMenu.EditMenu.SetCopyPageOptions}"
                                                   icon="Icons.16x16.NewDocumentIcon"
                                                   description="${res:XML.MainMenu.EditMenu.SetCopyPageOptions.Description}"
                                                   class="Altaxo.Graph.Commands.SetCopyPageOptions" />
+                <MenuItem id="CopyPageAsBitmap" label="${res:XML.MainMenu.EditMenu.CopyPageAsBitmap}"  type="Menu">
+                    
                     <MenuItem id="GraphCopyPageAsBitmap150dpiARGB"
                                                   label="${res:XML.MainMenu.EditMenu.CopyPageAsBitmap150dpiARGB}"
                                                   icon="Icons.16x16.NewDocumentIcon"

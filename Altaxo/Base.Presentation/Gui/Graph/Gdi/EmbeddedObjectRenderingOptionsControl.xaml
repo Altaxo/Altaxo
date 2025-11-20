@@ -47,7 +47,7 @@
 		<Label Grid.Column="0" Grid.Row="0" Content="Resolution of graph image (DPI):" />
 		<ComboBox Grid.Column="1" Grid.Row="0" ItemsSource="{Binding SourceDpi.Items}" SelectedItem="{Binding SourceDpi.SelectedItem, Mode=TwoWay}" Text="{Binding SourceDpiText, Mode=TwoWay}" IsEditable="True" ToolTip="Resolution of the embedded graph object in dots-per-inch." />
 		<Label Grid.Column="0" Grid.Row="2" Content="Output scaling:" />
-		<axogcd:ScaleComboBox Grid.Column="1" Grid.Row="2" SelectedIndex="{Binding OutputScaling}" UnitEnvironment="{Binding OutputScalingEnvironment}" ToolTip="Set this to values above 100% if you want the graph to appear larger than originally, or to values below 100% if you want the graph to appear smaller than originally." />
+		<axogcd:ScaleComboBox Grid.Column="1" Grid.Row="2" SelectedQuantity="{Binding OutputScaling}" UnitEnvironment="{Binding OutputScalingEnvironment}" ToolTip="Set this to values above 100% if you want the graph to appear larger than originally, or to values below 100% if you want the graph to appear smaller than originally." />
 		<Label Grid.Column="0" Grid.Row="4" Content="Background color for bitmaps and WMF:" />
 		<axogcd:ColorComboBox Grid.Column="1" Grid.Row="4" SelectedColor="{Binding BackgroundColor}" ToolTip="Base color for formats that don't support transparency. After applying the base color, the background brush is applied before the graph is drawn." />
 		<Label Grid.Column="0" Grid.Row="6" Content="Background brush:" ToolTip="Background brush that is applied before the graph is drawn on top of it." />
