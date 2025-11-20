@@ -70,6 +70,16 @@
                 description="Export selected tables to multiple Excel files"
 							  class="Altaxo.Data.Commands.ExportDataTablesToMultipleExcelFiles" />
     </Condition>
+      <Condition name="ProjbrowserListItemSelection" selcount=">0" selitems="Altaxo.Graph.GraphDocumentBase, AltaxoBase" action="Disable">
+          <MenuItem id="SendGraphsToWord"
+                    label="Send graphs to MS Word ..."
+                    description="Send the selected graphs to an open Word document"
+                                  class="Altaxo.Graph.Commands.ExportGraphsToOpenWordDocument" />
+          <MenuItem id="SendGraphsToPowerPoint"
+                    label="Send graphs to MS PowerPoint ..."
+                    description="Send the selected graphs to an open PowerPoint document"
+                                  class="Altaxo.Graph.Commands.ExportGraphsToOpenPowerPointDocument" />
+      </Condition>
     <Condition name="ProjbrowserListItemSelection" selcount=">0" selitems="Altaxo.Main.IProjectItem, AltaxoBase" action="Disable">
       <MenuItem id="ExportMultiMicrosoft"
                 insertbefore="MultiRescaleGraphs"

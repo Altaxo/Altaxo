@@ -2,7 +2,7 @@
 
 /////////////////////////////////////////////////////////////////////////////
 //    Altaxo:  a data processing and data plotting program
-//    Copyright (C) 2014 Dr. Dirk Lellinger
+//    Copyright (C) 2002-2025 Dr. Dirk Lellinger
 //
 //    This program is free software; you can redistribute it and/or modify
 //    it under the terms of the GNU General Public License as published by
@@ -24,13 +24,9 @@
 
 #nullable enable
 using System;
-using System.Collections.Generic;
 using System.Diagnostics.CodeAnalysis;
 using System.Drawing;
 using System.Drawing.Imaging;
-using System.Linq;
-using System.Text;
-using Altaxo.Main;
 
 namespace Altaxo.Graph.Gdi
 {
@@ -309,6 +305,23 @@ namespace Altaxo.Graph.Gdi
       {
         return false;
       }
+    }
+
+    /// <summary>
+    /// Converts the <see cref="CopyPageOptions"/> to <see cref="GraphExportOptions"/>.
+    /// </summary>
+    /// <returns>The <see cref="GraphExportOptions"/> retrieved from the <see cref="CopyPageOptions"/>.</returns>
+    public static GraphExportOptions GetGraphExportOptionsFromCopyPageOptions()
+    {
+      var options = CopyPageOptions;
+      var graphExportOptions = new GraphExportOptions
+      {
+        BackgroundBrush = options.BackgroundBrush,
+        SourceDpiResolution = options.SourceDpiResolution,
+        DestinationDpiResolution = options.SourceDpiResolution / options.OutputScalingFactor,
+      };
+      graphExportOptions.TrySetImageAndPixelFormat(options.DropFileImageFormat, options.DropFileBitmapPixelFormat);
+      return graphExportOptions;
     }
 
     #endregion Helper functions
