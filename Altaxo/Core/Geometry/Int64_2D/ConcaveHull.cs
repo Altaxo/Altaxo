@@ -27,7 +27,7 @@ using System;
 using System.Collections.Generic;
 using System.Diagnostics.CodeAnalysis;
 using System.Linq;
-using ClipperLib;
+using Clipper2Lib;
 
 namespace Altaxo.Geometry.Int64_2D
 {
@@ -48,19 +48,19 @@ namespace Altaxo.Geometry.Int64_2D
     /// <summary>
     /// Gets the points that form the convex hull.
     /// </summary>
-    public IReadOnlyList<(IntPoint point, int index)> ConvexHullPoints => _convexHullPoints;
-    private IReadOnlyList<(IntPoint point, int index)> _convexHullPoints;
+    public IReadOnlyList<(Point64 point, int index)> ConvexHullPoints => _convexHullPoints;
+    private IReadOnlyList<(Point64 point, int index)> _convexHullPoints;
 
     /// <summary>
     /// Gets the points that are not part of the convex hull.
     /// </summary>
-    public IReadOnlyList<(IntPoint point, int index)> PointsNotOnConvexHull { get; private set; }
+    public IReadOnlyList<(Point64 point, int index)> PointsNotOnConvexHull { get; private set; }
 
     /// <summary>
     /// Gets the points that form the concave hull.
     /// </summary>
-    public IReadOnlyList<(IntPoint point, int index)> ConcaveHullPoints => _concaveHullPoints;
-    private IReadOnlyList<(IntPoint point, int index)> _concaveHullPoints;
+    public IReadOnlyList<(Point64 point, int index)> ConcaveHullPoints => _concaveHullPoints;
+    private IReadOnlyList<(Point64 point, int index)> _concaveHullPoints;
 
     /// <summary>
     /// Initializes a new instance of the <see cref="ConcaveHull"/> class.
@@ -71,14 +71,14 @@ namespace Altaxo.Geometry.Int64_2D
     /// Thus a value of 1 is the limit case of a convex hull, a value of -1 allows sharp and deep bends.
     /// </param>
     /// <param name="minimalEdgeLength">The minimal length of an edge of the hull that is considered as a candidate edge for having a concave bend.</param>
-    public ConcaveHull(IReadOnlyList<IntPoint> points, double concavity, double minimalEdgeLength)
+    public ConcaveHull(IReadOnlyList<Point64> points, double concavity, double minimalEdgeLength)
     {
       concavity = Math.Min(1, Math.Max(concavity, -1));
 
       _convexHullPoints = GrahamScan.GetConvexHull(points);
       _hull_convex_edges = CalculateConvexHullAsLineList(points);
 
-      var pointsNotOnConvexHull = new List<(IntPoint point, int index)>();
+      var pointsNotOnConvexHull = new List<(Point64 point, int index)>();
       // from pointsNotOnConvexHull remove all points that are part of the convex hull
       // so that only those points that are not part of the convex hull remain
       // note: the Graham scan does not include colinear points in the convex hull!
@@ -118,7 +118,7 @@ namespace Altaxo.Geometry.Int64_2D
         return;
       }
 
-      var pointsNotOnHull = new List<(IntPoint point, int index)>(PointsNotOnConvexHull); // make a copy of the unused points
+      var pointsNotOnHull = new List<(Point64 point, int index)>(PointsNotOnConvexHull); // make a copy of the unused points
       var hull_concave_edges_temp = new List<Int64LineD2DAnnotated>(_hull_convex_edges); // list A in the paper
       hull_concave_edges_temp.Sort(LengthComparer.Instance); // the edge with greatest length is at the end of the list!
       var hull_concave_edges_final = new List<Int64LineD2DAnnotated>(); // list B in the paper
@@ -168,7 +168,7 @@ namespace Altaxo.Geometry.Int64_2D
         // paper: foreach of nearPoints, calculate the two angles and select that point with the minimum angles
         // note instead of the angle, we use the cosine, thus instead of minimum angle, we need maximum cosine
         var bestAngle = double.PositiveInfinity;
-        (IntPoint point, int index) bestPoint = default;
+        (Point64 point, int index) bestPoint = default;
         foreach (var np in nearPoints)
         {
           if (boundingBox is null || boundingBox.Value.IsPointWithin(np.point))
@@ -309,8 +309,8 @@ namespace Altaxo.Geometry.Int64_2D
       var upperY = Math.Max(centerY + dim2, Math.Max(segment.P0.Y, segment.P1.Y));
 
       return new Int64BoundingBox(
-        new IntPoint(Math.Floor(leftX), Math.Floor(lowerY)),
-        new IntPoint(Math.Ceiling(rightX), Math.Ceiling(upperY))
+        new Point64(Math.Floor(leftX), Math.Floor(lowerY)),
+        new Point64(Math.Ceiling(rightX), Math.Ceiling(upperY))
         );
     }
 
@@ -319,7 +319,7 @@ namespace Altaxo.Geometry.Int64_2D
     /// </summary>
     /// <param name="points">The points that form the convex hull.</param>
     /// <returns></returns>
-    private List<Int64LineD2DAnnotated> CalculateConvexHullAsLineList(IReadOnlyList<IntPoint> points)
+    private List<Int64LineD2DAnnotated> CalculateConvexHullAsLineList(IReadOnlyList<Point64> points)
     {
       var hull_convex_edges = new List<Int64LineD2DAnnotated>();
 
@@ -358,7 +358,7 @@ namespace Altaxo.Geometry.Int64_2D
     /// <param name="point">The point.</param>
     /// <param name="otherLines">The other lines.</param>
     /// <returns></returns>
-    private bool DoesPointTouchAnyOtherLine((IntPoint point, int index) point, List<Int64LineD2DAnnotated> otherLines)
+    private bool DoesPointTouchAnyOtherLine((Point64 point, int index) point, List<Int64LineD2DAnnotated> otherLines)
     {
       foreach (var otherEdge in otherLines)
       {
@@ -406,7 +406,7 @@ namespace Altaxo.Geometry.Int64_2D
     /// <param name="segment">The segment.</param>
     /// <param name="pointsNotOnHull">The points not part of the hull.</param>
     /// <returns>Currently, all points are returned. May be changed in future versions when implementing partitioning, as described in the paper by E. Rosén et al.</returns>
-    private List<(IntPoint point, int index)> GetPointsNearby(Int64LineD2DAnnotated segment, List<(IntPoint point, int index)> pointsNotOnHull)
+    private List<(Point64 point, int index)> GetPointsNearby(Int64LineD2DAnnotated segment, List<(Point64 point, int index)> pointsNotOnHull)
     {
       return pointsNotOnHull;
     }
@@ -417,7 +417,7 @@ namespace Altaxo.Geometry.Int64_2D
     /// is contained in the other line segment (either as start or end point).
     /// </summary>
     /// <returns>A fresh list of points that form the concave hull.</returns>
-    private static List<(IntPoint point, int index)> GetHullPoints(List<Int64LineD2DAnnotated> hull_concave_edges)
+    private static List<(Point64 point, int index)> GetHullPoints(List<Int64LineD2DAnnotated> hull_concave_edges)
     {
       // Dictionary where the key is the point.ID.
       // The value is a tuple of the two indices of the line segments which have a point with this ID either as start or end point
@@ -452,7 +452,7 @@ namespace Altaxo.Geometry.Int64_2D
 
       // now build the list of the points that forms the concave hull
 
-      var hullPoints = new List<(IntPoint point, int index)>(hull_concave_edges.Count);
+      var hullPoints = new List<(Point64 point, int index)>(hull_concave_edges.Count);
       var subidx0 = 0; // the index of the point of the current line segment that should be added next
       var subidx1 = 1; // the index of the other point of the current line segment
       for (int i = 0, j = 0; i < hull_concave_edges.Count; ++i)
@@ -489,7 +489,7 @@ namespace Altaxo.Geometry.Int64_2D
     /// <param name="hull_concave_edges_temp">The hull concave edges temporary.</param>
     /// <param name="hull_concave_edges_final">The hull concave edges final.</param>
     /// <param name="allPoints">All points.</param>
-    private void Debug_ExecuteTestsAfterInsertion(List<Int64LineD2DAnnotated> hull_concave_edges_temp, List<Int64LineD2DAnnotated> hull_concave_edges_final, List<(IntPoint point, int index)> allPoints)
+    private void Debug_ExecuteTestsAfterInsertion(List<Int64LineD2DAnnotated> hull_concave_edges_temp, List<Int64LineD2DAnnotated> hull_concave_edges_final, List<(Point64 point, int index)> allPoints)
     {
       var listAllEdged = new List<Int64LineD2DAnnotated>();
       listAllEdged.AddRange(hull_concave_edges_temp);
@@ -511,26 +511,28 @@ namespace Altaxo.Geometry.Int64_2D
 
 
       // Various tests with clipper
-      var clipperPoly = new List<ClipperLib.IntPoint>(hull.Select(dp => new ClipperLib.IntPoint(dp.point.X, dp.point.Y)));
+      var clipperPoly = new Path64(hull.Select(dp => new Point64(dp.point.X, dp.point.Y)));
 
       // The area should be != 0
-      if (!(Math.Abs(ClipperLib.Clipper.Area(clipperPoly)) > 0)) // Area should be != 0
+      if (!(Math.Abs(Clipper.Area(clipperPoly)) > 0)) // Area should be != 0
       {
         throw new InvalidProgramException();
       }
 
-      if (!(ClipperLib.Clipper.Area(clipperPoly) > 0)) // Polygon should be positive oriented
+      if (!(Clipper.Area(clipperPoly) > 0)) // Polygon should be positive oriented
       {
         throw new InvalidProgramException();
       }
 
       // The polygon should be simple
-      var clipperPolys = ClipperLib.Clipper.SimplifyPolygon(clipperPoly);
+
+      var clipperPolys = Clipper.SimplifyPath(clipperPoly, 0.25);
       if (0 == clipperPolys.Count)
       {
         throw new Exception();
       }
 
+      /* 2025-11-22: Disabled this test, because Clipper2Lib does not return multiple polygons when simplifying
       if (!(1 == clipperPolys.Count)) // if polygon is simple, it can not be transformed into two or more polygons
       {
         // note: Clipper simplifies polygons even if the segments do not touch, but are near enough to each other
@@ -544,12 +546,12 @@ namespace Altaxo.Geometry.Int64_2D
       {
         throw new InvalidProgramException();
       }
-
+      */
 
       // Test whether all points are on the hull or inside the hull
       for (var i = 0; i < allPoints.Count; ++i)
       {
-        if (!(0 != ClipperLib.Clipper.PointInPolygon(new ClipperLib.IntPoint(allPoints[i].point.X, allPoints[i].point.Y), clipperPoly)))
+        if (!(0 != Clipper.PointInPolygon(new Point64(allPoints[i].point.X, allPoints[i].point.Y), clipperPoly)))
         {
           throw new InvalidProgramException();
         }
@@ -560,7 +562,7 @@ namespace Altaxo.Geometry.Int64_2D
     /// Checks the hull segments for intersections with each other. The computational effort is in the order of n².
     /// </summary>
     /// <param name="hull">The hull to check.</param>
-    private static void Debug_CheckHullForIntersections(IReadOnlyList<(IntPoint point, int index)> hull)
+    private static void Debug_CheckHullForIntersections(IReadOnlyList<(Point64 point, int index)> hull)
     {
       var segments = new Int64LineD2DAnnotated[hull.Count];
 

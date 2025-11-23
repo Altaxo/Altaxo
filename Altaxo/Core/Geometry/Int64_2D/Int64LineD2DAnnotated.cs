@@ -25,10 +25,7 @@
 #nullable enable
 using System;
 using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-using ClipperLib;
+using Clipper2Lib;
 
 namespace Altaxo.Geometry.Int64_2D
 {
@@ -40,7 +37,7 @@ namespace Altaxo.Geometry.Int64_2D
     /// <summary>
     /// Start point of the line segment.
     /// </summary>
-    public readonly IntPoint P0;
+    public readonly Point64 P0;
 
     /// <summary>
     /// Gets the index that is associated with the start point <see cref="P0"/>.
@@ -50,7 +47,7 @@ namespace Altaxo.Geometry.Int64_2D
     /// <summary>
     /// End point of the line segment.
     /// </summary>
-    public readonly IntPoint P1;
+    public readonly Point64 P1;
 
     /// <summary>
     /// Gets the index that is associated with the end point <see cref="P1"/>.
@@ -67,7 +64,7 @@ namespace Altaxo.Geometry.Int64_2D
     /// </summary>
     /// <param name="p0">The start point (including its index).</param>
     /// <param name="p1">The end point (including its index).</param>
-    public Int64LineD2DAnnotated((IntPoint point, int index) p0, (IntPoint point, int index) p1)
+    public Int64LineD2DAnnotated((Point64 point, int index) p0, (Point64 point, int index) p1)
     {
       P0 = p0.point;
       I0 = p0.index;
@@ -90,7 +87,7 @@ namespace Altaxo.Geometry.Int64_2D
     /// <summary>
     /// Enumerates the two points <see cref="P0"/> and <see cref="P1"/>.
     /// </summary>
-    public IEnumerable<IntPoint> Points
+    public IEnumerable<Point64> Points
     {
       get
       {
@@ -105,7 +102,7 @@ namespace Altaxo.Geometry.Int64_2D
     /// <param name="idx">The index.</param>
     /// <returns>Either the point <see cref="P0"/> (idx==0), or the point <see cref="P1"/> (idx==1).</returns>
     /// <exception cref="IndexOutOfRangeException">Index out of range [0,1]</exception>
-    public IntPoint GetPoint(int idx)
+    public Point64 GetPoint(int idx)
     {
       switch (idx)
       {
@@ -143,7 +140,7 @@ namespace Altaxo.Geometry.Int64_2D
     /// <param name="idx">The retrieving index.</param>
     /// <returns>Either the start point with associated index  (idx==0), or the end point with associated index  (idx==1).</returns>
     /// <exception cref="IndexOutOfRangeException">Index out of range [0,1]</exception>
-    public (IntPoint point, int index) GetPointWithIndex(int idx)
+    public (Point64 point, int index) GetPointWithIndex(int idx)
     {
       switch (idx)
       {
@@ -159,10 +156,10 @@ namespace Altaxo.Geometry.Int64_2D
 
   public readonly struct Int64BoundingBox
   {
-    public readonly IntPoint P0;
-    public readonly IntPoint P1;
+    public readonly Point64 P0;
+    public readonly Point64 P1;
 
-    public Int64BoundingBox(IntPoint p0, IntPoint p1)
+    public Int64BoundingBox(Point64 p0, Point64 p1)
     {
       if (!(p0.X <= p1.X && p0.Y <= p1.Y))
       {
@@ -173,7 +170,7 @@ namespace Altaxo.Geometry.Int64_2D
       P1 = p1;
     }
 
-    public bool IsPointWithin(in IntPoint p)
+    public bool IsPointWithin(in Point64 p)
     {
       return
            p.X >= P0.X

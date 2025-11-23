@@ -24,23 +24,22 @@
 
 #nullable enable
 using System;
-using ClipperLib;
-using Int128 = ClipperLib.Int128;
+using Clipper2Lib;
 
 namespace Altaxo.Geometry.Int64_2D
 {
   public readonly struct Int64LineSegment
   {
-    public readonly IntPoint P0;
-    public readonly IntPoint P1;
+    public readonly Point64 P0;
+    public readonly Point64 P1;
 
-    public Int64LineSegment(IntPoint p0, IntPoint p1)
+    public Int64LineSegment(Point64 p0, Point64 p1)
     {
       P0 = p0;
       P1 = p1;
     }
 
-    public static double GetDistance(IntPoint p0, IntPoint p1)
+    public static double GetDistance(Point64 p0, Point64 p1)
     {
       var dx = (double)(p1.X - p0.X);
       var dy = (double)(p1.Y - p0.Y);
@@ -54,7 +53,7 @@ namespace Altaxo.Geometry.Int64_2D
     /// <param name="a">a.</param>
     /// <param name="b">The b.</param>
     /// <returns></returns>
-    public static double GetCosOfAngle(IntPoint pivot, IntPoint a, IntPoint b)
+    public static double GetCosOfAngle(Point64 pivot, Point64 a, Point64 b)
     {
       var rX = (double)(a.X - pivot.X);
       var rY = (double)(a.Y - pivot.Y);
@@ -75,7 +74,7 @@ namespace Altaxo.Geometry.Int64_2D
     /// Per default a negative angle (-Pi) is returned, but
     /// if this parameter is set to true, then a positive angle (+Pi) will be returned.</param>
     /// <returns>The angle between the two lines.</returns>
-    public static double GetAngle(IntPoint pivot, IntPoint a, IntPoint b, bool returnPositiveValueIf180Degrees)
+    public static double GetAngle(Point64 pivot, Point64 a, Point64 b, bool returnPositiveValueIf180Degrees)
     {
       var aX = (double)(a.X - pivot.X);
       var aY = (double)(a.Y - pivot.Y);
@@ -108,18 +107,18 @@ namespace Altaxo.Geometry.Int64_2D
     /// <param name="a">The line segment.</param>
     /// <param name="b">The point to test.</param>
     /// <returns>0 if the point is on, -1 if it is right, and +1 if it is left on/to the infinite long line that is defined by the line segment.</returns>
-    public static int SignOfCrossProduct(in Int64LineSegment a, in IntPoint b)
+    public static int SignOfCrossProduct(in Int64LineSegment a, in Point64 b)
     {
       var aX = a.P1.X - a.P0.X;
       var aY = a.P1.Y - a.P0.Y;
       var bX = b.X - a.P0.X;
       var bY = b.Y - a.P0.Y;
-      var d1 = Int128.Int128Mul(aX, bY);
-      var d2 = Int128.Int128Mul(bX, aY);
+      var d1 = ((Int128)aX) * bY;
+      var d2 = ((Int128)bX) * aY;
       return d1 == d2 ? 0 : (d1 < d2 ? -1 : 1); // for non-integer we have to use some delta for comparison with 0
     }
 
-    public static bool DoesPointTouchLine(in IntPoint b, in Int64LineSegment a)
+    public static bool DoesPointTouchLine(in Point64 b, in Int64LineSegment a)
     {
       if (
            Math.Min(a.P0.X, a.P1.X) > b.X // then a is right of b

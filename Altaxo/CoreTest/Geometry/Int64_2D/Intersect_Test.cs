@@ -22,12 +22,7 @@
 
 #endregion Copyright
 
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-using ClipperLib;
+using Clipper2Lib;
 using Xunit;
 
 namespace Altaxo.Geometry.Int64_2D
@@ -37,64 +32,64 @@ namespace Altaxo.Geometry.Int64_2D
     private readonly (Int64LineSegment l1, Int64LineSegment l2)[] _intersectingLines = new (Int64LineSegment l1, Int64LineSegment l2)[]
     {
       (
-        new Int64LineSegment(new IntPoint(-100, 0), new IntPoint(100, 0)), // horizontal
-        new Int64LineSegment(new IntPoint(-100, 0), new IntPoint(100, 0))  // vertical
+        new Int64LineSegment(new Point64(-100, 0), new Point64(100, 0)), // horizontal
+        new Int64LineSegment(new Point64(-100, 0), new Point64(100, 0))  // vertical
       ),
       (
-        new Int64LineSegment(new IntPoint(0, 0), new IntPoint(100, 100)),
-        new Int64LineSegment(new IntPoint(20, 20), new IntPoint(150, 40)) // touching at 20,20
+        new Int64LineSegment(new Point64(0, 0), new Point64(100, 100)),
+        new Int64LineSegment(new Point64(20, 20), new Point64(150, 40)) // touching at 20,20
       ),
       (
-        new Int64LineSegment(new IntPoint(-100, -100), new IntPoint(-100, 100)), // vertical
-        new Int64LineSegment(new IntPoint(-100, 0), new IntPoint(0, 0))  // horizontal
+        new Int64LineSegment(new Point64(-100, -100), new Point64(-100, 100)), // vertical
+        new Int64LineSegment(new Point64(-100, 0), new Point64(0, 0))  // horizontal
       ),
       (
-        new Int64LineSegment(new IntPoint(0, 40), new IntPoint(40, 40)), // horizontal
-        new Int64LineSegment(new IntPoint(40, 0), new IntPoint(40, 80))  // vertical with y overlap
+        new Int64LineSegment(new Point64(0, 40), new Point64(40, 40)), // horizontal
+        new Int64LineSegment(new Point64(40, 0), new Point64(40, 80))  // vertical with y overlap
       ),
       (
-        new Int64LineSegment(new IntPoint(0, 0), new IntPoint(100, 100)),
-        new Int64LineSegment(new IntPoint(20, 20), new IntPoint(60, 60))  // included
+        new Int64LineSegment(new Point64(0, 0), new Point64(100, 100)),
+        new Int64LineSegment(new Point64(20, 20), new Point64(60, 60))  // included
       ),
       (
-        new Int64LineSegment(new IntPoint(20, 20), new IntPoint(180, -100)),
-        new Int64LineSegment(new IntPoint(20, 20), new IntPoint(180, -100))  // same
+        new Int64LineSegment(new Point64(20, 20), new Point64(180, -100)),
+        new Int64LineSegment(new Point64(20, 20), new Point64(180, -100))  // same
       ),
 
     };
     private readonly (Int64LineSegment l1, Int64LineSegment l2)[] _nonintersectingLines = new (Int64LineSegment l1, Int64LineSegment l2)[]
 {
       (
-        new Int64LineSegment(new IntPoint(40, 40), new IntPoint(150, 150)),
-        new Int64LineSegment(new IntPoint(60, 80), new IntPoint(80, 100)) // parallel with y overlap
+        new Int64LineSegment(new Point64(40, 40), new Point64(150, 150)),
+        new Int64LineSegment(new Point64(60, 80), new Point64(80, 100)) // parallel with y overlap
       ),
       (
-        new Int64LineSegment(new IntPoint(-80, 80), new IntPoint(-40, 20)),
-        new Int64LineSegment(new IntPoint(-40, 60), new IntPoint(0, 0)) // parallel with just x overlap
+        new Int64LineSegment(new Point64(-80, 80), new Point64(-40, 20)),
+        new Int64LineSegment(new Point64(-40, 60), new Point64(0, 0)) // parallel with just x overlap
       ),
       (
-        new Int64LineSegment(new IntPoint(0, 0), new IntPoint(0, 20)), // vertical
-        new Int64LineSegment(new IntPoint(40, 40), new IntPoint(40, 60))  // vertical no overlap
+        new Int64LineSegment(new Point64(0, 0), new Point64(0, 20)), // vertical
+        new Int64LineSegment(new Point64(40, 40), new Point64(40, 60))  // vertical no overlap
       ),
       (
-        new Int64LineSegment(new IntPoint(0, 0), new IntPoint(0, 20)), // vertical
-        new Int64LineSegment(new IntPoint(40, 40), new IntPoint(60, 40))  // horizontal no overlap
+        new Int64LineSegment(new Point64(0, 0), new Point64(0, 20)), // vertical
+        new Int64LineSegment(new Point64(40, 40), new Point64(60, 40))  // horizontal no overlap
       ),
       (
-        new Int64LineSegment(new IntPoint(-30, -30), new IntPoint(50, 50)),
-        new Int64LineSegment(new IntPoint(70, 70), new IntPoint(120, 1200))  // colinear no overlap
+        new Int64LineSegment(new Point64(-30, -30), new Point64(50, 50)),
+        new Int64LineSegment(new Point64(70, 70), new Point64(120, 1200))  // colinear no overlap
       ),
       (
-        new Int64LineSegment(new IntPoint(0, 0), new IntPoint(20, 20)),
-        new Int64LineSegment(new IntPoint(10, 40), new IntPoint(40, 0))  // almost perpendicular with x and y overlap
+        new Int64LineSegment(new Point64(0, 0), new Point64(20, 20)),
+        new Int64LineSegment(new Point64(10, 40), new Point64(40, 0))  // almost perpendicular with x and y overlap
       ),
       (
-        new Int64LineSegment(new IntPoint(20, 20), new IntPoint(80, 20)),
-        new Int64LineSegment(new IntPoint(40, 40), new IntPoint(60, 40))  // horizontal with x overlap
+        new Int64LineSegment(new Point64(20, 20), new Point64(80, 20)),
+        new Int64LineSegment(new Point64(40, 40), new Point64(60, 40))  // horizontal with x overlap
       ),
       (
-        new Int64LineSegment(new IntPoint(40, 20), new IntPoint(40, 40)),
-        new Int64LineSegment(new IntPoint(0, 80), new IntPoint(100, 0))  // 45° x and y overlap
+        new Int64LineSegment(new Point64(40, 20), new Point64(40, 40)),
+        new Int64LineSegment(new Point64(0, 80), new Point64(100, 0))  // 45° x and y overlap
       ),
 
 };

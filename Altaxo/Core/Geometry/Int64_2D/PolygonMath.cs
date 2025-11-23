@@ -25,8 +25,7 @@
 #nullable enable
 using System;
 using System.Collections.Generic;
-using ClipperLib;
-using Int128 = ClipperLib.Int128;
+using Clipper2Lib;
 
 namespace Altaxo.Geometry.Int64_2D
 {
@@ -42,10 +41,10 @@ namespace Altaxo.Geometry.Int64_2D
     /// </summary>
     /// <param name="closedPolygon">The closed polygon.</param>
     /// <returns>The circumference of the given closed polygon.</returns>
-    public static double GetClosedPolygonCircumference(IEnumerable<IntPoint> closedPolygon)
+    public static double GetClosedPolygonCircumference(IEnumerable<Point64> closedPolygon)
     {
-      IntPoint firstPoint = default;
-      IntPoint previous = default;
+      Point64 firstPoint = default;
+      Point64 previous = default;
 
       double sum = 0.0;
       var numberOfPoints = 0;
@@ -57,7 +56,7 @@ namespace Altaxo.Geometry.Int64_2D
         }
         else
         {
-          sum += Math.Sqrt((double)(Int128.Int128Mul(pt.X - previous.X, pt.X - previous.X) + Int128.Int128Mul(pt.Y - previous.Y, pt.Y - previous.Y)));
+          sum += Math.Sqrt((double)((pt.X - previous.X) * (Int128)(pt.X - previous.X) + (pt.Y - previous.Y) * (Int128)(pt.Y - previous.Y)));
         }
 
         previous = pt;
@@ -71,7 +70,7 @@ namespace Altaxo.Geometry.Int64_2D
       else
       {
         var pt = firstPoint;
-        sum += Math.Sqrt((double)(Int128.Int128Mul(pt.X - previous.X, pt.X - previous.X) + Int128.Int128Mul(pt.Y - previous.Y, pt.Y - previous.Y)));
+        sum += Math.Sqrt((double)((pt.X - previous.X) * (Int128)(pt.X - previous.X) + (pt.Y - previous.Y) * (Int128)(pt.Y - previous.Y)));
         return sum;
       }
     }
@@ -81,12 +80,12 @@ namespace Altaxo.Geometry.Int64_2D
     /// </summary>
     /// <param name="closedPolygon">The points forming a closed polygon.</param>
     /// <returns>The polygon area. The value is signed. The sign is positive if the polygon is counter-clockwise (in a coordinate system in which x is to the right and y is up).</returns>
-    public static double GetClosedPolygonArea(IEnumerable<IntPoint> closedPolygon)
+    public static double GetClosedPolygonArea(IEnumerable<Point64> closedPolygon)
     {
-      IntPoint firstPoint = default;
-      IntPoint previous = default;
+      Point64 firstPoint = default;
+      Point64 previous = default;
 
-      var sum = new Int128(0);
+      Int128 sum = 0;
       var numberOfPoints = 0;
       foreach (var pt in closedPolygon)
       {
@@ -96,7 +95,7 @@ namespace Altaxo.Geometry.Int64_2D
         }
         else
         {
-          sum += (Int128.Int128Mul(previous.X, pt.Y) - Int128.Int128Mul(previous.Y, pt.X));
+          sum += (previous.X * (Int128)pt.Y) - (previous.Y * (Int128)pt.X);
         }
 
         previous = pt;
@@ -117,7 +116,7 @@ namespace Altaxo.Geometry.Int64_2D
       }
       else
       {
-        sum += (Int128.Int128Mul(previous.X, firstPoint.Y) - Int128.Int128Mul(previous.Y, firstPoint.X));
+        sum += (previous.X * (Int128)firstPoint.Y) - (previous.Y * (Int128)firstPoint.X);
         return (double)sum / 2.0;
       }
     }
@@ -129,16 +128,16 @@ namespace Altaxo.Geometry.Int64_2D
     /// <param name="closedPolygon">The closed polygon.</param>
     /// <returns>The center of gravity of the given polygon.</returns>
     /// <seealso href="https://en.wikipedia.org/wiki/Centroid"/>
-    public static PointD2D GetClosedPolygonCentroid(IEnumerable<IntPoint> closedPolygon)
+    public static PointD2D GetClosedPolygonCentroid(IEnumerable<Point64> closedPolygon)
     {
-      IntPoint firstPoint = default;
-      IntPoint previous = default;
+      Point64 firstPoint = default;
+      Point64 previous = default;
       var numberOfPoints = 0;
 
       double sumX = 0;
       double sumY = 0;
       Int128 s;
-      var sumS = new Int128(0);
+      Int128 sumS = 0;
       foreach (var pt in closedPolygon)
       {
         if (numberOfPoints == 0)
@@ -147,7 +146,7 @@ namespace Altaxo.Geometry.Int64_2D
         }
         else
         {
-          s = (Int128.Int128Mul(previous.X, pt.Y) - Int128.Int128Mul(previous.Y, pt.X));
+          s = (previous.X * (Int128)pt.Y) - (previous.Y * (Int128)pt.X);
           sumS += s;
           sumX += (previous.X + pt.X) * (double)s;
           sumY += (previous.Y + pt.Y) * (double)s;
@@ -172,7 +171,7 @@ namespace Altaxo.Geometry.Int64_2D
       }
       else
       {
-        s = (Int128.Int128Mul(previous.X, firstPoint.Y) - Int128.Int128Mul(previous.Y, firstPoint.X));
+        s = (previous.X * (Int128)firstPoint.Y) - (previous.Y * (Int128)firstPoint.X);
         sumS += s;
         sumX += (previous.X + firstPoint.X) * (double)s;
         sumY += (previous.Y + firstPoint.Y) * (double)s;
@@ -191,7 +190,7 @@ namespace Altaxo.Geometry.Int64_2D
     /// <param name="closedPolygons">The closed polygons.</param>
     /// <returns>The second moments, Ixx, Iyy, and Ixy, of the given polygons (with respect to the origin (x=0, y=0)).</returns>
     /// <seealso href="https://en.wikipedia.org/wiki/Second_moment_of_area"/>
-    public static (double Ixx, double Iyy, double Ixy) GetClosedPolygonSecondMoments(IEnumerable<IEnumerable<IntPoint>> closedPolygons)
+    public static (double Ixx, double Iyy, double Ixy) GetClosedPolygonSecondMoments(IEnumerable<IEnumerable<Point64>> closedPolygons)
     {
       double sumX = 0, sumY = 0, sumXY = 0;
 
@@ -212,10 +211,10 @@ namespace Altaxo.Geometry.Int64_2D
     /// <param name="closedPolygon">The closed polygon.</param>
     /// <returns>The second moments, Ixx, Iyy, and Ixy, of the given polygon (with respect to the origin (x=0, y=0)).</returns>
     /// <seealso href="https://en.wikipedia.org/wiki/Second_moment_of_area"/>
-    public static (double Ixx, double Iyy, double Ixy) GetClosedPolygonSecondMoments(IEnumerable<IntPoint> closedPolygon)
+    public static (double Ixx, double Iyy, double Ixy) GetClosedPolygonSecondMoments(IEnumerable<Point64> closedPolygon)
     {
-      IntPoint firstPoint = default;
-      IntPoint previous = default;
+      Point64 firstPoint = default;
+      Point64 previous = default;
       var numberOfPoints = 0;
 
       double sumX = 0;
@@ -230,7 +229,7 @@ namespace Altaxo.Geometry.Int64_2D
         }
         else
         {
-          s = (Int128.Int128Mul(previous.X, pt.Y) - Int128.Int128Mul(previous.Y, pt.X));
+          s = (previous.X * (Int128)pt.Y) - (previous.Y * (Int128)pt.X);
           sumX += (Pow2(previous.Y) + previous.Y * pt.Y + Pow2(pt.Y)) * (double)s;
           sumY += (Pow2(previous.X) + previous.X * pt.X + Pow2(pt.X)) * (double)s;
           sumXY += (previous.X * pt.Y + 2 * previous.X * previous.Y + 2 * pt.X * pt.Y + pt.X * previous.Y) * (double)s;
@@ -255,7 +254,7 @@ namespace Altaxo.Geometry.Int64_2D
       }
       else
       {
-        s = (Int128.Int128Mul(previous.X, firstPoint.Y) - Int128.Int128Mul(previous.Y, firstPoint.X));
+        s = (previous.X * (Int128)firstPoint.Y) - (previous.Y * (Int128)firstPoint.X);
         var pt = firstPoint;
         sumX += (Pow2(previous.Y) + previous.Y * pt.Y + Pow2(pt.Y)) * (double)s;
         sumY += (Pow2(previous.X) + previous.X * pt.X + Pow2(pt.X)) * (double)s;
@@ -324,7 +323,7 @@ namespace Altaxo.Geometry.Int64_2D
     /// <param name="rotation_rad">The rotation in rad (second transformation x'' = Cos(phi) * x' - Sin(phi) * y', y'' = Sin(phi) * x' + Cos(phi) * y').</param>
     /// <param name="scale">The scale (third transformation x''' = scale * x'', y''' = scale * y'').</param>
     /// <returns>The centered, rotated and scaled points, rounded to integers.</returns>
-    public static IEnumerable<IntPoint> ToIntPoints(this IEnumerable<Altaxo.Geometry.PointD2D> points, double centerX = 0, double centerY = 0, double rotation_rad = 0, double scale = 1)
+    public static IEnumerable<Point64> ToIntPoints(this IEnumerable<Altaxo.Geometry.PointD2D> points, double centerX = 0, double centerY = 0, double rotation_rad = 0, double scale = 1)
     {
       double cos = 1, sin = 0;
       if (0 != rotation_rad)
@@ -344,7 +343,7 @@ namespace Altaxo.Geometry.Int64_2D
           x = x * cos - y * sin;
           y = xx * sin + y * cos;
         }
-        yield return new IntPoint((long)Math.Round(x * scale), (long)Math.Round(y * scale));
+        yield return new Point64((long)Math.Round(x * scale), (long)Math.Round(y * scale));
       }
     }
 
@@ -359,7 +358,7 @@ namespace Altaxo.Geometry.Int64_2D
     /// <param name="rotation_rad">The rotation in rad (second transformation x'' = Cos(phi) * x' - Sin(phi) * y', y'' = Sin(phi) * x' + Cos(phi) * y').</param>
     /// <param name="scale">The scale (third transformation x''' = scale * x'', y''' = scale * y'').</param>
     /// <returns>The centered, rotated and scaled points, rounded to integers.</returns>
-    public static IEnumerable<IntPoint> ToIntPoints(this IEnumerable<(double X, double Y)> points, double centerX = 0, double centerY = 0, double rotation_rad = 0, double scale = 1)
+    public static IEnumerable<Point64> ToIntPoints(this IEnumerable<(double X, double Y)> points, double centerX = 0, double centerY = 0, double rotation_rad = 0, double scale = 1)
     {
       double cos = 1, sin = 0;
       if (0 != rotation_rad)
@@ -379,7 +378,7 @@ namespace Altaxo.Geometry.Int64_2D
           x = x * cos - y * sin;
           y = xx * sin + y * cos;
         }
-        yield return new IntPoint((long)Math.Round(x * scale), (long)Math.Round(y * scale));
+        yield return new Point64((long)Math.Round(x * scale), (long)Math.Round(y * scale));
       }
     }
 

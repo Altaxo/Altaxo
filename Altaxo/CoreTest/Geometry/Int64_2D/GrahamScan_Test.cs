@@ -24,10 +24,7 @@
 
 using System;
 using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-using ClipperLib;
+using Clipper2Lib;
 using Xunit;
 
 namespace Altaxo.Geometry.Int64_2D
@@ -54,10 +51,10 @@ namespace Altaxo.Geometry.Int64_2D
       };
 
 
-      var arr = new IntPoint[numberOfPoints];
+      var arr = new Point64[numberOfPoints];
       for (var i = 0; i < numberOfPoints; ++i)
       {
-        arr[i] = new IntPoint(a[2 * i], a[2 * i + 1]);
+        arr[i] = new Point64(a[2 * i], a[2 * i + 1]);
       }
 
       var convexHull = GrahamScan.GetConvexHull(arr);
@@ -72,7 +69,7 @@ namespace Altaxo.Geometry.Int64_2D
       for (var numberOfTests = 0; numberOfTests < 100; ++numberOfTests)
       {
         var numberOfPoints = 20 + numberOfTests * 10;
-        var arr = new IntPoint[numberOfPoints];
+        var arr = new Point64[numberOfPoints];
 
         hash.Clear();
         for (var i = 0; i < numberOfPoints;)
@@ -83,7 +80,7 @@ namespace Altaxo.Geometry.Int64_2D
           if (!hash.Contains((x, y)))
           {
             hash.Add((x, y));
-            arr[i] = new IntPoint(x, y);
+            arr[i] = new Point64(x, y);
             ++i;
           }
         }

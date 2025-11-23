@@ -23,16 +23,11 @@
 #endregion Copyright
 
 using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using Altaxo.Geometry;
-using Altaxo.Graph.Graph3D;
 using Xunit;
 
 namespace Altaxo.Geometry
 {
-  
+
   public class TestMatrixD3D
   {
     private static System.Random _random = new Random(432);

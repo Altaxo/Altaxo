@@ -25,9 +25,7 @@
 using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-using ClipperLib;
+using Clipper2Lib;
 using Xunit;
 
 namespace Altaxo.Geometry.Int64_2D
@@ -52,10 +50,10 @@ namespace Altaxo.Geometry.Int64_2D
       };
 
 
-      var arr = new IntPoint[numberOfPoints];
+      var arr = new Point64[numberOfPoints];
       for (var i = 0; i < numberOfPoints; ++i)
       {
-        arr[i] = new IntPoint(a[2 * i], a[2 * i + 1]);
+        arr[i] = new Point64(a[2 * i], a[2 * i + 1]);
       }
 
       var concaveCalc = new ConcaveHull(arr, 0, 2);
@@ -71,7 +69,7 @@ namespace Altaxo.Geometry.Int64_2D
       for (var numberOfTests = 0; numberOfTests < 10; ++numberOfTests)
       {
         var numberOfPoints = 20 + numberOfTests * 10;
-        var arr = new IntPoint[numberOfPoints];
+        var arr = new Point64[numberOfPoints];
         var arrxy = new int[numberOfPoints, 2];
 
 
@@ -84,7 +82,7 @@ namespace Altaxo.Geometry.Int64_2D
           if (!hash.Contains((x, y)))
           {
             hash.Add((x, y));
-            arr[i] = new IntPoint(x, y);
+            arr[i] = new Point64(x, y);
             arrxy[i, 0] = x;
             arrxy[i, 1] = y;
             ++i;
@@ -104,13 +102,13 @@ namespace Altaxo.Geometry.Int64_2D
     [Fact]
     public void Test_FivePoints()
     {
-      var arr = new IntPoint[5];
+      var arr = new Point64[5];
 
-      arr[0] = new IntPoint(-90, -10);
-      arr[1] = new IntPoint(80, -20);
-      arr[2] = new IntPoint(-100, 0);
-      arr[3] = new IntPoint(100, 0);
-      arr[4] = new IntPoint(0, -10);
+      arr[0] = new Point64(-90, -10);
+      arr[1] = new Point64(80, -20);
+      arr[2] = new Point64(-100, 0);
+      arr[3] = new Point64(100, 0);
+      arr[4] = new Point64(0, -10);
       var concaveCalc = new ConcaveHull(arr, -1, 2);
       IncludenessTest(concaveCalc.ConvexHullPoints, arr);
       IncludenessTest(concaveCalc.ConcaveHullPoints, arr);
@@ -119,13 +117,13 @@ namespace Altaxo.Geometry.Int64_2D
     [Fact]
     public void Test_FivePoints2()
     {
-      var arr = new IntPoint[5];
+      var arr = new Point64[5];
 
-      arr[0] = new IntPoint(-100, -100);
-      arr[1] = new IntPoint(100, -100);
-      arr[2] = new IntPoint(100, 100);
-      arr[3] = new IntPoint(0, 90);
-      arr[4] = new IntPoint(-100, 100);
+      arr[0] = new Point64(-100, -100);
+      arr[1] = new Point64(100, -100);
+      arr[2] = new Point64(100, 100);
+      arr[3] = new Point64(0, 90);
+      arr[4] = new Point64(-100, 100);
       var concaveCalc = new ConcaveHull(arr, Math.Cos(Math.PI / 8), 2);
       IncludenessTest(concaveCalc.ConvexHullPoints, arr);
       IncludenessTest(concaveCalc.ConcaveHullPoints, arr);
@@ -135,15 +133,15 @@ namespace Altaxo.Geometry.Int64_2D
     [Fact]
     public void Test_ColinearPointsHorizontal()
     {
-      var arr = new IntPoint[7];
+      var arr = new Point64[7];
 
-      arr[0] = new IntPoint(-1000, -1000);
-      arr[1] = new IntPoint(1000, -1000);
-      arr[2] = new IntPoint(1000, 0); // 1000, 0, 0,0 and -1000, 0 are colinear
-      arr[3] = new IntPoint(500, -10); // a little bit under this colinear line another point
-      arr[4] = new IntPoint(0, 0);
-      arr[5] = new IntPoint(-500, -10); // here another one a little bit under the colinear line
-      arr[6] = new IntPoint(-1000, 0);
+      arr[0] = new Point64(-1000, -1000);
+      arr[1] = new Point64(1000, -1000);
+      arr[2] = new Point64(1000, 0); // 1000, 0, 0,0 and -1000, 0 are colinear
+      arr[3] = new Point64(500, -10); // a little bit under this colinear line another point
+      arr[4] = new Point64(0, 0);
+      arr[5] = new Point64(-500, -10); // here another one a little bit under the colinear line
+      arr[6] = new Point64(-1000, 0);
       var concaveCalc = new ConcaveHull(arr, 0, 2);
 
       // will the points 500, -10 and -500, -10 be found?
@@ -157,23 +155,23 @@ namespace Altaxo.Geometry.Int64_2D
     [Fact]
     public void Test_MultipleColinearPointsHorizontal()
     {
-      var arr = new IntPoint[9];
+      var arr = new Point64[9];
 
-      arr[0] = new IntPoint(-10, 10);
-      arr[1] = new IntPoint(-9, 10);
-      arr[2] = new IntPoint(-8, 10); // the first three points are colinear
-      arr[3] = new IntPoint(0, 9);  // a little concaveness in the middle
-      arr[4] = new IntPoint(8, 10);  // the next three points are also colinear
-      arr[5] = new IntPoint(9, 10);
-      arr[6] = new IntPoint(10, 10);
-      arr[7] = new IntPoint(10, -10);
-      arr[8] = new IntPoint(-10, -10);
+      arr[0] = new Point64(-10, 10);
+      arr[1] = new Point64(-9, 10);
+      arr[2] = new Point64(-8, 10); // the first three points are colinear
+      arr[3] = new Point64(0, 9);  // a little concaveness in the middle
+      arr[4] = new Point64(8, 10);  // the next three points are also colinear
+      arr[5] = new Point64(9, 10);
+      arr[6] = new Point64(10, 10);
+      arr[7] = new Point64(10, -10);
+      arr[8] = new Point64(-10, -10);
       var concaveCalc = new ConcaveHull(arr, 0.707, 5);
 
       Assert.Equal(4, concaveCalc.ConvexHullPoints.Count);
       Assert.True(concaveCalc.ConcaveHullPoints.Count >= 7);
 
-      var l = new List<IntPoint>(concaveCalc.ConcaveHullPoints.Select(x => x.point));
+      var l = new List<Point64>(concaveCalc.ConcaveHullPoints.Select(x => x.point));
       var c = l.Count;
       int idx = l.IndexOf(arr[3]); // Point (0 , 9) has to be included
       Assert.True(idx >= 0);
@@ -187,13 +185,13 @@ namespace Altaxo.Geometry.Int64_2D
     [Fact]
     public void Test_ForbiddenPointOnHull()
     {
-      var arr = new IntPoint[5];
+      var arr = new Point64[5];
 
-      arr[0] = new IntPoint(-1100, -20);
-      arr[1] = new IntPoint(1100, -20); // lower line somewhat larger in order to be processed first
-      arr[2] = new IntPoint(1000, 0); // 1000, 0, 0,0 and -1000, 0 are colinear
-      arr[3] = new IntPoint(0, 0); // this point must not be catched by the lower horz line!
-      arr[4] = new IntPoint(-1000, 0);
+      arr[0] = new Point64(-1100, -20);
+      arr[1] = new Point64(1100, -20); // lower line somewhat larger in order to be processed first
+      arr[2] = new Point64(1000, 0); // 1000, 0, 0,0 and -1000, 0 are colinear
+      arr[3] = new Point64(0, 0); // this point must not be catched by the lower horz line!
+      arr[4] = new Point64(-1000, 0);
       var concaveCalc = new ConcaveHull(arr, 0, 2);
 
       // convex and concave hull may contain 0,0, but only as part of the upper horizontal line
@@ -206,12 +204,12 @@ namespace Altaxo.Geometry.Int64_2D
     [Fact]
     public void Test_Polygon_Area()
     {
-      var arr = new IntPoint[4];
+      var arr = new Point64[4];
 
-      arr[0] = new IntPoint(-200, -100);
-      arr[1] = new IntPoint(100, -100);
-      arr[2] = new IntPoint(100, 100);
-      arr[3] = new IntPoint(-200, 100);
+      arr[0] = new Point64(-200, -100);
+      arr[1] = new Point64(100, -100);
+      arr[2] = new Point64(100, 100);
+      arr[3] = new Point64(-200, 100);
 
       var area = PolygonMath.GetClosedPolygonArea(arr);
       Assert.Equal(60000, area); // counterclockwise should give positive area
@@ -220,19 +218,19 @@ namespace Altaxo.Geometry.Int64_2D
     [Fact]
     public void Test_Polygon_Centroid()
     {
-      var arr = new IntPoint[4];
+      var arr = new Point64[4];
 
-      arr[0] = new IntPoint(-100, -200);
-      arr[1] = new IntPoint(100, -200);
-      arr[2] = new IntPoint(100, 200);
-      arr[3] = new IntPoint(-100, 200);
+      arr[0] = new Point64(-100, -200);
+      arr[1] = new Point64(100, -200);
+      arr[2] = new Point64(100, 200);
+      arr[3] = new Point64(-100, 200);
 
       var x = 77;
       var y = 44;
 
       for (var i = 0; i < arr.Length; ++i)
       {
-        arr[i] = new IntPoint(x + arr[i].X, y + arr[i].Y);
+        arr[i] = new Point64(x + arr[i].X, y + arr[i].Y);
       }
 
       var area = PolygonMath.GetClosedPolygonArea(arr);

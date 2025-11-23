@@ -25,9 +25,7 @@
 using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-using ClipperLib;
+using Clipper2Lib;
 using Xunit;
 
 namespace Altaxo.Geometry.Int64_2D
@@ -40,7 +38,7 @@ namespace Altaxo.Geometry.Int64_2D
     /// </summary>
     /// <param name="hull">The hull.</param>
     /// <param name="allPoints">All points.</param>
-    public void IncludenessTest(IReadOnlyList<(IntPoint point, int index)> hull, IReadOnlyList<IntPoint> allPoints)
+    public void IncludenessTest(IReadOnlyList<(Point64 point, int index)> hull, IReadOnlyList<Point64> allPoints)
     {
 
       Assert.NotNull(hull);        // convex hull has to be != null
@@ -57,34 +55,24 @@ namespace Altaxo.Geometry.Int64_2D
 
 
       // Various tests with clipper
-      var clipperPoly = new List<ClipperLib.IntPoint>(hull.Select(dp => new ClipperLib.IntPoint(dp.point.X, dp.point.Y)));
+      var clipperPoly = new Path64(hull.Select(dp => new Point64(dp.point.X, dp.point.Y)));
 
       // The area should be != 0
-      Assert.True(Math.Abs(ClipperLib.Clipper.Area(clipperPoly)) > 0); // Area should be != 0
-      Assert.True(ClipperLib.Clipper.Area(clipperPoly) > 0); // Polygon should be positive oriented
+      Assert.True(Math.Abs(Clipper.Area(clipperPoly)) > 0); // Area should be != 0
+      Assert.True(Clipper.Area(clipperPoly) > 0); // Polygon should be positive oriented
 
       // The polygon should be simple
-      var clipperPolys = ClipperLib.Clipper.SimplifyPolygon(clipperPoly);
-
-      if (clipperPolys.Count != 1)
-      {
-        // note: Clipper simplifies polygons even if the segments do not touch, but are near enough to each other
-        // thus when clipper has created two or more polygons, we need some check with
-        // or own library if this is "wrong" alarm
-        CheckHullForIntersections(hull);
-      }
-
-      Assert.True(clipperPolys[0].Count <= clipperPoly.Count); // the resulting polygon should have the same number of points than the original one
-
+      clipperPoly = Clipper.SimplifyPath(clipperPoly, 0, isClosedPath: true);
 
       // Test whether all points are on the hull or inside the hull
       for (var i = 0; i < allPoints.Count; ++i)
       {
-        Assert.NotEqual(0, ClipperLib.Clipper.PointInPolygon(new ClipperLib.IntPoint(allPoints[i].X, allPoints[i].Y), clipperPoly));
+        var result = Clipper.PointInPolygon(new Point64(allPoints[i].X, allPoints[i].Y), clipperPoly);
+        Assert.True(result == PointInPolygonResult.IsInside || result == PointInPolygonResult.IsOn);
       }
     }
 
-    public static void CheckHullForIntersections(IReadOnlyList<(IntPoint point, int index)> hull)
+    public static void CheckHullForIntersections(IReadOnlyList<(Point64 point, int index)> hull)
     {
       var segments = new Int64LineD2DAnnotated[hull.Count];
 
