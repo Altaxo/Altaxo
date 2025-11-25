@@ -153,6 +153,17 @@ namespace Altaxo.Graph.Commands
   /// <summary>
   /// Tool for reading the x-y coordinate values of a layer.
   /// </summary>
+  public class TwoPointsOnCurveTool : AbstractGraphToolsCommand
+  {
+    public TwoPointsOnCurveTool()
+      : base(GraphToolType.TwoPointsOnCurve)
+    {
+    }
+  }
+
+  /// <summary>
+  /// Tool for reading the x-y coordinate values of a layer.
+  /// </summary>
   public class FourPointsOnCurveTool : AbstractGraphToolsCommand
   {
     public FourPointsOnCurveTool()

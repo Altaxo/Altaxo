@@ -985,7 +985,9 @@
                       class="Altaxo.Graph.Commands.ReadPlotItemDataTool" />
             <ToolbarItem id="ReadLayerCoordinates" type="CheckBox" icon="Icons.16x16.ReadLayer" tooltip="${res:XML.MainMenu.GraphMenu.Tools.ReadLayerCoordinates.Description}"
                       class="Altaxo.Graph.Commands.ReadXYCoordinatesTool" />
-          <ToolbarItem id="FourPointHandler" type="CheckBox" icon="Icons.16x16.FourPointTool" tooltip="${res:XML.MainMenu.GraphMenu.Tools.FourPointTool.Description}"
+            <ToolbarItem id="TwoPointHandler" type="CheckBox" icon="Icons.16x16.TwoPointTool" tooltip="${res:XML.MainMenu.GraphMenu.Tools.TwoPointTool.Description}"
+                      class="Altaxo.Graph.Commands.TwoPointsOnCurveTool" />
+            <ToolbarItem id="FourPointHandler" type="CheckBox" icon="Icons.16x16.FourPointTool" tooltip="${res:XML.MainMenu.GraphMenu.Tools.FourPointTool.Description}"
                     class="Altaxo.Graph.Commands.FourPointsOnCurveTool" />
           <ToolbarItem id="FourPointStepEvaluation" type="CheckBox" icon="Icons.16x16.StepEvaluationTool" tooltip="${res:XML.MainMenu.GraphMenu.Tools.StepEvaluationTool.Description}"
                     class="Altaxo.Graph.Commands.FourPointStepEvaluationTool" />

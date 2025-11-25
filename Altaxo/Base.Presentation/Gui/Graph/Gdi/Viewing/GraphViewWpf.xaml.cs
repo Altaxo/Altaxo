@@ -222,6 +222,10 @@ namespace Altaxo.Gui.Graph.Gdi.Viewing
               _mouseState = new GraphControllerMouseHandlers.EditGridMouseHandler(Controller);
               break;
 
+            case GraphToolType.TwoPointsOnCurve:
+              _mouseState = new GraphControllerMouseHandlers.FourPointsOnCurveMouseHandler(Controller, useFourHandles: false, initAllFourHandles: false);
+              break;
+
             case GraphToolType.FourPointsOnCurve:
               _mouseState = new GraphControllerMouseHandlers.FourPointsOnCurveMouseHandler(Controller, useFourHandles: true, initAllFourHandles: false);
               break;

@@ -25,8 +25,8 @@
 using System;
 using System.Drawing;
 using System.Windows.Input;
-using Altaxo.Data;
 using Altaxo.Calc;
+using Altaxo.Data;
 using Altaxo.Geometry;
 using Altaxo.Graph.Gdi;
 using Altaxo.Graph.Gdi.Plot;
@@ -35,12 +35,12 @@ using Altaxo.Graph.Plot.Data;
 
 namespace Altaxo.Gui.Graph.Gdi.Viewing.GraphControllerMouseHandlers
 {
- 
-    /// <summary>
-    /// A mouse handler that creates either 2 or 4 points on a curve, that can be used to evaluate the area under the line that is
-    /// created by the points, or to evaluate step positions.
-    /// </summary>
-    public class FourPointsOnCurveMouseHandler : MouseStateHandler, IToolFourPointsOnCurve
+
+  /// <summary>
+  /// A mouse handler that creates either 2 or 4 points on a curve, that can be used to evaluate the area under the line that is
+  /// created by the points, or to evaluate step positions.
+  /// </summary>
+  public class FourPointsOnCurveMouseHandler : MouseStateHandler, IToolFourPointsOnCurve
   {
     // Working thesis:
     // 1. The user uses the cross cursor to set the first mark on a curve.
@@ -171,7 +171,7 @@ namespace Altaxo.Gui.Graph.Gdi.Viewing.GraphControllerMouseHandlers
 
     public override GraphToolType GraphToolType => GraphToolType.FourPointsOnCurve;
 
-    (double PlotIndex, double RowIndex) IToolFourPointsOnCurve.InnerLeftPoint => _handle.Length==4 ? ((_handle[1].PlotIndex, _handle[1].RowIndex)) : (-1, -1);
+    (double PlotIndex, double RowIndex) IToolFourPointsOnCurve.InnerLeftPoint => _handle.Length == 4 ? ((_handle[1].PlotIndex, _handle[1].RowIndex)) : (-1, -1);
 
     (double PlotIndex, double RowIndex) IToolFourPointsOnCurve.InnerRightPoint => _handle.Length == 4 ? ((_handle[^2].PlotIndex, _handle[^2].RowIndex)) : (-1, -1);
 
@@ -238,8 +238,11 @@ namespace Altaxo.Gui.Graph.Gdi.Viewing.GraphControllerMouseHandlers
           var rootLayerCoord = clickedObject.ParentLayer.TransformCoordinatesFromHereToRoot(scatterPoint.LayerCoordinates.ToPointD2D());
           _handle[0] = new Handle { PlotIndex = plotIndex, RowIndex = rowIndex, Position = rootLayerCoord };
           _handle[1] = new Handle { PlotIndex = plotIndex, RowIndex = rowIndex, Position = rootLayerCoord };
-          _handle[2] = new Handle { PlotIndex = plotIndex, RowIndex = rowIndex, Position = rootLayerCoord };
-          _handle[3] = new Handle { PlotIndex = plotIndex, RowIndex = rowIndex, Position = rootLayerCoord };
+          if (_handle.Length >= 4)
+          {
+            _handle[2] = new Handle { PlotIndex = plotIndex, RowIndex = rowIndex, Position = rootLayerCoord };
+            _handle[3] = new Handle { PlotIndex = plotIndex, RowIndex = rowIndex, Position = rootLayerCoord };
+          }
           _state = State.OnePoint;
 
           OnHandlesUpdated();   // show coordinates in the data reader
@@ -286,13 +289,19 @@ namespace Altaxo.Gui.Graph.Gdi.Viewing.GraphControllerMouseHandlers
         var rowIndex = scatterPoint.RowIndex;
         // convert this layer coordinates first to PrintableAreaCoordinates
         var rootLayerCoord = _layer.TransformCoordinatesFromHereToRoot(scatterPoint.LayerCoordinates.ToPointD2D());
-        _handle[2] = new Handle { PlotIndex = plotIndex, RowIndex = rowIndex, Position = rootLayerCoord };
-        _handle[3] = new Handle { PlotIndex = plotIndex, RowIndex = rowIndex, Position = rootLayerCoord };
-
-        if (_handle[3].Position.X < _handle[0].Position.X)
+        if (_handle.Length >= 4)
         {
-          (_handle[0], _handle[3]) = (_handle[3], _handle[0]);
-          (_handle[1], _handle[2]) = (_handle[2], _handle[1]);
+          _handle[2] = new Handle { PlotIndex = plotIndex, RowIndex = rowIndex, Position = rootLayerCoord };
+          _handle[3] = new Handle { PlotIndex = plotIndex, RowIndex = rowIndex, Position = rootLayerCoord };
+        }
+
+        if (_handle[^1].Position.X < _handle[0].Position.X)
+        {
+          (_handle[0], _handle[^1]) = (_handle[^1], _handle[0]);
+          if (_handle.Length >= 4)
+          {
+            (_handle[1], _handle[2]) = (_handle[2], _handle[1]);
+          }
         }
 
         var newPixelCoord = _grac.ConvertGraphToMouseCoordinates(rootLayerCoord);
@@ -527,8 +536,19 @@ namespace Altaxo.Gui.Graph.Gdi.Viewing.GraphControllerMouseHandlers
 
     private RectangleF DrawHandle(Graphics g, Brush brush, Pen pen, PointD2D position, int indexOfHandle)
     {
-      var downFactor = indexOfHandle == 1 || indexOfHandle == 2 ? 1 : -1;
-      var leftFactor = indexOfHandle == 0 || indexOfHandle == 1 ? -1 : 1;
+      int downFactor;
+      int leftFactor;
+
+      if (_handle.Length >= 4)
+      {
+        downFactor = indexOfHandle == 1 || indexOfHandle == 2 ? 1 : -1;
+        leftFactor = indexOfHandle == 0 || indexOfHandle == 1 ? -1 : 1;
+      }
+      else
+      {
+        downFactor = indexOfHandle == 0 ? -1 : 1; // left handle up, right handle left
+        leftFactor = indexOfHandle == 0 ? -1 : 1; // left handle left right handle right
+      }
 
       var stemLength = 10 / _grac.ZoomFactor;
       var squareLength = stemLength / 2d;
@@ -707,7 +727,7 @@ namespace Altaxo.Gui.Graph.Gdi.Viewing.GraphControllerMouseHandlers
           Current.DataDisplay.WriteThreeLines(
             $"{_layer.Name}: {PlotItem}",
             $"XL[{_handle[0].RowIndex}]={RMath.InterpolateLinear(_handle[0].PlotIndex, xcol)}; YL[{_handle[0].RowIndex}]={RMath.InterpolateLinear(_handle[0].PlotIndex, ycol)}; XR[{_handle[1].RowIndex}]={RMath.InterpolateLinear(_handle[1].PlotIndex, xcol)}; YR[{_handle[1].RowIndex}]={RMath.InterpolateLinear(_handle[1].PlotIndex, ycol)}",
-            $"DX={RMath.InterpolateLinear(_handle[1].PlotIndex, xcol) - RMath.InterpolateLinear(_handle[0].PlotIndex, xcol)}; DY={RMath.InterpolateLinear(_handle[1].PlotIndex, ycol) - RMath.InterpolateLinear(_handle[0].PlotIndex, ycol)}"
+            $"ΔI={_handle[1].RowIndex - _handle[0].RowIndex}; ΔX={RMath.InterpolateLinear(_handle[1].PlotIndex, xcol) - RMath.InterpolateLinear(_handle[0].PlotIndex, xcol)}; ΔY={RMath.InterpolateLinear(_handle[1].PlotIndex, ycol) - RMath.InterpolateLinear(_handle[0].PlotIndex, ycol)}"
             );
         }
       }
