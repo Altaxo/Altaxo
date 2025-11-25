@@ -2,7 +2,7 @@
 
 /////////////////////////////////////////////////////////////////////////////
 //    Altaxo:  a data processing and data plotting program
-//    Copyright (C) 2002-2015 Dr. Dirk Lellinger
+//    Copyright (C) 2002-2025 Dr. Dirk Lellinger
 //
 //    This program is free software; you can redistribute it and/or modify
 //    it under the terms of the GNU General Public License as published by
@@ -23,21 +23,33 @@
 #endregion Copyright
 
 #nullable enable
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-
 namespace Altaxo.Drawing.D3D
 {
   using Altaxo.Geometry;
-  using Altaxo.Graph;
 
+  /// <summary>
+  /// Represents a collection of 2D vertices together with an index array describing triangles.
+  /// Each consecutive group of three indices in <see cref="TriangleIndices"/> defines one triangle
+  /// referencing elements in <see cref="Vertices"/>.
+  /// </summary>
   public class IndexedTriangles
   {
+    /// <summary>
+    /// Gets the array of 2D vertex positions used by the triangles.
+    /// </summary>
     public PointD2D[] Vertices { get; private set; }
+
+    /// <summary>
+    /// Gets the index array. Each consecutive group of three indices defines a triangle.
+    /// Indices refer to entries in <see cref="Vertices"/>.
+    /// </summary>
     public int[] TriangleIndices { get; private set; }
 
+    /// <summary>
+    /// Initializes a new instance of the <see cref="IndexedTriangles"/> class.
+    /// </summary>
+    /// <param name="vertices">The vertex positions.</param>
+    /// <param name="triangleIndices">The triangle index array (groups of three indices).</param>
     public IndexedTriangles(PointD2D[] vertices, int[] triangleIndices)
     {
       Vertices = vertices;
