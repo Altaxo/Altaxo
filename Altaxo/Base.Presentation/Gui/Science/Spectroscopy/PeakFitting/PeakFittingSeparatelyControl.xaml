@@ -1,57 +1,72 @@
 ﻿<UserControl x:Class="Altaxo.Gui.Science.Spectroscopy.PeakFitting.PeakFittingSeparatelyControl"
              xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
              xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
-             xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
-             xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
+             xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+             xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
              xmlns:local="clr-namespace:Altaxo.Gui.Science.Spectroscopy"
              xmlns:localModel="clr-namespace:Altaxo.Gui.Science.Spectroscopy.PeakFitting;assembly=AltaxoBase"
-             xmlns:axogc="clr-namespace:Altaxo.Gui.Common" 
+             xmlns:axogc="clr-namespace:Altaxo.Gui.Common"
              d:DataContext="{d:DesignInstance Type=localModel:PeakFittingSeparatelyController}"
-             mc:Ignorable="d" 
-             d:DesignHeight="450" d:DesignWidth="800">
-    <Grid>
-        <Grid.RowDefinitions>
-            <RowDefinition Height="Auto"/>
-            <RowDefinition Height="4"/>
-            <RowDefinition Height="Auto"/>
-            <RowDefinition Height="4"/>
-            <RowDefinition Height="Auto"/>
-            <RowDefinition Height="4"/>
-        </Grid.RowDefinitions>
-        <Grid.ColumnDefinitions>
-            <ColumnDefinition Width="Auto"/>
-            <ColumnDefinition Width="4"/>
-            <ColumnDefinition Width="Auto"/>
-            <ColumnDefinition Width="4"/>
-            <ColumnDefinition Width="Auto"/>
-            <ColumnDefinition Width="4"/>
-        </Grid.ColumnDefinitions>
+             mc:Ignorable="d"
+             d:DesignHeight="450"
+             d:DesignWidth="800">
+  <Grid>
+    <Grid.RowDefinitions>
+      <RowDefinition Height="Auto" />
+      <RowDefinition Height="20" />
+      <RowDefinition Height="Auto" />
+      <RowDefinition Height="4" />
+      <RowDefinition Height="Auto" />
+      <RowDefinition Height="4" />
+      <RowDefinition Height="Auto" />
+      <RowDefinition Height="4" />
+    </Grid.RowDefinitions>
+    <Grid.ColumnDefinitions>
+      <ColumnDefinition Width="Auto" />
+      <ColumnDefinition Width="4" />
+      <ColumnDefinition Width="Auto" />
+      <ColumnDefinition Width="4" />
+      <ColumnDefinition Width="Auto" />
+      <ColumnDefinition Width="4" />
+    </Grid.ColumnDefinitions>
 
-        <GroupBox Grid.Row="0" Grid.Column="0"
-                  Header="Fit function:">
-            <axogc:SingleChoiceRadioStackPanelDC 
-                ItemsSource="{Binding FitFunctions.Items}"
-                SelectedItem="{Binding FitFunctions.SelectedItem}"/>
-        </GroupBox>
+    <GroupBox Grid.Row="0"
+              Grid.RowSpan="4"
+              Grid.ColumnSpan="4"
+              Header="Fit function:" />
 
-        <Label Grid.Row="2" Grid.Column="0"
-               Content="Scale fit width by:"/>
+    <ComboBox Grid.Row="2"
+              ItemsSource="{Binding FitFunctions.Items}"
+              SelectedItem="{Binding FitFunctions.SelectedItem}"
+              Margin="4,0,0,0" />
+    <Button Grid.Row="2"
+            Grid.Column="2"
+            Content="Configure..."
+            Command="{Binding CmdConfigureFitFunction}" />
 
-        <axogc:QuantityWithUnitTextBox Grid.Row="2" Grid.Column="2"
-                                       UnitEnvironment="{Binding FitWidthScalingFactorEnvironment}"
-                                       SelectedQuantity="{Binding FitWidthScalingFactor}"
-                                       MinWidth="100"/>
+    <Label Grid.Row="4"
+           Grid.Column="0"
+           Content="Scale fit width by:" />
 
-        <Label Grid.Row="4" Grid.Column="0"
-               Content="Minimal peak FWHM:"/>
+    <axogc:QuantityWithUnitTextBox Grid.Row="4"
+                                   Grid.Column="2"
+                                   UnitEnvironment="{Binding FitWidthScalingFactorEnvironment}"
+                                   SelectedQuantity="{Binding FitWidthScalingFactor}"
+                                   MinWidth="100" />
 
-        <axogc:NumericDoubleTextBox Grid.Row="4" Grid.Column="2" 
-                                    SelectedValue="{Binding MinimalFWHMValue}"/>
+    <Label Grid.Row="6"
+           Grid.Column="0"
+           Content="Minimal peak FWHM:" />
 
-        <CheckBox Grid.Row="4" Grid.Column="4"
-                  IsChecked="{Binding IsMinimalFWHMValueInXUnits, Mode=TwoWay}"
-                  Content="in X-units" 
-                  VerticalAlignment="Center"/>
+    <axogc:NumericDoubleTextBox Grid.Row="6"
+                                Grid.Column="2"
+                                SelectedValue="{Binding MinimalFWHMValue}" />
 
-    </Grid>
+    <CheckBox Grid.Row="6"
+              Grid.Column="4"
+              IsChecked="{Binding IsMinimalFWHMValueInXUnits, Mode=TwoWay}"
+              Content="in X-units"
+              VerticalAlignment="Center" />
+
+  </Grid>
 </UserControl>

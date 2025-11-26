@@ -132,6 +132,51 @@ namespace Altaxo.Gui.Common.PropertyGrid
       }
     }
 
+    public static IEnumerable<(string Name, Type type)> GetNameAndTypeOfWritableProperties(object doc)
+    {
+      if (doc is null)
+        throw new ArgumentNullException(nameof(doc));
+
+      var doctype = doc.GetType();
+
+      // Special treatment is neccessary if our document itself is a basic type.
+      if (IsBasicType(doctype)) // if our document is a basic type, then we can add a controller directly
+      {
+        yield return ("value", doctype);
+      }
+
+      var namesOfWriteableProperties = new HashSet<string>();
+      var propertyInfos = doctype.GetProperties();
+      foreach (var propertyInfo in propertyInfos.Where(x => x.CanWrite && x.CanRead)) // First, we are interested in the writable properties
+      {
+        yield return (propertyInfo.Name, propertyInfo.PropertyType);
+      }
+
+      foreach (var methodInfo in doctype.GetMethods())
+      {
+        if (!(methodInfo.ReturnType == doc.GetType()))
+          continue;
+
+        var methodParameters = methodInfo.GetParameters();
+        if (methodParameters.Length != 1)
+          continue;
+
+        if (!methodInfo.Name.StartsWith("With"))
+          continue;
+
+        var parameterName = methodInfo.Name.Substring("With".Length);
+        if (string.IsNullOrEmpty(parameterName))
+          continue; // no name of the method
+        if (namesOfWriteableProperties.Contains(parameterName))
+          continue; // no need for the With.. method, we already have a writeable property
+
+        var parameterType = methodParameters[0].ParameterType;
+
+        yield return (parameterName, parameterType);
+      }
+    }
+
+
     protected virtual void InitializeValueInfos()
     {
       var doctype = _doc.GetType();

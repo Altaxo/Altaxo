@@ -437,10 +437,15 @@ namespace Altaxo.Science.Spectroscopy.PeakFitting
 
         // Copy the parameters from the initial guess always to the start of the array
         var peakParam = fitFunction.GetInitialParametersFromHeightPositionAndWidthAtRelativeHeight(yMax, xArray[idxMax], fwhm, 0.5);
-        if (peakParam[2] < boundariesForOnePeak.LowerBounds[2])
-          peakParam[2] = boundariesForOnePeak.LowerBounds[2].Value;
-        else if (peakParam[2] > boundariesForOnePeak.UpperBounds[2])
-          peakParam[2] = boundariesForOnePeak.UpperBounds[2].Value;
+
+        if (peakParam.Length > 2)
+        {
+          // we assume that peakParam[2] is the width parameter
+          if (peakParam[2] < boundariesForOnePeak.LowerBounds[2])
+            peakParam[2] = boundariesForOnePeak.LowerBounds[2].Value;
+          else if (peakParam[2] > boundariesForOnePeak.UpperBounds[2])
+            peakParam[2] = boundariesForOnePeak.UpperBounds[2].Value;
+        }
 
         Array.Copy(peakParam, initialGuess, numberOfParametersPerPeak);
         var fitResult1 = fit.Fit(xArray, yArray, initialGuess, lowerBounds, upperBounds, null, paramsFixed, cancellationToken);

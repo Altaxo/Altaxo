@@ -22,12 +22,7 @@
 
 #endregion Copyright
 
-using System;
 using System.Collections.Generic;
-using System.Linq;
-using Altaxo.Calc.FitFunctions.Peaks;
-using Altaxo.Collections;
-using Altaxo.Gui.Common;
 using Altaxo.Science.Spectroscopy.PeakFitting;
 using Altaxo.Units;
 
@@ -57,12 +52,7 @@ namespace Altaxo.Gui.Science.Spectroscopy.PeakFitting
 
       if (initData)
       {
-        var ftypeList = new SelectableListNodeList(
-          Altaxo.Main.Services.ReflectionService.GetNonAbstractSubclassesOf(typeof(IFitFunctionPeak))
-            .Select(t => new SelectableListNode(t.Name, t, false))
-            );
-        FitFunctions = new ItemsController<Type>(ftypeList);
-        FitFunctions.SelectedValue = _doc.FitFunction.GetType();
+        InitializeFitFunctions(_doc.FitFunction);
 
         FitWidthScalingFactor = new DimensionfulQuantity(_doc.FitWidthScalingFactor, Altaxo.Units.Dimensionless.Unity.Instance).AsQuantityIn(FitWidthScalingFactorEnvironment.DefaultUnit);
 
@@ -75,7 +65,7 @@ namespace Altaxo.Gui.Science.Spectroscopy.PeakFitting
     {
       _doc = _doc with
       {
-        FitFunction = (IFitFunctionPeak)Activator.CreateInstance(FitFunctions.SelectedValue),
+        FitFunction = _currentFitFunction,
         FitWidthScalingFactor = FitWidthScalingFactor.AsValueInSIUnits,
         IsMinimalFWHMValueInXUnits = IsMinimalFWHMValueInXUnits,
         MinimalFWHMValue = MinimalFWHMValue,

@@ -23,7 +23,12 @@
 #endregion Copyright
 
 using System;
+using System.Collections.Generic;
+using System.Linq;
+using Altaxo.Calc.FitFunctions.Peaks;
+using Altaxo.Collections;
 using Altaxo.Gui.Common;
+using Altaxo.Gui.Common.PropertyGrid;
 using Altaxo.Units;
 
 namespace Altaxo.Gui.Science.Spectroscopy.PeakFitting
@@ -48,6 +53,22 @@ namespace Altaxo.Gui.Science.Spectroscopy.PeakFitting
       }
     }
 
+    protected void EhFitFunctionChanged(Type type)
+    {
+      if (type is not null && _currentFitFunction?.GetType() != type)
+      {
+        if (!_fitFunctionInstances.TryGetValue(type, out var fitFunction))
+        {
+          fitFunction = (IFitFunctionPeak)Activator.CreateInstance(type);
+          _fitFunctionInstances.Add(fitFunction.GetType(), fitFunction);
+        }
+
+        _currentFitFunction = fitFunction;
+        CmdConfigureFitFunction.OnCanExecuteChanged();
+      }
+    }
+
+    public RelayCommand CmdConfigureFitFunction => field ??= new RelayCommand(EhConfigureFitFunction, EhCanConfigureFitFunction);
 
     public QuantityWithUnitGuiEnvironment FitWidthScalingFactorEnvironment => RelationEnvironment.Instance;
 
@@ -99,5 +120,56 @@ namespace Altaxo.Gui.Science.Spectroscopy.PeakFitting
     #endregion
 
 
+    protected void InitializeFitFunctions(IFitFunctionPeak fitFunction)
+    {
+      var ftypeList = new SelectableListNodeList(
+          Altaxo.Main.Services.ReflectionService.GetNonAbstractSubclassesOf(typeof(IFitFunctionPeak))
+            .Select(t => new SelectableListNode(t.Name, t, false))
+            );
+      FitFunctions = new ItemsController<Type>(ftypeList, EhFitFunctionChanged);
+      FitFunctions.SelectedValue = fitFunction.GetType();
+      _currentFitFunction = fitFunction;
+      _fitFunctionInstances[fitFunction.GetType()] = fitFunction;
+    }
+
+
+    /// <summary>The currently selected fit function.</summary>
+    protected IFitFunctionPeak _currentFitFunction = new Altaxo.Calc.FitFunctions.Peaks.GaussAmplitude();
+
+    /// <summary>Keeps the configured fit functions. Key is the type, value is the instance.</summary>
+    protected Dictionary<Type, IFitFunctionPeak> _fitFunctionInstances = [];
+
+    protected void EhConfigureFitFunction()
+    {
+      if (!EhCanConfigureFitFunction())
+        return;
+
+      var controller = (IMVCAController)Current.Gui.GetController([_currentFitFunction], typeof(IMVCAController)) ??
+                       new PropertyGridController(_currentFitFunction);
+
+      if (controller is not null)
+      {
+        if (Current.Gui.ShowDialog(controller, "Configure fit function", showApplyButton: false))
+        {
+          _currentFitFunction = (IFitFunctionPeak)controller.ModelObject;
+          _fitFunctionInstances[_currentFitFunction.GetType()] = _currentFitFunction;
+        }
+      }
+    }
+
+    protected bool EhCanConfigureFitFunction()
+    {
+      if (_currentFitFunction is null)
+        return false;
+
+
+      var hash = PropertyGridController.GetNameAndTypeOfWritableProperties(_currentFitFunction)
+                 .Select(e => e.Name)
+                 .ToHashSet();
+
+      hash.Remove(nameof(IFitFunctionPeak.NumberOfTerms));
+      hash.Remove(nameof(IFitFunctionPeak.OrderOfBaselinePolynomial));
+      return hash.Count > 0;
+    }
   }
 }

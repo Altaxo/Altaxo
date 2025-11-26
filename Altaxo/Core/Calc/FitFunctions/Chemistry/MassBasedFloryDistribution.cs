@@ -339,17 +339,6 @@ namespace Altaxo.Calc.FitFunctions.Chemistry
       }
     }
 
-    public double[] GetInitialParametersFromHeightPositionAndWidthAtRelativeHeight(double height, double position, double width, double relativeHeight)
-    {
-      if (IndependentVariableIsDecadicLogarithm)
-      {
-        position = Math.Pow(10, position);
-      }
-      var tau = 2 * MolecularWeightOfMonomerUnit / position;
-      var area = height / (lambda * 4 * Math.Exp(-2));
-      return [area, tau];
-    }
-
     public (IReadOnlyList<double?>? LowerBounds, IReadOnlyList<double?>? UpperBounds) GetParameterBoundariesForPositivePeaks(double? minimalPosition = null, double? maximalPosition = null, double? minimalFWHM = null, double? maximalFWHM = null)
     {
       var lowerBounds = new double?[NumberOfParameters];
@@ -384,46 +373,88 @@ namespace Altaxo.Calc.FitFunctions.Chemistry
       return (null, null);
     }
 
+    public double[] GetInitialParametersFromHeightPositionAndWidthAtRelativeHeight(double height, double position, double width, double relativeHeight)
+    {
+      if (IndependentVariableIsDecadicLogarithm)
+      {
+        position = Math.Pow(10, position);
+      }
+      var tau = 2 * MolecularWeightOfMonomerUnit / position;
+      var area = height / (lambda * 4 * Math.Exp(-2));
+      return [area, tau];
+    }
+
     public (double Position, double Area, double Height, double FWHM) GetPositionAreaHeightFWHMFromSinglePeakParameters(IReadOnlyList<double> parameters)
     {
+      //leftXX and rightXX are ProductLog[-(1/(Sqrt[2]*E))] and ProductLog[-1, -(1/(Sqrt[2]*E))]
       const double leftXX = 0.76124022935440305941; // while the peak maximum is at xx=2, the FWHM is at xx=0.76124022935440305941 and xx=4.1559209002009059020
       const double rightXX = 4.1559209002009059020;
 
       var area = parameters[0];
+      var tau = parameters[1];
+
       var height = area * lambda * 4 * Math.Exp(-2);
-      var position = 2 * MolecularWeightOfMonomerUnit / parameters[1];
-      var width = (rightXX - leftXX) * MolecularWeightOfMonomerUnit / parameters[1];
+
+      double position, width;
+      if (IndependentVariableIsDecadicLogarithm)
+      {
+        position = Math.Log10(2 * MolecularWeightOfMonomerUnit / tau);
+        width = Math.Log10(rightXX) - Math.Log10(leftXX);
+      }
+      else
+      {
+        position = 2 * MolecularWeightOfMonomerUnit / tau;
+        width = (rightXX - leftXX) * MolecularWeightOfMonomerUnit / tau;
+      }
 
       return (position, area, height, width);
     }
 
     public (double Position, double PositionStdDev, double Area, double AreaStdDev, double Height, double HeightStdDev, double FWHM, double FWHMStdDev) GetPositionAreaHeightFWHMFromSinglePeakParameters(IReadOnlyList<double> parameters, IROMatrix<double>? cv)
     {
+      //leftXX and rightXX are ProductLog[-(1/(Sqrt[2]*E))] and ProductLog[-1, -(1/(Sqrt[2]*E))]
       const double leftXX = 0.76124022935440305941; // while the peak maximum is at xx=2, the FWHM is at xx=0.76124022935440305941 and xx=4.1559209002009059020
       const double rightXX = 4.1559209002009059020;
 
       var area = parameters[0];
+      var tau = parameters[1];
+
       double areaVar = 0;
-      var height = area * lambda * 4 * Math.Exp(-2);
       double heightVar = 0;
-      var position = 2 * MolecularWeightOfMonomerUnit / parameters[1];
       double positionVar = 0;
-      var width = (rightXX - leftXX) * MolecularWeightOfMonomerUnit / parameters[1];
       double widthVar = 0;
+
+      var height = area * lambda * 4 * Math.Exp(-2);
 
       if (cv is not null)
       {
         areaVar = Math.Sqrt(cv[0, 0]);
         heightVar = areaVar * lambda * 4 * Math.Exp(-2);
-        positionVar = 2 * MolecularWeightOfMonomerUnit / (parameters[1] * parameters[1]) * Math.Sqrt(cv[1, 1]);
-        widthVar = (rightXX - leftXX) * MolecularWeightOfMonomerUnit / (parameters[1] * parameters[1]) * Math.Sqrt(cv[1, 1]);
       }
 
+      double position, width;
+      if (IndependentVariableIsDecadicLogarithm)
+      {
+        position = Math.Log10(2 * MolecularWeightOfMonomerUnit / tau);
+        width = Math.Log10(rightXX) - Math.Log10(leftXX);
+        if (cv is not null)
+        {
+          positionVar = 2 * MolecularWeightOfMonomerUnit / (tau * tau) * Math.Sqrt(cv[1, 1]);
+          widthVar = 0;
+        }
+      }
+      else
+      {
+        position = 2 * MolecularWeightOfMonomerUnit / parameters[1];
+        width = (rightXX - leftXX) * MolecularWeightOfMonomerUnit / tau;
+        if (cv is not null)
+        {
+          positionVar = 2 * MolecularWeightOfMonomerUnit / (tau * tau) * Math.Sqrt(cv[1, 1]);
+          widthVar = (rightXX - leftXX) * MolecularWeightOfMonomerUnit / (tau * tau) * Math.Sqrt(cv[1, 1]);
+        }
+      }
       return (position, positionVar, area, areaVar, height, heightVar, width, widthVar);
     }
-
-
-
     #endregion
   }
 

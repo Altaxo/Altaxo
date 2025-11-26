@@ -24,10 +24,6 @@
 
 using System;
 using System.Collections.Generic;
-using System.Linq;
-using Altaxo.Calc.FitFunctions.Peaks;
-using Altaxo.Collections;
-using Altaxo.Gui.Common;
 using Altaxo.Science.Spectroscopy.PeakFitting;
 using Altaxo.Units;
 
@@ -37,7 +33,7 @@ namespace Altaxo.Gui.Science.Spectroscopy.PeakFitting
 
   [UserControllerForObject(typeof(PeakFittingByIncrementalPeakAddition))]
   [ExpectedTypeOfView(typeof(IPeakFittingByIncrementalPeakAdditionView))]
-  public class PeakFittingByIncrementalPeakAdditionController : MVCANControllerEditImmutableDocBase<PeakFittingByIncrementalPeakAddition, IPeakFittingByIncrementalPeakAdditionView>
+  public class PeakFittingByIncrementalPeakAdditionController : PeakFittingBaseController<PeakFittingByIncrementalPeakAddition, IPeakFittingByIncrementalPeakAdditionView>
   {
     public override IEnumerable<ControllerAndSetNullMethod> GetSubControllers()
     {
@@ -45,21 +41,6 @@ namespace Altaxo.Gui.Science.Spectroscopy.PeakFitting
     }
 
     #region Bindings
-
-    private ItemsController<Type> _fitFunctions;
-
-    public ItemsController<Type> FitFunctions
-    {
-      get => _fitFunctions;
-      set
-      {
-        if (!(_fitFunctions == value))
-        {
-          _fitFunctions = value;
-          OnPropertyChanged(nameof(FitFunctions));
-        }
-      }
-    }
 
     private int _orderOfBaselinePolynomial;
 
@@ -140,54 +121,6 @@ namespace Altaxo.Gui.Science.Spectroscopy.PeakFitting
       }
     }
 
-    private bool _isMinimalFWHMValueInXUnits;
-
-    public bool IsMinimalFWHMValueInXUnits
-    {
-      get => _isMinimalFWHMValueInXUnits;
-      set
-      {
-        if (!(_isMinimalFWHMValueInXUnits == value))
-        {
-          _isMinimalFWHMValueInXUnits = value;
-          OnPropertyChanged(nameof(IsMinimalFWHMValueInXUnits));
-        }
-      }
-    }
-
-    private double _minimalFWHMValue;
-
-    public double MinimalFWHMValue
-    {
-      get => _minimalFWHMValue;
-      set
-      {
-        if (!(_minimalFWHMValue == value))
-        {
-          _minimalFWHMValue = value;
-          OnPropertyChanged(nameof(MinimalFWHMValue));
-        }
-      }
-    }
-
-    public QuantityWithUnitGuiEnvironment FitWidthScalingFactorEnvironment => RelationEnvironment.Instance;
-
-
-    private DimensionfulQuantity _fitWidthScalingFactor;
-
-    public DimensionfulQuantity FitWidthScalingFactor
-    {
-      get => _fitWidthScalingFactor;
-      set
-      {
-        if (!(_fitWidthScalingFactor == value))
-        {
-          _fitWidthScalingFactor = value;
-          OnPropertyChanged(nameof(FitWidthScalingFactor));
-        }
-      }
-    }
-
     private DimensionfulQuantity _prunePeaksSumChiSquareFactor;
 
     public DimensionfulQuantity PrunePeaksSumChiSquareFactor
@@ -212,12 +145,7 @@ namespace Altaxo.Gui.Science.Spectroscopy.PeakFitting
 
       if (initData)
       {
-        var ftypeList = new SelectableListNodeList(
-          Altaxo.Main.Services.ReflectionService.GetNonAbstractSubclassesOf(typeof(IFitFunctionPeak))
-            .Select(t => new SelectableListNode(t.Name, t, false))
-            );
-        FitFunctions = new ItemsController<Type>(ftypeList);
-        FitFunctions.SelectedValue = _doc.FitFunction.GetType();
+        InitializeFitFunctions(_doc.FitFunction);
 
         OrderOfBaselinePolynomial = _doc.OrderOfBaselinePolynomial;
 
@@ -244,7 +172,7 @@ namespace Altaxo.Gui.Science.Spectroscopy.PeakFitting
       {
         _doc = _doc with
         {
-          FitFunction = (IFitFunctionPeak)Activator.CreateInstance(FitFunctions.SelectedValue),
+          FitFunction = _currentFitFunction,
           OrderOfBaselinePolynomial = OrderOfBaselinePolynomial,
           MaximumNumberOfPeaks = MaximumNumberOfPeaks,
           MinimalRelativeHeight = MinimalRelativeHeight.AsValueInSIUnits,
@@ -263,7 +191,5 @@ namespace Altaxo.Gui.Science.Spectroscopy.PeakFitting
 
       return ApplyEnd(true, disposeController);
     }
-
-
   }
 }
