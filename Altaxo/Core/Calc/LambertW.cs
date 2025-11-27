@@ -46,10 +46,23 @@ namespace Altaxo.Calc
     /// <returns>The value of the principal branch of the Lambert W function at the specified input.</returns>
     public static double W0(double z, int maxIter = 50, double tol = 1e-12)
     {
-      // Startwert: asymptotische Näherung für große z
-      double w = (z > 3.0)
-          ? Math.Log(z) - Math.Log(Math.Log(z))
-          : z; // für kleine z reicht Taylor-Näherung
+      if (!(z >= -1 / Math.E))
+        throw new ArgumentOutOfRangeException(nameof(z), "Argument must be greater to or equal than 1/e");
+
+      var d = z + 1 / Math.E;
+      if (d <= Math.Sqrt(tol)) // if we are close to -1/e, then the following formula will suffice
+      {
+        double p = Math.Sqrt(2 * d * Math.E);
+        return -1 + (((((769 / 17280d * p - 43 / 540d) * p + 11 / 72d) * p - 1 / 3d) * p + 1) * p);
+      }
+
+      // w is the start value for Newton-Raphson
+      double w = z switch
+      {
+        > 3 => Math.Log(z) - Math.Log(Math.Log(z)), // asymtotic for big z
+        >= 0 => z,                                  // simply z 
+        _ => ((((-8 / 3d) * z + 1.5) * z - 1) * z + 1) * z // for negative valöues
+      };
 
       return Newton(z, w, maxIter, tol);
     }
@@ -68,13 +81,13 @@ namespace Altaxo.Calc
     /// <exception cref="ArgumentOutOfRangeException">Thrown when z is outside the valid range of -1/e &lt;= z &lt; 0.</exception>
     public static double Wm1(double z, int maxIter = 50, double tol = 1e-12)
     {
-      if (z > 0 || z < -1.0 / Math.E)
+      if (!(z < 0 && z >= -1 / Math.E))
         throw new ArgumentOutOfRangeException(nameof(z), "Nur für -1/e <= z < 0 definiert.");
 
       // Start value: asymptotic approximation for z close to 0
       double w = Math.Log(-z) - Math.Log(-Math.Log(-z));
 
-      return Newton(z, w, maxIter, tol);
+      return w == -1 ? w : Newton(z, w, maxIter, tol);
     }
 
     /// <summary>
