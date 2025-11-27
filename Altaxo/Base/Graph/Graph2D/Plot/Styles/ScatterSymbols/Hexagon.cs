@@ -25,13 +25,8 @@
 #nullable enable
 using System;
 using System.Collections.Generic;
-using System.Drawing;
-using System.Drawing.Drawing2D;
-using System.Linq;
-using System.Text;
 using Altaxo.Drawing;
-using Altaxo.Geometry;
-using ClipperLib;
+using Clipper2Lib;
 
 namespace Altaxo.Graph.Graph2D.Plot.Styles.ScatterSymbols
 {
@@ -72,16 +67,16 @@ namespace Altaxo.Graph.Graph2D.Plot.Styles.ScatterSymbols
     {
     }
 
-    public override List<List<ClipperLib.IntPoint>> GetCopyOfOuterPolygon()
+    public override Paths64 GetCopyOfOuterPolygon()
     {
-      var list = new List<ClipperLib.IntPoint>(6);
+      var list = new List<Point64>(6);
       for (int i = 0; i < 6; ++i)
       {
         var phi = Math.PI * (i / 3.0);
-        list.Add(new IntPoint((int)(ClipperScalingInt * Math.Cos(phi)), (int)(ClipperScalingInt * Math.Sin(phi))));
+        list.Add(new Point64((int)(ClipperScalingInt * Math.Cos(phi)), (int)(ClipperScalingInt * Math.Sin(phi))));
       }
 
-      return new List<List<ClipperLib.IntPoint>>(1) { list };
+      return new Paths64 { new Path64(list) };
     }
   }
 }

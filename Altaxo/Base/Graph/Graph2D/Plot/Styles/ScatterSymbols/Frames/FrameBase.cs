@@ -24,11 +24,8 @@
 
 #nullable enable
 using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
 using Altaxo.Drawing;
-using ClipperLib;
+using Clipper2Lib;
 
 namespace Altaxo.Graph.Graph2D.Plot.Styles.ScatterSymbols.Frames
 {
@@ -87,7 +84,7 @@ namespace Altaxo.Graph.Graph2D.Plot.Styles.ScatterSymbols.Frames
       return WithColor(color);
     }
 
-    public abstract List<List<IntPoint>> GetCopyOfClipperPolygon(double relativeWidth, List<List<IntPoint>> outerPolygon);
+    public abstract Paths64 GetCopyOfClipperPolygon(double relativeWidth, Paths64 outerPolygon);
 
     public override bool Equals(object? obj)
     {

@@ -23,11 +23,7 @@
 #endregion Copyright
 
 #nullable enable
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using Altaxo.Drawing;
+using Clipper2Lib;
 
 namespace Altaxo.Graph.Graph2D.Plot.Styles.ScatterSymbols.Insets
 {
@@ -56,28 +52,28 @@ namespace Altaxo.Graph.Graph2D.Plot.Styles.ScatterSymbols.Insets
 
     #endregion Serialization
 
-    public override List<List<ClipperLib.IntPoint>> GetCopyOfClipperPolygon(double relativeWidth)
+    public override Paths64 GetCopyOfClipperPolygon(double relativeWidth)
     {
       var w = relativeWidth * ClipperScalingDouble;
       var h = ClipperScalingInt;
 
-      var list = new List<ClipperLib.IntPoint>(12)
+      var list = new Path64(12)
         {
-        new ClipperLib.IntPoint(-w, -h),
-        new ClipperLib.IntPoint(w, -h),
-        new ClipperLib.IntPoint(w, -w),
-        new ClipperLib.IntPoint(h, -w),
-        new ClipperLib.IntPoint(h, w),
-        new ClipperLib.IntPoint(w, w),
-        new ClipperLib.IntPoint(w, h),
-        new ClipperLib.IntPoint(-w, h),
-        new ClipperLib.IntPoint(-w, w),
-        new ClipperLib.IntPoint(-h, w),
-        new ClipperLib.IntPoint(-h, -w),
-        new ClipperLib.IntPoint(-w, -w),
+        new Point64(-w, -h),
+        new Point64(w, -h),
+        new Point64(w, -w),
+        new Point64(h, -w),
+        new Point64(h, w),
+        new Point64(w, w),
+        new Point64(w, h),
+        new Point64(-w, h),
+        new Point64(-w, w),
+        new Point64(-h, w),
+        new Point64(-h, -w),
+        new Point64(-w, -w),
       };
 
-      return new List<List<ClipperLib.IntPoint>>(1) { list };
+      return [list];
     }
   }
 }

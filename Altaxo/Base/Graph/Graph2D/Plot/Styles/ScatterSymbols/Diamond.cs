@@ -23,15 +23,8 @@
 #endregion Copyright
 
 #nullable enable
-using System;
-using System.Collections.Generic;
-using System.Drawing;
-using System.Drawing.Drawing2D;
-using System.Linq;
-using System.Text;
 using Altaxo.Drawing;
-using Altaxo.Geometry;
-using ClipperLib;
+using Clipper2Lib;
 
 namespace Altaxo.Graph.Graph2D.Plot.Styles.ScatterSymbols
 {
@@ -72,18 +65,18 @@ namespace Altaxo.Graph.Graph2D.Plot.Styles.ScatterSymbols
     {
     }
 
-    public override List<List<ClipperLib.IntPoint>> GetCopyOfOuterPolygon()
+    public override Paths64 GetCopyOfOuterPolygon()
     {
       int h = ClipperScalingInt;
 
-      return new List<List<ClipperLib.IntPoint>>(1)
+      return new Paths64
       {
-      new List<ClipperLib.IntPoint>(4)
+      new Path64
       {
-      new ClipperLib.IntPoint(0, -h),
-      new ClipperLib.IntPoint(h, 0),
-      new ClipperLib.IntPoint(0, h),
-      new ClipperLib.IntPoint(-h, 0)
+      new Point64(0, -h),
+      new Point64(h, 0),
+      new Point64(0, h),
+      new Point64(-h, 0)
       }};
     }
   }

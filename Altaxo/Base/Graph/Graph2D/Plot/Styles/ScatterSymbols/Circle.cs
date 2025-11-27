@@ -25,11 +25,8 @@
 #nullable enable
 using System;
 using System.Collections.Generic;
-using System.Linq;
-using System.Text;
 using Altaxo.Drawing;
-using Altaxo.Geometry;
-using ClipperLib;
+using Clipper2Lib;
 
 namespace Altaxo.Graph.Graph2D.Plot.Styles.ScatterSymbols
 {
@@ -70,17 +67,17 @@ namespace Altaxo.Graph.Graph2D.Plot.Styles.ScatterSymbols
     {
     }
 
-    public override List<List<ClipperLib.IntPoint>> GetCopyOfOuterPolygon()
+    public override Paths64 GetCopyOfOuterPolygon()
     {
       double radius = ClipperScalingDouble * 0.797884560802865; // we decrease the radius a little, so that the size of this symbol "feels" roughly the same as for the square (has same area)
-      var list = new List<ClipperLib.IntPoint>(360);
+      var list = new List<Point64>(360);
       for (int i = 0; i < 360; ++i)
       {
         var phi = Math.PI * i / 180.0;
-        list.Add(new IntPoint((int)(radius * Math.Cos(phi)), (int)(radius * Math.Sin(phi))));
+        list.Add(new Point64((int)(radius * Math.Cos(phi)), (int)(radius * Math.Sin(phi))));
       }
 
-      return new List<List<ClipperLib.IntPoint>>(1) { list };
+      return new Paths64 { new Path64(list) };
     }
   }
 }

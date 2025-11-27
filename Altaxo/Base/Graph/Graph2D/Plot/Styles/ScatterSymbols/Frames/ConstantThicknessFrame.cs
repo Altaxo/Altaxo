@@ -23,12 +23,7 @@
 #endregion Copyright
 
 #nullable enable
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using Altaxo.Drawing;
-using ClipperLib;
+using Clipper2Lib;
 
 namespace Altaxo.Graph.Graph2D.Plot.Styles.ScatterSymbols.Frames
 {
@@ -57,13 +52,13 @@ namespace Altaxo.Graph.Graph2D.Plot.Styles.ScatterSymbols.Frames
 
     #endregion Serialization
 
-    public override List<List<IntPoint>> GetCopyOfClipperPolygon(double relativeWidth, List<List<IntPoint>> outerPolygon)
+    public override Paths64 GetCopyOfClipperPolygon(double relativeWidth, Paths64 outerPolygon)
     {
       var delta = (-2 * relativeWidth) * ClosedSymbolBase.ClipperScalingInt;
       var clipper = new ClipperOffset();
-      clipper.AddPaths(outerPolygon, JoinType.jtMiter, EndType.etClosedPolygon);
-      var result = new List<List<IntPoint>>();
-      clipper.Execute(ref result, delta);
+      clipper.AddPaths(outerPolygon, JoinType.Miter, EndType.Polygon);
+      var result = new Paths64();
+      clipper.Execute(delta, result);
       return result;
     }
   }

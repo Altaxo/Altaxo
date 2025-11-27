@@ -25,13 +25,8 @@
 #nullable enable
 using System;
 using System.Collections.Generic;
-using System.Drawing;
-using System.Drawing.Drawing2D;
-using System.Linq;
-using System.Text;
 using Altaxo.Drawing;
-using Altaxo.Geometry;
-using ClipperLib;
+using Clipper2Lib;
 
 namespace Altaxo.Graph.Graph2D.Plot.Styles.ScatterSymbols
 {
@@ -72,20 +67,20 @@ namespace Altaxo.Graph.Graph2D.Plot.Styles.ScatterSymbols
     {
     }
 
-    private ClipperLib.IntPoint GetPoint(double w, double h)
+    private Point64 GetPoint(double w, double h)
     {
       const double Sqrt05 = 0.707106781186547524400844;
-      return new ClipperLib.IntPoint((int)(Sqrt05 * (w + h) * ClipperScalingDouble), (int)(Sqrt05 * (h - w) * ClipperScalingDouble));
+      return new Point64((int)(Sqrt05 * (w + h) * ClipperScalingDouble), (int)(Sqrt05 * (h - w) * ClipperScalingDouble));
     }
 
-    public override List<List<ClipperLib.IntPoint>> GetCopyOfOuterPolygon(double relativeStructureWidth)
+    public override Paths64 GetCopyOfOuterPolygon(double relativeStructureWidth)
     {
       relativeStructureWidth = Altaxo.Calc.RMath.ClampToInterval(relativeStructureWidth, 0, 0.5);
 
       var h = Math.Sqrt(1 - relativeStructureWidth * relativeStructureWidth);
       var w = relativeStructureWidth;
 
-      var list = new List<ClipperLib.IntPoint>(12)
+      var list = new List<Point64>(12)
         {
         GetPoint(-w, -h),
         GetPoint(w, -h),
@@ -101,7 +96,7 @@ namespace Altaxo.Graph.Graph2D.Plot.Styles.ScatterSymbols
         GetPoint(-w, -w),
       };
 
-      return new List<List<ClipperLib.IntPoint>>(1) { list };
+      return new Paths64 { new Path64(list) };
     }
   }
 }

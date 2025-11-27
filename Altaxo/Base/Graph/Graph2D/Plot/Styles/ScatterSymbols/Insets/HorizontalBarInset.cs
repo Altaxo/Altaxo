@@ -24,10 +24,7 @@
 
 #nullable enable
 using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using Altaxo.Drawing;
+using Clipper2Lib;
 
 namespace Altaxo.Graph.Graph2D.Plot.Styles.ScatterSymbols.Insets
 {
@@ -56,21 +53,19 @@ namespace Altaxo.Graph.Graph2D.Plot.Styles.ScatterSymbols.Insets
 
     #endregion Serialization
 
-    public override List<List<ClipperLib.IntPoint>> GetCopyOfClipperPolygon(double structureScale)
+    public override Paths64 GetCopyOfClipperPolygon(double structureScale)
     {
       var h = ClipperScalingInt;
       var w = (int)Math.Round(0.25 + structureScale * ClipperScalingInt);
 
-      return new List<List<ClipperLib.IntPoint>>(1)
-      {
-        new List<ClipperLib.IntPoint>(4)
+      return [
+        new Path64(4)
         {
-        new ClipperLib.IntPoint( -h, -w),
-        new ClipperLib.IntPoint( h, -w),
-        new ClipperLib.IntPoint( h, w),
-        new ClipperLib.IntPoint( -h, w)
-      }
-      };
+        new Point64( -h, -w),
+        new Point64( h, -w),
+        new Point64( h, w),
+        new Point64( -h, w)
+      }];
     }
   }
 }

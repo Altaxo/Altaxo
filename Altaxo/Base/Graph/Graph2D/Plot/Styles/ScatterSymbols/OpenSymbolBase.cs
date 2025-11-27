@@ -24,12 +24,8 @@
 
 #nullable enable
 using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using Altaxo.Collections;
 using Altaxo.Drawing;
-using Altaxo.Graph.Graph2D.Plot.Groups;
+using Clipper2Lib;
 
 namespace Altaxo.Graph.Graph2D.Plot.Styles.ScatterSymbols
 {
@@ -69,7 +65,7 @@ namespace Altaxo.Graph.Graph2D.Plot.Styles.ScatterSymbols
     /// Gets a copy of the outer symbol shape as polygon(s).
     /// </summary>
     /// <returns>Polygon(s) of the outer symbol shape.</returns>
-    public abstract List<List<ClipperLib.IntPoint>> GetCopyOfOuterPolygon(double relativeStructureWidth);
+    public abstract Paths64 GetCopyOfOuterPolygon(double relativeStructureWidth);
 
     protected OpenSymbolBase()
     {
@@ -160,9 +156,9 @@ namespace Altaxo.Graph.Graph2D.Plot.Styles.ScatterSymbols
 
     public void CalculatePolygons(
       double? relativeStructureWidth,
-      out List<List<ClipperLib.IntPoint>>? framePolygon,
-      out List<List<ClipperLib.IntPoint>>? insetPolygon,
-      out List<List<ClipperLib.IntPoint>>? fillPolygon)
+      out Paths64? framePolygon,
+      out Paths64? insetPolygon,
+      out Paths64? fillPolygon)
 
     {
       insetPolygon = null;

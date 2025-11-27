@@ -24,11 +24,8 @@
 
 #nullable enable
 using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
 using Altaxo.Drawing;
-using Altaxo.Geometry;
+using Clipper2Lib;
 
 namespace Altaxo.Graph.Graph2D.Plot.Styles
 {
@@ -96,8 +93,8 @@ namespace Altaxo.Graph.Graph2D.Plot.Styles
     /// <param name="fillPolygon">On return: the fill polygon (null if no fill shape present).</param>
     void CalculatePolygons(
       double? relativeStructureWidth,
-      out List<List<ClipperLib.IntPoint>>? framePolygon,
-      out List<List<ClipperLib.IntPoint>>? insetPolygon,
-      out List<List<ClipperLib.IntPoint>>? fillPolygon);
+      out Paths64? framePolygon,
+      out Paths64? insetPolygon,
+      out Paths64? fillPolygon);
   }
 }

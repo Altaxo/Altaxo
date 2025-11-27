@@ -24,14 +24,8 @@
 
 #nullable enable
 using System;
-using System.Collections.Generic;
-using System.Drawing;
-using System.Drawing.Drawing2D;
-using System.Linq;
-using System.Text;
 using Altaxo.Drawing;
-using Altaxo.Geometry;
-using ClipperLib;
+using Clipper2Lib;
 
 namespace Altaxo.Graph.Graph2D.Plot.Styles.ScatterSymbols
 {
@@ -72,7 +66,7 @@ namespace Altaxo.Graph.Graph2D.Plot.Styles.ScatterSymbols
     {
     }
 
-    public override List<List<ClipperLib.IntPoint>> GetCopyOfOuterPolygon(double relativeStructureWidth)
+    public override Paths64 GetCopyOfOuterPolygon(double relativeStructureWidth)
     {
       var innerRadiusRel = relativeStructureWidth / (2 * Math.Sin(Math.PI / 8));
 
@@ -84,18 +78,18 @@ namespace Altaxo.Graph.Graph2D.Plot.Styles.ScatterSymbols
 
       double phi;
 
-      var list = new List<ClipperLib.IntPoint>(24);
+      var list = new Path64(24);
       for (int i = 0; i < 8; ++i)
       {
         phi = -innerStartAngle + Math.PI * (i / 4.0);
-        list.Add(new IntPoint((int)(innerRadius * Math.Cos(phi)), (int)(innerRadius * Math.Sin(phi))));
+        list.Add(new Point64((int)(innerRadius * Math.Cos(phi)), (int)(innerRadius * Math.Sin(phi))));
         phi = -outerStartAngle + Math.PI * (i / 4.0);
-        list.Add(new IntPoint((int)(outerRadius * Math.Cos(phi)), (int)(outerRadius * Math.Sin(phi))));
+        list.Add(new Point64((int)(outerRadius * Math.Cos(phi)), (int)(outerRadius * Math.Sin(phi))));
         phi = outerStartAngle + Math.PI * (i / 4.0);
-        list.Add(new IntPoint((int)(outerRadius * Math.Cos(phi)), (int)(outerRadius * Math.Sin(phi))));
+        list.Add(new Point64((int)(outerRadius * Math.Cos(phi)), (int)(outerRadius * Math.Sin(phi))));
       }
 
-      return new List<List<ClipperLib.IntPoint>>(1) { list };
+      return [list];
     }
   }
 }

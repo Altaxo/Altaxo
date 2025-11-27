@@ -23,11 +23,8 @@
 #endregion Copyright
 
 #nullable enable
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
 using Altaxo.Drawing;
+using Clipper2Lib;
 
 namespace Altaxo.Graph.Graph2D.Plot.Styles.ScatterSymbols
 {
@@ -37,6 +34,6 @@ namespace Altaxo.Graph.Graph2D.Plot.Styles.ScatterSymbols
 
     IScatterSymbolInset WithColor(NamedColor color);
 
-    List<List<ClipperLib.IntPoint>> GetCopyOfClipperPolygon(double relativeWidth);
+    Paths64 GetCopyOfClipperPolygon(double relativeWidth);
   }
 }

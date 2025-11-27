@@ -24,16 +24,14 @@
 
 #nullable disable warnings
 using System;
-using System.Collections.Generic;
 using System.Linq;
-using System.Text;
 using System.Windows.Data;
 using System.Windows.Media;
 using Altaxo.Drawing;
-using Altaxo.Graph.Graph2D.Plot.Groups;
 using Altaxo.Graph.Graph2D.Plot.Styles;
 using Altaxo.Graph.Graph2D.Plot.Styles.ScatterSymbols;
 using Altaxo.Graph.Graph2D.Plot.Styles.ScatterSymbols.Frames;
+using Clipper2Lib;
 
 namespace Altaxo.Gui.Graph.Gdi.Plot.Styles
 {
@@ -67,7 +65,7 @@ namespace Altaxo.Gui.Graph.Gdi.Plot.Styles
       return _innerConverter.Convert(symbol, targetType, parameter, culture);
     }
 
-    private PathFigure GetPathFigure(List<ClipperLib.IntPoint> polygon, double symbolSize)
+    private PathFigure GetPathFigure(Path64 polygon, double symbolSize)
     {
       if (polygon is null || polygon.Count <= 2)
         return null;
@@ -77,7 +75,7 @@ namespace Altaxo.Gui.Graph.Gdi.Plot.Styles
         polygon.Skip(1).Select(pp => new LineSegment(new System.Windows.Point(pp.X * symbolSize * SymbolBase.InverseClipperScalingToSymbolSize1, -pp.Y * symbolSize * SymbolBase.InverseClipperScalingToSymbolSize1), false)), true);
     }
 
-    private PathGeometry GetPathGeometry(List<List<ClipperLib.IntPoint>> polygon, double symbolSize)
+    private PathGeometry GetPathGeometry(Paths64 polygon, double symbolSize)
     {
       return new PathGeometry(polygon.Where(p => p is not null && p.Count > 2).Select(p => GetPathFigure(p, symbolSize)));
     }

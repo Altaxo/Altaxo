@@ -22,6 +22,7 @@
 
 #endregion Copyright
 
+#if false
 using System.Collections.Generic;
 using ClipperLib;
 using Xunit;
@@ -86,3 +87,4 @@ namespace Altaxo.ClipperLib
     }
   }
 }
+#endif

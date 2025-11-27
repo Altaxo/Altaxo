@@ -23,12 +23,8 @@
 #endregion Copyright
 
 #nullable enable
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
 using Altaxo.Drawing;
-using ClipperLib;
+using Clipper2Lib;
 
 namespace Altaxo.Graph.Graph2D.Plot.Styles.ScatterSymbols
 {
@@ -117,7 +113,7 @@ namespace Altaxo.Graph.Graph2D.Plot.Styles.ScatterSymbols
       return this;
     }
 
-    public void CalculatePolygons(double? relativeStructureWidth, out List<List<IntPoint>>? framePolygon, out List<List<IntPoint>>? insetPolygon, out List<List<IntPoint>>? fillPolygon)
+    public void CalculatePolygons(double? relativeStructureWidth, out Paths64? framePolygon, out Paths64? insetPolygon, out Paths64? fillPolygon)
     {
       framePolygon = null;
       insetPolygon = null;

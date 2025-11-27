@@ -26,15 +26,13 @@
 using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
+using Clipper2Lib;
 
 namespace Altaxo.Drawing.D3D
 {
   using System.Diagnostics.CodeAnalysis;
   using Altaxo.Geometry;
   using Drawing;
-  using Drawing.D3D;
 
   public class FontManager3D
   {
@@ -206,19 +204,19 @@ namespace Altaxo.Drawing.D3D
 
       var rawOutline = GetRawCharacterOutline(textChar, font, FontSizeForCaching);
 
-      var clipperPolygonsInput = new List<List<ClipperLib.IntPoint>>();
+      var clipperPolygonsInput = new Paths64();
 
-      var sharpPoints = new HashSet<ClipperLib.IntPoint>();
-      var allPoints = new HashSet<ClipperLib.IntPoint>(); // allPoints to determine whether after the simplification new points were added
+      var sharpPoints = new HashSet<Point64>();
+      var allPoints = new HashSet<Point64>(); // allPoints to determine whether after the simplification new points were added
 
       foreach (var polygon in rawOutline.Outline)
       {
         foreach (var p in polygon.SharpPoints)
         {
-          sharpPoints.Add(new ClipperLib.IntPoint(p.X * 65536, p.Y * 65536));
+          sharpPoints.Add(new Point64(p.X * 65536, p.Y * 65536));
         }
 
-        var clipperPolygon = new List<ClipperLib.IntPoint>(polygon.Points.Select((x) => new ClipperLib.IntPoint(x.X * 65536, x.Y * 65536)));
+        var clipperPolygon = new Path64(polygon.Points.Select((x) => new Point64(x.X * 65536, x.Y * 65536)));
         clipperPolygonsInput.Add(clipperPolygon);
 
         foreach (var clipperPoint in clipperPolygon)
@@ -227,16 +225,16 @@ namespace Altaxo.Drawing.D3D
 
       //clipperPolygons = ClipperLib.Clipper.SimplifyPolygons(clipperPolygons, ClipperLib.PolyFillType.pftEvenOdd);
 
-      var clipperPolygons = new ClipperLib.PolyTree();
-      var clipper = new ClipperLib.Clipper
+      var clipperPolygons = new PolyTree64();
+      var clipper = new Clipper64
       {
-        StrictlySimple = true
       };
-      clipper.AddPaths(clipperPolygonsInput, ClipperLib.PolyType.ptSubject, true);
-      clipper.Execute(ClipperLib.ClipType.ctUnion, clipperPolygons, ClipperLib.PolyFillType.pftNonZero, ClipperLib.PolyFillType.pftNegative);
+
+      clipper.AddSubject(clipperPolygonsInput);
+      clipper.Execute(ClipType.Union, FillRule.NonZero, clipperPolygons);
 
       var polygons = new List<PolygonClosedD2D>();
-      var dictClipperNodeToNode = new Dictionary<ClipperLib.PolyNode, PolygonClosedD2D>(); // helper dictionary
+      var dictClipperNodeToNode = new Dictionary<PolyPath64, PolygonClosedD2D>(); // helper dictionary
       ClipperPolyTreeToPolygonListRecursively(clipperPolygons, sharpPoints, allPoints, polygons, dictClipperNodeToNode);
 
       var result = rawOutline;
@@ -245,12 +243,12 @@ namespace Altaxo.Drawing.D3D
       return result;
     }
 
-    private static void ClipperPolyTreeToPolygonListRecursively(ClipperLib.PolyNode node, HashSet<ClipperLib.IntPoint> sharpPoints, HashSet<ClipperLib.IntPoint> allPoints, List<PolygonClosedD2D> polygonList, IDictionary<ClipperLib.PolyNode, PolygonClosedD2D> dictClipperNodeToNode)
+    private static void ClipperPolyTreeToPolygonListRecursively(PolyPath64 node, HashSet<Point64> sharpPoints, HashSet<Point64> allPoints, List<PolygonClosedD2D> polygonList, IDictionary<PolyPath64, PolygonClosedD2D> dictClipperNodeToNode)
     {
-      if (node.Contour is not null && node.Contour.Count != 0)
+      if (node.Polygon is not null && node.Polygon.Count != 0)
       {
-        var pointsInThisPolygon = node.Contour.Select(clipperPt => new PointD2D(clipperPt.X / 65536.0, clipperPt.Y / 65536.0));
-        var sharpPointsInThisPolygon = node.Contour.Where(clipperPt => sharpPoints.Contains(clipperPt)).Select(clipperPt => new PointD2D(clipperPt.X / 65536.0, clipperPt.Y / 65536.0));
+        var pointsInThisPolygon = node.Polygon.Select(clipperPt => new PointD2D(clipperPt.X / 65536.0, clipperPt.Y / 65536.0));
+        var sharpPointsInThisPolygon = node.Polygon.Where(clipperPt => sharpPoints.Contains(clipperPt)).Select(clipperPt => new PointD2D(clipperPt.X / 65536.0, clipperPt.Y / 65536.0));
 
         var polygon = new PolygonClosedD2D(pointsInThisPolygon.ToArray(), new HashSet<PointD2D>(sharpPointsInThisPolygon))
         {
@@ -266,9 +264,9 @@ namespace Altaxo.Drawing.D3D
         dictClipperNodeToNode.Add(node, polygon);
       }
 
-      if (0 != node.ChildCount)
+      if (0 != node.Count)
       {
-        foreach (var childNode in node.Childs)
+        foreach (PolyPath64 childNode in node)
         {
           ClipperPolyTreeToPolygonListRecursively(childNode, sharpPoints, allPoints, polygonList, dictClipperNodeToNode);
         }

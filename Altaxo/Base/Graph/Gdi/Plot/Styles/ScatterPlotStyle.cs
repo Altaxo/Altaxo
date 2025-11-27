@@ -35,6 +35,7 @@ namespace Altaxo.Graph.Gdi.Plot.Styles
   using System.Diagnostics.CodeAnalysis;
   using Altaxo.Data;
   using Altaxo.Main;
+  using Clipper2Lib;
   using Drawing;
   using Drawing.ColorManagement;
   using Graph.Plot.Data;
@@ -625,7 +626,7 @@ namespace Altaxo.Graph.Gdi.Plot.Styles
 
     #endregion I2DPlotItem Members
 
-    public static PointF[] ToPointFArray(List<ClipperLib.IntPoint> list, double symbolSize)
+    public static PointF[] ToPointFArray(List<Point64> list, double symbolSize)
     {
       var scale = SymbolBase.InverseClipperScalingToSymbolSize1 * symbolSize;
       return list.Select(
