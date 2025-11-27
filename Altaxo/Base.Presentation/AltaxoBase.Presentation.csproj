@@ -39,6 +39,9 @@
   </ItemGroup>
 
   <ItemGroup>
+    <Compile Update="Gui\Calc\FitFunctions\Chemistry\MassBasedFloryDistributionControl.xaml.cs">
+      <SubType>Code</SubType>
+    </Compile>
     <Compile Update="Gui\Calc\Interpolation\NonlinearFitAsInterpolationControl.xaml.cs">
       <SubType>Code</SubType>
     </Compile>

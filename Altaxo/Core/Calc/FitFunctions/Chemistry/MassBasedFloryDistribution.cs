@@ -38,7 +38,7 @@ namespace Altaxo.Calc.FitFunctions.Chemistry
   [FitFunctionClass]
   public record MassBasedFloryDistribution : IFitFunctionWithDerivative, IFitFunctionPeak, IImmutable
   {
-    private const double lambda = 2.3025850929940456840; // Log(10)
+    private const double _lnOf10 = 2.3025850929940456840; // Log(10)
 
     private const string ParameterBaseName0 = "A";
     private const string ParameterBaseName1 = "tau";
@@ -244,7 +244,7 @@ namespace Altaxo.Calc.FitFunctions.Chemistry
     public static double GetYOfOneTerm(double M, double area, double tau, double molecularMassMonomer)
     {
       var xx = tau * M / molecularMassMonomer;
-      return area * lambda * xx * xx * Math.Exp(-xx);
+      return area * _lnOf10 * xx * xx * Math.Exp(-xx);
     }
 
     void IFitFunction.Evaluate(double[] independent, double[] parameters, double[] FV)
@@ -320,7 +320,7 @@ namespace Altaxo.Calc.FitFunctions.Chemistry
           var tau = P[j + 1];
 
           var argtau = arg * tau;
-          var body = lambda * argtau * argtau * Math.Exp(-argtau);
+          var body = _lnOf10 * argtau * argtau * Math.Exp(-argtau);
 
           DY[r, j + 0] = body;
           DY[r, j + 1] = area * body * (2 / tau - arg);
@@ -380,7 +380,7 @@ namespace Altaxo.Calc.FitFunctions.Chemistry
         position = Math.Pow(10, position);
       }
       var tau = 2 * MolecularWeightOfMonomerUnit / position;
-      var area = height / (lambda * 4 * Math.Exp(-2));
+      var area = height / (_lnOf10 * 4 * Math.Exp(-2));
       return [area, tau];
     }
 
@@ -393,7 +393,7 @@ namespace Altaxo.Calc.FitFunctions.Chemistry
       var area = parameters[0];
       var tau = parameters[1];
 
-      var height = area * lambda * 4 * Math.Exp(-2);
+      var height = area * _lnOf10 * 4 * Math.Exp(-2);
 
       double position, width;
       if (IndependentVariableIsDecadicLogarithm)
@@ -424,12 +424,12 @@ namespace Altaxo.Calc.FitFunctions.Chemistry
       double positionVar = 0;
       double widthVar = 0;
 
-      var height = area * lambda * 4 * Math.Exp(-2);
+      var height = area * _lnOf10 * 4 * Math.Exp(-2);
 
       if (cv is not null)
       {
         areaVar = Math.Sqrt(cv[0, 0]);
-        heightVar = areaVar * lambda * 4 * Math.Exp(-2);
+        heightVar = areaVar * _lnOf10 * 4 * Math.Exp(-2);
       }
 
       double position, width;
@@ -439,7 +439,7 @@ namespace Altaxo.Calc.FitFunctions.Chemistry
         width = Math.Log10(rightXX) - Math.Log10(leftXX);
         if (cv is not null)
         {
-          positionVar = 2 * MolecularWeightOfMonomerUnit / (tau * tau) * Math.Sqrt(cv[1, 1]);
+          positionVar = Math.Sqrt(cv[1, 1]) / (tau * _lnOf10);
           widthVar = 0;
         }
       }
