@@ -42,7 +42,7 @@ namespace Altaxo.Calc.FitFunctions.Chemistry
       var expectedDerivativeWrtArea = 0.054093079695801119518;
       var expectedDerivativeWrta = 1015.0566404917080078;
 
-      var v = new MassBasedFloryDistribution { MolecularWeightOfMonomerUnit = MM, NumberOfTerms = 1 };
+      var v = new MassBasedFloryDistribution { MolecularWeightOfMonomerUnit = MM, NumberOfTerms = 1, IndependentVariableIsDecadicLogarithm = false };
       var parameters = new double[] { area, a };
 
       var X = Matrix<double>.Build.Dense(1, 1);
@@ -68,7 +68,7 @@ namespace Altaxo.Calc.FitFunctions.Chemistry
       expectedDerivativeWrtArea = 0.31508548830033083639;
       expectedDerivativeWrta = -15075.265187729328867;
 
-      v = new MassBasedFloryDistribution { MolecularWeightOfMonomerUnit = MM, NumberOfTerms = 1 };
+      v = new MassBasedFloryDistribution { MolecularWeightOfMonomerUnit = MM, NumberOfTerms = 1, IndependentVariableIsDecadicLogarithm = false };
       parameters = new double[] { area, a };
 
 

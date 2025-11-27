@@ -46,6 +46,7 @@ namespace Altaxo.Calc.FitFunctions.Chemistry
 
       var v = new MassBasedFloryDistributionWithFixedGaussianBroadening(1, -1)
       {
+        IndependentVariableIsDecadicLogarithm = false,
         MolecularWeightOfMonomerUnit = MM,
         PolynomialCoefficientsForSigma = [sigma],
         Accuracy = 1E-6,
@@ -78,6 +79,7 @@ namespace Altaxo.Calc.FitFunctions.Chemistry
 
       v = new MassBasedFloryDistributionWithFixedGaussianBroadening(1, -1)
       {
+        IndependentVariableIsDecadicLogarithm = false,
         MolecularWeightOfMonomerUnit = MM,
         PolynomialCoefficientsForSigma = [sigma],
       };

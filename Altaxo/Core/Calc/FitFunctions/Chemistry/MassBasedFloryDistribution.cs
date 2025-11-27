@@ -59,7 +59,7 @@ namespace Altaxo.Calc.FitFunctions.Chemistry
     /// If false, the independent variable is the molecular weight M. If true, the independent variable is log10(M).
     /// Default is false.
     /// </summary>
-    public bool IndependentVariableIsDecadicLogarithm { get; init; }
+    public bool IndependentVariableIsDecadicLogarithm { get; init; } = true;
 
     #region Serialization
 
