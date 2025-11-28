@@ -1221,9 +1221,10 @@ namespace Altaxo.Scripting
         ((IFitFunction)_scriptObject).Evaluate(independent, P, FV, dependentVariableChoice);
         return;
       }
-      catch (Exception)
+      catch (Exception ex)
       {
-        return;
+        Current.Console.WriteLine($"Exception while evaluating fit function script {this._fitFunctionName} Details:\r\n{ex}");
+        throw;
       }
     }
 
