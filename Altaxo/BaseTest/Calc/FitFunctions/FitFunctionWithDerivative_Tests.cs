@@ -147,6 +147,7 @@ namespace Altaxo.Calc.FitFunctions
         (() => new Diffusion.MassChangeAfterExponentialEquilibrationForCylinder(){ Radius = 3 }, 1/1024d + 1 / 512d, new double[]{1 / 1024d, 7, 11, 5, 1/13d }, 7.0135510959042729),
         (() => new Diffusion.MassChangeAfterExponentialEquilibrationForCylinder(){ Radius = 3 }, 17 +2, new double[]{2, 7, 11, 5, 13 }, 14.972416762220183),
         (() => new Diffusion.MassChangeAfterExponentialEquilibrationForCylinder(){ Radius = 3 }, 1/1024d - 1 / 512d, new double[]{1 / 1024d, 7, 11, 5, 1/13d }, 7),
+        (() => new ErrorFunctionFromTo(), 11, new double[]{7, 9, -3, 5}, 2.3731148537449182431),
       };
     private static DoubleEqualityComparer CompareD = new DoubleEqualityComparer(1E-100, 1E-12);
     private static DoubleEqualityComparer CompareDerivatives = new DoubleEqualityComparer(1E-4, 1E-4);

@@ -3937,6 +3937,39 @@ References:
 - Williams, G., Watts, D. C., "Non-Symmetrical Dielectric Relaxation Behavior Arising from a Simple Empirical Decay Function", Transactions of the Faraday Society 66 (1970) 80–85. [doi:10.1039/tf9706600080](https://doi.org/10.1039/tf9706600080)
 </value>
   </data>
+  <data name="Transitions.ErrorFunctionFromTo" xml:space="preserve">
+    <value>##### ErrorFunctionFromTo
+
+This function evaluates a smooth transition between two polynomial segments, according to:
+
+$$
+y(x) = \left(1-\mathrm{Erf}\left(\frac{x-xc}{\sigma \sqrt 2}\right)\right) [ a_0 + a_1 x^1 + a_2 x^2 + ... + a_n x^n ] +
+\mathrm{Erf}\left(\frac{x-xc}{\sigma \sqrt 2}\right)[ b_0 + b_1 x^1 + b_2 x^2 + ... + b_n x^n ] 
+$$
+
+in which:
+
+- $\mathrm{Erf}(x)$ is the error function
+- $xc$ is the x-coordinate of the transition point 
+- $\sigma$ is the width of the transition
+- $y_0$ is the y-coordinate of the point at which the two polynomial segments are joined
+- $a_0 ... a_n$ are the polynomial coefficients of the left polynomial (small x values$)
+- $b_0$ ... $b_{m}$ are the polynomial coefficients of the right polynomial(large x values)
+- $n$ is the order of the left polynomial  ($0 \leq n &lt; \infty$)
+- $m$ is the order of the right polynomial ($0 \leq m &lt; \infty$)
+
+The polynomial orders $n$ and $m$ can be changed by double-clicking on the fit function. The default values are $n=0$ and $m=0$, resulting in a transition between two constant levels at the center position $xc$. 
+
+The domain of the function generally is $-\infty &lt; x &lt; \infty$. If both polynomial orders are zero, then the domain of the function is $-\infty \le x \le \infty$.
+
+^^^
+![](res:Altaxo.Calc.FitFunctions.Transitions.ErrorFunctionFromTo.Fig1.png){width=15cm}  
+^^^ Fig. 1: ErrorFunctionFromTo ($n=0$, $m=0$) with $xc=8$, $\sigma=1$, $a_0=16$ and $b_0=4$.
+
+
+
+</value>
+  </data>
   <data name="Transitions.GeneralEffectiveMedium" xml:space="preserve">
     <value>##### General effective medium transition
 
