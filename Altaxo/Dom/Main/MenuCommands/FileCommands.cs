@@ -293,7 +293,7 @@ namespace Altaxo.Main.Commands
 
           if (doc.ParentObject is IProjectItemCollection coll)
           {
-            var newnamebase = Altaxo.Main.ProjectFolder.CreateFullName(doc.Name, coll.ItemBaseName);
+            var newnamebase = Altaxo.Main.ProjectFolder.CreateFullName(doc.Name, Main.ProjectFolder.GetNamePart(doc.Name));
             newDoc.Name = coll.FindNewItemName(newnamebase);
           }
 

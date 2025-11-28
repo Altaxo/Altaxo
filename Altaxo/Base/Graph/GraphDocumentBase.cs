@@ -187,6 +187,17 @@ namespace Altaxo.Graph
     }
 
     /// <summary>
+    /// Gets the short name (i.e. without the folder name) of this item.
+    /// </summary>
+    public string ShortName
+    {
+      get
+      {
+        return Main.ProjectFolder.GetNamePart(Name);
+      }
+    }
+
+    /// <summary>
     /// Fires both a Changed and a TunnelingEvent when the name has changed.
     /// The event arg of the Changed event is an instance of <see cref="T:Altaxo.Main.NamedObjectCollectionChangedEventArgs"/>.
     /// The event arg of the Tunneling event is an instance of <see cref="T:Altaxo.Main.DocumentPathChangedEventArgs"/>.
@@ -253,7 +264,7 @@ namespace Altaxo.Graph
 
     [return: NotNullIfNotNull("resultCreationIfNotFound")]
     [return: MaybeNull]
-    public T GetPropertyValue<T>(Altaxo.Main.Properties.PropertyKey<T> key, Func<T>? resultCreationIfNotFound) where T: notnull
+    public T GetPropertyValue<T>(Altaxo.Main.Properties.PropertyKey<T> key, Func<T>? resultCreationIfNotFound) where T : notnull
     {
       return PropertyExtensions.GetPropertyValue(this, key, resultCreationIfNotFound);
     }

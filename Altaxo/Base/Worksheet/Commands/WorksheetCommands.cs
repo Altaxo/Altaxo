@@ -24,7 +24,6 @@
 
 #nullable enable
 using Altaxo.Gui.Common;
-using Altaxo.Gui.Worksheet;
 using Altaxo.Gui.Worksheet.Viewing;
 
 namespace Altaxo.Worksheet.Commands
@@ -39,7 +38,7 @@ namespace Altaxo.Worksheet.Commands
       var clonedTable = (Altaxo.Data.DataTable)ctrl.DataTable.Clone();
 
       // find a new name for the cloned table and add it to the DataTableCollection
-      string newnamebase = Altaxo.Main.ProjectFolder.CreateFullName(ctrl.DataTable.Name, "WKS");
+      string newnamebase = Altaxo.Main.ProjectFolder.CreateFullName(ctrl.DataTable.Name, ctrl.DataTable.ShortName);
       clonedTable.Name = Current.Project.DataTableCollection.FindNewItemName(newnamebase);
       Current.Project.DataTableCollection.Add(clonedTable);
       Current.ProjectService.CreateNewWorksheet(clonedTable);
