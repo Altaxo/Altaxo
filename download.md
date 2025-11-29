@@ -24,12 +24,12 @@ if you are logged on as user only, Altaxo is registered only for you (the curren
 You can also use a binary .zip file to make a copy-paste installation of Altaxo.
 Starting from September 2025, there are three binary .zip files:
 
-- `AltaxoBinaries-4.8.3351.0.zip`: This file contains the Altaxo version that requires the .NET Framework 4.8. The framework should be installed on
+- `AltaxoBinaries-4.8.3351.0.zip`: This file contains the Altaxo version that requires the .NET Framework 4.8. This framework should be installed on
  all recent Windows systems by default, so this is the safest option, but after September 2025, it is no longer updated.
-- `AltaxoBinaries-4.8.xxxx.0-WINDOWS-DotNet9.0.zip`: This file contains the Altaxo version that requires the .NET 9.0.x Desktop Runtime installed on your computer.
-  .NET 9.0.x Desktop Runtime can be downloaded [here](https://dotnet.microsoft.com/en-us/download/dotnet/9.0).
+- `AltaxoBinaries-4.8.xxxx.0-WINDOWS-DotNet10.0.zip`: This file contains the Altaxo version that requires the .NET 10.0 Desktop Runtime installed on your computer.
+  .NET 10.0 Desktop Runtime can be downloaded [here](https://dotnet.microsoft.com/en-us/download/dotnet/10.0).
   Note that the installation of .NET Desktop Runtime requires adminstrative rights.
-- `AltaxoBinaries-4.8.xxxx.0-WINDOWS-X64.zip`: This file contains the Altaxo version that is self-contained, i.e. it comes with the neccessary files of .NET 9.0. It requires
+- `AltaxoBinaries-4.8.xxxx.0-WINDOWS-X64.zip`: This file contains the Altaxo version that is self-contained, i.e. it comes with the neccessary files of .NET 10.0. It requires
   a Windows 64 bit operating system (Windows 10 22H2 or later), but nothing more.
 
 You can download either the stable or the unstable version.

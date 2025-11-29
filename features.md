@@ -22,25 +22,44 @@ permalink: /features.html
 ### Plotting 
 * Line and scatter plots (and both combined) with a lot of options, including fill styles and drop styles.
 * Label style (labels can either be attached to the data point, or to one of the axes)
+* Drop styles, error bars (both horizontal and vertical), fill styles, etc.
 * Column charts and bar charts, including stacked charts and percentage charts
+* Density plots (2D histograms)
 * Support for different layers. Layers can be rotated, scaled, and linked to other layers.
-* Support for different coordinate systems. Currently implemented is 2D cartesic and 2D polar coordinate systems. 3D cartesic is in experimental state.
+* Layers can be nested.
+* Support for different coordinate systems. Currently implemented is 2D cartesic and 2D polar coordinate systems.
 * Support for graphics elements (only the text element can be edited and created by menu; image, line, rectangle elements are supported by the library)
 * Density images, i.e. visualization of 2-dim. meshed data, currently only in cartesic coordinates with linear axes.
+* 3D plots (mesh plots, scatter plots, bar and column plots) by use of DirectX 11
 
+* ### Notes
+* Notes are Markdown documents that can be created inside of Altaxo.
+* Notes can contain text, images, and links to Altaxo graphs.
+* Notes can contain formulas in LaTeX notation.
+* Notes can be exported to MAML or to Word documents, including the formulas.
+
+ 
 ### Input / output 
 * ASCII import with automatic structure and number format recognition
-* ASCII export (tab separated)
 * Picture import (as brightness values)
 * Galactic® SPC file import (multiple files selectable)
+* Import of many more file formats (Excel files, Bruker Opus files, JCamp, Nexus HDF5, Nicolet, Princeton Instruments, Renishaw, WiTec).
+* Import of Origin .OPJ files.
+* Import of Markdown documents.
+* The Altaxo document is stored as ZIP-file. The worksheets and graphs are stored in XML file format inside of the ZIP-file. Support for versioning.
+
+### Output 
+* ASCII export (tab separated)
+* Excel export (xlsx format)
 * Galactic® SPC file export wizard
-* Import of Origin .OPJ files (only worksheet data).
 * Export of graphs as WMF (Windows Metafile)
 * Export of partial least squares (PLS) calibration files (XML format)
-* The Altaxo document is now stored as ZIP-file. The worksheets and graphs are stored in XML file format inside of the ZIP-file. Support for versioning.
-
+* Bulk export of selected notes, tables and graphs, to MS Word files, Excel files, and a selectable image format (png, jpg, bmp, emf, wmf).
+* Pushing of selected graphs to an open Word or PowerPoint document.
+* Embedding of graphs as OLE/COM objects into Word, PowerPoint, Excel etc.
+ 
 ### Data analysis / data processing
-* Complex number library (thanks to the Exocortexdsp project)
+* Complex number library.
 * Growing collection of special functions (Bessel related functions, Gamma related function, Error functions, spherical functions, scientific functions (most of them are C# translations of Berndt Gammel's C++ Matpack library)
 * Random number generators, probability distributions.
 * Interpolation functions: polynomial interpolation, rational interpolation, cubic splines and and and...
@@ -49,7 +68,8 @@ permalink: /features.html
 * Chemometric methods, like partial least squares analysis (PLS), and principal component regression (PCR)
 * Matrix operations (some are from Lutz Roeder's mapack library)
 * Statistics (column statistics, row statistics)
-* Non-linear fitting. Multiple fit functions can be simultaneously fitted. Parameters can be shared between multiple fitting functions.
+* Non-linear fitting. Multiple fit functions can be fitted simultaneously. Parameters can be shared between multiple fitting functions.
+* Support for parameter constraints (upper and lower bounds).
 * Routines for spectrum processing, including spectral preprocessing (cosmic ray removal, baseline subtraction, cropping, normalization etc.) and 
   automatic peak finding and peak fitting
 * specialized routines for calibration of Raman spectra 
@@ -63,5 +83,5 @@ permalink: /features.html
 * Addin support (addins are DLLs that are linked to the program, see the SharpDevelop project)
 
 ### Localization
-Altaxo is designed with an english user interface. The code (the class names and the comments) you can refer to in your scripts is also in english.
-So far no plans exist to localize Altaxo to other languages. Due to the nice localization support of the SharpDevelop project used for the Gui, it should be possible to localize Altaxo for other languages.
+Altaxo comes with an english user interface. The code (the class names and the comments) you can refer to in your scripts is also in english.
+So far no plans exist to localize Altaxo to other languages. Due to the localization support of the SharpDevelop project used for the Gui, it should be possible to localize Altaxo for other languages.

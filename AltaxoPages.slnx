@@ -1,0 +1,10 @@
+<Solution>
+  <Folder Name="/Solution Items/">
+    <File Path=".editorconfig" />
+  </Folder>
+  <Project Path="AltaxoPages.csproj" Id="214609a0-4794-4ddc-bd78-f6ea95f8d6c9">
+    <BuildType Project="Debug" />
+    <Platform Project="x86" />
+    <Build Solution="Debug|*" Project="false" />
+  </Project>
+</Solution>
