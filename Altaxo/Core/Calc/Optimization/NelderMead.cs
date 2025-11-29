@@ -49,6 +49,13 @@ namespace Altaxo.Calc.Optimization
     private double[] fx; //Array of simplex function values
 #nullable disable
 
+    ///<summary>Default constructor for simplex method</summary>
+    /// <param name="costFunction">The cost function to minimize. Argument is a vector of parameters. The return value
+    /// is the penalty value that is about to be minimized.</param>
+    public NelderMead(Func<Vector<double>, double> costFunction)
+      : this(new CostFunctionMockup(costFunction), new EndCriteria())
+    {
+    }
 
     ///<summary>Default constructor for simplex method</summary>
     public NelderMead(ICostFunction costfunction)
@@ -344,6 +351,43 @@ namespace Altaxo.Calc.Optimization
       iterationValues_[endCriteria_.iterationCounter] = fx[0];
       iterationGradientNorms_[endCriteria_.iterationCounter] = 2.0 * System.Math.Abs(fx[x.Length - 1] - fx[0]) /
         (System.Math.Abs(fx[x.Length - 1]) + System.Math.Abs(fx[0]) + double.Epsilon);
+    }
+
+    private class CostFunctionMockup : ICostFunction
+    {
+      public Func<Vector<double>, double> CostFunction;
+
+      public CostFunctionMockup(Func<Vector<double>, double> costFunction)
+      {
+        CostFunction = costFunction;
+      }
+
+      public double Value(Altaxo.Calc.LinearAlgebra.Vector<double> v)
+      {
+        return CostFunction(v);
+      }
+
+
+      ///<summary>Method to override to calculate the grad_f, the first derivative of
+      /// the cost function with respect to x</summary>
+      public Altaxo.Calc.LinearAlgebra.Vector<double> Gradient(Altaxo.Calc.LinearAlgebra.Vector<double> x)
+      {
+        throw new NotImplementedException();
+      }
+
+      ///<summary>Method to override to calculate the hessian, the second derivative of
+      /// the cost function with respect to x</summary>
+      public Matrix<double> Hessian(Altaxo.Calc.LinearAlgebra.Vector<double> x)
+      {
+        throw new NotImplementedException();
+      }
+
+      ///<summary>Access the constraints for the given cost function </summary>
+      public Altaxo.Calc.Optimization.ConstraintDefinition Constraint
+      {
+        get;
+        set;
+      }
     }
   }
 }
