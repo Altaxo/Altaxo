@@ -29,7 +29,6 @@ using Altaxo.Calc.FitFunctions.Chemistry;
 using Altaxo.Calc.FitFunctions.General;
 using Altaxo.Calc.FitFunctions.Peaks;
 using Altaxo.Calc.FitFunctions.Probability;
-using Altaxo.Calc.FitFunctions.Transitions;
 using Altaxo.Calc.LinearAlgebra;
 using Altaxo.Calc.Regression.Nonlinear;
 using Xunit;
@@ -115,10 +114,6 @@ namespace Altaxo.Calc.FitFunctions
         (() => new PearsonIVArea(1,1), 4, new double[]{17E6,2,3,5,11,1,3 }, 5.94700744472337464654413 + 1 + 3*4),
         (() => new MassBasedFloryDistribution(1, 1){ MolecularWeightOfMonomerUnit=3, IndependentVariableIsDecadicLogarithm=false}, 32787, new double[]{7,1/2047d,5,-1/5000d}, 0.64819841810231585472),
         (() => new MassBasedFloryDistributionWithFixedGaussianBroadening(1, 1){ MolecularWeightOfMonomerUnit=3, IndependentVariableIsDecadicLogarithm=false, PolynomialCoefficientsForSigma=[0]}, 32787, new double[]{7,1/2047d,5,-1/5000d}, 0.64819841810231585472),
-        (() => new LogisticDecreasing(1,1), 0.5, new double[]{2,3,5,1,3}, 1+3*0.5+2/(1+Math.Exp((0.5-3)/5))),
-        (() => new LogisticIncreasing(1,1), 0.5, new double[]{2,3,5,1,3}, 1+3*0.5+2/(1+Math.Exp(-(0.5-3)/5))),
-        (() => new GeneralizedLogisticDecreasing(1,1), 0.5, new double[]{2,3,5,0.4, 0.3, 1,3}, 1+3*0.5+2/Math.Pow(1+Math.Pow(Math.Exp((0.5-3)/5),0.4),0.3/0.4)),
-        (() => new GeneralizedLogisticIncreasing(1,1), 0.5, new double[]{2,3,5,0.4, 0.3, 1,3}, 1+3*0.5+2/Math.Pow(1+Math.Pow(Math.Exp(-(0.5-3)/5),0.4),0.3/0.4)),
         (() => new Kinetics.KineticsNthOrder(), 0.5, new double[]{2,3,1}, 2*Math.Exp(-3*0.5)),
         (() => new Kinetics.KineticsNthOrder(), 0.5, new double[]{2,3,1.5}, Math.Pow(3*(1.5-1)*0.5 + Math.Pow(2, 1-1.5), 1/(1-1.5))),
         (() => new Kinetics.ConversionNthOrder(), 3.5, new double[]{2,1,3,1}, 1-Math.Exp(3*(2-3.5))),
@@ -147,7 +142,13 @@ namespace Altaxo.Calc.FitFunctions
         (() => new Diffusion.MassChangeAfterExponentialEquilibrationForCylinder(){ Radius = 3 }, 1/1024d + 1 / 512d, new double[]{1 / 1024d, 7, 11, 5, 1/13d }, 7.0135510959042729),
         (() => new Diffusion.MassChangeAfterExponentialEquilibrationForCylinder(){ Radius = 3 }, 17 +2, new double[]{2, 7, 11, 5, 13 }, 14.972416762220183),
         (() => new Diffusion.MassChangeAfterExponentialEquilibrationForCylinder(){ Radius = 3 }, 1/1024d - 1 / 512d, new double[]{1 / 1024d, 7, 11, 5, 1/13d }, 7),
-        (() => new ErrorFunctionFromTo(), 11, new double[]{7, 9, -3, 5}, 2.3731148537449182431),
+        (() => new Transitions.ErrorFunctionFromTo(), 11, new double[]{7, 9, -3, 5}, 2.3731148537449182431),
+        (() => new Transitions.GeneralizedLogisticDecreasing(1,1), 0.5, new double[]{2,3,5,0.4, 0.3, 1,3}, 1+3*0.5+2/Math.Pow(1+Math.Pow(Math.Exp((0.5-3)/5),0.4),0.3/0.4)),
+        (() => new Transitions.GeneralizedLogisticIncreasing(1,1), 0.5, new double[]{2,3,5,0.4, 0.3, 1,3}, 1+3*0.5+2/Math.Pow(1+Math.Pow(Math.Exp(-(0.5-3)/5),0.4),0.3/0.4)),
+        (() => new Transitions.GompertzTransition(0,0), 11, new double[]{7, 1/9d, -3, 5}, 1.2133630509177669241),
+        (() => new Transitions.LogisticDecreasing(1,1), 0.5, new double[]{2,3,5,1,3}, 1+3*0.5+2/(1+Math.Exp((0.5-3)/5))),
+        (() => new Transitions.LogisticIncreasing(1,1), 0.5, new double[]{2,3,5,1,3}, 1+3*0.5+2/(1+Math.Exp(-(0.5-3)/5))),
+
       };
     private static DoubleEqualityComparer CompareD = new DoubleEqualityComparer(1E-100, 1E-12);
     private static DoubleEqualityComparer CompareDerivatives = new DoubleEqualityComparer(1E-4, 1E-4);

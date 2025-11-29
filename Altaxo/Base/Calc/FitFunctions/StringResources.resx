@@ -3940,7 +3940,7 @@ References:
   <data name="Transitions.ErrorFunctionFromTo" xml:space="preserve">
     <value>##### ErrorFunctionFromTo
 
-This function evaluates a smooth transition between two polynomial segments, according to:
+This function evaluates a smooth transition between two polynomial segments, using the error function [1], according to:
 
 $$
 y(x) = \left(1-\mathrm{Erf}\left(\frac{x-xc}{\sigma \sqrt 2}\right)\right) [ a_0 + a_1 x^1 + a_2 x^2 + ... + a_n x^n ] +
@@ -3966,7 +3966,9 @@ The domain of the function generally is $-\infty &lt; x &lt; \infty$. If both po
 ![](res:Altaxo.Calc.FitFunctions.Transitions.ErrorFunctionFromTo.Fig1.png){width=15cm}  
 ^^^ Fig. 1: ErrorFunctionFromTo ($n=0$, $m=0$) with $xc=8$, $\sigma=1$, $a_0=16$ and $b_0=4$.
 
+Literature:
 
+[1] [Error function in Wikipedia](https://en.wikipedia.org/wiki/Error_function)
 
 </value>
   </data>
@@ -4089,6 +4091,45 @@ References:
 
 
 
+
+</value>
+  </data>
+  <data name="Transitions.GompertzTransition" xml:space="preserve">
+    <value>##### Gompertz function / transition
+
+The Gompertz function is used in biology to describe growth rates of cells and  mortality [1].  
+
+This fit function evaluates a smooth transition between two polynomial segments, using the Gompertz function, according to:
+
+$$
+y(x) = \left(1-e^{-\exp(-r(x-xc))}\right) [ a_0 + a_1 x^1 + a_2 x^2 + ... + a_n x^n ] +
+e^{-\exp(-r(x-xc))}[ b_0 + b_1 x^1 + b_2 x^2 + ... + b_m x^m ] 
+$$
+
+in which:
+
+- x is the independent variable (for growth description, this is time)  
+- $xc$ is the x-coordinate of the transition point ($1/e$ part)
+- $r$ is the growth rate
+- $y_0$ is the y-coordinate of the point at which the two polynomial segments are joined
+- $a_0 ... a_n$ are the polynomial coefficients of the left polynomial (small x values)
+- $b_0$ ... $b_{m}$ are the polynomial coefficients of the right polynomial(large x values)
+- $n$ is the order of the left polynomial  ($0 \leq n &lt; \infty$)
+- $m$ is the order of the right polynomial ($0 \leq m &lt; \infty$)
+
+The polynomial orders $n$ and $m$ can be changed by double-clicking on the fit function. The default values are $n=0$ and $m=0$, resulting in a smooth transition between two constant levels at the center position $xc$. 
+
+The domain of the function generally is $-\infty &lt; x &lt; \infty$. If both polynomial orders are zero, then the domain of the function is $-\infty \le x \le \infty$.
+
+If $n=m=0$ and $a_0=0$, one gets the Gompertz function that is described in [1], with $b_0$ being the asymptote for $x \rightarrow \infty$.
+
+^^^
+![](res:Altaxo.Calc.FitFunctions.Transitions.GompertzTransition.Fig1.png){width=15cm}  
+^^^ Fig. 1: Gompertz function ($n=0$, $m=0$) with $xc=8$, $r=1$, $a_0=4$ and $b_0=16$.
+
+References:
+
+[1] [Gompertz function in Wikipedia](https://en.wikipedia.org/wiki/Gompertz_function)
 
 </value>
   </data>
