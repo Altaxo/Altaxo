@@ -3944,7 +3944,7 @@ This function evaluates a smooth transition between two polynomial segments, acc
 
 $$
 y(x) = \left(1-\mathrm{Erf}\left(\frac{x-xc}{\sigma \sqrt 2}\right)\right) [ a_0 + a_1 x^1 + a_2 x^2 + ... + a_n x^n ] +
-\mathrm{Erf}\left(\frac{x-xc}{\sigma \sqrt 2}\right)[ b_0 + b_1 x^1 + b_2 x^2 + ... + b_n x^n ] 
+\mathrm{Erf}\left(\frac{x-xc}{\sigma \sqrt 2}\right)[ b_0 + b_1 x^1 + b_2 x^2 + ... + b_m x^m ] 
 $$
 
 in which:
@@ -3953,12 +3953,12 @@ in which:
 - $xc$ is the x-coordinate of the transition point 
 - $\sigma$ is the width of the transition
 - $y_0$ is the y-coordinate of the point at which the two polynomial segments are joined
-- $a_0 ... a_n$ are the polynomial coefficients of the left polynomial (small x values$)
+- $a_0 ... a_n$ are the polynomial coefficients of the left polynomial (small x values)
 - $b_0$ ... $b_{m}$ are the polynomial coefficients of the right polynomial(large x values)
 - $n$ is the order of the left polynomial  ($0 \leq n &lt; \infty$)
 - $m$ is the order of the right polynomial ($0 \leq m &lt; \infty$)
 
-The polynomial orders $n$ and $m$ can be changed by double-clicking on the fit function. The default values are $n=0$ and $m=0$, resulting in a transition between two constant levels at the center position $xc$. 
+The polynomial orders $n$ and $m$ can be changed by double-clicking on the fit function. The default values are $n=0$ and $m=0$, resulting in a smooth transition between two constant levels at the center position $xc$. 
 
 The domain of the function generally is $-\infty &lt; x &lt; \infty$. If both polynomial orders are zero, then the domain of the function is $-\infty \le x \le \infty$.
 

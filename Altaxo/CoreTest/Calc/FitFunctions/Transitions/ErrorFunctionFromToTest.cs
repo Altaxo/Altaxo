@@ -245,7 +245,7 @@ namespace Altaxo.Calc.FitFunctions.Transitions
     {
       var f1 = new ErrorFunctionFromTo();
       Assert.Equal("xc", f1.ParameterName(0));
-      Assert.Equal("sigma", f1.ParameterName(1));
+      Assert.Equal("σ", f1.ParameterName(1));
       Assert.Equal("a0", f1.ParameterName(2));
       Assert.Equal("b0", f1.ParameterName(3));
       Assert.Throws<ArgumentOutOfRangeException>(() => f1.ParameterName(4));
@@ -253,7 +253,7 @@ namespace Altaxo.Calc.FitFunctions.Transitions
 
       var f2 = new ErrorFunctionFromTo(3, 2);
       Assert.Equal("xc", f2.ParameterName(0));
-      Assert.Equal("sigma", f2.ParameterName(1));
+      Assert.Equal("σ", f2.ParameterName(1));
       Assert.Equal("a0", f2.ParameterName(2));
       Assert.Equal("a1", f2.ParameterName(3));
       Assert.Equal("a2", f2.ParameterName(4));

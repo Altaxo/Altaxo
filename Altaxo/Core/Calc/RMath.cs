@@ -324,8 +324,13 @@ namespace Altaxo.Calc
     /// <returns>The value of the evaluated polynom.</returns>
     public static double EvaluatePolynomOrderAscending(double x, ReadOnlySpan<double> coefficients)
     {
-      double sum = 0;
-      for (int i = coefficients.Length - 1; i >= 0; --i)
+      if (double.IsNaN(x))
+      {
+        return double.NaN;
+      }
+
+      double sum = coefficients[^1]; // enable x = +- Infinity by starting with the highest coefficient
+      for (int i = coefficients.Length - 2; i >= 0; --i)
       {
         sum *= x;
         sum += coefficients[i];
@@ -341,8 +346,13 @@ namespace Altaxo.Calc
     /// <returns>The value of the evaluated polynom.</returns>
     public static double EvaluatePolynomOrderAscending(double x, IReadOnlyList<double> coefficients)
     {
-      double sum = 0;
-      for (int i = coefficients.Count - 1; i >= 0; --i)
+      if (double.IsNaN(x))
+      {
+        return double.NaN;
+      }
+
+      double sum = coefficients[^1]; // enable x = +- Infinity by starting with the highest coefficient
+      for (int i = coefficients.Count - 2; i >= 0; --i)
       {
         sum *= x;
         sum += coefficients[i];
@@ -359,6 +369,11 @@ namespace Altaxo.Calc
     /// <returns>The value of the 1st derivative of the polynom.</returns>
     public static double EvaluatePolynom1stDerivativeOrderAscending(double x, ReadOnlySpan<double> coefficients)
     {
+      if (double.IsNaN(x))
+      {
+        return double.NaN;
+      }
+
       double sum = 0;
       for (int i = coefficients.Length - 1; i >= 1; --i)
       {
@@ -377,6 +392,11 @@ namespace Altaxo.Calc
     /// <returns>The value of the 1st derivative of the polynom.</returns>
     public static double EvaluatePolynom1stDerivativeOrderAscending(double x, IReadOnlyList<double> coefficients)
     {
+      if (double.IsNaN(x))
+      {
+        return double.NaN;
+      }
+
       double sum = 0;
       for (int i = coefficients.Count - 1; i >= 1; --i)
       {
@@ -394,8 +414,13 @@ namespace Altaxo.Calc
     /// <returns>The value of the evaluated polynom.</returns>
     public static double EvaluatePolynomOrderDescending(double x, ReadOnlySpan<double> coefficients)
     {
-      double sum = 0;
-      for (int i = 0; i < coefficients.Length; ++i)
+      if (double.IsNaN(x))
+      {
+        return double.NaN;
+      }
+
+      double sum = coefficients[0]; // enable x = +- Infinity by starting with the highest coefficient
+      for (int i = 1; i < coefficients.Length; ++i)
       {
         sum *= x;
         sum += coefficients[i];
@@ -411,8 +436,13 @@ namespace Altaxo.Calc
     /// <returns>The value of the evaluated polynom.</returns>
     public static double EvaluatePolynomOrderDescending(double x, IReadOnlyList<double> coefficients)
     {
-      double sum = 0;
-      for (int i = 0; i < coefficients.Count; ++i)
+      if (double.IsNaN(x))
+      {
+        return double.NaN;
+      }
+
+      double sum = coefficients[0]; // enable x = +- Infinity by starting with the highest coefficient
+      for (int i = 1; i < coefficients.Count; ++i)
       {
         sum *= x;
         sum += coefficients[i];

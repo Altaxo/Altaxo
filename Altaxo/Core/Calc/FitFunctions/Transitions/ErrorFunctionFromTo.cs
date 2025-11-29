@@ -31,12 +31,12 @@ namespace Altaxo.Calc.FitFunctions.Transitions
 {
   /// <summary>
   /// This function produces a continuous transition from a left to a right polynomial,
-  /// centered at xc, with the width of the transition determined by sigma. It is commonly used for
+  /// centered at xc, with the width of the transition determined by σ. It is commonly used for
   /// modeling gradual transitions or soft thresholds.
   /// </summary>
-  /// <remarks>This function is defined by at least four parameters: 'xc', 'sigma', which determine position and width of the transition, and a0 and b0, which are the polynomial coefficients of zero order
+  /// <remarks>This function is defined by at least four parameters: 'xc', 'σ', which determine position and width of the transition, and a0 and b0, which are the polynomial coefficients of zero order
   /// of the left and the right polynomial, respectively. It produces a
-  /// sigmoidal transition from the 'a0' value to the 'b0' value, centered at 'xc' with the width determined by 'sigma'.</remarks>
+  /// sigmoidal transition from the 'a0' value to the 'b0' value, centered at 'xc' with the width determined by 'σ'.</remarks>
   [FitFunctionClass]
   public record ErrorFunctionFromTo : IFitFunctionWithDerivative, Main.IImmutable
   {
@@ -219,7 +219,7 @@ namespace Altaxo.Calc.FitFunctions.Transitions
       if (i == 0)
         return "xc";
       else if (i == 1)
-        return "sigma";
+        return "σ";
       else if (i >= 2 && i < 3 + _order_l)
         return FormattableString.Invariant($"a{i - 2}");
       else if (i >= 3 + _order_l && i < 4 + _order_l + _order_r)
