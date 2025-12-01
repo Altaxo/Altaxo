@@ -32,71 +32,169 @@ namespace Altaxo.Calc.FitFunctions.Chemistry
     [Fact]
     public void TestDerivatives()
     {
+      foreach (var expectedAccuracy in new double[] { 1E-8, 1E-7, 1E-6, 1E-5, 1E-4, 1E-3 })
+      {
+        // left case
+        double sigma = 0.125;
+        double area = 5;
+        var tau = 1 / 2047d;
+        double MM = 3;
+        double M = 2589;
+
+
+        var expectedFunctionValue = 1.453867967636616;
+        var expectedDerivativeWrtArea = 0.2907735935273231;
+        var expectedDerivativeWrtTau = 4473.448913684046;
+
+        var v = new MassBasedFloryDistributionWithFixedGaussianBroadening(1, -1)
+        {
+          IndependentVariableIsDecadicLogarithm = false,
+          MolecularWeightOfMonomerUnit = MM,
+          PolynomialCoefficientsForSigma = [sigma],
+          Accuracy = expectedAccuracy,
+        };
+
+        // The accuracy of the function value is specified relative to the peak height
+        // That is the reason why we have the term  expectedAccuracy * height / expectedFunctionValue for the relative accuracy here
+        var (_, _, height, _) = v.GetPositionAreaHeightFWHMFromSinglePeakParameters([area, tau]);
+
+        var y = v.GetYOfOneTerm(M, area, tau);
+        AssertEx.AreEqual(expectedFunctionValue, y, 0, expectedAccuracy * height / expectedFunctionValue);
+
+        var parameters = new double[] { area, tau };
+        var X = Matrix<double>.Build.Dense(1, 1);
+        X[0, 0] = M;
+        var FV = Vector<double>.Build.Dense(1);
+        v.Evaluate(X, parameters, FV, null);
+        AssertEx.AreEqual(expectedFunctionValue, FV[0], 0, expectedAccuracy * height / expectedFunctionValue);
+
+        var DY = Matrix<double>.Build.Dense(1, 2);
+        v.EvaluateDerivative(X, parameters, null, DY, null);
+        AssertEx.AreEqual(expectedDerivativeWrtArea, DY[0, 0], 0, expectedAccuracy * height / expectedFunctionValue);
+        AssertEx.AreEqual(expectedDerivativeWrtTau, DY[0, 1], 0, expectedAccuracy * height / expectedFunctionValue);
+
+        // right case
+        area = 7;
+        tau = 1 / 2047d;
+        MM = 3;
+        M = 25896;
+
+        expectedFunctionValue = 4.305794261946497;
+        expectedDerivativeWrtArea = 0.6151134659923567;
+        expectedDerivativeWrtTau = -15521.67751589214;
+
+        v = new MassBasedFloryDistributionWithFixedGaussianBroadening(1, -1)
+        {
+          IndependentVariableIsDecadicLogarithm = false,
+          MolecularWeightOfMonomerUnit = MM,
+          PolynomialCoefficientsForSigma = [sigma],
+          Accuracy = expectedAccuracy,
+        };
+        (_, _, height, _) = v.GetPositionAreaHeightFWHMFromSinglePeakParameters([area, tau]);
+
+        y = v.GetYOfOneTerm(M, area, tau);
+        AssertEx.AreEqual(expectedFunctionValue, y, 0, expectedAccuracy * height / expectedFunctionValue);
+
+        parameters = new double[] { area, tau };
+        X[0, 0] = M;
+        v.Evaluate(X, parameters, FV, null);
+        v.EvaluateDerivative(X, parameters, null, DY, null);
+
+        AssertEx.AreEqual(expectedFunctionValue, FV[0], 0, expectedAccuracy * height / expectedFunctionValue);
+        AssertEx.AreEqual(expectedDerivativeWrtArea, DY[0, 0], 0, expectedAccuracy * height / expectedFunctionValue);
+        AssertEx.AreEqual(expectedDerivativeWrtTau, DY[0, 1], 0, expectedAccuracy * height / expectedFunctionValue);
+      }
+    }
+
+    [Fact]
+    public void TestPositionAreaHeightFWHM()
+    {
       // left case
-      double sigma = 0.125;
-      double area = 5;
-      var tau = 1 / 2047d;
-      double MM = 3;
-      double M = 2589;
+      double sigma = 0.25;
+      var area = 66;
+      var tau = 1d;
 
-
-      var expectedFunctionValue = 1.453867967636616;
-      var expectedDerivativeWrtArea = 0.2907735935273231;
-      var expectedDerivativeWrtTau = 4473.448913684046;
-
+      // logarithmic
       var v = new MassBasedFloryDistributionWithFixedGaussianBroadening(1, -1)
       {
-        IndependentVariableIsDecadicLogarithm = false,
-        MolecularWeightOfMonomerUnit = MM,
+        IndependentVariableIsDecadicLogarithm = true,
+        MolecularWeightOfMonomerUnit = 1,
         PolynomialCoefficientsForSigma = [sigma],
-        Accuracy = 1E-6,
       };
 
-      var y = v.GetYOfOneTerm(M, area, tau);
-      AssertEx.AreEqual(expectedFunctionValue, y, 0, 1E-5);
+      var (position1, area1, height1, fwhm1) = v.GetPositionAreaHeightFWHMFromSinglePeakParameters([area, tau]);
+      var (position2, _, area2, _, height2, _, fwhm2, _) = v.GetPositionAreaHeightFWHMFromSinglePeakParameters([area, tau], null);
 
-      var parameters = new double[] { area, tau };
-      var X = Matrix<double>.Build.Dense(1, 1);
-      X[0, 0] = M;
-      var FV = Vector<double>.Build.Dense(1);
-      v.Evaluate(X, parameters, FV, null);
-      AssertEx.AreEqual(expectedFunctionValue, FV[0], 0, 1E-5);
+      AssertEx.AreEqual(0.2581787109375, position1, 0, 1E-2);
+      AssertEx.AreEqual(0.2581787109375, position2, 0, 1E-2);
+      AssertEx.AreEqual(area, area1, 0, 1E-2);
+      AssertEx.AreEqual(area, area2, 0, 1E-2);
+      AssertEx.AreEqual(0.969143879832546 * area, height1, 0, 5E-2);
+      AssertEx.AreEqual(0.969143879832546 * area, height2, 0, 5E-2);
+      AssertEx.AreEqual(0.954886102117598, fwhm1, 0, 5E-2);
+      AssertEx.AreEqual(0.954886102117598, fwhm2, 0, 5E-2);
 
-      var DY = Matrix<double>.Build.Dense(1, 2);
-      v.EvaluateDerivative(X, parameters, null, DY, null);
-      AssertEx.AreEqual(expectedDerivativeWrtArea, DY[0, 0], 0, 1E-5);
-      AssertEx.AreEqual(expectedDerivativeWrtTau, DY[0, 1], 0, 1E-5);
 
-      // right case
-      area = 7;
-      tau = 1 / 2047d;
-      MM = 3;
-      M = 25896;
+      tau = 17 / 10000d;
+      v = new MassBasedFloryDistributionWithFixedGaussianBroadening(1, -1)
+      {
+        IndependentVariableIsDecadicLogarithm = true,
+        MolecularWeightOfMonomerUnit = 17,
+        PolynomialCoefficientsForSigma = [sigma],
+      };
 
-      expectedFunctionValue = 4.305794261946497;
-      expectedDerivativeWrtArea = 0.6151134659923567;
-      expectedDerivativeWrtTau = -15521.67751589214;
+      (position1, area1, height1, fwhm1) = v.GetPositionAreaHeightFWHMFromSinglePeakParameters([area, tau]);
+      (position2, _, area2, _, height2, _, fwhm2, _) = v.GetPositionAreaHeightFWHMFromSinglePeakParameters([area, tau], null);
 
+      AssertEx.AreEqual(4.2581787109375, position1, 0, 1E-2);
+      AssertEx.AreEqual(4.2581787109375, position2, 0, 1E-2);
+      AssertEx.AreEqual(area, area1, 0, 1E-2);
+      AssertEx.AreEqual(area, area2, 0, 1E-2);
+      AssertEx.AreEqual(0.969143879832546 * area, height1, 0, 5E-2);
+      AssertEx.AreEqual(0.969143879832546 * area, height2, 0, 5E-2);
+      AssertEx.AreEqual(0.954886102117598, fwhm1, 0, 5E-2);
+      AssertEx.AreEqual(0.954886102117598, fwhm2, 0, 5E-2);
+
+
+      // non-logarithmic
+      tau = 1;
       v = new MassBasedFloryDistributionWithFixedGaussianBroadening(1, -1)
       {
         IndependentVariableIsDecadicLogarithm = false,
-        MolecularWeightOfMonomerUnit = MM,
+        MolecularWeightOfMonomerUnit = 1,
         PolynomialCoefficientsForSigma = [sigma],
       };
+      (position1, area1, height1, fwhm1) = v.GetPositionAreaHeightFWHMFromSinglePeakParameters([area, tau]);
+      (position2, _, area2, _, height2, _, fwhm2, _) = v.GetPositionAreaHeightFWHMFromSinglePeakParameters([area, tau], null);
 
 
-      y = v.GetYOfOneTerm(M, area, tau);
-      AssertEx.AreEqual(expectedFunctionValue, y, 0, 1E-3);
+      AssertEx.AreEqual(1.8120856072664995, position1, 0, 1E-2);
+      AssertEx.AreEqual(1.8120856072664995, position2, 0, 1E-2);
+      AssertEx.AreEqual(area, area1, 0, 1E-2);
+      AssertEx.AreEqual(area, area2, 0, 1E-2);
+      AssertEx.AreEqual(0.969143879832546 * area, height1, 0, 5E-2);
+      AssertEx.AreEqual(0.969143879832546 * area, height2, 0, 5E-2);
+      AssertEx.AreEqual(4.4998745594595775, fwhm1, 0, 5E-2);
+      AssertEx.AreEqual(4.4998745594595775, fwhm2, 0, 5E-2);
 
-      parameters = new double[] { area, tau };
-      X[0, 0] = M;
-      v.Evaluate(X, parameters, FV, null);
-      v.EvaluateDerivative(X, parameters, null, DY, null);
+      tau = 17 / 10000d;
+      v = new MassBasedFloryDistributionWithFixedGaussianBroadening(1, -1)
+      {
+        IndependentVariableIsDecadicLogarithm = false,
+        MolecularWeightOfMonomerUnit = 17,
+        PolynomialCoefficientsForSigma = [sigma],
+      };
+      (position1, area1, height1, fwhm1) = v.GetPositionAreaHeightFWHMFromSinglePeakParameters([area, tau]);
+      (position2, _, area2, _, height2, _, fwhm2, _) = v.GetPositionAreaHeightFWHMFromSinglePeakParameters([area, tau], null);
 
-      AssertEx.AreEqual(expectedFunctionValue, FV[0], 0, 1E-3);
-      AssertEx.AreEqual(expectedDerivativeWrtArea, DY[0, 0], 0, 1E-3);
-      AssertEx.AreEqual(expectedDerivativeWrtTau, DY[0, 1], 0, 1E-2);
-
+      AssertEx.AreEqual(10000 * 1.8120856072664995, position1, 0, 1E-2);
+      AssertEx.AreEqual(10000 * 1.8120856072664995, position2, 0, 1E-2);
+      AssertEx.AreEqual(area, area1, 0, 1E-2);
+      AssertEx.AreEqual(area, area2, 0, 1E-2);
+      AssertEx.AreEqual(0.969143879832546 * area, height1, 0, 5E-2);
+      AssertEx.AreEqual(0.969143879832546 * area, height2, 0, 5E-2);
+      AssertEx.AreEqual(10000 * 4.4998745594595775, fwhm1, 0, 5E-2);
+      AssertEx.AreEqual(10000 * 4.4998745594595775, fwhm2, 0, 5E-2);
     }
   }
 }

@@ -534,7 +534,7 @@ namespace Altaxo.Science.Spectroscopy
         // ***************************************
         //     output the fit curves
         // ***************************************
-        if (doc.OutputOptions.OutputFitCurve && fitResults.Count > 0)
+        if (fitResults.Count > 0 && doc.OutputOptions.OutputFitCurve)
         {
           // output also a column, which designates, whether a point was used for the fit or was not used.
           // the column group belongs to the preprocessed spectrum
@@ -542,9 +542,13 @@ namespace Altaxo.Science.Spectroscopy
 
           // two other columns which accomodate the fit curve
           var cXFit = (DoubleColumn)peakTable.DataColumns.EnsureExistence(PeakTable_FitCurveColumnNameX(runningColumnNumber), typeof(DoubleColumn), ColumnKind.X, groupNumberBase + 2);
+
+
           var cYFit = (DoubleColumn)peakTable.DataColumns.EnsureExistence(PeakTable_FitCurveColumnNameY(runningColumnNumber), typeof(DoubleColumn), ColumnKind.V, groupNumberBase + 2);
 
-          foreach (var dcolumn in new DoubleColumn[] { cYUsedForFit, cXFit, cYFit })
+
+
+          foreach (var dcolumn in (new DoubleColumn[] { cYUsedForFit, cXFit, cYFit }))
           {
             for (int i = 0; i < columnPropertyColumns.Length; ++i)
             {
@@ -590,6 +594,7 @@ namespace Altaxo.Science.Spectroscopy
             for (int i = 0; i < localXValues.Length; ++i, ++idxOutputRow)
             {
               cXFit[idxOutputRow] = localXValues[i];
+
               cYFit[idxOutputRow] = ySumValues[i];
             }
           }
@@ -717,8 +722,53 @@ namespace Altaxo.Science.Spectroscopy
         // ***************************************
         //     output the residual curves
         // ***************************************
-        if (doc.OutputOptions.OutputFitResidualCurve)
+        if (doc.OutputOptions.OutputFitResidualCurve && fitResults.Count > 0)
         {
+          var cXPre = (DoubleColumn)peakTable.DataColumns.EnsureExistence(PeakTable_ResidualCurveColumnNameX(runningColumnNumber), typeof(DoubleColumn), ColumnKind.X, groupNumberBase + 1);
+          var cYPre = (DoubleColumn)peakTable.DataColumns.EnsureExistence(PeakTable_ResidualCurveColumnNameY(runningColumnNumber), typeof(DoubleColumn), ColumnKind.V, groupNumberBase + 1);
+          cXPre.Data = xArr;
+          cYPre.Data = yArr;
+
+          foreach (var dcolumn in new DoubleColumn[] { cXPre, cYPre })
+          {
+            for (int i = 0; i < columnPropertyColumns.Length; ++i)
+            {
+              columnPropertyColumns[i][peakTable.DataColumns.GetColumnNumber(dcolumn)] = columnProperties[i][runningColumnNumber];
+            }
+          }
+          var yFitValues = new double[entry.xArray.Length];
+          var idxOutputRow = 0;
+          for (var idxRegion = 0; idxRegion < fitResults.Count; idxRegion++)
+          {
+            var descriptionsOfRegion = fitResults[idxRegion].PeakDescriptions;
+            var regionStart = fitResults[idxRegion].StartOfRegion;
+            var regionEnd = fitResults[idxRegion].EndOfRegion;
+            var regionLength = regionEnd - regionStart;
+
+            double[] localXValues = entry.xArray[regionStart..regionEnd].ToArray();
+
+            var ySumValues = new double[localXValues.Length];
+            var yScratch = new double[localXValues.Length];
+            for (var pi = 0; pi < descriptionsOfRegion.Count; pi++)
+            {
+              var peakDescription = descriptionsOfRegion[pi];
+              if (peakDescription.FitFunction is IFitFunctionPeak fitFunction)
+              {
+                fitFunction = fitFunction.WithNumberOfTerms(1).WithOrderOfBaselinePolynomial(-1);
+                var para = peakDescription.PeakParameter;
+                fitFunction.Evaluate(MatrixMath.ToROMatrixWithOneColumn(localXValues), para, VectorMath.ToVector(yScratch), null);
+                VectorMath.Add(ySumValues, yScratch, ySumValues);
+              }
+            }
+
+
+            for (int i = 0; i < localXValues.Length; ++i, ++idxOutputRow)
+            {
+              cXPre[idxOutputRow] = localXValues[i];
+
+              cYPre[idxOutputRow] = yArr[idxOutputRow] - ySumValues[i];
+            }
+          }
         }
 
         resultList.Add((entry.xOrgCol, entry.yOrgCol, entry.xPreprocessedCol, entry.yPreprocessedCol, fitResults));

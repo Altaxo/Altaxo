@@ -8,7 +8,7 @@
              xmlns:axogcc="clr-namespace:Altaxo.Gui.Common.Converters"
              d:DataContext="{d:DesignInstance Type=local:MassBasedFloryDistributionWithFixedGaussianBroadeningController}"
              mc:Ignorable="d" 
-             d:DesignHeight="450" d:DesignWidth="800">
+             >
     <Grid>
         <Grid.ColumnDefinitions>
             <ColumnDefinition Width="Auto"/>
@@ -17,6 +17,12 @@
             <ColumnDefinition Width="4" />
         </Grid.ColumnDefinitions>
         <Grid.RowDefinitions>
+            <RowDefinition Height="Auto" />
+            <RowDefinition Height="4" />
+      <RowDefinition Height="Auto" />
+      <RowDefinition Height="4" />
+      <RowDefinition Height="Auto" />
+            <RowDefinition Height="4" />
             <RowDefinition Height="Auto" />
             <RowDefinition Height="4" />
             <RowDefinition Height="Auto" />
@@ -44,96 +50,127 @@
             <RowDefinition Height="Auto" />
             <RowDefinition Height="4" />
         </Grid.RowDefinitions>
-        <CheckBox Grid.Row="0" Grid.ColumnSpan="3" Content="X-axis is decadic logarithm of molecular weight" IsChecked="{Binding IndependentVariableIsDecadicLogarithm}" />
+
+        <Label Grid.Row="0"
+               Grid.Column="0"
+               Content="Number of terms:" />
+        <axogc:Int32UpDown Grid.Row="0"
+                           Grid.Column="2"
+                           Minimum="0"
+                           Value="{Binding Path=NumberOfTerms}" />
+
         <Label Grid.Row="2"
                Grid.Column="0"
+               Content="Order of baseline polynomial:" />
+        <axogc:Int32UpDown Grid.Row="2"
+                           Grid.Column="2"
+                           Minimum="-1"
+                           Value="{Binding Path=OrderOfBaselinePolynominal}" />
+
+    <Label Grid.Row="4"
+           Grid.Column="0"
+           Content="Accuracy:" />
+    <axogc:NumericDoubleTextBox Grid.Row="4"
+                                Grid.Column="2"
+                                Width="100"
+                                MinValue="1E-8"
+                                MaxValue="1E-3"
+                                DisallowNegativeValues="True"
+                                DisallowZeroValues="True"
+                                SelectedValue="{Binding Path=Accuracy}" 
+                                ToolTip="Enter accuracy. Supported values are 1E-8, 1E-7, 1E-6, 1E-5, 1E-4 and 1E-3. The lower the value, the better is the accuracy, but the longer is the function evaluation."
+                                />
+
+    <CheckBox Grid.Row="6" Grid.ColumnSpan="3" Content="X-axis is decadic logarithm of molecular weight" IsChecked="{Binding IndependentVariableIsDecadicLogarithm}" />
+        <Label Grid.Row="8"
+               Grid.Column="0"
                Content="Molecular weight of monomer:" />
-        <axogc:NumericDoubleTextBox Grid.Row="2"
+        <axogc:NumericDoubleTextBox Grid.Row="8"
                                     Grid.Column="2"
                                     Width="100"
                                     MinValue="0.5"
                                     SelectedValue="{Binding Path=MolecularWeightOfMonomerUnit}" />
 
-        <Label Grid.Row="4"
+        <Label Grid.Row="10"
                Grid.Column="0"
                Content="Polynomial order for sigma calculation:" />
-        <axogc:Int32UpDown Grid.Row="4"
+        <axogc:Int32UpDown Grid.Row="10"
                            Grid.Column="2"
                            Width="100"
                            Minimum="-1"
                            Maximum="9"
                            Value="{Binding OrderOfPolynomial}" />
 
-        <Label Grid.Row="6"
+        <Label Grid.Row="12"
                Grid.Column="0"
                Content="Sigma coeff.[0]:" 
                Visibility="{Binding Coeff0IsEnabled, Converter={x:Static axogcc:FalseToVisibilityCollapsedConverter.Instance}}" />
         
-        <axogc:NumericDoubleTextBox Grid.Row="6"
+        <axogc:NumericDoubleTextBox Grid.Row="12"
                                     Grid.Column="2"
                                     Width="100"
                                     MinValue="0.0"
                                     SelectedValue="{Binding Coeff0}"
                                     Visibility="{Binding Coeff0IsEnabled, Converter={x:Static axogcc:FalseToVisibilityCollapsedConverter.Instance}}"/>
 
-        <Label Grid.Row="8"
+        <Label Grid.Row="14"
                Grid.Column="0"
                Content="Sigma coeff.[1]:"
                Visibility="{Binding Coeff1IsEnabled, Converter={x:Static axogcc:FalseToVisibilityCollapsedConverter.Instance}}" />
 
-        <axogc:NumericDoubleTextBox Grid.Row="8"
+        <axogc:NumericDoubleTextBox Grid.Row="14"
                                     Grid.Column="2"
                                     Width="100"
                                     MinValue="0.0"
                                     SelectedValue="{Binding Coeff1}"
                                     Visibility="{Binding Coeff1IsEnabled, Converter={x:Static axogcc:FalseToVisibilityCollapsedConverter.Instance}}" />
 
-        <Label Grid.Row="10"
+        <Label Grid.Row="16"
                Grid.Column="0"
                Content="Sigma coeff.[2]:"
                Visibility="{Binding Coeff2IsEnabled, Converter={x:Static axogcc:FalseToVisibilityCollapsedConverter.Instance}}" />
-        <axogc:NumericDoubleTextBox Grid.Row="10"
+        <axogc:NumericDoubleTextBox Grid.Row="16"
                                     Grid.Column="2"
                                     Width="100"
                                     MinValue="0.0"
                                     SelectedValue="{Binding Coeff2}"
                                     Visibility="{Binding Coeff2IsEnabled, Converter={x:Static axogcc:FalseToVisibilityCollapsedConverter.Instance}}" />
-        <Label Grid.Row="12"
+        <Label Grid.Row="18"
                Grid.Column="0"
                Content="Sigma coeff.[3]:"
                Visibility="{Binding Coeff3IsEnabled, Converter={x:Static axogcc:FalseToVisibilityCollapsedConverter.Instance}}" />
-        <axogc:NumericDoubleTextBox Grid.Row="12"
+        <axogc:NumericDoubleTextBox Grid.Row="18"
                                     Grid.Column="2"
                                     Width="100"
                                     MinValue="0.0"
                                     SelectedValue="{Binding Coeff3}"
                                     Visibility="{Binding Coeff3IsEnabled, Converter={x:Static axogcc:FalseToVisibilityCollapsedConverter.Instance}}" />
-        <Label Grid.Row="14"
+        <Label Grid.Row="20"
                Grid.Column="0"
                Content="Sigma coeff.[4]:"
                Visibility="{Binding Coeff4IsEnabled, Converter={x:Static axogcc:FalseToVisibilityCollapsedConverter.Instance}}" />
-        <axogc:NumericDoubleTextBox Grid.Row="14"
+        <axogc:NumericDoubleTextBox Grid.Row="20"
                                     Grid.Column="2"
                                     Width="100"
                                     MinValue="0.0"
                                     SelectedValue="{Binding Coeff4}"
                                     Visibility="{Binding Coeff4IsEnabled, Converter={x:Static axogcc:FalseToVisibilityCollapsedConverter.Instance}}" />
-        <Label Grid.Row="16"
+        <Label Grid.Row="22"
                Grid.Column="0"
                Content="Sigma coeff.[5]:"
                Visibility="{Binding Coeff5IsEnabled, Converter={x:Static axogcc:FalseToVisibilityCollapsedConverter.Instance}}" />
-        <axogc:NumericDoubleTextBox Grid.Row="16"
+        <axogc:NumericDoubleTextBox Grid.Row="22"
                                     Grid.Column="2"
                                     Width="100"
                                     MinValue="0.0"
                                     SelectedValue="{Binding Coeff5}"
                                     Visibility="{Binding Coeff5IsEnabled, Converter={x:Static axogcc:FalseToVisibilityCollapsedConverter.Instance}}" />
-        <Label Grid.Row="18"
+        <Label Grid.Row="24"
                Grid.Column="0"
                Content="Sigma coeff.[6]:"
                Visibility="{Binding Coeff6IsEnabled, Converter={x:Static axogcc:FalseToVisibilityCollapsedConverter.Instance}}" />
 
-        <axogc:NumericDoubleTextBox Grid.Row="18"
+        <axogc:NumericDoubleTextBox Grid.Row="24"
                                     Grid.Column="2"
                                     Width="100"
                                     MinValue="0.0"
@@ -141,32 +178,32 @@
                                     Visibility="{Binding Coeff6IsEnabled, Converter={x:Static axogcc:FalseToVisibilityCollapsedConverter.Instance}}" />
 
 
-        <Label Grid.Row="20"
+        <Label Grid.Row="26"
                Grid.Column="0"
                Content="Sigma coeff.[7]:"
                Visibility="{Binding Coeff7IsEnabled, Converter={x:Static axogcc:FalseToVisibilityCollapsedConverter.Instance}}" />
 
-        <axogc:NumericDoubleTextBox Grid.Row="20"
+        <axogc:NumericDoubleTextBox Grid.Row="26"
                                     Grid.Column="2"
                                     Width="100"
                                     MinValue="0.0"
                                     SelectedValue="{Binding Coeff7}"
                                     Visibility="{Binding Coeff7IsEnabled, Converter={x:Static axogcc:FalseToVisibilityCollapsedConverter.Instance}}" />
-<Label Grid.Row="22"
+<Label Grid.Row="28"
                Grid.Column="0"
                Content="Sigma coeff.[8]:"
                Visibility="{Binding Coeff8IsEnabled, Converter={x:Static axogcc:FalseToVisibilityCollapsedConverter.Instance}}" />
-        <axogc:NumericDoubleTextBox Grid.Row="22"
+        <axogc:NumericDoubleTextBox Grid.Row="28"
                                     Grid.Column="2"
                                     Width="100"
                                     MinValue="0.0"
                                     SelectedValue="{Binding Coeff8}"
                                     Visibility="{Binding Coeff8IsEnabled, Converter={x:Static axogcc:FalseToVisibilityCollapsedConverter.Instance}}" />
-        <Label Grid.Row="24"
+        <Label Grid.Row="30"
                Grid.Column="0"
                Content="Sigma coeff.[9]:"
                Visibility="{Binding Coeff9IsEnabled, Converter={x:Static axogcc:FalseToVisibilityCollapsedConverter.Instance}}" />
-        <axogc:NumericDoubleTextBox Grid.Row="24"
+        <axogc:NumericDoubleTextBox Grid.Row="30"
                                     Grid.Column="2"
                                     Width="100"
                                     MinValue="0.0"

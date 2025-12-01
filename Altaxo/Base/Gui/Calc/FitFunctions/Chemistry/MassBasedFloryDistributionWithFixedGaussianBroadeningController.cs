@@ -43,6 +43,46 @@ namespace Altaxo.Gui.Calc.FitFunctions.Chemistry
 
     #region Bindings
 
+    public int OrderOfBaselinePolynominal
+    {
+      get => field;
+      set
+      {
+        if (!(field == value))
+        {
+          field = value;
+          OnPropertyChanged(nameof(OrderOfBaselinePolynominal));
+        }
+      }
+    }
+
+    public int NumberOfTerms
+    {
+      get => field;
+      set
+      {
+        if (!(field == value))
+        {
+          field = value;
+          OnPropertyChanged(nameof(NumberOfTerms));
+        }
+      }
+    }
+
+
+    public double Accuracy
+    {
+      get => field;
+      set
+      {
+        if (!(field == value))
+        {
+          field = value;
+          OnPropertyChanged(nameof(Accuracy));
+        }
+      }
+    }
+
 
     public double MolecularWeightOfMonomerUnit
     {
@@ -252,6 +292,9 @@ namespace Altaxo.Gui.Calc.FitFunctions.Chemistry
 
       if (initData)
       {
+        NumberOfTerms = _doc.NumberOfTerms;
+        OrderOfBaselinePolynominal = _doc.OrderOfBaselinePolynomial;
+        Accuracy = _doc.Accuracy;
         MolecularWeightOfMonomerUnit = _doc.MolecularWeightOfMonomerUnit;
         IndependentVariableIsDecadicLogarithm = _doc.IndependentVariableIsDecadicLogarithm;
         OrderOfPolynomial = _doc.PolynomialCoefficientsForSigma.Length - 1;
@@ -291,6 +334,9 @@ namespace Altaxo.Gui.Calc.FitFunctions.Chemistry
 
       _doc = _doc with
       {
+        NumberOfTerms = NumberOfTerms,
+        OrderOfBaselinePolynomial = OrderOfBaselinePolynominal,
+        Accuracy = Accuracy,
         MolecularWeightOfMonomerUnit = MolecularWeightOfMonomerUnit,
         IndependentVariableIsDecadicLogarithm = IndependentVariableIsDecadicLogarithm,
         PolynomialCoefficientsForSigma = arr[0..(OrderOfPolynomial + 1)],

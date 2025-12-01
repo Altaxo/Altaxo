@@ -280,45 +280,51 @@ namespace Altaxo.Calc.FitFunctions.Chemistry
       }
       else
       {
-        int N;
+        int Nmin;
+        double xc, a;
         double relSigmaEnd = 0;
         switch (Accuracy)
         {
-          case <= 3E-5:
+          case <= 9.9E-8:
             {
-              N = Math.Max(8, (int)Math.Ceiling(1.7383574575204515 + 36.589049716803025 * sigmaCenter));
-              double x0 = 0.24302070673085596;
-              double y0 = 3.9727767426224503;
-              double a0 = 0.6665996357154224;
-              double τ0 = 0.08617754311624344;
-              double β0 = 0.5499113474841462;
-              relSigmaEnd = sigmaCenter <= x0 ? y0 : y0 + a0 * (1 - Math.Exp(-Math.Pow(sigmaCenter / τ0, β0)));
+              relSigmaEnd = 6;
+              Nmin = 15; xc = 0.14023621067404723; a = 66.55798223242172;
             }
             break;
-          case <= 3E-4:
+          case <= 9.9E-7:
             {
-              N = Math.Max(6, (int)Math.Ceiling(1.775 + 27.623529411764707 * sigmaCenter));
-              double x0 = 0.2;
-              double y0 = 3.2430371725696197;
-              double a0 = 0.8842534504852964;
-              double τ0 = 0.09310065101698227;
-              double β0 = 0.6489338265756501;
-              relSigmaEnd = sigmaCenter <= x0 ? y0 : y0 + a0 * (1 - Math.Exp(-Math.Pow(sigmaCenter / τ0, β0)));
+              relSigmaEnd = 5.5;
+              Nmin = 13; xc = 0.15538004726171484; a = 55.659311182796955;
+            }
+            break;
+          case <= 9.9E-6:
+            {
+              relSigmaEnd = 5;
+              Nmin = 11; xc = 0.15545005559921243; a = 45.121426153182945;
+            }
+            break;
+          case <= 9.9E-5:
+            {
+              relSigmaEnd = 4.6;
+              Nmin = 11; xc = 0.24527435302734366; a = 36.338748931884766;
+            }
+            break;
+          case <= 9.9E-4:
+            {
+              relSigmaEnd = 4.2;
+              Nmin = 9; xc = 0.21734252929687492; a = 27.35855712890623;
             }
             break;
           default:
             {
-              N = Math.Max(4, (int)Math.Ceiling(1 + 20 * sigmaCenter));
-              double x0 = 0.183133795011144;
-              double y0 = 2.284555517883196;
-              double a0 = 1.3365913543073111;
-              double τ0 = 0.09173291302278766;
-              double β0 = 0.4587167759857299;
-              relSigmaEnd = sigmaCenter <= x0 ? y0 : y0 + a0 * (1 - Math.Exp(-Math.Pow(sigmaCenter / τ0, β0)));
+              relSigmaEnd = 3.6;
+              Nmin = 7; xc = 0.17651916503906245; a = 18.434545898437506;
             }
             break;
         }
 
+        var nd = (sigmaCenter <= xc) ? Nmin : Nmin + (sigmaCenter - xc) * a;
+        int N = (int)(1 + 2 * Math.Ceiling((nd - 1) / 2)); // make sure N is odd for symmetry
         return (N, relSigmaEnd);
       }
     }
@@ -555,28 +561,8 @@ namespace Altaxo.Calc.FitFunctions.Chemistry
 
     public (double Position, double Area, double Height, double FWHM) GetPositionAreaHeightFWHMFromSinglePeakParameters(IReadOnlyList<double> parameters)
     {
-      //leftXX and rightXX are ProductLog[-(1/(Sqrt[2]*E))] and ProductLog[-1, -(1/(Sqrt[2]*E))]
-      const double leftXX = 0.76124022935440305941; // while the peak maximum is at xx=2, the FWHM is at xx=0.76124022935440305941 and xx=4.1559209002009059020
-      const double rightXX = 4.1559209002009059020;
-
-      var area = parameters[0];
-      var tau = parameters[1];
-
-      var height = area * _lnOf10 * 4 * Math.Exp(-2);
-
-      double position, width;
-      if (IndependentVariableIsDecadicLogarithm)
-      {
-        position = Math.Log10(2 * MolecularWeightOfMonomerUnit / tau);
-        width = Math.Log10(rightXX) - Math.Log10(leftXX);
-      }
-      else
-      {
-        position = 2 * MolecularWeightOfMonomerUnit / tau;
-        width = (rightXX - leftXX) * MolecularWeightOfMonomerUnit / tau;
-      }
-
-      return (position, area, height, width);
+      var (position, _, area, _, height, _, fwhm, _) = GetPositionAreaHeightFWHMFromSinglePeakParameters(parameters, null);
+      return (position, area, height, fwhm);
     }
 
     public (double Position, double PositionStdDev, double Area, double AreaStdDev, double Height, double HeightStdDev, double FWHM, double FWHMStdDev) GetPositionAreaHeightFWHMFromSinglePeakParameters(IReadOnlyList<double> parameters, IROMatrix<double>? cv)
@@ -584,6 +570,7 @@ namespace Altaxo.Calc.FitFunctions.Chemistry
       //leftXX and rightXX are ProductLog[-(1/(Sqrt[2]*E))] and ProductLog[-1, -(1/(Sqrt[2]*E))]
       const double leftXX = 0.76124022935440305941; // while the peak maximum is at xx=2, the FWHM is at xx=0.76124022935440305941 and xx=4.1559209002009059020
       const double rightXX = 4.1559209002009059020;
+      const double log10Mean = 0.18361290376839959366;
 
       var area = parameters[0];
       var tau = parameters[1];
@@ -593,7 +580,18 @@ namespace Altaxo.Calc.FitFunctions.Chemistry
       double positionVar = 0;
       double widthVar = 0;
 
-      var height = area * _lnOf10 * 4 * Math.Exp(-2);
+      var log10FloryPosition = Math.Log10(2 * MolecularWeightOfMonomerUnit / tau);
+      var sigma = RMath.EvaluatePolynomOrderAscending(log10FloryPosition, this.PolynomialCoefficientsForSigma);
+      var log10Max = log10Mean + (Math.Log10(2) - log10Mean) * 0.5 * ErrorFunction.Erfc((Math.Log10(sigma) + 0.46773301028340636) / (0.3924498314183897 * Math.Sqrt(2)));
+      var log10FloryGaussPosition = log10Max + Math.Log10(MolecularWeightOfMonomerUnit / tau);
+
+      var heightFlory = area * _lnOf10 * 4 * Math.Exp(-2);
+      var heightGauss = area / (sigma * Math.Sqrt(2 * Math.PI));
+      var heightFloryGauss = sigma == 0 ? heightFlory : 1 / Math.Sqrt(1 / RMath.Pow2(heightFlory) + 1 / RMath.Pow2(heightGauss));
+
+      var log10FwhmFlory = Math.Log10(rightXX) - Math.Log10(leftXX);
+      var log10FwhmGauss = sigma * 2 * Math.Sqrt(Math.Log(4));
+      var log10FwhmFloryGauss = Math.Sqrt(RMath.Pow2(log10FwhmFlory) + RMath.Pow2(log10FwhmGauss));
 
       if (cv is not null)
       {
@@ -601,28 +599,31 @@ namespace Altaxo.Calc.FitFunctions.Chemistry
         heightVar = areaVar * _lnOf10 * 4 * Math.Exp(-2);
       }
 
-      double position, width;
       if (IndependentVariableIsDecadicLogarithm)
       {
-        position = Math.Log10(2 * MolecularWeightOfMonomerUnit / tau);
-        width = Math.Log10(rightXX) - Math.Log10(leftXX);
         if (cv is not null)
         {
           positionVar = Math.Sqrt(cv[1, 1]) / (tau * _lnOf10);
           widthVar = 0;
         }
+
+        return (log10FloryGaussPosition, positionVar, area, areaVar, heightFloryGauss, heightVar, log10FwhmFloryGauss, widthVar);
       }
       else
       {
-        position = 2 * MolecularWeightOfMonomerUnit / parameters[1];
-        width = (rightXX - leftXX) * MolecularWeightOfMonomerUnit / tau;
         if (cv is not null)
         {
           positionVar = 2 * MolecularWeightOfMonomerUnit / (tau * tau) * Math.Sqrt(cv[1, 1]);
           widthVar = (rightXX - leftXX) * MolecularWeightOfMonomerUnit / (tau * tau) * Math.Sqrt(cv[1, 1]);
         }
+
+        var log10XLeftFloryCorr = Math.Log10(leftXX) - log10Mean;
+        var log10XRightFloryCorr = Math.Log10(rightXX) - log10Mean;
+        var log10XLeftRightGauss = 0.5 * sigma * 2 * Math.Sqrt(Math.Log(4));
+        var log10XLeft = -Math.Sqrt(RMath.Pow2(log10XLeftFloryCorr) + RMath.Pow2(log10XLeftRightGauss)) + log10Mean;
+        var log10XRight = Math.Sqrt(RMath.Pow2(log10XRightFloryCorr) + RMath.Pow2(log10XLeftRightGauss)) + log10Mean;
+        return (Math.Pow(10, log10FloryGaussPosition), positionVar, area, areaVar, heightFloryGauss, heightVar, (MolecularWeightOfMonomerUnit / tau) * (Math.Pow(10, log10XRight) - Math.Pow(10, log10XLeft)), widthVar);
       }
-      return (position, positionVar, area, areaVar, height, heightVar, width, widthVar);
     }
     #endregion
   }

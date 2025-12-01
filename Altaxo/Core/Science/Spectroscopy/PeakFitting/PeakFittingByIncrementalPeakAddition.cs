@@ -364,6 +364,7 @@ namespace Altaxo.Science.Spectroscopy.PeakFitting
 
         if (thispeak.Height == 0)
         {
+          fitFunction = fitFunction.WithNumberOfTerms(numberOfTerms - 1);
           break; // no more peaks to fit
         }
 

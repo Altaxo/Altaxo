@@ -43,6 +43,33 @@ namespace Altaxo.Gui.Calc.FitFunctions.Chemistry
     #region Bindings
 
 
+    public int OrderOfBaselinePolynominal
+    {
+      get => field;
+      set
+      {
+        if (!(field == value))
+        {
+          field = value;
+          OnPropertyChanged(nameof(OrderOfBaselinePolynominal));
+        }
+      }
+    }
+
+
+    public int NumberOfTerms
+    {
+      get => field;
+      set
+      {
+        if (!(field == value))
+        {
+          field = value;
+          OnPropertyChanged(nameof(NumberOfTerms));
+        }
+      }
+    }
+
     public double MolecularWeightOfMonomerUnit
     {
       get => field;
@@ -70,13 +97,6 @@ namespace Altaxo.Gui.Calc.FitFunctions.Chemistry
       }
     }
 
-
-
-
-
-
-
-
     #endregion
 
     protected override void Initialize(bool initData)
@@ -85,6 +105,8 @@ namespace Altaxo.Gui.Calc.FitFunctions.Chemistry
 
       if (initData)
       {
+        NumberOfTerms = _doc.NumberOfTerms;
+        OrderOfBaselinePolynominal = _doc.OrderOfBaselinePolynomial;
         MolecularWeightOfMonomerUnit = _doc.MolecularWeightOfMonomerUnit;
         IndependentVariableIsDecadicLogarithm = _doc.IndependentVariableIsDecadicLogarithm;
       }
@@ -95,6 +117,8 @@ namespace Altaxo.Gui.Calc.FitFunctions.Chemistry
     {
       _doc = _doc with
       {
+        NumberOfTerms = NumberOfTerms,
+        OrderOfBaselinePolynomial = OrderOfBaselinePolynominal,
         MolecularWeightOfMonomerUnit = MolecularWeightOfMonomerUnit,
         IndependentVariableIsDecadicLogarithm = IndependentVariableIsDecadicLogarithm,
       };
