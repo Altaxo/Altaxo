@@ -107,6 +107,7 @@ namespace Altaxo.Calc.FitFunctions.Chemistry
         info.AddValue("MolecularWeightOfMonomerUnit", s.MolecularWeightOfMonomerUnit);
         info.AddValue("IndependentVariableIsDecadicLogarithm", s.IndependentVariableIsDecadicLogarithm);
         info.AddArray("PolynomialCoefficientsForSigma", s._polynomialCoefficientsForSigma, s._polynomialCoefficientsForSigma.Length);
+        info.AddValue("Accuracy", s.Accuracy);
       }
 
       public virtual object Deserialize(object? o, Serialization.Xml.IXmlDeserializationInfo info, object? parent)
@@ -116,11 +117,13 @@ namespace Altaxo.Calc.FitFunctions.Chemistry
         var molecularWeightOfMonomerUnit = info.GetDouble("MolecularWeightOfMonomerUnit");
         var independentVariableIsDecadicLogarithm = info.GetBoolean("IndependentVariableIsDecadicLogarithm");
         info.GetArray("PolynomialCoefficientsForSigma", out double[] polynomialCoefficientsForSigma);
+        var accuracy = info.GetDouble("Accuracy");
         return new MassBasedFloryDistributionWithFixedGaussianBroadening(numberOfTerms, orderOfBackgroundPolynomial)
         {
           MolecularWeightOfMonomerUnit = molecularWeightOfMonomerUnit,
           IndependentVariableIsDecadicLogarithm = independentVariableIsDecadicLogarithm,
           PolynomialCoefficientsForSigma = polynomialCoefficientsForSigma,
+          Accuracy = accuracy,
         };
       }
     }
