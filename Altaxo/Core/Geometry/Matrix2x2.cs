@@ -48,12 +48,18 @@ namespace Altaxo.Geometry
     /// <summary>Gets the matrix element M[2,2].</summary>
     public double M22 { get; private set; }
 
+    /// <summary>
+    /// Gets the determinant of this matrix.
+    /// </summary>
     public double Determinant { get; private set; }
 
     private static Matrix2x2 _identityMatrix;
 
     #region Constructors
 
+    /// <summary>
+    /// Initializes static members of the <see cref="Matrix2x2"/> struct.
+    /// </summary>
     static Matrix2x2()
     {
       _identityMatrix = new Matrix2x2(
@@ -201,6 +207,7 @@ namespace Altaxo.Geometry
 
     #endregion Inverse transformations
 
+    /// <inheritdoc/>
     public override string ToString()
     {
       var stb = new StringBuilder(4 * 12);

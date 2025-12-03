@@ -38,6 +38,11 @@ namespace Altaxo.Geometry
   /// </summary>
   public interface IPolylineD3D
   {
+    /// <summary>
+    /// Gets the point at the specified index.
+    /// </summary>
+    /// <param name="idx">The index of the point to retrieve.</param>
+    /// <returns>The <see cref="PointD3D"/> at the specified index.</returns>
     PointD3D GetPoint(int idx);
 
     /// <summary>
@@ -56,6 +61,11 @@ namespace Altaxo.Geometry
     /// </value>
     IList<PointD3D> Points { get; } // TODO change this to IReadonlyList
 
+    /// <summary>
+    /// Determines whether the transition from the point at the specified index to the next point is sharp.
+    /// </summary>
+    /// <param name="idx">The index of the starting point of the transition.</param>
+    /// <returns><c>true</c> if the transition is sharp; otherwise, <c>false</c>.</returns>
     bool IsTransitionFromIdxToNextIdxSharp(int idx);
 
     /// <summary>

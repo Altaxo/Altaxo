@@ -76,6 +76,9 @@ namespace Altaxo.Geometry
 
     #region Constructors
 
+    /// <summary>
+    /// Initializes static members of the <see cref="Matrix3x2"/> struct.
+    /// </summary>
     static Matrix3x2()
     {
       _identityMatrix = new Matrix3x2(
@@ -137,13 +140,12 @@ namespace Altaxo.Geometry
     }
 
     /// <summary>
-    /// Creates a transformation matrix that uses three basis vectors, and a location to construct the matrix that transform points expressed in the three basis vectors to points in
-    /// the coordinate system.
+    /// Creates a transformation matrix that uses two basis vectors and a location to construct the matrix that transforms points expressed in the basis vectors to points in the coordinate system.
     /// </summary>
     /// <param name="xBasis">Basis vector for the x-direction.</param>
     /// <param name="yBasis">Basis vector for the y-direction.</param>
     /// <param name="origin">The origin of the coordinate system.</param>
-    /// <returns>A transformation matrix that uses the three basis vectors, and a location</returns>
+    /// <returns>A transformation matrix that uses the two basis vectors and a location.</returns>
     public static Matrix3x2 NewFromBasisVectorsAndLocation(VectorD2D xBasis, VectorD2D yBasis, PointD3D origin)
     {
       return new Matrix3x2(
@@ -152,6 +154,11 @@ namespace Altaxo.Geometry
         origin.X, origin.Y);
     }
 
+    /// <summary>
+    /// Creates a new translation matrix from a translation vector.
+    /// </summary>
+    /// <param name="d">The translation vector.</param>
+    /// <returns>A translation matrix.</returns>
     public static Matrix3x2 NewTranslation(VectorD2D d)
     {
       return new Matrix3x2(
@@ -162,6 +169,12 @@ namespace Altaxo.Geometry
         );
     }
 
+    /// <summary>
+    /// Creates a new translation matrix from translation components.
+    /// </summary>
+    /// <param name="dx">Translation in x direction.</param>
+    /// <param name="dy">Translation in y direction.</param>
+    /// <returns>A translation matrix.</returns>
     public static Matrix3x2 NewTranslation(double dx, double dy)
     {
       return new Matrix3x2(
@@ -270,6 +283,9 @@ namespace Altaxo.Geometry
       }
     }
 
+    /// <summary>
+    /// Gets a value indicating whether this matrix is the identity transformation.
+    /// </summary>
     public bool IsIdentity
     {
       get
@@ -455,6 +471,7 @@ namespace Altaxo.Geometry
 
     #endregion Conversion to other matrices
 
+    /// <inheritdoc/>
     public override string ToString()
     {
       var stb = new StringBuilder(12 * 12);
@@ -490,6 +507,7 @@ namespace Altaxo.Geometry
       return stb.ToString();
     }
 
+    /// <inheritdoc/>
     public bool Equals(Matrix3x2 other)
     {
       return
@@ -501,6 +519,12 @@ namespace Altaxo.Geometry
         M21 == other.M21;
     }
 
+    /// <summary>
+    /// Determines whether two matrices are equal.
+    /// </summary>
+    /// <param name="x">The first matrix.</param>
+    /// <param name="y">The second matrix.</param>
+    /// <returns><c>true</c> if all corresponding elements are equal; otherwise, <c>false</c>.</returns>
     public static bool operator ==(Matrix3x2 x, Matrix3x2 y)
     {
       return
@@ -511,16 +535,24 @@ namespace Altaxo.Geometry
         x.M12 == y.M12 &&
         x.M21 == y.M21;
     }
+    /// <summary>
+    /// Determines whether two matrices are not equal.
+    /// </summary>
+    /// <param name="x">The first matrix.</param>
+    /// <param name="y">The second matrix.</param>
+    /// <returns><c>true</c> if any corresponding elements differ; otherwise, <c>false</c>.</returns>
     public static bool operator !=(Matrix3x2 x, Matrix3x2 y)
     {
       return !(x == y);
     }
 
+    /// <inheritdoc/>
     public override bool Equals(object? obj)
     {
       return obj is Matrix3x2 y && Equals(y);
     }
 
+    /// <inheritdoc/>
     public override int GetHashCode()
     {
       return M11.GetHashCode() + 5 * M22.GetHashCode() + 7 * M31.GetHashCode() + 9 * M32.GetHashCode();

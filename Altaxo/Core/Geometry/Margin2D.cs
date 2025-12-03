@@ -27,9 +27,19 @@ using System;
 
 namespace Altaxo.Geometry
 {
+  /// <summary>
+  /// Represents a margin in 2D space, defined by left, top, right, and bottom values.
+  /// </summary>
   [Serializable]
   public struct Margin2D : IEquatable<Margin2D>
   {
+    /// <summary>
+    /// Initializes a new instance of the <see cref="Margin2D"/> struct.
+    /// </summary>
+    /// <param name="left">The left margin.</param>
+    /// <param name="top">The top margin.</param>
+    /// <param name="right">The right margin.</param>
+    /// <param name="bottom">The bottom margin.</param>
     public Margin2D(double left, double top, double right, double bottom)
     {
       Left = left;
@@ -38,17 +48,30 @@ namespace Altaxo.Geometry
       Bottom = bottom;
     }
 
+    /// <summary>
+    /// Gets or sets the left margin.
+    /// </summary>
     public double Left { get; set; }
 
+    /// <summary>
+    /// Gets or sets the top margin.
+    /// </summary>
     public double Top { get; set; }
 
+    /// <summary>
+    /// Gets or sets the right margin.
+    /// </summary>
     public double Right { get; set; }
 
+    /// <summary>
+    /// Gets or sets the bottom margin.
+    /// </summary>
     public double Bottom { get; set; }
 
     #region Serialization
 
     /// <summary>
+    /// XML serialization surrogate for <see cref="Margin2D"/>.
     /// V1: 2015-11-15 Move to Altaxo.Geometry namespace.
     /// V2: 2023-01-14 Move from assembly AltaxoBase to AltaxoCore
     /// </summary>
@@ -57,6 +80,7 @@ namespace Altaxo.Geometry
     [Altaxo.Serialization.Xml.XmlSerializationSurrogateFor(typeof(Margin2D), 2)]
     private class XmlSerializationSurrogate0 : Altaxo.Serialization.Xml.IXmlSerializationSurrogate
     {
+      /// <inheritdoc/>
       public void Serialize(object obj, Altaxo.Serialization.Xml.IXmlSerializationInfo info)
       {
         var s = (Margin2D)obj;
@@ -67,6 +91,7 @@ namespace Altaxo.Geometry
         info.AddValue("Bottom", s.Bottom);
       }
 
+      /// <inheritdoc/>
       public object Deserialize(object? o, Altaxo.Serialization.Xml.IXmlDeserializationInfo info, object? parent)
       {
         var s = o is not null ? (Margin2D)o : new Margin2D();
@@ -82,21 +107,35 @@ namespace Altaxo.Geometry
 
     #endregion Serialization
 
+    /// <inheritdoc/>
     public bool Equals(Margin2D other)
     {
       return Left == other.Left && Top == other.Top && Right == other.Right && Bottom == other.Bottom;
     }
 
+    /// <summary>
+    /// Determines whether two <see cref="Margin2D"/> instances are equal.
+    /// </summary>
+    /// <param name="a">The first <see cref="Margin2D"/>.</param>
+    /// <param name="b">The second <see cref="Margin2D"/>.</param>
+    /// <returns><c>true</c> if the instances are equal; otherwise, <c>false</c>.</returns>
     public static bool operator ==(Margin2D a, Margin2D b)
     {
       return a.Equals(b);
     }
 
+    /// <summary>
+    /// Determines whether two <see cref="Margin2D"/> instances are not equal.
+    /// </summary>
+    /// <param name="a">The first <see cref="Margin2D"/>.</param>
+    /// <param name="b">The second <see cref="Margin2D"/>.</param>
+    /// <returns><c>true</c> if the instances are not equal; otherwise, <c>false</c>.</returns>
     public static bool operator !=(Margin2D a, Margin2D b)
     {
       return !(a.Equals(b));
     }
 
+    /// <inheritdoc/>
     public override bool Equals(object? obj)
     {
       if (obj is Margin2D from)
@@ -109,6 +148,7 @@ namespace Altaxo.Geometry
       }
     }
 
+    /// <inheritdoc/>
     public override int GetHashCode()
     {
       return Left.GetHashCode() + 3 * Right.GetHashCode() + 7 * Top.GetHashCode() + 11 * Bottom.GetHashCode();

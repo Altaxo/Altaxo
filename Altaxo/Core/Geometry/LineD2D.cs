@@ -37,7 +37,7 @@ namespace Altaxo.Geometry
     private PointD2D _p1;
 
     /// <summary>
-    /// Initializes a new instance of the <see cref="LineD3D"/> struct.
+    /// Initializes a new instance of the <see cref="LineD2D"/> struct.
     /// </summary>
     /// <param name="p0">The starting point of the line.</param>
     /// <param name="p1">The end point of the line.</param>
@@ -99,8 +99,20 @@ namespace Altaxo.Geometry
     /// </value>
     public double Length { get { return ((VectorD2D)(_p1 - _p0)).Length; } }
 
+    /// <summary>
+    /// Gets the vector from <see cref="P0"/> to <see cref="P1"/>.
+    /// </summary>
+    /// <value>
+    /// The vector from <see cref="P0"/> to <see cref="P1"/>.
+    /// </value>
     public VectorD2D LineVector { get { return (VectorD2D)(_p1 - _p0); } }
 
+    /// <summary>
+    /// Gets the normalized vector from <see cref="P0"/> to <see cref="P1"/>.
+    /// </summary>
+    /// <value>
+    /// The normalized vector from <see cref="P0"/> to <see cref="P1"/>.
+    /// </value>
     public VectorD2D LineVectorNormalized { get { return VectorD2D.CreateNormalized(_p1.X - _p0.X, _p1.Y - _p0.Y); } }
 
     /// <summary>
@@ -116,23 +128,23 @@ namespace Altaxo.Geometry
     /// <summary>
     /// Gets the point at this line from a relative value.
     /// </summary>
-    /// <param name="relValue">The relative value. If 0, the start point <see cref="P0"/> is returned. If 1, the end point <see cref="P1"/> is returned.</param>
-    /// <returns></returns>
-    public PointD2D GetPointAtLineFromRelativeValue(double relValue)
+    /// <param name="relativeValue">The relative value. If 0, the start point <see cref="P0"/> is returned. If 1, the end point <see cref="P1"/> is returned.</param>
+    /// <returns>The point at the specified relative value along the line.</returns>
+    public PointD2D GetPointAtLineFromRelativeValue(double relativeValue)
     {
-      if (relValue == 0)
+      if (relativeValue == 0)
       {
         return _p0;
       }
-      else if (relValue == 1)
+      else if (relativeValue == 1)
       {
         return _p1;
       }
       else
       {
         return new PointD2D(
-        (1 - relValue) * _p0.X + (relValue) * _p1.X,
-        (1 - relValue) * _p0.Y + (relValue) * _p1.Y);
+        (1 - relativeValue) * _p0.X + (relativeValue) * _p1.X,
+        (1 - relativeValue) * _p0.Y + (relativeValue) * _p1.Y);
       }
     }
 
@@ -189,12 +201,11 @@ namespace Altaxo.Geometry
       return new LineD2D(line.P0 + translation, line.P1 + translation);
     }
 
-
     /// <summary>
     /// Translate a line by subtracting a vector from both start and end point.
     /// </summary>
     /// <param name="line">The line.</param>
-    /// <param name="translation">The vector to add.</param>
+    /// <param name="translation">The vector to subtract.</param>
     /// <returns>
     /// The translated line.
     /// </returns>

@@ -44,6 +44,7 @@ namespace Altaxo.Geometry
     #region Serialization
 
     /// <summary>
+    /// XML serialization surrogate for <see cref="Matrix3x2Class"/>.
     /// V1: 2023-01-14 Move from assembly AltaxoBase to AltaxoCore
     /// </summary>
     /// <seealso cref="Altaxo.Serialization.Xml.IXmlSerializationSurrogate" />
@@ -51,6 +52,7 @@ namespace Altaxo.Geometry
     [Serialization.Xml.XmlSerializationSurrogateFor(typeof(Matrix3x2Class), 1)]
     private class XmlSerializationSurrogate0 : Serialization.Xml.IXmlSerializationSurrogate
     {
+      /// <inheritdoc/>
       public void Serialize(object o, IXmlSerializationInfo info)
       {
         var s = (Matrix3x2Class)o;
@@ -62,6 +64,7 @@ namespace Altaxo.Geometry
         info.AddValue("M32", s.Matrix.M32);
       }
 
+      /// <inheritdoc/>
       public object Deserialize(object? o, IXmlDeserializationInfo info, object? parentobject)
       {
         var m11 = info.GetDouble("M11");
@@ -111,21 +114,25 @@ namespace Altaxo.Geometry
       Matrix = new Matrix3x2(m11, m12, m21, m22, m31, m32);
     }
 
+    /// <inheritdoc/>
     public bool Equals(Matrix3x2Class? other)
     {
       return other is { } from && Matrix.Equals(from.Matrix);
     }
 
+    /// <inheritdoc/>
     public bool Equals(Matrix3x2 other)
     {
       return Matrix.Equals(other);
     }
 
+    /// <inheritdoc/>
     public override bool Equals(object? obj)
     {
       return Equals(obj as Matrix3x2Class);
     }
 
+    /// <inheritdoc/>
     public override int GetHashCode()
     {
       return Matrix.GetHashCode();

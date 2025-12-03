@@ -28,12 +28,6 @@ using System;
 namespace Altaxo.Geometry
 {
   /// <summary>
-  /// Designates the 4 edges of a rectangular area.
-  /// </summary>
-  [Serializable]
-  public enum EdgeType { Left = 0, Bottom = 1, Right = 2, Top = 3 }
-
-  /// <summary>
   /// V1: 2015-11-15 Move to Altaxo.Geometry namespace.
   /// V2: 2023-01-14 Move from assembly AltaxoBase to AltaxoCore
   /// </summary>

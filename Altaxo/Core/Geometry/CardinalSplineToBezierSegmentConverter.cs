@@ -29,6 +29,7 @@ namespace Altaxo.Geometry
 {
   /// <summary>
   /// Converter for points connected by a cardinal spline curve into Bezier segments.
+  /// Provides helpers to convert open/closed cardinal splines and utility methods for Bezier manipulation.
   /// </summary>
   public static class CardinalSplineToBezierSegmentConverter
   {
@@ -36,12 +37,12 @@ namespace Altaxo.Geometry
     //
 
     /// <summary>
-    /// Calculates Bezier points from cardinal spline endpoints.
+    /// Calculates the first Bezier control point next to an endpoint of a cardinal spline.
     /// </summary>
-    /// <param name="end">The end point.</param>
+    /// <param name="end">The endpoint of the spline.</param>
     /// <param name="adj">The adjacent point next to the endpoint.</param>
-    /// <param name="tension">The tension.</param>
-    /// <returns></returns>
+    /// <param name="tension">The tension factor applied to the tangent.</param>
+    /// <returns>The Bezier control point near the endpoint.</returns>
     /// <remarks>Original name in Wine sources: calc_curve_bezier_endp</remarks>
     private static PointD2D Calc_Curve_Bezier_Endpoint(PointD2D end, PointD2D adj, double tension)
     {
@@ -71,11 +72,11 @@ namespace Altaxo.Geometry
     }
 
     /// <summary>
-    /// Calculates the control points of the incoming and outgoing Bezier segment around the original point <paramref name="p1"/>.
+    /// Calculates the control points of the incoming and outgoing Bezier segment around the original point <paramref name="pts1"/>.
     /// </summary>
-    /// <param name="pts0">The previous point on a cardinal spline curce.</param>
+    /// <param name="pts0">The previous point on a cardinal spline curve.</param>
     /// <param name="pts1">The point on a cardinal spline curve for which to calculate the incoming and outgoing Bezier control points.</param>
-    /// <param name="pts2">The nex point on the cardinal spline curve.</param>
+    /// <param name="pts2">The next point on the cardinal spline curve.</param>
     /// <param name="tension">The tension of the cardinal spline.</param>
     /// <param name="p1">The Bezier control point that controls the slope towards the point <paramref name="pts1"/>.</param>
     /// <param name="p2">The Bezier control point that controls the slope outwards from the point <paramref name="pts1"/>.</param>
@@ -91,12 +92,12 @@ namespace Altaxo.Geometry
     }
 
     /// <summary>
-    /// Converts an open cardinal spline, given by the points in <paramref name="points"/>, to Bezier segments.
+    /// Converts an open cardinal spline, given by the points in <paramref name="points"/>, to a sequence of Bezier control points.
     /// </summary>
     /// <param name="points">The control points of the open cardinal spline curve.</param>
-    /// <param name="count">Number of control points of the closed cardinal spline curve.</param>
-    /// <param name="tension">The tension of the cardinal spline.</param>
-    /// <returns>Bezier segments that constitute the closed curve.</returns>
+    /// <param name="count">Number of control points of the open cardinal spline curve.</param>
+    /// <param name="tension">The tension of the cardinal spline (typically in range 0..1).</param>
+    /// <returns>Bezier control points that constitute the open curve.</returns>
     /// <remarks>Original name in Wine source: GdipAddPathClosedCurve2</remarks>
     public static PointD2D[] OpenCardinalSplineToBezierSegments(PointD2D[] points, int count, double tension)
     {
@@ -129,12 +130,12 @@ namespace Altaxo.Geometry
     }
 
     /// <summary>
-    /// Converts a closed cardinal spline, given by the points in <paramref name="points"/>, to Bezier segments.
+    /// Converts a closed cardinal spline, given by the points in <paramref name="points"/>, to a sequence of Bezier control points.
     /// </summary>
     /// <param name="points">The control points of the closed cardinal spline curve.</param>
     /// <param name="count">Number of control points of the closed cardinal spline curve.</param>
-    /// <param name="tension">The tension of the cardinal spline.</param>
-    /// <returns>Bezier segments that constitute the closed curve.</returns>
+    /// <param name="tension">The tension of the cardinal spline (typically in range 0..1).</param>
+    /// <returns>Bezier control points that constitute the closed curve.</returns>
     /// <remarks>Original name in Wine source: GdipAddPathClosedCurve2</remarks>
     public static PointD2D[] ClosedCardinalSplineToBezierSegments(PointD2D[] points, int count, double tension)
     {
@@ -172,18 +173,18 @@ namespace Altaxo.Geometry
     }
 
     /// <summary>
-    /// Shortens a Bezier segment and returns the Bezier points of the shortened segment.
+    /// Shortens a Bezier segment in parameter space and returns the Bezier control points of the shortened segment.
     /// </summary>
-    /// <param name="P1">Control point p1 of the bezier segment.</param>
-    /// <param name="P2">Control point p2 of the bezier segment.</param>
-    /// <param name="P3">Control point p3 of the bezier segment.</param>
-    /// <param name="P4">Control point p4 of the bezier segment.</param>
-    /// <param name="t0">Value in the range 0..1 to indicate the shortening at the beginning of the segment.</param>
-    /// <param name="t1">Value in the range 0..1 to indicate the shortening at the beginning of the segment. This value must be greater than <paramref name="t0"/>.</param>
-    /// <returns>The control points of the shortened Bezier segment.</returns>
+    /// <param name="P1">Endpoint P1 of the original Bezier segment.</param>
+    /// <param name="P2">Control point P2 of the original Bezier segment.</param>
+    /// <param name="P3">Control point P3 of the original Bezier segment.</param>
+    /// <param name="P4">Endpoint P4 of the original Bezier segment.</param>
+    /// <param name="t0">Start parameter in range [0, 1].</param>
+    /// <param name="t1">End parameter in range [0, 1], must be greater than <paramref name="t0"/>.</param>
+    /// <returns>The control points of the shortened Bezier segment (PS1, PS2, PS3, PS4).</returns>
     /// <remarks>
     /// <para>See this source <see href="http://stackoverflow.com/questions/11703283/cubic-bezier-curve-segment"/> for explanation.</para>
-    /// <para>The assumtion here is that the Bezier curve is parametrized using</para>
+    /// <para>The assumption here is that the Bezier curve is parametrized using</para>
     /// <para>B(t) = (1−t)³ P1 + 3(1−t)² t P2 + 3(1−t) t² P3 + t³ P4</para>
     /// </remarks>
     public static Tuple<PointD2D, PointD2D, PointD2D, PointD2D> ShortenBezierSegment(PointD2D P1, PointD2D P2, PointD2D P3, PointD2D P4, double t0, double t1)
@@ -202,6 +203,14 @@ namespace Altaxo.Geometry
       return new Tuple<PointD2D, PointD2D, PointD2D, PointD2D>(PS1, PS2, PS3, PS4);
     }
 
+    /// <summary>
+    /// Finds the parametric distance along a poly-Bezier composed path from the start until a given Euclidean distance is reached.
+    /// </summary>
+    /// <param name="points">Array of Bezier control points following the 1 + 3k convention (curve points and controls).</param>
+    /// <param name="distanceFromStart">Target Euclidean distance from the first point.</param>
+    /// <returns>
+    /// The parametric distance value if determinable; otherwise <see cref="double.NaN"/>.
+    /// </returns>
     public static double FindDistanceFromStart(PointD2D[] points, double distanceFromStart)
     {
       var pivot = points[0];
@@ -227,6 +236,15 @@ namespace Altaxo.Geometry
       return double.NaN;
     }
 
+    /// <summary>
+    /// Shortens a sequence of Bezier segments by removing parts near the start and end points.
+    /// </summary>
+    /// <param name="points">Bezier control points following the 1 + 3k convention.</param>
+    /// <param name="distanceFromStart">Euclidean distance to shorten from the start.</param>
+    /// <param name="distanceFromEnd">Euclidean distance to shorten from the end.</param>
+    /// <returns>
+    /// The shortened sequence of Bezier control points, or <c>null</c> when shortening removes the entire curve.
+    /// </returns>
     public static PointD2D[]? ShortenBezierSegmentsByDistanceFromEndPoints(PointD2D[] points, double distanceFromStart, double distanceFromEnd)
     {
       return null;

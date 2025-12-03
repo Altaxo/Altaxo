@@ -101,8 +101,20 @@ namespace Altaxo.Geometry
     /// </value>
     public double Length { get { return (_p1 - _p0).Length; } }
 
+    /// <summary>
+    /// Gets the vector from <see cref="P0"/> to <see cref="P1"/>.
+    /// </summary>
+    /// <value>
+    /// The vector from <see cref="P0"/> to <see cref="P1"/>.
+    /// </value>
     public VectorD3D LineVector { get { return _p1 - _p0; } }
 
+    /// <summary>
+    /// Gets the normalized vector from <see cref="P0"/> to <see cref="P1"/>.
+    /// </summary>
+    /// <value>
+    /// The normalized vector from <see cref="P0"/> to <see cref="P1"/>.
+    /// </value>
     public VectorD3D LineVectorNormalized { get { return VectorD3D.CreateNormalized(_p1.X - _p0.X, _p1.Y - _p0.Y, _p1.Z - _p0.Z); } }
 
     /// <summary>
@@ -119,7 +131,7 @@ namespace Altaxo.Geometry
     /// Gets the point at this line from a relative value.
     /// </summary>
     /// <param name="relValue">The relative value. If 0, the start point <see cref="P0"/> is returned. If 1, the end point <see cref="P1"/> is returned.</param>
-    /// <returns></returns>
+    /// <returns>The point at the specified relative value along the line.</returns>
     public PointD3D GetPointAtLineFromRelativeValue(double relValue)
     {
       if (relValue == 0)

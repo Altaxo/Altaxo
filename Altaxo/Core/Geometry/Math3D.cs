@@ -30,16 +30,18 @@ using System.Text;
 
 namespace Altaxo.Geometry
 {
+  /// <summary>
+  /// Provides helper methods for 3D math operations such as vector symmetry, orthogonal projection, plane projection, and line dash dissection.
+  /// </summary>
   public static class Math3D
   {
     /// <summary>
-    /// Calculates the counterpart of the provided vector <paramref name="n"/>, so that this vector <paramref name="n"/> and it's conterpart are symmetrical,
+    /// Calculates the counterpart of the provided vector <paramref name="n"/>, so that this vector <paramref name="n"/> and its counterpart are symmetrical,
     /// with the symmetry line provided by vector <paramref name="q"/>.
     /// </summary>
-    /// <param name="n">The vector for which to find the symmectrical counterpart. Not required to be normalized.</param>
+    /// <param name="n">The vector for which to find the symmetrical counterpart. Not required to be normalized.</param>
     /// <param name="q">Symmetry line.</param>
-    /// <returns>The counterpart of the provided vector <paramref name="n"/>, so that this vector <paramref name="n"/> and it's conterpart are symmetrical,
-    /// with the symmetry line given by vector <paramref name="q"/>.</returns>
+    /// <returns>The counterpart of the provided vector <paramref name="n"/>, symmetrical with respect to the symmetry line given by vector <paramref name="q"/>.</returns>
     public static VectorD3D GetVectorSymmetricalToVector(VectorD3D n, VectorD3D q)
     {
       double two_nq_qq = 2 * VectorD3D.DotProduct(n, q) / VectorD3D.DotProduct(q, q);
@@ -47,13 +49,12 @@ namespace Altaxo.Geometry
     }
 
     /// <summary>
-    /// Calculates a vector which is symmectrical to the provided vector <paramref name="n"/> with respected to the symmetry plane given by the normal normal <paramref name="q"/>.
-    /// The result is the same as if a ray is reflected on a miiror described by the plane, thus
-    /// an incident vector is resulting in an outcoming vector, and an outcoming vector is resulting in an incident vector.
+    /// Calculates a vector which is symmetrical to the provided vector <paramref name="n"/> with respect to the symmetry plane given by the normal <paramref name="q"/>.
+    /// The result corresponds to reflecting a ray on a mirror described by the plane.
     /// </summary>
-    /// <param name="n">The vector for which to find the symmectrical counterpart. Not required to be normalized.</param>
-    /// <param name="q">Normal of a plane where the vector n is mirrored. Not required to be normalized.</param>
-    /// <returns>A vector which is symmectrical to the provided vector <paramref name="n"/> with respected to the symmetry plane given by the normal normal <paramref name="q"/>.</returns>
+    /// <param name="n">The vector for which to find the symmetrical counterpart. Not required to be normalized.</param>
+    /// <param name="q">Normal of a plane where the vector <paramref name="n"/> is mirrored. Not required to be normalized.</param>
+    /// <returns>A vector symmetrical to <paramref name="n"/> with respect to the symmetry plane given by the normal <paramref name="q"/>.</returns>
     public static VectorD3D GetVectorSymmetricalToPlane(VectorD3D n, VectorD3D q)
     {
       double two_nq_qq = 2 * VectorD3D.DotProduct(n, q) / VectorD3D.DotProduct(q, q);
@@ -61,11 +62,11 @@ namespace Altaxo.Geometry
     }
 
     /// <summary>
-    /// Makes a given vector n orthogonal to another vector v. This is done by adding a fraction of v to n, so that the new vector is orthogonal to v.
+    /// Makes a given vector <paramref name="n"/> orthogonal to another vector <paramref name="v"/> by subtracting a fraction of <paramref name="v"/> from <paramref name="n"/>.
     /// </summary>
     /// <param name="n">Given vector.</param>
     /// <param name="v">A vector, to which the returned vector should be perpendicular.</param>
-    /// <returns>A new vector n+t*v, so that this vector is orthogonal to v (but not neccessarily normalized).</returns>
+    /// <returns>A new vector that is orthogonal to <paramref name="v"/> (not necessarily normalized).</returns>
     public static VectorD3D GetVectorOrthogonalToVector(VectorD3D n, VectorD3D v)
     {
       double nv_vv = VectorD3D.DotProduct(n, v) / VectorD3D.DotProduct(v, v);
@@ -73,12 +74,11 @@ namespace Altaxo.Geometry
     }
 
     /// <summary>
-    /// Makes a given vector n orthogonal to another vector v. This is done by adding a fraction of v to n, so that the new vector is orthogonal to v.
-    /// After this, the vector is normalized.
+    /// Makes a given vector <paramref name="n"/> orthogonal to another vector <paramref name="v"/> and normalizes the result.
     /// </summary>
     /// <param name="n">Given vector.</param>
     /// <param name="v">A vector, to which the returned vector should be perpendicular.</param>
-    /// <returns>A new vector n+t*v, so that this vector is orthogonal to v and normalized.</returns>
+    /// <returns>A normalized vector that is orthogonal to <paramref name="v"/>.</returns>
     public static VectorD3D GetNormalizedVectorOrthogonalToVector(VectorD3D n, VectorD3D v)
     {
       double nv_vv = VectorD3D.DotProduct(n, v) / VectorD3D.DotProduct(v, v);
@@ -87,12 +87,12 @@ namespace Altaxo.Geometry
     }
 
     /// <summary>
-    /// Gets a projection matrix that projects a point in the direction given by <paramref name="v"/> onto a plane with is given by an arbitrary point on the plane <paramref name="p"/> and the plane's normal <paramref name="q"/>.
+    /// Gets a projection matrix that projects a point in the direction given by <paramref name="v"/> onto a plane defined by an arbitrary point on the plane <paramref name="p"/> and the plane's normal <paramref name="q"/>.
     /// </summary>
     /// <param name="v">The projection direction. Not required to be normalized.</param>
     /// <param name="p">An arbitrary point onto the projection plane.</param>
     /// <param name="q">The projection plane's normal. Not required to be normalized.</param>
-    /// <returns>The projection matrix that projects a point in the direction given by <paramref name="v"/> onto a plane with is given by an arbitrary point on the plane <paramref name="p"/> and the plane's normal <paramref name="q"/>.</returns>
+    /// <returns>The projection matrix for the described projection.</returns>
     public static Matrix4x3 GetProjectionToPlane(VectorD3D v, PointD3D p, VectorD3D q)
     {
       double OneByQV = 1 / VectorD3D.DotProduct(q, v);
@@ -107,15 +107,14 @@ namespace Altaxo.Geometry
     }
 
     /// <summary>
-    /// Creates a transformation matrix that does the following: First, it converts a 2D point into a 3D coordinate system with the origin given by <paramref name="p"/>, and the unit vectors <paramref name="e"/> and <paramref name="n"/>.
-    /// Then the thus created 3D point is projected in the direction of <paramref name="v"/> onto a plane that is defined by the same point <paramref name="p"/> on the plane and the plane's normal <paramref name="q"/>.
+    /// Creates a transformation matrix that first maps a 2D point into a 3D coordinate system with origin <paramref name="p"/>, and unit vectors <paramref name="e"/> and <paramref name="n"/>,    /// then projects the created 3D point in the direction of <paramref name="v"/> onto a plane defined by point <paramref name="p"/> and the plane's normal <paramref name="q"/>.
     /// </summary>
     /// <param name="e">East vector: Spans one dimension of the projection of the 2D points to a 3D plane.</param>
     /// <param name="n">North vector: Spans the other dimension of the projection of the 2D input points to a 3D plane.</param>
     /// <param name="v">Direction of the projection of the 3D points to a plane.</param>
     /// <param name="p">Origin of the coordinate system, and point on the projection plane, too.</param>
     /// <param name="q">Normal of the projection plane.</param>
-    /// <returns>Matrix that transforms 2D points to a plane. (The 2D points are in fact 3D points with a z-coordinate that is ignored.</returns>
+    /// <returns>Matrix that transforms 2D points to a plane via 3D mapping and projection.</returns>
     public static Matrix4x3 Get2DProjectionToPlaneToPlane(VectorD3D e, VectorD3D n, VectorD3D v, PointD3D p, VectorD3D q)
     {
       double qn = VectorD3D.DotProduct(q, e);
@@ -133,13 +132,13 @@ namespace Altaxo.Geometry
     }
 
     /// <summary>
-    /// Creates a transformation matrix that projects 2D points (in fact: 3D-points with ignored z-coordinate) to a plane that is defined by 2 vectors (<paramref name="e"/> and <paramref name="n"/>) and a point
-    /// on that plane <paramref name="p"/>. The x-coordinates of the original point is projected in the <paramref name="e"/> direction, the y-coordinate in the <paramref name="n"/> direction.
+    /// Creates a transformation matrix that projects 2D points (represented as 3D points with ignored z-coordinate) to a plane defined by vectors <paramref name="e"/> and <paramref name="n"/> and a point <paramref name="p"/>.
+    /// The x-coordinate is projected in the <paramref name="e"/> direction, the y-coordinate in the <paramref name="n"/> direction.
     /// </summary>
     /// <param name="e">East vector: direction, in which the x-coordinate of the original points is projected.</param>
     /// <param name="n">North vector: direction, in which the y-coordinate of the original points is projected.</param>
-    /// <param name="p">The 3D point, which is the origin of the spanned plane (the original point with the coordinates (0,0) is projected to this point.</param>
-    /// <returns>A transformation matrix that projects 2D points (in fact: 3D-points with ignored z-coordinate) to a plane in 3D space.</returns>
+    /// <param name="p">The 3D point which is the origin of the spanned plane (the original point with the coordinates (0,0) is projected to this point).</param>
+    /// <returns>A transformation matrix that projects 2D points to a plane in 3D space.</returns>
     public static Matrix4x3 Get2DProjectionToPlane(VectorD3D e, VectorD3D n, PointD3D p)
     {
       return new Matrix4x3(
@@ -150,13 +149,13 @@ namespace Altaxo.Geometry
     }
 
     /// <summary>
-    /// Gets the distance of a point <paramref name="a"/> to a plane defined by a point <paramref name="p"/> and a normal vector <paramref name="q"/>. The distance is considered to be positive
-    /// if the point <paramref name="a"/> is located in the half space into which the vector <paramref name="q"/> is pointing.
+    /// Gets the signed distance of a point <paramref name="a"/> to a plane defined by a point <paramref name="p"/> and a normal vector <paramref name="q"/>.
+    /// The distance is positive if the point <paramref name="a"/> lies in the half-space into which <paramref name="q"/> points.
     /// </summary>
     /// <param name="a">The point a.</param>
     /// <param name="p">A point on a plane.</param>
     /// <param name="q">The normal vector of that plane (can be not-normalized).</param>
-    /// <returns></returns>
+    /// <returns>The signed distance from point <paramref name="a"/> to the plane.</returns>
     public static double GetDistancePointToPlane(PointD3D a, PointD3D p, VectorD3D q)
     {
       return ((a.X - p.X) * q.X + (a.Y - p.Y) * q.Y + (a.Z - p.Z) * q.Z) / q.Length;
@@ -169,8 +168,8 @@ namespace Altaxo.Geometry
     /// <param name="p1">The end point of the line.</param>
     /// <param name="ps">The other point.</param>
     /// <param name="distance">The given distance.</param>
-    /// <returns>A relative index on the line [0..1] for the point on the line that has the provided distance to the point <paramref name="ps"/>. If the point <paramref name="ps"/> is too far away, the result will be double.NaN.
-    /// If the point <paramref name="ps"/> is too close, the result can be outside the interval [0,1].</returns>
+    /// <returns>A relative index on the line [0..1] for the point on the line that has the provided distance to the point <paramref name="ps"/>.
+    /// If the point <paramref name="ps"/> is too far away, the result will be <see cref="double.NaN"/>; if too close, the result can be outside [0,1].</returns>
     public static double GetFractionalIndexOfPointOnLineInGivenDistanceToAnotherPoint(PointD3D p0, PointD3D p1, PointD3D ps, double distance)
     {
       VectorD3D p0s = p0 - ps;
@@ -195,7 +194,7 @@ namespace Altaxo.Geometry
     /// <param name="dashPatternOffset">The dash pattern offset (relative units, i.e. same units as dashPattern itself).</param>
     /// <param name="dashPatternScale">The dash pattern scale.</param>
     /// <param name="dashPatternStartAbsolute">An absolute length. This parameter is similar to <paramref name="dashPatternOffset"/>, but in absolute units.</param>
-    /// <returns></returns>
+    /// <returns>An enumeration of line segments resulting from the dash dissection.</returns>
     public static IEnumerable<LineD3D> DissectStraightLineWithDashPattern(LineD3D line, IReadOnlyList<double> dashPattern, double dashPatternOffset, double dashPatternScale, double dashPatternStartAbsolute)
     {
       int dashIndex = 0;
@@ -268,15 +267,14 @@ namespace Altaxo.Geometry
     }
 
     /// <summary>
-    /// Gets the relative positions of the two points on a line segment that have a given distance to a third point. The returned relative values are in the range [-Infinity, Infinity] and
-    /// therefore don't neccessarily lie directly on the line segment. Furthermore, a solution not always exists (in this case the returned values are NaN).
+    /// Gets the relative positions of the two points on a line segment that have a given distance to a third point.
+    /// Returned values may be outside [0,1], and if no solution exists the values are <see cref="double.NaN"/>.
     /// </summary>
-    /// <param name="p0">The start point of the line segment..</param>
+    /// <param name="p0">The start point of the line segment.</param>
     /// <param name="p1">The end point of the line segment.</param>
     /// <param name="ps">The third point.</param>
-    /// <param name="distance">The distance between a point on the line sigment and the third point.</param>
-    /// <returns>The relative positions of the points on the line segment that have the provided distance to the third point. The returned relative values are in the range [-Infinity, Infinity] and
-    /// therefore don't neccessarily lie directly on the line segment. Furthermore, a solution not always exists (in this case the returned values are NaN). </returns>
+    /// <param name="distance">The distance between a point on the line segment and the third point.</param>
+    /// <returns>A tuple of the two relative positions along the segment, possibly outside [0,1]; <see cref="double.NaN"/> when unsolvable.</returns>
     public static Tuple<double, double> GetRelativePositionsOnLineSegmentForPointsAtDistanceToPoint(PointD3D p0, PointD3D p1, PointD3D ps, double distance)
     {
       // we rescale the problem so that p0 is becoming the origin
@@ -292,6 +290,12 @@ namespace Altaxo.Geometry
       return new Tuple<double, double>(t1, t2);
     }
 
+    /// <summary>
+    /// Cuts the polyline for a start cap based on the provided start cap length and polyline thickness.
+    /// </summary>
+    /// <param name="polyLine">The polyline to process.</param>
+    /// <param name="startCapLength">The start cap length.</param>
+    /// <param name="polyLineThickness">The thickness of the polyline.</param>
     private static void CutPolylineForStartCap(IEnumerable<PointD3D> polyLine, double startCapLength, double polyLineThickness)
     {
       var startCapLengthSquare = startCapLength * startCapLength;

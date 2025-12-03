@@ -67,6 +67,9 @@ namespace Altaxo.Geometry
 
     #region Constructors
 
+    /// <summary>
+    /// Initializes static members of the <see cref="Matrix3x3"/> struct.
+    /// </summary>
     static Matrix3x3()
     {
       _identityMatrix = new Matrix3x3(
@@ -179,6 +182,11 @@ namespace Altaxo.Geometry
       );
     }
 
+    /// <summary>
+    /// Transforms a plane by applying this matrix, returning a new plane with transformed normal and distance.
+    /// </summary>
+    /// <param name="o">The plane to transform.</param>
+    /// <returns>The transformed plane.</returns>
     public PlaneD3D Transform(PlaneD3D o)
     {
       var x = o.X * (M22 * M33 - M23 * M32) + o.Y * (M13 * M32 - M12 * M33) + o.Z * (M12 * M23 - M13 * M22);
@@ -199,6 +207,11 @@ namespace Altaxo.Geometry
       return new PlaneD3D(x, y, z, w);
     }
 
+    /// <summary>
+    /// Transforms the specified point and returns the result.
+    /// </summary>
+    /// <param name="p">The point to transform.</param>
+    /// <returns>The transformed point.</returns>
     public PointD3D TransformPoint(PointD3D p)
     {
       return Transform(p);
@@ -477,6 +490,9 @@ namespace Altaxo.Geometry
 
     #region Inverse transformations
 
+    /// <summary>
+    /// Gets the inverse of this matrix.
+    /// </summary>
     public Matrix3x3 Inverse
     {
       get
@@ -657,6 +673,7 @@ namespace Altaxo.Geometry
 
       #endregion Inverse transformations
 
+    /// <inheritdoc/>
     public override string ToString()
     {
       var stb = new StringBuilder(12 * 12);
@@ -673,6 +690,7 @@ namespace Altaxo.Geometry
       stb.AppendFormat("M13=");
       stb.Append(M13);
       stb.Append(";");
+
       stb.Append("}, ");
 
       stb.Append("{");
@@ -685,6 +703,7 @@ namespace Altaxo.Geometry
       stb.AppendFormat("M23=");
       stb.Append(M23);
       stb.Append(";");
+
       stb.Append("}, ");
 
       stb.Append("{");

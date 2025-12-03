@@ -28,11 +28,31 @@ using System.Collections.Generic;
 
 namespace Altaxo.Geometry
 {
+  /// <summary>
+  /// Approximates cubic Bezier curves with polylines by recursively subdividing segments
+  /// until angle and absolute deviation criteria are met.
+  /// </summary>
   public class BezierCurveFlattener
   {
+    /// <summary>
+    /// Cosine of the maximum allowed angle deviation used for flatness checks.
+    /// </summary>
     private double _angleCriterium;
+
+    /// <summary>
+    /// Squared absolute tolerance criterion (16 * tol^2), where <c>tol</c> is the maximum
+    /// absolute allowed deviation between the Bezier curve and the polyline approximation.
+    /// </summary>
     private double _toleranceCriterium; // tolerance here is 16*tol^2 (tol is the maximum absolute allowed deviation of the curve from the approximation)
 
+    /// <summary>
+    /// Initializes a new instance of the <see cref="BezierCurveFlattener"/> class.
+    /// </summary>
+    /// <param name="angleInDegree">Maximum angle deviation in degrees (exclusive range (0, 90)).</param>
+    /// <param name="absoluteTolerance">Maximum absolute deviation between curve and approximation (must be &gt; 0).</param>
+    /// <exception cref="ArgumentOutOfRangeException">
+    /// Thrown when <paramref name="angleInDegree"/> is not &gt; 0 and &lt; 90, or when <paramref name="absoluteTolerance"/> is not &gt; 0.
+    /// </exception>
     public BezierCurveFlattener(double angleInDegree, double absoluteTolerance)
     {
       if (!(angleInDegree > 0) || !(angleInDegree < 90))
@@ -45,6 +65,15 @@ namespace Altaxo.Geometry
       _angleCriterium = Math.Cos(Math.PI * angleInDegree / 180);
     }
 
+    /// <summary>
+    /// Flattens a poly Bezier curve defined by an array of control points into a list of points.
+    /// </summary>
+    /// <param name="bezierPoints">
+    /// Control points of the poly Bezier curve. Must contain <c>1 + 3*k</c> points (start point followed by k cubic segments).
+    /// </param>
+    /// <returns>A list of points forming the polyline approximation of the Bezier curve.</returns>
+    /// <exception cref="ArgumentNullException">Thrown when <paramref name="bezierPoints"/> is null.</exception>
+    /// <exception cref="ArgumentException">Thrown when array length is invalid (must be ≥ 4 and expressible as <c>1 + 3*k</c>).</exception>
     public IList<PointD2D> FlattenPolyBezierCurve(PointD2D[] bezierPoints)
     {
       if (bezierPoints is null)
@@ -68,6 +97,16 @@ namespace Altaxo.Geometry
       return list;
     }
 
+    /// <summary>
+    /// Flattens a poly Bezier curve and appends the resulting points to the provided <paramref name="flattenedList"/>.
+    /// </summary>
+    /// <param name="startPoint">The starting point of the first segment.</param>
+    /// <param name="bezierPoints">
+    /// Control points for subsequent segments. Must contain a count that is a multiple of 3 (three per segment).
+    /// </param>
+    /// <param name="flattenedList">The list to receive points of the flattened curve.</param>
+    /// <exception cref="ArgumentNullException">Thrown when <paramref name="bezierPoints"/> is null.</exception>
+    /// <exception cref="ArgumentException">Thrown when <paramref name="bezierPoints"/> count is invalid (must be ≥ 3 and a multiple of 3).</exception>
     public void FlattenPolyBezierCurve(PointD2D startPoint, IList<PointD2D> bezierPoints, List<PointD2D> flattenedList)
     {
       if (bezierPoints is null)
@@ -87,6 +126,19 @@ namespace Altaxo.Geometry
       }
     }
 
+    /// <summary>
+    /// Recursively flattens a single cubic Bezier segment by subdividing it until flatness criteria are met.
+    /// </summary>
+    /// <param name="recursionLevel">Current recursion depth (limited internally).</param>
+    /// <param name="p0_0">Segment start point.</param>
+    /// <param name="p1_0">First control point.</param>
+    /// <param name="p2_0">Second control point.</param>
+    /// <param name="p3_0">Segment end point.</param>
+    /// <param name="flattenedList">Target list to insert subdivision points.</param>
+    /// <param name="insertIdx">Insertion index for the newly computed midpoint.</param>
+    /// <returns>
+    /// True if the segment was subdivided (i.e., not flat enough), false if it already met the flatness criteria.
+    /// </returns>
     public bool FlattenBezierSegment(int recursionLevel, PointD2D p0_0, PointD2D p1_0, PointD2D p2_0, PointD2D p3_0, List<PointD2D> flattenedList, int insertIdx)
     {
       if (!IsBezierSegmentFlatEnough(p0_0, p1_0, p2_0, p3_0))
@@ -117,6 +169,15 @@ namespace Altaxo.Geometry
       return false;
     }
 
+    /// <summary>
+    /// Tests whether a cubic Bezier segment is sufficiently flat according to the absolute deviation
+    /// and angle deviation criteria.
+    /// </summary>
+    /// <param name="p0">Segment start point.</param>
+    /// <param name="p1">First control point.</param>
+    /// <param name="p2">Second control point.</param>
+    /// <param name="p3">Segment end point.</param>
+    /// <returns>True if the segment is flat enough; otherwise, false.</returns>
     public bool IsBezierSegmentFlatEnough(PointD2D p0, PointD2D p1, PointD2D p2, PointD2D p3)
     {
       // First, test for absolute deviation of the curve
@@ -149,25 +210,32 @@ namespace Altaxo.Geometry
 
       var v10 = p1 - p0;
       if (0 == v10.X && 0 == v10.Y)
-        if ((0 != v10.X || 0 != v10.Y) && !IsAngleBelowCriterium(v30, v10))
+        if ((0 != v10.X || 0 != v10.Y) && !IsAngleBelowCriterion(v30, v10))
           return false;
 
       var v20 = p2 - p0;
-      if ((0 != v20.X || 0 != v20.Y) && !IsAngleBelowCriterium(v30, v20))
+      if ((0 != v20.X || 0 != v20.Y) && !IsAngleBelowCriterion(v30, v20))
         return false;
 
       var v32 = p3 - p2;
-      if ((0 != v32.X || 0 != v32.Y) && !IsAngleBelowCriterium(v30, v32))
+      if ((0 != v32.X || 0 != v32.Y) && !IsAngleBelowCriterion(v30, v32))
         return false;
 
       var v31 = p3 - p1;
-      if ((0 != v31.X || 0 != v31.Y) && !IsAngleBelowCriterium(v30, v31))
+      if ((0 != v31.X || 0 != v31.Y) && !IsAngleBelowCriterion(v30, v31))
         return false;
 
       return true;
     }
 
-    public bool IsAngleBelowCriterium(PointD2D v1, PointD2D v2)
+    /// <summary>
+    /// Determines whether the angle between <paramref name="v1"/> and <paramref name="v2"/> is below the configured criterium,
+    /// using the cosine of the angle.
+    /// </summary>
+    /// <param name="v1">First vector.</param>
+    /// <param name="v2">Second vector.</param>
+    /// <returns>True if the angle is below the criterium; otherwise, false.</returns>
+    public bool IsAngleBelowCriterion(PointD2D v1, PointD2D v2)
     {
       double r = v1.X * v2.X + v1.Y * v2.Y;
       if (r <= 0)

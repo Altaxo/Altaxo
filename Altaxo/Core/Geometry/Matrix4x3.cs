@@ -97,6 +97,9 @@ namespace Altaxo.Geometry
 
     #region Constructors
 
+    /// <summary>
+    /// Initializes static members of the <see cref="Matrix4x3"/> struct.
+    /// </summary>
     static Matrix4x3()
     {
       _identityMatrix = new Matrix4x3(
@@ -201,6 +204,11 @@ namespace Altaxo.Geometry
         origin.X, origin.Y, origin.Z);
     }
 
+    /// <summary>
+    /// Creates a new translation matrix from a translation vector.
+    /// </summary>
+    /// <param name="d">The translation vector.</param>
+    /// <returns>A translation matrix.</returns>
     public static Matrix4x3 NewTranslation(VectorD3D d)
     {
       return new Matrix4x3(
@@ -212,6 +220,13 @@ namespace Altaxo.Geometry
         );
     }
 
+    /// <summary>
+    /// Creates a new translation matrix from translation components.
+    /// </summary>
+    /// <param name="dx">Translation in x direction.</param>
+    /// <param name="dy">Translation in y direction.</param>
+    /// <param name="dz">Translation in z direction.</param>
+    /// <returns>A translation matrix.</returns>
     public static Matrix4x3 NewTranslation(double dx, double dy, double dz)
     {
       return new Matrix4x3(
@@ -306,7 +321,7 @@ namespace Altaxo.Geometry
     /// <param name="u">The axis about which the rotation takes place.</param>
     /// <param name="angleRadian">The rotation angle in radian.</param>
     /// <param name="center">The center of rotation.</param>
-    /// <returns>Matrix that describes the drotation.</returns>
+    /// <returns>Matrix that describes the rotation.</returns>
     public static Matrix4x3 NewRotationFromAxisAndAngleRadian(VectorD3D u, double angleRadian, PointD3D center)
     {
       double cosTheta = Math.Cos(angleRadian);
@@ -455,7 +470,9 @@ namespace Altaxo.Geometry
 
     #region Inverse transformations (of points, vectors)
 
-
+    /// <summary>
+    /// Gets the inverse of this matrix.
+    /// </summary>
     public Matrix4x3 Inverse
     {
       get
@@ -822,12 +839,21 @@ namespace Altaxo.Geometry
 
     #region Decomposition into shear, scale, and rotation
 
+    /// <summary>
+    /// Decomposes this matrix into scale, shear, rotation (in radian), and translation components.
+    /// </summary>
+    /// <returns>A tuple containing scale, shear, rotation in radian, and translation.</returns>
     public ( VectorD3D scale, VectorD3D shear, VectorD3D rotationRadian, VectorD3D translation) DecomposeIntoScaleShearRotationRadianTranslation()
     {
       var core = new Matrix3x3(M11, M12, M13, M21, M22, M23, M31, M32, M33);
       var (shears, scales, rotations) = core.DecomposeIntoScaleShearRotationRadian();
       return (shears, scales, rotations, new VectorD3D(M41, M42, M43));
     }
+
+    /// <summary>
+    /// Decomposes this matrix into scale, shear, rotation (in degree), and translation components.
+    /// </summary>
+    /// <returns>A tuple containing scale, shear, rotation in degree, and translation.</returns>
     public (VectorD3D scale, VectorD3D shear, VectorD3D rotationDegree, VectorD3D translation) DecomposeIntoScaleShearRotationDegreeTranslation()
     {
       var core = new Matrix3x3(M11, M12, M13, M21, M22, M23, M31, M32, M33);
@@ -837,6 +863,7 @@ namespace Altaxo.Geometry
 
     #endregion
 
+    /// <inheritdoc/>
     public override string ToString()
     {
       var stb = new StringBuilder(12 * 12);
