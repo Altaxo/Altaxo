@@ -2,7 +2,7 @@
 
 /////////////////////////////////////////////////////////////////////////////
 //    Altaxo:  a data processing and data plotting program
-//    Copyright (C) 2002-2024 Dr. Dirk Lellinger
+//    Copyright (C) 2002-2025 Dr. Dirk Lellinger
 //
 //    This program is free software; you can redistribute it and/or modify
 //    it under the terms of the GNU General Public License as published by
@@ -28,11 +28,16 @@ using Altaxo.Main;
 
 namespace Altaxo.Data
 {
+  /// <summary>
+  /// Keeps a list of X and Y columns representing curves to be processed together.
+  /// </summary>
+  /// <seealso cref="Altaxo.Main.SuspendableDocumentNodeWithSetOfEventArgs" />
+  /// <seealso cref="Altaxo.Main.IHasDocumentReferences" />
+  /// <seealso cref="System.ICloneable" />
   public class ListOfXAndYColumn : Main.SuspendableDocumentNodeWithSetOfEventArgs, IHasDocumentReferences, ICloneable
   {
     /// <summary>
-    /// The data of the curves to master. The data belonging to the first master curve are _curves[0][0], _curves[1][0], _curves[2][0], .. _curves[n-1][0].
-    /// The data belonging to a second master curve with the same shift factors (if there is any, e.g. the imaginary part), are _curves[0][1], _curves[1][1], .. _curves[n-1][1].
+    /// The data of the x-y-curves.
     /// </summary>
     public List<XAndYColumn> CurveData { get; set; } = [];
 
@@ -87,15 +92,21 @@ namespace Altaxo.Data
     #endregion
 
 
-    public void SetCurveData(DataTable dataTable, IReadOnlyList<DataColumn> dataGroups)
+    /// <summary>
+    /// Sets the curve data, using a source data table and a set of y-columns.
+    /// </summary>
+    /// <param name="dataTable">The data table containing the y-columns.</param>
+    /// <param name="yColumns">A list of y columns to be used. The corresponding x-columns are
+    /// retrieved by finding them in the <paramref name="dataTable"/>.</param>
+    public void SetCurveData(DataTable dataTable, IReadOnlyList<DataColumn> yColumns)
     {
       var curveData = new List<XAndYColumn>();
 
 
       var arr = new List<XAndYColumn>();
-      for (int i = 0; i < dataGroups.Count; ++i)
+      for (int i = 0; i < yColumns.Count; ++i)
       {
-        var yCol = dataGroups[i];
+        var yCol = yColumns[i];
         if (yCol is not null)
         {
           var xCol = dataTable.DataColumns.FindXColumnOf(yCol);
@@ -111,6 +122,10 @@ namespace Altaxo.Data
       CurveData = curveData;
     }
 
+    /// <summary>
+    /// Sets the curve data, using an enumeration of x- and y-column pairs.
+    /// </summary>
+    /// <param name="data">The enumeration of x- and y-column pairs.</param>
     public void SetCurveData(IEnumerable<(DataColumn x, DataColumn y)> data)
     {
       var curveData = new List<XAndYColumn>();
@@ -124,6 +139,7 @@ namespace Altaxo.Data
       CurveData = curveData;
     }
 
+    /// <inheritdoc/>
     public object Clone()
     {
       var clone = new ListOfXAndYColumn();
@@ -134,6 +150,7 @@ namespace Altaxo.Data
       return clone;
     }
 
+    /// <inheritdoc/>
     public void VisitDocumentReferences(DocNodeProxyReporter ReportProxies)
     {
       var curves = CurveData;
@@ -146,6 +163,7 @@ namespace Altaxo.Data
       }
     }
 
+    /// <inheritdoc/>
     protected override IEnumerable<DocumentNodeAndName> GetDocumentNodeChildrenWithName()
     {
       var curves = CurveData;
@@ -155,6 +173,23 @@ namespace Altaxo.Data
         {
           yield return new DocumentNodeAndName(curves[j], () => curves[j] = null, $"Curves[{j}]");
         }
+      }
+    }
+
+    /// <summary>
+    /// Returns an enumerable collection of resolved X and Y data arrays for each curve that contains valid data.
+    /// </summary>
+    /// <returns>An enumerable sequence of tuples, each containing the curve's column information and its corresponding X and Y
+    /// data arrays. Only curves with non-null X and Y arrays and at least one data point are included.</returns>
+    /// <remarks>Use this method to iterate over all curves with available resolved data. Curves without valid
+    /// data are automatically excluded from the results.</remarks>
+    public IEnumerable<(XAndYColumn xyColumns, double[] xArray, double[] yArray, int rowCount)> GetResolvedData()
+    {
+      foreach (var curve in CurveData)
+      {
+        var (x, y, rowCount) = curve.GetResolvedXYData();
+        if (x is not null && y is not null && rowCount > 0)
+          yield return (curve, x, y, rowCount);
       }
     }
   }

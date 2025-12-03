@@ -144,6 +144,13 @@ namespace Altaxo.Data
 
     #endregion
 
+    /// <summary>
+    /// Initializes a new instance with the specified data table, group number, and the counts of independent and dependent variable columns.
+    /// </summary>
+    /// <param name="table">The data table that provides the columns.</param>
+    /// <param name="groupNumber">The group number applied to all involved columns.</param>
+    /// <param name="numberOfIndependentColumns">The number of independent variable columns to allocate.</param>
+    /// <param name="numberOfDependentColumns">The number of dependent variable columns to allocate.</param>
     public IndependentAndDependentColumns(DataTable table, int groupNumber, int numberOfIndependentColumns, int numberOfDependentColumns)
     {
       _rangeOfRows = new AllRows() { ParentObject = this };
@@ -153,6 +160,10 @@ namespace Altaxo.Data
       _dependentVariables = new IReadableColumnProxy[numberOfDependentColumns];
     }
 
+    /// <summary>
+    /// Initializes a new instance by cloning the state and proxies from another instance.
+    /// </summary>
+    /// <param name="from">The source instance to copy from.</param>
     public IndependentAndDependentColumns(IndependentAndDependentColumns from)
     {
       ChildCopyToMember<DataTableProxy>(ref _dataTable, from._dataTable);
@@ -351,6 +362,11 @@ namespace Altaxo.Data
       }
     }
 
+    /// <summary>
+    /// Gets the independent variable column at the specified index, or null if the proxy is unset or the column is unavailable.
+    /// </summary>
+    /// <param name="i">Index of the independent variable column.</param>
+    /// <returns>The readable column instance or null.</returns>
     public IReadableColumn? GetIndependentVariable(int i)
     {
       return _independentVariables[i]?.Document();
@@ -404,6 +420,11 @@ namespace Altaxo.Data
       }
     }
 
+    /// <summary>
+    /// Gets the dependent variable column at the specified index, or null if the proxy is unset or the column is unavailable.
+    /// </summary>
+    /// <param name="i">Index of the dependent variable column.</param>
+    /// <returns>The readable column instance or null.</returns>
     public IReadableColumn? GetDependentVariable(int i)
     {
       return _dependentVariables[i]?.Document();
@@ -447,6 +468,17 @@ namespace Altaxo.Data
       return maxRowIndex ?? 0;
     }
 
+    /// <summary>
+    /// Resolves the currently selected independent and dependent columns to contiguous arrays of doubles for the filtered row selection.
+    /// </summary>
+    /// <remarks>
+    /// The returned tuple contains arrays for each independent and dependent column. If a column is not assigned, the corresponding array entry is null.
+    /// The arrays have a length equal to the number of rows included by the current <see cref="DataRowSelection"/> over the common row range of the independent columns.
+    /// Rows are gathered by iterating the selection segments in order, preserving row order.
+    /// </remarks>
+    /// <returns>
+    /// A tuple of the resolved independent and dependent data arrays, and the total number of resolved rows.
+    /// </returns>
     public virtual (double[]?[] Independent, double[]?[] Dependent, int RowCount) GetResolvedData()
     {
       var resIndependent = new double[_independentVariables.Length][];
@@ -497,15 +529,17 @@ namespace Altaxo.Data
       return (resIndependent, resDependent, rowCount);
     }
 
-    public static DataColumn? GetRootDataColumn(IReadableColumn? column)
-    {
-      while (column is TransformedReadableColumn trc)
-      {
-        column = trc.UnderlyingReadableColumn;
-      }
-      return column as DataColumn;
-    }
-
+    /// <summary>
+    /// Gets the value of a specified property for a given data column, if defined, or returns an empty value if the
+    /// property is not set.
+    /// </summary>
+    /// <remarks>The method first attempts to retrieve the property value from a property column associated
+    /// with the specified data column. If not found, it searches for the property in the parent data table's property
+    /// hierarchy. If the property is not defined in either location, an empty AltaxoVariant is returned.</remarks>
+    /// <param name="ycol">The data column for which to retrieve the property value. Can be null.</param>
+    /// <param name="propertyName">The name of the property to retrieve. Cannot be null or empty.</param>
+    /// <returns>An AltaxoVariant containing the value of the specified property for the given column, or an empty AltaxoVariant
+    /// if the property is not set or the parameters are invalid.</returns>
     public static AltaxoVariant GetPropertyValueOfColumn(DataColumn ycol, string propertyName)
     {
       if (ycol is null || string.IsNullOrEmpty(propertyName))
@@ -537,13 +571,79 @@ namespace Altaxo.Data
     }
 
 
+    /// <summary>
+    /// Retrieves a property value associated with the specified independent or dependent variable column.
+    /// </summary>
+    /// <param name="isIndependent">True to query an independent variable; false to query a dependent variable.</param>
+    /// <param name="idxColumn">The column index among the selected variables.</param>
+    /// <param name="propertyName">The property name to look up.</param>
+    /// <returns>An <see cref="AltaxoVariant"/> containing the property value if found; otherwise an empty variant.</returns>
+    public AltaxoVariant GetPropertyValueOfIndependentOrDependentVariable(bool isIndependent, int idxColumn, string propertyName)
+    {
+      if (string.IsNullOrEmpty(propertyName))
+        return new AltaxoVariant();
+
+      DataTable? table = null;
+      var column = isIndependent ? GetIndependentVariable(idxColumn) : GetDependentVariable(idxColumn);
+      if (IReadableColumn.GetRootDataColumn(column) is { } col)
+      {
+        table = DataTable ?? DataTable.GetParentDataTableOf(col);
+        if (table is not null)
+        {
+          if (table.PropCols.TryGetColumn(propertyName) is { } pcol1)
+          {
+            // if the column has a property column with that name...
+            var columnNumber = table.DataColumns.GetColumnNumber(col);
+            if (!pcol1.IsElementEmpty(columnNumber))
+              return pcol1[columnNumber];
+          }
+        }
+      }
+
+      {
+        // try to get the property from the data row selection of the xycurve
+        foreach (var node in Altaxo.Collections.TreeNodeExtensions.TakeFromHereToFirstLeaves(DataRowSelection))
+        {
+          if (node is IncludeSingleNumericalValue isn && isn.ColumnName == propertyName)
+          {
+            var p1 = isn.Value;
+            return new AltaxoVariant(p1);
+          }
+          else if (node is IncludeSingleTextValue istv && istv.ColumnName == propertyName)
+          {
+            var p1 = istv.Value;
+            return new AltaxoVariant(p1);
+          }
+        }
+      }
+
+      if (table is not null)
+      {
+        // try to get the property from the hierarchy of table .. folder .. root folder
+        var p = table.GetPropertyValue<object>(propertyName);
+        if (p is not null)
+        {
+          return new AltaxoVariant(p);
+        }
+      }
+
+      return new AltaxoVariant(); // empty property
+    }
+
+
+    /// <summary>
+    /// Gets the value of a property associated with the specified curve's dependent variable or its table context.
+    /// </summary>
+    /// <param name="curve">The curve that provides data and selection context.</param>
+    /// <param name="propertyName">The property name to look up.</param>
+    /// <returns>An <see cref="AltaxoVariant"/> containing the property value if found; otherwise an empty variant.</returns>
     public static AltaxoVariant GetPropertyValueOfCurve(IColumnPlotData curve, string propertyName)
     {
       if (curve is null || string.IsNullOrEmpty(propertyName))
         return new AltaxoVariant();
 
       DataTable? table = null;
-      if (GetRootDataColumn(curve.GetDependentVariable(0)) is { } ycol)
+      if (IReadableColumn.GetRootDataColumn(curve.GetDependentVariable(0)) is { } ycol)
       {
         table = curve.DataTable ?? DataTable.GetParentDataTableOf(ycol);
         if (table is not null)

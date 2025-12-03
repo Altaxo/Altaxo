@@ -2,7 +2,7 @@
 
 /////////////////////////////////////////////////////////////////////////////
 //    Altaxo:  a data processing and data plotting program
-//    Copyright (C) 2002-2011 Dr. Dirk Lellinger
+//    Copyright (C) 2002-2025 Dr. Dirk Lellinger
 //
 //    This program is free software; you can redistribute it and/or modify
 //    it under the terms of the GNU General Public License as published by
@@ -76,5 +76,19 @@ namespace Altaxo.Data
     /// The type of the item.
     /// </value>
     Type ItemType { get; }
+
+    /// <summary>
+    /// Traverses the given (probably transformed) column recursively down to the bottom to retrieve the underlying root DataColumn, if present.
+    /// </summary>
+    /// <param name="column">The column to examine. May be a DataColumn, a TransformedReadableColumn, or null.</param>
+    /// <returns>The root DataColumn if one exists in the transformation chain; otherwise, null.</returns>
+    public static DataColumn? GetRootDataColumn(IReadableColumn? column)
+    {
+      while (column is TransformedReadableColumn trc)
+      {
+        column = trc.UnderlyingReadableColumn;
+      }
+      return column as DataColumn;
+    }
   }
 }

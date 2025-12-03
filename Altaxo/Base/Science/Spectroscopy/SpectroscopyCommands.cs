@@ -54,24 +54,92 @@ namespace Altaxo.Science.Spectroscopy
     private static SpectralPreprocessingOptionsBase? _lastPreprocessOptions = null;
 
     public static string PeakTable_PreprocessedColumnNameX(int numberOfSpectrum) => $"X_Preprocessed{numberOfSpectrum}";
+    /// <summary>
+    /// Gets the standard name of the preprocessed X column for the specified spectrum index.
+    /// </summary>
+    /// <param name="numberOfSpectrum">Zero-based spectrum index.</param>
+    /// <returns>The column name for the preprocessed X values.</returns>
     public static string PeakTable_PreprocessedColumnNameY(int numberOfSpectrum) => $"Y_Preprocessed{numberOfSpectrum}";
+    /// <summary>
+    /// Gets the standard name of the boolean/indicator column marking whether a point was used for fitting for the specified spectrum.
+    /// </summary>
+    /// <param name="numberOfSpectrum">Zero-based spectrum index.</param>
+    /// <returns>The column name indicating points used for fitting.</returns>
     public static string PeakTable_UsedForFitColumnName(int numberOfSpectrum) => $"UsedForFit{numberOfSpectrum}";
 
     public static string PeakTable_FitCurveColumnNameX(int numberOfSpectrum) => $"X_FitCurve{numberOfSpectrum}";
+    /// <summary>
+    /// Gets the standard name of the Y column containing the fitted curve values for the specified spectrum.
+    /// </summary>
+    /// <param name="numberOfSpectrum">Zero-based spectrum index.</param>
+    /// <returns>The column name for the fitted Y values.</returns>
     public static string PeakTable_FitCurveColumnNameY(int numberOfSpectrum) => $"Y_FitCurve{numberOfSpectrum}";
 
+    /// <summary>
+    /// Gets the standard name of the X column containing separate peak fit curves for the specified spectrum.
+    /// </summary>
+    /// <param name="numberOfSpectrum">Zero-based spectrum index.</param>
+    /// <returns>The column name for separate peak curves X values.</returns>
     public static string PeakTable_SeparatePeaksColumnNameX(int numberOfSpectrum) => $"X_PeakCurves{numberOfSpectrum}";
+    /// <summary>
+    /// Gets the standard name of the Y column containing separate peak fit curves for the specified spectrum.
+    /// </summary>
+    /// <param name="numberOfSpectrum">Zero-based spectrum index.</param>
+    /// <returns>The column name for separate peak curves Y values.</returns>
     public static string PeakTable_SeparatePeaksColumnNameY(int numberOfSpectrum) => $"Y_PeakCurves{numberOfSpectrum}";
+    /// <summary>
+    /// Gets the standard name of the identifier column used to distinguish separate peaks for the specified spectrum.
+    /// </summary>
+    /// <param name="numberOfSpectrum">Zero-based spectrum index.</param>
+    /// <returns>The column name for the separate peaks identifier.</returns>
     public static string PeakTable_SeparatePeaksColumnNameID(int numberOfSpectrum) => $"ID_PeakCurves{numberOfSpectrum}";
 
+    /// <summary>
+    /// Gets the standard name of the X column containing the baseline curve for the specified spectrum.
+    /// </summary>
+    /// <param name="numberOfSpectrum">Zero-based spectrum index.</param>
+    /// <returns>The column name for baseline X values.</returns>
     public static string PeakTable_BaselineCurveColumnNameX(int numberOfSpectrum) => $"X_BaselineCurve{numberOfSpectrum}";
+    /// <summary>
+    /// Gets the standard name of the Y column containing the baseline curve for the specified spectrum.
+    /// </summary>
+    /// <param name="numberOfSpectrum">Zero-based spectrum index.</param>
+    /// <returns>The column name for baseline Y values.</returns>
     public static string PeakTable_BaselineCurveColumnNameY(int numberOfSpectrum) => $"Y_BaselineCurve{numberOfSpectrum}";
 
+    /// <summary>
+    /// Gets the standard name of the X column containing the residual curve (data minus fit) for the specified spectrum.
+    /// </summary>
+    /// <param name="numberOfSpectrum">Zero-based spectrum index.</param>
+    /// <returns>The column name for residual X values.</returns>
     public static string PeakTable_ResidualCurveColumnNameX(int numberOfSpectrum) => $"X_ResidualCurve{numberOfSpectrum}";
+    /// <summary>
+    /// Gets the standard name of the Y column containing the residual curve (data minus fit) for the specified spectrum.
+    /// </summary>
+    /// <param name="numberOfSpectrum">Zero-based spectrum index.</param>
+    /// <returns>The column name for residual Y values.</returns>
     public static string PeakTable_ResidualCurveColumnNameY(int numberOfSpectrum) => $"Y_ResidualCurve{numberOfSpectrum}";
 
+    /// <summary>
+    /// Gets the default graph name for preprocessed spectrum plotting.
+    /// </summary>
+    /// <param name="numberOfSpectrum">Zero-based spectrum index.</param>
+    /// <param name="numberOfSpectra">Total number of spectra.</param>
+    /// <returns>The graph name for the preprocessed curve.</returns>
     public static string GraphName_PreprocessedCurve(int numberOfSpectrum, int numberOfSpectra) => numberOfSpectra <= 1 ? "GPreprocessedCurve" : $"GPreprocessedCurve{numberOfSpectrum}";
+    /// <summary>
+    /// Gets the default graph name for plotting separate peaks.
+    /// </summary>
+    /// <param name="numberOfSpectrum">Zero-based spectrum index.</param>
+    /// <param name="numberOfSpectra">Total number of spectra.</param>
+    /// <returns>The graph name for separate peak curves.</returns>
     public static string GraphName_PeaksSeparate(int numberOfSpectrum, int numberOfSpectra) => numberOfSpectra <= 1 ? "GPeaksSeparate" : $"GPeaksSeparate{numberOfSpectrum}";
+    /// <summary>
+    /// Gets the default graph name for plotting peaks together.
+    /// </summary>
+    /// <param name="numberOfSpectrum">Zero-based spectrum index.</param>
+    /// <param name="numberOfSpectra">Total number of spectra.</param>
+    /// <returns>The graph name for combined peak curves.</returns>
     public static string GraphName_PeaksTogether(int numberOfSpectrum, int numberOfSpectra) => numberOfSpectra <= 1 ? "GPeaksTogether" : $"GPeaksTogether{numberOfSpectrum}";
 
 
@@ -135,6 +203,12 @@ namespace Altaxo.Science.Spectroscopy
     public const string ColumnsV = "V-Columns";
 
 
+    /// <summary>
+    /// Retrieves X and Y columns and converts them into arrays for processing.
+    /// </summary>
+    /// <param name="inputData">The proxy bundling X and one or more Y columns.</param>
+    /// <param name="srcTable">On return, the source data table.</param>
+    /// <returns>A list of tuples containing the X column, Y column, and their corresponding value arrays.</returns>
     public static List<(DataColumn xCol, DataColumn yCol, double[] xArray, double[] yArray)> GetColumnsAndArrays(
       DataTableMultipleColumnProxy inputData,
       out DataTable srcTable)
@@ -186,30 +260,6 @@ namespace Altaxo.Science.Spectroscopy
       return resultList;
     }
 
-    public static List<(DataColumn xCol, DataColumn yCol, double[] xArray, double[] yArray)> GetColumnsAndArrays(ListOfXAndYColumn inputData)
-    {
-      var resultList = new List<(DataColumn xCol, DataColumn yCol, double[] xArray, double[] yArray)>();
-
-      foreach (var curve in inputData.CurveData)
-      {
-        var xCol = curve.XColumn as DataColumn;
-        var yCol = curve.YColumn as DataColumn;
-        if (xCol is null || yCol is null)
-          continue;
-        var len = Math.Min(xCol.Count, yCol.Count);
-
-        var xArr = new double[len];
-        var yArr = new double[len];
-        for (var i = 0; i < len; i++)
-        {
-          xArr[i] = xCol[i];
-          yArr[i] = yCol[i];
-        }
-        resultList.Add((xCol, yCol, xArr, yArr));
-      }
-      return resultList;
-    }
-
     /// <summary>
     /// Executes the spectral preprocessing for one or more than one spectrum
     /// </summary>
@@ -223,8 +273,7 @@ namespace Altaxo.Science.Spectroscopy
     /// - the array with the preprocessed spectrum (x, y, and regions).
     /// </returns>
     public static List<(
-      DataColumn xOrgCol,
-      DataColumn yOrgCol,
+      XAndYColumn orgCols,
       DataColumn xPreprocessedCol,
       DataColumn yPreprocessedCol,
       double[] xArray,
@@ -233,28 +282,26 @@ namespace Altaxo.Science.Spectroscopy
       ExecuteSpectralPreprocessing(ListOfXAndYColumn inputData, SpectralPreprocessingOptionsBase doc, DataTable dstTable)
     {
       var resultList = new List<(
-      DataColumn xOrgCol,
-      DataColumn yOrgCol,
+      XAndYColumn orgCols,
       DataColumn xPreprocessedCol,
       DataColumn yPreprocessedCol,
       double[] xArray,
       double[] yArray,
       int[]? regions)>();
 
-      var dictionarySrcXCol_To_DstXCol = new Dictionary<DataColumn, DataColumn>();
-      var dictionarySrcYCol_To_DstYCol = new Dictionary<DataColumn, DataColumn>();
+      var dictionarySrcXCol_To_DstXCol = new Dictionary<IReadableColumn, DataColumn>();
+      var dictionarySrcYCol_To_DstYCol = new Dictionary<IReadableColumn, DataColumn>();
       var runningColumnNumber = -1;
 
       dstTable.DataColumns.RemoveColumnsAll();
       dstTable.PropCols.RemoveColumnsAll();
 
-      foreach (var entry in GetColumnsAndArrays(inputData))
+      foreach (var entry in inputData.GetResolvedData())
       {
         ++runningColumnNumber;
         var groupNumberBase = runningColumnNumber * 10;
 
-        var xCol = entry.xCol;
-        var yCol = entry.yCol;
+        var xyCols = entry.xyColumns;
         var xArr = entry.xArray;
         var yArr = entry.yArray;
 
@@ -263,34 +310,34 @@ namespace Altaxo.Science.Spectroscopy
         (xArr, yArr, regions) = doc.Execute(xArr, yArr, regions);
 
         // Store result
-        var srcTable = DataTable.GetParentDataTableOf(xCol) ?? DataTable.GetParentDataTableOf(yCol) ?? throw new InvalidOperationException($"Neither x-column {xCol} nor y-column {yCol} have a parent data table.");
+        var srcTable = xyCols.DataTable ?? throw new InvalidOperationException($"Neither x-column {xyCols.XColumn} nor y-column {xyCols.YColumn} have a parent data table.");
 
-        if (!dictionarySrcXCol_To_DstXCol.ContainsKey(xCol))
+        if (!dictionarySrcXCol_To_DstXCol.ContainsKey(xyCols.XColumn))
         {
-          var xDst = dstTable.DataColumns.EnsureExistence(
-          srcTable.DataColumns.GetColumnName(xCol),
-          xCol.GetType(),
-          srcTable.DataColumns.GetColumnKind(xCol),
-          srcTable.DataColumns.GetColumnGroup(xCol)
-          );
+          var dstXName = xyCols.GetXName(0);
+          var dstXType = DataColumn.GetColumnTypeAppropriateForElementType(xyCols.XColumn.ItemType);
+
+          var dstXKind = xyCols.GetXKind();
+
+          var xDst = dstTable.DataColumns.EnsureExistence(dstXName, dstXType, dstXKind, xyCols.GroupNumber);
 
           for (var i = 0; i < xArr.Length; i++)
             xDst[i] = xArr[i];
 
-          dictionarySrcXCol_To_DstXCol.Add(xCol, xDst);
+          dictionarySrcXCol_To_DstXCol.Add(xyCols.XColumn, xDst);
         }
 
+        var dstYName = xyCols.GetYName(0);
+        var dstYType = DataColumn.GetColumnTypeAppropriateForElementType(xyCols.YColumn.ItemType);
+        var dstYKind = xyCols.GetYKind();
+        var yDst = dstTable.DataColumns.EnsureExistence(dstYName, dstYType, dstYKind, xyCols.GroupNumber);
+        dictionarySrcYCol_To_DstYCol[xyCols.YColumn] = yDst;
 
-        var yDst = dstTable.DataColumns.EnsureExistence(
-          srcTable.DataColumns.GetColumnName(yCol),
-          yCol.GetType(),
-          srcTable.DataColumns.GetColumnKind(yCol),
-          srcTable.DataColumns.GetColumnGroup(yCol)
-          );
-        dictionarySrcYCol_To_DstYCol[yCol] = yDst;
 
         for (var i = 0; i < yArr.Length; i++)
+        {
           yDst[i] = yArr[i];
+        }
 
         // store the property columns
         for (var i = 0; i < srcTable.PropCols.ColumnCount; ++i)
@@ -301,20 +348,28 @@ namespace Altaxo.Science.Spectroscopy
             srcTable.PropCols.GetColumnKind(i),
             srcTable.PropCols.GetColumnGroup(i));
 
-          var idxSrc = srcTable.DataColumns.GetColumnNumber(yCol);
           var idxDst = dstTable.DataColumns.GetColumnNumber(yDst);
-          pCol[idxDst] = srcTable.PropCols[i][idxSrc];
+          pCol[idxDst] = xyCols.GetYPropertyValue(srcTable.PropCols.GetColumnName(i));
         }
 
-        resultList.Add((xCol, yCol, dictionarySrcXCol_To_DstXCol[xCol], yDst, xArr, yArr, regions));
+        resultList.Add((xyCols, dictionarySrcXCol_To_DstXCol[xyCols.XColumn], yDst, xArr, yArr, regions));
       }
 
       return resultList;
     }
 
+    /// <summary>
+    /// Executes peak searching and fitting across one or multiple spectra and writes output to the provided peak table.
+    /// </summary>
+    /// <param name="inputData">Input spectra bundle.</param>
+    /// <param name="doc">Peak searching and fitting options.</param>
+    /// <param name="peakTable">Destination table to receive output columns.</param>
+    /// <param name="progressReporter">Optional progress reporter.</param>
+    /// <param name="cancellationTokenSoft">Token for soft cancellation (best-effort).</param>
+    /// <param name="cancellationTokenHard">Token for immediate cancellation of fitting.</param>
+    /// <returns>A list of results per spectrum with references to created columns and fitting results.</returns>
     public static List<(
-      DataColumn xOrgCol,
-      DataColumn yOrgCol,
+      XAndYColumn orgCols,
       DataColumn xPreprocessedCol,
       DataColumn yPreprocessedCol,
       IReadOnlyList<(IReadOnlyList<PeakFitting.PeakDescription> PeakDescriptions, int StartOfRegion, int EndOfRegion)> fittingResult)>
@@ -326,8 +381,7 @@ namespace Altaxo.Science.Spectroscopy
                                     CancellationToken cancellationTokenHard)
     {
       var resultList = new List<(
-      DataColumn xOrgCol,
-      DataColumn yOrgCol,
+      XAndYColumn orgCols,
       DataColumn xPreprocessedCol,
       DataColumn yPreprocessedCol,
       IReadOnlyList<(IReadOnlyList<PeakFitting.PeakDescription> PeakDescriptions, int StartOfRegion, int EndOfRegion)> fittingResult)>();
@@ -371,7 +425,7 @@ namespace Altaxo.Science.Spectroscopy
         }
         if (progressReporter is { } pr)
         {
-          pr.Report($"Peak search+fit column {entry.yOrgCol.Name}");
+          pr.Report($"Peak search+fit column {entry.orgCols.GetYName(0)}");
         }
 
 
@@ -771,7 +825,7 @@ namespace Altaxo.Science.Spectroscopy
           }
         }
 
-        resultList.Add((entry.xOrgCol, entry.yOrgCol, entry.xPreprocessedCol, entry.yPreprocessedCol, fitResults));
+        resultList.Add((entry.orgCols, entry.xPreprocessedCol, entry.yPreprocessedCol, fitResults));
       }
 
 
@@ -876,6 +930,10 @@ namespace Altaxo.Science.Spectroscopy
       return result;
     }
 
+    /// <summary>
+    /// Shows a dialog to configure peak finding and fitting for the selected spectra, creates an output table, and plots results.
+    /// </summary>
+    /// <param name="ctrl">The worksheet controller providing selection and table context.</param>
     public static void SpectralPeakFindingFittingShowDialog(WorksheetController ctrl)
     {
       if (!TryGetDataProxyForSpectralPreprocessing(ctrl, out var dataProxy))
@@ -890,8 +948,7 @@ namespace Altaxo.Science.Spectroscopy
 
 
       List<(
-      DataColumn xOrgCol,
-      DataColumn yOrgCol,
+      XAndYColumn orgCols,
       DataColumn xPreprocessedCol,
       DataColumn yPreprocessedCol,
       IReadOnlyList<(IReadOnlyList<PeakFitting.PeakDescription> PeakDescriptions, int StartOfRegion, int EndOfRegion)> fittingResult)> result = null;
@@ -951,6 +1008,10 @@ namespace Altaxo.Science.Spectroscopy
       }
     }
 
+    /// <summary>
+    /// Shows a dialog to configure peak fitting across multiple spectra and creates the resulting peak table.
+    /// </summary>
+    /// <param name="ctrl">The worksheet controller providing selected spectra.</param>
     public static void PeakFindingFittingInMultipleSpectraShowDialog(WorksheetController ctrl)
     {
       int numberOfNamesWithBaseName = 0;
@@ -1110,6 +1171,12 @@ namespace Altaxo.Science.Spectroscopy
       return (graph, group);
     }
 
+    /// <summary>
+    /// Attempts to create a proxy for spectral preprocessing from the currently selected columns.
+    /// </summary>
+    /// <param name="ctrl">Worksheet controller providing selection and table context.</param>
+    /// <param name="proxy">On success, the constructed proxy; otherwise null.</param>
+    /// <returns>True if the proxy was created; otherwise false.</returns>
     public static bool TryGetDataProxyForSpectralPreprocessing(WorksheetController ctrl, out ListOfXAndYColumn? proxy)
     {
       if (ctrl.SelectedDataColumns.Count == 0)
@@ -1133,6 +1200,10 @@ namespace Altaxo.Science.Spectroscopy
       return true;
     }
 
+    /// <summary>
+    /// Shows a dialog to configure spectral preprocessing, processes the selected spectra, and writes results to a new table.
+    /// </summary>
+    /// <param name="ctrl">The worksheet controller providing selection and table context.</param>
     public static void SpectralPreprocessingShowDialog(WorksheetController ctrl)
     {
       if (!TryGetDataProxyForSpectralPreprocessing(ctrl, out var dataProxy))
@@ -1163,6 +1234,10 @@ namespace Altaxo.Science.Spectroscopy
       }
     }
 
+    /// <summary>
+    /// Performs a x-calibration of a Raman instrument using the Neon spectrum.
+    /// </summary>
+    /// <param name="ctrl">The worksheet controller, providing the selected column containing the Neon spectrum.</param>
     public static void Raman_CalibrateWithNeonSpectrum(WorksheetController ctrl)
     {
       if (ctrl.SelectedDataColumns.Count == 0)
@@ -1226,6 +1301,10 @@ namespace Altaxo.Science.Spectroscopy
 
     }
 
+    /// <summary>
+    /// Plots the Neon calibration diagnostic graph, including measured differences and spline fit.
+    /// </summary>
+    /// <param name="dstTable">The destination table containing Neon calibration columns.</param>
     public static void PlotNeonCalibration(DataTable dstTable)
     {
       var selColumnsForPeakGraph = new AscendingIntegerCollection
@@ -1335,9 +1414,9 @@ namespace Altaxo.Science.Spectroscopy
     }
 
     /// <summary>
-    /// Calibrate intensity with a known spectrum, and optionally, a dark spectrum.
+    /// Calibrates intensity using a known spectrum, optionally subtracting a dark spectrum, and writes results to a new table.
     /// </summary>
-    /// <param name="ctrl">The worksheet controller.</param>
+    /// <param name="ctrl">Worksheet controller providing selected columns and table context.</param>
     public static void CalibrateWithIntensitySpectrum(WorksheetController ctrl)
     {
       if (ctrl.SelectedDataColumns.Count == 0)

@@ -22,8 +22,6 @@
 
 #endregion Copyright
 
-using System;
-using System.Collections.Generic;
 using Altaxo.Serialization.Xml;
 
 namespace Altaxo.Data
@@ -57,15 +55,24 @@ namespace Altaxo.Data
 
     #endregion
 
+    /// <summary>
+    /// Initializes a new instance by copying the state from another <see cref="XAndYColumn"/>.
+    /// </summary>
+    /// <param name="from">The source instance to copy.</param>
     public XAndYColumn(XAndYColumn from) : base(from)
     {
     }
 
+    /// <summary>
+    /// Initializes a new instance for a single X and Y column bound to the specified data table and group.
+    /// </summary>
+    /// <param name="table">The data table that contains the columns.</param>
+    /// <param name="groupNumber">The group number applied to both X and Y columns.</param>
     public XAndYColumn(DataTable table, int groupNumber) : base(table, groupNumber, 1, 1)
     {
     }
 
-   
+
 
     protected XAndYColumn(IXmlDeserializationInfo info, int version) : base(info, version)
     {
@@ -93,6 +100,7 @@ namespace Altaxo.Data
     }
 
 
+    /// <inheritdoc/>
     public override object Clone()
     {
       return new XAndYColumn(this);
@@ -107,28 +115,45 @@ namespace Altaxo.Data
       return "Y";
     }
 
+    /// <summary>
+    /// Gets or sets the X (independent) column.
+    /// </summary>
     public virtual IReadableColumn? XColumn
     {
       get { return GetIndependentVariable(0); }
       set { SetIndependentVariable(0, value); }
     }
+    /// <summary>
+    /// Gets or sets the Y (dependent) column.
+    /// </summary>
     public virtual IReadableColumn? YColumn
     {
       get { return GetDependentVariable(0); }
       set { SetDependentVariable(0, value); }
     }
 
+    /// <inheritdoc/>
     public override string ToString()
     {
       return string.Format("{0}(X), {1}(Y)", _independentVariables[0].ToString(), _dependentVariables[0].ToString());
     }
 
+    /// <summary>
+    /// Retrieves the resolved X and Y data arrays along with the number of rows in the dataset.
+    /// </summary>
+    /// <returns>A tuple containing the X data array, the Y data array, and the row count. The X and Y arrays may be null if no
+    /// data is available. The row count indicates the number of data points in the arrays.</returns>
     public (double[]? X, double[]? Y, int RowCount) GetResolvedXYData()
     {
       var result = GetResolvedData();
       return (result.Independent[0], result.Dependent[0], result.RowCount);
     }
 
+    /// <summary>
+    /// Retrieves a combined display name for the X and Y columns based on the provided style.
+    /// </summary>
+    /// <param name="style">A bit-packed style value; low nibble selects X name detail, high nibble selects Y name detail.</param>
+    /// <returns>A formatted name string for X and/or Y depending on style.</returns>
     public virtual string GetName(int style)
     {
       int st = (int)style;
@@ -222,9 +247,67 @@ namespace Altaxo.Data
       }
     }
 
+    /// <summary>
+    /// Creates a new <see cref="XAndYColumn"/> using existing proxies without cloning them.
+    /// </summary>
+    /// <param name="table">The data table proxy.</param>
+    /// <param name="groupNumber">The group number for X and Y.</param>
+    /// <param name="xCol">The X column proxy.</param>
+    /// <param name="yCol">The Y column proxy.</param>
+    /// <returns>A new <see cref="XAndYColumn"/> instance bound to the provided proxies.</returns>
     public static XAndYColumn CreateFromProxies(DataTableProxy table, int groupNumber, IReadableColumnProxy xCol, IReadableColumnProxy yCol)
     {
       return new XAndYColumn(table, groupNumber, xCol, yCol);
+    }
+
+    /// <summary>
+    /// Gets the kind of the X column as defined by the parent data table.
+    /// </summary>
+    /// <returns>The column kind of X, or <see cref="ColumnKind.V"/> if unavailable.</returns>
+    public ColumnKind GetXKind()
+    {
+      if (XColumn is null)
+        return ColumnKind.V;
+      var rootCol = IReadableColumn.GetRootDataColumn(XColumn);
+      if (rootCol is null)
+        return ColumnKind.V;
+      else
+        return DataTable.DataColumns.GetColumnKind(rootCol);
+    }
+
+    /// <summary>
+    /// Gets the kind of the Y column as defined by the parent data table.
+    /// </summary>
+    /// <returns>The column kind of Y, or <see cref="ColumnKind.V"/> if unavailable.</returns>
+    public ColumnKind GetYKind()
+    {
+      if (YColumn is null)
+        return ColumnKind.V;
+      var rootCol = IReadableColumn.GetRootDataColumn(YColumn);
+      if (rootCol is null)
+        return ColumnKind.V;
+      else
+        return DataTable.DataColumns.GetColumnKind(rootCol);
+    }
+
+    /// <summary>
+    /// Gets the property value of the x-column.
+    /// </summary>
+    /// <param name="propertyName">Name of the property.</param>
+    /// <returns>The property value of the x-column. If not found, returns an empty <see cref="AltaxoVariant"/>.</returns>
+    public AltaxoVariant GetXPropertyValue(string propertyName)
+    {
+      return GetPropertyValueOfIndependentOrDependentVariable(isIndependent: true, 0, propertyName);
+    }
+
+    /// <summary>
+    /// Gets the property value of the y-column.
+    /// </summary>
+    /// <param name="propertyName">Name of the property.</param>
+    /// <returns>The property value of the y-column. If not found, returns an empty <see cref="AltaxoVariant"/>.</returns>
+    public AltaxoVariant GetYPropertyValue(string propertyName)
+    {
+      return GetPropertyValueOfIndependentOrDependentVariable(isIndependent: false, 0, propertyName);
     }
   }
 }
