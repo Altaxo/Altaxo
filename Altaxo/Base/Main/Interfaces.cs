@@ -50,6 +50,10 @@ namespace Altaxo.Main
     event System.EventHandler? Changed;
   }
 
+  /// <summary>
+  /// Interface for objects that receive child change notifications from owned components.
+  /// Implementations should handle child changes and propagate state updates.
+  /// </summary>
   public interface IChildChangedEventSink
   {
     /// <summary>

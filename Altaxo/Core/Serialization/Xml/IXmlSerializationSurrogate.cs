@@ -29,7 +29,8 @@ using System;
 namespace Altaxo.Serialization.Xml
 {
   /// <summary>
-  /// This interface has to be implemented by all XmlSerializationSurrogates.
+  /// Contract for XML serialization surrogates that serialize/deserialize specific types.
+  /// Implementations should emit/read XML for the target type and handle base-type chaining.
   /// </summary>
   public interface IXmlSerializationSurrogate
   {

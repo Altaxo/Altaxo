@@ -24,7 +24,6 @@
 
 using System;
 using System.Collections.Generic;
-using System.Diagnostics.CodeAnalysis;
 
 namespace Altaxo.Calc.LinearAlgebra
 {
@@ -106,6 +105,11 @@ namespace Altaxo.Calc.LinearAlgebra
   /// <typeparam name="T"></typeparam>
   public interface IROMatrixLevel1<T> : IROMatrix<T> where T : struct
   {
+    /// <summary>
+    /// Enumerates the matrix elements with their indices.
+    /// </summary>
+    /// <param name="zeros">Whether zero elements may be skipped for sparse/banded matrices.</param>
+    /// <returns>An enumeration of (row, column, value) tuples.</returns>
     IEnumerable<(int row, int column, T value)> EnumerateElementsIndexed(Zeros zeros = Zeros.AllowSkip);
 
     /// <summary>

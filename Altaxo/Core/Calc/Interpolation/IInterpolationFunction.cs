@@ -25,7 +25,8 @@
 namespace Altaxo.Calc.Interpolation
 {
   /// <summary>
-  /// Gives an interpolation function, i.e. for every given x, there is exactly one corresponding y value.
+  /// Gives an interpolation function that maps each x to exactly one y value.
+  /// Extends <see cref="IInterpolationCurve"/> with the function mapping capability.
   /// </summary>
   public interface IInterpolationFunction : IInterpolationCurve
   {

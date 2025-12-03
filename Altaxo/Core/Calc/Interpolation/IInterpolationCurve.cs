@@ -27,8 +27,8 @@ using System.Collections.Generic;
 namespace Altaxo.Calc.Interpolation
 {
   /// <summary>
-  /// Represents an interpolation curve. The curve is parametrized using a parameter u. Because of the parametrization, it is possible that
-  /// for some x values there can exist more than one corresponding y values.
+  /// Represents an interpolation curve parametrized by a parameter <c>u</c>.
+  /// Implementations may represent non-functional curves where multiple y values can exist for a single x.
   /// </summary>
   public interface IInterpolationCurve
   {
@@ -37,7 +37,6 @@ namespace Altaxo.Calc.Interpolation
     /// </summary>
     /// <param name="xvec">Vector of x (independent) data.</param>
     /// <param name="yvec">Vector of y (dependent) data.</param>
-    /// <returns></returns>
     void Interpolate(IReadOnlyList<double> xvec, IReadOnlyList<double> yvec);
 
     /// <summary>

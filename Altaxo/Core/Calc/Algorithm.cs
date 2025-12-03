@@ -28,7 +28,7 @@ using System;
 
 namespace Altaxo.Calc
 {
-  /// <summary>Define an algorithm.</summary>
+  /// <summary>Define an algorithm that can be computed and notifies about begin/end of computation.</summary>
   ///<remarks>
   /// <para>Copyright (c) 2003-2004, dnAnalytics Project. All rights reserved.</para>
   /// <para>Adapted to Altaxo (C) 2005 D.Lellinger.</para>

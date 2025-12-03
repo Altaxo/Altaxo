@@ -28,6 +28,10 @@ using System.Diagnostics.CodeAnalysis;
 
 namespace Altaxo.Data
 {
+  /// <summary>
+  /// Defines a set of virtual operator methods that enable dynamic operator-like behavior on implementing types.
+  /// Implementations should return <c>true</c> when an operation is supported and provide the resulting value via the <c>out</c> parameter.
+  /// </summary>
   public interface IOperatable
   {
     // Note: unfortunately (and maybe also undocumented) we can not use
@@ -35,86 +39,238 @@ namespace Altaxo.Data
     // names seems to be used by the compiler for the operators itself
     // so we use here vopAddition and so on (the v from virtual)
 
+    /// <summary>Attempts to add <paramref name="a"/> to this instance.</summary>
+    /// <param name="a">Right-hand operand.</param>
+    /// <param name="b">Result of the addition if supported.</param>
+    /// <returns><c>true</c> if operation is supported.</returns>
     bool vop_Addition(object a, [MaybeNullWhen(false)] out object b);
 
+    /// <summary>Attempts reversed addition where this instance is the right-hand operand.</summary>
+    /// <param name="a">Left-hand operand.</param>
+    /// <param name="b">Result of the addition if supported.</param>
+    /// <returns><c>true</c> if operation is supported.</returns>
     bool vop_Addition_Rev(object a, [MaybeNullWhen(false)] out object b);
 
+    /// <summary>Attempts to subtract <paramref name="a"/> from this instance.</summary>
+    /// <param name="a">Right-hand operand.</param>
+    /// <param name="b">Result of the subtraction if supported.</param>
+    /// <returns><c>true</c> if operation is supported.</returns>
     bool vop_Subtraction(object a, [MaybeNullWhen(false)] out object b);
 
+    /// <summary>Attempts reversed subtraction where this instance is the right-hand operand.</summary>
+    /// <param name="a">Left-hand operand.</param>
+    /// <param name="b">Result of the subtraction if supported.</param>
+    /// <returns><c>true</c> if operation is supported.</returns>
     bool vop_Subtraction_Rev(object a, [MaybeNullWhen(false)] out object b);
 
+    /// <summary>Attempts to multiply this instance by <paramref name="a"/>.</summary>
+    /// <param name="a">Right-hand operand.</param>
+    /// <param name="b">Result of the multiplication if supported.</param>
+    /// <returns><c>true</c> if operation is supported.</returns>
     bool vop_Multiplication(object a, [MaybeNullWhen(false)] out object b);
 
+    /// <summary>Attempts reversed multiplication where this instance is the right-hand operand.</summary>
+    /// <param name="a">Left-hand operand.</param>
+    /// <param name="b">Result of the multiplication if supported.</param>
+    /// <returns><c>true</c> if operation is supported.</returns>
     bool vop_Multiplication_Rev(object a, [MaybeNullWhen(false)] out object b);
 
+    /// <summary>Attempts to divide this instance by <paramref name="a"/>.</summary>
+    /// <param name="a">Right-hand operand.</param>
+    /// <param name="b">Result of the division if supported.</param>
+    /// <returns><c>true</c> if operation is supported.</returns>
     bool vop_Division(object a, [MaybeNullWhen(false)] out object b);
 
+    /// <summary>Attempts reversed division where this instance is the right-hand operand.</summary>
+    /// <param name="a">Left-hand operand.</param>
+    /// <param name="b">Result of the division if supported.</param>
+    /// <returns><c>true</c> if operation is supported.</returns>
     bool vop_Division_Rev(object a, [MaybeNullWhen(false)] out object b);
 
+    /// <summary>Attempts to compute the modulo using <paramref name="a"/>.</summary>
+    /// <param name="a">Right-hand operand.</param>
+    /// <param name="b">Result of the modulo if supported.</param>
+    /// <returns><c>true</c> if operation is supported.</returns>
     bool vop_Modulo(object a, [MaybeNullWhen(false)] out object b);
 
+    /// <summary>Attempts reversed modulo where this instance is the right-hand operand.</summary>
+    /// <param name="a">Left-hand operand.</param>
+    /// <param name="b">Result of the modulo if supported.</param>
+    /// <returns><c>true</c> if operation is supported.</returns>
     bool vop_Modulo_Rev(object a, [MaybeNullWhen(false)] out object b);
 
+    /// <summary>Attempts bitwise AND with <paramref name="a"/>.</summary>
+    /// <param name="a">Right-hand operand.</param>
+    /// <param name="b">Result of the AND if supported.</param>
+    /// <returns><c>true</c> if operation is supported.</returns>
     bool vop_And(object a, [MaybeNullWhen(false)] out object b);
 
+    /// <summary>Attempts reversed bitwise AND where this instance is the right-hand operand.</summary>
+    /// <param name="a">Left-hand operand.</param>
+    /// <param name="b">Result of the AND if supported.</param>
+    /// <returns><c>true</c> if operation is supported.</returns>
     bool vop_And_Rev(object a, [MaybeNullWhen(false)] out object b);
 
+    /// <summary>Attempts bitwise OR with <paramref name="a"/>.</summary>
+    /// <param name="a">Right-hand operand.</param>
+    /// <param name="b">Result of the OR if supported.</param>
+    /// <returns><c>true</c> if operation is supported.</returns>
     bool vop_Or(object a, [MaybeNullWhen(false)] out object b);
 
+    /// <summary>Attempts reversed bitwise OR where this instance is the right-hand operand.</summary>
+    /// <param name="a">Left-hand operand.</param>
+    /// <param name="b">Result of the OR if supported.</param>
+    /// <returns><c>true</c> if operation is supported.</returns>
     bool vop_Or_Rev(object a, [MaybeNullWhen(false)] out object b);
 
+    /// <summary>Attempts bitwise XOR with <paramref name="a"/>.</summary>
+    /// <param name="a">Right-hand operand.</param>
+    /// <param name="b">Result of the XOR if supported.</param>
+    /// <returns><c>true</c> if operation is supported.</returns>
     bool vop_Xor(object a, [MaybeNullWhen(false)] out object b);
 
+    /// <summary>Attempts reversed bitwise XOR where this instance is the right-hand operand.</summary>
+    /// <param name="a">Left-hand operand.</param>
+    /// <param name="b">Result of the XOR if supported.</param>
+    /// <returns><c>true</c> if operation is supported.</returns>
     bool vop_Xor_Rev(object a, [MaybeNullWhen(false)] out object b);
 
+    /// <summary>Attempts bit-shift left by <paramref name="a"/>.</summary>
+    /// <param name="a">Shift amount.</param>
+    /// <param name="b">Result of the shift if supported.</param>
+    /// <returns><c>true</c> if operation is supported.</returns>
     bool vop_ShiftLeft(object a, [MaybeNullWhen(false)] out object b);
 
+    /// <summary>Attempts reversed bit-shift left where this instance is the right-hand operand.</summary>
+    /// <param name="a">Shift amount.</param>
+    /// <param name="b">Result of the shift if supported.</param>
+    /// <returns><c>true</c> if operation is supported.</returns>
     bool vop_ShiftLeft_Rev(object a, [MaybeNullWhen(false)] out object b);
 
+    /// <summary>Attempts bit-shift right by <paramref name="a"/>.</summary>
+    /// <param name="a">Shift amount.</param>
+    /// <param name="b">Result of the shift if supported.</param>
+    /// <returns><c>true</c> if operation is supported.</returns>
     bool vop_ShiftRight(object a, [MaybeNullWhen(false)] out object b);
 
+    /// <summary>Attempts reversed bit-shift right where this instance is the right-hand operand.</summary>
+    /// <param name="a">Shift amount.</param>
+    /// <param name="b">Result of the shift if supported.</param>
+    /// <returns><c>true</c> if operation is supported.</returns>
     bool vop_ShiftRight_Rev(object a, [MaybeNullWhen(false)] out object b);
 
+    /// <summary>Attempts equality comparison with <paramref name="a"/>.</summary>
+    /// <param name="a">Other operand.</param>
+    /// <param name="b">Result of the equality test if supported.</param>
+    /// <returns><c>true</c> if operation is supported.</returns>
     bool vop_Equal(object a, out bool b);
 
+    /// <summary>Attempts reversed equality comparison where this instance is the right-hand operand.</summary>
+    /// <param name="a">Other operand.</param>
+    /// <param name="b">Result of the equality test if supported.</param>
+    /// <returns><c>true</c> if operation is supported.</returns>
     bool vop_Equal_Rev(object a, out bool b);
 
+    /// <summary>Attempts inequality comparison with <paramref name="a"/>.</summary>
+    /// <param name="a">Other operand.</param>
+    /// <param name="b">Result of the inequality test if supported.</param>
+    /// <returns><c>true</c> if operation is supported.</returns>
     bool vop_NotEqual(object a, out bool b);
 
+    /// <summary>Attempts reversed inequality comparison where this instance is the right-hand operand.</summary>
+    /// <param name="a">Other operand.</param>
+    /// <param name="b">Result of the inequality test if supported.</param>
+    /// <returns><c>true</c> if operation is supported.</returns>
     bool vop_NotEqual_Rev(object a, out bool b);
 
+    /// <summary>Attempts lesser-than comparison with <paramref name="a"/>.</summary>
+    /// <param name="a">Other operand.</param>
+    /// <param name="b">Result of the comparison if supported.</param>
+    /// <returns><c>true</c> if operation is supported.</returns>
     bool vop_Lesser(object a, out bool b);
 
+    /// <summary>Attempts reversed lesser-than comparison where this instance is the right-hand operand.</summary>
+    /// <param name="a">Other operand.</param>
+    /// <param name="b">Result of the comparison if supported.</param>
+    /// <returns><c>true</c> if operation is supported.</returns>
     bool vop_Lesser_Rev(object a, out bool b);
 
+    /// <summary>Attempts greater-than comparison with <paramref name="a"/>.</summary>
+    /// <param name="a">Other operand.</param>
+    /// <param name="b">Result of the comparison if supported.</param>
+    /// <returns><c>true</c> if operation is supported.</returns>
     bool vop_Greater(object a, out bool b);
 
+    /// <summary>Attempts reversed greater-than comparison where this instance is the right-hand operand.</summary>
+    /// <param name="a">Other operand.</param>
+    /// <param name="b">Result of the comparison if supported.</param>
+    /// <returns><c>true</c> if operation is supported.</returns>
     bool vop_Greater_Rev(object a, out bool b);
 
+    /// <summary>Attempts lesser-or-equal comparison with <paramref name="a"/>.</summary>
+    /// <param name="a">Other operand.</param>
+    /// <param name="b">Result of the comparison if supported.</param>
+    /// <returns><c>true</c> if operation is supported.</returns>
     bool vop_LesserOrEqual(object a, out bool b);
 
+    /// <summary>Attempts reversed lesser-or-equal comparison where this instance is the right-hand operand.</summary>
+    /// <param name="a">Other operand.</param>
+    /// <param name="b">Result of the comparison if supported.</param>
+    /// <returns><c>true</c> if operation is supported.</returns>
     bool vop_LesserOrEqual_Rev(object a, out bool b);
 
+    /// <summary>Attempts greater-or-equal comparison with <paramref name="a"/>.</summary>
+    /// <param name="a">Other operand.</param>
+    /// <param name="b">Result of the comparison if supported.</param>
+    /// <returns><c>true</c> if operation is supported.</returns>
     bool vop_GreaterOrEqual(object a, out bool b);
 
+    /// <summary>Attempts reversed greater-or-equal comparison where this instance is the right-hand operand.</summary>
+    /// <param name="a">Other operand.</param>
+    /// <param name="b">Result of the comparison if supported.</param>
+    /// <returns><c>true</c> if operation is supported.</returns>
     bool vop_GreaterOrEqual_Rev(object a, out bool b);
 
     // Unary operators
 
+    /// <summary>Attempts unary plus.</summary>
+    /// <param name="a">Result of unary plus if supported.</param>
+    /// <returns><c>true</c> if operation is supported.</returns>
     bool vop_Plus([MaybeNullWhen(false)] out object a);
 
+    /// <summary>Attempts unary minus.</summary>
+    /// <param name="a">Result of unary minus if supported.</param>
+    /// <returns><c>true</c> if operation is supported.</returns>
     bool vop_Minus([MaybeNullWhen(false)] out object a);
 
+    /// <summary>Attempts logical NOT.</summary>
+    /// <param name="a">Result of NOT if supported.</param>
+    /// <returns><c>true</c> if operation is supported.</returns>
     bool vop_Not([MaybeNullWhen(false)] out object a);
 
+    /// <summary>Attempts bitwise complement.</summary>
+    /// <param name="a">Result of complement if supported.</param>
+    /// <returns><c>true</c> if operation is supported.</returns>
     bool vop_Complement([MaybeNullWhen(false)] out object a);
 
+    /// <summary>Attempts pre-increment.</summary>
+    /// <param name="a">Result of increment if supported.</param>
+    /// <returns><c>true</c> if operation is supported.</returns>
     bool vop_Increment([MaybeNullWhen(false)] out object a);
 
+    /// <summary>Attempts pre-decrement.</summary>
+    /// <param name="a">Result of decrement if supported.</param>
+    /// <returns><c>true</c> if operation is supported.</returns>
     bool vop_Decrement([MaybeNullWhen(false)] out object a);
 
+    /// <summary>Attempts boolean true operator.</summary>
+    /// <param name="a">Result of operator <c>true</c>.</param>
+    /// <returns><c>true</c> if operation is supported.</returns>
     bool vop_True(out bool a);
 
+    /// <summary>Attempts boolean false operator.</summary>
+    /// <param name="a">Result of operator <c>false</c>.</param>
+    /// <returns><c>true</c> if operation is supported.</returns>
     bool vop_False(out bool a);
   }
 

@@ -27,7 +27,8 @@ using System.Collections.Generic;
 namespace Altaxo.Calc.Interpolation
 {
   /// <summary>
-  /// Interface to options for creation of an <see cref="IInterpolationFunction"/> (which includes <see cref="IInterpolationCurve"/>).
+  /// Interface to options for creating an <see cref="IInterpolationFunction"/> from sample data.
+  /// Implementations configure algorithm parameters and produce a function mapping x to y.
   /// </summary>
   public interface IInterpolationFunctionOptions : IInterpolationCurveOptions
   {

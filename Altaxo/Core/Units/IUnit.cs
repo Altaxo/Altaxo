@@ -33,6 +33,7 @@ namespace Altaxo.Units
 {
   /// <summary>
   /// Represents an arbitrary unit (SI or any other unit).
+  /// Implementations define how to convert to/from SI units and expose prefixes and the corresponding SI base unit.
   /// </summary>
   public interface IUnit
   {
