@@ -32,6 +32,9 @@ namespace Altaxo.Collections
   /// </summary>
   public class AscendingIntegerCollection : IAscendingIntegerCollection, System.ICloneable
   {
+    /// <summary>
+    /// The underlying sorted list storing the integer values.
+    /// </summary>
     protected System.Collections.Generic.SortedList<int, object?> _list = new System.Collections.Generic.SortedList<int, object?>();
 
     #region Serialization
@@ -44,6 +47,7 @@ namespace Altaxo.Collections
     [Altaxo.Serialization.Xml.XmlSerializationSurrogateFor(typeof(AscendingIntegerCollection), 1)]
     private class XmlSerializationSurrogate0 : Altaxo.Serialization.Xml.IXmlSerializationSurrogate
     {
+      /// <inheritdoc/>
       public void Serialize(object obj, Altaxo.Serialization.Xml.IXmlSerializationInfo info)
       {
         var s = (AscendingIntegerCollection)obj;
@@ -60,6 +64,7 @@ namespace Altaxo.Collections
         info.CommitArray();
       }
 
+      /// <inheritdoc/>
       public object Deserialize(object? o, Altaxo.Serialization.Xml.IXmlDeserializationInfo info, object? parent)
       {
         var s = (AscendingIntegerCollection?)o ?? new AscendingIntegerCollection();
@@ -91,7 +96,7 @@ namespace Altaxo.Collections
     /// <summary>
     /// Creates a collection cloned from another <see cref="AscendingIntegerCollection" />.
     /// </summary>
-    /// <param name="from"></param>
+    /// <param name="from">The source collection to clone from.</param>
     public AscendingIntegerCollection(AscendingIntegerCollection from)
     {
       _list = new System.Collections.Generic.SortedList<int, object?>(from._list);
@@ -100,15 +105,17 @@ namespace Altaxo.Collections
     /// <summary>
     /// Creates the collection copied from another <see cref="IAscendingIntegerCollection" />.
     /// </summary>
-    /// <param name="from"></param>
+    /// <param name="from">The source collection to copy from.</param>
     public AscendingIntegerCollection(IAscendingIntegerCollection from)
     {
       for (int i = 0; i < from.Count; i++)
         Add(from[i]);
     }
 
-    /// <summary>Creates the collection with some initial values.</summary>
-    /// <param name="initialEntries">The initial entries of this collection</param>
+    /// <summary>
+    /// Creates the collection with some initial values.
+    /// </summary>
+    /// <param name="initialEntries">The initial entries of this collection.</param>
     public AscendingIntegerCollection(IEnumerable<int> initialEntries)
     {
       foreach (var entry in initialEntries)
@@ -116,11 +123,11 @@ namespace Altaxo.Collections
     }
 
     /// <summary>
-    /// Creates a instance froms the start value and the count value.
+    /// Creates an instance from the start value and the count value.
     /// </summary>
     /// <param name="rangestart">The start value.</param>
     /// <param name="rangecount">The range value.</param>
-    /// <returns>A instance containing all integers from start to (start+count-1).</returns>
+    /// <returns>An instance containing all integers from start to (start+count-1).</returns>
     public static AscendingIntegerCollection FromStartAndCount(int rangestart, int rangecount)
     {
       var result = new AscendingIntegerCollection();
@@ -213,7 +220,7 @@ namespace Altaxo.Collections
     /// Get the next range (i.e. a contiguous range of integers) in descending order.
     /// </summary>
     /// <param name="currentposition">The current position into this collection. Use Count-1 for the first time. On return, this is the next position.</param>
-    /// <param name="result">Returns the next contiguous interger range if the return value is <c>true</c>.</param>
+    /// <param name="result">Returns the next contiguous integer range if the return value is <c>true</c>.</param>
     /// <returns>True if the range data are valid, false if there is no more data. Used as end-of-loop indicator.</returns>
     /// <remarks>You can use this function in a while loop:
     /// <code>
@@ -254,6 +261,9 @@ namespace Altaxo.Collections
       }
     }
 
+    /// <summary>
+    /// Enumerates all contiguous integer ranges in ascending order.
+    /// </summary>
     public IEnumerable<ContiguousIntegerRange> RangesAscending
     {
       get
@@ -264,6 +274,9 @@ namespace Altaxo.Collections
       }
     }
 
+    /// <summary>
+    /// Enumerates all contiguous integer ranges in descending order.
+    /// </summary>
     public IEnumerable<ContiguousIntegerRange> RangesDescending
     {
       get
@@ -274,11 +287,7 @@ namespace Altaxo.Collections
       }
     }
 
-    /// <summary>
-    /// Returns true, if the integer <code>nValue</code> is contained in this collection.
-    /// </summary>
-    /// <param name="nValue">The integer value to test for membership.</param>
-    /// <returns>True if the integer value is member of the collection.</returns>
+    /// <inheritdoc/>
     public bool Contains(int nValue)
     {
       return _list.ContainsKey(nValue);
@@ -327,12 +336,16 @@ namespace Altaxo.Collections
     /// <summary>
     /// Removes an integer at a given position from the collection (e.g. in general not the integer you provide as argument is removed (!)).
     /// </summary>
-    /// <param name="position"></param>
+    /// <param name="position">The position in the collection to remove.</param>
     public void RemoveAt(int position)
     {
       _list.RemoveAt(position);
     }
 
+    /// <summary>
+    /// Removes all integers above the specified maximum value from the collection.
+    /// </summary>
+    /// <param name="maxValue">The maximum value to keep.</param>
     public void RemoveAllAbove(int maxValue)
     {
       var keys = _list.Keys;
@@ -353,6 +366,7 @@ namespace Altaxo.Collections
 
     #region ICloneable Members
 
+    /// <inheritdoc/>
     public object Clone()
     {
       return new AscendingIntegerCollection(this);
@@ -362,6 +376,7 @@ namespace Altaxo.Collections
 
     #region IEnumerable<int> Members
 
+    /// <inheritdoc/>
     public System.Collections.Generic.IEnumerator<int> GetEnumerator()
     {
       return _list.Keys.GetEnumerator();
@@ -371,6 +386,7 @@ namespace Altaxo.Collections
 
     #region IEnumerable Members
 
+    /// <inheritdoc/>
     System.Collections.IEnumerator System.Collections.IEnumerable.GetEnumerator()
     {
       return _list.Keys.GetEnumerator();

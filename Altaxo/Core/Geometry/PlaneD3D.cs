@@ -86,6 +86,9 @@ namespace Altaxo.Geometry
       W = distance;
     }
 
+    /// <summary>
+    /// Gets an empty plane (all components zero).
+    /// </summary>
     public static PlaneD3D Empty
     {
       get
@@ -94,6 +97,9 @@ namespace Altaxo.Geometry
       }
     }
 
+    /// <summary>
+    /// Gets the normal vector of the plane.
+    /// </summary>
     public VectorD3D Normal
     {
       get
@@ -102,6 +108,9 @@ namespace Altaxo.Geometry
       }
     }
 
+    /// <summary>
+    /// Gets the normalized plane (normal vector length 1).
+    /// </summary>
     public PlaneD3D Normalized
     {
       get
@@ -123,22 +132,26 @@ namespace Altaxo.Geometry
       }
     }
 
+    /// <inheritdoc/>
     public override int GetHashCode()
     {
       return 7 * X.GetHashCode() + 11 * Y.GetHashCode() + 17 * Z.GetHashCode() + 31 * W.GetHashCode();
     }
 
+    /// <inheritdoc/>
     public override bool Equals(object? obj)
     {
       return obj is PlaneD3D b &&
              X == b.X && Y == b.Y && Z == b.Z && W == b.W;
     }
 
+    /// <inheritdoc/>
     public bool Equals(PlaneD3D a, PlaneD3D b)
     {
       return a.X == b.X && a.Y == b.Y && a.Z == b.Z && a.W == b.W;
     }
 
+    /// <inheritdoc/>
     public int GetHashCode(PlaneD3D obj)
     {
       return obj.GetHashCode();

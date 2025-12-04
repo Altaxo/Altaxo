@@ -32,9 +32,7 @@ namespace Altaxo.Collections
   /// </summary>
   public interface IContiguousIntegerRange : IReadOnlyList<int>, IAscendingIntegerCollection
   {
-    /// <summary>
-    /// Gets the first element of this integer range.
-    /// </summary>
+    /// <inheritdoc/>
     int Start { get; }
   }
 
@@ -51,6 +49,7 @@ namespace Altaxo.Collections
     [Altaxo.Serialization.Xml.XmlSerializationSurrogateFor("AltaxoBase", "Altaxo.Collections.IntegerRangeAsCollection", 0)]
     private class XmlSerializationSurrogate00 : Altaxo.Serialization.Xml.IXmlSerializationSurrogate
     {
+      /// <inheritdoc/>
       public void Serialize(object obj, Altaxo.Serialization.Xml.IXmlSerializationInfo info)
       {
         throw new NotImplementedException("Should not serialize deprecated type");
@@ -60,7 +59,7 @@ namespace Altaxo.Collections
                 info.AddValue("Count", s._count);
                 */
       }
-
+      /// <inheritdoc/>
       public object Deserialize(object? o, Altaxo.Serialization.Xml.IXmlDeserializationInfo info, object? parent)
       {
         var start = info.GetInt32("Start");
@@ -72,13 +71,14 @@ namespace Altaxo.Collections
     [Altaxo.Serialization.Xml.XmlSerializationSurrogateFor(typeof(ContiguousIntegerRange), 0)]
     private class XmlSerializationSurrogate0 : Altaxo.Serialization.Xml.IXmlSerializationSurrogate
     {
+      /// <inheritdoc/>
       public void Serialize(object obj, Altaxo.Serialization.Xml.IXmlSerializationInfo info)
       {
         var s = (ContiguousIntegerRange)obj;
         info.AddValue("Start", s.Start);
         info.AddValue("Count", s.Count);
       }
-
+      /// <inheritdoc/>
       public object Deserialize(object? o, Altaxo.Serialization.Xml.IXmlDeserializationInfo info, object? parent)
       {
         var start = info.GetInt32("Start");
@@ -220,7 +220,7 @@ namespace Altaxo.Collections
     }
 
     /// <summary>
-    /// Element immmediately <b>after</b> the last valid element (is equal to <see cref="Start"/>+<see cref="Count"/>).
+    /// Element immediately <b>after</b> the last valid element (is equal to <see cref="Start"/>+<see cref="Count"/>).
     /// </summary>
     public int EndExclusive
     {
@@ -230,21 +230,19 @@ namespace Altaxo.Collections
       }
     }
 
-    /// <summary>
-    /// Number of elements of the integer range.Thus the integer range contains Start, Start+1, .. Start+Count-1.
-    /// </summary>
+    /// <inheritdoc/>
     public int Count
     {
       get
       {
         if (_count > int.MaxValue || (_count == 0 && _start != 0))
-          throw new InvalidOperationException("This range is to large, thus integer is not sufficient for Count. Use LongCount instead.");
+          throw new InvalidOperationException("This range is too large, thus integer is not sufficient for Count. Use LongCount instead.");
         return (int)_count;
       }
     }
 
     /// <summary>
-    /// Number of elements of the integer range.Thus the integer range contains Start, Start+1, .. Start+Count-1.
+    /// Number of elements of the integer range. Thus the integer range contains Start, Start+1, .. Start+Count-1.
     /// </summary>
     public long LongCount
     {
@@ -259,6 +257,7 @@ namespace Altaxo.Collections
 
     #region IList interface
 
+    /// <inheritdoc/>
     public int IndexOf(int item)
     {
       if (item >= _start && item <= LastInclusive)
@@ -267,16 +266,19 @@ namespace Altaxo.Collections
         return -1;
     }
 
+    /// <inheritdoc/>
     public void Insert(int index, int item)
     {
       throw new InvalidOperationException("This instance is read-only");
     }
 
+    /// <inheritdoc/>
     public void RemoveAt(int index)
     {
       throw new InvalidOperationException("This instance is read-only");
     }
 
+    /// <inheritdoc/>
     public int this[int index]
     {
       get
@@ -329,11 +331,11 @@ namespace Altaxo.Collections
 
       for (int i = _start; i < lastInclusive; ++i) // use < instead of <= in order to avoid problems if lastInclusive==int.MaxValue
         yield return i;
-
       if (_start <= lastInclusive)
         yield return lastInclusive;
     }
 
+    /// <inheritdoc/>
     System.Collections.IEnumerator System.Collections.IEnumerable.GetEnumerator()
     {
       return GetEnumerator();
@@ -343,6 +345,7 @@ namespace Altaxo.Collections
 
     #region IAscendingIntegerCollection
 
+    /// <inheritdoc/>
     public IEnumerable<ContiguousIntegerRange> RangesAscending
     {
       get
@@ -351,6 +354,7 @@ namespace Altaxo.Collections
       }
     }
 
+    /// <inheritdoc/>
     public IEnumerable<ContiguousIntegerRange> RangesDescending
     {
       get
@@ -363,6 +367,7 @@ namespace Altaxo.Collections
 
     #region ICloneable Members
 
+    /// <inheritdoc/>
     public object Clone()
     {
       return new ContiguousIntegerRange { _start = _start, _count = _count };

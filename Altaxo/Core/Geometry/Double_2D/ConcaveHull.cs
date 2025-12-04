@@ -37,11 +37,13 @@ namespace Altaxo.Geometry.Double_2D
   /// </summary>
   public partial class ConcaveHull
   {
+    /// <summary>
+    /// The convex hull edges as a list of annotated lines.
+    /// </summary>
     private IReadOnlyList<LineD2DAnnotated> _hull_convex_edges;
 
-
     /// <summary>
-    /// Gets the points that form the convex hull.
+    /// The points that form the convex hull.
     /// </summary>
     private IReadOnlyList<PointD2DAnnotated> _convexHullPoints;
 
@@ -58,7 +60,11 @@ namespace Altaxo.Geometry.Double_2D
     /// </summary>
     public IReadOnlyList<PointD2DAnnotated> PointsNotOnConvexHull { get; private set; }
 
+    /// <summary>
+    /// The points that form the concave hull.
+    /// </summary>
     private IReadOnlyList<PointD2DAnnotated> _concaveHullPoints;
+
     /// <summary>
     /// Gets the points that form the concave hull.
     /// </summary>
@@ -70,7 +76,7 @@ namespace Altaxo.Geometry.Double_2D
     /// <param name="nodes">The points for which to calculate the concave hull.</param>
     /// <param name="concavity">The concavity.</param>
     /// <param name="scaleFactor">The scale factor.</param>
-    /// <param name="isSquareGrid"></param>
+    /// <param name="isSquareGrid">Indicates whether a square grid is used.</param>
     public ConcaveHull(IEnumerable<PointD2DAnnotated> nodes, double concavity, int scaleFactor, bool isSquareGrid)
     {
       CalculateConvexHullAsLineList(nodes);
@@ -91,8 +97,10 @@ namespace Altaxo.Geometry.Double_2D
       SetConcaveHull(concavity, scaleFactor, isSquareGrid);
     }
 
-
-
+    /// <summary>
+    /// Calculates the convex hull as a list of annotated lines.
+    /// </summary>
+    /// <param name="nodes">The points for which to calculate the convex hull.</param>
     [MemberNotNull(nameof(_convexHullPoints), nameof(_hull_convex_edges))]
     private void CalculateConvexHullAsLineList(IEnumerable<PointD2DAnnotated> nodes)
     {
@@ -113,7 +121,7 @@ namespace Altaxo.Geometry.Double_2D
     /// </summary>
     /// <param name="concavity">The concavity.</param>
     /// <param name="scaleFactor">The scale factor.</param>
-    /// <param name="isSquareGrid"></param>
+    /// <param name="isSquareGrid">Indicates whether a square grid is used.</param>
     [MemberNotNull(nameof(_concaveHullPoints))]
     public void SetConcaveHull(double concavity, int scaleFactor, bool isSquareGrid)
     {
@@ -184,6 +192,7 @@ namespace Altaxo.Geometry.Double_2D
     /// the concave hull are in arbitrary order. So for each line segment we need to find another line segment where the end point of the first segment
     /// is contained in the other line segment (either as start or end point).
     /// </summary>
+    /// <param name="hull_concave_edges">The list of line segments forming the concave hull.</param>
     /// <returns>A fresh list of points that form the concave hull.</returns>
     private List<PointD2DAnnotated> GetHullPoints(List<LineD2DAnnotated> hull_concave_edges)
     {

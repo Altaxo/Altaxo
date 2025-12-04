@@ -23,19 +23,21 @@
 #endregion Copyright
 
 #nullable enable
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-
 namespace Altaxo.Geometry
 {
   /// <summary>
-  /// A infinite line in 3D space.
+  /// An infinite line in 3D space.
   /// </summary>
   public class Ray3D
   {
+    /// <summary>
+    /// The origin of the line (one arbitrary point at the line).
+    /// </summary>
     private PointD3D _origin;
+
+    /// <summary>
+    /// The direction of the line.
+    /// </summary>
     private VectorD3D _direction;
 
     /// <summary>
@@ -52,17 +54,11 @@ namespace Altaxo.Geometry
     /// <summary>
     /// Gets the origin, i.e. one point at the line.
     /// </summary>
-    /// <value>
-    /// The origin.
-    /// </value>
     public PointD3D Origin { get { return _origin; } }
 
     /// <summary>
     /// Gets the direction of the line.
     /// </summary>
-    /// <value>
-    /// The direction.
-    /// </value>
     public VectorD3D Direction { get { return _direction; } }
   }
 }

@@ -29,24 +29,31 @@ using System.Text;
 
 namespace Altaxo.Collections.Text
 {
-  /// <summary>Base class for problem solvers for the longest common substring problem.</summary>
+  /// <summary>
+  /// Base class for problem solvers for the longest common substring problem.
+  /// </summary>
   /// <remarks>
-  /// For details of the algorithm see the very nice paper by Michael Arnold and Enno Ohlebusch, 'Linear Time Algorithms for Generalizations of the Longest Common Substring Problem', Algorithmica (2011) 60; 806-818; DOI: 10.1007/s00453-009-9369-1.
-  /// This code was adopted from the C++ sources from the web site of the authors at http://www.uni-ulm.de/in/theo/research/sequana.html.
+  /// For details of the algorithm, see the paper by Michael Arnold and Enno Ohlebusch, "Linear Time Algorithms for Generalizations of the Longest Common Substring Problem", Algorithmica (2011) 60; 806-818; DOI: 10.1007/s00453-009-9369-1.
+  /// This code was adapted from the C++ sources from the authors' website at http://www.uni-ulm.de/in/theo/research/sequana.html.
   /// </remarks>
   public class LongestCommonSubstringBase
   {
     #region internal types
 
-    /// <summary>Stores a region in the suffix array.</summary>
+    /// <summary>
+    /// Stores a region in the suffix array.
+    /// </summary>
     protected struct SuffixArrayRegion
     {
       /// <summary>First index in the suffix array.</summary>
       public int Begin;
-
       /// <summary>Last index in the suffix array (this index is included in the region).</summary>
       public int End;
-
+      /// <summary>
+      /// Initializes a new instance of the <see cref="SuffixArrayRegion"/> struct.
+      /// </summary>
+      /// <param name="beg">The first index in the suffix array.</param>
+      /// <param name="end">The last index in the suffix array.</param>
       public SuffixArrayRegion(int beg, int end)
       {
         Begin = beg;
@@ -69,14 +76,13 @@ namespace Altaxo.Collections.Text
       {
         /// <summary>Value of this bucket.</summary>
         public int Value;
-
         /// <summary>Number of generation, when this bucket can be considered as expired, i.e. is moved out of the sliding window, and therefore must be removed from the collection.</summary>
         public int ExpireGeneration;
       }
 
       #endregion Item
 
-      /// <summary>Counter that is incremented each time an element is added</summary>
+      /// <summary>Counter that is incremented each time an element is added.</summary>
       private int _generation;
 
       /// <summary>Array of Bucket structs storing the value and the generation when this value will become invalid.</summary>
@@ -88,9 +94,11 @@ namespace Altaxo.Collections.Text
       /// <summary>Index of the bucket that was the last added value in the array.</summary>
       private int _lastItemIdx;
 
-      /// <summary>Initializes a new instance of the <see cref="MinimumOnSlidingWindow"/> class.</summary>
-      /// <param name="numberOfItems">The number of items N. The algorithm evaluates the minimum of the last N items that where added to this instance.</param>
-      /// <param name="startValue">The start value. This is the first entry to add to the instance. Thus, <see cref="MinimumValue"/> always return a valid value.</param>
+      /// <summary>
+      /// Initializes a new instance of the <see cref="MinimumOnSlidingWindow"/> class.
+      /// </summary>
+      /// <param name="numberOfItems">The number of items N. The algorithm evaluates the minimum of the last N items that were added to this instance.</param>
+      /// <param name="startValue">The start value. This is the first entry to add to the instance. Thus, <see cref="MinimumValue"/> always returns a valid value.</param>
       public void Initialize(int numberOfItems, int startValue)
       {
         _items = new Bucket[numberOfItems];
@@ -99,7 +107,9 @@ namespace Altaxo.Collections.Text
         ++_generation;
       }
 
-      /// <summary>Gets the current minimum value of the window.</summary>
+      /// <summary>
+      /// Gets the current minimum value of the window.
+      /// </summary>
       public int MinimumValue
       {
         get
@@ -108,8 +118,10 @@ namespace Altaxo.Collections.Text
         }
       }
 
-      /// <summary>Removes the expired element from this window. Note: normally this is done when you use the <see cref="Add"/> function, thus there is no need to call this function separately.
-      /// When the minimum item is the item that is expired now, then this function will remove this item from the collection and sets the current minimum to the next greater item.</summary>
+      /// <summary>
+      /// Removes the expired element from this window. Note: normally this is done when you use the <see cref="Add"/> function, thus there is no need to call this function separately.
+      /// When the minimum item is the item that is expired now, then this function will remove this item from the collection and sets the current minimum to the next greater item.
+      /// </summary>
       public void Remove()
       {
         if (_items[_minItemIdx].ExpireGeneration == _generation)
@@ -120,8 +132,10 @@ namespace Altaxo.Collections.Text
         }
       }
 
-      /// <summary>Adds the specified value to the window, and removes the item that is now expired from the window.</summary>
-      /// <param name="val">The val.</param>
+      /// <summary>
+      /// Adds the specified value to the window, and removes the item that is now expired from the window.
+      /// </summary>
+      /// <param name="val">The value to add.</param>
       public void Add(int val)
       {
         if (_items[_minItemIdx].ExpireGeneration == _generation)

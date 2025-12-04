@@ -30,10 +30,13 @@ using System.Text;
 
 namespace Altaxo.Geometry
 {
+  /// <summary>
+  /// Provides extension methods for <see cref="RectangleD2D"/>.
+  /// </summary>
   public static class RectangleD2DExtensions
   {
     /// <summary>
-    /// Calculates the dimensions of the greatest (by area) rectangle included in an outer rectangle, where the inner rectangle is rotated/sheared/scaled.
+    /// Calculates the dimensions of the greatest (by area) rectangle included in an outer rectangle, where the inner rectangle is rotated, sheared, or scaled.
     /// </summary>
     /// <param name="outerRectangle">The outer rectangle.</param>
     /// <param name="sx">SX component of the transformation matrix that is applied to the inner rectangle.</param>
@@ -43,9 +46,9 @@ namespace Altaxo.Geometry
     /// <returns>The inner rectangle with the greatest area that fits (when transformed with the transformation elements) into the outer rectangle.
     /// The position of the returned rectangle is calculated so that it centers into the outer rectangle.</returns>
     /// <exception cref="System.ArgumentOutOfRangeException">
-    /// X-Size of outer rectangle must be > 0
+    /// X-Size of outer rectangle must be &gt; 0
     /// or
-    /// Y-Size of outer rectangle must be > 0
+    /// Y-Size of outer rectangle must be &gt; 0
     /// </exception>
     public static RectangleD2D GetIncludedTransformedRectangle(this RectangleD2D outerRectangle, double sx, double rx, double ry, double sy)
     {

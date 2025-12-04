@@ -76,6 +76,9 @@ namespace Altaxo.Geometry.Int64_2D
       Length = Math.Sqrt(dx * dx + dy * dy);
     }
 
+    /// <summary>
+    /// Gets the line segment as an <see cref="Int64LineSegment"/>.
+    /// </summary>
     public Int64LineSegment Line
     {
       get
@@ -119,7 +122,7 @@ namespace Altaxo.Geometry.Int64_2D
     /// Gets either the start point's index <see cref="I0"/> at index 0, or the end point's index <see cref="I1"/> at index 1.
     /// </summary>
     /// <param name="idx">The retrieving index.</param>
-    /// <returns>Either the start point's index <see cref="P0"/> (idx==0), or the end point's index <see cref="P1"/> (idx==1).</returns>
+    /// <returns>Either the start point's index <see cref="I0"/> (idx==0), or the end point's index <see cref="I1"/> (idx==1).</returns>
     /// <exception cref="IndexOutOfRangeException">Index out of range [0,1]</exception>
     public int GetIndex(int idx)
     {
@@ -154,11 +157,26 @@ namespace Altaxo.Geometry.Int64_2D
     }
   }
 
+  /// <summary>
+  /// Represents a rectangular bounding box using two <see cref="Point64"/> coordinates.
+  /// </summary>
   public readonly struct Int64BoundingBox
   {
+    /// <summary>
+    /// The lower-left corner of the bounding box.
+    /// </summary>
     public readonly Point64 P0;
+    /// <summary>
+    /// The upper-right corner of the bounding box.
+    /// </summary>
     public readonly Point64 P1;
 
+    /// <summary>
+    /// Initializes a new instance of the <see cref="Int64BoundingBox"/> struct.
+    /// </summary>
+    /// <param name="p0">The lower-left corner.</param>
+    /// <param name="p1">The upper-right corner.</param>
+    /// <exception cref="ArgumentException">Thrown if p0 is not less than or equal to p1 in both coordinates.</exception>
     public Int64BoundingBox(Point64 p0, Point64 p1)
     {
       if (!(p0.X <= p1.X && p0.Y <= p1.Y))
@@ -170,6 +188,11 @@ namespace Altaxo.Geometry.Int64_2D
       P1 = p1;
     }
 
+    /// <summary>
+    /// Determines whether the specified point is within the bounding box.
+    /// </summary>
+    /// <param name="p">The point to test.</param>
+    /// <returns>True if the point is within the bounding box; otherwise, false.</returns>
     public bool IsPointWithin(in Point64 p)
     {
       return

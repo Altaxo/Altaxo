@@ -37,11 +37,26 @@ namespace Altaxo.Geometry.Int64_2D
   /// </summary>
   public static class GrahamScan
   {
+    /// <summary>
+    /// Constant for a left turn.
+    /// </summary>
     private const int TURN_LEFT = 1;
+    /// <summary>
+    /// Constant for a right turn.
+    /// </summary>
     private const int TURN_RIGHT = -1;
+    /// <summary>
+    /// Constant for no turn.
+    /// </summary>
     private const int TURN_NONE = 0;
 
-
+    /// <summary>
+    /// Determines the kind of turn formed by three points.
+    /// </summary>
+    /// <param name="p">First point.</param>
+    /// <param name="q">Second point.</param>
+    /// <param name="r">Third point.</param>
+    /// <returns>TURN_LEFT, TURN_RIGHT, or TURN_NONE.</returns>
     private static int KindOfTurn(in Point64 p, in Point64 q, in Point64 r)
     {
       var d1 = (q.X - p.X) * (Int128)(r.Y - p.Y);
@@ -49,6 +64,11 @@ namespace Altaxo.Geometry.Int64_2D
       return d1 == d2 ? 0 : (d1 < d2 ? -1 : 1);
     }
 
+    /// <summary>
+    /// Keeps the hull left by removing points that do not form a left turn.
+    /// </summary>
+    /// <param name="hull">The current hull.</param>
+    /// <param name="r">The candidate point.</param>
     private static void KeepLeft(List<(Point64 point, int index)> hull, in (Point64 point, int index) r)
     {
       while (hull.Count > 1 && KindOfTurn(hull[hull.Count - 2].point, hull[hull.Count - 1].point, r.point) != TURN_LEFT)
@@ -61,6 +81,12 @@ namespace Altaxo.Geometry.Int64_2D
       }
     }
 
+    /// <summary>
+    /// Sorts points by turn direction using merge sort.
+    /// </summary>
+    /// <param name="p0">Reference point.</param>
+    /// <param name="arrPoint">Array of points to sort.</param>
+    /// <returns>Sorted list of points.</returns>
     private static List<(Point64 point, int index)> MergeSort(in Point64 p0, List<(Point64 point, int index)> arrPoint)
     {
       if (arrPoint.Count == 1)
@@ -108,6 +134,8 @@ namespace Altaxo.Geometry.Int64_2D
     /// </summary>
     /// <param name="points">The set of points for which to calculate the convex hull.</param>
     /// <returns>The ordered set of points that forms the hull.</returns>
+    /// <exception cref="ArgumentNullException">Thrown when <paramref name="points"/> is null.</exception>
+    /// <exception cref="ArgumentException">Thrown when the number of points is less than 3.</exception>
     public static IReadOnlyList<(Point64 point, int index)> GetConvexHull(IReadOnlyList<Point64> points)
     {
       if (points is null)

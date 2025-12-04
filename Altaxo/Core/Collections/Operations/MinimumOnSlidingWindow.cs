@@ -37,6 +37,9 @@ namespace Altaxo.Collections.Operations
   {
     #region Item
 
+    /// <summary>
+    /// Internal data structure to store the value, and the generation number when this value moves out of the sliding window.
+    /// </summary>
     private struct Bucket
     {
       /// <summary>Value of this bucket.</summary>
@@ -48,7 +51,7 @@ namespace Altaxo.Collections.Operations
 
     #endregion Item
 
-    /// <summary>Counter that is incremented each time an element is added</summary>
+    /// <summary>Counter that is incremented each time an element is added.</summary>
     private int _generation;
 
     /// <summary>Array of Bucket structs storing the value and the generation when this value will become invalid.</summary>
@@ -60,9 +63,12 @@ namespace Altaxo.Collections.Operations
     /// <summary>Index of the bucket that was the last added value in the array.</summary>
     private int _lastItemIdx;
 
+    /// <summary>Comparer function for comparing two values of type T.</summary>
     private Func<T, T, int> _comparer;
 
-    /// <summary>Initializes a new instance of the <see cref="MinimumOnSlidingWindow&lt;T&gt;"/> class.</summary>
+    /// <summary>
+    /// Initializes a new instance of the <see cref="MinimumOnSlidingWindow{T}"/> class.
+    /// </summary>
     /// <param name="numberOfItems">The number of items N. The algorithm evaluates the minimum of the last N items that where added to this instance.</param>
     /// <param name="startValue">The start value. This is the first entry to add to the instance. Thus, the <see cref="MinimumValue"/> always return a valid value.</param>
     public MinimumOnSlidingWindow(int numberOfItems, T startValue)
@@ -74,7 +80,9 @@ namespace Altaxo.Collections.Operations
       ++_generation;
     }
 
-    /// <summary>Gets the current minimum value of the window.</summary>
+    /// <summary>
+    /// Gets the current minimum value of the window.
+    /// </summary>
     public T MinimumValue
     {
       get
@@ -83,8 +91,10 @@ namespace Altaxo.Collections.Operations
       }
     }
 
-    /// <summary>Removes the expired element from this window. Note: normally this is done when you use the <see cref="Add"/> function, thus there is no need to call this function separately.
-    /// When the minimum item is the item that is expired now, then this function will remove this item from the collection and sets the current minimum to the next greater item.</summary>
+    /// <summary>
+    /// Removes the expired element from this window. Note: normally this is done when you use the <see cref="Add"/> function, thus there is no need to call this function separately.
+    /// When the minimum item is the item that is expired now, then this function will remove this item from the collection and sets the current minimum to the next greater item.
+    /// </summary>
     public void Remove()
     {
       if (_items[_minItemIdx].ExpireGeneration == _generation)
@@ -95,8 +105,10 @@ namespace Altaxo.Collections.Operations
       }
     }
 
-    /// <summary>Adds the specified value to the window, and removes the item that is now expired from the window.</summary>
-    /// <param name="val">The val.</param>
+    /// <summary>
+    /// Adds the specified value to the window, and removes the item that is now expired from the window.
+    /// </summary>
+    /// <param name="val">The value to add.</param>
     public void Add(T val)
     {
       if (_items[_minItemIdx].ExpireGeneration == _generation)
@@ -130,8 +142,10 @@ namespace Altaxo.Collections.Operations
       ++_generation;
     }
 
-    /// <summary>Gets the sliding minimum of an enumeration.</summary>
-    /// <param name="list">The enumeration to enumerate through</param>
+    /// <summary>
+    /// Gets the sliding minimum of an enumeration.
+    /// </summary>
+    /// <param name="list">The enumeration to enumerate through.</param>
     /// <param name="windowWidth">Width of the sliding window.</param>
     /// <returns>An enumeration. Each value is the minimum of the <paramref name="windowWidth"/> values (including the current one) of the original enumeration.</returns>
     public static IEnumerable<T> GetSlidingMinimum(IEnumerable<T> list, int windowWidth)

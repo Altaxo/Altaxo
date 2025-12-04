@@ -36,22 +36,17 @@ namespace Altaxo.Geometry
     /// <summary>
     /// Gets the x component of this point.
     /// </summary>
-    /// <value>
-    /// The x  component of this point..
-    /// </value>
     public double X { get; private set; }
 
     /// <summary>
     /// Gets the y component of this point.
     /// </summary>
-    /// <value>
-    /// The y  component of this point..
-    /// </value>
     public double Y { get; private set; }
 
     #region Serialization
 
     /// <summary>
+    /// XML serialization surrogate for <see cref="PointD2D"/>.
     /// 2015-11-15 Version 1 - Move to Altaxo.Geometry namespace.
     /// V2: 2023-01-14 Move from assembly AltaxoBase to AltaxoCore
     /// </summary>
@@ -60,6 +55,7 @@ namespace Altaxo.Geometry
     [Altaxo.Serialization.Xml.XmlSerializationSurrogateFor(typeof(PointD2D), 2)]
     private class XmlSerializationSurrogate0 : Altaxo.Serialization.Xml.IXmlSerializationSurrogate
     {
+      /// <inheritdoc/>
       public void Serialize(object obj, Altaxo.Serialization.Xml.IXmlSerializationInfo info)
       {
         var s = (PointD2D)obj;
@@ -67,6 +63,7 @@ namespace Altaxo.Geometry
         info.AddValue("Y", s.Y);
       }
 
+      /// <inheritdoc/>
       public object Deserialize(object? o, Altaxo.Serialization.Xml.IXmlDeserializationInfo info, object? parent)
       {
         return new PointD2D(info.GetDouble("X"), info.GetDouble("Y"));
@@ -75,12 +72,22 @@ namespace Altaxo.Geometry
 
     #endregion Serialization
 
+    /// <summary>
+    /// Initializes a new instance of the <see cref="PointD2D"/> struct.
+    /// </summary>
+    /// <param name="x">The x component.</param>
+    /// <param name="y">The y component.</param>
     public PointD2D(double x, double y)
     {
       X = x;
       Y = y;
     }
 
+    /// <summary>
+    /// Deconstructs this point into its x and y components.
+    /// </summary>
+    /// <param name="x">The x component.</param>
+    /// <param name="y">The y component.</param>
     public void Deconstruct(out double x, out double y)
     {
       x = X;
@@ -100,7 +107,7 @@ namespace Altaxo.Geometry
     /// <summary>
     /// Returns a new instance with <see cref="Y"/> set to the provided value.
     /// </summary>
-    /// <param name="newY">The new x.</param>
+    /// <param name="newY">The new y.</param>
     /// <returns>New instance with <see cref="Y"/> set to the provided value.</returns>
     public PointD2D WithY(double newY)
     {
@@ -127,6 +134,9 @@ namespace Altaxo.Geometry
       return new PointD2D(X, Y + addY);
     }
 
+    /// <summary>
+    /// Gets an empty point (0,0).
+    /// </summary>
     public static PointD2D Empty
     {
       get
@@ -135,6 +145,9 @@ namespace Altaxo.Geometry
       }
     }
 
+    /// <summary>
+    /// Gets a value indicating whether this point is empty (both components are zero).
+    /// </summary>
     public bool IsEmpty
     {
       get
@@ -146,9 +159,6 @@ namespace Altaxo.Geometry
     /// <summary>
     /// Gets a value indicating whether one of the members of this instance is <see cref="double.NaN"/>.
     /// </summary>
-    /// <value>
-    ///   <c>true</c> if one of the members of this instance is <see cref="double.NaN"/>; otherwise, <c>false</c>.
-    /// </value>
     public bool IsNaN
     {
       get
@@ -159,51 +169,81 @@ namespace Altaxo.Geometry
 
     #region Operators
 
+    /// <summary>
+    /// Subtracts two points component-wise.
+    /// </summary>
     public static PointD2D operator -(PointD2D p1, PointD2D p2)
     {
       return new PointD2D(p1.X - p2.X, p1.Y - p2.Y);
     }
 
+    /// <summary>
+    /// Subtracts a vector from a point component-wise.
+    /// </summary>
     public static PointD2D operator -(PointD2D p1, VectorD2D p2)
     {
       return new PointD2D(p1.X - p2.X, p1.Y - p2.Y);
     }
 
+    /// <summary>
+    /// Adds two points component-wise.
+    /// </summary>
     public static PointD2D operator +(PointD2D p1, PointD2D p2)
     {
       return new PointD2D(p1.X + p2.X, p1.Y + p2.Y);
     }
 
+    /// <summary>
+    /// Adds a vector to a point component-wise.
+    /// </summary>
     public static PointD2D operator +(PointD2D p1, VectorD2D p2)
     {
       return new PointD2D(p1.X + p2.X, p1.Y + p2.Y);
     }
 
+    /// <summary>
+    /// Multiplies a point by a scalar.
+    /// </summary>
     public static PointD2D operator *(PointD2D p, double s)
     {
       return new PointD2D(p.X * s, p.Y * s);
     }
 
+    /// <summary>
+    /// Multiplies a scalar by a point.
+    /// </summary>
     public static PointD2D operator *(double s, PointD2D p)
     {
       return new PointD2D(p.X * s, p.Y * s);
     }
 
+    /// <summary>
+    /// Multiplies two points component-wise.
+    /// </summary>
     public static PointD2D operator *(PointD2D p, PointD2D q)
     {
       return new PointD2D(p.X * q.X, p.Y * q.Y);
     }
 
+    /// <summary>
+    /// Divides a point by a scalar.
+    /// </summary>
     public static PointD2D operator /(PointD2D p, double s)
     {
       return new PointD2D(p.X / s, p.Y / s);
     }
 
+    /// <summary>
+    /// Checks if two points are equal.
+    /// </summary>
     public static bool operator ==(PointD2D p, PointD2D q)
     {
       return p.X == q.X && p.Y == q.Y;
     }
 
+    /// <summary>
+    /// Checks if two points are not equal.
+    /// </summary>
     public static bool operator !=(PointD2D p, PointD2D q)
     {
       return !(p.X == q.X && p.Y == q.Y);
@@ -213,6 +253,10 @@ namespace Altaxo.Geometry
 
     #region Conversion operators
 
+    /// <summary>
+    /// Converts a <see cref="VectorD2D"/> to a <see cref="PointD2D"/>.
+    /// </summary>
+    /// <param name="v">The vector to convert.</param>
     public static explicit operator PointD2D(VectorD2D v)
     {
       return new PointD2D(v.X, v.Y);
@@ -220,11 +264,13 @@ namespace Altaxo.Geometry
 
     #endregion Conversion operators
 
+    /// <inheritdoc/>
     public override int GetHashCode()
     {
       return X.GetHashCode() + 7 * Y.GetHashCode();
     }
 
+    /// <inheritdoc/>
     public override bool Equals(object? obj)
     {
       if (obj is PointD2D q)
@@ -237,6 +283,7 @@ namespace Altaxo.Geometry
       }
     }
 
+    /// <inheritdoc/>
     public override string ToString()
     {
       return string.Format(System.Globalization.CultureInfo.InvariantCulture,
@@ -257,12 +304,15 @@ namespace Altaxo.Geometry
     /// Calculates the squared distance between this point and another point.
     /// </summary>
     /// <param name="p">Other point.</param>
-    /// <returns>The distance between this point and point p.</returns>
+    /// <returns>The squared distance between this point and point p.</returns>
     public double DistanceSquaredTo(PointD2D p)
     {
       return DistanceSquared(this, p);
     }
 
+    /// <summary>
+    /// Gets the vector length of this point.
+    /// </summary>
     public double VectorLength
     {
       get
@@ -271,6 +321,9 @@ namespace Altaxo.Geometry
       }
     }
 
+    /// <summary>
+    /// Gets the squared vector length of this point.
+    /// </summary>
     public double VectorLengthSquared
     {
       get
@@ -279,40 +332,69 @@ namespace Altaxo.Geometry
       }
     }
 
+    /// <summary>
+    /// Gets a new point with x and y components flipped.
+    /// </summary>
+    /// <returns>A new point with x and y components flipped.</returns>
     public PointD2D GetXYFlipped()
     {
       return new PointD2D(Y, X);
     }
 
+    /// <summary>
+    /// Gets a new point rotated by 90 degrees counterclockwise.
+    /// </summary>
+    /// <returns>A new point rotated by 90 degrees counterclockwise.</returns>
     public PointD2D Get90DegreeRotated()
     {
       return new PointD2D(-Y, X);
     }
 
+    /// <summary>
+    /// Gets a new point with both components sign-flipped.
+    /// </summary>
+    /// <returns>A new point with both components sign-flipped.</returns>
     public PointD2D GetSignFlipped()
     {
       return new PointD2D(-X, -Y);
     }
 
     /// <summary>
-    /// Returns a new <see cref="PointD2D"/> based on the existing one, but with both Abs(X) instead of X, and Abs(Y) instead of Y.
+    /// Gets a new point with both components replaced by their absolute values.
     /// </summary>
-    /// <returns>New <see cref="PointD2D"/> based on the existing one, but with both Abs(X) instead of X, and Abs(Y) instead of Y.</returns>
+    /// <returns>A new point with both components replaced by their absolute values.</returns>
     public PointD2D GetMemberwiseAbs()
     {
       return new PointD2D(Math.Abs(X), Math.Abs(Y));
     }
 
+    /// <summary>
+    /// Gets a new point rotated by a specified angle in degrees around a pivot.
+    /// </summary>
+    /// <param name="rotation">Rotation angle in degrees.</param>
+    /// <param name="pivot">Pivot point.</param>
+    /// <returns>A new point rotated by the specified angle around the pivot.</returns>
     public PointD2D GetRotatedByDegree(double rotation, PointD2D pivot)
     {
       return GetRotatedByRad(rotation * Math.PI / 180, pivot);
     }
 
+    /// <summary>
+    /// Gets a new point rotated by a specified angle in degrees around the origin.
+    /// </summary>
+    /// <param name="rotation">Rotation angle in degrees.</param>
+    /// <returns>A new point rotated by the specified angle around the origin.</returns>
     public PointD2D GetRotatedByDegree(double rotation)
     {
       return GetRotatedByRad(rotation * Math.PI / 180, PointD2D.Empty);
     }
 
+    /// <summary>
+    /// Gets a new point rotated by a specified angle in radians around a pivot.
+    /// </summary>
+    /// <param name="phi">Rotation angle in radians.</param>
+    /// <param name="pivot">Pivot point.</param>
+    /// <returns>A new point rotated by the specified angle around the pivot.</returns>
     public PointD2D GetRotatedByRad(double phi, PointD2D pivot)
     {
       var dx = X - pivot.X;
@@ -330,21 +412,41 @@ namespace Altaxo.Geometry
       }
     }
 
+    /// <summary>
+    /// Gets a new point rotated by a specified angle in radians around the origin.
+    /// </summary>
+    /// <param name="phi">Rotation angle in radians.</param>
+    /// <returns>A new point rotated by the specified angle around the origin.</returns>
     public PointD2D GetRotatedByRad(double phi)
     {
       return GetRotatedByRad(phi, PointD2D.Empty);
     }
 
+    /// <summary>
+    /// Calculates the dot product of this point and another point.
+    /// </summary>
+    /// <param name="q">Other point.</param>
+    /// <returns>The dot product.</returns>
     public double DotProduct(PointD2D q)
     {
       return DotProduct(this, q);
     }
 
+    /// <summary>
+    /// Calculates the dot product of two points.
+    /// </summary>
+    /// <param name="p">First point.</param>
+    /// <param name="q">Second point.</param>
+    /// <returns>The dot product.</returns>
     public static double DotProduct(PointD2D p, PointD2D q)
     {
       return p.X * q.X + p.Y * q.Y;
     }
 
+    /// <summary>
+    /// Gets a normalized version of this point (length 1).
+    /// </summary>
+    /// <returns>A normalized version of this point.</returns>
     public PointD2D GetNormalized()
     {
       var s = 1 / VectorLength;
@@ -369,7 +471,7 @@ namespace Altaxo.Geometry
     /// </summary>
     /// <param name="p1">First point.</param>
     /// <param name="p2">Second point.</param>
-    /// <returns>The distance between points p1 and p2.</returns>
+    /// <returns>The squared distance between points p1 and p2.</returns>
     public static double DistanceSquared(PointD2D p1, PointD2D p2)
     {
       var x = p1.X - p2.X;

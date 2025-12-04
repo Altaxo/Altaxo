@@ -30,15 +30,15 @@ namespace Altaxo.Geometry
   /// Provides fast and efficient storage and retrieval of items with a rectangular area in a 2D coordinate system.
   /// </summary>
   /// <typeparam name="TItem">Type of item to store in the quad tree. The item must contain enough information in order to calculate a bounding rectangle of the item.</typeparam>
-  public class QuadTree<TItem> 
+  public class QuadTree<TItem>
   {
-    // How many objects can exist in a QuadTree before it sub divides itself
+    /// <summary>How many objects can exist in a QuadTree before it sub divides itself.</summary>
     private readonly int _maximumNumberOfItemsPerNode = 2;
 
-    /// <summary>The items of this quad at this level</summary>
+    /// <summary>The items of this quad at this level.</summary>
     private List<TItem>? _items = null;
 
-    /// <summary>Bounding rectangle of the quad tree at this level</summary>
+    /// <summary>Bounding rectangle of the quad tree at this level.</summary>
     private RectangleD2D _boundaries;
 
     /// <summary>Function that evaluates the bounding rectangle of an item. Input is the item, output is the bounding rectangle of the item.</summary>
@@ -47,10 +47,14 @@ namespace Altaxo.Geometry
     /// <summary>Structure to stores the child quads (top-left, top-right, bottom-left and bottom-right).</summary>
     private struct ChildTrees
     {
-      public QuadTree<TItem> TL; // top-left quad
-      public QuadTree<TItem> TR; // top-right quad
-      public QuadTree<TItem> BL; // bottom-left quad
-      public QuadTree<TItem> BR; // bottom-right quad
+      /// <summary>Top-left quad.</summary>
+      public QuadTree<TItem> TL;
+      /// <summary>Top-right quad.</summary>
+      public QuadTree<TItem> TR;
+      /// <summary>Bottom-left quad.</summary>
+      public QuadTree<TItem> BL;
+      /// <summary>Bottom-right quad.</summary>
+      public QuadTree<TItem> BR;
     }
 
     /// <summary>The child quads (top-left, top-right, bottom-left and bottom-right).</summary>
@@ -432,10 +436,10 @@ namespace Altaxo.Geometry
     /// <returns>If the search was successful, a string which designates the location of the item in the quad tree; otherwise the return value is <c>null</c>.</returns>
     internal string? SearchFor(TItem item, string level = "Root")
     {
-      if(_items is { } items)
+      if (_items is { } items)
       {
         // look into the items at this level
-        foreach(var oitem in items)
+        foreach (var oitem in items)
         {
           if (object.Equals(oitem, item))
           {
@@ -445,19 +449,19 @@ namespace Altaxo.Geometry
       }
 
       string? res;
-      if(_children is { } children)
+      if (_children is { } children)
       {
         // look into the items in the child quads
-        res = children.TL.SearchFor(item, level+"_TL");
+        res = children.TL.SearchFor(item, level + "_TL");
         if (res is not null)
           return res;
-        res = children.TR.SearchFor(item, level+"_TR");
+        res = children.TR.SearchFor(item, level + "_TR");
         if (res is not null)
           return res;
-        res = children.BL.SearchFor(item, level+"_BL");
+        res = children.BL.SearchFor(item, level + "_BL");
         if (res is not null)
           return res;
-        res = children.BR.SearchFor(item, level+"_BR");
+        res = children.BR.SearchFor(item, level + "_BR");
         if (res is not null)
           return res;
       }

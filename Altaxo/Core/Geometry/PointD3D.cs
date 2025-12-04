@@ -49,16 +49,14 @@ namespace Altaxo.Geometry
     public double Y { get; private set; }
 
     /// <summary>
-    /// Gets the y component of this point.
+    /// Gets the z component of this point.
     /// </summary>
-    /// <value>
-    /// The y  component of this point..
-    /// </value>
     public double Z { get; private set; }
 
     #region Serialization
 
     /// <summary>
+    /// XML serialization surrogate for <see cref="PointD3D"/>.
     /// V1: 2015-11-16 initial version.
     /// V2: 2023-01-14 Move from assembly AltaxoBase to AltaxoCore
     /// </summary>
@@ -66,6 +64,7 @@ namespace Altaxo.Geometry
     [Altaxo.Serialization.Xml.XmlSerializationSurrogateFor(typeof(PointD3D), 2)]
     private class XmlSerializationSurrogate0 : Altaxo.Serialization.Xml.IXmlSerializationSurrogate
     {
+      /// <inheritdoc/>
       public void Serialize(object obj, Altaxo.Serialization.Xml.IXmlSerializationInfo info)
       {
         var s = (PointD3D)obj;
@@ -74,6 +73,7 @@ namespace Altaxo.Geometry
         info.AddValue("Z", s.Z);
       }
 
+      /// <inheritdoc/>
       public object Deserialize(object? o, Altaxo.Serialization.Xml.IXmlDeserializationInfo info, object? parent)
       {
         var x = info.GetDouble("X");
@@ -85,6 +85,12 @@ namespace Altaxo.Geometry
 
     #endregion Serialization
 
+    /// <summary>
+    /// Initializes a new instance of the <see cref="PointD3D"/> struct.
+    /// </summary>
+    /// <param name="x">The x component.</param>
+    /// <param name="y">The y component.</param>
+    /// <param name="z">The z component.</param>
     public PointD3D(double x, double y, double z)
     {
       X = x;
@@ -166,6 +172,9 @@ namespace Altaxo.Geometry
       }
     }
 
+    /// <summary>
+    /// Gets an empty point (0,0,0).
+    /// </summary>
     public static PointD3D Empty
     {
       get
@@ -174,6 +183,9 @@ namespace Altaxo.Geometry
       }
     }
 
+    /// <summary>
+    /// Gets a value indicating whether this point is empty (all components are zero).
+    /// </summary>
     public bool IsEmpty
     {
       get
@@ -185,9 +197,6 @@ namespace Altaxo.Geometry
     /// <summary>
     /// Gets a value indicating whether one of the members of this instance is <see cref="double.NaN"/>.
     /// </summary>
-    /// <value>
-    ///   <c>true</c> if one of the members of this instance is <see cref="double.NaN"/>; otherwise, <c>false</c>.
-    /// </value>
     public bool IsNaN
     {
       get
@@ -198,36 +207,58 @@ namespace Altaxo.Geometry
 
     #region Operators
 
+    /// <summary>
+    /// Adds a vector to a point component-wise.
+    /// </summary>
     public static PointD3D operator +(PointD3D a, VectorD3D b)
     {
       return new PointD3D(a.X + b.X, a.Y + b.Y, a.Z + b.Z);
     }
 
+    /// <summary>
+    /// Adds a vector to a point component-wise.
+    /// </summary>
     public static PointD3D operator +(VectorD3D b, PointD3D a)
     {
       return new PointD3D(a.X + b.X, a.Y + b.Y, a.Z + b.Z);
     }
 
+    /// <summary>
+    /// Subtracts two points to get a vector.
+    /// </summary>
     public static VectorD3D operator -(PointD3D a, PointD3D b)
     {
       return new VectorD3D(a.X - b.X, a.Y - b.Y, a.Z - b.Z);
     }
 
+    /// <summary>
+    /// Subtracts a vector from a point component-wise.
+    /// </summary>
     public static PointD3D operator -(PointD3D a, VectorD3D b)
     {
       return new PointD3D(a.X - b.X, a.Y - b.Y, a.Z - b.Z);
     }
 
+    /// <summary>
+    /// Checks if two points are equal.
+    /// </summary>
     public static bool operator ==(PointD3D a, PointD3D b)
     {
       return a.X == b.X && a.Y == b.Y && a.Z == b.Z;
     }
 
+    /// <summary>
+    /// Checks if two points are not equal.
+    /// </summary>
     public static bool operator !=(PointD3D a, PointD3D b)
     {
       return !(a.X == b.X && a.Y == b.Y && a.Z == b.Z);
     }
 
+    /// <summary>
+    /// Converts a <see cref="VectorD3D"/> to a <see cref="PointD3D"/>.
+    /// </summary>
+    /// <param name="v">The vector to convert.</param>
     public static explicit operator PointD3D(VectorD3D v)
     {
       return new PointD3D(v.X, v.Y, v.Z);
@@ -252,17 +283,20 @@ namespace Altaxo.Geometry
 
     #endregion Other calculations
 
+    /// <inheritdoc/>
     public override bool Equals(object? obj)
     {
       return obj is PointD3D from &&
              X == from.X && Y == from.Y && Z == from.Z;
     }
 
+    /// <inheritdoc/>
     public override int GetHashCode()
     {
       return X.GetHashCode() + 7 * Y.GetHashCode() + 13 * Z.GetHashCode();
     }
 
+    /// <inheritdoc/>
     public override string ToString()
     {
       return string.Format(System.Globalization.CultureInfo.InvariantCulture,
@@ -288,7 +322,7 @@ namespace Altaxo.Geometry
     /// </summary>
     /// <param name="p1">First point.</param>
     /// <param name="p2">Second point.</param>
-    /// <returns>The distance between points p1 and p2.</returns>
+    /// <returns>The squared distance between points p1 and p2.</returns>
     public static double DistanceSquared(PointD3D p1, PointD3D p2)
     {
       var x = p1.X - p2.X;
@@ -311,12 +345,15 @@ namespace Altaxo.Geometry
     /// Calculates the squared distance between this point and another point.
     /// </summary>
     /// <param name="p">Other point.</param>
-    /// <returns>The distance between this point and point p.</returns>
+    /// <returns>The squared distance between this point and point p.</returns>
     public double DistanceSquaredTo(PointD3D p)
     {
       return DistanceSquared(this, p);
     }
 
+    /// <summary>
+    /// Gets the vector length of this point.
+    /// </summary>
     public double VectorLength
     {
       get
@@ -325,6 +362,9 @@ namespace Altaxo.Geometry
       }
     }
 
+    /// <summary>
+    /// Gets the squared vector length of this point.
+    /// </summary>
     public double VectorLengthSquared
     {
       get
@@ -333,22 +373,41 @@ namespace Altaxo.Geometry
       }
     }
 
+    /// <summary>
+    /// Gets a normalized version of this point (length 1).
+    /// </summary>
+    /// <returns>A normalized version of this point.</returns>
     public PointD3D GetNormalized()
     {
       var s = 1 / VectorLength;
       return new PointD3D(X * s, Y * s, Z * s);
     }
 
+    /// <summary>
+    /// Calculates the dot product of this point and another point.
+    /// </summary>
+    /// <param name="q">Other point.</param>
+    /// <returns>The dot product.</returns>
     public double DotProduct(PointD3D q)
     {
       return DotProduct(this, q);
     }
 
+    /// <summary>
+    /// Calculates the dot product of two points.
+    /// </summary>
+    /// <param name="p">First point.</param>
+    /// <param name="q">Second point.</param>
+    /// <returns>The dot product.</returns>
     public static double DotProduct(PointD3D p, PointD3D q)
     {
       return p.X * q.X + p.Y * q.Y + p.Z * q.Z;
     }
 
+    /// <summary>
+    /// Gets a new point with all components sign-flipped.
+    /// </summary>
+    /// <returns>A new point with all components sign-flipped.</returns>
     public PointD3D GetSignFlipped()
     {
       return new PointD3D(-X, -Y, -Z);

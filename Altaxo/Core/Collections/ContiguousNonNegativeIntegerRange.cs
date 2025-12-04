@@ -37,7 +37,7 @@ namespace Altaxo.Collections
     private int _count;
 
     /// <summary>
-    /// Constructs an integer range from the first element and the number of element of the range.
+    /// Constructs an integer range from the first element and the number of elements of the range.
     /// </summary>
     /// <param name="start">First element belonging to the range.</param>
     /// <param name="count">Number of consecutive integers belonging to the range.</param>
@@ -59,6 +59,9 @@ namespace Altaxo.Collections
       EnsureValidity();
     }
 
+    /// <summary>
+    /// Ensures the validity of the range parameters.
+    /// </summary>
     private void EnsureValidity()
     {
       if (_count < 0)
@@ -68,7 +71,7 @@ namespace Altaxo.Collections
     }
 
     /// <summary>
-    /// Constructs an integer range from the first element and the number of element of the range.
+    /// Constructs an integer range from the first element and the number of elements of the range.
     /// </summary>
     /// <param name="start">First element belonging to the range.</param>
     /// <param name="count">Number of consecutive integers belonging to the range.</param>
@@ -77,7 +80,6 @@ namespace Altaxo.Collections
     {
       if (count < 0)
         throw new ArgumentOutOfRangeException("count", "Count must be a positive integer");
-
       return new ContiguousNonNegativeIntegerRange(start, count);
     }
 
@@ -118,23 +120,16 @@ namespace Altaxo.Collections
     /// </summary>
     public static ContiguousNonNegativeIntegerRange Empty
     {
-      get
-      {
-        return new ContiguousNonNegativeIntegerRange();
-      }
+      get { return new ContiguousNonNegativeIntegerRange(); }
     }
 
-    /// <summary>
-    /// Start value of the integer range.
-    /// </summary>
+    /// <inheritdoc/>
     public int Start
     {
       get { return _start; }
     }
 
-    /// <summary>
-    /// Number of elements of the integer range.Thus the integer range contains Start, Start+1, .. Start+Count-1.
-    /// </summary>
+    /// <inheritdoc/>
     public int Count
     {
       get { return _count; }
@@ -155,7 +150,7 @@ namespace Altaxo.Collections
     }
 
     /// <summary>
-    /// Element immmediately <b>after</b> the last valid element (is equal to <see cref="Start"/>+<see cref="Count"/>).
+    /// Element immediately <b>after</b> the last valid element (is equal to <see cref="Start"/>+<see cref="Count"/>).
     /// </summary>
     public int End
     {
@@ -173,10 +168,7 @@ namespace Altaxo.Collections
     /// </summary>
     public bool IsInfinite
     {
-      get
-      {
-        return _count == int.MaxValue;
-      }
+      get { return _count == int.MaxValue; }
     }
 
     /// <summary>
@@ -184,18 +176,12 @@ namespace Altaxo.Collections
     /// </summary>
     public bool IsEmpty
     {
-      get
-      {
-        return _count <= 0;
-      }
+      get { return _count <= 0; }
     }
 
     #region IEnumerable<int> Members
 
-    /// <summary>
-    /// Enumerates all elements of this range.
-    /// </summary>
-    /// <returns>Enumerator for all elements</returns>
+    /// <inheritdoc/>
     public IEnumerator<int> GetEnumerator()
     {
       for (int i = 0; i < _count; i++)
@@ -206,10 +192,7 @@ namespace Altaxo.Collections
 
     #region IEnumerable Members
 
-    /// <summary>
-    /// Enumerates all elements of this range.
-    /// </summary>
-    /// <returns>Enumerator for all elements</returns>
+    /// <inheritdoc/>
     System.Collections.IEnumerator System.Collections.IEnumerable.GetEnumerator()
     {
       for (int i = 0; i < _count; i++)
@@ -220,6 +203,7 @@ namespace Altaxo.Collections
 
     #region IROVector<int> Members
 
+    /// <inheritdoc/>
     public int this[int i]
     {
       get
@@ -237,32 +221,30 @@ namespace Altaxo.Collections
 
     #region IAscendingIntegerCollection Members
 
+    /// <inheritdoc/>
     public bool Contains(int nValue)
     {
       nValue -= _start;
       return nValue >= 0 && nValue < _count;
     }
 
+    /// <inheritdoc/>
     public IEnumerable<ContiguousIntegerRange> RangesAscending
     {
-      get
-      {
-        yield return ContiguousIntegerRange.FromStartAndCount(_start, _count);
-      }
+      get { yield return ContiguousIntegerRange.FromStartAndCount(_start, _count); }
     }
 
+    /// <inheritdoc/>
     public IEnumerable<ContiguousIntegerRange> RangesDescending
     {
-      get
-      {
-        yield return ContiguousIntegerRange.FromStartAndCount(_start, _count);
-      }
+      get { yield return ContiguousIntegerRange.FromStartAndCount(_start, _count); }
     }
 
     #endregion IAscendingIntegerCollection Members
 
     #region ICloneable Members
 
+    /// <inheritdoc/>
     public object Clone()
     {
       return new ContiguousNonNegativeIntegerRange(_start, _count);

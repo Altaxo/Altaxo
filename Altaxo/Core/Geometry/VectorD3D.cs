@@ -27,10 +27,16 @@ using System;
 
 namespace Altaxo.Geometry
 {
+  /// <summary>
+  /// Represents a vector with members of type Double in 3D space.
+  /// </summary>
   public struct VectorD3D : IEquatable<VectorD3D>
   {
+    /// <summary>Gets the x component of this vector.</summary>
     public double X { get; private set; }
+    /// <summary>Gets the y component of this vector.</summary>
     public double Y { get; private set; }
+    /// <summary>Gets the z component of this vector.</summary>
     public double Z { get; private set; }
 
     #region Serialization
@@ -62,6 +68,12 @@ namespace Altaxo.Geometry
 
     #endregion Serialization
 
+    /// <summary>
+    /// Initializes a new instance of the <see cref="VectorD3D"/> struct.
+    /// </summary>
+    /// <param name="x">The x component.</param>
+    /// <param name="y">The y component.</param>
+    /// <param name="z">The z component.</param>
     public VectorD3D(double x, double y, double z)
     {
       X = x;
@@ -82,7 +94,7 @@ namespace Altaxo.Geometry
     /// <summary>
     /// Returns a new instance with <see cref="Y"/> set to the provided value.
     /// </summary>
-    /// <param name="newY">The new x.</param>
+    /// <param name="newY">The new y.</param>
     /// <returns>New instance with <see cref="Y"/> set to the provided value.</returns>
     public VectorD3D WithY(double newY)
     {
@@ -99,6 +111,9 @@ namespace Altaxo.Geometry
       return new VectorD3D(X, Y, newZ);
     }
 
+    /// <summary>
+    /// Gets the length of the vector.
+    /// </summary>
     public double Length
     {
       get
@@ -107,6 +122,9 @@ namespace Altaxo.Geometry
       }
     }
 
+    /// <summary>
+    /// Gets the squared length of the vector.
+    /// </summary>
     public double SquareOfLength
     {
       get
@@ -115,13 +133,20 @@ namespace Altaxo.Geometry
       }
     }
 
+    /// <summary>
+    /// Gets the normalized version of this vector (length 1).
+    /// </summary>
     public VectorD3D Normalized { get { var s = 1 / Length; return new VectorD3D(s * X, s * Y, s * Z); } }
 
+    /// <inheritdoc/>
     public bool Equals(VectorD3D other)
     {
       return X == other.X && Y == other.Y && Z == other.Z;
     }
 
+    /// <summary>
+    /// Gets an empty vector (0,0,0).
+    /// </summary>
     public static VectorD3D Empty
     {
       get
@@ -138,16 +163,19 @@ namespace Altaxo.Geometry
     /// </value>
     public bool IsEmpty { get { return 0 == X && 0 == Y && 0 == Z; } }
 
+    /// <inheritdoc/>
     public override bool Equals(object? obj)
     {
       return obj is VectorD3D from && X == from.X && Y == from.Y && Z == from.Z;
     }
 
+    /// <inheritdoc/>
     public override int GetHashCode()
     {
       return X.GetHashCode() + 7 * Y.GetHashCode() + 13 * Z.GetHashCode();
     }
 
+    /// <inheritdoc/>
     public override string ToString()
     {
       return string.Format(System.Globalization.CultureInfo.InvariantCulture,
@@ -156,46 +184,74 @@ namespace Altaxo.Geometry
 
     #region operators
 
+    /// <summary>
+    /// Adds two vectors component-wise.
+    /// </summary>
     public static VectorD3D operator +(VectorD3D a, VectorD3D b)
     {
       return new VectorD3D(a.X + b.X, a.Y + b.Y, a.Z + b.Z);
     }
 
+    /// <summary>
+    /// Subtracts two vectors component-wise.
+    /// </summary>
     public static VectorD3D operator -(VectorD3D a, VectorD3D b)
     {
       return new VectorD3D(a.X - b.X, a.Y - b.Y, a.Z - b.Z);
     }
 
+    /// <summary>
+    /// Multiplies a vector by a scalar.
+    /// </summary>
     public static VectorD3D operator *(VectorD3D a, double b)
     {
       return new VectorD3D(a.X * b, a.Y * b, a.Z * b);
     }
 
+    /// <summary>
+    /// Multiplies a scalar by a vector.
+    /// </summary>
     public static VectorD3D operator *(double b, VectorD3D a)
     {
       return new VectorD3D(a.X * b, a.Y * b, a.Z * b);
     }
 
+    /// <summary>
+    /// Divides a vector by a scalar.
+    /// </summary>
     public static VectorD3D operator /(VectorD3D a, double b)
     {
       return new VectorD3D(a.X / b, a.Y / b, a.Z / b);
     }
 
+    /// <summary>
+    /// Negates a vector.
+    /// </summary>
     public static VectorD3D operator -(VectorD3D b)
     {
       return new VectorD3D(-b.X, -b.Y, -b.Z);
     }
 
+    /// <summary>
+    /// Checks if two vectors are equal.
+    /// </summary>
     public static bool operator ==(VectorD3D a, VectorD3D b)
     {
       return a.X == b.X && a.Y == b.Y && a.Z == b.Z;
     }
 
+    /// <summary>
+    /// Checks if two vectors are not equal.
+    /// </summary>
     public static bool operator !=(VectorD3D a, VectorD3D b)
     {
       return !(a.X == b.X && a.Y == b.Y && a.Z == b.Z);
     }
 
+    /// <summary>
+    /// Converts a <see cref="PointD3D"/> to a <see cref="VectorD3D"/>.
+    /// </summary>
+    /// <param name="v">The point to convert.</param>
     public static explicit operator VectorD3D(PointD3D v)
     {
       return new VectorD3D(v.X, v.Y, v.Z);
@@ -205,22 +261,34 @@ namespace Altaxo.Geometry
 
     #region static functions
 
+    /// <summary>
+    /// Multiplies two vectors elementwise.
+    /// </summary>
     public static VectorD3D MultiplicationElementwise(VectorD3D a, VectorD3D b)
     {
       return new VectorD3D(a.X * b.X, a.Y * b.Y, a.Z * b.Z);
     }
 
+    /// <summary>
+    /// Calculates the dot product of two vectors.
+    /// </summary>
     public static double DotProduct(VectorD3D a, VectorD3D b)
     {
       return a.X * b.X + a.Y * b.Y + a.Z * b.Z;
     }
 
+    /// <summary>
+    /// Creates a normalized version of the given vector.
+    /// </summary>
     public static VectorD3D CreateNormalized(VectorD3D pt)
     {
       var ilen = 1 / pt.Length;
       return new VectorD3D(pt.X * ilen, pt.Y * ilen, pt.Z * ilen);
     }
 
+    /// <summary>
+    /// Creates a normalized vector from the given x, y, and z components.
+    /// </summary>
     public static VectorD3D CreateNormalized(double x, double y, double z)
     {
       var k = x * x + y * y + z * z;
@@ -235,21 +303,33 @@ namespace Altaxo.Geometry
       return new VectorD3D(x * k, y * k, z * k);
     }
 
+    /// <summary>
+    /// Creates a vector that is the sum of two vectors.
+    /// </summary>
     public static VectorD3D CreateSum(VectorD3D pt1, VectorD3D pt2)
     {
       return new VectorD3D(pt1.X + pt2.X, pt1.Y + pt2.Y, pt1.Z + pt2.Z);
     }
 
+    /// <summary>
+    /// Creates a scaled version of the given vector.
+    /// </summary>
     public static VectorD3D CreateScaled(VectorD3D pt, double scale)
     {
       return new VectorD3D(pt.X * scale, pt.Y * scale, pt.Z * scale);
     }
 
+    /// <summary>
+    /// Calculates the cross product of two vectors.
+    /// </summary>
     public static VectorD3D CrossProduct(VectorD3D a, VectorD3D b)
     {
       return new VectorD3D(a.Y * b.Z - a.Z * b.Y, a.Z * b.X - a.X * b.Z, a.X * b.Y - a.Y * b.X);
     }
 
+    /// <summary>
+    /// Calculates the angle between two vectors in radians.
+    /// </summary>
     public static double AngleBetweenInRadians(VectorD3D vector1, VectorD3D vector2)
     {
       vector1 = vector1.Normalized;

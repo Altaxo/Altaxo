@@ -38,10 +38,10 @@ namespace Altaxo.Geometry
   {
     /// <summary>Gets the identifier of this point.</summary>
     public int ID { get; private set; }
+    /// <summary>Gets the x position of the point.</summary>
     public double X { get; private set; }
+    /// <summary>Gets the y position of the point.</summary>
     public double Y { get; private set; }
-
-
 
     /// <summary>
     /// Initializes a new instance of the <see cref="PointD2DAnnotated"/> struct.
@@ -57,7 +57,7 @@ namespace Altaxo.Geometry
     }
 
     /// <summary>
-    /// Deconstructs is instance.
+    /// Deconstructs this instance into its components.
     /// </summary>
     /// <param name="x">The x position of the point.</param>
     /// <param name="y">The y position of the point.</param>
@@ -78,9 +78,7 @@ namespace Altaxo.Geometry
     /// Performs an implicit conversion from <see cref="PointD2DAnnotated"/> to <see cref="PointD2D"/>.
     /// </summary>
     /// <param name="annotatedPoint">The annotated point.</param>
-    /// <returns>
-    /// The underlying 2D point.
-    /// </returns>
+    /// <returns>The underlying 2D point.</returns>
     public static implicit operator PointD2D(PointD2DAnnotated annotatedPoint)
     {
       return annotatedPoint.Point;

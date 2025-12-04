@@ -34,17 +34,23 @@ namespace Altaxo
 {
   /// <summary>
   /// Asynchronous event with no arguments. The event handlers are stored as weak references, in order to not prevent
-  /// the event handler instances to be garbage collected.
-  /// The event handlers can be executed either parallel or serial.
+  /// the event handler instances from being garbage collected.
+  /// The event handlers can be executed either in parallel or serial order.
   /// All functions of this class are thread safe.
   /// </summary>
   public class WeakAsynchronousEvent
   {
+    /// <summary>
+    /// Synchronization object for thread safety.
+    /// </summary>
     object _locker = new();
+    /// <summary>
+    /// List of weak references to subscribed event handlers.
+    /// </summary>
     List<WeakReference> _list = new();
 
     /// <summary>
-    /// Subscribes the eventHandler to the event.
+    /// Subscribes the event handler to the event.
     /// </summary>
     /// <param name="eventHandler">The event handler.</param>
     public void Subscribe(Func<CancellationToken, Task> eventHandler)
@@ -59,12 +65,10 @@ namespace Altaxo
     }
 
     /// <summary>
-    /// Unsubscribes the eventHandler from the event.
+    /// Unsubscribes the event handler from the event.
     /// </summary>
     /// <param name="eventHandler">The event handler.</param>
-    /// <returns>
-    /// True if the event was removed; otherwise, false.
-    /// </returns>
+    /// <returns>True if the event handler was removed; otherwise, false.</returns>
     public bool Unsubscribe(Func<CancellationToken, Task> eventHandler)
     {
       if (eventHandler is not null)
@@ -91,7 +95,8 @@ namespace Altaxo
     /// <summary>
     /// Invokes all event handlers in parallel.
     /// </summary>
-    /// <returns>A task that can be awaited for.</returns>
+    /// <param name="token">The cancellation token.</param>
+    /// <returns>A task that can be awaited for completion of all handlers.</returns>
     public Task InvokeParallel(CancellationToken token)
     {
       List<Func<CancellationToken, Task>> array;
@@ -122,7 +127,8 @@ namespace Altaxo
     /// Invokes the event handlers in serial order. If one or more event handlers fail, the other event handlers are executed nevertheless.
     /// </summary>
     /// <param name="token">The cancellation token.</param>
-    /// <exception cref="System.AggregateException"></exception>
+    /// <returns>A task that can be awaited for completion of all handlers.</returns>
+    /// <exception cref="System.AggregateException">Thrown if one or more handlers throw exceptions.</exception>
     public async Task InvokeSerial(CancellationToken token)
     {
       List<Func<CancellationToken, Task>> array;

@@ -30,7 +30,7 @@ using System.Linq;
 namespace Altaxo.Collections
 {
   /// <summary>
-  /// Manages a bunch of cached objects. The cached object are accessed by a key. In this instance more than one object with the same key can be stored, but it is presumed that all objects which
+  /// Manages a bunch of cached objects. The cached objects are accessed by a key. In this instance, more than one object with the same key can be stored, but it is presumed that all objects which
   /// are stored under the same key are considered equal.
   /// Usage: Try to take out a cached object with <see cref="TryTake(TKey, out TValue)"/>. If no such object exists, create a new one. After usage of the object, put it back with <see cref="Add(TKey, TValue)"/>.
   /// If after adding an object more than the allowed number of objects exists, the object which is used the least will be removed from that instance.
@@ -39,13 +39,16 @@ namespace Altaxo.Collections
   /// <typeparam name="TKey">The type of the key that characterizes the value.</typeparam>
   /// <typeparam name="TValue">The type of the value.</typeparam>
   /// <remarks>
-  /// Two collections are neccessary to store the items: The values are stored in a doubly linked list as KeyValuePairs together with their key.
+  /// Two collections are necessary to store the items: The values are stored in a doubly linked list as KeyValuePairs together with their key.
   /// The first item in the doubly linked list is the most recently added item. The last item in the doubly linked list is the least used item.
   /// To have fast access to the items by key, a dictionary can be accessed by those keys. The values of this dictionary are HashSets
   /// of LinkedListNodes, these LinkedListNodes that are members of the doubly linked list, and whose values are associated with the key.
   /// </remarks>
   public sealed class CachedObjectManagerByMaximumNumberOfItems<TKey, TValue> where TKey : notnull
   {
+    /// <summary>
+    /// Synchronization object for thread safety.
+    /// </summary>
     private object _syncObj;
 
     /// <summary>
@@ -67,7 +70,7 @@ namespace Altaxo.Collections
     /// Initializes a new instance of the <see cref="CachedObjectManagerByMaximumNumberOfItems{TKey, TValue}"/> class.
     /// </summary>
     /// <param name="maximumNumberOfItems">The maximum number of items allowed to store.</param>
-    /// <exception cref="System.ArgumentException">maxItemsAllowedToStore must be > 0</exception>
+    /// <exception cref="System.ArgumentException">maxItemsAllowedToStore must be &gt; 0</exception>
     public CachedObjectManagerByMaximumNumberOfItems(int maximumNumberOfItems)
     {
       if (maximumNumberOfItems <= 0)
@@ -81,7 +84,7 @@ namespace Altaxo.Collections
 
     /// <summary>
     /// Try to take a stored object from this collection.
-    /// If successfull, this function will return any object that was stored under the given key.
+    /// If successful, this function will return any object that was stored under the given key.
     /// </summary>
     /// <param name="key">The key of the object.</param>
     /// <param name="value">On success, the object taken from this collection.</param>
@@ -124,6 +127,12 @@ namespace Altaxo.Collections
         itemToDispose.Dispose();
     }
 
+    /// <summary>
+    /// Attempts to take a stored object from this collection without locking.
+    /// </summary>
+    /// <param name="key">The key of the object.</param>
+    /// <param name="value">On success, the object taken from this collection.</param>
+    /// <returns>True if the object was found; false otherwise.</returns>
     private bool InternalTryTake_Unlocked(TKey key, [MaybeNullWhen(false)] out TValue value)
     {
 
@@ -145,6 +154,11 @@ namespace Altaxo.Collections
       }
     }
 
+    /// <summary>
+    /// Adds an object under the specified key without locking.
+    /// </summary>
+    /// <param name="key">The key under which to store the object.</param>
+    /// <param name="value">The value to store.</param>
     private void InternalAdd_Unlocked(TKey key, TValue value)
     {
       if (!_keyDictionary.TryGetValue(key, out var nodeSet))
@@ -163,6 +177,9 @@ namespace Altaxo.Collections
       }
     }
 
+    /// <summary>
+    /// Removes the least used item from the collection without locking.
+    /// </summary>
     private void InternalRemoveLastItem_Unlocked()
     {
       if (_valueList.Last is { } lastItem)

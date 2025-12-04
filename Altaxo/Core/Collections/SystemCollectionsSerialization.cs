@@ -28,9 +28,13 @@ using System.Collections;
 
 namespace Altaxo.Collections
 {
+  /// <summary>
+  /// XML serialization surrogate for <see cref="System.Collections.ArrayList"/>.
+  /// </summary>
   [Altaxo.Serialization.Xml.XmlSerializationSurrogateFor(typeof(System.Collections.ArrayList), 0)]
   public class SystemCollectionsArrayListXmlSerializationSurrogate0 : Altaxo.Serialization.Xml.IXmlSerializationSurrogate
   {
+    /// <inheritdoc/>
     public void Serialize(object obj, Altaxo.Serialization.Xml.IXmlSerializationInfo info)
     {
       var s = (ArrayList)obj;
@@ -42,6 +46,7 @@ namespace Altaxo.Collections
       info.CommitArray();
     }
 
+    /// <inheritdoc/>
     public object Deserialize(object? obj, Altaxo.Serialization.Xml.IXmlDeserializationInfo info, object? parent)
     {
       int count = info.OpenArray("List");
@@ -55,9 +60,13 @@ namespace Altaxo.Collections
     }
   }
 
+  /// <summary>
+  /// XML serialization surrogate for <see cref="System.Collections.Generic.List{object}"/>.
+  /// </summary>
   [Altaxo.Serialization.Xml.XmlSerializationSurrogateFor(typeof(System.Collections.Generic.List<object?>), 0)]
   public class SystemCollectionsListOfObjectListXmlSerializationSurrogate0 : Altaxo.Serialization.Xml.IXmlSerializationSurrogate
   {
+    /// <inheritdoc/>
     public void Serialize(object obj, Altaxo.Serialization.Xml.IXmlSerializationInfo info)
     {
       var s = (System.Collections.Generic.List<object?>)obj;
@@ -69,6 +78,7 @@ namespace Altaxo.Collections
       info.CommitArray();
     }
 
+    /// <inheritdoc/>
     public object Deserialize(object? obj, Altaxo.Serialization.Xml.IXmlDeserializationInfo info, object? parent)
     {
       int count = info.OpenArray("List");

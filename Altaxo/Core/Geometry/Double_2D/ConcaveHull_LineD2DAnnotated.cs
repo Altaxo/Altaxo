@@ -32,19 +32,38 @@ namespace Altaxo.Geometry.Double_2D
 {
   public partial class ConcaveHull
   {
+    /// <summary>
+    /// Represents an annotated line segment between two 2D points.
+    /// </summary>
     private class LineD2DAnnotated
     {
+      /// <summary>
+      /// Gets or sets a value indicating whether this line has been checked during hull construction.
+      /// </summary>
       public bool IsChecked { get; set; }
+      /// <summary>
+      /// Gets the first point of the line segment.
+      /// </summary>
       public PointD2DAnnotated P0 { get; private set; }
+      /// <summary>
+      /// Gets the second point of the line segment.
+      /// </summary>
       public PointD2DAnnotated P1 { get; private set; }
 
-
+      /// <summary>
+      /// Initializes a new instance of the <see cref="LineD2DAnnotated"/> class.
+      /// </summary>
+      /// <param name="p0">The first point.</param>
+      /// <param name="p1">The second point.</param>
       public LineD2DAnnotated(PointD2DAnnotated p0, PointD2DAnnotated p1)
       {
         P0 = p0;
         P1 = p1;
       }
 
+      /// <summary>
+      /// Gets an enumeration of the two points of the line segment.
+      /// </summary>
       public IEnumerable<PointD2DAnnotated> Points
       {
         get
@@ -54,6 +73,12 @@ namespace Altaxo.Geometry.Double_2D
         }
       }
 
+      /// <summary>
+      /// Gets the point at the specified index (0 for P0, 1 for P1).
+      /// </summary>
+      /// <param name="idx">Index of the point (0 or 1).</param>
+      /// <returns>The point at the specified index.</returns>
+      /// <exception cref="IndexOutOfRangeException">Thrown if index is not 0 or 1.</exception>
       public PointD2DAnnotated this[int idx]
       {
         get
@@ -70,6 +95,12 @@ namespace Altaxo.Geometry.Double_2D
         }
       }
 
+      /// <summary>
+      /// Calculates the Euclidean distance between two annotated points.
+      /// </summary>
+      /// <param name="node1">The first point.</param>
+      /// <param name="node2">The second point.</param>
+      /// <returns>The distance between the two points.</returns>
       public static double GetDistance(PointD2DAnnotated node1, PointD2DAnnotated node2)
       {
         var dx = node1.X - node2.X;

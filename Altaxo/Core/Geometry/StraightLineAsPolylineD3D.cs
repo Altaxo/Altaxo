@@ -32,16 +32,28 @@ using System.Threading.Tasks;
 
 namespace Altaxo.Geometry
 {
+  /// <summary>
+  /// Represents a straight line as a polyline in 3D space, consisting of exactly two points.
+  /// </summary>
   public class StraightLineAsPolylineD3D : IPolylineD3D, IList<PointD3D>
   {
+    /// <summary>
+    /// The first point of the line.
+    /// </summary>
     private PointD3D _p0, _p1;
 
+    /// <summary>
+    /// Initializes a new instance of the <see cref="StraightLineAsPolylineD3D"/> class with two points.
+    /// </summary>
+    /// <param name="p0">The first point.</param>
+    /// <param name="p1">The second point.</param>
     public StraightLineAsPolylineD3D(PointD3D p0, PointD3D p1)
     {
       _p0 = p0;
       _p1 = p1;
     }
 
+    /// <inheritdoc/>
     public int Count
     {
       get
@@ -50,6 +62,7 @@ namespace Altaxo.Geometry
       }
     }
 
+    /// <inheritdoc/>
     public PointD3D GetPoint(int idx)
     {
       switch (idx)
@@ -65,6 +78,7 @@ namespace Altaxo.Geometry
       }
     }
 
+    /// <inheritdoc/>
     public IList<PointD3D> Points
     {
       get
@@ -73,11 +87,13 @@ namespace Altaxo.Geometry
       }
     }
 
+    /// <inheritdoc/>
     public bool IsTransitionFromIdxToNextIdxSharp(int idx)
     {
       return true;
     }
 
+    /// <inheritdoc/>
     public double TotalLineLength
     {
       get
@@ -109,6 +125,7 @@ namespace Altaxo.Geometry
 
     #region IList<PointD3D>
 
+    /// <inheritdoc/>
     public bool IsReadOnly
     {
       get
@@ -117,6 +134,7 @@ namespace Altaxo.Geometry
       }
     }
 
+    /// <inheritdoc/>
     public PointD3D this[int index]
     {
       get
@@ -140,58 +158,63 @@ namespace Altaxo.Geometry
       }
     }
 
+    /// <inheritdoc/>
     public int IndexOf(PointD3D item)
     {
       throw new NotImplementedException();
     }
 
+    /// <inheritdoc/>
     public void Insert(int index, PointD3D item)
     {
       throw new InvalidOperationException("This list is readonly!");
     }
 
+    /// <inheritdoc/>
     public void RemoveAt(int index)
     {
       throw new InvalidOperationException("This list is readonly!");
     }
 
+    /// <inheritdoc/>
     public void Add(PointD3D item)
     {
       throw new InvalidOperationException("This list is readonly!");
     }
 
+    /// <inheritdoc/>
     public void Clear()
     {
       throw new InvalidOperationException("This list is readonly!");
     }
 
+    /// <inheritdoc/>
     public bool Contains(PointD3D item)
     {
       throw new NotImplementedException();
     }
 
-    /// <summary>
-    /// Copies the elements of the <see cref="T:System.Collections.Generic.ICollection`1" /> to an <see cref="T:System.Array" />, starting at a particular <see cref="T:System.Array" /> index.
-    /// </summary>
-    /// <param name="array">The one-dimensional <see cref="T:System.Array" /> that is the destination of the elements copied from <see cref="T:System.Collections.Generic.ICollection`1" />. The <see cref="T:System.Array" /> must have zero-based indexing.</param>
-    /// <param name="arrayIndex">The zero-based index in <paramref name="array" /> at which copying begins.</param>
+    /// <inheritdoc/>
     public void CopyTo(PointD3D[] array, int arrayIndex)
     {
       array[0 + arrayIndex] = _p0;
       array[1 + arrayIndex] = _p1;
     }
 
+    /// <inheritdoc/>
     public bool Remove(PointD3D item)
     {
       throw new InvalidOperationException("This list is readonly!");
     }
 
+    /// <inheritdoc/>
     public IEnumerator<PointD3D> GetEnumerator()
     {
       yield return _p0;
       yield return _p1;
     }
 
+    /// <inheritdoc/>
     IEnumerator IEnumerable.GetEnumerator()
     {
       yield return _p0;

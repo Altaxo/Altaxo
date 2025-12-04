@@ -37,8 +37,17 @@ namespace Altaxo.Collections
   /// <typeparam name="TValue">The type of the value.</typeparam>
   public class ConcurrentTokenizedLinkedList<TKey, TValue> where TKey : notnull
   {
+    /// <summary>
+    /// The underlying linked list storing the key-value pairs.
+    /// </summary>
     private LinkedList<Tuple<TKey, TValue>> _list;
+    /// <summary>
+    /// Dictionary mapping keys to their corresponding linked list nodes.
+    /// </summary>
     private Dictionary<TKey, LinkedListNode<Tuple<TKey, TValue>>> _dictionary;
+    /// <summary>
+    /// Lock for synchronizing access to the list.
+    /// </summary>
     private System.Threading.ReaderWriterLockSlim _lock;
 
     /// <summary>
@@ -86,7 +95,7 @@ namespace Altaxo.Collections
     /// Tries to take the first item from the list.
     /// </summary>
     /// <param name="key">If successful, contains the key that was used to add the item.</param>
-    /// <param name="value">if successful, contains the value of the item.</param>
+    /// <param name="value">If successful, contains the value of the item.</param>
     /// <returns>True if the operation was successful. If the list contains no items, the return value is false.</returns>
     public bool TryTakeFirst([MaybeNullWhen(false)] out TKey key, [MaybeNullWhen(false)] out TValue value)
     {
@@ -126,7 +135,7 @@ namespace Altaxo.Collections
     /// Tries to take the last item from the list.
     /// </summary>
     /// <param name="key">If successful, contains the key that was used to add the item.</param>
-    /// <param name="value">if successful, contains the value of the item.</param>
+    /// <param name="value">If successful, contains the value of the item.</param>
     /// <returns>True if the operation was successful. If the list contains no items, the return value is false.</returns>
     public bool TryTakeLast([MaybeNullWhen(false)] out TKey key, [MaybeNullWhen(false)] out TValue value)
     {

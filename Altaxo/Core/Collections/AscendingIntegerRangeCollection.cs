@@ -32,23 +32,27 @@ using System.Text;
 namespace Altaxo.Collections
 {
   /// <summary>
-  /// Implements an collection of ascending integers, that are stored in a list of ranges.
+  /// Implements a collection of ascending integers, that are stored in a list of ranges.
   /// </summary>
   public class AscendingIntegerRangeCollection : IEnumerable<int>
   {
+    /// <summary>
+    /// Bitmask to ensure a value is even.
+    /// </summary>
     private const int AndMaskToEvenValue = ~1;
+    /// <summary>
+    /// Bitmask to ensure a value is odd.
+    /// </summary>
     private const int OrMaskToOddValue = 1;
 
     /// <summary>
-    /// The _range array.
+    /// The array storing the range start and end values.
     /// </summary>
     private int[] _rangeArray;
-
     /// <summary>
     /// Current number of elements in <see cref="_rangeArray"/>.
     /// </summary>
     private int _rangeArrayCount;
-
     /// <summary>
     /// Array of cumulative sum of number of elements in the ranges.
     /// Element at index [0] contains the number of elements in range[0] (i.e. 1+to-from),
@@ -57,17 +61,20 @@ namespace Altaxo.Collections
     /// Last element (at index RangeCount-1) contains sum of number of elements in all ranges.
     /// </summary>
     private int[] _indexCache;
-
     /// <summary>
     /// Designates the first index in array <see cref="_indexCache"/> that contains invalid data.
     /// If range data are changed, the <see cref="_indexCacheInvalidFrom"/> is calculated simply
     /// by dividing the index of the range data by 2 (or using the shift operator) and take the minimum with the current value.
     /// </summary>
     private int _indexCacheInvalidFrom;
-
-    /// <summary>Permanent proxy for the range collection</summary>
+    /// <summary>
+    /// Permanent proxy for the range collection.
+    /// </summary>
     private RangeCollectionProxy? _collectionOfRanges;
 
+    /// <summary>
+    /// Initializes a new instance of the <see cref="AscendingIntegerRangeCollection"/> class.
+    /// </summary>
     public AscendingIntegerRangeCollection()
     {
       _rangeArray = new int[8];
@@ -89,7 +96,7 @@ namespace Altaxo.Collections
     }
 
     /// <summary>
-    /// Gets the ranges of the collection
+    /// Gets the ranges of the collection.
     /// </summary>
     /// <value>
     /// The ranges.
@@ -107,7 +114,7 @@ namespace Altaxo.Collections
     #region public functions
 
     /// <summary>
-    /// Adds the specified element. Detail: The element is added as a range with a start value equal to element and a count of 1.
+    /// Adds the specified element as a range with a start value equal to element and a count of 1.
     /// </summary>
     /// <param name="element">The element to add.</param>
     public void Add(int element)
@@ -163,7 +170,7 @@ namespace Altaxo.Collections
     }
 
     /// <summary>
-    /// Determines whether this collection contains the specified element.
+    /// Determines whether this collection contains the specified element and returns the range index if found.
     /// </summary>
     /// <param name="element">The element.</param>
     /// <param name="rangeIndex">If the collection contains the element, this value is the index of the range that contains the element.</param>
@@ -204,12 +211,7 @@ namespace Altaxo.Collections
       }
     }
 
-    /// <summary>
-    /// Returns an enumerator that iterates through the collection.
-    /// </summary>
-    /// <returns>
-    /// A <see cref="T:System.Collections.Generic.IEnumerator`1" /> that can be used to iterate through the collection.
-    /// </returns>
+    /// <inheritdoc/>
     public IEnumerator<int> GetEnumerator()
     {
       var ranges = _rangeArray;
@@ -223,12 +225,7 @@ namespace Altaxo.Collections
       }
     }
 
-    /// <summary>
-    /// Returns an enumerator that iterates through a collection.
-    /// </summary>
-    /// <returns>
-    /// An <see cref="T:System.Collections.IEnumerator" /> object that can be used to iterate through the collection.
-    /// </returns>
+    /// <inheritdoc/>
     System.Collections.IEnumerator System.Collections.IEnumerable.GetEnumerator()
     {
       return GetEnumerator();
@@ -261,12 +258,9 @@ namespace Altaxo.Collections
     /// <summary>
     /// Gets the <see cref="int"/> element with the specified index.
     /// </summary>
-    /// <value>The element.</value>
     /// <param name="idx">The index of the element.</param>
     /// <returns>Element at the specified index.</returns>
-    /// <exception cref="System.IndexOutOfRangeException">
-    /// If idx is less than 0 or greater than or equal to <see cref="Count"/>.
-    /// </exception>
+    /// <exception cref="System.IndexOutOfRangeException">If idx is less than 0 or greater than or equal to <see cref="Count"/>.</exception>
     public int this[int idx]
     {
       get
@@ -577,11 +571,16 @@ namespace Altaxo.Collections
     {
       private AscendingIntegerRangeCollection _parent;
 
+      /// <summary>
+      /// Initializes a new instance of the <see cref="RangeCollectionProxy"/> class.
+      /// </summary>
+      /// <param name="parent">The parent <see cref="AscendingIntegerRangeCollection"/>.</param>
       internal RangeCollectionProxy(AscendingIntegerRangeCollection parent)
       {
         _parent = parent;
       }
 
+      /// <inheritdoc/>
       public IEnumerator<ContiguousIntegerRange> GetEnumerator()
       {
         var rangeArray = _parent._rangeArray;
@@ -590,6 +589,7 @@ namespace Altaxo.Collections
           yield return ContiguousIntegerRange.FromFirstAndLastInclusive(rangeArray[i], rangeArray[i + 1]);
       }
 
+      /// <inheritdoc/>
       System.Collections.IEnumerator System.Collections.IEnumerable.GetEnumerator()
       {
         return GetEnumerator();

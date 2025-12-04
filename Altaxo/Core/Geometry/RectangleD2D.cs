@@ -37,7 +37,7 @@ namespace Altaxo.Geometry
     private double _x, _y, _w, _h;
 
     /// <summary>
-    /// Gets or sets the x location (the x coordinate of the left side).
+    /// The x location (the x coordinate of the left side).
     /// </summary>
     public double X
     {
@@ -46,7 +46,7 @@ namespace Altaxo.Geometry
     }
 
     /// <summary>
-    /// Gets or sets the y location (the y coordinate of the top side).
+    /// The y location (the y coordinate of the top side).
     /// </summary>
     public double Y
     {
@@ -55,7 +55,7 @@ namespace Altaxo.Geometry
     }
 
     /// <summary>
-    /// Gets or sets the width of the rectangle.
+    /// The width of the rectangle.
     /// </summary>
     public double Width
     {
@@ -64,7 +64,7 @@ namespace Altaxo.Geometry
     }
 
     /// <summary>
-    /// Gets or sets the height of the rectangle.
+    /// The height of the rectangle.
     /// </summary>
     public double Height
     {
@@ -335,9 +335,6 @@ namespace Altaxo.Geometry
 
     /// <summary>
     /// Gets a new rectangle that is the left half of this rectangle.
-    /// </summary>
-    /// <summary>
-    /// Gets the left(x)-top(y) point of the rectangle.
     /// </summary>
     public RectangleD2D LeftHalf { get { return new RectangleD2D(_x, _y, _w / 2, _h); } }
 

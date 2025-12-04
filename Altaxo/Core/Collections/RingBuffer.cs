@@ -34,8 +34,17 @@ namespace Altaxo.Collections
   /// <typeparam name="T">Type of elements to store in the ring buffer.</typeparam>
   public class RingBuffer<T>
   {
+    /// <summary>
+    /// The index for the next insertion.
+    /// </summary>
     private int _insertionPoint;
+    /// <summary>
+    /// The index for the next removal.
+    /// </summary>
     private int _removalPoint;
+    /// <summary>
+    /// The underlying array storing buffer elements.
+    /// </summary>
     private T[] _array;
 
     /// <summary>
@@ -75,9 +84,6 @@ namespace Altaxo.Collections
     /// <summary>
     /// Gets a value indicating whether this instance is empty.
     /// </summary>
-    /// <value>
-    ///   <c>true</c> if this instance is empty; otherwise, <c>false</c>.
-    /// </value>
     public bool IsEmpty
     {
       get
@@ -110,7 +116,7 @@ namespace Altaxo.Collections
     /// 1st argument is the buffer array,
     /// 2nd argument is the position where to put the first data to,
     /// and 3rd argument is the maximum number of items to read.
-    /// The return value has to be the number of items that where actually read.</param>
+    /// The return value has to be the number of items that were actually read.</param>
     /// <returns>The number of items that were added to the ring buffer.</returns>
     public int Add(Func<T[], int, int, int> readFunc)
     {
@@ -133,7 +139,7 @@ namespace Altaxo.Collections
     }
 
     /// <summary>
-    /// Try the peek an item.
+    /// Try to peek an item.
     /// </summary>
     /// <param name="item">If successful, the item.</param>
     /// <returns>True if there was an item in the buffer; false otherwise.</returns>
@@ -417,10 +423,10 @@ namespace Altaxo.Collections
     }
 
     /// <summary>
-    /// Try the remove an item from the buffer.
+    /// Try to remove an item from the buffer.
     /// </summary>
     /// <param name="item">If successful, the item that was removed.</param>
-    /// <returns>True if a item could be removed; otherwise, false.</returns>
+    /// <returns>True if an item could be removed; otherwise, false.</returns>
     public bool TryRemove(out T item)
     {
       if (_insertionPoint == _removalPoint)

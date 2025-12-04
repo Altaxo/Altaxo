@@ -22,27 +22,31 @@
 
 #endregion Copyright
 
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-
 namespace Altaxo
 {
   /// <summary>
-  /// Designates a resource key that will be used to retrieve a resource string. This struct is immutable. Store instances of this struct in static fields. This will help external programs to prove that for all resource keys there exists corresponding entries.
+  /// Designates a resource key that will be used to retrieve a resource string. This struct is immutable. Store instances of this struct in static fields. This will help external programs to prove that for all resource keys there exist corresponding entries.
   /// </summary>
   public struct StringResourceKey
   {
+    /// <summary>
+    /// The resource key.
+    /// </summary>
     private readonly string _key;
+    /// <summary>
+    /// An example of the resource string value (always in English).
+    /// </summary>
     private readonly string _exampleValue;
+    /// <summary>
+    /// The description of the resource string to help translating it into other languages.
+    /// </summary>
     private readonly string _description;
 
     /// <summary>
     /// Initializes a new instance of the <see cref="StringResourceKey"/> struct.
     /// </summary>
     /// <param name="key">The resource key.</param>
-    /// <param name="exampleValue">An example of the resource string (always in the english language).</param>
+    /// <param name="exampleValue">An example of the resource string (always in English).</param>
     /// <param name="description">The description of the resource string to help translating it into other languages.</param>
     public StringResourceKey(string key, string exampleValue, string description)
     {
@@ -57,7 +61,7 @@ namespace Altaxo
     public string Key { get { return _key; } }
 
     /// <summary>
-    /// Gets an example of the resource string value (always in english).
+    /// Gets an example of the resource string value (always in English).
     /// </summary>
     public string ExampleStringValue { get { return _exampleValue; } }
 
@@ -66,6 +70,7 @@ namespace Altaxo
     /// </summary>
     public string Description { get { return _description; } }
 
+    /// <inheritdoc/>
     public override string ToString()
     {
       return Key;

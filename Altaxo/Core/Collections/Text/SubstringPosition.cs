@@ -22,10 +22,7 @@
 
 #endregion Copyright
 
-using System;
 using System.Collections.Generic;
-using System.Linq;
-using System.Text;
 
 namespace Altaxo.Collections.Text
 {
@@ -208,12 +205,14 @@ namespace Altaxo.Collections.Text
       return string.Format("CommonSubstring Length={0}, SuffixArray_Begin={1}, End={2}", _substringLength, _begin, _end);
     }
 
+    /// <inheritdoc/>
     public IEnumerator<SubstringPosition> GetEnumerator()
     {
       for (int i = _begin; i <= _end; ++i)
         yield return GetSubstringPosition(i);
     }
 
+    /// <inheritdoc/>
     System.Collections.IEnumerator System.Collections.IEnumerable.GetEnumerator()
     {
       for (int i = _begin; i <= _end; ++i)

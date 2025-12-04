@@ -31,16 +31,28 @@ namespace Altaxo.Collections
   /// <summary>
   /// Ring buffer that stores elements in a ring-buffer like fashion.
   /// Elements can only be enqueued, but not dequeued.
-  /// The oldest element will be overwritten, if a new elements is enqueued and the capacity is reached.
+  /// The oldest element will be overwritten, if a new element is enqueued and the capacity is reached.
   /// Elements can be accessed by index; the newest element is accessed by index 0.
   /// </summary>
   /// <typeparam name="T">Type of element to store.</typeparam>
   /// <remarks>This instance is thread-safe.</remarks>
   public class RingBufferEnqueueableOnly<T> : IReadOnlyList<T>
   {
+    /// <summary>
+    /// The underlying array storing buffer elements.
+    /// </summary>
     private T[] _arr;
+    /// <summary>
+    /// The number of elements currently in the buffer.
+    /// </summary>
     private int _count;
+    /// <summary>
+    /// The pointer to the next insertion position.
+    /// </summary>
     private int _pointer;
+    /// <summary>
+    /// Synchronization object for thread safety.
+    /// </summary>
     private object _syncObject;
 
     /// <summary>
@@ -65,6 +77,9 @@ namespace Altaxo.Collections
     /// </value>
     public int Count => _count;
 
+    /// <summary>
+    /// Gets a value indicating whether this buffer is empty.
+    /// </summary>
     public bool IsEmpty => _count == 0;
 
     /// <summary>
@@ -76,7 +91,7 @@ namespace Altaxo.Collections
     public int Capacity => _arr.Length;
 
     /// <summary>
-    /// Enqueues (add) an element.
+    /// Enqueues (adds) an element.
     /// </summary>
     /// <param name="value">The value to add.</param>
     public void Enqueue(T value)
@@ -95,9 +110,6 @@ namespace Altaxo.Collections
     /// <summary>
     /// Gets the oldest element available. An exception is thrown if no element is enqueued.
     /// </summary>
-    /// <value>
-    /// The oldest element.
-    /// </value>
     /// <exception cref="System.InvalidOperationException">No element present in ring buffer</exception>
     public T OldestValue
     {
@@ -121,9 +133,6 @@ namespace Altaxo.Collections
     /// <summary>
     /// Gets the newest element available. An exception is thrown if no element is enqueued.
     /// </summary>
-    /// <value>
-    /// The oldest element.
-    /// </value>
     /// <exception cref="System.InvalidOperationException">No element present in ring buffer</exception>
     public T NewestValue
     {
@@ -196,12 +205,14 @@ namespace Altaxo.Collections
       }
     }
 
+    /// <inheritdoc/>
     public IEnumerator<T> GetEnumerator()
     {
       return (IEnumerator<T>)ToArray().GetEnumerator();
     }
 
-    IEnumerator IEnumerable.GetEnumerator()
+    /// <inheritdoc/>
+    System.Collections.IEnumerator System.Collections.IEnumerable.GetEnumerator()
     {
       return ToArray().GetEnumerator();
     }

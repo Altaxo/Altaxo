@@ -30,16 +30,23 @@ using System.Text;
 namespace Altaxo.Collections
 {
   /// <summary>
-  /// Class which holds unique items in the order in wich they are added (like a List, but with the difference that only unique items could be contained).
+  /// Class which holds unique items in the order in which they are added (like a List, but with the difference that only unique items can be contained).
   /// </summary>
-  /// <typeparam name="T"></typeparam>
+  /// <typeparam name="T">Type of item.</typeparam>
   public class SetList<T> : ICollection<T>, IReadOnlyList<T> where T: notnull
   {
+    /// <summary>
+    /// Internal list storing items in insertion order.
+    /// </summary>
     private List<T> _itemList = new List<T>();
+    /// <summary>
+    /// Internal dictionary mapping items to their index in the list.
+    /// </summary>
     private Dictionary<T, int> _itemHash = new Dictionary<T, int>();
 
     #region ICollection<T> Members
 
+    /// <inheritdoc/>
     public void Add(T item)
     {
       if (_itemHash.Count == 0)
@@ -52,6 +59,7 @@ namespace Altaxo.Collections
       _itemList.Add(item);
     }
 
+    /// <inheritdoc/>
     public bool Contains(T item)
     {
       if (_itemHash.Count == 0)
@@ -59,27 +67,32 @@ namespace Altaxo.Collections
       return _itemHash.ContainsKey(item);
     }
 
+    /// <inheritdoc/>
     public void Clear()
     {
       _itemList.Clear();
       InvalidateHash();
     }
 
+    /// <inheritdoc/>
     public void CopyTo(T[] array, int arrayIndex)
     {
       _itemList.CopyTo(array, arrayIndex);
     }
 
+    /// <inheritdoc/>
     public int Count
     {
       get { return _itemList.Count; }
     }
 
+    /// <inheritdoc/>
     public bool IsReadOnly
     {
       get { return false; }
     }
 
+    /// <inheritdoc/>
     public bool Remove(T item)
     {
       if (_itemHash.Count > 0)
@@ -114,6 +127,7 @@ namespace Altaxo.Collections
 
     #region IEnumerable<T> Members
 
+    /// <inheritdoc/>
     public IEnumerator<T> GetEnumerator()
     {
       return _itemList.GetEnumerator();
@@ -123,6 +137,7 @@ namespace Altaxo.Collections
 
     #region IEnumerable Members
 
+    /// <inheritdoc/>
     System.Collections.IEnumerator System.Collections.IEnumerable.GetEnumerator()
     {
       return _itemList.GetEnumerator();
@@ -132,6 +147,9 @@ namespace Altaxo.Collections
 
     #region other members
 
+    /// <summary>
+    /// Clears the internal hash dictionary.
+    /// </summary>
     private void InvalidateHash()
     {
       _itemHash.Clear();
@@ -151,6 +169,11 @@ namespace Altaxo.Collections
       }
     }
 
+    /// <summary>
+    /// Gets the index of the specified item.
+    /// </summary>
+    /// <param name="item">The item to search for.</param>
+    /// <returns>The index of the item, or -1 if not found.</returns>
     public int IndexOf(T item)
     {
       if (_itemHash.Count == 0)
@@ -159,6 +182,7 @@ namespace Altaxo.Collections
       return _itemHash.TryGetValue(item, out var result) ? result : -1;
     }
 
+    /// <inheritdoc/>
     public T this[int i]
     {
       get
@@ -167,6 +191,10 @@ namespace Altaxo.Collections
       }
     }
 
+    /// <summary>
+    /// Converts the list to an array.
+    /// </summary>
+    /// <returns>Array of items in insertion order.</returns>
     public T[] ToArray()
     {
       return _itemList.ToArray();

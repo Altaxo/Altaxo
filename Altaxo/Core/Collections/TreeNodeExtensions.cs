@@ -32,9 +32,9 @@ using System.Text;
 namespace Altaxo.Collections
 {
   /// <summary>
-  /// Extends the IList interface by a function that allows to swap two items by index.
+  /// Extends the IList interface by a function that allows swapping two items by index.
   /// </summary>
-  /// <typeparam name="T"></typeparam>
+  /// <typeparam name="T">Type of item.</typeparam>
   public interface ISwappableList<T> : IList<T>
   {
   }
@@ -46,16 +46,13 @@ namespace Altaxo.Collections
   public interface ITreeNode<T> where T : ITreeNode<T>
   {
     /// <summary>
-    /// Gets the child nodes. 
+    /// Gets the child nodes.
     /// </summary>
-    /// <value>
-    /// The child nodes.
-    /// </value>
     IEnumerable<T>? ChildNodes { get; }
   }
 
   /// <summary>
-  /// Defines a tree node, where the childs can be accessed by index. There is no reference to the node's parent.
+  /// Defines a tree node, where the children can be accessed by index. There is no reference to the node's parent.
   /// </summary>
   /// <typeparam name="T">Type of the node.</typeparam>
   public interface ITreeListNode<T> : ITreeNode<T> where T : ITreeListNode<T>
@@ -63,14 +60,11 @@ namespace Altaxo.Collections
     /// <summary>
     /// Gets the child nodes.
     /// </summary>
-    /// <value>
-    /// The child nodes.
-    /// </value>
     new IList<T> ChildNodes { get; }
   }
 
   /// <summary>
-  /// Defines a tree node, where the childs can be accessed by index. There is no reference to the node's parent.
+  /// Defines a tree node, where the children can be accessed by index and swapped. There is no reference to the node's parent.
   /// </summary>
   /// <typeparam name="T">Type of the node.</typeparam>
   public interface ITreeSwappableListNode<T> : ITreeListNode<T> where T : ITreeSwappableListNode<T>
@@ -78,14 +72,11 @@ namespace Altaxo.Collections
     /// <summary>
     /// Gets the child nodes.
     /// </summary>
-    /// <value>
-    /// The child nodes.
-    /// </value>
     new ISwappableList<T> ChildNodes { get; }
   }
 
   /// <summary>
-  /// Defines an interface of a node, with has a parent node.
+  /// Defines an interface for a node with a parent node.
   /// </summary>
   /// <typeparam name="T">Type of the node.</typeparam>
   public interface INodeWithParentNode<T>
@@ -93,9 +84,6 @@ namespace Altaxo.Collections
     /// <summary>
     /// Gets the parent node of this node.
     /// </summary>
-    /// <value>
-    /// The parent node.
-    /// </value>
     [MaybeNull]
     T ParentNode { get; }
   }
@@ -111,7 +99,7 @@ namespace Altaxo.Collections
   /// <summary>
   /// Defines a tree node with parent. The child nodes can be accessed by index.
   /// </summary>
-  /// <typeparam name="T"></typeparam>
+  /// <typeparam name="T">Type of the node.</typeparam>
   public interface ITreeListNodeWithParent<T> : ITreeListNode<T>, INodeWithParentNode<T> where T : ITreeListNodeWithParent<T>
   {
   }
@@ -121,6 +109,13 @@ namespace Altaxo.Collections
   /// </summary>
   public static class TreeNodeExtensions
   {
+    /// <summary>
+    /// Executes the specified action on the provided node and recursively on all its descendant leaves.
+    /// </summary>
+    /// <typeparam name="T">Type of the node.</typeparam>
+    /// <param name="node">The starting node for the action execution.</param>
+    /// <param name="action">The action to be executed on each node.</param>
+    /// <exception cref="ArgumentNullException">Thrown when the action is null.</exception>
     public static void FromHereToLeavesDo<T>(this T node, Action<T> action) where T : ITreeNode<T>
     {
       if (action is null)
@@ -139,6 +134,12 @@ namespace Altaxo.Collections
       }
     }
 
+    /// <summary>
+    /// Executes the specified action on the provided node and recursively on all its ancestor nodes up to the root.
+    /// </summary>
+    /// <typeparam name="T">Type of the node.</typeparam>
+    /// <param name="node">The starting node for the action execution.</param>
+    /// <param name="action">The action to be executed on each node.</param>
     public static void FromLeavesToHereDo<T>(this T node, Action<T> action) where T : ITreeNode<T>
     {
       var childNodes = node.ChildNodes;
@@ -152,6 +153,15 @@ namespace Altaxo.Collections
       action(node);
     }
 
+    /// <summary>
+    /// Searches for any node starting from the provided node down to the leaves that satisfies the given condition.
+    /// </summary>
+    /// <typeparam name="T">The type of the node.</typeparam>
+    /// <param name="node">The starting node for the search.</param>
+    /// <param name="condition">The condition that the found node should satisfy.</param>
+    /// <returns>
+    /// The first node that matches the condition, or null if no such node is found.
+    /// </returns>
     [return: MaybeNull]
     public static T AnyBetweenHereAndLeaves<T>(this T node, Func<T, bool> condition) where T : class, ITreeNode<T>
     {
@@ -171,6 +181,15 @@ namespace Altaxo.Collections
       return default;
     }
 
+    /// <summary>
+    /// Searches for any node starting from the leaf nodes up to the provided node that satisfies the given condition.
+    /// </summary>
+    /// <typeparam name="T">The type of the node.</typeparam>
+    /// <param name="node">The starting node for the search.</param>
+    /// <param name="condition">The condition that the found node should satisfy.</param>
+    /// <returns>
+    /// The first node that matches the condition when traversing from the leaves to the provided node, or null if no such node is found.
+    /// </returns>
     [return: MaybeNull]
     public static T AnyBetweenLeavesAndHere<T>(this T node, Func<T, bool> condition) where T : ITreeNode<T>
     {
@@ -803,6 +822,14 @@ namespace Altaxo.Collections
       return result;
     }
 
+    /// <summary>
+    /// Gets a node inside a tree by using an index array, starting from a collection of nodes and an enumerator over the index array.
+    /// </summary>
+    /// <typeparam name="T">Type of node.</typeparam>
+    /// <param name="nodes">The collection of nodes at the current tree level.</param>
+    /// <param name="it">Enumerator over the index array.</param>
+    /// <param name="level">The current tree level.</param>
+    /// <returns>The node designated by the provided index.</returns>
     private static T ElementAtInternal<T>(IList<T> nodes, IEnumerator<int> it, int level) where T : ITreeListNode<T>
     {
       // check this in a public function before making a call to this: rootNode != null, index.Count>0, level>0
@@ -869,6 +896,15 @@ namespace Altaxo.Collections
 
     private static bool IsValidIndex<T>(IList<T> nodes, IEnumerator<int> it, int level, [MaybeNullWhen(false)] out T nodeAtIndex) where T : ITreeListNode<T>
     {
+      /// <summary>
+      /// Validates whether the given index points to a valid node in the tree, starting from a collection of nodes and an enumerator over the index array.
+      /// </summary>
+      /// <typeparam name="T">Type of node.</typeparam>
+      /// <param name="nodes">The collection of nodes at the current tree level.</param>
+      /// <param name="it">Enumerator over the index array.</param>
+      /// <param name="level">The current tree level.</param>
+      /// <param name="nodeAtIndex">If valid, contains the node at the given index; otherwise, default.</param>
+      /// <returns>True if the index is valid; otherwise, false.</returns>
       if (nodes is null || 0 == nodes.Count)
       {
         nodeAtIndex = default;
@@ -1365,6 +1401,15 @@ namespace Altaxo.Collections
       yield break;
     }
 
+    /// <summary>
+    /// Determines whether two trees are structurally equivalent by recursively comparing nodes and their children using a provided equivalence function.
+    /// </summary>
+    /// <typeparam name="T">Type of the first tree node.</typeparam>
+    /// <typeparam name="M">Type of the second tree node.</typeparam>
+    /// <param name="tree1">The root node of the first tree.</param>
+    /// <param name="tree2">The root node of the second tree.</param>
+    /// <param name="AreNodesEquivalent">Function to determine if two nodes are equivalent.</param>
+    /// <returns>True if the trees are structurally equivalent; otherwise, false.</returns>
     public static bool IsStructuralEquivalentTo<T, M>(this T tree1, M tree2, Func<T, M, bool> AreNodesEquivalent)
       where T : ITreeNode<T>
       where M : ITreeNode<M>

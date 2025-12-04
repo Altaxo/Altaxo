@@ -31,21 +31,21 @@ namespace Altaxo.Collections.Text
 {
   /// <summary>
   /// Given a text string, the substring starting at position i and until the end of text is called the suffix starting at position i. For a text string with N characters there are N suffixes.
-  /// This class gives an efficient algorithm to sort all N suffixes lexicographically, and to determine the length of the longest common prefix of each suffix with its lexicographical predecessor.
+  /// This class provides an efficient algorithm to sort all N suffixes lexicographically, and to determine the length of the longest common prefix of each suffix with its lexicographical predecessor.
   /// This is generally done in O(N) time.
   /// </summary>
   /// <remarks>
   /// <para>
-  /// First of all, we need an O(N) algorithm to calculate the suffix array in O(N) time. This algorithm is implemented according to J. Kärkkäinen and P. Sanders: "Simple linear work suffix array construction.",
-  /// Proc. 30th International Colloquium on Automata, Languages and Programming, volume 2719 of Lecture Notes in Computer Science, pages 943-955, Berlin, 2003, Springer-Verlag."
+  /// First, an O(N) algorithm is used to calculate the suffix array in O(N) time. This algorithm is implemented according to J. Kärkkäinen and P. Sanders: "Simple linear work suffix array construction.",
+  /// Proc. 30th International Colloquium on Automata, Languages and Programming, volume 2719 of Lecture Notes in Computer Science, pages 943-955, Berlin, 2003, Springer-Verlag.
   /// </para>
   /// <para>
-  /// Secondly, an O(N) algorithm is neccessary to calculated the length of longest common prefix of two adjacent suffixes. This is implemented according to T. Kasai, G. Lee, H. Arimura, S. Arikawa1, and K. Park:
+  /// Second, an O(N) algorithm is necessary to calculate the length of the longest common prefix of two adjacent suffixes. This is implemented according to T. Kasai, G. Lee, H. Arimura, S. Arikawa, and K. Park:
   /// "Linear-Time Longest-Common-Prefix Computation in Suffix Arrays and Its Applications", Proc. 12th Annual Symposium on Combinatorial Pattern Matching. Lecture Notes in Computer Science, vol. 2089, pp. 181–192. Springer, Berlin (2001).
   /// </para>
   /// <para>
-  /// See also the very nice paper by Michael Arnold and Enno Ohlebusch, 'Linear Time Algorithms for Generalizations of the Longest Common Substring Problem', Algorithmica (2011) 60; 806-818; DOI: 10.1007/s00453-009-9369-1.
-  /// The code here was partially adopted from the C++ sources from the web site of the authors at http://www.uni-ulm.de/in/theo/research/sequana.html.
+  /// See also the paper by Michael Arnold and Enno Ohlebusch, "Linear Time Algorithms for Generalizations of the Longest Common Substring Problem", Algorithmica (2011) 60; 806-818; DOI: 10.1007/s00453-009-9369-1.
+  /// The code here was partially adapted from the C++ sources from the authors' website at http://www.uni-ulm.de/in/theo/research/sequana.html.
   /// </para>
   /// </remarks>
   public class GeneralizedSuffixArray
@@ -55,13 +55,13 @@ namespace Altaxo.Collections.Text
     // Data from the original text
 
     /// <summary>Original text, converted to an integer alphabet. Each unique element of the original text (or each unique list element) corresponds to an integer value. The order of this integer alphabet is the same as the order of the original elements.
-    /// Note that the value 0 is reserved for the internal algorithm. If the original text was separated in different words, the first <c>numberOfWords</c> integers (1..<c>numberOfWords</c>) are reserved as separator elements, too.
+    /// Note that the value 0 is reserved for the internal algorithm. If the original text was separated into different words, the first <c>numberOfWords</c> integers (1..<c>numberOfWords</c>) are reserved as separator elements, too.
     /// </summary>
     private int[] _text;
 
     /// <summary>
     /// Length of the text. This is the total length of the original text, plus, if the text was separated into words, the number of separator elements (which is equal to the number of words). Note that the
-    /// array <see cref="_text"/> is needed to be longer than <see cref="_textLength"/>, since some additional elements are neccessary for most algorithms.
+    /// array <see cref="_text"/> must be longer than <see cref="_textLength"/>, since some additional elements are necessary for most algorithms.
     /// </summary>
     private int _textLength;
 
@@ -77,11 +77,9 @@ namespace Altaxo.Collections.Text
 
     /// <summary>
     /// Size of the alphabet, i.e. the number of unique elements that occur in the original text (or, number of unique list elements). If the text was separated into individual words, the number of words (= number of separator elements) also
-    /// contribute to the alphabet size.
+    /// contributes to the alphabet size.
     /// </summary>
     private int _alphabetSize;
-
-    // Data from the suffix-processed text
 
     /// <summary>Maps the lexicographical order position i of a suffix to the starting position of the suffix in the text, which is the value of the i-th element of this array.</summary>
     private int[] _suffixArray;
@@ -92,7 +90,7 @@ namespace Altaxo.Collections.Text
     private int[] _inverseSuffixArray;
 
     /// <summary>
-    /// Stores the length of the Longest Common Prefix of the lexicographically i-th suffix and its lexicographical  predecessor (the lexicographically (i-1)-th suffix).
+    /// Stores the length of the Longest Common Prefix of the lexicographically i-th suffix and its lexicographical predecessor (the lexicographically (i-1)-th suffix).
     /// The element at index 0 is always 0.
     /// </summary>
     private int[] _LCP;
@@ -102,9 +100,9 @@ namespace Altaxo.Collections.Text
     private int[] _LCPS;
 
     /// <summary>
-    /// Maps the lexicographical order position i of a suffix to the index of the word, in which this suffix starts. This means, that for instance the value of the i-th
+    /// Maps the lexicographical order position i of a suffix to the index of the word, in which this suffix starts. This means, for instance, the value of the i-th
     /// element contains the index of the word, in which the lexicographically i-th suffix that starts at position <see cref="_suffixArray"/>[i] begins.
-    /// The contents of this array is only meaningful, if you provided text that was separated into words, for instance for the longest common substring problem.
+    /// The contents of this array is only meaningful if you provided text that was separated into words, for instance for the longest common substring problem.
     /// </summary>
     private int[] _wordIndices = _intArrayEmpty;
 
@@ -266,7 +264,7 @@ namespace Altaxo.Collections.Text
     }
 
     /// <summary>
-    /// Stores the length of the Longest Common Prefix of the lexicographically i-th suffix and its lexicographical  predecessor (the lexicographically (i-1)-th suffix).
+    /// Stores the length of the Longest Common Prefix of the lexicographically i-th suffix and its lexicographical predecessor (the lexicographically (i-1)-th suffix).
     /// The element at index 0 is always 0.
     /// </summary>
     public int[] LCPArray

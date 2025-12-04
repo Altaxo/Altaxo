@@ -31,11 +31,11 @@ using System.Text;
 namespace Altaxo.Collections
 {
   /// <summary>
-  /// List of items of class T. From this list partitions can be created, which basically are views inside this list, which have certain selection criterions. See remarks for details.
+  /// List of items of class T. From this list partitions can be created, which basically are views inside this list, which have certain selection criteria. See remarks for details.
   /// </summary>
   /// <typeparam name="T">Type of the items in the list.</typeparam>
   /// <remarks>
-  /// Say you have two classes, A and B, both having the base class T. Then you can create a PartionableList, holding items of class A as well as items of class B.
+  /// Say you have two classes, A and B, both having the base class T. Then you can create a PartitionableList, holding items of class A as well as items of class B.
   /// From this list you then can create a partition, i.e. a view, that shows only items of class A, and another partition, that shows only items of class B.
   /// These partitions support all list operations, including deletion, insertion, movement, and setting of items. These list operations are propagated to
   /// the main list. Of course, it will cause an exception if you try to insert items of class B into the partition of class A (and vice versa). When you set
@@ -43,7 +43,9 @@ namespace Altaxo.Collections
   /// </remarks>
   public partial class PartitionableList<T> : System.Collections.ObjectModel.ObservableCollection<T>
   {
-    /// <summary>Contains all partial views that were created for this instance and are still alive.</summary>
+    /// <summary>
+    /// Contains all partial views that were created for this instance and are still alive.
+    /// </summary>
     protected LinkedList<WeakReference> _partialViews = new LinkedList<WeakReference>();
 
     /// <summary>
@@ -52,12 +54,12 @@ namespace Altaxo.Collections
     protected HashSet<PartialViewBase> _partialViewsToNotify = new HashSet<PartialViewBase>();
 
     /// <summary>
-    /// Defines an action that is executed before an item is inserted. The 1st argument is the item to insert.
+    /// Defines an action that is executed before an item is inserted. The first argument is the item to insert.
     /// </summary>
     protected Action<T>? _actionBeforeInsertion;
 
     /// <summary>
-    /// Get information whether the CollectionChanged events are enabled or disabled.
+    /// Gets information whether the CollectionChanged events are enabled or disabled.
     /// </summary>
     protected TemporaryDisabler _eventState;
 
@@ -68,11 +70,18 @@ namespace Altaxo.Collections
 
     #region Constructors
 
+    /// <summary>
+    /// Initializes a new instance of the <see cref="PartitionableList{T}"/> class.
+    /// </summary>
     public PartitionableList()
     {
       _eventState = new TemporaryDisabler(OnReenableEvents);
     }
 
+    /// <summary>
+    /// Initializes a new instance of the <see cref="PartitionableList{T}"/> class with an action to execute before insertion.
+    /// </summary>
+    /// <param name="actionBeforeInsertion">Action that is executed before an item is inserted.</param>
     public PartitionableList(Action<T> actionBeforeInsertion)
     {
       _eventState = new TemporaryDisabler(OnReenableEvents);
@@ -178,7 +187,6 @@ namespace Altaxo.Collections
     /// <summary>
     /// Notifies the partial views that have changed after each operation.
     /// </summary>
-    ///
     protected void NotifyPartialViewsThatHaveChanged()
     {
       foreach (var pv in _partialViewsToNotify)
@@ -191,12 +199,13 @@ namespace Altaxo.Collections
     /// Gets a token that will temporarily disable the CollectionChanged events from this collection. The best practice is to use this token inside a using statement, because at the end
     /// of the using statement the Dispose function of the token is called automatically, which then reenables the events.
     /// </summary>
-    /// <returns></returns>
+    /// <returns>A token to temporarily disable events.</returns>
     public ISuspendToken GetEventDisableToken()
     {
       return _eventState.Disable();
     }
 
+    /// <inheritdoc/>
     protected virtual void OnReenableEvents()
     {
       if (_pendingEvent is not null)
@@ -207,6 +216,7 @@ namespace Altaxo.Collections
       }
     }
 
+    /// <inheritdoc/>
     protected override void OnCollectionChanged(NotifyCollectionChangedEventArgs e)
     {
       if (_eventState.IsDisabled)
@@ -234,6 +244,10 @@ namespace Altaxo.Collections
 
     #region Some special list operations
 
+    /// <summary>
+    /// Adds a range of items to the list.
+    /// </summary>
+    /// <param name="enumeration">The items to add.</param>
     public void AddRange(IEnumerable<T> enumeration)
     {
       using (var token = _eventState.Disable())
@@ -247,6 +261,7 @@ namespace Altaxo.Collections
 
     #region List change operation overrides
 
+    /// <inheritdoc/>
     protected override void ClearItems()
     {
       var node = _partialViews.First;
@@ -274,6 +289,7 @@ namespace Altaxo.Collections
       NotifyPartialViewsThatHaveChanged();
     }
 
+    /// <inheritdoc/>
     protected override void InsertItem(int index, T item)
     {
       _actionBeforeInsertion?.Invoke(item);
@@ -307,6 +323,7 @@ namespace Altaxo.Collections
       NotifyPartialViewsThatHaveChanged();
     }
 
+    /// <inheritdoc/>
     protected override void MoveItem(int oldIndex, int newIndex)
     {
       if (oldIndex != newIndex)
@@ -364,6 +381,7 @@ namespace Altaxo.Collections
       NotifyPartialViewsThatHaveChanged();
     }
 
+    /// <inheritdoc/>
     protected override void RemoveItem(int index)
     {
       for (var node = _partialViews.First; node is not null; node = node.Next)
@@ -395,6 +413,7 @@ namespace Altaxo.Collections
       NotifyPartialViewsThatHaveChanged();
     }
 
+    /// <inheritdoc/>
     protected override void SetItem(int index, T item)
     {
       _actionBeforeInsertion?.Invoke(item);
@@ -451,11 +470,11 @@ namespace Altaxo.Collections
     }
 
     /// <summary>
-    /// Finds the item in the list that than or equal to.
+    /// Finds the item in the list that is greater than or equal to the specified value.
     /// </summary>
     /// <param name="itemIndex">List with the ordered list of item indices.</param>
     /// <param name="value">The index to find.</param>
-    /// <returns></returns>
+    /// <returns>The index of the item greater than or equal to the specified value.</returns>
     private static int FindIndexOfItemGreaterThanOrEqualTo(IList<int> itemIndex, int value)
     {
       int upperIndex = itemIndex.Count - 1;
@@ -488,10 +507,18 @@ namespace Altaxo.Collections
 
     #region EventDisabler
 
+    /// <summary>
+    /// Token interface for suspending and resuming events.
+    /// </summary>
     public interface ISuspendToken : IDisposable
     {
+      /// <summary>
+      /// Resumes event handling.
+      /// </summary>
       void Resume();
-
+      /// <summary>
+      /// Resumes event handling silently.
+      /// </summary>
       void ResumeSilently();
     }
 
@@ -519,9 +546,9 @@ namespace Altaxo.Collections
           Dispose();
         }
 
-        /// <summary>
+      /// <summary>
         /// Disarms this SuppressToken so that it can not raise the resume event anymore.
-        /// </summary>
+      /// </summary>
         public void ResumeSilently()
         {
           var parent = System.Threading.Interlocked.Exchange<TemporaryDisabler?>(ref _parent, null);
@@ -584,12 +611,12 @@ namespace Altaxo.Collections
 
       /// <summary>How many times was the <see cref="Disable"/> function called (without disposing the tokens got in these calls)</summary>
       private int _suspendLevel;
-
-      /// <summary>Action that is taken when the suppress levels falls down to zero and the event count is equal to or greater than one (i.e. during the suspend phase, at least an event had occured).</summary>
-      private Action _reenablingEventHandler;
-
       /// <summary>
-      /// Constructor. You have to provide a callback function, that is been called when the event handling resumes.
+      /// Action that is taken when the suppress levels falls down to zero and the event count is equal to or greater than one (i.e. during the suspend phase, at least an event had occurred).
+      /// </summary>
+      private Action _reenablingEventHandler;
+      /// <summary>
+      /// Constructor. You have to provide a callback function, that is called when the event handling resumes.
       /// </summary>
       /// <param name="reenablingEventHandler">The callback function called when the events resume. See remarks when the callback function is called.</param>
       /// <remarks>The callback function is called only (i) if the event resumes (exactly: the _suppressLevel changes from 1 to 0),
@@ -604,8 +631,8 @@ namespace Altaxo.Collections
       /// <summary>
       /// Increase the SuspendLevel.
       /// </summary>
-      /// <returns>An object, which must be disposed in order to re-enabling again.
-      /// The most convenient way is to use a using statement with this function call
+      /// <returns>An object, which must be disposed in order to re-enable again.
+      /// The most convenient way is to use a using statement with this function call.
       /// </returns>
       public ISuspendToken Disable()
       {
@@ -617,13 +644,11 @@ namespace Altaxo.Collections
       /// Otherwise false.
       /// </summary>
       public bool IsEnabled { get { return _suspendLevel == 0; } }
-
       /// <summary>
       /// Returns true when the disabling level is greater than zero (after calling the <see cref="Disable"/> function).
       /// Returns false if the disabling level is zero.
       /// </summary>
       public bool IsDisabled { get { return _suspendLevel != 0; } }
-
       /// <summary>
       /// Just fires the reenabling action that was given in the constructor,
       /// without changing the disabling level.
@@ -632,7 +657,6 @@ namespace Altaxo.Collections
       {
         OnResume();
       }
-
       /// <summary>
       /// Is called when the suppress level falls down from 1 to zero and the event count is != 0.
       /// Per default, the resume event handler is called that you provided in the constructor.
@@ -641,7 +665,6 @@ namespace Altaxo.Collections
       {
         _reenablingEventHandler?.Invoke();
       }
-
       /// <summary>
       /// Is called when the suppress level falls down from 1 to zero and the event count is != 0.
       /// Per default, the resume event handler is called that you provided in the constructor.

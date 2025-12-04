@@ -37,8 +37,15 @@ namespace Altaxo.Geometry
   /// </summary>
   public class SharpPolylineD3D : IPolylineD3D
   {
+    /// <summary>
+    /// The points that make out the polyline.
+    /// </summary>
     private PointD3D[] _points;
 
+    /// <summary>
+    /// Initializes a new instance of the <see cref="SharpPolylineD3D"/> class with the specified points.
+    /// </summary>
+    /// <param name="points">The points that make out the polyline.</param>
     protected SharpPolylineD3D(PointD3D[] points)
     {
       _points = points;
@@ -71,6 +78,7 @@ namespace Altaxo.Geometry
       return new SharpPolylineD3D(mypoints.ToArray());
     }
 
+    /// <inheritdoc/>
     public PointD3D GetPoint(int idx)
     {
       return _points[idx];
@@ -79,24 +87,20 @@ namespace Altaxo.Geometry
     /// <summary>
     /// Gets the number of points.
     /// </summary>
-    /// <value>
-    /// Number of points.
-    /// </value>
     public int Count { get { return _points.Length; } }
 
     /// <summary>
     /// Gets the points of this polyline. No information is contained here whether the joints are sharp or soft.
     /// </summary>
-    /// <value>
-    /// The points that make out the polyline.
-    /// </value>
     public IList<PointD3D> Points { get { return _points; } }
 
+    /// <inheritdoc/>
     public bool IsTransitionFromIdxToNextIdxSharp(int idx)
     {
       return true;
     }
 
+    /// <inheritdoc/>
     public double TotalLineLength
     {
       get

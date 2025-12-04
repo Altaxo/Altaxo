@@ -33,14 +33,20 @@ namespace Altaxo.Collections
   public interface IAscendingIntegerCollection : ICloneable, IReadOnlyList<int>
   {
     /// <summary>
-    /// Returns true if the integer <code>nValue</code> is contained in this collection.
+    /// Determines whether the specified integer value is contained in this collection.
     /// </summary>
     /// <param name="nValue">The integer value to test for membership.</param>
-    /// <returns>True if the integer value is member of the collection.</returns>
+    /// <returns>True if the integer value is a member of the collection; otherwise, false.</returns>
     bool Contains(int nValue);
 
+    /// <summary>
+    /// Gets the ranges of integers in ascending order.
+    /// </summary>
     IEnumerable<ContiguousIntegerRange> RangesAscending { get; }
 
+    /// <summary>
+    /// Gets the ranges of integers in descending order.
+    /// </summary>
     IEnumerable<ContiguousIntegerRange> RangesDescending { get; }
   }
 }

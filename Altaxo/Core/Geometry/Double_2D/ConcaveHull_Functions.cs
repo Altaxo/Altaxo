@@ -31,9 +31,17 @@ using System.Linq;
 
 namespace Altaxo.Geometry.Double_2D
 {
+  /// <summary>
+  /// Provides functions for concave hull calculation and geometry operations in 2D.
+  /// </summary>
   public partial class ConcaveHull
   {
-
+    /// <summary>
+    /// Determines if a vertical line segment intersects with another line segment.
+    /// </summary>
+    /// <param name="lineA">The vertical line segment.</param>
+    /// <param name="lineB">The other line segment.</param>
+    /// <returns>True if the segments intersect; otherwise, false.</returns>
     private static bool verticalIntersection(LineD2DAnnotated lineA, LineD2DAnnotated lineB)
     {
       /* lineA is vertical */
@@ -51,6 +59,12 @@ namespace Altaxo.Geometry.Double_2D
       }
     }
 
+    /// <summary>
+    /// Determines if two line segments intersect.
+    /// </summary>
+    /// <param name="lineA">The first line segment.</param>
+    /// <param name="lineB">The second line segment.</param>
+    /// <returns>True if the segments intersect; otherwise, false.</returns>
     private static bool intersection(LineD2DAnnotated lineA, LineD2DAnnotated lineB)
     {
       /* Returns true if segments collide
@@ -118,6 +132,15 @@ namespace Altaxo.Geometry.Double_2D
       }
     }
 
+    /// <summary>
+    /// Adds a middle point to a line (if possible) to make it concave.
+    /// </summary>
+    /// <param name="line">The line to modify.</param>
+    /// <param name="nearbyPoints">Nearby points to consider for concavity.</param>
+    /// <param name="concave_hull">Current concave hull edges.</param>
+    /// <param name="concavity">The concavity parameter.</param>
+    /// <param name="isSquareGrid">Indicates whether a square grid is used.</param>
+    /// <returns>List of line segments forming the concave hull.</returns>
     private static List<LineD2DAnnotated> setConcave(LineD2DAnnotated line, List<PointD2DAnnotated> nearbyPoints, List<LineD2DAnnotated> concave_hull, double concavity, bool isSquareGrid)
     {
       /* Adds a middlepoint to a line (if there can be one) to make it concave */
@@ -173,6 +196,15 @@ namespace Altaxo.Geometry.Double_2D
       return concave;
     }
 
+    /// <summary>
+    /// Determines if a new middle point would make a segment tangent to the hull.
+    /// </summary>
+    /// <param name="line_treated">The line being treated.</param>
+    /// <param name="node">The candidate middle point.</param>
+    /// <param name="cos1">Cosine value for the first angle.</param>
+    /// <param name="cos2">Cosine value for the second angle.</param>
+    /// <param name="concave_hull">Current concave hull edges.</param>
+    /// <returns>True if the segment would be tangent to the hull; otherwise, false.</returns>
     private static bool tangentToHull(LineD2DAnnotated line_treated, PointD2DAnnotated node, double cos1, double cos2, List<LineD2DAnnotated> concave_hull)
     {
       /* A new middlepoint could (rarely) make a segment that's tangent to the hull.
@@ -219,8 +251,20 @@ namespace Altaxo.Geometry.Double_2D
       return isTangent;
     }
 
+    /// <summary>
+    /// Returns the square of a value.
+    /// </summary>
+    /// <param name="x">The value.</param>
+    /// <returns>The square of <paramref name="x"/>.</returns>
     private static double Pow2(double x) => x * x;
 
+    /// <summary>
+    /// Calculates the cosine of the angle at point o between points a and b using the law of cosines.
+    /// </summary>
+    /// <param name="a">First point.</param>
+    /// <param name="b">Second point.</param>
+    /// <param name="o">Origin point.</param>
+    /// <returns>The cosine value.</returns>
     private static double getCos(PointD2DAnnotated a, PointD2DAnnotated b, PointD2DAnnotated o)
     {
       /* Law of cosines */
@@ -230,6 +274,12 @@ namespace Altaxo.Geometry.Double_2D
       return Math.Round((aPow2 + bPow2 - cPow2) / (2 * Math.Sqrt(aPow2 * bPow2)), 4);
     }
 
+    /// <summary>
+    /// Gets the boundary area around a line for searching nearby points.
+    /// </summary>
+    /// <param name="line">The line.</param>
+    /// <param name="scaleFactor">The scale factor.</param>
+    /// <returns>The boundary as a tuple (minx, miny, maxx, maxy).</returns>
     private static (int minx, int miny, int maxx, int maxy) getBoundary(LineD2DAnnotated line, int scaleFactor)
     {
       /* Giving a scaleFactor it returns an area around the line
@@ -245,6 +295,13 @@ namespace Altaxo.Geometry.Double_2D
       return (min_x_position, min_y_position, max_x_position, max_y_position);
     }
 
+    /// <summary>
+    /// Gets nearby points to a line within a boundary area.
+    /// </summary>
+    /// <param name="line">The line.</param>
+    /// <param name="nodeList">List of candidate points.</param>
+    /// <param name="scaleFactor">The scale factor.</param>
+    /// <returns>List of nearby points.</returns>
     private static List<PointD2DAnnotated> getNearbyPoints(LineD2DAnnotated line, List<PointD2DAnnotated> nodeList, int scaleFactor)
     {
       /* The bigger the scaleFactor the more points it will return
@@ -284,6 +341,12 @@ namespace Altaxo.Geometry.Double_2D
       return nearbyPoints;
     }
 
+    /// <summary>
+    /// Returns previous and next nodes to a line in the hull.
+    /// </summary>
+    /// <param name="line">The line in the hull.</param>
+    /// <param name="concave_hull">Current concave hull edges.</param>
+    /// <returns>Array of two nearby hull nodes.</returns>
     private static PointD2DAnnotated[] getHullNearbyNodes(LineD2DAnnotated line, List<LineD2DAnnotated> concave_hull)
     {
       /* Return previous and next nodes to a line in the hull */

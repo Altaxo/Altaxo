@@ -36,6 +36,7 @@ namespace Altaxo.Collections
     /// <summary>
     /// Converts a recursive data structure into a flat list. The root element is enumerated before its corresponding child element(s).
     /// </summary>
+    /// <typeparam name="T">Type of the elements.</typeparam>
     /// <param name="root">The root element of the recursive data structure.</param>
     /// <param name="recursion">The function that gets the children of an element. If no children of an element exist, the function is allowed to return null.</param>
     /// <returns>Iterator that enumerates the tree structure in preorder.</returns>
@@ -47,8 +48,9 @@ namespace Altaxo.Collections
     /// <summary>
     /// Converts a recursive data structure into a flat list. The root element is enumerated before its corresponding child element(s).
     /// </summary>
+    /// <typeparam name="T">Type of the elements.</typeparam>
     /// <param name="input">The root elements of the recursive data structure.</param>
-    /// <param name="recursion">The function that gets the children of an element.  If no children of an element exist, the function is allowed to return null.</param>
+    /// <param name="recursion">The function that gets the children of an element. If no children of an element exist, the function is allowed to return null.</param>
     /// <returns>Iterator that enumerates the tree structure in preorder.</returns>
     public static IEnumerable<T> FlattenFromRootToLeaves<T>(this IEnumerable<T> input, Func<T, IEnumerable<T>?> recursion)
     {
@@ -761,7 +763,12 @@ namespace Altaxo.Collections
         }
       }
     }
-
+    /// <summary>
+    /// Enumerates the range starting from <paramref name="start"/> with count elements, i.e. yields start, start+1, ..., start + count - 1, and returns the elements as double.
+    /// </summary>
+    /// <param name="start">The start.</param>
+    /// <param name="count">The count.</param>
+    /// <returns>Elements from start .. start + count -1 as double values.</returns>
     public static IEnumerable<double> RangeDouble(double start, int count)
     {
       for (int i = 0; i < count; ++i)

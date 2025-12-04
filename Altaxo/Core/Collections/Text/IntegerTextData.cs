@@ -30,32 +30,33 @@ using System.Text;
 namespace Altaxo.Collections.Text
 {
   /// <summary>
-  /// Converts list of arbitrary objects into an integer array. This is done by creating an integer alphabet, which maps each unique element in the original list(s) to an integer value. The lexicographical order of the elements is maintained, i.e.
+  /// Converts a list of arbitrary objects into an integer array. This is done by creating an integer alphabet, which maps each unique element in the original list(s) to an integer value. The lexicographical order of the elements is maintained, i.e.
   /// when a list of elements of ascending order is mapped to an integer list, the integer list is also in ascending order.
   /// </summary>
   public class IntegerText
   {
     private static int[] _intArrayEmpty = new int[0];
 
-    /// <summary>Original text, converted to an integer alphabet. Each unique element of the original text (or each unique list element) corresponds to an integer value. The order of this integer alphabet is the same as the order of the original elements.
-    /// Note that the value 0 is reserved for the internal algorithm. If the original text was separated in different words, the first <c>numberOfWords</c> integers (1..<c>numberOfWords</c>) are reserved as separator elements, too.
+    /// <summary>
+    /// Original text, converted to an integer alphabet. Each unique element of the original text (or each unique list element) corresponds to an integer value. The order of this integer alphabet is the same as the order of the original elements.
+    /// Note that the value 0 is reserved for the internal algorithm. If the original text was separated into different words, the first <c>numberOfWords</c> integers (1..<c>numberOfWords</c>) are reserved as separator elements, too.
     /// </summary>
     private int[] _text = _intArrayEmpty;
 
     /// <summary>
     /// Length of the text. This is the total length of the original text, plus, if the text was separated into words, the number of separator elements (which is equal to the number of words). Note that the
-    /// array <see cref="_text"/> is needed to be longer than <see cref="_textLength"/>, since some additional elements are neccessary for most algorithms.
+    /// array <see cref="_text"/> must be longer than <see cref="_textLength"/>, since some additional elements are necessary for most algorithms.
     /// </summary>
     private int _textLength;
 
     /// <summary>
-    /// Number of additional elements of array <see cref="_textLength"/>. Thus the length of this array is <see cref="_paddingLength"/> + <see cref="_textLength"/>.
+    /// Number of additional elements of array <see cref="_text"/>. Thus the length of this array is <see cref="_paddingLength"/> + <see cref="_textLength"/>.
     /// </summary>
     private int _paddingLength;
 
     /// <summary>
     /// Size of the alphabet, i.e. the number of unique elements that occur in the original text (or, number of unique list elements). If the text was separated into individual words, the number of words (= number of separator elements) also
-    /// contribute to the alphabet size.
+    /// contributes to the alphabet size.
     /// </summary>
     private int _alphabetSize;
 
@@ -82,7 +83,7 @@ namespace Altaxo.Collections.Text
 
     /// <summary>
     /// Length of the text. This is the total length of the original text, plus, if the text was separated into words, the number of separator elements (which is equal to the number of words). Note that the
-    /// array <see cref="_text"/> is needed to be longer than <see cref="_textLength"/>, since some additional elements are neccessary for most algorithms.
+    /// array <see cref="_text"/> must be longer than <see cref="_textLength"/>, since some additional elements are necessary for most algorithms.
     /// </summary>
     public int TextLength
     {

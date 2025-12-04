@@ -31,15 +31,29 @@ using System.Text;
 
 namespace Altaxo.Collections
 {
+  /// <summary>
+  /// Represents a dictionary view that exposes only entries of a derived value type from a parent dictionary of a base value type.
+  /// </summary>
+  /// <typeparam name="TKey">The type of the key.</typeparam>
+  /// <typeparam name="TBaseValue">The base value type.</typeparam>
+  /// <typeparam name="TDerivValue">The derived value type.</typeparam>
   public class PartialDictionary<TKey, TBaseValue, TDerivValue> : IDictionary<TKey, TDerivValue> where TKey : notnull where TBaseValue : class where TDerivValue : class, TBaseValue
   {
+    /// <summary>
+    /// The parent dictionary containing all base values.
+    /// </summary>
     private IDictionary<TKey, TBaseValue> _parent;
 
+    /// <summary>
+    /// Initializes a new instance of the <see cref="PartialDictionary{TKey, TBaseValue, TDerivValue}"/> class.
+    /// </summary>
+    /// <param name="parent">The parent dictionary.</param>
     public PartialDictionary(IDictionary<TKey, TBaseValue> parent)
     {
       _parent = parent;
     }
 
+    /// <inheritdoc/>
     public TDerivValue this[TKey key]
     {
       get
@@ -60,6 +74,7 @@ namespace Altaxo.Collections
       }
     }
 
+    /// <inheritdoc/>
     public int Count
     {
       get
@@ -73,6 +88,7 @@ namespace Altaxo.Collections
       }
     }
 
+    /// <inheritdoc/>
     public bool IsReadOnly
     {
       get
@@ -81,6 +97,7 @@ namespace Altaxo.Collections
       }
     }
 
+    /// <inheritdoc/>
     public ICollection<TKey> Keys
     {
       get
@@ -95,6 +112,7 @@ namespace Altaxo.Collections
       }
     }
 
+    /// <inheritdoc/>
     public ICollection<TDerivValue> Values
     {
       get
@@ -110,11 +128,13 @@ namespace Altaxo.Collections
       }
     }
 
+    /// <inheritdoc/>
     public void Add(KeyValuePair<TKey, TDerivValue> item)
     {
       Add(item.Key, item.Value);
     }
 
+    /// <inheritdoc/>
     public void Add(TKey key, TDerivValue value)
     {
       if (value is null)
@@ -126,6 +146,7 @@ namespace Altaxo.Collections
       _parent.Add(key, baseValue);
     }
 
+    /// <inheritdoc/>
     public void Clear()
     {
       var s = new List<KeyValuePair<TKey, TBaseValue>>();
@@ -137,11 +158,13 @@ namespace Altaxo.Collections
         _parent.Remove(k);
     }
 
+    /// <inheritdoc/>
     public bool Contains(KeyValuePair<TKey, TDerivValue> item)
     {
       return _parent.Contains(new KeyValuePair<TKey, TBaseValue>(item.Key, (TBaseValue)(item.Value)));
     }
 
+    /// <inheritdoc/>
     public bool ContainsKey(TKey key)
     {
       if (!_parent.TryGetValue(key, out var b))
@@ -150,6 +173,7 @@ namespace Altaxo.Collections
       return b is TDerivValue;
     }
 
+    /// <inheritdoc/>
     public void CopyTo(KeyValuePair<TKey, TDerivValue>[] array, int arrayIndex)
     {
       int i = arrayIndex;
@@ -161,6 +185,7 @@ namespace Altaxo.Collections
       }
     }
 
+    /// <inheritdoc/>
     public IEnumerator<KeyValuePair<TKey, TDerivValue>> GetEnumerator()
     {
       foreach (var entry in _parent)
@@ -168,6 +193,7 @@ namespace Altaxo.Collections
           yield return new KeyValuePair<TKey, TDerivValue>(entry.Key, tdvalue);
     }
 
+    /// <inheritdoc/>
     public bool Remove(KeyValuePair<TKey, TDerivValue> item)
     {
       if (!_parent.TryGetValue(item.Key, out var b))
@@ -177,6 +203,7 @@ namespace Altaxo.Collections
       return _parent.Remove(item.Key);
     }
 
+    /// <inheritdoc/>
     public bool Remove(TKey key)
     {
       if (!_parent.TryGetValue(key, out var b))
@@ -186,6 +213,7 @@ namespace Altaxo.Collections
       return _parent.Remove(key);
     }
 
+    /// <inheritdoc/>
     public bool TryGetValue(TKey key, [MaybeNullWhen(false)] out TDerivValue value)
     {
       if (_parent.TryGetValue(key, out var d))
@@ -200,6 +228,7 @@ namespace Altaxo.Collections
       }
     }
 
+    /// <inheritdoc/>
     IEnumerator IEnumerable.GetEnumerator()
     {
       foreach (var entry in _parent)

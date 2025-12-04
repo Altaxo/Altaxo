@@ -29,7 +29,7 @@ namespace Altaxo.Geometry
   /// Represents a polyline point with forward, west, and north vector, and its position.
   /// This is equivalent to a <see cref="Matrix4x3"/>, but without the overhead for calculating the determinant.
   /// </summary>
-  public struct PolylinePointD3D
+  public class PolylinePointD3DAsClass
   {
     /// <summary>Forward vector at this polyline point.</summary>
     public VectorD3D ForwardVector;
@@ -41,30 +41,25 @@ namespace Altaxo.Geometry
     public PointD3D Position;
 
     /// <summary>
-    /// Initializes a new instance of the <see cref="PolylinePointD3D"/> struct.
+    /// Initializes a new instance of the <see cref="PolylinePointD3DAsClass"/> class.
+    /// </summary>
+    public PolylinePointD3DAsClass()
+    {
+    }
+
+    /// <summary>
+    /// Initializes a new instance of the <see cref="PolylinePointD3DAsClass"/> class with specified vectors and position.
     /// </summary>
     /// <param name="forwardVector">The forward vector.</param>
     /// <param name="westVector">The west vector.</param>
     /// <param name="northVector">The north vector.</param>
     /// <param name="position">The position.</param>
-    public PolylinePointD3D(VectorD3D forwardVector, VectorD3D westVector, VectorD3D northVector, PointD3D position)
+    public PolylinePointD3DAsClass(VectorD3D forwardVector, VectorD3D westVector, VectorD3D northVector, PointD3D position)
     {
       Position = position;
       WestVector = westVector;
       NorthVector = northVector;
       ForwardVector = forwardVector;
-    }
-
-    /// <summary>
-    /// Returns a copy of this polyline point with the specified position.
-    /// </summary>
-    /// <param name="position">The new position.</param>
-    /// <returns>A copy of this polyline point with the specified position.</returns>
-    public PolylinePointD3D WithPosition(PointD3D position)
-    {
-      var result = this;
-      result.Position = position;
-      return result;
     }
   }
 }

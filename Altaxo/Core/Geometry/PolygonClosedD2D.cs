@@ -34,10 +34,19 @@ namespace Altaxo.Geometry
   /// </summary>
   public class PolygonClosedD2D
   {
+    /// <summary>
+    /// The points that form the closed polygon.
+    /// </summary>
     protected PointD2D[] _points;
 
+    /// <summary>
+    /// The points of the polygon which are sharp points.
+    /// </summary>
     protected HashSet<PointD2D> _sharpPoints;
 
+    /// <summary>
+    /// Indicates whether this polygon is a hole.
+    /// </summary>
     protected bool? _isHole;
 
     /// <summary>
@@ -48,12 +57,22 @@ namespace Altaxo.Geometry
     /// </value>
     public PolygonClosedD2D? Parent { get; set; }
 
+    /// <summary>
+    /// Initializes a new instance of the <see cref="PolygonClosedD2D"/> class with points and sharp points.
+    /// </summary>
+    /// <param name="points">The points that form the polygon.</param>
+    /// <param name="sharpPoints">The set of sharp points.</param>
     public PolygonClosedD2D(PointD2D[] points, HashSet<PointD2D> sharpPoints)
     {
       _points = points;
       _sharpPoints = sharpPoints;
     }
 
+    /// <summary>
+    /// Initializes a new instance of the <see cref="PolygonClosedD2D"/> class by scaling a template polygon.
+    /// </summary>
+    /// <param name="template">The template polygon.</param>
+    /// <param name="scale">The scale factor.</param>
     public PolygonClosedD2D(PolygonClosedD2D template, double scale)
     {
       _points = template._points.Select(p => new PointD2D(p.X * scale, p.Y * scale)).ToArray();
@@ -92,7 +111,7 @@ namespace Altaxo.Geometry
     /// <value>
     ///   <c>true</c> if this instance is a hole; otherwise, <c>false</c>.
     /// </value>
-    /// <exception cref="System.NotImplementedException"></exception>
+    /// <exception cref="System.NotImplementedException">Thrown if the value has not been set.</exception>
     public bool IsHole
     {
       get

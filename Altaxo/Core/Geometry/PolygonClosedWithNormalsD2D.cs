@@ -33,12 +33,28 @@ namespace Altaxo.Geometry
   /// </summary>
   public class PolygonClosedWithNormalsD2D
   {
+    /// <summary>
+    /// The points of the polygon. Sharp vertices are stored twice.
+    /// </summary>
     private PointD2D[] _points;
+    /// <summary>
+    /// The normals of the polygon. There is a 1:1 relationship between the indices of the normals and the points.
+    /// </summary>
     private PointD2D[] _normals;
 
+    /// <summary>
+    /// Gets the points of the polygon. Sharp vertices are stored twice.
+    /// </summary>
     public PointD2D[] Points { get { return _points; } }
+    /// <summary>
+    /// Gets the normals of the polygon. There is a 1:1 relationship between the indices of the normals and the points.
+    /// </summary>
     public PointD2D[] Normals { get { return _normals; } }
 
+    /// <summary>
+    /// Initializes a new instance of the <see cref="PolygonClosedWithNormalsD2D"/> class from a template polygon.
+    /// </summary>
+    /// <param name="template">The template polygon.</param>
     public PolygonClosedWithNormalsD2D(PolygonClosedD2D template)
     {
       var numPoints = template.Points.Length + template.SharpPoints.Count;
@@ -83,6 +99,12 @@ namespace Altaxo.Geometry
         throw new InvalidProgramException();
     }
 
+    /// <summary>
+    /// Calculates the normal vector for a polygon edge.
+    /// </summary>
+    /// <param name="polygonVector">The vector along the polygon edge.</param>
+    /// <param name="isHole">Indicates whether the polygon is a hole.</param>
+    /// <returns>The normal vector.</returns>
     private PointD2D GetNormal(PointD2D polygonVector, bool isHole)
     {
       return new PointD2D(polygonVector.Y, -polygonVector.X) / polygonVector.VectorLength;

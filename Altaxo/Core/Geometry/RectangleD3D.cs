@@ -34,7 +34,18 @@ namespace Altaxo.Geometry
   [Serializable]
   public struct RectangleD3D
   {
-    private double _x, _y, _z, _sizeX, _sizeY, _sizeZ;
+    /// <summary>The x coordinate of the left side.</summary>
+    private double _x;
+    /// <summary>The y coordinate of the top side.</summary>
+    private double _y;
+    /// <summary>The z coordinate of the front side.</summary>
+    private double _z;
+    /// <summary>The size in x direction.</summary>
+    private double _sizeX;
+    /// <summary>The size in y direction.</summary>
+    private double _sizeY;
+    /// <summary>The size in z direction.</summary>
+    private double _sizeZ;
 
     #region Serialization
 
@@ -268,7 +279,9 @@ namespace Altaxo.Geometry
         return new RectangleD3D();
       }
     }
-
+    /// <summary>
+    /// Gets a value indicating whether this rectangle is empty (all sizes are zero).
+    /// </summary>
     public bool IsEmpty
     {
       get
@@ -287,21 +300,24 @@ namespace Altaxo.Geometry
       return !(p._x == q._x && p._y == q._y && p._z == q._z && p._sizeX == q._sizeX && p._sizeY == q._sizeY && p._sizeZ == q._sizeZ);
     }
 
+    /// <inheritdoc/>
     public override int GetHashCode()
     {
       return _x.GetHashCode() + _y.GetHashCode() + _z.GetHashCode() + _sizeX.GetHashCode() + _sizeY.GetHashCode() + _sizeZ.GetHashCode();
     }
-
+    /// <inheritdoc/>
     public override bool Equals(object? obj)
     {
       return obj is RectangleD3D q && _x == q._x && _y == q._y && _z == q._z && _sizeX == q._sizeX && _sizeY == q._sizeY && _sizeZ == q._sizeZ;
     }
-
+    /// <inheritdoc/>
     public override string ToString()
     {
       return string.Format("X={0}; Y={1}; Z={2}; SX={3}; SY={4}; SZ={5}", _x, _y, _z, _sizeX, _sizeY, _sizeZ);
     }
-
+    /// <summary>
+    /// Gets the location (left-top-front corner) of the rectangle.
+    /// </summary>
     public PointD3D Location
     {
       get
@@ -309,7 +325,9 @@ namespace Altaxo.Geometry
         return new PointD3D(_x, _y, _z);
       }
     }
-
+    /// <summary>
+    /// Gets the location plus size (right-bottom-back corner) of the rectangle.
+    /// </summary>
     public PointD3D LocationPlusSize
     {
       get
@@ -317,13 +335,9 @@ namespace Altaxo.Geometry
         return new PointD3D(_x + _sizeX, _y + _sizeY, _z + _sizeZ);
       }
     }
-
     /// <summary>
     /// Gets the center of this rectangle.
     /// </summary>
-    /// <value>
-    /// The center of this rectangle.
-    /// </value>
     public PointD3D Center
     {
       get
@@ -459,9 +473,6 @@ namespace Altaxo.Geometry
     /// <summary>
     /// Gets the vertices in binary order (x: 0th digit, y: 1st digit, z: 2nd digit).
     /// </summary>
-    /// <value>
-    /// The vertices.
-    /// </value>
     public IEnumerable<PointD3D> Vertices
     {
       get
@@ -476,13 +487,9 @@ namespace Altaxo.Geometry
         yield return new PointD3D(_x + _sizeX, _y + _sizeY, _z + _sizeZ);
       }
     }
-
     /// <summary>
-    /// Gets the edges of the rectange (first bottom edges, then the pillars, and then the top edges)
+    /// Gets the edges of the rectangle (first bottom edges, then the pillars, and then the top edges).
     /// </summary>
-    /// <value>
-    /// The edges of the rectangle.
-    /// </value>
     public IEnumerable<LineD3D> Edges
     {
       get
@@ -506,13 +513,9 @@ namespace Altaxo.Geometry
         yield return new LineD3D(new PointD3D(_x, _y + _sizeY, _z + _sizeZ), new PointD3D(_x, _y, _z + _sizeZ));
       }
     }
-
     /// <summary>
     /// Gets an enumeration of the planes of the faces of this rectangle (left, right, front, back, bottom, top).
     /// </summary>
-    /// <value>
-    /// The planes of this rectangle (left, right, front, back, bottom, top).
-    /// </value>
     public IEnumerable<PlaneD3D> Planes
     {
       get
@@ -525,14 +528,10 @@ namespace Altaxo.Geometry
         yield return new PlaneD3D(0, 0, 1, _sizeZ); // Top
       }
     }
-
     /// <summary>
     /// Gets the triangle indices of all faces using the vertices returned by <see cref="Vertices"/>.
     /// The order is front, back, top, bottom, left, right.
     /// </summary>
-    /// <value>
-    /// The triangle indices.
-    /// </value>
     public IEnumerable<Tuple<int, int, int>> TriangleIndices
     {
       get
@@ -540,14 +539,10 @@ namespace Altaxo.Geometry
         return GetTriangleIndices();
       }
     }
-
     /// <summary>
     /// Gets the triangle indices of all faces using the vertices returned by <see cref="Vertices"/>.
     /// The order is front, back, top, bottom, left, right.
     /// </summary>
-    /// <return>
-    /// The triangle indices.
-    /// </return>
     public static IEnumerable<Tuple<int, int, int>> GetTriangleIndices()
     {
       // Front
@@ -569,9 +564,9 @@ namespace Altaxo.Geometry
       yield return new Tuple<int, int, int>(1, 7, 5);
       yield return new Tuple<int, int, int>(1, 3, 7);
     }
-
-    /// <summary>Gets a rectangle that includes the smallest circle around this rectangle.</summary>
-    /// <value>A rectangle that includes the smallest circle around this rectangle.</value>
+    /// <summary>
+    /// Gets a rectangle that includes the smallest circle around this rectangle.
+    /// </summary>
     public RectangleD3D OuterCircleBoundingBox
     {
       get

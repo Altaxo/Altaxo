@@ -35,29 +35,28 @@ namespace Altaxo
   #region WeakEventHandler (for an EventHandler with no specialized EventArgs)
 
   /// <summary>
-  /// Mediates an <see cref="EventHandler"/> event, holding only a weak reference to the event sink, and a weak
-  /// reference to the event source for removing the event handler.
+  /// Mediates an <see cref="EventHandler"/> event, holding only a weak reference to the event sink, and a weak reference to the event source for removing the event handler.
   /// Thus there is no reference created from the event source to the event sink, and both the event sink and the event source can be garbage collected.
   /// </summary>
-  /// <remarks>
-  /// Typical use: 
-  /// <code>
-  /// source.Changed += new WeakEventHandler(this.EhHandleChange, source, nameof(source.Changed));
-  /// </code>
-  /// Sometimes it might be neccessary to explicitly use the event handler method of this instance:
-  /// <code>
-  /// source.Changed += new WeakEventHandler(this.EhHandleChange, source, nameof(source.Changed)).EventSink;
-  /// </code>
-  /// You can even maintain a reference to the WeakActionHandler instance in your event sink instance, in case you have to remove the event handling programmatically:
-  /// <code>
-  /// _weakEventHandler = new WeakEventHandler(this.EhHandleChange, source, nameof(source.Changed)); // weakEventHandler is an instance variable of this class
-  /// source.Changed += _weakEventHandler;
-  /// .
-  /// .
-  /// .
-  /// source.Changed -= _weakEventHandler;
-  /// </code>
-  /// </remarks>
+    /// <remarks>
+    /// Typical use: 
+    /// <code>
+    /// source.Changed += new WeakEventHandler(this.EhHandleChange, source, nameof(source.Changed));
+    /// </code>
+    /// Sometimes it might be neccessary to explicitly use the event handler method of this instance:
+    /// <code>
+    /// source.Changed += new WeakEventHandler(this.EhHandleChange, source, nameof(source.Changed)).EventSink;
+    /// </code>
+    /// You can even maintain a reference to the WeakActionHandler instance in your event sink instance, in case you have to remove the event handling programmatically:
+    /// <code>
+    /// _weakEventHandler = new WeakEventHandler(this.EhHandleChange, source, nameof(source.Changed)); // weakEventHandler is an instance variable of this class
+    /// source.Changed += _weakEventHandler;
+    /// .
+    /// .
+    /// .
+    /// source.Changed -= _weakEventHandler;
+    /// </code>
+    /// </remarks>
   public class WeakEventHandler
   {
     /// <summary>A weak reference holding null.</summary>
@@ -216,18 +215,13 @@ namespace Altaxo
   {
     /// <summary>A weak reference holding null.</summary>
     private static readonly WeakReference _weakNullReference = new WeakReference(null);
-
     /// <summary>Weak reference to the event sink object.</summary>
     private WeakReference _handlerObjectWeakRef;
-
     /// <summary>Information about the method of the event sink that is called if the event is fired.</summary>
     private readonly MethodInfo _handlerMethodInfo;
-
     /// <summary>The information about the event this object is attached to.</summary>
     private readonly EventInfo _eventInfo;
-
-    /// <summary>The object that holds the event this object is attached to. If the event is a static event,
-    /// this member is null (not the <see cref="WeakReference.Target"/>, but the <see cref="WeakReference"/> itself).</summary>
+    /// <summary>The object that holds the event this object is attached to. If the event is a static event, this member is null (not the <see cref="WeakReference.Target"/>, but the <see cref="WeakReference"/> itself).</summary>
     private readonly WeakReference? _eventSource;
 
     /// <summary>
@@ -699,7 +693,7 @@ namespace Altaxo
     /// <param name="eventSource">The object that holds the event source.</param>
     /// <param name="eventName">The name of the event.</param>
     /// <remarks>
-    /// Typcical usage: <code>source.Changed += new WeakActionHandler&lt;MyClass&gt;(this.EhHandleChange, source, nameof(source.Changed));</code>
+    /// Typcical usage: <code>source.Changed += new WeakEventHandler&lt;MyEventArgs&gt;(this.EhHandleChange, source, nameof(source.Changed));</code>
     /// </remarks>
     public WeakActionHandler(Action<T1> handler, object eventSource, string eventName)
     {
@@ -821,7 +815,7 @@ namespace Altaxo
   /// </code>
   /// You can even maintain a reference to the WeakActionHandler instance in your event sink instance, in case you have to remove the event handling programmatically:
   /// <code>
-  /// _weakActionHandler = new WeakActionHandler&lt;MyArg1,MyArg2&gt;(this.EhActionHandling, x =&gt; source.ActionEvent -= x); // _weakActionHandler is an instance variable of this class
+  /// _weakActionHandler = new WeakActionHandler&lt;MyArg1,MyArg2&gt;(this.EhActionHandling, x =&gt; source.ActionEvent -= x); // weakActionHandler is an instance variable of this class
   /// source.ActionEvent += _weakActionHandler;
   /// .
   /// .
@@ -847,8 +841,6 @@ namespace Altaxo
     /// this member is null (not the <see cref="WeakReference.Target"/>, but the <see cref="WeakReference"/> itself).</summary>
     private readonly WeakReference? _eventSource;
 
-
-
     /// <summary>
     /// Initializes a new instance of the <see cref="WeakActionHandler"/> class.
     /// </summary>
@@ -856,7 +848,7 @@ namespace Altaxo
     /// <param name="eventSource">The object that holds the event source.</param>
     /// <param name="eventName">The name of the event.</param>
     /// <remarks>
-    /// Typical usage: <code>source.Changed += new WeakActionHandler&lt;MyClass1, MyClass2&gt;(this.EhHandleChange, source, nameof(source.Changed));</code>
+    /// Typical usage: <code>source.Changed += new WeakActionHandler&lt;MyClass&gt;(this.EhHandleChange, source, nameof(source.Changed));</code>
     /// </remarks>
     public WeakActionHandler(Action<T1, T2> handler, object eventSource, string eventName)
     {
@@ -911,7 +903,6 @@ namespace Altaxo
     }
 
 
-
     /// <summary>
     /// Handles the event from the original source. You must not call this method directly. However, it can be neccessary to use the method reference if the implicit casting fails. See remarks in the description of this class.
     /// </summary>
@@ -959,7 +950,7 @@ namespace Altaxo
     }
   }
 
-  #endregion WeakActionHandler<T1,T2> (for an Action with two generic arguments)
+  #endregion WeakActionHandler<T1, T2> (for an Action with two generic arguments)
 
   #region WeakActionHandler<T1,T2,T3> (for an Action with three generic arguments)
 
@@ -1007,6 +998,8 @@ namespace Altaxo
     /// this member is null (not the <see cref="WeakReference.Target"/>, but the <see cref="WeakReference"/> itself).</summary>
     private readonly WeakReference? _eventSource;
 
+
+
     /// <summary>
     /// Initializes a new instance of the <see cref="WeakActionHandler"/> class.
     /// </summary>
@@ -1014,7 +1007,7 @@ namespace Altaxo
     /// <param name="eventSource">The object that holds the event source.</param>
     /// <param name="eventName">The name of the event.</param>
     /// <remarks>
-    /// Typical usage: <code>source.Changed += new WeakActionHandler&lt;MyClass1, MyClass2, MyClass3&gt;(this.EhHandleChange, source, nameof(source.Changed));</code>
+    /// Typical usage: <code>source.Changed += new WeakActionHandler&lt;MyClass1, MyClass2&gt;(this.EhHandleChange, source, nameof(source.Changed));</code>
     /// </remarks>
     public WeakActionHandler(Action<T1, T2, T3> handler, object eventSource, string eventName)
     {
@@ -1037,7 +1030,6 @@ namespace Altaxo
 
       _handlerMethodInfo = handler.Method;
     }
-
 
     /// <summary>
     /// Initializes a new instance of the <see cref="WeakActionHandler"/> class for a static event.

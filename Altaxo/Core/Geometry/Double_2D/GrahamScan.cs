@@ -36,16 +36,36 @@ namespace Altaxo.Geometry.Double_2D
   /// </summary>
   public static class GrahamScan
   {
+    /// <summary>
+    /// Constant for a left turn.
+    /// </summary>
     private const int TURN_LEFT = 1;
+    /// <summary>
+    /// Constant for a right turn.
+    /// </summary>
     private const int TURN_RIGHT = -1;
+    /// <summary>
+    /// Constant for no turn.
+    /// </summary>
     private const int TURN_NONE = 0;
 
-
+    /// <summary>
+    /// Determines the turn direction formed by three points.
+    /// </summary>
+    /// <param name="p">First point.</param>
+    /// <param name="q">Second point.</param>
+    /// <param name="r">Third point.</param>
+    /// <returns>TURN_LEFT, TURN_RIGHT, or TURN_NONE.</returns>
     private static int Turn(PointD2DAnnotated p, PointD2DAnnotated q, PointD2DAnnotated r)
     {
       return ((q.X - p.X) * (r.Y - p.Y) - (r.X - p.X) * (q.Y - p.Y)).CompareTo(0);
     }
 
+    /// <summary>
+    /// Keeps the hull left by removing points that do not form a left turn.
+    /// </summary>
+    /// <param name="hull">The current hull.</param>
+    /// <param name="r">The candidate point.</param>
     private static void KeepLeft(List<PointD2DAnnotated> hull, PointD2DAnnotated r)
     {
       while (hull.Count > 1 && Turn(hull[hull.Count - 2], hull[hull.Count - 1], r) != TURN_LEFT)
@@ -58,6 +78,12 @@ namespace Altaxo.Geometry.Double_2D
       }
     }
 
+    /// <summary>
+    /// Gets the angle between two points in degrees.
+    /// </summary>
+    /// <param name="p1">First point.</param>
+    /// <param name="p2">Second point.</param>
+    /// <returns>The angle in degrees.</returns>
     private static double GetAngle(PointD2DAnnotated p1, PointD2DAnnotated p2)
     {
       var xDiff = p2.X - p1.X;
@@ -65,6 +91,12 @@ namespace Altaxo.Geometry.Double_2D
       return Math.Atan2(yDiff, xDiff) * 180.0 / Math.PI;
     }
 
+    /// <summary>
+    /// Sorts points by angle using merge sort.
+    /// </summary>
+    /// <param name="p0">Reference point.</param>
+    /// <param name="arrPoint">Array of points to sort.</param>
+    /// <returns>Sorted list of points.</returns>
     private static List<PointD2DAnnotated> MergeSort(PointD2DAnnotated p0, List<PointD2DAnnotated> arrPoint)
     {
       if (arrPoint.Count == 1)
@@ -106,7 +138,7 @@ namespace Altaxo.Geometry.Double_2D
     }
 
     /// <summary>
-    /// Gets the convex hull of a set of points
+    /// Gets the convex hull of a set of points.
     /// </summary>
     /// <param name="points">The points.</param>
     /// <returns>The ordered set of points that forms the hull.</returns>

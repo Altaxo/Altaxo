@@ -30,11 +30,11 @@ using System.Text;
 namespace Altaxo.Collections.Text
 {
   /// <summary>
-  /// Base class for problem solvers for longest common substring problems using an array of linked structures stored in a linear array instead of linked class instances. This should it make easier for the garbage collector.
+  /// Base class for problem solvers for longest common substring problems using an array of linked structures stored in a linear array instead of linked class instances. This should make it easier for the garbage collector.
   /// </summary>
   /// <remarks>
-  /// For details of the algorithm see the very nice paper by Michael Arnold and Enno Ohlebusch, 'Linear Time Algorithms for Generalizations of the Longest Common Substring Problem', Algorithmica (2011) 60; 806-818; DOI: 10.1007/s00453-009-9369-1.
-  /// This code was adopted from the C++ sources from the web site of the authors at http://www.uni-ulm.de/in/theo/research/sequana.html.
+  /// For details of the algorithm, see the paper by Michael Arnold and Enno Ohlebusch, "Linear Time Algorithms for Generalizations of the Longest Common Substring Problem", Algorithmica (2011) 60; 806-818; DOI: 10.1007/s00453-009-9369-1.
+  /// This code was adapted from the C++ sources from the authors' website at http://www.uni-ulm.de/in/theo/research/sequana.html.
   /// </remarks>
   public class LongestCommonSubstringBaseA : LongestCommonSubstringBase
   {
@@ -45,24 +45,18 @@ namespace Altaxo.Collections.Text
     /// </summary>
     protected struct LLElement
     {
-      /// <summary>First occurence in the suffix array.</summary>
+      /// <summary>First occurrence in the suffix array.</summary>
       public int Idx;
-
       /// <summary>Longest common prefix.</summary>
       public int Lcp;
-
       /// <summary>Index of the next list element in the array, or -1 if no such element exists.</summary>
       public int Next;
-
       /// <summary>Index of the previous list element in the array, or -1 if no such element exists.</summary>
       public int Previous;
-
       /// <summary>Index of the first list element of the interval to which this list element belongs.</summary>
       public int IntervalBegin;
-
       /// <summary>Index of the last list element of the interval to which this list element belongs.</summary>
       public int IntervalEnd;
-
       /// <summary>Length of the interval (number of nodes) that belong to the interval to which this list element belongs.</summary>
       public int IntervalSize;
     }
@@ -74,14 +68,13 @@ namespace Altaxo.Collections.Text
     {
       /// <summary>Index of the first element of the linked structures.</summary>
       public int First;
-
       /// <summary>Index of the last element of the linked structures.</summary>
       public int Last;
-
       /// <summary>List of linked structures.</summary>
       public LLElement[] L;
-
-      /// <summary>Moves the element at index i to the last position in the linked list of elements. Only the links (<see cref="LLElement.Next"/> and <see cref="LLElement.Previous"/>) of the node change, the structure itself is not moved inside the array.</summary>
+      /// <summary>
+      /// Moves the element at index <paramref name="node"/> to the last position in the linked list of elements. Only the links (<see cref="LLElement.Next"/> and <see cref="LLElement.Previous"/>) of the node change; the structure itself is not moved inside the array.
+      /// </summary>
       /// <param name="node">The index of the node.</param>
       public void MoveToLast(int node)
       {
@@ -107,7 +100,9 @@ namespace Altaxo.Collections.Text
         }
       }
 
-      /// <summary>Inits the linked list of structures by allocating an array, and filling this array with the structures linked in ascending order.</summary>
+      /// <summary>
+      /// Initializes the linked list of structures by allocating an array, and filling this array with the structures linked in ascending order.
+      /// </summary>
       /// <param name="count">Number of structures.</param>
       public void Init(int count)
       {
@@ -122,7 +117,9 @@ namespace Altaxo.Collections.Text
         Last = count - 1;
       }
 
-      /// <summary>Clears this instance (i.e. frees the array).</summary>
+      /// <summary>
+      /// Clears this instance (i.e. frees the array).
+      /// </summary>
       public void Clear()
       {
         L = new LLElement[0];

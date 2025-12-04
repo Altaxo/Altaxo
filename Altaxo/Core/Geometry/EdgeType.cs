@@ -50,4 +50,31 @@ namespace Altaxo.Geometry
     /// </summary>
     Top = 3
   }
+
+  /// <summary>
+  /// XML serialization surrogate for <see cref="EdgeType"/>.
+  /// V1: 2015-11-15 Move to Altaxo.Geometry namespace.
+  /// V2: 2023-01-14 Move from assembly AltaxoBase to AltaxoCore
+  /// </summary>
+  [Altaxo.Serialization.Xml.XmlSerializationSurrogateFor("AltaxoBase", "Altaxo.Graph.EdgeType", 0)]
+  [Altaxo.Serialization.Xml.XmlSerializationSurrogateFor("AltaxoBase", "Altaxo.Geometry.EdgeType", 1)]
+  [Altaxo.Serialization.Xml.XmlSerializationSurrogateFor(typeof(EdgeType), 2)]
+  public class EdgeTypeXmlSerializationSurrogate0 : Altaxo.Serialization.Xml.IXmlSerializationSurrogate
+  {
+    /// <inheritdoc/>
+    public void Serialize(object obj, Altaxo.Serialization.Xml.IXmlSerializationInfo info)
+    {
+      if (obj is null)
+        throw new ArgumentNullException(nameof(obj));
+
+      info.SetNodeContent(obj.ToString() ?? "Left");
+    }
+
+    /// <inheritdoc/>
+    public object Deserialize(object? o, Altaxo.Serialization.Xml.IXmlDeserializationInfo info, object? parent)
+    {
+      string val = info.GetNodeContent();
+      return System.Enum.Parse(typeof(EdgeType), val, true);
+    }
+  }
 }

@@ -26,43 +26,50 @@
 
 using System;
 using System.Collections.Generic;
-using System.Linq;
-using System.Text;
 
 namespace Altaxo.Collections.Text
 {
   /// <summary>
-  /// Evaluates the longest string, that is i) common to a number of words and ii) is repeated a certain number of times in those strings.
+  /// Evaluates the longest string that is (i) common to a number of words and (ii) is repeated a certain number of times in those strings.
   /// </summary>
   /// <remarks>
   /// <para>
   /// This is close to the original implementation, using a linked list of class instances. Thus, a
-  /// lot (repeats * textlength) class instances will be created as intermediates. The alternative implementation
-  /// <see cref="LongestCommonRepeatA"/> is avoiding this by using an array of struct's instead.
+  /// lot (repeats * text length) of class instances will be created as intermediates. The alternative implementation
+  /// <see cref="LongestCommonRepeatA"/> avoids this by using an array of structs instead.
   /// </para>
   /// <para>
-  /// For details of the algorithm see the very nice paper by Michael Arnold and Enno Ohlebusch, 'Linear Time Algorithms for Generalizations of the Longest Common Substring Problem', Algorithmica (2011) 60; 806-818; DOI: 10.1007/s00453-009-9369-1.
-  /// This code was adopted by D.Lellinger from the C++ sources from the web site of the authors at http://www.uni-ulm.de/in/theo/research/sequana.html.
+  /// For details of the algorithm, see the paper by Michael Arnold and Enno Ohlebusch, "Linear Time Algorithms for Generalizations of the Longest Common Substring Problem", Algorithmica (2011) 60; 806-818; DOI: 10.1007/s00453-009-9369-1.
+  /// This code was adapted by D. Lellinger from the C++ sources from the authors' website at http://www.uni-ulm.de/in/theo/research/sequana.html.
   /// </para>
   /// </remarks>
   public class LongestCommonRepeatL : LongestCommonSubstringBaseL
   {
     // intermediate data neccessary for the algorithm
+    /// <summary>
+    /// Array of pointers to the linked list elements for each word and repeat.
+    /// </summary>
     private LLElement[][]? _items;
-
+    /// <summary>
+    /// Number of repeats in each of the words.
+    /// </summary>
     private int _x_repeats;
     private int[]? _last_index;
     private MinimumOnSlidingWindow[]? _pqls;
 
-    /// <summary>Initializes a new instance of the problem solver for the repeated longest common substring problem.</summary>
-    /// <param name="gsa">Generalized suffix array. It is neccessary that this was constructed with individual words.</param>
+    /// <summary>
+    /// Initializes a new instance of the problem solver for the repeated longest common substring problem.
+    /// </summary>
+    /// <param name="gsa">Generalized suffix array. It is necessary that this was constructed with individual words.</param>
     public LongestCommonRepeatL(GeneralizedSuffixArray gsa)
       : base(gsa)
     {
     }
 
-    /// <summary>Initializes a new instance of the problem solver for the repeated longest common substring problem.</summary>
-    /// <param name="gsa">Generalized suffix array. It is neccessary that this was constructed with individual words.</param>
+    /// <summary>
+    /// Initializes a new instance of the problem solver for the repeated longest common substring problem.
+    /// </summary>
+    /// <param name="gsa">Generalized suffix array. It is necessary that this was constructed with individual words.</param>
     /// <param name="x_repeats">Number of repeats in each of the words.</param>
     public LongestCommonRepeatL(GeneralizedSuffixArray gsa, int x_repeats)
       : base(gsa)
@@ -70,7 +77,8 @@ namespace Altaxo.Collections.Text
       _x_repeats = x_repeats;
     }
 
-    /// <summary>Evaluates the repeated longest common substring. After evaluation, the results can be accessed by the properties of this instance. Please be aware that the amount of resulting information depends on
+    /// <summary>
+    /// Evaluates the repeated longest common substring. After evaluation, the results can be accessed by the properties of this instance. Please be aware that the amount of resulting information depends on
     /// the state of <see cref="P:LongestCommonSubstringBase.StoreVerboseResults"/>.
     /// </summary>
     /// <returns>This instance.</returns>
@@ -82,9 +90,11 @@ namespace Altaxo.Collections.Text
       return Evaluate(_x_repeats);
     }
 
-    /// <summary>Evaluates the repeated longest common substring. After evaluation, the results can be accessed by the properties of this instance. Please be aware that the amount of resulting information depends on
+    /// <summary>
+    /// Evaluates the repeated longest common substring. After evaluation, the results can be accessed by the properties of this instance. Please be aware that the amount of resulting information depends on
     /// the state of <see cref="P:StoreVerboseResults"/>.
     /// </summary>
+    /// <param name="x_repeats">Number of repeats in each of the words.</param>
     /// <returns>This instance.</returns>
     public LongestCommonRepeatL Evaluate(int x_repeats)
     {
@@ -134,7 +144,9 @@ namespace Altaxo.Collections.Text
       return this;
     }
 
-    /// <summary>Initializes all intermediates arrays and objects.</summary>
+    /// <summary>
+    /// Initializes all intermediates arrays and objects.
+    /// </summary>
     private void InitializeIntermediates()
     {
       // initialize items
@@ -181,7 +193,9 @@ namespace Altaxo.Collections.Text
       _lastLcp[0] = _ddlList.First;
     }
 
-    /// <summary>Cleans the intermediates so the garbage collector can get them.</summary>
+    /// <summary>
+    /// Cleans the intermediates so the garbage collector can get them.
+    /// </summary>
     private void CleanIntermediates()
     {
       _ddlList = null;
@@ -190,6 +204,9 @@ namespace Altaxo.Collections.Text
       _pqls = null;
     }
 
+    /// <summary>
+    /// Initializes the result arrays and objects.
+    /// </summary>
     private void InitializeResults()
     {
       // initialize results
@@ -204,6 +221,13 @@ namespace Altaxo.Collections.Text
 
 #nullable disable // disable for private functions
 
+    /// <summary>
+    /// Creates an interval in the linked list.
+    /// </summary>
+    /// <param name="end">The end element of the interval.</param>
+    /// <param name="begin">The begin element of the interval.</param>
+    /// <param name="lcp">The LCP value for the interval.</param>
+    /// <param name="size">The size of the interval.</param>
     private void create_interval(LLElement end, LLElement begin, int lcp, int size)
     {
       begin.IntervalBegin = begin;
@@ -215,8 +239,11 @@ namespace Altaxo.Collections.Text
       end.IntervalSize = size;
     }
 
-    /// <summary>To understand the principles of this algorithm see the paper by Michael Arnold and Enno Ohlebusch given in the remarks of the class description (<see cref="LongestCommonRepeatL"/>).</summary>
-    /// <param name="i">The i.</param>
+    /// <summary>
+    /// Updates the linked list for the current index.
+    /// </summary>
+    /// <param name="i">The current index in the suffix array.</param>
+    /// <remarks>To understand the principles of this algorithm see the paper by Michael Arnold and Enno Ohlebusch given in the remarks of the class description (<see cref="LongestCommonRepeatL"/>).</remarks>
     private void list_update(int i)
     {
       var sa_i = _suffixArray[i];
@@ -284,9 +311,12 @@ namespace Altaxo.Collections.Text
       text_item.Idx = i;
     }
 
-    /// <summary>To understand the principles of this algorithm see the paper by Michael Arnold and Enno Ohlebusch given in the remarks of the class description (<see cref="LongestCommonRepeatL"/>).</summary>
-    /// <param name="lcp_i">The lcp_i.</param>
-    /// <param name="index">The index.</param>
+    /// <summary>
+    /// Updates the LCP (Longest Common Prefix) information for the current index.
+    /// </summary>
+    /// <param name="lcp_i">The LCP value at the current index.</param>
+    /// <param name="index">The current index in the suffix array.</param>
+    /// <remarks>To understand the principles of this algorithm see the paper by Michael Arnold and Enno Ohlebusch given in the remarks of the class description (<see cref="LongestCommonRepeatL"/>).</remarks>
     private void lcp_update(int lcp_i, int index)
     {
       var current = _ddlList.Last;
@@ -338,7 +368,9 @@ namespace Altaxo.Collections.Text
     }
 
 
-    /// <summary>Posts the process results. Here the maximum number of words that have at least one common substring is evaluated.</summary>
+    /// <summary>
+    /// Posts the process results. Here the maximum number of words that have at least one common substring is evaluated.
+    /// </summary>
     protected void EvaluateMaximumNumberOfWordsWithCommonSubstring()
     {
       _maximumNumberOfWordsWithCommonSubstring = 0;
@@ -356,14 +388,17 @@ namespace Altaxo.Collections.Text
 
 
 #if LinkedListDebug
-		protected override void print_debug()
-		{
-			base.print_debug();
-			Console.WriteLine("State of the priority queues:");
-			for (int i = 0; i < _numberOfWords; ++i)
-				Console.Write("{0} ", _pqls[i].MinimumValue);
-			Console.WriteLine();
-		}
+    /// <summary>
+    /// Prints debug information for the linked list.
+    /// </summary>
+    protected override void print_debug()
+    {
+      base.print_debug();
+      Console.WriteLine("State of the priority queues:");
+      for (int i = 0; i < _numberOfWords; ++i)
+        Console.Write("{0} ", _pqls[i].MinimumValue);
+      Console.WriteLine();
+    }
 #endif
   }
 }

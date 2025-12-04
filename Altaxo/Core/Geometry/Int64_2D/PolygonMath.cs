@@ -382,6 +382,11 @@ namespace Altaxo.Geometry.Int64_2D
       }
     }
 
+    /// <summary>
+    /// Returns the square of a value.
+    /// </summary>
+    /// <param name="x">The value.</param>
+    /// <returns>The square of <paramref name="x"/>.</returns>
     private static double Pow2(double x) => x * x;
   }
 }

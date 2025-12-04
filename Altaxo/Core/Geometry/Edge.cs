@@ -27,29 +27,7 @@ using System;
 
 namespace Altaxo.Geometry
 {
-  /// <summary>
-  /// V1: 2015-11-15 Move to Altaxo.Geometry namespace.
-  /// V2: 2023-01-14 Move from assembly AltaxoBase to AltaxoCore
-  /// </summary>
-  [Altaxo.Serialization.Xml.XmlSerializationSurrogateFor("AltaxoBase", "Altaxo.Graph.EdgeType", 0)]
-  [Altaxo.Serialization.Xml.XmlSerializationSurrogateFor("AltaxoBase", "Altaxo.Geometry.EdgeType", 1)]
-  [Altaxo.Serialization.Xml.XmlSerializationSurrogateFor(typeof(EdgeType), 2)]
-  public class EdgeTypeXmlSerializationSurrogate0 : Altaxo.Serialization.Xml.IXmlSerializationSurrogate
-  {
-    public void Serialize(object obj, Altaxo.Serialization.Xml.IXmlSerializationInfo info)
-    {
-      if (obj is null)
-        throw new ArgumentNullException(nameof(obj));
 
-      info.SetNodeContent(obj.ToString() ?? "Left");
-    }
-
-    public object Deserialize(object? o, Altaxo.Serialization.Xml.IXmlDeserializationInfo info, object? parent)
-    {
-      string val = info.GetNodeContent();
-      return System.Enum.Parse(typeof(EdgeType), val, true);
-    }
-  }
 
   /// <summary>
   /// Edge provides some common functions that apply to one of the
@@ -63,6 +41,7 @@ namespace Altaxo.Geometry
     #region Serialization
 
     /// <summary>
+    /// XML serialization surrogate for <see cref="Edge"/>.
     /// 2015-11-15 Move to Altaxo.Geometry namespace.
     /// V2: 2023-01-14 Move from assembly AltaxoBase to AltaxoCore
     /// </summary>
@@ -71,12 +50,14 @@ namespace Altaxo.Geometry
     [Altaxo.Serialization.Xml.XmlSerializationSurrogateFor(typeof(Edge), 2)]
     private class XmlSerializationSurrogate0 : Altaxo.Serialization.Xml.IXmlSerializationSurrogate
     {
+      /// <inheritdoc/>
       public void Serialize(object obj, Altaxo.Serialization.Xml.IXmlSerializationInfo info)
       {
         var s = (Edge)obj;
         info.AddValue("EdgeType", s._styleType);
       }
 
+      /// <inheritdoc/>
       public object Deserialize(object? o, Altaxo.Serialization.Xml.IXmlDeserializationInfo info, object? parent)
       {
         var type = (EdgeType)info.GetValue("EdgeType", null);
@@ -88,17 +69,29 @@ namespace Altaxo.Geometry
 
     #endregion Serialization
 
+    /// <summary>
+    /// Initializes a new instance of the <see cref="Edge"/> struct.
+    /// </summary>
+    /// <param name="st">The edge type.</param>
     public Edge(EdgeType st)
     {
       _styleType = st;
     }
 
+    /// <summary>
+    /// Gets or sets the type of the edge.
+    /// </summary>
     public EdgeType TypeOfEdge
     {
       get { return _styleType; }
       set { _styleType = value; }
     }
 
+    /// <summary>
+    /// Gets the origin point of the edge for the given layer size.
+    /// </summary>
+    /// <param name="layerSize">The size of the layer.</param>
+    /// <returns>The origin point of the edge.</returns>
     public PointD2D GetOrg(VectorD2D layerSize)
     {
       switch (_styleType)
@@ -118,6 +111,11 @@ namespace Altaxo.Geometry
       return new PointD2D(0, 0);
     }
 
+    /// <summary>
+    /// Gets the end point of the edge for the given layer size.
+    /// </summary>
+    /// <param name="layerSize">The size of the layer.</param>
+    /// <returns>The end point of the edge.</returns>
     public PointD2D GetEnd(VectorD2D layerSize)
     {
       switch (_styleType)
@@ -137,11 +135,24 @@ namespace Altaxo.Geometry
       return new PointD2D(0, 0);
     }
 
+    /// <summary>
+    /// Gets a point between two points at a relative position.
+    /// </summary>
+    /// <param name="p1">The first point.</param>
+    /// <param name="p2">The second point.</param>
+    /// <param name="rel">The relative position between p1 and p2 (0=start, 1=end).</param>
+    /// <returns>The interpolated point.</returns>
     public static PointD2D GetPointBetween(PointD2D p1, PointD2D p2, double rel)
     {
       return new PointD2D((float)(p1.X + rel * (p2.X - p1.X)), (float)(p1.Y + rel * (p2.Y - p1.Y)));
     }
 
+    /// <summary>
+    /// Gets a point on the edge at a relative position.
+    /// </summary>
+    /// <param name="layerSize">The size of the layer.</param>
+    /// <param name="rel">The relative position along the edge (0=start, 1=end).</param>
+    /// <returns>The point on the edge.</returns>
     public PointD2D GetEdgePoint(VectorD2D layerSize, double rel)
     {
       switch (_styleType)
@@ -161,6 +172,11 @@ namespace Altaxo.Geometry
       return new PointD2D(0, 0);
     }
 
+    /// <summary>
+    /// Gets the length of the edge for the given layer size.
+    /// </summary>
+    /// <param name="layerSize">The size of the layer.</param>
+    /// <returns>The length of the edge.</returns>
     public double GetEdgeLength(VectorD2D layerSize)
     {
       switch (_styleType)
@@ -176,6 +192,11 @@ namespace Altaxo.Geometry
       return 0;
     }
 
+    /// <summary>
+    /// Gets the length of the edge opposite to this edge for the given layer size.
+    /// </summary>
+    /// <param name="layerSize">The size of the layer.</param>
+    /// <returns>The length of the opposite edge.</returns>
     public double GetOppositeEdgeLength(VectorD2D layerSize)
     {
       switch (_styleType)
@@ -191,6 +212,9 @@ namespace Altaxo.Geometry
       return 0;
     }
 
+    /// <summary>
+    /// Gets the outward-pointing normal vector for this edge.
+    /// </summary>
     public VectorD2D OuterVector
     {
       get
@@ -213,6 +237,9 @@ namespace Altaxo.Geometry
       }
     }
 
+    /// <summary>
+    /// Gets the inward-pointing normal vector for this edge.
+    /// </summary>
     public VectorD2D InnerVector
     {
       get

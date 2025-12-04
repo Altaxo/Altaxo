@@ -54,11 +54,11 @@ namespace Altaxo.Geometry
     }
 
     /// <summary>
-    /// Transforms a 2D point with a 3D homography matrix.
+    /// Transforms a 1D point with a 2x2 homography matrix.
     /// </summary>
     /// <param name="m">The matrix.</param>
     /// <param name="p">The point to transform.</param>
-    /// <returns>The transformed point.</returns>
+    /// <returns>The transformed value.</returns>
     public static double Transform(Matrix2x2 m, double p)
     {
       var pt = m.Transform(new PointD2D(p, 1));
@@ -121,7 +121,7 @@ namespace Altaxo.Geometry
 
 
     /// <summary>
-    /// Transforms a 2D point with a 3D homography matrix.
+    /// Transforms a 2D point with a 3x3 homography matrix.
     /// </summary>
     /// <param name="m">The matrix.</param>
     /// <param name="p">The point to transform.</param>
@@ -203,7 +203,7 @@ namespace Altaxo.Geometry
     }
 
     /// <summary>
-    /// Transforms a 2D point with a 3D homography matrix.
+    /// Transforms a 3D point with a 4x4 homography matrix.
     /// </summary>
     /// <param name="m">The matrix.</param>
     /// <param name="p">The point to transform.</param>
@@ -215,6 +215,11 @@ namespace Altaxo.Geometry
     }
 
 
+    /// <summary>
+    /// Evaluates an affine transformation matrix for 2D point pairs.
+    /// </summary>
+    /// <param name="pointPairs">Pairs of points (x and y).</param>
+    /// <returns>The affine transformation matrix.</returns>
     public static Matrix3x2 EvaluateAffine(IEnumerable<(PointD2D x, PointD2D y)> pointPairs)
     {
       var count = pointPairs.Count();
@@ -255,6 +260,11 @@ namespace Altaxo.Geometry
       return new Matrix3x2(parameter[0], parameter[1], parameter[2], parameter[3], parameter[4], parameter[5]);
     }
 
+    /// <summary>
+    /// Evaluates an affine transformation matrix for 3D point pairs.
+    /// </summary>
+    /// <param name="pointPairs">Pairs of points (x and y).</param>
+    /// <returns>The affine transformation matrix.</returns>
     public static Matrix4x3 EvaluateAffine(IEnumerable<(PointD3D x, PointD3D y)> pointPairs)
     {
       var count = pointPairs.Count();

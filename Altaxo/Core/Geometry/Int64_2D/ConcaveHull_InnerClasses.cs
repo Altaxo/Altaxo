@@ -29,10 +29,17 @@ namespace Altaxo.Geometry.Int64_2D
 {
   public partial class ConcaveHull
   {
+    /// <summary>
+    /// Compares two <see cref="Int64LineD2DAnnotated"/> instances by their length.
+    /// </summary>
     public class LengthComparer : IComparer<Int64LineD2DAnnotated>
     {
+      /// <summary>
+      /// Gets the singleton instance of <see cref="LengthComparer"/>.
+      /// </summary>
       public static LengthComparer Instance { get; private set; } = new LengthComparer();
 
+      /// <inheritdoc/>
       public int Compare(Int64LineD2DAnnotated x, Int64LineD2DAnnotated y)
       {
         return Comparer<double>.Default.Compare(x.Length, y.Length);

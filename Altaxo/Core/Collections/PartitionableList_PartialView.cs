@@ -30,6 +30,9 @@ using System.Text;
 
 namespace Altaxo.Collections
 {
+  /// <summary>
+  /// Interface for an observable list supporting move operations and collection change notifications.
+  /// </summary>
   public interface IObservableList<T> : IList<T>, INotifyCollectionChanged
   {
     /// <summary>
@@ -41,19 +44,16 @@ namespace Altaxo.Collections
   }
 
   /// <summary>
-  /// Determines the behavior when an item is inserted in the PartitionableList
+  /// Determines the behavior when an item is inserted in the PartitionableList.
   /// </summary>
   public enum PartitionableListAddBehavior
   {
     /// <summary>If there are items in the partial view, the new item is added to the parent list immediately after the last item of the partial view. If the partial view is empty, the new item is added to the parent list as the last item.</summary>
     KeepTogether_AddLastIfEmpty,
-
     /// <summary>If there are items in the partial view, the new item is added to the parent list immediately after the last item of the partial view. If the partial view is empty, the new item is inserted in the parent list at index 0.</summary>
     KeepTogether_AddFirstIfEmpty,
-
     /// <summary>If there are items in the partial view, the new item is added to the parent list as the last item. If the partial view is empty, the new item is added to the parent list as the last item.</summary>
     AddLast_AddLastIfEmpty,
-
     /// <summary>If there are items in the partial view, the new item is added to the parent list as the last item. If the partial view is empty, the new item is inserted in the parent list at index 0.</summary>
     AddLast_AddFirstIfEmpty
   }
@@ -63,16 +63,28 @@ namespace Altaxo.Collections
     #region PartialViewBase
 
     /// <summary>
-    /// We had to split PartialView into a non-generic base class and the generic class itself.
-    /// By that it is possible to safely cast to PartialViewBase whenever it is neccessary, whereas a cast to PartialViewBase&lt;T&gt; may fail because
-    /// it is infact a PartialViewBase&lt;M&gt; type.
+    /// Non-generic base class for partial views, allowing safe casting and management of views of different types.
     /// </summary>
     protected class PartialViewBase
     {
+      /// <summary>
+      /// The parent collection.
+      /// </summary>
       protected internal PartitionableList<T> _collection;
+      /// <summary>
+      /// The selection criterion for items in the partial view.
+      /// </summary>
       protected internal Func<T, bool> _selectionCriterium;
+      /// <summary>
+      /// List of indices of items in the parent collection that are included in the partial view.
+      /// </summary>
       protected internal List<int> _itemIndex;
 
+      /// <summary>
+      /// Initializes a new instance of the <see cref="PartialViewBase"/> class.
+      /// </summary>
+      /// <param name="list">The parent collection.</param>
+      /// <param name="selectionCriterium">The selection criterion for items.</param>
       protected internal PartialViewBase(PartitionableList<T> list, Func<T, bool> selectionCriterium)
       {
         _collection = list;
@@ -90,9 +102,9 @@ namespace Altaxo.Collections
       /// <summary>
       /// Finds the item in the list that is equal to <paramref name="value"/>.
       /// </summary>
-      /// <param name="value">The value to found.</param>
-      /// <param name="indexFound">On return, contains the index of the item in <see cref="_itemIndex"/> that is equal to contains <paramref name="value"/> (if such an item is found). Otherwise, contains the index of the first item which is greater than <paramref name="value"/>.</param>
-      /// <returns>True if <see cref="_itemIndex"/> contains an item equal to <paramref name="value"/>. Otherwise, the return value is <c>false</c>.</returns>
+      /// <param name="value">The value to find.</param>
+      /// <param name="indexFound">On return, contains the index of the item in <see cref="_itemIndex"/> that is equal to <paramref name="value"/> (if such an item is found). Otherwise, contains the index of the first item which is greater than <paramref name="value"/>.</param>
+      /// <returns>True if <see cref="_itemIndex"/> contains an item equal to <paramref name="value"/>; otherwise, false.</returns>
       public bool TryFindIndexOfItemGreaterThanOrEqualTo(int value, out int indexFound)
       {
         int upperIndex = _itemIndex.Count - 1;
@@ -134,8 +146,14 @@ namespace Altaxo.Collections
         }
       }
 
+      /// <summary>
+      /// Occurs when the collection has changed.
+      /// </summary>
       public event NotifyCollectionChangedEventHandler? CollectionChanged;
 
+      /// <summary>
+      /// Raises the <see cref="CollectionChanged"/> event.
+      /// </summary>
       public virtual void OnNotifyCollectionChanged()
       {
         CollectionChanged?.Invoke(this, new NotifyCollectionChangedEventArgs(NotifyCollectionChangedAction.Reset));
@@ -144,16 +162,36 @@ namespace Altaxo.Collections
 
     #endregion PartialViewBase
 
+    /// <summary>
+    /// Generic partial view class for a partitionable list, supporting selection criteria and insertion behavior.
+    /// </summary>
     protected class PartialView<M> : PartialViewBase, IObservableList<M> where M : T
     {
+      /// <summary>
+      /// Optional action to execute before insertion.
+      /// </summary>
       protected Action<M>? _actionBeforeInsertion;
+      /// <summary>
+      /// Behavior for adding items to the view.
+      /// </summary>
       private PartitionableListAddBehavior _addBehavior = PartitionableListAddBehavior.KeepTogether_AddLastIfEmpty;
 
+      /// <summary>
+      /// Initializes a new instance of the <see cref="PartialView{M}"/> class.
+      /// </summary>
+      /// <param name="list">The parent collection.</param>
+      /// <param name="selectionCriterium">The selection criterion for items.</param>
       protected internal PartialView(PartitionableList<T> list, Func<T, bool> selectionCriterium)
         : base(list, selectionCriterium)
       {
       }
 
+      /// <summary>
+      /// Initializes a new instance of the <see cref="PartialView{M}"/> class with an action before insertion.
+      /// </summary>
+      /// <param name="list">The parent collection.</param>
+      /// <param name="selectionCriterium">The selection criterion for items.</param>
+      /// <param name="actionBeforeInsertion">Action to execute before insertion.</param>
       protected internal PartialView(PartitionableList<T> list, Func<T, bool> selectionCriterium, Action<M> actionBeforeInsertion)
         : base(list, selectionCriterium)
       {
@@ -161,23 +199,15 @@ namespace Altaxo.Collections
       }
 
       /// <summary>
-      /// Gets or sets a property that determines at which position in the parent's list an item is placed when it is added to the <see cref="PartialView{M}"/>;
+      /// Gets or sets the behavior for adding items to the view.
       /// </summary>
-      /// <value>
-      /// The behavior when an item is added to this view.
-      /// </value>
       public PartitionableListAddBehavior AddBehavior
       {
-        get
-        {
-          return _addBehavior;
-        }
-        set
-        {
-          _addBehavior = value;
-        }
+        get { return _addBehavior; }
+        set { _addBehavior = value; }
       }
 
+      /// <inheritdoc/>
       public void Move(int oldIndex, int newIndex)
       {
         if (oldIndex < 0 || oldIndex >= _itemIndex.Count)
@@ -192,6 +222,7 @@ namespace Altaxo.Collections
 
       #region IList implementations
 
+      /// <inheritdoc/>
       public int IndexOf(M item)
       {
         for (int i = 0; i < _itemIndex.Count; ++i)
@@ -202,6 +233,7 @@ namespace Altaxo.Collections
         return -1;
       }
 
+      /// <inheritdoc/>
       public void Insert(int index, M item)
       {
         if (index < 0 || index > _itemIndex.Count)
@@ -232,12 +264,14 @@ namespace Altaxo.Collections
         _collection.Insert(insertPoint, item);
       }
 
+      /// <inheritdoc/>
       public void RemoveAt(int index)
       {
         int j = _itemIndex[index];
         _collection.RemoveAt(j);
       }
 
+      /// <inheritdoc/>
       public M this[int index]
       {
         get
@@ -257,6 +291,7 @@ namespace Altaxo.Collections
         }
       }
 
+      /// <inheritdoc/>
       public void Add(M item)
       {
         if (!_selectionCriterium(item))
@@ -280,6 +315,7 @@ namespace Altaxo.Collections
         }
       }
 
+      /// <inheritdoc/>
       public void Clear()
       {
         if (0 == _itemIndex.Count)
@@ -297,6 +333,7 @@ namespace Altaxo.Collections
         }
       }
 
+      /// <inheritdoc/>
       public bool Contains(M item)
       {
         for (int i = 0; i < _itemIndex.Count; ++i)
@@ -307,6 +344,7 @@ namespace Altaxo.Collections
         return false;
       }
 
+      /// <inheritdoc/>
       public void CopyTo(M[] array, int arrayIndex)
       {
 #pragma warning disable CS8600, 8601 // Possible null reference assignment.
@@ -315,16 +353,19 @@ namespace Altaxo.Collections
 #pragma warning restore CS8600, 8601 // Possible null reference assignment.
       }
 
+      /// <inheritdoc/>
       public int Count
       {
         get { return _itemIndex.Count; }
       }
 
+      /// <inheritdoc/>
       public bool IsReadOnly
       {
         get { return false; }
       }
 
+      /// <inheritdoc/>
       public bool Remove(M item)
       {
         int i = IndexOf(item);
@@ -339,6 +380,7 @@ namespace Altaxo.Collections
         }
       }
 
+      /// <inheritdoc/>
       public IEnumerator<M> GetEnumerator()
       {
 #pragma warning disable CS8600, CS8603 // Possible null reference return.
@@ -347,6 +389,7 @@ namespace Altaxo.Collections
 #pragma warning restore CS8600, CS8603 // Possible null reference return.
       }
 
+      /// <inheritdoc/>
       System.Collections.IEnumerator System.Collections.IEnumerable.GetEnumerator()
       {
         foreach (int j in _itemIndex)

@@ -32,18 +32,18 @@ using System.Text;
 namespace Altaxo.Collections.Text
 {
   /// <summary>
-  /// Evaluates the longest string, that is i) common to a number of words and ii) is repeated a certain number of times in those strings.
-  /// The number of repeats the string should occur in each word is given by an array of integers here.
+  /// Evaluates the longest string that is (i) common to a number of words and (ii) is repeated a certain number of times in those strings.
+  /// The number of repeats the string should occur in each word is given by an array of integers.
   /// </summary>
   /// <remarks>
   /// <para>
   /// This is close to the original implementation, using a linked list of class instances. Thus, a
-  /// lot (repeats * textlength) class instances will be created as intermediates. The implementation
-  /// <see cref="LongestCommonGeneralizedRepeatA"/> is avoiding this by using a array of struct's instead.
+  /// lot (repeats * text length) of class instances will be created as intermediates. The implementation
+  /// <see cref="LongestCommonGeneralizedRepeatA"/> avoids this by using an array of structs instead.
   /// </para>
   /// <para>
-  /// For details of the algorithm see the very nice paper by Michael Arnold and Enno Ohlebusch, 'Linear Time Algorithms for Generalizations of the Longest Common Substring Problem', Algorithmica (2011) 60; 806-818; DOI: 10.1007/s00453-009-9369-1.
-  /// This code was adopted by D.Lellinger from the C++ sources from the web site of the authors at http://www.uni-ulm.de/in/theo/research/sequana.html.
+  /// For details of the algorithm, see the paper by Michael Arnold and Enno Ohlebusch, "Linear Time Algorithms for Generalizations of the Longest Common Substring Problem", Algorithmica (2011) 60; 806-818; DOI: 10.1007/s00453-009-9369-1.
+  /// This code was adapted by D. Lellinger from the C++ sources from the authors' website at http://www.uni-ulm.de/in/theo/research/sequana.html.
   /// </para>
   /// </remarks>
   public class LongestCommonGeneralizedRepeatL : LongestCommonSubstringBase
@@ -55,49 +55,45 @@ namespace Altaxo.Collections.Text
     /// </summary>
     protected class DDLElement
     {
-      /// <summary>First occurence in the suffix array.</summary>
+      /// <summary>First occurrence in the suffix array.</summary>
       public int Idx;
-
       /// <summary>Longest common prefix.</summary>
       public int Lcp;
-
       /// <summary>Next list element in the array, or null if no such element exists.</summary>
       public DDLElement? Next;
-
       /// <summary>Previous list element in the array, or null if no such element exists.</summary>
       public DDLElement? Previous;
-
       /// <summary>First list element of the interval to which this list element belongs.</summary>
       public DDLElement IntervalBegin;
-
       /// <summary>Last list element of the interval to which this list element belongs.</summary>
       public DDLElement IntervalEnd;
-
       /// <summary>Length of the interval (number of nodes) that belong to the interval to which this list element belongs.</summary>
       public int IntervalSize;
-
       /// <summary>Number of the word this element belongs to.</summary>
       public int Text;
-
+      /// <summary>Indicates whether this element is clean.</summary>
       public bool Clean;
-
 #if LinkedListDebug
-			public int DebugId;
-			static int DebugIdGen = -1;
+      public int DebugId;
+      static int DebugIdGen = -1;
 #endif
-
+      /// <summary>
+      /// Initializes a new instance of the <see cref="DDLElement"/> class.
+      /// </summary>
       public DDLElement()
       {
         IntervalBegin = this;
         IntervalEnd = this;
         IntervalSize = 1;
         Clean = true;
-
 #if LinkedListDebug
-				DebugId = ++DebugIdGen;
+        DebugId = ++DebugIdGen;
 #endif
       }
-
+      /// <summary>
+      /// Initializes a new instance of the <see cref="DDLElement"/> class with the specified word index.
+      /// </summary>
+      /// <param name="text">The word index this element belongs to.</param>
       public DDLElement(int text)
       {
         Text = text;
@@ -106,16 +102,17 @@ namespace Altaxo.Collections.Text
         IntervalEnd = this;
         IntervalSize = 1;
 #if LinkedListDebug
-				DebugId = ++DebugIdGen;
+        DebugId = ++DebugIdGen;
 #endif
       }
-
 #if LinkedListDebug
-
-			public void print_debug()
-			{
-				Console.WriteLine("Id: {0}, Lcp={1}, Idx={2}, Size={3}, BegId={4}, EndId={5}", DebugId, Lcp, Idx, IntervalSize, IntervalBegin.DebugId, IntervalEnd.DebugId);
-			}
+      /// <summary>
+      /// Prints debug information for this element.
+      /// </summary>
+      public void print_debug()
+      {
+        Console.WriteLine("Id: {0}, Lcp={1}, Idx={2}, Size={3}, BegId={4}, EndId={5}", DebugId, Lcp, Idx, IntervalSize, IntervalBegin.DebugId, IntervalEnd.DebugId);
+      }
 #endif
     }
 
@@ -127,7 +124,10 @@ namespace Altaxo.Collections.Text
       private DDLElement? _first;
       private DDLElement? _last;
       private int _count;
-
+      /// <summary>
+      /// Adds the specified node to the end of the linked list.
+      /// </summary>
+      /// <param name="node">The node to add.</param>
       public void AddLast(DDLElement node)
       {
         if (_last is null)
@@ -146,7 +146,10 @@ namespace Altaxo.Collections.Text
         }
         ++_count;
       }
-
+      /// <summary>
+      /// Removes the specified node from the linked list.
+      /// </summary>
+      /// <param name="node">The node to remove.</param>
       public void Remove(DDLElement node)
       {
         var prev = node.Previous;
@@ -164,37 +167,41 @@ namespace Altaxo.Collections.Text
 
         --_count;
       }
-
+      /// <summary>
+      /// Gets the first element of the linked list.
+      /// </summary>
       public DDLElement? First
       {
-        get
-        {
-          return _first;
-        }
+        get { return _first; }
       }
-
+      /// <summary>
+      /// Gets the last element of the linked list.
+      /// </summary>
       public DDLElement? Last
       {
-        get
-        {
-          return _last;
-        }
+        get { return _last; }
       }
-
+      /// <summary>
+      /// Gets the number of elements in the linked list.
+      /// </summary>
       public int Count
       {
-        get
-        {
-          return _count;
-        }
+        get { return _count; }
       }
     }
 
+    /// <summary>
+    /// Stores a preliminary result for a substring occurrence.
+    /// </summary>
     protected struct PreResult
     {
+      /// <summary>Start index of the suffix in the suffix array.</summary>
       public int Begin;
+      /// <summary>End index of the suffix in the suffix array.</summary>
       public int End;
+      /// <summary>Number of words that have this common substring.</summary>
       public int WordIdx;
+      /// <summary>Longest common substring in the suffix array in the range [Begin, End].</summary>
       public int Lcs;
     }
 

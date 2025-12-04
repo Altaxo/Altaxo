@@ -2,7 +2,7 @@
 
 /////////////////////////////////////////////////////////////////////////////
 //    Altaxo:  a data processing and data plotting program
-//    Copyright (C) 2002-2015 Dr. Dirk Lellinger
+//    Copyright (C) 2002-2025 Dr. Dirk Lellinger
 //
 //    This program is free software; you can redistribute it and/or modify
 //    it under the terms of the GNU General Public License as published by
@@ -23,19 +23,27 @@
 #endregion Copyright
 
 #nullable enable
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-
 namespace Altaxo.Geometry
 {
+  /// <summary>
+  /// Represents a rectangle in 3D space with an associated transformation matrix.
+  /// </summary>
   public class RectangleTransformedD3D
   {
+    /// <summary>
+    /// The underlying rectangle in 3D space.
+    /// </summary>
     private RectangleD3D _rectangle;
+    /// <summary>
+    /// The transformation matrix applied to the rectangle.
+    /// </summary>
     private Matrix4x3 _transformation;
 
+    /// <summary>
+    /// Initializes a new instance of the <see cref="RectangleTransformedD3D"/> class.
+    /// </summary>
+    /// <param name="rectangle">The rectangle in 3D space.</param>
+    /// <param name="transformation">The transformation matrix to apply.</param>
     public RectangleTransformedD3D(RectangleD3D rectangle, Matrix4x3 transformation)
     {
       _rectangle = rectangle;

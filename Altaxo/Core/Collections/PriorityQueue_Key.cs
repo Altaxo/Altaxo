@@ -30,12 +30,18 @@ using System.Text;
 namespace Altaxo.Collections
 {
   /// <summary>
-  /// Implements a heap based priority queue that hold only keys. The key with the minimum value can then retrieved from the queue. This class is not thread safe.
+  /// Implements a heap-based priority queue that holds only keys. The key with the minimum value can then be retrieved from the queue. This class is not thread safe.
   /// </summary>
   /// <typeparam name="TKey">The type of the key.</typeparam>
   public class PriorityQueue<TKey> where TKey : IComparable<TKey>
   {
+    /// <summary>
+    /// The heap array storing the key values.
+    /// </summary>
     private TKey[] _heap;
+    /// <summary>
+    /// The number of elements in the queue.
+    /// </summary>
     private int _count;
 
     /// <summary>
@@ -60,9 +66,6 @@ namespace Altaxo.Collections
     /// <summary>
     /// Gets the number of elements in the queue.
     /// </summary>
-    /// <value>
-    /// Number of elements in the queue.
-    /// </value>
     public int Count
     {
       get
@@ -104,7 +107,7 @@ namespace Altaxo.Collections
     }
 
     /// <summary>
-    /// Peeks the element with the minimum key value. An exception is thrown if the queue is empty.
+    /// Peeks the element with the minimum key value. Throws an exception if the queue is empty.
     /// </summary>
     /// <returns>Minimum key value.</returns>
     /// <exception cref="System.InvalidOperationException">Queue is empty.</exception>
@@ -117,10 +120,10 @@ namespace Altaxo.Collections
     }
 
     /// <summary>
-    /// Dequeues the minimum key value. An exception is thrown if the queue is empty.
+    /// Dequeues the minimum key value. Throws an exception if the queue is empty.
     /// </summary>
     /// <returns>Minimum key value.</returns>
-    /// <exception cref="System.InvalidOperationException">Queue is empty</exception>
+    /// <exception cref="System.InvalidOperationException">Queue is empty.</exception>
     public TKey Dequeue()
     {
       if (_count == 0)
@@ -133,6 +136,10 @@ namespace Altaxo.Collections
       return result;
     }
 
+    /// <summary>
+    /// Restores the heap property by moving the element at index <paramref name="k"/> up the heap.
+    /// </summary>
+    /// <param name="k">The index of the element to move up.</param>
     private void UpHeap(int k)
     {
       int km1_2;
@@ -145,6 +152,10 @@ namespace Altaxo.Collections
       _heap[k] = v;
     }
 
+    /// <summary>
+    /// Restores the heap property by moving the element at index <paramref name="k"/> down the heap.
+    /// </summary>
+    /// <param name="k">The index of the element to move down.</param>
     private void DownHeap(int k)
     {
       int j, jp1;

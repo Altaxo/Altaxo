@@ -126,6 +126,10 @@ namespace Altaxo.Geometry
       _determinant = null;
     }
 
+    /// <summary>
+    /// Initializes a new instance of the <see cref="Matrix4x4"/> struct from a <see cref="Matrix4x3"/>.
+    /// </summary>
+    /// <param name="a">The source matrix.</param>
     public Matrix4x4(Matrix4x3 a)
     {
       M11 = a.M11;
@@ -148,6 +152,9 @@ namespace Altaxo.Geometry
     }
 
     double? _determinant;
+    /// <summary>
+    /// Gets the determinant of this matrix. The value is cached after first computation.
+    /// </summary>
     public double Determinant
     {
       get
@@ -162,6 +169,10 @@ namespace Altaxo.Geometry
       }
     }
 
+    /// <summary>
+    /// Computes the inverse of this matrix.
+    /// </summary>
+    /// <returns>The inverse matrix.</returns>
     public Matrix4x4 Inverse()
     {
       var d = Determinant;
@@ -190,6 +201,15 @@ namespace Altaxo.Geometry
         );
     }
 
+    /// <summary>
+    /// Gets the <see cref="System.Double"/> with the specified row and column.
+    /// </summary>
+    /// <value>
+    /// The <see cref="System.Double"/>.
+    /// </value>
+    /// <param name="r">The row index.</param>
+    /// <param name="c">The column index.</param>
+    /// <returns>Element of the matrix with the specified row and column.</returns>
     public double this[int r, int c]
     {
       get
@@ -219,33 +239,6 @@ namespace Altaxo.Geometry
           _ => throw new System.ArgumentOutOfRangeException()
         };
       }
-      /* No set accessor since this matrix should be immutable
-      set
-      {
-        switch (r,c)
-        {
-          case (0, 0): M11 = value; break;
-          case (0, 1): M12 = value; break;
-          case (0, 2): M13 = value; break;
-          case (0, 3): M14 = value; break;
-
-          case (1, 0): M21 = value; break;
-          case (1, 1): M22 = value; break;
-          case (1, 2): M23 = value; break;
-          case (1, 3): M24 = value; break;
-
-          case (2, 0): M31 = value; break;
-          case (2, 1): M32 = value; break;
-          case (2, 2): M33 = value; break;
-          case (2, 3): M34 = value; break;
-
-          case (3, 0): M41 = value; break;
-          case (3, 1): M42 = value; break;
-          case (3, 2): M43 = value; break;
-          case (3, 3): M44 = value; break;
-        }
-      }
-      */
     }
 
     /// <summary>
@@ -269,6 +262,11 @@ namespace Altaxo.Geometry
       );
     }
 
+    /// <summary>
+    /// Transforms the specified 4D vector.
+    /// </summary>
+    /// <param name="p">The vector to transform.</param>
+    /// <returns>The transformed 4D vector.</returns>
     public VectorD4D Transform(VectorD4D p)
     {
       double x = p.X;
@@ -381,6 +379,7 @@ namespace Altaxo.Geometry
       return (r, q);
     }
 
+    /// <inheritdoc/>
     public override string ToString()
     {
       var stb = new StringBuilder(12 * 12);

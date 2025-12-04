@@ -33,7 +33,7 @@ namespace Altaxo.Collections
   public static class ListExtensions
   {
     /// <summary>
-    /// Exchange the positions of two items in a list.
+    /// Exchanges the positions of two items in a list.
     /// </summary>
     /// <typeparam name="T">Type of the list items.</typeparam>
     /// <param name="list">List to operate with.</param>
@@ -58,12 +58,11 @@ namespace Altaxo.Collections
     }
 
     /// <summary>
-    /// Moves a item to another list position. All items inbetween the interval <paramref name="originalIndex"/> and <paramref name="destinationIndex"/> will slip by one position (except the item at <paramref name="originalIndex"/>,
-    /// which will of course move to <paramref name="destinationIndex"/>.
+    /// Moves an item to another list position. All items in between the interval <paramref name="originalIndex"/> and <paramref name="destinationIndex"/> will slip by one position (except the item at <paramref name="originalIndex"/>, which will move to <paramref name="destinationIndex"/>).
     /// </summary>
     /// <typeparam name="T">Type of the list items.</typeparam>
     /// <param name="list">List to operate with.</param>
-    /// <param name="originalIndex">Original position of the  item.</param>
+    /// <param name="originalIndex">Original position of the item.</param>
     /// <param name="destinationIndex">Destination position of the item.</param>
     public static void MoveItemToIndex<T>(this IList<T> list, int originalIndex, int destinationIndex)
     {
@@ -117,7 +116,7 @@ namespace Altaxo.Collections
     }
 
     /// <summary>
-    /// Return the number of steps that selected items can be moved towards lower indices. The selected item with the lowest index determines that value.
+    /// Returns the number of steps that selected items can be moved towards lower indices. The selected item with the lowest index determines that value.
     /// </summary>
     /// <typeparam name="T">Type of list item.</typeparam>
     /// <param name="list">List to operate onto.</param>
@@ -143,7 +142,7 @@ namespace Altaxo.Collections
     }
 
     /// <summary>
-    /// Return the number of steps that selected items can be moved towards higher indices. The selected item with the highest index determines that value.
+    /// Returns the number of steps that selected items can be moved towards higher indices. The selected item with the highest index determines that value.
     /// </summary>
     /// <typeparam name="T">Type of list item.</typeparam>
     /// <param name="list">List to operate onto.</param>
@@ -227,7 +226,6 @@ namespace Altaxo.Collections
     /// <param name="list">List to operate with.</param>
     /// <param name="isSelected">Function that determines for each item index if it is selected or not.</param>
     /// <param name="steps">Number of steps to move. Has to be a positive value.</param>
-
     public static void MoveSelectedItemsTowardsHigherIndices<T>(this IList<T> list, Func<int, bool> isSelected, int steps)
     {
       if (steps < 0)
@@ -250,12 +248,12 @@ namespace Altaxo.Collections
     }
 
     /// <summary>
-    /// Gets the index of an item in a enumeration or list.
+    /// Gets the index of an item in an enumeration or list.
     /// </summary>
     /// <typeparam name="T">Type of the item to search for.</typeparam>
     /// <param name="list">The item list.</param>
     /// <param name="searchedItem">The searched item.</param>
-    /// <returns>Index of the first occurence of the searched item in the list (0 for the first item). If the item is not found in the list, a negative value is returned.</returns>
+    /// <returns>Index of the first occurrence of the searched item in the list (0 for the first item). If the item is not found in the list, a negative value is returned.</returns>
     public static int IndexOf<T>(this IEnumerable<T> list, T searchedItem)
     {
       int i = 0;
@@ -271,12 +269,12 @@ namespace Altaxo.Collections
     }
 
     /// <summary>
-    /// Gets the index the of first item in <paramref name="list"/> that fulfills the predicate <paramref name="predicate"/>
+    /// Gets the index of the first item in <paramref name="list"/> that fulfills the predicate <paramref name="predicate"/>.
     /// </summary>
-    /// <typeparam name="T">Type of items in the list</typeparam>
+    /// <typeparam name="T">Type of items in the list.</typeparam>
     /// <param name="list">The list.</param>
     /// <param name="predicate">The predicate function. The first argument is the item. If the return value is true, the index of this item is returned.</param>
-    /// <returns>Index the of first item in <paramref name="list"/> that fulfills the predicate, or a value of -1 if no such item could be found.</returns>
+    /// <returns>Index of the first item in <paramref name="list"/> that fulfills the predicate, or a value of -1 if no such item could be found.</returns>
     public static int IndexOfFirst<T>(this IEnumerable<T> list, Func<T, bool> predicate)
     {
       int i = 0;
@@ -290,12 +288,12 @@ namespace Altaxo.Collections
     }
 
     /// <summary>
-    /// Gets the index the of first item in <paramref name="list"/> that fulfills the predicate <paramref name="predicate"/>
+    /// Gets the index of the first item in <paramref name="list"/> that fulfills the predicate <paramref name="predicate"/>.
     /// </summary>
-    /// <typeparam name="T">Type of items in the list</typeparam>
+    /// <typeparam name="T">Type of items in the list.</typeparam>
     /// <param name="list">The list.</param>
     /// <param name="predicate">The predicate function. The first argument is the item, the second argument is the item's index in the enumeration. If the return value is true, the index of this item is returned.</param>
-    /// <returns>Index the of first item in <paramref name="list"/> that fulfills the predicate, or a value of -1 if no such item could be found.</returns>
+    /// <returns>Index of the first item in <paramref name="list"/> that fulfills the predicate, or a value of -1 if no such item could be found.</returns>
     public static int IndexOfFirst<T>(this IEnumerable<T> list, Func<T, int, bool> predicate)
     {
       int i = 0;
@@ -309,12 +307,12 @@ namespace Altaxo.Collections
     }
 
     /// <summary>
-    /// Gets the index the of last item in <paramref name="list"/> that fulfills the predicate <paramref name="predicate"/>
+    /// Gets the index of the last item in <paramref name="list"/> that fulfills the predicate <paramref name="predicate"/>.
     /// </summary>
-    /// <typeparam name="T">Type of items in the list</typeparam>
+    /// <typeparam name="T">Type of items in the list.</typeparam>
     /// <param name="list">The list.</param>
     /// <param name="predicate">The predicate function. The first argument is the item, the second argument is the item's index in the list. If the return value is true, the index of this item is returned.</param>
-    /// <returns>Index the of last item in <paramref name="list"/> that fulfills the predicate, or a value of -1 if no such an item could be found.</returns>
+    /// <returns>Index of the last item in <paramref name="list"/> that fulfills the predicate, or a value of -1 if no such an item could be found.</returns>
     public static int IndexOfLast<T>(this IList<T> list, Func<T, int, bool> predicate)
     {
       for (int i = list.Count - 1; i >= 0; --i)
@@ -325,9 +323,9 @@ namespace Altaxo.Collections
     }
 
     /// <summary>
-    /// Removes all items for which the predicate function returns <c>true.</c>
+    /// Removes all items for which the predicate function returns <c>true</c>.
     /// </summary>
-    /// <typeparam name="T">Type of list items</typeparam>
+    /// <typeparam name="T">Type of list items.</typeparam>
     /// <param name="list">The list.</param>
     /// <param name="predicate">The predicate function. The first argument is the item. If the function returns <c>true</c>, the item is removed from the list.</param>
     /// <remarks>The list is iterated backwards, starting from the last item in the list, and ending with the first item in the list.</remarks>
@@ -341,9 +339,9 @@ namespace Altaxo.Collections
     }
 
     /// <summary>
-    /// Removes all items for which the predicate function returns <c>true.</c>
+    /// Removes all items for which the predicate function returns <c>true</c>.
     /// </summary>
-    /// <typeparam name="T">Type of list items</typeparam>
+    /// <typeparam name="T">Type of list items.</typeparam>
     /// <param name="list">The list.</param>
     /// <param name="predicate">The predicate function. The first argument is the item, the second argument is the item's index. If the function returns <c>true</c>, the item is removed from the list.</param>
     /// <remarks>The list is iterated backwards, starting from the last item in the list, and ending with the first item in the list.</remarks>
@@ -356,11 +354,24 @@ namespace Altaxo.Collections
       }
     }
 
+    /// <summary>
+    /// Adds a range of items to an ObservableCollection.
+    /// </summary>
+    /// <typeparam name="T">Type of item.</typeparam>
+    /// <param name="collection">The ObservableCollection to add items to.</param>
+    /// <param name="itemsToAdd">The items to add.</param>
     public static void AddRange<T>(this System.Collections.ObjectModel.ObservableCollection<T> collection, IEnumerable<T> itemsToAdd)
     {
       foreach (var i in itemsToAdd)
         collection.Add(i);
     }
+
+    /// <summary>
+    /// Clears and fills an ObservableCollection with the specified items.
+    /// </summary>
+    /// <typeparam name="T">Type of item.</typeparam>
+    /// <param name="collection">The ObservableCollection to fill.</param>
+    /// <param name="itemsToAdd">The items to add.</param>
     public static void FillWith<T>(this System.Collections.ObjectModel.ObservableCollection<T> collection, IEnumerable<T> itemsToAdd)
     {
       collection.Clear();
@@ -371,7 +382,7 @@ namespace Altaxo.Collections
     /// <summary>
     /// Adds a range of items to a collection.
     /// </summary>
-    /// <typeparam name="T">Type of item</typeparam>
+    /// <typeparam name="T">Type of item.</typeparam>
     /// <param name="destination">The collection where to add the items.</param>
     /// <param name="itemsToAdd">The items to add.</param>
     public static void AddRange<T>(this ICollection<T> destination, IEnumerable<T> itemsToAdd)
@@ -380,6 +391,12 @@ namespace Altaxo.Collections
         destination.Add(t);
     }
 
+    /// <summary>
+    /// Clears and fills a collection with the specified items.
+    /// </summary>
+    /// <typeparam name="T">Type of item.</typeparam>
+    /// <param name="collection">The collection to fill.</param>
+    /// <param name="itemsToAdd">The items to add.</param>
     public static void FillWith<T>(this ICollection<T> collection, IEnumerable<T> itemsToAdd)
     {
       collection.Clear();
@@ -402,7 +419,5 @@ namespace Altaxo.Collections
       }
       return array;
     }
-
-
   }
 }

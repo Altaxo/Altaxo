@@ -33,8 +33,8 @@ using System.Text;
 namespace Altaxo.Collections
 {
   /// <summary>
-  /// Generic list that implements the <see cref=" INotifyCollectionChanged"/> interface to notify changed.
-  /// Does additionally implement <see cref="MoveToLowerIndex(int)"/> and <see cref="MoveToHigherIndex(int)"/> as well as <see cref="AddRange(IEnumerable{T})"/>.
+  /// Generic list that implements the <see cref="INotifyCollectionChanged"/> interface to notify changes.
+  /// Additionally implements <see cref="MoveToLowerIndex(int)"/>, <see cref="MoveToHigherIndex(int)"/>, and <see cref="AddRange(IEnumerable{T})"/>.
   /// </summary>
   /// <typeparam name="T">The type of the items in this list.</typeparam>
   /// <seealso cref="IList{T}" />
@@ -57,16 +57,27 @@ namespace Altaxo.Collections
       _countChangedEventArgs = new PropertyChangedEventArgs(nameof(Count));
     }
 
+    /// <summary>
+    /// Initializes a new instance of the <see cref="ObservableList{T}"/> class.
+    /// </summary>
     public ObservableList()
     {
       _innerList = new List<T>();
     }
 
+    /// <summary>
+    /// Initializes a new instance of the <see cref="ObservableList{T}"/> class with the specified collection.
+    /// </summary>
+    /// <param name="collection">The collection whose elements are copied to the new list.</param>
     public ObservableList(IEnumerable<T> collection)
     {
       _innerList = new List<T>(collection);
     }
 
+    /// <summary>
+    /// Raises the <see cref="CollectionChanged"/> event.
+    /// </summary>
+    /// <param name="e">The event arguments.</param>
     protected virtual void OnCollectionChanged(NotifyCollectionChangedEventArgs e)
     {
       CollectionChanged?.Invoke(this, e);
@@ -232,10 +243,9 @@ namespace Altaxo.Collections
     /// <summary>
     /// Exchanges the item at index <paramref name="idx1"/> with the item at <paramref name="idx2"/>.
     /// </summary>
-    /// <param name="idx1">The index of the one item.</param>
+    /// <param name="idx1">The index of one item.</param>
     /// <param name="idx2">The index of the other item.</param>
-    /// <exception cref="System.ArgumentOutOfRangeException">If a provided index is out of range.
-    /// </exception>
+    /// <exception cref="System.ArgumentOutOfRangeException">If a provided index is out of range.</exception>
     public void ExchangeItemsAtIndices(int idx1, int idx2)
     {
       if (!(0 <= idx1 && idx1 < _innerList.Count))

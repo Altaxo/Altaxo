@@ -42,6 +42,7 @@ namespace Altaxo.Collections
     /// <param name="array">The array to clone.</param>
     /// <returns>Cloned array, with each of the elements a clone from the original element.</returns>
     /// <exception cref="NullReferenceException">nameof(array)</exception>
+    /// <inheritdoc/>
     public static T[] CloneDeep<T>(this T[] array) where T : class, ICloneable
     {
       if (array is null)
@@ -63,6 +64,7 @@ namespace Altaxo.Collections
     /// <param name="array">The array to clone.</param>
     /// <returns>Cloned array, with each of the elements a clone from the original element.</returns>
     /// <exception cref="NullReferenceException">nameof(array)</exception>
+    /// <inheritdoc/>
     public static T?[] CloneDeepNullable<T>(this T?[] array) where T : class, ICloneable
     {
       if (array is null)

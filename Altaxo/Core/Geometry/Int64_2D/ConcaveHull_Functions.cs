@@ -28,85 +28,15 @@ using Clipper2Lib;
 
 namespace Altaxo.Geometry.Int64_2D
 {
-  public readonly struct Int64LineSegment
-  {
-    public readonly Point64 P0;
-    public readonly Point64 P1;
-
-    public Int64LineSegment(Point64 p0, Point64 p1)
-    {
-      P0 = p0;
-      P1 = p1;
-    }
-
-    public static double GetDistance(Point64 p0, Point64 p1)
-    {
-      var dx = (double)(p1.X - p0.X);
-      var dy = (double)(p1.Y - p0.Y);
-      return Math.Sqrt(dx * dx + dy * dy);
-    }
-
-    /// <summary>
-    /// Gets the angle between the lines pivot-a and pivot-b
-    /// </summary>
-    /// <param name="pivot">The pivot.</param>
-    /// <param name="a">a.</param>
-    /// <param name="b">The b.</param>
-    /// <returns></returns>
-    public static double GetCosOfAngle(Point64 pivot, Point64 a, Point64 b)
-    {
-      var rX = (double)(a.X - pivot.X);
-      var rY = (double)(a.Y - pivot.Y);
-      var sX = (double)(b.X - pivot.X);
-      var sY = (double)(b.Y - pivot.Y);
-      var z = (rX * sX + rY * sY) / Math.Sqrt((rX * rX + rY * rY) * (sX * sX + sY * sY));
-      return z;
-    }
-
-
-    /// <summary>
-    /// Gets the angle between the lines pivot-a and pivot-b
-    /// </summary>
-    /// <param name="pivot">The pivot point.</param>
-    /// <param name="a">The first point.</param>
-    /// <param name="b">The second point.</param>
-    /// <param name="returnPositiveValueIf180Degrees">If both lines are antiparallel (180 degrees), the angle is not unique (can be -Pi or +Pi).
-    /// Per default a negative angle (-Pi) is returned, but
-    /// if this parameter is set to true, then a positive angle (+Pi) will be returned.</param>
-    /// <returns>The angle between the two lines.</returns>
-    public static double GetAngle(Point64 pivot, Point64 a, Point64 b, bool returnPositiveValueIf180Degrees)
-    {
-      var aX = (double)(a.X - pivot.X);
-      var aY = (double)(a.Y - pivot.Y);
-      var bX = (double)(b.X - pivot.X);
-      var bY = (double)(b.Y - pivot.Y);
-      var d1 = aX * bY - aY * bX;
-      var d2 = aX * bX + aY * bY;
-
-      if (d1 == 0 && d2 < 0 && returnPositiveValueIf180Degrees)
-        return Math.PI;
-      else
-        return Math.Atan2(d1, d2);
-    }
-
-
-  }
-
-
-
-
   public partial class ConcaveHull
   {
-    #region Line Intersection
-
-    // see https://martin-thoma.com/how-to-check-if-two-line-segments-intersect/ for details
-
     /// <summary>
     /// Determines whether a point is right, left or on the (infinite long!) line that is defined by the provided line segment.
     /// </summary>
     /// <param name="a">The line segment.</param>
     /// <param name="b">The point to test.</param>
     /// <returns>0 if the point is on, -1 if it is right, and +1 if it is left on/to the infinite long line that is defined by the line segment.</returns>
+    /// <remarks>see https://martin-thoma.com/how-to-check-if-two-line-segments-intersect/ for details.</remarks>
     public static int SignOfCrossProduct(in Int64LineSegment a, in Point64 b)
     {
       var aX = a.P1.X - a.P0.X;
@@ -118,6 +48,12 @@ namespace Altaxo.Geometry.Int64_2D
       return d1 == d2 ? 0 : (d1 < d2 ? -1 : 1); // for non-integer we have to use some delta for comparison with 0
     }
 
+    /// <summary>
+    /// Determines whether a point touches a line segment.
+    /// </summary>
+    /// <param name="b">The point to test.</param>
+    /// <param name="a">The line segment.</param>
+    /// <returns>True if the point touches the line segment; otherwise, false.</returns>
     public static bool DoesPointTouchLine(in Point64 b, in Int64LineSegment a)
     {
       if (
@@ -168,13 +104,5 @@ namespace Altaxo.Geometry.Int64_2D
     }
 
     private static double Pow2(double x) => x * x;
-
-
-
-    #endregion
-
-
-
-
   }
 }

@@ -38,19 +38,24 @@ namespace Altaxo.Collections
   /// <typeparam name="TValue">Value type.</typeparam>
   public class DictionaryWithNullableKey<TKey, TValue> : IDictionary<TKey, TValue> where TKey : notnull
   {
-    /// <summary>Underlying dictionary for the normal keys (without the null key).</summary>
+    /// <summary>
+    /// Underlying dictionary for the normal keys (without the null key).
+    /// </summary>
     private Dictionary<TKey, TValue> _dict = new Dictionary<TKey, TValue>();
 
-    /// <summary>True if the value for the null key is set.</summary>
+    /// <summary>
+    /// True if the value for the null key is set.
+    /// </summary>
     private bool _nullValueSet;
 
-    /// <summary>Value corresponding to the null key. Only valid if <see cref="_nullValueSet"/> is True.</summary>
-#nullable disable
+    /// <summary>
+    /// Value corresponding to the null key. Only valid if <see cref="_nullValueSet"/> is True.
+    /// </summary>
     private TValue _nullValue;
-#nullable enable
 
     #region IDictionary<TKey,TValue> Members
 
+    /// <inheritdoc/>
     public void Add([MaybeNull] TKey key, TValue value)
     {
       if (key is null)
@@ -64,16 +69,19 @@ namespace Altaxo.Collections
         _dict.Add(key, value);
     }
 
+    /// <inheritdoc/>
     public bool ContainsKey(TKey key)
     {
       return key is null ? _nullValueSet : _dict.ContainsKey(key);
     }
 
+    /// <inheritdoc/>
     public ICollection<TKey> Keys
     {
       get { throw new NotImplementedException(); }
     }
 
+    /// <inheritdoc/>
     public bool Remove(TKey key)
     {
       if (key is null)
@@ -89,6 +97,7 @@ namespace Altaxo.Collections
       }
     }
 
+    /// <inheritdoc/>
     public bool TryGetValue(TKey key, [MaybeNullWhen(false)] out TValue value)
     {
       if (key is null)
@@ -108,11 +117,13 @@ namespace Altaxo.Collections
         return _dict.TryGetValue(key, out value);
     }
 
+    /// <inheritdoc/>
     public ICollection<TValue> Values
     {
       get { throw new NotImplementedException(); }
     }
 
+    /// <inheritdoc/>
     public TValue this[TKey key]
     {
       get
@@ -143,6 +154,7 @@ namespace Altaxo.Collections
 
     #region ICollection<KeyValuePair<TKey,TValue>> Members
 
+    /// <inheritdoc/>
     public void Add(KeyValuePair<TKey, TValue> item)
     {
       if (item.Key is null)
@@ -156,6 +168,7 @@ namespace Altaxo.Collections
         _dict.Add(item.Key, item.Value);
     }
 
+    /// <inheritdoc/>
     public void Clear()
     {
       _dict.Clear();
@@ -163,26 +176,31 @@ namespace Altaxo.Collections
       _nullValue = default;
     }
 
+    /// <inheritdoc/>
     public bool Contains(KeyValuePair<TKey, TValue> item)
     {
       return ContainsKey(item.Key);
     }
 
+    /// <inheritdoc/>
     public void CopyTo(KeyValuePair<TKey, TValue>[] array, int arrayIndex)
     {
       throw new NotImplementedException();
     }
 
+    /// <inheritdoc/>
     public int Count
     {
       get { return _nullValueSet ? _dict.Count : _dict.Count + 1; }
     }
 
+    /// <inheritdoc/>
     public bool IsReadOnly
     {
       get { return false; }
     }
 
+    /// <inheritdoc/>
     public bool Remove(KeyValuePair<TKey, TValue> item)
     {
       return Remove(item.Key);
@@ -192,6 +210,7 @@ namespace Altaxo.Collections
 
     #region IEnumerable<KeyValuePair<TKey,TValue>> Members
 
+    /// <inheritdoc/>
     public IEnumerator<KeyValuePair<TKey, TValue>> GetEnumerator()
     {
       throw new NotImplementedException();
@@ -201,6 +220,7 @@ namespace Altaxo.Collections
 
     #region IEnumerable Members
 
+    /// <inheritdoc/>
     System.Collections.IEnumerator System.Collections.IEnumerable.GetEnumerator()
     {
       throw new NotImplementedException();

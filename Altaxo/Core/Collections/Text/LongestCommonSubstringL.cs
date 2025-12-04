@@ -36,23 +36,30 @@ namespace Altaxo.Collections.Text
   /// code runs slightly slower than <see cref="LongestCommonSubstringA"/>, but is provided here because it is closer to the original code (see below) and easier to understand.
   /// </summary>
   /// <remarks>
-  /// For details of the algorithm see the very nice paper by Michael Arnold and Enno Ohlebusch, 'Linear Time Algorithms for Generalizations of the Longest Common Substring Problem', Algorithmica (2011) 60; 806-818; DOI: 10.1007/s00453-009-9369-1.
-  /// This code was by D.Lellinger adopted from the C++ sources from the web site of the authors at http://www.uni-ulm.de/in/theo/research/sequana.html.
+  /// For details of the algorithm, see the paper by Michael Arnold and Enno Ohlebusch, "Linear Time Algorithms for Generalizations of the Longest Common Substring Problem", Algorithmica (2011) 60; 806-818; DOI: 10.1007/s00453-009-9369-1.
+  /// This code was adopted by D. Lellinger from the C++ sources from the authors' website at http://www.uni-ulm.de/in/theo/research/sequana.html.
   /// </remarks>
   internal class LongestCommonSubstringL : LongestCommonSubstringBaseL
   {
     // intermediate data neccessary for the algorithm
 
+    /// <summary>
+    /// Array of pointers to the linked list elements for each word.
+    /// </summary>
     private LLElement[]? _textPtr;
 
-    /// <summary>Initializes a new instance of the problem solver for the longest common substring problem.</summary>
-    /// <param name="gsa">Generalized suffix array. It is neccessary that this was constructed with individual words.</param>
+    /// <summary>
+    /// Initializes a new instance of the problem solver for the longest common substring problem.
+    /// </summary>
+    /// <param name="gsa">Generalized suffix array. It is necessary that this was constructed with individual words.</param>
     public LongestCommonSubstringL(GeneralizedSuffixArray gsa)
       : base(gsa)
     {
     }
 
-    /// <summary>Evaluates the longest common substring. After evaluation, the results can be accessed by the properties of this instance.</summary>
+    /// <summary>
+    /// Evaluates the longest common substring. After evaluation, the results can be accessed by the properties of this instance.
+    /// </summary>
     /// <returns>This instance.</returns>
     public LongestCommonSubstringL Evaluate()
     {
@@ -99,7 +106,9 @@ namespace Altaxo.Collections.Text
       return this;
     }
 
-    /// <summary>Initialize all intermediate arrays and objects.</summary>
+    /// <summary>
+    /// Initialize all intermediate arrays and objects.
+    /// </summary>
     private void InitializeIntermediates()
     {
       // initialize intermediates
@@ -114,7 +123,9 @@ namespace Altaxo.Collections.Text
       }
     }
 
-    /// <summary>Cleans the intermediates so the garbage collector can get them.</summary>
+    /// <summary>
+    /// Cleans the intermediates so the garbage collector can get them.
+    /// </summary>
     private void CleanIntermediates()
     {
       _ddlList = null;
@@ -122,6 +133,9 @@ namespace Altaxo.Collections.Text
       _lastLcp = null;
     }
 
+    /// <summary>
+    /// Initializes the result arrays and objects.
+    /// </summary>
     private void InitializeResults()
     {
       // initialize results
@@ -136,7 +150,9 @@ namespace Altaxo.Collections.Text
 
 #nullable disable // disable nullable for the private functions
 
-    /// <summary>Posts the process results. Here the maximum number of words that have at least one common substring is evaluated.</summary>
+    /// <summary>
+    /// Posts the process results. Here the maximum number of words that have at least one common substring is evaluated.
+    /// </summary>
     private void PostProcessResults()
     {
       _maximumNumberOfWordsWithCommonSubstring = 0;
@@ -151,6 +167,11 @@ namespace Altaxo.Collections.Text
     }
 
 
+    /// <summary>
+    /// Updates the LCP (Longest Common Prefix) information for the current index.
+    /// </summary>
+    /// <param name="lcp_i">The LCP value at the current index.</param>
+    /// <param name="index">The current index in the suffix array.</param>
     private void lcp_update(int lcp_i, int index)
     {
       var current = _ddlList.Last;
@@ -193,6 +214,13 @@ namespace Altaxo.Collections.Text
       _lastLcp[lcp_i] = last_updated;
     }
 
+    /// <summary>
+    /// Creates an interval in the linked list.
+    /// </summary>
+    /// <param name="end">The end element of the interval.</param>
+    /// <param name="begin">The begin element of the interval.</param>
+    /// <param name="lcp">The LCP value for the interval.</param>
+    /// <param name="size">The size of the interval.</param>
     private void create_interval(LLElement end, LLElement begin, int lcp, int size)
     {
       begin.IntervalBegin = begin;
@@ -204,6 +232,10 @@ namespace Altaxo.Collections.Text
       end.IntervalSize = size;
     }
 
+    /// <summary>
+    /// Updates the linked list for the current index.
+    /// </summary>
+    /// <param name="i">The current index in the suffix array.</param>
     private void list_update(int i)
     {
       var sa_i = _suffixArray[i];
@@ -249,9 +281,11 @@ namespace Altaxo.Collections.Text
 #nullable enable
 
 #if LinkedListDebug
-
-		void Test()
-		{
+    /// <summary>
+    /// Tests the integrity of the linked list intervals for debugging purposes.
+    /// </summary>
+    void Test()
+    {
 			int totIntervalLen = 0;
 			var e = _ddlList.Last;
 			while (null != e)
@@ -301,17 +335,19 @@ namespace Altaxo.Collections.Text
 				throw new ArgumentOutOfRangeException();
 		}
 
-		void print_debug()
-		{
-			var e = _ddlList.Last;
+    /// <summary>
+    /// Prints debug information for the linked list.
+    /// </summary>
+    void print_debug()
+    {
+      var e = _ddlList.Last;
 
-			while (null != e)
-			{
-				e.print_debug();
-				e = (DDLElement)e.Previous;
-			}
-		}
-
+      while (null != e)
+      {
+        e.print_debug();
+        e = (DDLElement)e.Previous;
+      }
+    }
 #endif
   }
 }

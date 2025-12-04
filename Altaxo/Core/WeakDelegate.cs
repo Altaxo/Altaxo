@@ -33,20 +33,31 @@ using System.Text;
 namespace Altaxo
 {
   /// <summary>
-  /// Can be used to build an event that binds the clients weak.
+  /// Can be used to build an event that binds the clients weakly.
   /// </summary>
   /// <typeparam name="TDelegate">The type of the delegate.</typeparam>
   /// <remarks>Credits and further info: Albahari, Joseph and Ben, C# 6.0 in a Nutshell - The definitive reference.</remarks>
   public class WeakDelegate<TDelegate> where TDelegate : class
   {
+    /// <summary>
+    /// List of method targets (delegates and their weak references).
+    /// </summary>
     private List<MethodTarget> _targets = new List<MethodTarget>();
 
+    /// <summary>
+    /// Initializes a new instance of the <see cref="WeakDelegate{TDelegate}"/> class.
+    /// </summary>
+    /// <exception cref="InvalidOperationException">Thrown if <typeparamref name="TDelegate"/> is not a delegate type.</exception>
     public WeakDelegate()
     {
       if (!typeof(TDelegate).IsSubclassOf(typeof(Delegate)))
         throw new InvalidOperationException("TDelegate must be a delegate type");
     }
 
+    /// <summary>
+    /// Combines the specified delegate(s) into the weak delegate list.
+    /// </summary>
+    /// <param name="target">The delegate(s) to add.</param>
     public void Combine(TDelegate? target)
     {
       if (target is Delegate targetDelegate)
@@ -56,6 +67,10 @@ namespace Altaxo
       }
     }
 
+    /// <summary>
+    /// Removes the specified delegate(s) from the weak delegate list.
+    /// </summary>
+    /// <param name="target">The delegate(s) to remove.</param>
     public void Remove(TDelegate? target)
     {
       if (target is Delegate targetDelegate)
@@ -71,13 +86,11 @@ namespace Altaxo
     }
 
     /// <summary>
-    /// Gets or sets the target.
+    /// Gets or sets the target delegate(s).
     /// Gets all delegates that are still alive (and removes the dead targets by the way).
     /// If set, it removes the present targets and replaces them with the provided target(s).
     /// </summary>
-    /// <value>
-    /// The target.
-    /// </value>
+    /// <value>The target delegate(s).</value>
     public TDelegate? Target
     {
       get
@@ -113,11 +126,24 @@ namespace Altaxo
 
     #region Inner class
 
+    /// <summary>
+    /// Holds a weak reference to a delegate's target and its method info.
+    /// </summary>
     private class MethodTarget
     {
+      /// <summary>
+      /// Weak reference to the delegate's target.
+      /// </summary>
       public readonly WeakReference Reference;
+      /// <summary>
+      /// Method info of the delegate.
+      /// </summary>
       public readonly MethodInfo Method;
 
+      /// <summary>
+      /// Initializes a new instance of the <see cref="MethodTarget"/> class.
+      /// </summary>
+      /// <param name="d">The delegate.</param>
       public MethodTarget(Delegate d)
       {
         Reference = new WeakReference(d.Target);

@@ -95,8 +95,6 @@ namespace Altaxo.Geometry.Int64_2D
       CalculateConcaveHull(concavity, minimalEdgeLength);
     }
 
-
-
     /// <summary>
     /// Sets a concave hull with parameters that could be different from those provided in the constructor.
     /// </summary>
@@ -283,7 +281,7 @@ namespace Altaxo.Geometry.Int64_2D
     }
 
     /// <summary>
-    /// Gets the bounding box for a convex hull segment, given the precalculated relative circle radius and offset
+    /// Gets the bounding box for a convex hull segment, given the precalculated relative circle radius and offset.
     /// </summary>
     /// <param name="segment">The convex hull segment.</param>
     /// <param name="boundingCircleRelativeRadius">The bounding circle relative radius.</param>
@@ -318,7 +316,7 @@ namespace Altaxo.Geometry.Int64_2D
     /// Calculates the convex hull as a list of line segments.
     /// </summary>
     /// <param name="points">The points that form the convex hull.</param>
-    /// <returns></returns>
+    /// <returns>A list of line segments representing the convex hull.</returns>
     private List<Int64LineD2DAnnotated> CalculateConvexHullAsLineList(IReadOnlyList<Point64> points)
     {
       var hull_convex_edges = new List<Int64LineD2DAnnotated>();
@@ -357,7 +355,7 @@ namespace Altaxo.Geometry.Int64_2D
     /// </summary>
     /// <param name="point">The point.</param>
     /// <param name="otherLines">The other lines.</param>
-    /// <returns></returns>
+    /// <returns>True if the point touches any other line; otherwise, false.</returns>
     private bool DoesPointTouchAnyOtherLine((Point64 point, int index) point, List<Int64LineD2DAnnotated> otherLines)
     {
       foreach (var otherEdge in otherLines)
@@ -372,12 +370,12 @@ namespace Altaxo.Geometry.Int64_2D
 
     /// <summary>
     /// Tests if either segment e2 or e3 touches or crosses any other segment given in the list. Touches with the
-    /// neighboring segments (e2.P0 with linesegment.P1, and e3.P1 with lineSegment.P0 is allowed).
+    /// neighboring segments (e2.P0 with linesegment.P1, and e3.P1 with lineSegment.P0) is allowed.
     /// </summary>
     /// <param name="e2">The first segment to test.</param>
     /// <param name="e3">The other segment to test.</param>
     /// <param name="otherEdges">List of edges to test against.</param>
-    /// <returns></returns>
+    /// <returns>True if either segment touches or crosses any other segment; otherwise, false.</returns>
     private bool DoLinesIntersectAnyOtherLine(Int64LineD2DAnnotated e2, Int64LineD2DAnnotated e3, List<Int64LineD2DAnnotated> otherEdges)
     {
       foreach (var otherEdge in otherEdges)
@@ -412,10 +410,11 @@ namespace Altaxo.Geometry.Int64_2D
     }
 
     /// <summary>
-    /// Gets the hull points from the calculated line segments. The challenge here is that the line segments that forms
+    /// Gets the hull points from the calculated line segments. The challenge here is that the line segments that form
     /// the concave hull are in arbitrary order. So for each line segment we need to find another line segment where the end point of the first segment
     /// is contained in the other line segment (either as start or end point).
     /// </summary>
+    /// <param name="hull_concave_edges">The list of line segments forming the hull.</param>
     /// <returns>A fresh list of points that form the concave hull.</returns>
     private static List<(Point64 point, int index)> GetHullPoints(List<Int64LineD2DAnnotated> hull_concave_edges)
     {
@@ -512,6 +511,7 @@ namespace Altaxo.Geometry.Int64_2D
 
       // Various tests with clipper
       var clipperPoly = new Path64(hull.Select(dp => new Point64(dp.point.X, dp.point.Y)));
+
 
       // The area should be != 0
       if (!(Math.Abs(Clipper.Area(clipperPoly)) > 0)) // Area should be != 0

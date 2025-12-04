@@ -22,26 +22,23 @@ using System.Collections.Generic;
 namespace Altaxo.Collections
 {
   /// <summary>
-  /// A collection that allows its elements to be garbage-collected (unless there are other
-  /// references to the elements). Elements will disappear from the collection when they are
-  /// garbage-collected.
-  ///
-  /// The WeakCollection is not thread-safe, not even for read-only access!
-  /// No methods may be called on the WeakCollection while it is enumerated, not even a Contains or
-  /// creating a second enumerator.
-  /// The WeakCollection does not preserve any order among its contents; the ordering may be different each
-  /// time the collection is enumerated.
-  ///
-  /// Since items may disappear at any time when they are garbage collected, this class
-  /// cannot provide a useful implementation for Count and thus cannot implement the ICollection interface.
+  /// A collection that allows its elements to be garbage-collected unless there are other references to the elements. Elements will disappear from the collection when they are garbage-collected.
+  /// The WeakCollection is not thread-safe, not even for read-only access. No methods may be called on the WeakCollection while it is enumerated, not even a Contains or creating a second enumerator.
+  /// The WeakCollection does not preserve any order among its contents; the ordering may be different each time the collection is enumerated.
+  /// Since items may disappear at any time when they are garbage collected, this class cannot provide a useful implementation for Count and thus cannot implement the ICollection interface.
   /// </summary>
   public class WeakCollection<T> : IEnumerable<T> where T : class
   {
+    /// <summary>
+    /// Internal list of weak references to the elements.
+    /// </summary>
     private readonly List<WeakReference> innerList = new List<WeakReference>();
 
     /// <summary>
     /// Adds an element to the collection. Runtime: O(n).
     /// </summary>
+    /// <param name="item">The item to add.</param>
+    /// <exception cref="ArgumentNullException">Thrown if item is null.</exception>
     public void Add(T item)
     {
       if (item is null)
@@ -63,10 +60,10 @@ namespace Altaxo.Collections
     }
 
     /// <summary>
-    /// Removes an element from the collection. Returns true if the item is found and removed,
-    /// false when the item is not found.
-    /// Runtime: O(n).
+    /// Removes an element from the collection. Returns true if the item is found and removed, false when the item is not found. Runtime: O(n).
     /// </summary>
+    /// <param name="item">The item to remove.</param>
+    /// <returns>True if the item was found and removed; otherwise, false.</returns>
     public bool Remove(T item)
     {
       if (item is null)
@@ -95,6 +92,10 @@ namespace Altaxo.Collections
       return false;
     }
 
+    /// <summary>
+    /// Removes the element at the specified index by swapping it with the last element and removing the last.
+    /// </summary>
+    /// <param name="i">The index of the element to remove.</param>
     private void RemoveAt(int i)
     {
       int lastIndex = innerList.Count - 1;
@@ -102,8 +103,15 @@ namespace Altaxo.Collections
       innerList.RemoveAt(lastIndex);
     }
 
+    /// <summary>
+    /// Indicates whether the collection is currently being enumerated.
+    /// </summary>
     private bool hasEnumerator;
 
+    /// <summary>
+    /// Throws an exception if the collection is currently being enumerated.
+    /// </summary>
+    /// <exception cref="InvalidOperationException">Thrown if the collection is being enumerated.</exception>
     private void CheckNoEnumerator()
     {
       if (hasEnumerator)
@@ -111,9 +119,10 @@ namespace Altaxo.Collections
     }
 
     /// <summary>
-    /// Enumerates the collection.
-    /// Each MoveNext() call on the enumerator is O(1), thus the enumeration is O(n).
+    /// Enumerates the collection. Each MoveNext() call on the enumerator is O(1), thus the enumeration is O(n).
     /// </summary>
+    /// <returns>An enumerator over the live elements in the collection.</returns>
+    /// <exception cref="InvalidOperationException">Thrown if the collection is already being enumerated.</exception>
     public IEnumerator<T> GetEnumerator()
     {
       if (hasEnumerator)
@@ -140,6 +149,7 @@ namespace Altaxo.Collections
       }
     }
 
+    /// <inheritdoc/>
     System.Collections.IEnumerator System.Collections.IEnumerable.GetEnumerator()
     {
       return GetEnumerator();

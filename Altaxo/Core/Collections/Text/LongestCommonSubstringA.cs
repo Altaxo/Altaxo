@@ -38,6 +38,7 @@ namespace Altaxo.Collections.Text
   /// <remarks>
   /// For details of the algorithm see the very nice paper by Michael Arnold and Enno Ohlebusch, 'Linear Time Algorithms for Generalizations of the Longest Common Substring Problem', Algorithmica (2011) 60; 806-818; DOI: 10.1007/s00453-009-9369-1.
   /// This code was adopted by D.Lellinger from the C++ sources from the web site of the authors at http://www.uni-ulm.de/in/theo/research/sequana.html.
+  /// To understand the principles of this algorithm, see the paper by Michael Arnold and Enno Ohlebusch referenced in the remarks of the class description (<see cref="LongestCommonRepeatL"/>).
   /// </remarks>
   public class LongestCommonSubstringA : LongestCommonSubstringBaseA
   {

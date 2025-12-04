@@ -30,12 +30,21 @@ using System.Text;
 
 namespace Altaxo.Geometry
 {
+  /// <summary>
+  /// Provides mathematical operations for polylines in 3D space, including calculation of west and north vectors, polyline dissection, and cap handling.
+  /// </summary>
   public static class PolylineMath3D
   {
+    /// <summary>
+    /// Cosine of 0.1 degree, used for angle comparisons.
+    /// </summary>
     private static readonly double Cos01Degree = Math.Cos(0.1 * Math.PI / 180);
 
     #region Get west and north vector for a line
 
+    /// <summary>
+    /// Maximum Z component for north vector calculation.
+    /// </summary>
     private static readonly double _northVectorMaxZComponent = Math.Cos(0.9 * Math.PI / 180);
 
     /// <summary>
@@ -80,6 +89,11 @@ namespace Altaxo.Geometry
       return GetWestNorthVectors(line.Vector);
     }
 
+    /// <summary>
+    /// Gets the west and north vector at the start of a polyline.
+    /// </summary>
+    /// <param name="linePoints">The polyline points.</param>
+    /// <returns>The polyline point with forward, west, and north vectors at the start.</returns>
     public static PolylinePointD3D GetWestNorthVectorAtStart(IEnumerable<PointD3D> linePoints)
     {
       VectorD3D v = VectorD3D.Empty;
