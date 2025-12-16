@@ -38,12 +38,18 @@ namespace Altaxo.Calc.FitFunctions.Chemistry
   [FitFunctionClass]
   public record MassBasedFloryDistribution : IFitFunctionWithDerivative, IFitFunctionPeak, IImmutable
   {
+    /// <summary>
+    /// The natural logarithm of 10.
+    /// </summary>
     private const double _lnOf10 = 2.3025850929940456840; // Log(10)
 
     private const string ParameterBaseName0 = "A";
     private const string ParameterBaseName1 = "tau";
     private const int NumberOfParametersPerPeak = 2;
 
+    /// <summary>
+    /// Gets the molecular weight of the monomer unit.
+    /// </summary>
     public double MolecularWeightOfMonomerUnit
     {
       get => field;
@@ -57,7 +63,7 @@ namespace Altaxo.Calc.FitFunctions.Chemistry
 
     /// <summary>
     /// If false, the independent variable is the molecular weight M. If true, the independent variable is log10(M).
-    /// Default is false.
+    /// Default is true.
     /// </summary>
     public bool IndependentVariableIsDecadicLogarithm { get; init; } = true;
 
@@ -69,6 +75,7 @@ namespace Altaxo.Calc.FitFunctions.Chemistry
     [Serialization.Xml.XmlSerializationSurrogateFor(typeof(MassBasedFloryDistribution), 0)]
     private class XmlSerializationSurrogate0 : Serialization.Xml.IXmlSerializationSurrogate
     {
+      /// <inheritdoc/>
       public virtual void Serialize(object obj, Serialization.Xml.IXmlSerializationInfo info)
       {
         var s = (MassBasedFloryDistribution)obj;
@@ -78,6 +85,7 @@ namespace Altaxo.Calc.FitFunctions.Chemistry
         info.AddValue("IndependentVariableIsDecadicLogarithm", s.IndependentVariableIsDecadicLogarithm);
       }
 
+      /// <inheritdoc/>
       public virtual object Deserialize(object? o, Serialization.Xml.IXmlDeserializationInfo info, object? parent)
       {
         var numberOfTerms = info.GetInt32("NumberOfTerms");
@@ -90,12 +98,20 @@ namespace Altaxo.Calc.FitFunctions.Chemistry
 
     #endregion Serialization
 
+    /// <summary>
+    /// Initializes a new instance of the <see cref="MassBasedFloryDistribution"/> class with default values.
+    /// </summary>
     public MassBasedFloryDistribution()
     {
       NumberOfTerms = 1;
       OrderOfBaselinePolynomial = -1;
     }
 
+    /// <summary>
+    /// Initializes a new instance of the <see cref="MassBasedFloryDistribution"/> class with the specified number of terms and order of background polynomial.
+    /// </summary>
+    /// <param name="numberOfTerms">The number of terms (peaks).</param>
+    /// <param name="orderOfBackgroundPolynomial">The order of the background polynomial.</param>
     public MassBasedFloryDistribution(int numberOfTerms, int orderOfBackgroundPolynomial)
     {
       NumberOfTerms = numberOfTerms;
@@ -108,6 +124,10 @@ namespace Altaxo.Calc.FitFunctions.Chemistry
       return $"{GetType().Name} NumberOfTerms={NumberOfTerms} OrderOfBaseline={OrderOfBaselinePolynomial}";
     }
 
+    /// <summary>
+    /// Creates a new instance of the fit function with one term and no baseline.
+    /// </summary>
+    /// <returns>A new fit function instance.</returns>
     [FitFunctionCreator("MassBasedFloryDistribution", "Chemistry", 1, 1, NumberOfParametersPerPeak)]
     [System.ComponentModel.Description("${res:Altaxo.Calc.FitFunctions.Chemistry.MassBasedFloryDistribution}")]
     public static IFitFunction Create_1_M1()
@@ -116,7 +136,7 @@ namespace Altaxo.Calc.FitFunctions.Chemistry
     }
 
     /// <summary>
-    /// Gets/sets the order of the baseline polynomial.
+    /// Gets or sets the order of the baseline polynomial.
     /// </summary>
     public int OrderOfBaselinePolynomial
     {
@@ -136,7 +156,7 @@ namespace Altaxo.Calc.FitFunctions.Chemistry
     }
 
     /// <summary>
-    /// Gets/sets the number of peak terms.
+    /// Gets or sets the number of peak terms.
     /// </summary>
     public int NumberOfTerms
     {
@@ -157,22 +177,28 @@ namespace Altaxo.Calc.FitFunctions.Chemistry
 
     #region IFitFunction Members
 
+    /// <inheritdoc/>
     public int NumberOfIndependentVariables => 1;
 
+    /// <inheritdoc/>
     public int NumberOfDependentVariables => 1;
 
+    /// <inheritdoc/>
     public int NumberOfParameters => OrderOfBaselinePolynomial + 1 + NumberOfTerms * NumberOfParametersPerPeak;
 
+    /// <inheritdoc/>
     public string IndependentVariableName(int i)
     {
       return IndependentVariableIsDecadicLogarithm ? "log10(M)" : "M";
     }
 
+    /// <inheritdoc/>
     public string DependentVariableName(int i)
     {
       return "y";
     }
 
+    /// <inheritdoc/>
     public string ParameterName(int i)
     {
       var k = i - NumberOfParametersPerPeak * NumberOfTerms;
@@ -196,6 +222,7 @@ namespace Altaxo.Calc.FitFunctions.Chemistry
       }
     }
 
+    /// <inheritdoc/>
     public double DefaultParameterValue(int i)
     {
       var k = i - NumberOfParametersPerPeak * NumberOfTerms;
@@ -218,6 +245,7 @@ namespace Altaxo.Calc.FitFunctions.Chemistry
       }
     }
 
+    /// <inheritdoc/>
     public IVarianceScaling? DefaultVarianceScaling(int i)
     {
       return null;
@@ -225,20 +253,18 @@ namespace Altaxo.Calc.FitFunctions.Chemistry
 
 
 
+    /// <inheritdoc/>
     public string[] ParameterNamesForOnePeak => new string[] { ParameterBaseName0, ParameterBaseName1 };
 
-    /// <summary>
-    /// Not functional because instance is immutable.
-    /// </summary>
+    /// <inheritdoc/>
     public event EventHandler? Changed { add { } remove { } }
 
-
-
     /// <summary>
-    /// Evaluates the mass based Flory distribution in dependency of the molecular mass M.
+    /// Evaluates the mass based Flory distribution in dependency of the molecular mass M. ATTENTION: the first argument is always M, not log10(M)!
     /// </summary>
-    /// <param name="M">The molecular mass.</param>
-    /// <param name="tau">The probability for chain termination in every reation step.</param>
+    /// <param name="M">The molecular mass M (ATTENTION: it is always M, not log10(M)).</param>
+    /// <param name="area">The area of the peak.</param>
+    /// <param name="tau">The probability for chain termination in every reaction step.</param>
     /// <param name="molecularMassMonomer">The molecular mass of a monomer unit.</param>
     /// <returns>The distribution function. ATTENTION: the area of the distribution is area only if integrated over Log10(M), not M itself!</returns>
     public static double GetYOfOneTerm(double M, double area, double tau, double molecularMassMonomer)
@@ -247,7 +273,8 @@ namespace Altaxo.Calc.FitFunctions.Chemistry
       return area * _lnOf10 * xx * xx * Math.Exp(-xx);
     }
 
-    void IFitFunction.Evaluate(double[] independent, double[] parameters, double[] FV)
+    /// <inheritdoc/>
+    public void Evaluate(double[] independent, double[] parameters, double[] FV)
     {
       var x = IndependentVariableIsDecadicLogarithm ? Math.Pow(10, independent[0]) : independent[0];
 
@@ -272,6 +299,7 @@ namespace Altaxo.Calc.FitFunctions.Chemistry
       FV[0] = sumTerms + sumPolynomial;
     }
 
+    /// <inheritdoc/>
     public void Evaluate(IROMatrix<double> independent, IReadOnlyList<double> P, IVector<double> FV, IReadOnlyList<bool>? dependentVariableChoice)
     {
       var rowCount = independent.RowCount;
@@ -300,6 +328,7 @@ namespace Altaxo.Calc.FitFunctions.Chemistry
       }
     }
 
+    /// <inheritdoc/>
     public void EvaluateDerivative(IROMatrix<double> X, IReadOnlyList<double> P, IReadOnlyList<bool>? isParameterFixed, IMatrix<double> DY, IReadOnlyList<bool>? dependentVariableChoice)
     {
       var rowCount = X.RowCount;
@@ -339,6 +368,7 @@ namespace Altaxo.Calc.FitFunctions.Chemistry
       }
     }
 
+    /// <inheritdoc/>
     public (IReadOnlyList<double?>? LowerBounds, IReadOnlyList<double?>? UpperBounds) GetParameterBoundariesForPositivePeaks(double? minimalPosition = null, double? maximalPosition = null, double? minimalFWHM = null, double? maximalFWHM = null)
     {
       var lowerBounds = new double?[NumberOfParameters];
@@ -356,6 +386,7 @@ namespace Altaxo.Calc.FitFunctions.Chemistry
       return (lowerBounds, upperBounds);
     }
 
+    /// <inheritdoc/>
     public (IReadOnlyList<double?>? LowerBounds, IReadOnlyList<double?>? UpperBounds) GetParameterBoundariesHardLimit()
     {
       var lowerBounds = new double?[NumberOfParameters];
@@ -368,11 +399,13 @@ namespace Altaxo.Calc.FitFunctions.Chemistry
       return (lowerBounds, upperBounds);
     }
 
+    /// <inheritdoc/>
     public (IReadOnlyList<double?>? LowerBounds, IReadOnlyList<double?>? UpperBounds) GetParameterBoundariesSoftLimit()
     {
       return (null, null);
     }
 
+    /// <inheritdoc/>
     public double[] GetInitialParametersFromHeightPositionAndWidthAtRelativeHeight(double height, double position, double width, double relativeHeight)
     {
       if (IndependentVariableIsDecadicLogarithm)
@@ -384,6 +417,7 @@ namespace Altaxo.Calc.FitFunctions.Chemistry
       return [area, tau];
     }
 
+    /// <inheritdoc/>
     public (double Position, double Area, double Height, double FWHM) GetPositionAreaHeightFWHMFromSinglePeakParameters(IReadOnlyList<double> parameters)
     {
       //leftXX and rightXX are ProductLog[-(1/(Sqrt[2]*E))] and ProductLog[-1, -(1/(Sqrt[2]*E))]
@@ -410,6 +444,7 @@ namespace Altaxo.Calc.FitFunctions.Chemistry
       return (position, area, height, width);
     }
 
+    /// <inheritdoc/>
     public (double Position, double PositionStdDev, double Area, double AreaStdDev, double Height, double HeightStdDev, double FWHM, double FWHMStdDev) GetPositionAreaHeightFWHMFromSinglePeakParameters(IReadOnlyList<double> parameters, IROMatrix<double>? cv)
     {
       //leftXX and rightXX are ProductLog[-(1/(Sqrt[2]*E))] and ProductLog[-1, -(1/(Sqrt[2]*E))]

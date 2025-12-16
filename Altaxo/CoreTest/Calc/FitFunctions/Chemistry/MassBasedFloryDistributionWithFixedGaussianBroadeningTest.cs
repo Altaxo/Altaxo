@@ -22,6 +22,7 @@
 
 #endregion Copyright
 
+using System;
 using Altaxo.Calc.LinearAlgebra;
 using Xunit;
 
@@ -62,14 +63,20 @@ namespace Altaxo.Calc.FitFunctions.Chemistry
         AssertEx.AreEqual(expectedFunctionValue, y, 0, expectedAccuracy * height / expectedFunctionValue);
 
         var parameters = new double[] { area, tau };
-        var X = Matrix<double>.Build.Dense(1, 1);
-        X[0, 0] = M;
-        var FV = Vector<double>.Build.Dense(1);
-        v.Evaluate(X, parameters, FV, null);
-        AssertEx.AreEqual(expectedFunctionValue, FV[0], 0, expectedAccuracy * height / expectedFunctionValue);
+        var X = new double[1];
+        var Y = new double[1];
+        X[0] = M;
+        v.Evaluate(X, parameters, Y);
+        AssertEx.AreEqual(expectedFunctionValue, Y[0], 0, expectedAccuracy * height / expectedFunctionValue);
+
+        var XX = Matrix<double>.Build.Dense(1, 1);
+        XX[0, 0] = M;
+        var YY = Vector<double>.Build.Dense(1);
+        v.Evaluate(XX, parameters, YY, null);
+        AssertEx.AreEqual(expectedFunctionValue, YY[0], 0, expectedAccuracy * height / expectedFunctionValue);
 
         var DY = Matrix<double>.Build.Dense(1, 2);
-        v.EvaluateDerivative(X, parameters, null, DY, null);
+        v.EvaluateDerivative(XX, parameters, null, DY, null);
         AssertEx.AreEqual(expectedDerivativeWrtArea, DY[0, 0], 0, expectedAccuracy * height / expectedFunctionValue);
         AssertEx.AreEqual(expectedDerivativeWrtTau, DY[0, 1], 0, expectedAccuracy * height / expectedFunctionValue);
 
@@ -96,11 +103,112 @@ namespace Altaxo.Calc.FitFunctions.Chemistry
         AssertEx.AreEqual(expectedFunctionValue, y, 0, expectedAccuracy * height / expectedFunctionValue);
 
         parameters = new double[] { area, tau };
-        X[0, 0] = M;
-        v.Evaluate(X, parameters, FV, null);
-        v.EvaluateDerivative(X, parameters, null, DY, null);
+        X = new double[1];
+        Y = new double[1];
+        X[0] = M;
+        v.Evaluate(X, parameters, Y);
+        AssertEx.AreEqual(expectedFunctionValue, Y[0], 0, expectedAccuracy * height / expectedFunctionValue);
 
-        AssertEx.AreEqual(expectedFunctionValue, FV[0], 0, expectedAccuracy * height / expectedFunctionValue);
+
+        XX[0, 0] = M;
+        v.Evaluate(XX, parameters, YY, null);
+        v.EvaluateDerivative(XX, parameters, null, DY, null);
+
+        AssertEx.AreEqual(expectedFunctionValue, YY[0], 0, expectedAccuracy * height / expectedFunctionValue);
+        AssertEx.AreEqual(expectedDerivativeWrtArea, DY[0, 0], 0, expectedAccuracy * height / expectedFunctionValue);
+        AssertEx.AreEqual(expectedDerivativeWrtTau, DY[0, 1], 0, expectedAccuracy * height / expectedFunctionValue);
+      }
+    }
+
+    /// <summary>
+    /// Same as <see cref="TestDerivatives"/>, but now M is given as log10(M).
+    /// </summary>
+    [Fact]
+    public void TestDerivativesLog10()
+    {
+      foreach (var expectedAccuracy in new double[] { 1E-8, 1E-7, 1E-6, 1E-5, 1E-4, 1E-3 })
+      {
+        // left case
+        double sigma = 0.125;
+        double area = 5;
+        var tau = 1 / 2047d;
+        double MM = 3;
+        double M = 2589;
+        double log10M = Math.Log10(M);
+
+
+        var expectedFunctionValue = 1.453867967636616;
+        var expectedDerivativeWrtArea = 0.2907735935273231;
+        var expectedDerivativeWrtTau = 4473.448913684046;
+
+        var v = new MassBasedFloryDistributionWithFixedGaussianBroadening(1, -1)
+        {
+          IndependentVariableIsDecadicLogarithm = true,
+          MolecularWeightOfMonomerUnit = MM,
+          PolynomialCoefficientsForSigma = [sigma],
+          Accuracy = expectedAccuracy,
+        };
+
+        // The accuracy of the function value is specified relative to the peak height
+        // That is the reason why we have the term  expectedAccuracy * height / expectedFunctionValue for the relative accuracy here
+        var (_, _, height, _) = v.GetPositionAreaHeightFWHMFromSinglePeakParameters([area, tau]);
+
+        var y = v.GetYOfOneTerm(M, area, tau);
+        AssertEx.AreEqual(expectedFunctionValue, y, 0, expectedAccuracy * height / expectedFunctionValue);
+
+        var parameters = new double[] { area, tau };
+        var X = new double[1];
+        var Y = new double[1];
+        X[0] = log10M;
+        v.Evaluate(X, parameters, Y);
+        AssertEx.AreEqual(expectedFunctionValue, Y[0], 0, expectedAccuracy * height / expectedFunctionValue);
+
+        var XX = Matrix<double>.Build.Dense(1, 1);
+        XX[0, 0] = log10M;
+        var YY = Vector<double>.Build.Dense(1);
+        v.Evaluate(XX, parameters, YY, null);
+        AssertEx.AreEqual(expectedFunctionValue, YY[0], 0, expectedAccuracy * height / expectedFunctionValue);
+
+        var DY = Matrix<double>.Build.Dense(1, 2);
+        v.EvaluateDerivative(XX, parameters, null, DY, null);
+        AssertEx.AreEqual(expectedDerivativeWrtArea, DY[0, 0], 0, expectedAccuracy * height / expectedFunctionValue);
+        AssertEx.AreEqual(expectedDerivativeWrtTau, DY[0, 1], 0, expectedAccuracy * height / expectedFunctionValue);
+
+        // right case
+        area = 7;
+        tau = 1 / 2047d;
+        MM = 3;
+        M = 25896;
+        log10M = Math.Log10(M);
+
+        expectedFunctionValue = 4.305794261946497;
+        expectedDerivativeWrtArea = 0.6151134659923567;
+        expectedDerivativeWrtTau = -15521.67751589214;
+
+        v = new MassBasedFloryDistributionWithFixedGaussianBroadening(1, -1)
+        {
+          IndependentVariableIsDecadicLogarithm = true,
+          MolecularWeightOfMonomerUnit = MM,
+          PolynomialCoefficientsForSigma = [sigma],
+          Accuracy = expectedAccuracy,
+        };
+        (_, _, height, _) = v.GetPositionAreaHeightFWHMFromSinglePeakParameters([area, tau]);
+
+        y = v.GetYOfOneTerm(M, area, tau);
+        AssertEx.AreEqual(expectedFunctionValue, y, 0, expectedAccuracy * height / expectedFunctionValue);
+
+        parameters = new double[] { area, tau };
+        X = new double[1];
+        Y = new double[1];
+        X[0] = log10M;
+        v.Evaluate(X, parameters, Y);
+        AssertEx.AreEqual(expectedFunctionValue, Y[0], 0, expectedAccuracy * height / expectedFunctionValue);
+
+        XX[0, 0] = log10M;
+        v.Evaluate(XX, parameters, YY, null);
+        v.EvaluateDerivative(XX, parameters, null, DY, null);
+
+        AssertEx.AreEqual(expectedFunctionValue, YY[0], 0, expectedAccuracy * height / expectedFunctionValue);
         AssertEx.AreEqual(expectedDerivativeWrtArea, DY[0, 0], 0, expectedAccuracy * height / expectedFunctionValue);
         AssertEx.AreEqual(expectedDerivativeWrtTau, DY[0, 1], 0, expectedAccuracy * height / expectedFunctionValue);
       }
