@@ -570,24 +570,20 @@ namespace Altaxo.Data
       return new AltaxoVariant(); // empty property
     }
 
-
     /// <summary>
-    /// Retrieves a property value associated with the specified independent or dependent variable column.
+    /// Gets the property value of a column.
     /// </summary>
-    /// <param name="isIndependent">True to query an independent variable; false to query a dependent variable.</param>
-    /// <param name="idxColumn">The column index among the selected variables.</param>
-    /// <param name="propertyName">The property name to look up.</param>
-    /// <returns>An <see cref="AltaxoVariant"/> containing the property value if found; otherwise an empty variant.</returns>
-    public AltaxoVariant GetPropertyValueOfIndependentOrDependentVariable(bool isIndependent, int idxColumn, string propertyName)
+    /// <param name="column">The column.</param>
+    /// <param name="propertyName">Name of the property.</param>
+    /// <param name="dataTable">Optional: the data table the column belongs to.</param>
+    /// <param name="dataRowSelection">Optional: the data row selection of the column.</param>
+    /// <returns>The property value. If none is found, an empty <see cref="AltaxoVariant"/> is returned.</returns>
+    public static AltaxoVariant GetPropertyValueOfColumn(IReadableColumn column, string propertyName, DataTable? dataTable, IRowSelection? dataRowSelection)
     {
-      if (string.IsNullOrEmpty(propertyName))
-        return new AltaxoVariant();
-
       DataTable? table = null;
-      var column = isIndependent ? GetIndependentVariable(idxColumn) : GetDependentVariable(idxColumn);
       if (IReadableColumn.GetRootDataColumn(column) is { } col)
       {
-        table = DataTable ?? DataTable.GetParentDataTableOf(col);
+        table = dataTable ?? DataTable.GetParentDataTableOf(col);
         if (table is not null)
         {
           if (table.PropCols.TryGetColumn(propertyName) is { } pcol1)
@@ -600,9 +596,10 @@ namespace Altaxo.Data
         }
       }
 
+      if (dataRowSelection is not null)
       {
         // try to get the property from the data row selection of the xycurve
-        foreach (var node in Altaxo.Collections.TreeNodeExtensions.TakeFromHereToFirstLeaves(DataRowSelection))
+        foreach (var node in Altaxo.Collections.TreeNodeExtensions.TakeFromHereToFirstLeaves(dataRowSelection))
         {
           if (node is IncludeSingleNumericalValue isn && isn.ColumnName == propertyName)
           {
@@ -628,6 +625,23 @@ namespace Altaxo.Data
       }
 
       return new AltaxoVariant(); // empty property
+    }
+
+
+    /// <summary>
+    /// Retrieves a property value associated with the specified independent or dependent variable column.
+    /// </summary>
+    /// <param name="isIndependent">True to query an independent variable; false to query a dependent variable.</param>
+    /// <param name="idxColumn">The column index among the selected variables.</param>
+    /// <param name="propertyName">The property name to look up.</param>
+    /// <returns>An <see cref="AltaxoVariant"/> containing the property value if found; otherwise an empty variant.</returns>
+    public AltaxoVariant GetPropertyValueOfIndependentOrDependentVariable(bool isIndependent, int idxColumn, string propertyName)
+    {
+      if (string.IsNullOrEmpty(propertyName))
+        return new AltaxoVariant();
+
+      var column = isIndependent ? GetIndependentVariable(idxColumn) : GetDependentVariable(idxColumn);
+      return GetPropertyValueOfColumn(column, propertyName, DataTable, DataRowSelection);
     }
 
 

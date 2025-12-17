@@ -580,6 +580,28 @@ namespace Altaxo.Worksheet.Commands
     }
   }
 
+
+  public class DataTablesAggregationCreation : AbstractWorksheetControllerCommand
+  {
+    private const string ExtractTableDataScriptPropertyName = "Scripts/ExtractTableData";
+    private Altaxo.Data.DataTable m_Table;
+
+    public override void Run(Altaxo.Gui.Worksheet.Viewing.WorksheetController ctrl)
+    {
+      var srcTable = ctrl.DataTable;
+
+      var newTableName = Current.Project.DataTableCollection.FindNewItemName(srcTable.Folder + srcTable.ShortName + "_Aggregated");
+      var newTable = new DataTable(newTableName);
+      Current.Project.DataTableCollection.Add(newTable);
+
+      var ds = new DataTablesAggregationDataSource(new DataTablesAggregationProcessData([new DataTableProxy(srcTable)], [], true, true), new DataTablesAggregationOptions(), new DataSourceImportOptions());
+      newTable.DataSource = ds;
+
+      Current.Gui.ShowDialog<DataTablesAggregationDataSource>(ref ds, "Aggregation of table data", true);
+    }
+  }
+
+
   public class OpenTableScriptDialog : AbstractWorksheetControllerCommand
   {
     private Altaxo.Data.DataTable _table;

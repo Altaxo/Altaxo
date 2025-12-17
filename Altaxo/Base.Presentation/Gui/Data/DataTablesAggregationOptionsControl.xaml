@@ -1,0 +1,105 @@
+﻿<UserControl x:Class="Altaxo.Gui.Data.DataTablesAggregationOptionsControl"
+             xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+             xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+             xmlns:localm="clr-namespace:Altaxo.Data;assembly=AltaxoBase"
+             xmlns:local="clr-namespace:Altaxo.Gui.Data;assembly=AltaxoBase"
+             d:DataContext="{d:DesignInstance Type=local:DataTablesAggregationOptionsController}"
+             mc:Ignorable="d"
+             d:DesignHeight="450"
+             d:DesignWidth="800">
+  <Grid>
+    <Grid.Resources>
+      <ResourceDictionary Source="pack://application:,,,/AltaxoBase.Presentation;component/CommonStyles.xaml" />
+    </Grid.Resources>
+
+    <Grid.ColumnDefinitions>
+      <ColumnDefinition Width="*" />
+      <ColumnDefinition Width="4" />
+      <ColumnDefinition Width="Auto" />
+      <ColumnDefinition Width="4" />
+      <ColumnDefinition Width="*" />
+      <ColumnDefinition Width="4" />
+      <ColumnDefinition Width="Auto" />
+      <ColumnDefinition Width="4" />
+    </Grid.ColumnDefinitions>
+    <Grid.RowDefinitions>
+      <RowDefinition Height="Auto" />
+      <RowDefinition Height="4" />
+      <RowDefinition Height="*" />
+      <RowDefinition Height="4" />
+      <RowDefinition Height="Auto" />
+      <RowDefinition Height="4" />
+      <RowDefinition Height="Auto" />
+      <RowDefinition Height="4" />
+      <RowDefinition Height="*" />
+      <RowDefinition Height="4" />
+      <RowDefinition Height="Auto" />
+      <RowDefinition Height="4" />
+    </Grid.RowDefinitions>
+
+    <Label Grid.Row="0"
+           Grid.Column="0"
+           Content="Name of columns or properties used to cluster the elements:" />
+
+    <DataGrid Grid.Row="2"
+              Grid.Column="0"
+              ItemsSource="{Binding ClusteredPropertyNames}"
+              AutoGenerateColumns="False"
+              CanUserAddRows="True"
+              CanUserDeleteRows="True"
+              HeadersVisibility="All"
+              IsReadOnly="False"
+              RowHeaderWidth="16">
+      <DataGrid.Columns>
+        <DataGridTextColumn Header="Property or column names"
+                            Width="*"
+                            Binding="{Binding Value, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" />
+      </DataGrid.Columns>
+    </DataGrid>
+
+
+    <Label Grid.Row="0"
+           Grid.Column="4"
+           Content="Name of the columns whose values are to be aggregated:" />
+
+    <DataGrid Grid.Row="2"
+              Grid.Column="4"
+              ItemsSource="{Binding AggregatedColumnNames}"
+              AutoGenerateColumns="False"
+              CanUserAddRows="True"
+              CanUserDeleteRows="True"
+              HeadersVisibility="All"
+              IsReadOnly="False"
+              RowHeaderWidth="16">
+      <DataGrid.Columns>
+        <DataGridTextColumn Header="Column names"
+                            Width="*"
+                            Binding="{Binding Value, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" />
+      </DataGrid.Columns>
+    </DataGrid>
+
+    <Label Grid.Row="6"
+           Grid.Column="0"
+           Content="Type(s) of aggregation:" />
+
+    <DataGrid Grid.Row="8"
+              ItemsSource="{Binding AggregationKinds}"
+              AutoGenerateColumns="False"
+              CanUserAddRows="True"
+              CanUserDeleteRows="True"
+              HeadersVisibility="All"
+              IsReadOnly="False"
+              RowHeaderWidth="16">
+      <DataGrid.Columns>
+        <!-- ComboBox column bound to Enum -->
+        <DataGridComboBoxColumn Header="Aggregation type"
+                                Width="*"
+                                SelectedItemBinding="{Binding Value, Mode=TwoWay}"
+                                ItemsSource="{x:Static local:DataTablesAggregationOptionsController.AvailableAggregationKinds}" />
+      </DataGrid.Columns>
+    </DataGrid>
+
+  </Grid>
+</UserControl>

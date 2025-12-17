@@ -564,6 +564,8 @@
                                 class="Altaxo.Worksheet.Commands.OpenProcessSourceTablesScriptDialog" />
                 <MenuItem id="ExtractTableData" label="${res:XML.MainMenu.WorksheetMenu.ExtractTableData}" description="${res:XML.MainMenu.WorksheetMenu.ExtractTableData.Description}"
                             class="Altaxo.Worksheet.Commands.OpenExtractTableDataScriptDialog" />
+                <MenuItem id="AggregateTableData" label="Aggregate table data ..." description="Aggregates data from one or multiple tables"
+                            class="Altaxo.Worksheet.Commands.DataTablesAggregationCreation" />
                 <MenuItem id="MoveRows" label="${res:XML.MainMenu.WorksheetMenu.MoveSelectedRows}" description="${res:XML.MainMenu.WorksheetMenu.MoveSelectedRows.Description}"
                             class="Altaxo.Worksheet.Commands.SetRowPosition" />
                 <MenuItem id="ChangeStructure" label="${res:XML.MainMenu.WorksheetChangeStructureMenu}"  type="Menu">

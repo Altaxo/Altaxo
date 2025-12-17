@@ -30,6 +30,7 @@ namespace Altaxo.Gui
 {
   /// <summary>
   /// Helper class that wraps a single value of type T and implements the <see cref="System.ComponentModel.INotifyPropertyChanged"/> interface, so that changes to the value can be monitored by the Gui.
+  /// This class is a must if using a DataGrid, since plain values (string, int, etc.) are not editable.
   /// </summary>
   /// <typeparam name="T">Type of the value to wrap.</typeparam>
   public class NotifyChangedValue<T> : System.ComponentModel.INotifyPropertyChanged

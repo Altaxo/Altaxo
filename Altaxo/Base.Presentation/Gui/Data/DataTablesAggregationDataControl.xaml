@@ -1,0 +1,174 @@
+﻿<UserControl x:Class="Altaxo.Gui.Data.DataTablesAggregationDataControl"
+             xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+             xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+             xmlns:local="clr-namespace:Altaxo.Gui.Data;assembly=AltaxoBase"
+             d:DataContext="{d:DesignInstance Type=local:DataTablesAggregationDataController}"
+             mc:Ignorable="d"
+             d:DesignHeight="450"
+             d:DesignWidth="800">
+  <Grid>
+    <Grid.Resources>
+      <ResourceDictionary Source="pack://application:,,,/AltaxoBase.Presentation;component/CommonStyles.xaml" />
+    </Grid.Resources>
+
+    <Grid.ColumnDefinitions>
+      <ColumnDefinition Width="*" />
+      <ColumnDefinition Width="4" />
+      <ColumnDefinition Width="Auto" />
+      <ColumnDefinition Width="4" />
+      <ColumnDefinition Width="*" />
+      <ColumnDefinition Width="4" />
+      <ColumnDefinition Width="Auto" />
+      <ColumnDefinition Width="4" />
+    </Grid.ColumnDefinitions>
+    <Grid.RowDefinitions>
+      <RowDefinition Height="Auto" />
+      <RowDefinition Height="4" />
+      <RowDefinition Height="*" />
+      <RowDefinition Height="4" />
+      <RowDefinition Height="Auto" />
+      <RowDefinition Height="4" />
+      <RowDefinition Height="*" />
+      <RowDefinition Height="4" />
+      <RowDefinition Height="Auto" />
+      <RowDefinition Height="4" />
+      <RowDefinition Height="Auto" />
+      <RowDefinition Height="4" />
+    </Grid.RowDefinitions>
+
+    <Label Grid.Row="0"
+           Grid.Column="0"
+           Content="Available tables" />
+
+    <ListBox Grid.Row="2"
+             Grid.Column="0"
+             ScrollViewer.VerticalScrollBarVisibility="Visible"
+             ItemsSource="{Binding AvailableTables}"
+             VirtualizingStackPanel.IsVirtualizing="False"
+             SelectionMode="Extended">
+      <ListBox.Resources>
+        <Style TargetType="{x:Type ListBoxItem}">
+          <Setter Property="IsSelected"
+                  Value="{Binding IsSelected, Mode=TwoWay}" />
+        </Style>
+      </ListBox.Resources>
+    </ListBox>
+
+    <Label Grid.Row="0"
+           Grid.Column="4"
+           Content="Source tables:" />
+
+    <ListBox Grid.Row="2"
+             Grid.Column="4"
+             ScrollViewer.VerticalScrollBarVisibility="Visible"
+             ItemsSource="{Binding ParticipatingTables}"
+             VirtualizingStackPanel.IsVirtualizing="False"
+             SelectionMode="Extended"
+             DisplayMemberPath="Text">
+      <ListBox.Resources>
+        <Style TargetType="{x:Type ListViewItem}">
+          <Setter Property="IsSelected"
+                  Value="{Binding IsSelected, Mode=TwoWay}" />
+        </Style>
+      </ListBox.Resources>
+    </ListBox>
+
+    <StackPanel Grid.Row="2"
+                Grid.Column="2"
+                Orientation="Vertical">
+      <Button Grid.Row="0"
+              Grid.Column="0"
+              Command="{Binding CmdAddToParticipatingTables}">
+        <Button.Content>
+          <Viewbox Style="{StaticResource ArrowViewBoxStyle}">
+            <Path Style="{StaticResource LeftArrowPathStyle}" />
+          </Viewbox>
+        </Button.Content>
+      </Button>
+
+      <Button Grid.Row="0"
+              Grid.Column="0"
+              Margin="0,8,0,0"
+              Command="{Binding CmdRemoveFromParticipatingTables}">
+        <Button.Content>
+          <Viewbox Style="{StaticResource ArrowViewBoxStyle}">
+            <Path Style="{StaticResource RightArrowPathStyle}" />
+          </Viewbox>
+        </Button.Content>
+      </Button>
+
+
+    </StackPanel>
+
+    <StackPanel Grid.Row="2"
+                Grid.Column="6"
+                Orientation="Vertical">
+      <Button Grid.Row="0"
+              Grid.Column="0"
+              Command="{Binding CmdParticipatingTablesUp}">
+        <Button.Content>
+          <Viewbox Style="{StaticResource ArrowViewBoxStyle}">
+            <Path Style="{StaticResource UpArrowPathStyle}" />
+          </Viewbox>
+        </Button.Content>
+      </Button>
+
+      <Button Grid.Row="0"
+              Grid.Column="0"
+              Margin="0,8,0,0"
+              Command="{Binding CmdParticipatingTablesDown}">
+        <Button.Content>
+          <Viewbox Style="{StaticResource ArrowViewBoxStyle}">
+            <Path Style="{StaticResource DownArrowPathStyle}" />
+          </Viewbox>
+        </Button.Content>
+      </Button>
+    </StackPanel>
+
+    <Label Grid.Row="4"
+           Grid.Column="0"
+           Content="Source tables by name filters:" />
+    <DataGrid Grid.Row="6"
+              Grid.Column="0"
+              MinHeight="50"
+              ItemsSource="{Binding Filters}"
+              AutoGenerateColumns="False"
+              CanUserAddRows="True"
+              CanUserDeleteRows="True"
+              HeadersVisibility="All"
+              IsReadOnly="False"
+              RowHeaderWidth="16">
+      <DataGrid.Columns>
+        <DataGridTextColumn Header="Filter patterns"
+                            Width="*"
+                            Binding="{Binding Path=Value, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"
+                            IsReadOnly="False" />
+      </DataGrid.Columns>
+    </DataGrid>
+    <Button Grid.Row="6"
+            Grid.Column="4"
+            Content="Add matched tables to source table list"
+            Command="{Binding CmdFilterMatchesToParticipatingTables}"
+            VerticalAlignment="Top" />
+
+    <CheckBox Grid.Row="8"
+              Grid.Column="0"
+              Content="Add additionally matched tables before execution."
+              IsChecked="{Binding  AddMatched , Mode=TwoWay}"
+              ToolTip="If checked, the filter string(s) are used to find more tables that match the filter. If more tables were found, theay are added to the list of source tables." />
+
+    <CheckBox Grid.Row="10"
+              Grid.Column="0"
+              Content="Remove unmatched tables before execution."
+              IsChecked="{Binding RemoveUnmatched , Mode=TwoWay}"
+              ToolTip="If checked, the filter string(s) are used to find all tables that match the filter. If there are tables in the source tables list that are not matched by the filter, they will be removed from the source table list.." />
+
+    <Button Grid.Row="10"
+            Grid.Column="4"
+            Content="Test data and options"
+            Command="{Binding CmdTestDataAndOptions}"
+            ToolTip="Tests the data settings and the options (check for existence of properties and columns, use the filter string if choosen)." />
+  </Grid>
+</UserControl>
