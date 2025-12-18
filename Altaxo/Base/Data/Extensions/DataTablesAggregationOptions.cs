@@ -159,6 +159,26 @@ namespace Altaxo.Data
     /// </summary>
     PopulationVariance = 10,
 
+    MinimumAbsolute = 11,
 
+    MaximumAbsolute = 12,
+
+    GeometricMean = 13,
+
+    HarmonicMean = 14,
+
+    Skewness = 15,
+
+    PopulationSkewness = 16,
+
+    Kurtosis = 17,
+
+    PopulationKurtosis = 18,
+
+    RootMeanSquare = 19,
+
+    LowerQuartile = 20,
+
+    UpperQuartile = 21,
   }
 }

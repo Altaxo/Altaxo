@@ -46,7 +46,7 @@ namespace Altaxo.Data
     /// Gets or sets the row selection.
     /// </summary>
     /// <exception cref="Markdig.Helpers.ThrowHelper.ArgumentNullException(System.String)">RowSelection</exception>
-    IRowSelection RowSelection
+    public IRowSelection RowSelection
     {
       get => field;
       set

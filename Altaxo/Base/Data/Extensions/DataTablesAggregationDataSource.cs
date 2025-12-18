@@ -356,40 +356,43 @@ namespace Altaxo.Data
               propDictConstants[clusteredPropertyName] = prop;
             }
 
-
-            for (int rowIndex = 0; rowIndex < column.Count; rowIndex++)
+            foreach (var (segmentStart, segmentEndExclusive) in ProcessData.RowSelection.GetSelectedRowIndexSegmentsFromTo(0, column.Count, table.DataColumns, column.Count))
             {
-              if (column.IsElementEmpty(rowIndex))
-                continue;
+              for (int rowIndex = segmentStart; rowIndex < segmentEndExclusive; rowIndex++)
+              {
+                if (column.IsElementEmpty(rowIndex))
+                  continue;
 
-              var keyValues = new AltaxoVariant[ProcessOptions.ClusteredPropertiesNames.Count];
-              var keyValuesContainEmpty = false;
-              for (int i = 0; i < ProcessOptions.ClusteredPropertiesNames.Count; i++)
-              {
-                var clusteredPropertyName = ProcessOptions.ClusteredPropertiesNames[i];
-                AltaxoVariant keyValue;
-                if (propDictColumns.TryGetValue(clusteredPropertyName, out var clusteredColumn))
+
+                var keyValues = new AltaxoVariant[ProcessOptions.ClusteredPropertiesNames.Count];
+                var keyValuesContainEmpty = false;
+                for (int i = 0; i < ProcessOptions.ClusteredPropertiesNames.Count; i++)
                 {
-                  if (!clusteredColumn.IsElementEmpty(rowIndex))
-                    keyValue = clusteredColumn[rowIndex];
+                  var clusteredPropertyName = ProcessOptions.ClusteredPropertiesNames[i];
+                  AltaxoVariant keyValue;
+                  if (propDictColumns.TryGetValue(clusteredPropertyName, out var clusteredColumn))
+                  {
+                    if (!clusteredColumn.IsElementEmpty(rowIndex))
+                      keyValue = clusteredColumn[rowIndex];
+                    else
+                      keyValue = new AltaxoVariant();
+                  }
                   else
-                    keyValue = new AltaxoVariant();
+                  {
+                    keyValue = propDictConstants[clusteredPropertyName];
+                  }
+                  keyValuesContainEmpty |= keyValue.IsEmpty;
+                  keyValues[i] = keyValue;
                 }
-                else
+                if (!keyValuesContainEmpty)
                 {
-                  keyValue = propDictConstants[clusteredPropertyName];
+                  var aggregationKey = new AggregationKey(keyValues);
+                  if (!aggregationResults.ContainsKey(aggregationKey))
+                  {
+                    aggregationResults[aggregationKey] = new List<AltaxoVariant>();
+                  }
+                  aggregationResults[aggregationKey].Add(column[rowIndex]);
                 }
-                keyValuesContainEmpty |= keyValue.IsEmpty;
-                keyValues[i] = keyValue;
-              }
-              if (!keyValuesContainEmpty)
-              {
-                var aggregationKey = new AggregationKey(keyValues);
-                if (!aggregationResults.ContainsKey(aggregationKey))
-                {
-                  aggregationResults[aggregationKey] = new List<AltaxoVariant>();
-                }
-                aggregationResults[aggregationKey].Add(column[rowIndex]);
               }
             }
           }
@@ -424,48 +427,106 @@ namespace Altaxo.Data
           {
             var c = destinationTable.DataColumns.EnsureExistence($"{columnName}_{aggregationKind}", typeof(DoubleColumn), ColumnKind.V, 0);
 
-            if (aggregationKind == KindOfAggregation.Count)
-            {
-              c[idxRow] = aggregation.Count;
-            }
-            else if (aggregationKind == KindOfAggregation.Mean)
-            {
-              c[idxRow] = aggregation.Select(v => v.ToDouble()).Average();
-            }
-            else if (aggregationKind == KindOfAggregation.Sum)
-            {
-              c[idxRow] = aggregation.Select(v => v.ToDouble()).Sum();
-            }
-            else if (aggregationKind == KindOfAggregation.Minimum)
-            {
-              c[idxRow] = aggregation.Select(v => v.ToDouble()).Min();
-            }
-            else if (aggregationKind == KindOfAggregation.Maximum)
-            {
-              c[idxRow] = aggregation.Select(v => v.ToDouble()).Max();
-            }
-            else if (aggregationKind == KindOfAggregation.StdDev)
-            {
-              c[idxRow] = aggregation.Select(v => v.ToDouble()).StandardDeviation();
-            }
-            else if (aggregationKind == KindOfAggregation.PopulationStdDev)
-            {
-              c[idxRow] = aggregation.Select(v => v.ToDouble()).PopulationStandardDeviation();
-            }
-            else if (aggregationKind == KindOfAggregation.Median)
-            {
-              c[idxRow] = aggregation.Select(v => v.ToDouble()).PopulationStandardDeviation();
-            }
-            else if (aggregationKind == KindOfAggregation.PopulationVariance)
-            {
-              c[idxRow] = aggregation.Select(v => v.ToDouble()).PopulationVariance();
-            }
-            else if (aggregationKind == KindOfAggregation.Variance)
-            {
-              c[idxRow] = aggregation.Select(v => v.ToDouble()).Variance();
-            }
 
+            switch (aggregationKind)
+            {
+              case KindOfAggregation.Mean:
+                if (aggregation.Count == 1)
+                  c[idxRow] = aggregation[0]; // if there is only one item, we use the item directly. Thus even DataTime or Text could be possible for the kind of item
+                else
+                  c[idxRow] = aggregation.Select(v => v.ToDouble()).Average();
+                break;
 
+              case KindOfAggregation.StdDev:
+                c[idxRow] = aggregation.Select(v => v.ToDouble()).StandardDeviation();
+                break;
+
+              case KindOfAggregation.PopulationStdDev:
+                c[idxRow] = aggregation.Select(v => v.ToDouble()).PopulationStandardDeviation();
+                break;
+
+              case KindOfAggregation.Median:
+                c[idxRow] = aggregation.Select(v => v.ToDouble()).Median();
+                break;
+
+              case KindOfAggregation.Minimum:
+                if (aggregation.Count == 1)
+                  c[idxRow] = aggregation[0]; // if there is only one item, we use the item directly. Thus even DataTime or Text could be possible for the kind of item
+                else
+                  c[idxRow] = aggregation.Select(v => v.ToDouble()).Min();
+                break;
+
+              case KindOfAggregation.Maximum:
+                if (aggregation.Count == 1)
+                  c[idxRow] = aggregation[0]; // if there is only one item, we use the item directly. Thus even DataTime or Text could be possible for the kind of item
+                else
+                  c[idxRow] = aggregation.Select(v => v.ToDouble()).Max();
+                break;
+
+              case KindOfAggregation.Count:
+                c[idxRow] = aggregation.Count;
+                break;
+
+              case KindOfAggregation.Sum:
+                if (aggregation.Count == 1)
+                  c[idxRow] = aggregation[0]; // if there is only one item, we use the item directly. Thus even DataTime or Text could be possible for the kind of item
+                else
+                  c[idxRow] = aggregation.Select(v => v.ToDouble()).Sum();
+                break;
+
+              case KindOfAggregation.Variance:
+                c[idxRow] = aggregation.Select(v => v.ToDouble()).Variance();
+                break;
+
+              case KindOfAggregation.PopulationVariance:
+                c[idxRow] = aggregation.Select(v => v.ToDouble()).PopulationVariance();
+                break;
+              case KindOfAggregation.MinimumAbsolute:
+                c[idxRow] = aggregation.Select(v => v.ToDouble()).MinimumAbsolute();
+                break;
+
+              case KindOfAggregation.MaximumAbsolute:
+                c[idxRow] = aggregation.Select(v => v.ToDouble()).MaximumAbsolute();
+                break;
+
+              case KindOfAggregation.GeometricMean:
+                c[idxRow] = aggregation.Select(v => v.ToDouble()).GeometricMean();
+                break;
+
+              case KindOfAggregation.HarmonicMean:
+                c[idxRow] = aggregation.Select(v => v.ToDouble()).HarmonicMean();
+                break;
+
+              case KindOfAggregation.Skewness:
+                c[idxRow] = aggregation.Select(v => v.ToDouble()).Skewness();
+                break;
+
+              case KindOfAggregation.PopulationSkewness:
+                c[idxRow] = aggregation.Select(v => v.ToDouble()).PopulationSkewness();
+                break;
+
+              case KindOfAggregation.Kurtosis:
+                c[idxRow] = aggregation.Select(v => v.ToDouble()).Kurtosis();
+                break;
+
+              case KindOfAggregation.PopulationKurtosis:
+                c[idxRow] = aggregation.Select(v => v.ToDouble()).PopulationKurtosis();
+                break;
+
+              case KindOfAggregation.RootMeanSquare:
+                c[idxRow] = aggregation.Select(v => v.ToDouble()).RootMeanSquare();
+                break;
+
+              case KindOfAggregation.LowerQuartile:
+                c[idxRow] = aggregation.Select(v => v.ToDouble()).LowerQuartile();
+                break;
+
+              case KindOfAggregation.UpperQuartile:
+                c[idxRow] = aggregation.Select(v => v.ToDouble()).UpperQuartile();
+                break;
+              default:
+                throw new NotImplementedException($"The aggregation kind {aggregationKind} is not implemented!");
+            }
           }
           ++idxRow;
         }
