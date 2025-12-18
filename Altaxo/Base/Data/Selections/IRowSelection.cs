@@ -31,59 +31,76 @@ using Altaxo.Main;
 
 namespace Altaxo.Data.Selections
 {
+  /// <summary>
+  /// Represents a selection of rows for data operations.
+  /// </summary>
   public interface IRowSelection : Main.IDocumentLeafNode, ICloneable, ITreeNode<IRowSelection>, IEquatable<IRowSelection>
   {
     /// <summary>
     /// Gets the selected row indices as segments of (startIndex, endIndexExclusive), beginning with no less than the start index and less than the maximum index.
     /// </summary>
     /// <param name="startIndex">The start index. Each segment that is returned has to start at an index being equal to or greater than this value.</param>
-    /// <param name="maxIndexExclusive">The maximum index.  Each segment that is returned has to have an endExclusive value being less than or equal to this value.</param>
+    /// <param name="maxIndexExclusive">The maximum index. Each segment that is returned has to have an endExclusive value being less than or equal to this value.</param>
     /// <param name="table">The underlying data column collection. All columns that are part of the row selection should either be standalone or belong to this collection.</param>
     /// <param name="totalRowCount">The maximum number of rows (and therefore the row index after the last inclusive row index) that could theoretically be returned, for instance if the selection is <see cref="AllRows"/>.
-    /// This parameter is neccessary because some of the selections (e.g. <see cref="RangeOfRowIndices"/>) work <b>relative</b> to the start or to the end of the maximum possible range, and therefore need this range for calculations.  </param>
+    /// This parameter is necessary because some of the selections (e.g. <see cref="RangeOfRowIndices"/>) work <b>relative</b> to the start or to the end of the maximum possible range, and therefore need this range for calculations.</param>
     /// <returns>The segments of selected row indices, beginning with a segment starting at no less than the start index and ending with a segment whose endExclusive value is less than or equal to the maximum index.</returns>
     IEnumerable<(int start, int endExclusive)> GetSelectedRowIndexSegmentsFromTo(int startIndex, int maxIndexExclusive, DataColumnCollection? table, int totalRowCount);
 
     /// <summary>
-    /// Replaces path of items (intended for data items like tables and columns) by other paths. Thus it is possible
-    /// to change a plot so that the plot items refer to another table.
+    /// Visits document references so path items (for example, tables and columns) can be replaced by other paths.
+    /// This makes it possible to change a plot so that plot items refer to another table.
     /// </summary>
     /// <param name="Report">Function that reports the found <see cref="DocNodeProxy"/> instances to the visitor.</param>
     void VisitDocumentReferences(DocNodeProxyReporter Report);
 
     /// <summary>
-    /// Gets the columns used additionally by this style, e.g. the label column for a label plot style, or the error columns for an error bar plot style.
+    /// Gets the columns used additionally by this selection, for example label columns or error columns used in plots.
     /// </summary>
-    /// <returns>An enumeration of tuples. Each tuple consist of the column name, as it should be used to identify the column in the data dialog. The second item of this
-    /// tuple is a function that returns the column proxy for this column, in order to get the underlying column or to set the underlying column.</returns>
+    /// <returns>An enumeration of <see cref="ColumnInformationSimple"/> values. Each item contains the column name, as it should appear in dialogs,
+    /// and a function that returns the column proxy for this column, in order to get or set the underlying column.</returns>
     IEnumerable<ColumnInformationSimple> GetAdditionallyUsedColumns();
   }
 
   /// <summary>
-  /// Interface to a collection of row selections. Since this is itself a row selection, it extends <see cref="IRowSelection"/> interface.
+  /// Interface to a collection of row selections. Since this is itself a row selection, it extends the <see cref="IRowSelection"/> interface.
   /// </summary>
-  /// <seealso cref="T:System.Collections.Generic.IEnumerable{Selections.IRowSelection}" />
-  /// <seealso cref="T:Altaxo.Data.Selections.IRowSelection" />
   public interface IRowSelectionCollection : IEnumerable<IRowSelection>, IRowSelection
   {
+    /// <summary>
+    /// Creates a new collection that contains all existing items plus the specified additional item.
+    /// </summary>
+    /// <param name="item">The item to add.</param>
+    /// <returns>A new <see cref="IRowSelectionCollection"/> instance containing the additional item.</returns>
     IRowSelectionCollection WithAdditionalItem(IRowSelection item);
 
+    /// <summary>
+    /// Creates a new collection in which the item at the specified index is replaced.
+    /// </summary>
+    /// <param name="idx">The index of the item to replace.</param>
+    /// <param name="item">The new item.</param>
+    /// <returns>A new <see cref="IRowSelectionCollection"/> instance with the item replaced.</returns>
     IRowSelectionCollection WithChangedItem(int idx, IRowSelection item);
 
+    /// <summary>
+    /// Creates a new collection using the provided items.
+    /// </summary>
+    /// <param name="items">The items that make up the new collection.</param>
+    /// <returns>A new <see cref="IRowSelectionCollection"/> instance containing the provided items.</returns>
     IRowSelectionCollection NewWithItems(IEnumerable<IRowSelection> items);
 
     /// <summary>
-    /// Gets a value indicating whether the collection with only one item returns the same selection than the one item alone.
-    /// This is the case e.g. for union and intersection, but not for exclusion of a union.
+    /// Gets a value indicating whether a collection that contains only a single item returns the same selection as that item alone.
+    /// This is the case, for example, for union and intersection collections, but not for exclusion of a union.
     /// </summary>
     /// <value>
-    ///   <c>true</c> if the collection with only one item returns the same selection than the one item alone.
+    /// <c>true</c> if the collection with only one item returns the same selection as the one item alone; otherwise, <c>false</c>.
     /// </value>
     bool IsCollectionWithOneItemEquivalentToThisItem { get; }
   }
 
   /// <summary>
-  /// Helper class for <see cref="IRowSelection"/> instances.
+  /// Helper methods for <see cref="IRowSelection"/> instances.
   /// </summary>
   public static class IRowSelectionExtensions
   {
@@ -92,10 +109,10 @@ namespace Altaxo.Data.Selections
     /// </summary>
     /// <param name="rowSelection">The row selection.</param>
     /// <param name="startIndex">The start index. Each row index that is returned has to be equal to or greater than this value.</param>
-    /// <param name="maxIndexExclusive">The maximum index.  Each row index that is returned has to be less than this value.</param>
+    /// <param name="maxIndexExclusive">The maximum index. Each row index that is returned has to be less than this value.</param>
     /// <param name="table">The underlying data column collection. All columns that are part of the row selection should either be standalone or belong to this collection.</param>
     /// <param name="totalRowCount">The maximum number of rows (and therefore the row index after the last inclusive row index) that could theoretically be returned, for instance if the selection is <see cref="AllRows"/>.
-    /// This parameter is neccessary because some of the selections (e.g. <see cref="RangeOfRowIndices"/>) work <b>relative</b> to the start or to the end of the maximum possible range, and therefore need this range for calculations.  </param>
+    /// This parameter is necessary because some of the selections (e.g. <see cref="RangeOfRowIndices"/>) work <b>relative</b> to the start or to the end of the maximum possible range, and therefore need this range for calculations.</param>
     /// <returns>The selected row indices, beginning with no less than the start index and less than the maximum index.</returns>
     public static IEnumerable<int> GetSelectedRowIndicesFromTo(this IRowSelection rowSelection, int startIndex, int maxIndexExclusive, DataColumnCollection? table, int totalRowCount)
     {
@@ -113,8 +130,8 @@ namespace Altaxo.Data.Selections
     /// <param name="filteredRowIndex">Index of the filtered row.</param>
     /// <param name="table">The underlying data table.</param>
     /// <param name="totalRowCount">The total row count.</param>
-    /// <returns>The index of the original row in the data table corresponding to the index of the filtered row. If the index of the filtered row equal to or higher than the total number
-    /// of filtered rows, the return value is null.</returns>
+    /// <returns>The index of the original row in the data table corresponding to the index of the filtered row. If the index of the filtered row is equal to or higher than the total number
+    /// of filtered rows, the return value is <c>null</c>.</returns>
     public static int? GetOriginalRowIndexForFilteredRowIndex(this IRowSelection rowSelection, int filteredRowIndex, DataColumnCollection? table, int totalRowCount)
     {
       var remaining = filteredRowIndex;
@@ -136,8 +153,8 @@ namespace Altaxo.Data.Selections
     /// <param name="originalRowIndex">Index of the original row in the data table.</param>
     /// <param name="table">The underlying data table.</param>
     /// <param name="totalRowCount">The total row count.</param>
-    /// <returns>The index of the filtered row corresponding to the index of the original row in the data table . If the index of the original row is not included by the filter,
-    /// the return value is null.</returns>
+    /// <returns>The index of the filtered row corresponding to the index of the original row in the data table. If the index of the original row is not included by the filter,
+    /// the return value is <c>null</c>.</returns>
     public static int? GetFilteredRowIndexForOriginalRowIndex(this IRowSelection rowSelection, int originalRowIndex, DataColumnCollection? table, int totalRowCount)
     {
       var filteredRowIndexOffset = 0;

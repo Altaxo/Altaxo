@@ -30,12 +30,19 @@ using Altaxo.Data;
 
 namespace Altaxo.Gui.Data
 {
+  /// <summary>
+  /// Represents the view for editing <see cref="DataTablesAggregationOptions"/>.
+  /// </summary>
   public interface IDataTablesAggregationOptionsView : IDataContextAwareView { }
 
+  /// <summary>
+  /// Controller for editing <see cref="DataTablesAggregationOptions"/> in a GUI.
+  /// </summary>
   [ExpectedTypeOfView(typeof(IDataTablesAggregationOptionsView))]
   [UserControllerForObject(typeof(DataTablesAggregationOptions))]
   public class DataTablesAggregationOptionsController : MVCANControllerEditImmutableDocBase<DataTablesAggregationOptions, IDataTablesAggregationOptionsView>
   {
+    /// <inheritdoc/>
     public override IEnumerable<ControllerAndSetNullMethod> GetSubControllers()
     {
       yield break;
@@ -44,6 +51,9 @@ namespace Altaxo.Gui.Data
     #region Binding
 
 
+    /// <summary>
+    /// Gets or sets the collection of clustered property names.
+    /// </summary>
     public ObservableCollection<NotifyChangedValue<string>> ClusteredPropertyNames
     {
       get => field;
@@ -58,6 +68,9 @@ namespace Altaxo.Gui.Data
     }
 
 
+    /// <summary>
+    /// Gets or sets the collection of column names that should be aggregated.
+    /// </summary>
     public ObservableCollection<NotifyChangedValue<string>> AggregatedColumnNames
     {
       get => field;
@@ -72,6 +85,27 @@ namespace Altaxo.Gui.Data
     }
 
 
+    /// <summary>
+    /// Gets or sets a value indicating whether the aggregated column names are treated as property names instead of data column names.
+    /// </summary>
+    public bool AggregatedColumnNamesArePropertyNames
+    {
+      get => field;
+      set
+      {
+        if (!(field == value))
+        {
+          field = value;
+          OnPropertyChanged(nameof(AggregatedColumnNamesArePropertyNames));
+        }
+      }
+    }
+
+
+
+    /// <summary>
+    /// Gets or sets the aggregation kinds that can be applied.
+    /// </summary>
     public ObservableCollection<NotifyChangedValue<KindOfAggregation>> AggregationKinds
     {
       get => field;
@@ -85,12 +119,14 @@ namespace Altaxo.Gui.Data
       }
     }
 
+    /// <summary>
+    /// Gets the list of available aggregation kinds.
+    /// </summary>
     public static KindOfAggregation[] AvailableAggregationKinds => field ??= (KindOfAggregation[])System.Enum.GetValues(typeof(KindOfAggregation));
-
-
 
     #endregion
 
+    /// <inheritdoc/>
     protected override void Initialize(bool initData)
     {
       base.Initialize(initData);
@@ -99,16 +135,19 @@ namespace Altaxo.Gui.Data
       {
         ClusteredPropertyNames = new ObservableCollection<NotifyChangedValue<string>>(_doc.ClusteredPropertiesNames.Select(e => new NotifyChangedValue<string>(e)));
         AggregatedColumnNames = new ObservableCollection<NotifyChangedValue<string>>(_doc.AggregatedColumnNames.Select(e => new NotifyChangedValue<string>(e)));
+        AggregatedColumnNamesArePropertyNames = _doc.AggregatedColumnNamesArePropertyNames;
         AggregationKinds = new ObservableCollection<NotifyChangedValue<KindOfAggregation>>(_doc.AggregationKinds.Select(x => new NotifyChangedValue<KindOfAggregation>(x)));
       }
     }
 
+    /// <inheritdoc/>
     public override bool Apply(bool disposeController)
     {
       _doc = _doc with
       {
         ClusteredPropertiesNames = ClusteredPropertyNames.Select(e => e.Value).Where(s => !string.IsNullOrEmpty(s)).ToImmutableList(),
         AggregatedColumnNames = AggregatedColumnNames.Select(e => e.Value).Where(s => !string.IsNullOrEmpty(s)).ToImmutableList(),
+        AggregatedColumnNamesArePropertyNames = AggregatedColumnNamesArePropertyNames,
         AggregationKinds = AggregationKinds.Select(x => x.Value).Distinct().ToImmutableList(),
       };
 

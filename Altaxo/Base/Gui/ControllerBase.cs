@@ -34,7 +34,9 @@ namespace Altaxo.Gui
   /// </summary>
   public class ControllerBase : INotifyPropertyChanged, IDisposable
   {
-    /// <summary>Get a value indication whether  this controller is already disposed.</summary>
+    /// <summary>
+    /// Gets a value indicating whether this controller is already disposed.
+    /// </summary>
     public bool IsDisposed { get; private set; }
 
     /// <summary>
@@ -43,17 +45,32 @@ namespace Altaxo.Gui
     public event PropertyChangedEventHandler? PropertyChanged;
 
 
+    /// <summary>
+    /// Gets an exception that is thrown when a controller was not initialized with a document.
+    /// </summary>
     protected InvalidOperationException NoDocumentException =>
       new InvalidOperationException($"Controller {GetType()} was not initialized with a document");
 
 
+    /// <summary>
+    /// Gets an exception that is thrown when a controller currently has no view.
+    /// </summary>
     protected InvalidOperationException NoViewException =>
       new InvalidOperationException($"Controller {GetType()} currently has no view.");
 
+    /// <summary>
+    /// Gets an exception that is thrown when a controller is not properly initialized.
+    /// </summary>
     protected InvalidOperationException NotInitializedException =>
-      new InvalidOperationException($"Controller {GetType()} is not property initialized.");
+      new InvalidOperationException($"Controller {GetType()} is not properly initialized.");
 
 
+    /// <summary>
+    /// Checks whether the document has been initialized and throws an exception if it is <c>null</c>.
+    /// </summary>
+    /// <typeparam name="T">The type of the document.</typeparam>
+    /// <param name="doc">The document reference to check.</param>
+    /// <exception cref="InvalidOperationException">Thrown when the document is not initialized.</exception>
     protected virtual void CheckDocumentInitialized<T>([AllowNull][NotNull] ref T doc)
     {
       if (doc is null)
@@ -61,14 +78,13 @@ namespace Altaxo.Gui
     }
 
 
+    /// <inheritdoc/>
     public virtual void OnPropertyChanged(string propertyName)
     {
       PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(propertyName));
     }
 
-    /// <summary>
-    /// Performs application-defined tasks associated with freeing, releasing, or resetting unmanaged resources.
-    /// </summary>
+    /// <inheritdoc/>
     public void Dispose()
     {
       Dispose(true);
@@ -76,7 +92,7 @@ namespace Altaxo.Gui
     }
 
     /// <summary>
-    /// Releases unmanaged and - optionally - managed resources.
+    /// Releases unmanaged and, optionally, managed resources.
     /// </summary>
     /// <param name="isDisposing"><c>true</c> to release both managed and unmanaged resources; <c>false</c> to release only unmanaged resources.</param>
     public virtual void Dispose(bool isDisposing)
@@ -88,7 +104,7 @@ namespace Altaxo.Gui
     #region Helper functions
 
     /// <summary>
-    /// Helper function to dispose a member and set it to null.
+    /// Helper function to dispose a member and set it to <c>null</c>.
     /// </summary>
     /// <typeparam name="T">Type of the object to dispose.</typeparam>
     /// <param name="objectToDispose">The object to dispose.</param>

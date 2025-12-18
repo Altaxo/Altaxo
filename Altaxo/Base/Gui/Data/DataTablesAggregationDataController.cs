@@ -6,17 +6,25 @@ using System.Linq;
 using System.Windows.Input;
 using Altaxo.Collections;
 using Altaxo.Data;
+using Altaxo.Data.Selections;
 
 namespace Altaxo.Gui.Data
 {
+  /// <summary>
+  /// Represents the view for editing <see cref="DataTablesAggregationProcessData"/>.
+  /// </summary>
   public interface IDataTablesAggregationDataView : IDataContextAwareView { }
 
+  /// <summary>
+  /// Controller for editing <see cref="DataTablesAggregationProcessData"/> in a GUI.
+  /// </summary>
   [ExpectedTypeOfView(typeof(IDataTablesAggregationDataView))]
   [UserControllerForObject(typeof(DataTablesAggregationProcessData))]
   public class DataTablesAggregationDataController : MVCANControllerEditCopyOfDocBase<DataTablesAggregationProcessData, IDataTablesAggregationDataView>
   {
 
 
+    /// <inheritdoc/>
     public override IEnumerable<ControllerAndSetNullMethod> GetSubControllers()
     {
       yield break;
@@ -24,15 +32,37 @@ namespace Altaxo.Gui.Data
 
     #region Bindings
 
+    /// <summary>
+    /// Gets the command that adds selected available tables to the list of participating tables.
+    /// </summary>
     public ICommand CmdAddToParticipatingTables => field ??= new RelayCommand(EhAddToParticipatingDataTable);
+
+    /// <summary>
+    /// Gets the command that removes selected tables from the list of participating tables.
+    /// </summary>
     public ICommand CmdRemoveFromParticipatingTables => field ??= new RelayCommand(EhRemoveFromParticipatingTablesCommand);
+
+    /// <summary>
+    /// Gets the command that moves selected participating tables up in the list.
+    /// </summary>
     public ICommand CmdParticipatingTablesUp => field ??= new RelayCommand(EhParticipatingTablesUpCommand);
+
+    /// <summary>
+    /// Gets the command that moves selected participating tables down in the list.
+    /// </summary>
     public ICommand CmdParticipatingTablesDown => field ??= new RelayCommand(EhParticipatingTablesDownCommand);
+
+    /// <summary>
+    /// Gets the command that automatically renames participating tables to unique names.
+    /// </summary>
     public ICommand CmdAutoRename => field ??= new RelayCommand(EhAutoRename);
 
 
     private SelectableListNodeList _availableTables;
 
+    /// <summary>
+    /// Gets or sets the list of available tables that can participate in the aggregation.
+    /// </summary>
     public SelectableListNodeList AvailableTables
     {
       get => _availableTables;
@@ -48,6 +78,9 @@ namespace Altaxo.Gui.Data
 
     private SelectableListNodeList _participatingTables;
 
+    /// <summary>
+    /// Gets or sets the list of tables that currently participate in the aggregation.
+    /// </summary>
     public SelectableListNodeList ParticipatingTables
     {
       get => _participatingTables;
@@ -62,6 +95,9 @@ namespace Altaxo.Gui.Data
     }
 
 
+    /// <summary>
+    /// Gets or sets the collection of filter strings used to select tables by name.
+    /// </summary>
     public ObservableCollection<NotifyChangedValue<string>> Filters
     {
       get => field;
@@ -76,6 +112,9 @@ namespace Altaxo.Gui.Data
     }
 
 
+    /// <summary>
+    /// Gets or sets a value indicating whether tables that match the filters should be added to the participating tables before execution.
+    /// </summary>
     public bool AddMatched
     {
       get => field;
@@ -90,6 +129,9 @@ namespace Altaxo.Gui.Data
     }
 
 
+    /// <summary>
+    /// Gets or sets a value indicating whether tables that do not match the filters should be removed from the participating tables before execution.
+    /// </summary>
     public bool RemoveUnmatched
     {
       get => field;
@@ -103,15 +145,25 @@ namespace Altaxo.Gui.Data
       }
     }
 
+    /// <summary>
+    /// Gets the command that adds all tables matching the current filters to the participating tables.
+    /// </summary>
     public ICommand CmdFilterMatchesToParticipatingTables => field ??= new RelayCommand(EhCmdNowAddFilterMatchesToParticipatingTables);
 
+    /// <summary>
+    /// Gets the command that triggers a test of the current data and options.
+    /// </summary>
     public ICommand CmdTestDataAndOptions => field ??= new RelayCommand(() => TestDataAndOptions?.Invoke(), () => TestDataAndOptions is not null);
 
 
+    /// <summary>
+    /// Gets or sets the callback used to test data and options.
+    /// </summary>
     public Action? TestDataAndOptions { get; set; }
 
     #endregion
 
+    /// <inheritdoc/>
     protected override void Initialize(bool initData)
     {
       base.Initialize(initData);
@@ -139,6 +191,9 @@ namespace Altaxo.Gui.Data
       }
     }
 
+    /// <summary>
+    /// Adds all tables matching the current filters to the participating tables list.
+    /// </summary>
     private void EhCmdNowAddFilterMatchesToParticipatingTables()
     {
       var filterStrings = Filters.Select(f => f.Value).ToList();
@@ -148,10 +203,16 @@ namespace Altaxo.Gui.Data
       ParticipatingTables.AddRange(tablesToAdd.Select(t => new SelectableListNode(t.Name, t, false)));
     }
 
+    /// <summary>
+    /// Called when the list of participating tables has changed.
+    /// </summary>
     private void OnParticipatingTablesChanged()
     {
     }
 
+    /// <summary>
+    /// Adds selected available tables to the participating tables list.
+    /// </summary>
     private void EhAddToParticipatingDataTable()
     {
       for (int i = 0; i < AvailableTables.Count; i++)
@@ -168,6 +229,9 @@ namespace Altaxo.Gui.Data
       OnParticipatingTablesChanged();
     }
 
+    /// <summary>
+    /// Removes selected tables from the participating tables list.
+    /// </summary>
     private void EhRemoveFromParticipatingTablesCommand()
     {
       for (int i = ParticipatingTables.Count - 1; i >= 0; i--)
@@ -180,16 +244,25 @@ namespace Altaxo.Gui.Data
       OnParticipatingTablesChanged();
     }
 
+    /// <summary>
+    /// Moves selected participating tables up in the list.
+    /// </summary>
     private void EhParticipatingTablesUpCommand()
     {
       ParticipatingTables.MoveSelectedItemsUp();
     }
 
+    /// <summary>
+    /// Moves selected participating tables down in the list.
+    /// </summary>
     private void EhParticipatingTablesDownCommand()
     {
       ParticipatingTables.MoveSelectedItemsDown();
     }
 
+    /// <summary>
+    /// Automatically renames participating tables to unique numeric names.
+    /// </summary>
     private void EhAutoRename()
     {
       for (int i = 0; i < ParticipatingTables.Count; ++i)
@@ -198,6 +271,7 @@ namespace Altaxo.Gui.Data
       }
     }
 
+    /// <inheritdoc/>
     public override bool Apply(bool disposeController)
     {
       if (ParticipatingTables.Count == 0)
@@ -224,6 +298,7 @@ namespace Altaxo.Gui.Data
 
       _doc = new DataTablesAggregationProcessData(
         ParticipatingTables.Select(node => new DataTableProxy(((DataTable)node.Tag))),
+        new AllRows(),
         Filters.Select(f => f.Value).Where(s => !string.IsNullOrEmpty(s)).ToImmutableList(),
         AddMatched,
         RemoveUnmatched);

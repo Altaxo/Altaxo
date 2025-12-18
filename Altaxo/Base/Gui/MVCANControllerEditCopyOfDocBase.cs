@@ -31,7 +31,7 @@ namespace Altaxo.Gui
 {
   /// <summary>
   /// Base class of controllers that edit a copy of the document. This means that the document is not connected to the document tree when edited.
-  /// If you need the document connected to the document tree during editing, consider using <see cref="MVCANControllerEditOriginalDocBase{TModel, TView>"/> instead.
+  /// If you need the document connected to the document tree during editing, consider using <see cref="MVCANControllerEditOriginalDocBase{TModel, TView}"/> instead.
   /// </summary>
   /// <typeparam name="TModel">The type of the document to edit.</typeparam>
   /// <typeparam name="TView">The type of the view.</typeparam>
@@ -39,33 +39,41 @@ namespace Altaxo.Gui
     where TModel : class // for structs please use MVCANControllerEditImmutableDocBase
     where TView : class
   {
-    /// <summary>The document to edit. If <see cref="_useDocumentCopy"/> is true, this is a copy of the original document; otherwise, it is the original document itself.</summary>
+    /// <summary>
+    /// The document to edit. If <see cref="_useDocumentCopy"/> is <see langword="true"/>, this is a copy of the original document; otherwise, it is the original document itself.
+    /// </summary>
     protected TModel? _doc;
 
-    /// <summary>The original document. If <see cref="_useDocumentCopy"/> is false, it maybe has been edited by this controller.</summary>
+    /// <summary>
+    /// The original document. If <see cref="_useDocumentCopy"/> is <see langword="false"/>, it may have been edited by this controller.
+    /// </summary>
     protected TModel? _originalDoc;
 
-    /// <summary>The Gui view of this controller</summary>
+    /// <summary>
+    /// The GUI view of this controller.
+    /// </summary>
     protected TView? _view;
 
-    /// <summary>If true, a copy of the document is made before editing; this copy can later be used to revert the state of the document to the original state.</summary>
+    /// <summary>
+    /// If <see langword="true"/>, a copy of the document is made before editing; this copy can later be used to revert the state of the document to the original state.
+    /// </summary>
     protected bool _useDocumentCopy;
 
 
 
     /// <summary>
-    /// Enumerates the sub controllers. This function is called on <see cref="Dispose(bool)"/> of this controller to dispose the subcontrollers too.
-    /// By overriding this function, there is no need to override <see cref="Dispose(bool)"/>
+    /// Enumerates the sub controllers. This function is called on <see cref="Dispose(bool)"/> of this controller to dispose the sub controllers too.
+    /// By overriding this function, there is no need to override <see cref="Dispose(bool)"/>.
     /// </summary>
-    /// <returns></returns>
+    /// <returns>An enumeration of controller/set-null-method pairs.</returns>
     public abstract IEnumerable<ControllerAndSetNullMethod> GetSubControllers();
 
     /// <summary>
-    /// Initialize the controller with the document. If successfull, the function has to return true.
+    /// Initializes the controller with the document. If successful, the function returns <see langword="true"/>.
     /// </summary>
-    /// <param name="args">The arguments neccessary to create the controller. Normally, the first argument is the document, the second can be the parent of the document and so on.</param>
+    /// <param name="args">The arguments necessary to create the controller. Normally, the first argument is the document, the second can be the parent of the document, and so on.</param>
     /// <returns>
-    /// Returns <see langword="true" /> if successfull; otherwise <see langword="false" />.
+    /// Returns <see langword="true" /> if successful; otherwise <see langword="false" />.
     /// </returns>
     public virtual bool InitializeDocument(params object[] args)
     {
@@ -86,9 +94,9 @@ namespace Altaxo.Gui
     /// <summary>
     /// Basic initialization of the document.
     /// </summary>
-    /// <param name="initData">If set to <c>true</c>, it indicates that the controller should initialize its model classes..</param>
-    /// <exception cref="System.InvalidOperationException">This controller was not initialized with a document.</exception>
-    /// <exception cref="System.ObjectDisposedException">The controller was already disposed.</exception>
+    /// <param name="initData">If set to <c>true</c>, it indicates that the controller should initialize its model classes.</param>
+    /// <exception cref="InvalidOperationException">This controller was not initialized with a document.</exception>
+    /// <exception cref="ObjectDisposedException">The controller was already disposed.</exception>
     [MemberNotNull(nameof(_doc))]
     protected virtual void Initialize(bool initData)
     {
@@ -101,7 +109,7 @@ namespace Altaxo.Gui
 
 
     /// <summary>Throws an exception if the controller is not initialized with a document.</summary>
-    /// <exception cref="InvalidOperationException">Controller was not initialized with a document</exception>
+    /// <exception cref="InvalidOperationException">Controller was not initialized with a document.</exception>
     [MemberNotNull(nameof(_originalDoc), nameof(_doc))]
     protected void ThrowIfNotInitialized()
     {
@@ -110,18 +118,25 @@ namespace Altaxo.Gui
     }
 
     /// <summary>
-    /// Called when the user input has to be applied to the document being controlled. Returns true if Apply is successfull.
+    /// Called when the user input has to be applied to the document being controlled. Returns <see langword="true"/> if applying succeeded.
     /// </summary>
-    /// <param name="disposeController">If the Apply operation was successfull, and this argument is <c>true</c>, the controller should release all temporary resources, because they are not needed any more.
-    /// If this argument is <c>false</c>, the controller should be reinitialized with the current model (the model that results from the Apply operation).</param>
+    /// <param name="disposeController">If the apply operation was successful and this argument is <c>true</c>, the controller should release all temporary resources, because they are not needed any more.
+    /// If this argument is <c>false</c>, the controller should be reinitialized with the current model (the model that results from the apply operation).</param>
     /// <returns>
-    /// True if the apply operation was successfull, otherwise false. If false is returned, the <paramref name="disposeController" /> argument is ignored: thus the controller is not disposed.
+    /// <see langword="true"/> if the apply operation was successful; otherwise <see langword="false"/>.
+    /// If <see langword="false"/> is returned, the <paramref name="disposeController" /> argument is ignored and the controller is not disposed.
     /// </returns>
     /// <remarks>
-    /// This function is called in two cases: Either the user pressed OK or the user pressed Apply.
+    /// This function is called in two cases: either the user pressed OK or the user pressed Apply.
     /// </remarks>
     public abstract bool Apply(bool disposeController);
 
+    /// <summary>
+    /// Helper that performs the final steps of the apply operation, optionally copying back to the original document and disposing the controller.
+    /// </summary>
+    /// <param name="applyResult">The result of the apply operation.</param>
+    /// <param name="disposeController">If set to <c>true</c>, the controller is disposed when <paramref name="applyResult"/> is <c>true</c>.</param>
+    /// <returns>The value of <paramref name="applyResult"/>.</returns>
     protected virtual bool ApplyEnd(bool applyResult, bool disposeController)
     {
       ThrowIfNotInitialized();
@@ -148,11 +163,11 @@ namespace Altaxo.Gui
     }
 
     /// <summary>
-    /// Try to revert changes to the model, i.e. restores the original state of the model.
+    /// Tries to revert changes to the model, i.e. restores the original state of the model.
     /// </summary>
-    /// <param name="disposeController">If set to <c>true</c>, the controller should release all temporary resources, since the controller is not needed anymore.</param>
+    /// <param name="disposeController">If set to <c>true</c>, the controller should release all temporary resources, since the controller is not needed any more.</param>
     /// <returns>
-    ///   <c>True</c> if the revert operation was successfull; <c>false</c> if the revert operation was not possible (i.e. because the controller has not stored the original state of the model).
+    ///   <c>true</c> if the revert operation was successful; <c>false</c> if the revert operation was not possible (for example because the controller has not stored the original state of the model).
     /// </returns>
     public virtual bool Revert(bool disposeController)
     {
@@ -176,7 +191,7 @@ namespace Altaxo.Gui
     }
 
     /// <summary>
-    /// Override this function to detach the view from the controller, either by unsubscribing to events of the view, or by setting the controller object on the view to null.
+    /// Override this function to detach the view from the controller, either by unsubscribing from events of the view or by setting the controller object on the view to <c>null</c>.
     /// </summary>
     protected virtual void DetachView()
     {
@@ -188,9 +203,9 @@ namespace Altaxo.Gui
 
 
     /// <summary>
-    /// Sets whether or not a copy of the document is used. If set to true, a copy of the document is used, so if the controller is not applied,
-    /// all changes can be reverted. If set to false, no copy must be made. The document is directly changed by the controller, and changes can not be reverted.
-    /// Use the last option if a controller up in the hierarchie has already made a copy of the document.
+    /// Sets whether or not a copy of the document is used. If set to <c>true</c>, a copy of the document is used, so if the controller is not applied,
+    /// all changes can be reverted. If set to <c>false</c>, no copy must be made. The document is directly changed by the controller, and changes can not be reverted.
+    /// Use the last option if a controller up in the hierarchy has already made a copy of the document.
     /// </summary>
     public UseDocument UseDocumentCopy
     {
@@ -198,7 +213,7 @@ namespace Altaxo.Gui
     }
 
     /// <summary>
-    /// Returns the Gui element that shows the model to the user.
+    /// Gets or sets the GUI element that shows the model to the user.
     /// </summary>
     public virtual object? ViewObject
     {
@@ -228,7 +243,7 @@ namespace Altaxo.Gui
     }
 
     /// <summary>
-    /// Returns the document that this controller has edited. Here the state of the document has changed only after calling <see cref="Apply"/>.
+    /// Gets the document that this controller has edited. Here the state of the document has changed only after calling <see cref="Apply(bool)"/>.
     /// </summary>
     public virtual object ModelObject
     {
@@ -241,10 +256,7 @@ namespace Altaxo.Gui
 
 
 
-    /// <summary>
-    /// Releases unmanaged and - optionally - managed resources.
-    /// </summary>
-    /// <param name="isDisposing"><c>true</c> to release both managed and unmanaged resources; <c>false</c> to release only unmanaged resources.</param>
+    /// <inheritdoc/>
     public override void Dispose(bool isDisposing)
     {
       if (!IsDisposed)

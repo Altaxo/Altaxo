@@ -27,6 +27,9 @@ using System.Collections.Immutable;
 
 namespace Altaxo.Data
 {
+  /// <summary>
+  /// Options for aggregating data from one or multiple tables, see also <see cref="DataTablesAggregationDataSource"/>.
+  /// </summary>
   public record DataTablesAggregationOptions : Main.IImmutable
   {
     /// <summary>
@@ -39,6 +42,14 @@ namespace Altaxo.Data
     /// </summary>
     public ImmutableList<string> AggregatedColumnNames { get; init; } = ImmutableList<string>.Empty;
 
+    /// <summary>
+    /// If true, the names in <see cref="AggregatedColumnNames"/> are treated as property names of the tables.
+    /// </summary>
+    public bool AggregatedColumnNamesArePropertyNames { get; init; } = false;
+
+    /// <summary>
+    /// Gets the kinds of aggregation that should be applied to the aggregated columns.
+    /// </summary>
     public ImmutableList<KindOfAggregation> AggregationKinds { get; init; } = [KindOfAggregation.Mean];
 
 
@@ -52,6 +63,7 @@ namespace Altaxo.Data
     [Altaxo.Serialization.Xml.XmlSerializationSurrogateFor(typeof(DataTablesAggregationOptions), 0)]
     private class XmlSerializationSurrogate0 : Altaxo.Serialization.Xml.IXmlSerializationSurrogate
     {
+      /// <inheritdoc/>
       public virtual void Serialize(object obj, Altaxo.Serialization.Xml.IXmlSerializationInfo info)
       {
         var s = (DataTablesAggregationOptions)obj;
@@ -66,6 +78,7 @@ namespace Altaxo.Data
 
 
 
+      /// <inheritdoc/>
       public object Deserialize(object? o, Altaxo.Serialization.Xml.IXmlDeserializationInfo info, object? parent)
       {
         var clusteredPropertiesNames = info.GetArrayOfStrings("ClusteredPropertiesNames");
@@ -91,15 +104,61 @@ namespace Altaxo.Data
     #endregion Serialization
   }
 
+  /// <summary>
+  /// Specifies the available kinds of aggregation for aggregated columns.
+  /// </summary>
   public enum KindOfAggregation
   {
+    /// <summary>
+    /// Arithmetic mean of the values.
+    /// </summary>
     Mean = 1,
+
+    /// <summary>
+    /// Standard deviation of the values, the divisor is N-1 (sample size minus 1, Bessel’s correction).
+    /// </summary>
     StdDev = 2,
-    SStdDev = 3,
+
+    /// <summary>
+    /// Standard deviation estimated from a sample, the divisor is N (population size).
+    /// </summary>
+    PopulationStdDev = 3,
+
+    /// <summary>
+    /// Median of the values.
+    /// </summary>
     Median = 4,
+
+    /// <summary>
+    /// Minimum of the values.
+    /// </summary>
     Minimum = 5,
+
+    /// <summary>
+    /// Maximum of the values.
+    /// </summary>
     Maximum = 6,
+
+    /// <summary>
+    /// Number of values.
+    /// </summary>
     Count = 7,
+
+    /// <summary>
+    /// Sum of the values.
+    /// </summary>
     Sum = 8,
+
+    /// <summary>
+    /// Sample variance of the values, the divisor is N-1 (sample size minus 1, Bessel’s correction).
+    /// </summary>
+    Variance = 9,
+
+    /// <summary>
+    /// Population variance estimated from a sample, the divisor is N (population size).
+    /// </summary>
+    PopulationVariance = 10,
+
+
   }
 }

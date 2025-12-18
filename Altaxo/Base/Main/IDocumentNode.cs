@@ -30,7 +30,7 @@ using Altaxo.Main;
 namespace Altaxo.Main
 {
   /// <summary>
-  /// Interface of a document node at the end of the hierarchie, i.e. a leaf node.
+  /// Interface of a document node at the end of the hierarchy, i.e. a leaf node.
   /// </summary>
   public interface IDocumentLeafNode
     :
@@ -44,10 +44,16 @@ namespace Altaxo.Main
   //Altaxo.Collections.INodeWithParentNode<IDocumentNode>
   {
     /// <summary>
-    /// Retrieves the parent object.
+    /// Gets or sets the parent document node of this leaf node.
     /// </summary>
     IDocumentNode? ParentObject { get; set; }
 
+    /// <summary>
+    /// Handles a tunneling event raised by a parent document node.
+    /// </summary>
+    /// <param name="sender">The parent node that forwarded the tunneling event.</param>
+    /// <param name="originalSource">The original source node where the event was raised.</param>
+    /// <param name="e">The event data associated with the tunneling event.</param>
     void EhParentTunnelingEventHappened(IDocumentNode sender, IDocumentNode originalSource, TunnelingEventArgs e);
 
     /// <summary>
@@ -59,10 +65,10 @@ namespace Altaxo.Main
     bool IsDisposed { get; }
 
     /// <summary>
-    /// Gets a value indicating whether this instance is dispose in progress, or the instance is already disposed.
+    /// Gets a value indicating whether this instance is in dispose progress, or the instance is already disposed.
     /// </summary>
     /// <value>
-    /// <c>true</c> if this instance is dispose in progress or already disposed; otherwise, <c>false</c>.
+    /// <c>true</c> if this instance is in dispose progress or already disposed; otherwise, <c>false</c>.
     /// </value>
     bool IsDisposeInProgress { get; }
 
@@ -79,11 +85,25 @@ namespace Altaxo.Main
   {
   }
 
+  /// <summary>
+  /// Represents the dispose state of a document node.
+  /// </summary>
   [Flags]
   public enum DisposeState
   {
+    /// <summary>
+    /// The node is not disposed.
+    /// </summary>
     NotDisposed = 0,
+
+    /// <summary>
+    /// The node is currently in the process of being disposed.
+    /// </summary>
     DisposeInProgress = 1,
+
+    /// <summary>
+    /// The node has been disposed.
+    /// </summary>
     Disposed = 2
   }
 }

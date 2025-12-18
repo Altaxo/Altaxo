@@ -29,8 +29,9 @@ using System.Diagnostics.CodeAnalysis;
 namespace Altaxo.Gui
 {
   /// <summary>
-  /// Helper class that wraps a single value of type T and implements the <see cref="System.ComponentModel.INotifyPropertyChanged"/> interface, so that changes to the value can be monitored by the Gui.
-  /// This class is a must if using a DataGrid, since plain values (string, int, etc.) are not editable.
+  /// Helper class that wraps a single value of type <typeparamref name="T"/> and implements the <see cref="System.ComponentModel.INotifyPropertyChanged"/> interface,
+  /// so that changes to the value can be monitored by the GUI.
+  /// This class is required when using a <c>DataGrid</c>, since plain values (such as <see cref="string"/>, <see cref="int"/>, etc.) are not directly editable.
   /// </summary>
   /// <typeparam name="T">Type of the value to wrap.</typeparam>
   public class NotifyChangedValue<T> : System.ComponentModel.INotifyPropertyChanged
@@ -38,10 +39,11 @@ namespace Altaxo.Gui
     [MaybeNull]
     private T _value;
 
+    /// <inheritdoc/>
     public event System.ComponentModel.PropertyChangedEventHandler? PropertyChanged;
 
     /// <summary>
-    /// Empty constructor, which sets the value to the defaulting one.
+    /// Initializes a new instance of the <see cref="NotifyChangedValue{T}"/> class, setting the value to its default.
     /// </summary>
 #pragma warning disable CS8618 // Non-nullable field is uninitialized. Consider declaring as nullable.
     public NotifyChangedValue()
@@ -50,7 +52,7 @@ namespace Altaxo.Gui
     }
 
     /// <summary>
-    /// Constructs the class with the given value.
+    /// Initializes a new instance of the <see cref="NotifyChangedValue{T}"/> class with the given value.
     /// </summary>
     /// <param name="value">Initial value.</param>
     public NotifyChangedValue(T value)
@@ -59,7 +61,7 @@ namespace Altaxo.Gui
     }
 
     /// <summary>
-    /// Gets/sets the value. If the value set is different from the old one, the PropertyChanged event is triggered.
+    /// Gets or sets the wrapped value. If the new value differs from the old one, the <see cref="PropertyChanged"/> event is raised.
     /// </summary>
     [MaybeNull]
     public T Value

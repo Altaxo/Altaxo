@@ -27,17 +27,42 @@ using System;
 using System.Collections.Generic;
 using System.Collections.Immutable;
 using System.Linq;
+using Altaxo.Data.Selections;
 using Altaxo.Main;
 
 namespace Altaxo.Data
 {
+  /// <summary>
+  /// Holds configuration and state for aggregating data from multiple data tables.
+  /// </summary>
   public class DataTablesAggregationProcessData : Main.SuspendableDocumentNodeWithEventArgs, ICloneable
   {
+    /// <summary>
+    /// Gets the list of data table proxies that are used as sources for aggregation.
+    /// </summary>
     public List<DataTableProxy> DataTables = new List<DataTableProxy>();
 
     /// <summary>
-    /// The alternative possibility is to use a name filter to select tables by their name.
+    /// Gets or sets the row selection.
     /// </summary>
+    /// <exception cref="Markdig.Helpers.ThrowHelper.ArgumentNullException(System.String)">RowSelection</exception>
+    IRowSelection RowSelection
+    {
+      get => field;
+      set
+      {
+        ArgumentNullException.ThrowIfNull(value, nameof(RowSelection));
+        field = value;
+
+      }
+    } = new AllRows();
+
+    /// <summary>
+    /// Gets or sets filters that are used as name patterns to select tables by their name.
+    /// </summary>
+    /// <remarks>
+    /// The alternative possibility is to use a name filter to select tables by their name.
+    /// </remarks>
     public ImmutableList<string> DataTableNameFilter
     {
       get => field;
@@ -50,12 +75,13 @@ namespace Altaxo.Data
 
 
     /// <summary>
-    /// If true, all tables that match the filter matches are added to the list of tables before execution.
+    /// Gets or sets a value indicating whether all tables that match the filter are added to the list of tables before execution of the data source.
     /// </summary>
     public bool AddFilterMatchedTablesBeforeExecution { get; set; } = true;
 
     /// <summary>
-    /// If true, all tables that do not match the filter are removed from the list of tables before execution.
+    /// Gets or sets a value indicating whether all tables that do not match the filter are removed from the list of tables before execution of the data source.
+    /// </summary>
     public bool RemoveFilterUnmatchedTablesBeforeExecution { get; set; } = true;
 
 
@@ -70,11 +96,13 @@ namespace Altaxo.Data
     [Altaxo.Serialization.Xml.XmlSerializationSurrogateFor(typeof(DataTablesAggregationProcessData), 0)]
     private class XmlSerializationSurrogate0 : Altaxo.Serialization.Xml.IXmlSerializationSurrogate
     {
+      /// <inheritdoc/>
       public virtual void Serialize(object obj, Altaxo.Serialization.Xml.IXmlSerializationInfo info)
       {
         var s = (DataTablesAggregationProcessData)obj;
 
         info.AddArray("DataTables", s.DataTables, s.DataTables.Count);
+        info.AddValue("RowSelection", s.RowSelection);
         info.AddArray("DataTableNameFilter", s.DataTableNameFilter, s.DataTableNameFilter.Count);
         info.AddValue("AddFilterdMatchedTablesBeforeExecution", s.AddFilterMatchedTablesBeforeExecution);
         info.AddValue("RemoveFilterUnmatchedTablesBeforeExecution", s.RemoveFilterUnmatchedTablesBeforeExecution);
@@ -82,13 +110,15 @@ namespace Altaxo.Data
 
 
 
+      /// <inheritdoc/>
       public object Deserialize(object? o, Altaxo.Serialization.Xml.IXmlDeserializationInfo info, object? parent)
       {
         var tableProxies = info.GetArrayOfValues<DataTableProxy>("DataTables", parent);
+        var rowSelection = info.GetValue<IRowSelection>("RowSelection", parent);
         var filter = info.GetArrayOfStrings("DataTableNameFilter");
         bool addMatched = info.GetBoolean("AddFilterdMatchedTablesBeforeExecution");
         bool removeUnmatched = info.GetBoolean("RemoveFilterUnmatchedTablesBeforeExecution");
-        return new DataTablesAggregationProcessData(tableProxies, filter.ToImmutableList(), addMatched, removeUnmatched);
+        return new DataTablesAggregationProcessData(tableProxies, rowSelection, filter.ToImmutableList(), addMatched, removeUnmatched);
       }
     }
 
@@ -98,23 +128,33 @@ namespace Altaxo.Data
 
 
 
-    public DataTablesAggregationProcessData(IEnumerable<DataTableProxy> tables, ImmutableList<string> dataTableNameFilter, bool addMatched, bool removeUnmatched)
+    /// <summary>
+    /// Initializes a new instance of the <see cref="DataTablesAggregationProcessData"/> class.
+    /// </summary>
+    /// <param name="tables">The source table proxies. They are used as is, i.e. without cloning, thus make sure to clone them before if they are used elsewhere.</param>
+    /// <param name="rowSelection">The row selection to use for all tables. It is used as is, i.e. without cloning, thus make sure to clone it before if it is used elsewhere.</param>
+    /// <param name="dataTableNameFilter">The table name filters used to select tables for aggregation.</param>
+    /// <param name="addMatched">If set to <c>true</c>, tables matching the filter are added before execution of the data source.</param>
+    /// <param name="removeUnmatched">If set to <c>true</c>, tables not matching the filter are removed before execution of the data source.</param>
+    public DataTablesAggregationProcessData(IEnumerable<DataTableProxy> tables, IRowSelection rowSelection, ImmutableList<string> dataTableNameFilter, bool addMatched, bool removeUnmatched)
     {
-      DataTables = new();
-      foreach (var entry in tables)
-      {
-        var tt = (DataTableProxy)entry.Clone();
-        tt.ParentObject = this;
-        DataTables.Add(tt);
-      }
+      DataTables = tables.ToList();
+      RowSelection = rowSelection;
       DataTableNameFilter = dataTableNameFilter;
       AddFilterMatchedTablesBeforeExecution = addMatched;
       RemoveFilterUnmatchedTablesBeforeExecution = removeUnmatched;
     }
 
+    /// <inheritdoc/>
     public object Clone()
     {
-      return new DataTablesAggregationProcessData(this.DataTables, this.DataTableNameFilter, AddFilterMatchedTablesBeforeExecution, RemoveFilterUnmatchedTablesBeforeExecution);
+      return new DataTablesAggregationProcessData(
+        this.DataTables.Select(tp => { var c = (DataTableProxy)tp.Clone(); c.ParentObject = this; return c; }),
+        (IRowSelection)RowSelection.Clone(),
+        this.DataTableNameFilter,
+        AddFilterMatchedTablesBeforeExecution,
+        RemoveFilterUnmatchedTablesBeforeExecution
+        );
     }
 
     /// <summary>
@@ -122,16 +162,35 @@ namespace Altaxo.Data
     /// </summary>
     public IReadOnlyList<DataTableProxy> TableProxies => DataTables;
 
+    /// <summary>
+    /// Determines whether the specified path matches the current table name filter.
+    /// </summary>
+    /// <param name="path">The table path or name to test.</param>
+    /// <returns><c>true</c> if the path matches at least one filter pattern; otherwise, <c>false</c>.</returns>
     public bool IsTableNameMatching(string path)
     {
       return IsTableNameMatching(DataTableNameFilter, path);
     }
 
+    /// <summary>
+    /// Determines whether the specified path matches at least one of the provided filter patterns.
+    /// </summary>
+    /// <param name="filters">The collection of filter patterns.</param>
+    /// <param name="path">The table path or name to test.</param>
+    /// <returns><c>true</c> if the path matches at least one pattern; otherwise, <c>false</c>.</returns>
     public static bool IsTableNameMatching(IEnumerable<string> filters, string path)
     {
       return filters.Any(pattern => MatchRecursive(pattern, 0, path, 0));
     }
 
+    /// <summary>
+    /// Matches a table path against a single filter pattern using recursive wildcard matching.
+    /// </summary>
+    /// <param name="pattern">The filter pattern that may contain '*', '**', or '?' wildcards.</param>
+    /// <param name="pi">The current index in the pattern.</param>
+    /// <param name="path">The table path or name to match.</param>
+    /// <param name="si">The current index in the path.</param>
+    /// <returns><c>true</c> if the pattern matches the path; otherwise, <c>false</c>.</returns>
     private static bool MatchRecursive(string pattern, int pi, string path, int si)
     {
       while (pi < pattern.Length)
@@ -167,6 +226,7 @@ namespace Altaxo.Data
         }
 
         // Handle "?"
+
         if (pattern[pi] == '?')
         {
           if (si >= path.Length) return false;
@@ -187,6 +247,11 @@ namespace Altaxo.Data
       return si == path.Length;
     }
 
+    /// <summary>
+    /// Synchronizes the internal table proxies with the current project tables using the filters and returns the resulting source tables.
+    /// </summary>
+    /// <param name="destinationTable">The destination table, or <c>null</c> to use the global project tables.</param>
+    /// <returns>The collection of source tables referenced by the updated proxies.</returns>
     public IEnumerable<DataTable> UpdateTableProxiesAndGetSourceTables(DataTable? destinationTable)
     {
       var allTables = destinationTable?.ParentObject as DataTableCollection ?? Current.Project.DataTableCollection;
@@ -196,7 +261,7 @@ namespace Altaxo.Data
         filteredTables = allTables.Where(t => IsTableNameMatching(DataTableNameFilter, t.Name)).ToHashSet();
       }
 
-      if (RemoveFilterUnmatchedTablesBeforeExecution)
+      if (RemoveFilterUnmatchedTablesBeforeExecution && DataTableNameFilter.Count > 0)
       {
         DataTables.RemoveAll(p => p.Document is null || !filteredTables.Contains(p.Document));
       }
@@ -218,6 +283,7 @@ namespace Altaxo.Data
 
 
 
+    /// <inheritdoc/>
     protected override IEnumerable<DocumentNodeAndName> GetDocumentNodeChildrenWithName()
     {
       if (DataTables is { } tables)
@@ -227,6 +293,10 @@ namespace Altaxo.Data
       }
     }
 
+    /// <summary>
+    /// Visits all document references so that proxies can be reported or updated.
+    /// </summary>
+    /// <param name="reportProxies">The callback used to report each proxy instance.</param>
     public void VisitDocumentReferences(DocNodeProxyReporter reportProxies)
     {
       for (int i = DataTables.Count - 1; i >= 0; i--)

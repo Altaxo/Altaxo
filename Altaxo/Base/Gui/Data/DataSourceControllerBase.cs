@@ -28,6 +28,10 @@ using Altaxo.Data;
 
 namespace Altaxo.Gui.Data
 {
+  /// <summary>
+  /// Base controller for configuring a table data source, including import options, process options, and process data.
+  /// </summary>
+  /// <typeparam name="TItem">The type of the data source being edited.</typeparam>
   [ExpectedTypeOfView(typeof(ICommonDataSourceViewN))]
   public class DataSourceControllerBase<TItem> : MVCANControllerEditOriginalDocBase<TItem, IDataContextAwareView>, IMVCSupportsApplyCallback where TItem : IAltaxoTableDataSource
   {
@@ -35,12 +39,27 @@ namespace Altaxo.Gui.Data
     private IMVCANController _processOptionsController;
     private IMVCANController _processDataController;
 
+    /// <summary>
+    /// Occurs when the apply operation has completed successfully.
+    /// </summary>
     public event Action SuccessfullyApplied;
 
+    /// <summary>
+    /// Name of the tab that shows the input options.
+    /// </summary>
     public const string TabInputOptions = "InputOptions";
+
+    /// <summary>
+    /// Name of the tab that shows the process options.
+    /// </summary>
     public const string TabProcessOptions = "ProcessOptions";
+
+    /// <summary>
+    /// Name of the tab that shows the process data.
+    /// </summary>
     public const string TabProcessData = "ProcessData";
 
+    /// <inheritdoc/>
     public override IEnumerable<ControllerAndSetNullMethod> GetSubControllers()
     {
       yield return new ControllerAndSetNullMethod(_inputOptionsController, () => _inputOptionsController = null);
@@ -51,6 +70,9 @@ namespace Altaxo.Gui.Data
     #region Bindings
 
 
+    /// <summary>
+    /// Gets or sets the controller that manages the input options of the data source.
+    /// </summary>
     public IMVCANController InputOptionsController
     {
       get { return _inputOptionsController; }
@@ -65,6 +87,9 @@ namespace Altaxo.Gui.Data
       }
     }
 
+    /// <summary>
+    /// Gets or sets the controller that manages the process options of the data source.
+    /// </summary>
     public IMVCANController ProcessOptionsController
     {
       get { return _processOptionsController; }
@@ -81,6 +106,9 @@ namespace Altaxo.Gui.Data
       }
     }
 
+    /// <summary>
+    /// Gets or sets the controller that manages the process data of the data source.
+    /// </summary>
     public IMVCANController ProcessDataController
     {
       get { return _processDataController; }
@@ -97,6 +125,9 @@ namespace Altaxo.Gui.Data
       }
     }
 
+    /// <summary>
+    /// Gets the controller that should be shown in the second position (middle panel).
+    /// </summary>
     public IMVCANController ControllerAtPosition2
     {
       get
@@ -107,6 +138,9 @@ namespace Altaxo.Gui.Data
 
     private bool _isPosition2Expanded;
 
+    /// <summary>
+    /// Gets or sets a value indicating whether the second panel (position 2) is expanded.
+    /// </summary>
     public bool IsPosition2Expanded
     {
       get => _isPosition2Expanded;
@@ -121,6 +155,9 @@ namespace Altaxo.Gui.Data
     }
 
 
+    /// <summary>
+    /// Gets the controller that should be shown in the third position (bottom panel).
+    /// </summary>
     public IMVCANController ControllerAtPosition3
     {
       get
@@ -131,6 +168,9 @@ namespace Altaxo.Gui.Data
 
     private bool _isPosition3Expanded;
 
+    /// <summary>
+    /// Gets or sets a value indicating whether the third panel (position 3) is expanded.
+    /// </summary>
     public bool IsPosition3Expanded
     {
       get => _isPosition3Expanded;
@@ -145,7 +185,7 @@ namespace Altaxo.Gui.Data
     }
 
     /// <summary>
-    /// If true, the process data view is shown before (on top) of the process options view. If false (default), the process options view is shown on top of the process data view.
+    /// If <see langword="true"/>, the process data view is shown before (on top of) the process options view. If <see langword="false"/> (default), the process options view is shown on top of the process data view.
     /// </summary>
     public virtual bool ShowProcessDataBeforeProcessOptions
     {
@@ -155,6 +195,7 @@ namespace Altaxo.Gui.Data
 
     #endregion
 
+    /// <inheritdoc/>
     protected override void Initialize(bool initData)
     {
       base.Initialize(initData);
@@ -178,6 +219,10 @@ namespace Altaxo.Gui.Data
       }
     }
 
+    /// <summary>
+    /// Creates the controller that manages the process options for the data source.
+    /// </summary>
+    /// <returns>The process options controller, or <c>null</c> if there is no process options object.</returns>
     protected virtual IMVCANController GetProcessOptionsController()
     {
       if (_doc.ProcessOptionsObject is not null)
@@ -191,6 +236,10 @@ namespace Altaxo.Gui.Data
     }
 
 
+    /// <summary>
+    /// Creates the controller that manages the process data for the data source.
+    /// </summary>
+    /// <returns>The process data controller, or <c>null</c> if there is no process data object.</returns>
     protected virtual IMVCANController GetProcessDataController()
     {
       if (_doc.ProcessDataObject is not null)
@@ -202,9 +251,6 @@ namespace Altaxo.Gui.Data
         return null;
       }
     }
-
-
-   
 
 
     /// <summary>
@@ -225,6 +271,7 @@ namespace Altaxo.Gui.Data
     protected virtual bool IsProcessDataInitiallyExpanded() => false;
 
 
+    /// <inheritdoc/>
     public override bool Apply(bool disposeController)
     {
 

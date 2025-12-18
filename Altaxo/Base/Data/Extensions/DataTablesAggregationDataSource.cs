@@ -31,17 +31,43 @@ using Altaxo.Calc.Statistics;
 
 namespace Altaxo.Data
 {
+  /// <summary>
+  /// Provides a data source that aggregates data from multiple tables according to specified options.
+  /// </summary>
   public class DataTablesAggregationDataSource : TableDataSourceBase, Altaxo.Data.IAltaxoTableDataSource
   {
-    public struct AggregationKey : IEquatable<AggregationKey>, IComparable<AggregationKey>
+    /// <summary>
+    /// Represents a key for grouping rows during aggregation, based on clustered property values.
+    /// </summary>
+    public readonly struct AggregationKey : IEquatable<AggregationKey>, IComparable<AggregationKey>
     {
-      public AltaxoVariant[] KeyValues;
+      /// <summary>
+      /// Gets the key values that define this aggregation key.
+      /// </summary>
+      public AltaxoVariant[] KeyValues { get; }
 
+      private readonly int _hashCode;
+
+      /// <summary>
+      /// Initializes a new instance of the <see cref="AggregationKey"/> struct.
+      /// </summary>
+      /// <param name="keyValues">The key values that define this aggregation key.</param>
       public AggregationKey(AltaxoVariant[] keyValues)
       {
+        if (keyValues is null)
+          throw new ArgumentNullException(nameof(keyValues));
+
         KeyValues = keyValues;
+
+        int hash = 17;
+        for (int i = 0; i < keyValues.Length; ++i)
+        {
+          hash = hash * 31 + keyValues[i].GetHashCode();
+        }
+        _hashCode = hash;
       }
 
+      /// <inheritdoc/>
       public int CompareTo(AggregationKey other)
       {
         int r = 0;
@@ -53,24 +79,31 @@ namespace Altaxo.Data
         return r;
       }
 
-      public readonly bool Equals(AggregationKey other)
+      /// <inheritdoc/>
+      public bool Equals(AggregationKey other)
       {
-        if (KeyValues.Length != other.KeyValues.Length) return false;
+        if (KeyValues.Length != other.KeyValues.Length)
+          return false;
+
         for (int i = 0; i < KeyValues.Length; i++)
         {
-          if (!KeyValues[i].Equals(other.KeyValues[i])) return false;
+          if (!KeyValues[i].Equals(other.KeyValues[i]))
+            return false;
         }
+
         return true;
       }
 
-      public override readonly int GetHashCode()
+      /// <inheritdoc/>
+      public override bool Equals(object? obj)
       {
-        int hash = 17;
-        foreach (var val in KeyValues)
-        {
-          hash = hash * 31 + val.GetHashCode();
-        }
-        return hash;
+        return obj is AggregationKey other && Equals(other);
+      }
+
+      /// <inheritdoc/>
+      public override int GetHashCode()
+      {
+        return _hashCode;
       }
     }
 
@@ -78,6 +111,9 @@ namespace Altaxo.Data
     private DataTablesAggregationProcessData _processData;
     private IDataSourceImportOptions _importOptions;
 
+    /// <summary>
+    /// Backing field for the <see cref="DataSourceChanged"/> event.
+    /// </summary>
     public Action<IAltaxoTableDataSource>? _dataSourceChanged;
 
     #region Serialization
@@ -90,6 +126,7 @@ namespace Altaxo.Data
     [Altaxo.Serialization.Xml.XmlSerializationSurrogateFor(typeof(DataTablesAggregationDataSource), 0)]
     private class XmlSerializationSurrogate0 : Altaxo.Serialization.Xml.IXmlSerializationSurrogate
     {
+      /// <inheritdoc/>
       public virtual void Serialize(object obj, Altaxo.Serialization.Xml.IXmlSerializationInfo info)
       {
         var s = (DataTablesAggregationDataSource)obj;
@@ -101,6 +138,7 @@ namespace Altaxo.Data
 
 
 
+      /// <inheritdoc/>
       public object Deserialize(object? o, Altaxo.Serialization.Xml.IXmlDeserializationInfo info, object? parent)
       {
         if (o is DataTablesAggregationDataSource s)
@@ -122,6 +160,12 @@ namespace Altaxo.Data
 
     #endregion Version 0
 
+    /// <summary>
+    /// Initializes a new instance of the <see cref="DataTablesAggregationDataSource"/> class during XML deserialization.
+    /// </summary>
+    /// <param name="info">The XML deserialization info.</param>
+    /// <param name="version">The serialized version.</param>
+    /// <exception cref="ArgumentOutOfRangeException">Thrown when the version is not supported.</exception>
     protected DataTablesAggregationDataSource(Altaxo.Serialization.Xml.IXmlDeserializationInfo info, int version)
     {
       switch (version)
@@ -142,15 +186,11 @@ namespace Altaxo.Data
     /// <summary>
     /// Initializes a new instance of the <see cref="DataTablesAggregationDataSource"/> class.
     /// </summary>
-    /// <param name="inputData">The input data designates the original source of data (used then for the processing).</param>
-    /// <param name="dataSourceOptions">The Fourier transformation options.</param>
+    /// <param name="inputData">The input data that designates the original source of data used for aggregation.</param>
+    /// <param name="dataSourceOptions">The aggregation options.</param>
     /// <param name="importOptions">The data source import options.</param>
-    /// <exception cref="System.ArgumentNullException">
-    /// inputData
-    /// or
-    /// transformationOptions
-    /// or
-    /// importOptions
+    /// <exception cref="ArgumentNullException">
+    /// Thrown if <paramref name="inputData"/>, <paramref name="dataSourceOptions"/>, or <paramref name="importOptions"/> is <c>null</c>.
     /// </exception>
     public DataTablesAggregationDataSource(DataTablesAggregationProcessData inputData, DataTablesAggregationOptions dataSourceOptions, IDataSourceImportOptions importOptions)
     {
@@ -170,7 +210,7 @@ namespace Altaxo.Data
     }
 
     /// <summary>
-    /// Initializes a new instance of the <see cref="ExpandCyclingVariableColumnDataSource"/> class.
+    /// Initializes a new instance of the <see cref="DataTablesAggregationDataSource"/> class by copying from another instance.
     /// </summary>
     /// <param name="from">Another instance to copy from.</param>
     public DataTablesAggregationDataSource(DataTablesAggregationDataSource from)
@@ -201,7 +241,7 @@ namespace Altaxo.Data
     /// Copies from another instance.
     /// </summary>
     /// <param name="obj">The object to copy from.</param>
-    /// <returns><c>True</c> if anything could be copied from the object, otherwise <c>false</c>.</returns>
+    /// <returns><c>true</c> if anything could be copied from the object; otherwise, <c>false</c>.</returns>
     public bool CopyFrom(object obj)
     {
       if (ReferenceEquals(this, obj))
@@ -215,12 +255,7 @@ namespace Altaxo.Data
       return false;
     }
 
-    /// <summary>
-    /// Creates a new object that is a copy of the current instance.
-    /// </summary>
-    /// <returns>
-    /// A new object that is a copy of this instance.
-    /// </returns>
+    /// <inheritdoc/>
     public object Clone()
     {
       return new DataTablesAggregationDataSource(this);
@@ -228,6 +263,10 @@ namespace Altaxo.Data
 
     #region IAltaxoTableDataSource
 
+    /// <summary>
+    /// Checks the process data and options and returns warnings or errors, if any.
+    /// </summary>
+    /// <returns>An enumerable of warning or error messages; may be empty.</returns>
     public IEnumerable<string> CheckDataAndOptions()
     {
       var tablesParticipating = ProcessData.UpdateTableProxiesAndGetSourceTables(null);
@@ -279,7 +318,7 @@ namespace Altaxo.Data
     /// Fills (or refills) the data table with the processed data. The data source is represented by this instance, the destination table is provided in the argument <paramref name="destinationTable" />.
     /// </summary>
     /// <param name="destinationTable">The destination table.</param>
-    /// <param name="reporter"></param>
+    /// <param name="reporter">The progress reporter.</param>
     public override void FillData_Unchecked(DataTable destinationTable, IProgressReporter reporter)
     {
       destinationTable.DataColumns.RemoveColumnsAll();
@@ -324,28 +363,38 @@ namespace Altaxo.Data
                 continue;
 
               var keyValues = new AltaxoVariant[ProcessOptions.ClusteredPropertiesNames.Count];
+              var keyValuesContainEmpty = false;
               for (int i = 0; i < ProcessOptions.ClusteredPropertiesNames.Count; i++)
               {
                 var clusteredPropertyName = ProcessOptions.ClusteredPropertiesNames[i];
+                AltaxoVariant keyValue;
                 if (propDictColumns.TryGetValue(clusteredPropertyName, out var clusteredColumn))
                 {
-                  keyValues[i] = clusteredColumn[rowIndex];
+                  if (!clusteredColumn.IsElementEmpty(rowIndex))
+                    keyValue = clusteredColumn[rowIndex];
+                  else
+                    keyValue = new AltaxoVariant();
                 }
                 else
                 {
-                  keyValues[i] = propDictConstants[clusteredPropertyName];
+                  keyValue = propDictConstants[clusteredPropertyName];
                 }
+                keyValuesContainEmpty |= keyValue.IsEmpty;
+                keyValues[i] = keyValue;
               }
-              var aggregationKey = new AggregationKey(keyValues);
-              if (!aggregationResults.ContainsKey(aggregationKey))
+              if (!keyValuesContainEmpty)
               {
-                aggregationResults[aggregationKey] = new List<AltaxoVariant>();
+                var aggregationKey = new AggregationKey(keyValues);
+                if (!aggregationResults.ContainsKey(aggregationKey))
+                {
+                  aggregationResults[aggregationKey] = new List<AltaxoVariant>();
+                }
+                aggregationResults[aggregationKey].Add(column[rowIndex]);
               }
-              aggregationResults[aggregationKey].Add(column[rowIndex]);
             }
           }
         } // for all tables
-        allAggregationResults[columnName] = aggregationResults;
+        allAggregationResults.Add(columnName, aggregationResults);
       }
 
       // now we have all aggregation results collected, we can create the output table
@@ -399,7 +448,7 @@ namespace Altaxo.Data
             {
               c[idxRow] = aggregation.Select(v => v.ToDouble()).StandardDeviation();
             }
-            else if (aggregationKind == KindOfAggregation.SStdDev)
+            else if (aggregationKind == KindOfAggregation.PopulationStdDev)
             {
               c[idxRow] = aggregation.Select(v => v.ToDouble()).PopulationStandardDeviation();
             }
@@ -407,6 +456,15 @@ namespace Altaxo.Data
             {
               c[idxRow] = aggregation.Select(v => v.ToDouble()).PopulationStandardDeviation();
             }
+            else if (aggregationKind == KindOfAggregation.PopulationVariance)
+            {
+              c[idxRow] = aggregation.Select(v => v.ToDouble()).PopulationVariance();
+            }
+            else if (aggregationKind == KindOfAggregation.Variance)
+            {
+              c[idxRow] = aggregation.Select(v => v.ToDouble()).Variance();
+            }
+
 
           }
           ++idxRow;
@@ -415,6 +473,12 @@ namespace Altaxo.Data
     }
 
 
+    /// <summary>
+    /// Determines the type of clustered column to create based on the aggregated key values.
+    /// </summary>
+    /// <param name="allAggregationResults">All aggregation results grouped by column and key.</param>
+    /// <param name="idxClusterProperty">The index of the clustered property.</param>
+    /// <returns>The column type for the clustered property.</returns>
     private Type GetKindOfClusteredColumn(Dictionary<string, Dictionary<AggregationKey, List<AltaxoVariant>>> allAggregationResults, int idxClusterProperty)
     {
       Type? columnType = null;
@@ -445,7 +509,7 @@ namespace Altaxo.Data
     }
 
     /// <summary>
-    /// Occurs when the data source has changed and the import trigger source is DataSourceChanged. The argument is the sender of this event.
+    /// Occurs when the data source has changed and the import trigger source is <see cref="ImportTriggerSource.DataSourceChanged"/>. The argument is the sender of this event.
     /// </summary>
     public event Action<Data.IAltaxoTableDataSource> DataSourceChanged
     {
@@ -472,7 +536,7 @@ namespace Altaxo.Data
     /// Gets or sets the input data.
     /// </summary>
     /// <value>
-    /// The input data. This data is the input for the 2D-Fourier transformation.
+    /// The input data used as the source for aggregation.
     /// </value>
     public DataTablesAggregationProcessData ProcessData
     {
@@ -496,7 +560,7 @@ namespace Altaxo.Data
     /// <value>
     /// The import options.
     /// </value>
-    /// <exception cref="System.ArgumentNullException">ImportOptions</exception>
+    /// <exception cref="ArgumentNullException">ImportOptions</exception>
     public override Data.IDataSourceImportOptions ImportOptions
     {
       get
@@ -514,12 +578,12 @@ namespace Altaxo.Data
     }
 
     /// <summary>
-    /// Gets or sets the options for the transpose operation.
+    /// Gets or sets the options for the aggregation operation.
     /// </summary>
     /// <value>
-    /// The transpose options.
+    /// The aggregation options.
     /// </value>
-    /// <exception cref="System.ArgumentNullException">FourierTransformation2DOptions</exception>
+    /// <exception cref="ArgumentNullException">Thrown when the value is <c>null</c>.</exception>
     public DataTablesAggregationOptions ProcessOptions
     {
       get
@@ -538,12 +602,14 @@ namespace Altaxo.Data
       }
     }
 
+    /// <inheritdoc/>
     object IAltaxoTableDataSource.ProcessOptionsObject
     {
       get => _processOptions;
       set => ProcessOptions = (DataTablesAggregationOptions)value;
     }
 
+    /// <inheritdoc/>
     object IAltaxoTableDataSource.ProcessDataObject
     {
       get => _processData;
@@ -552,6 +618,7 @@ namespace Altaxo.Data
 
     #region Change event handling
 
+    /// <inheritdoc/>
     protected override bool HandleHighPriorityChildChangeCases(object? sender, ref EventArgs e)
     {
       if (object.ReferenceEquals(_processData, sender)) // incoming call from data proxy
@@ -573,6 +640,7 @@ namespace Altaxo.Data
 
     #region Document Node functions
 
+    /// <inheritdoc/>
     protected override IEnumerable<Main.DocumentNodeAndName> GetDocumentNodeChildrenWithName()
     {
       if (_processData is not null)
@@ -586,7 +654,7 @@ namespace Altaxo.Data
     #endregion Document Node functions
 
     /// <summary>
-    /// Called after deserization of a data source instance, when it is already associated with a data table.
+    /// Called after deserialization of a data source instance, when it is already associated with a data table.
     /// </summary>
     public void OnAfterDeserialization()
     {
@@ -595,7 +663,7 @@ namespace Altaxo.Data
     /// <summary>
     /// Visits all document references.
     /// </summary>
-    /// <param name="ReportProxies">The report proxies.</param>
+    /// <param name="ReportProxies">The callback used to report proxies.</param>
     public void VisitDocumentReferences(Main.DocNodeProxyReporter ReportProxies)
     {
       if (_processData is not null)

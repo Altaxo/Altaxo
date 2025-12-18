@@ -30,9 +30,13 @@ using Altaxo.Data;
 
 namespace Altaxo.Gui.Data
 {
+  /// <summary>
+  /// Controller for configuring a <see cref="DataTablesAggregationDataSource"/> in the GUI.
+  /// </summary>
   [UserControllerForObject(typeof(DataTablesAggregationDataSource))]
   public class DataTablesAggregationSourceController : DataSourceControllerBase<DataTablesAggregationDataSource>
   {
+    /// <inheritdoc/>
     protected override IMVCANController GetProcessDataController()
     {
       var pdc = base.GetProcessDataController();
@@ -44,6 +48,9 @@ namespace Altaxo.Gui.Data
       return pdc;
     }
 
+    /// <summary>
+    /// Tests the current data and options of the aggregation process and shows a message box with the result.
+    /// </summary>
     private void EhTestDataAndOptions()
     {
       if (!this.Apply(false)) { return; }
@@ -76,6 +83,7 @@ namespace Altaxo.Gui.Data
       }
     }
 
+    /// <inheritdoc/>
     public override bool Apply(bool disposeController)
     {
       if (disposeController && base.GetProcessDataController() is DataTablesAggregationDataController pdcDataController)

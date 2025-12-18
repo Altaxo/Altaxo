@@ -25,6 +25,7 @@
 #nullable disable warnings
 using System;
 using Altaxo.Data;
+using Altaxo.Data.Selections;
 using Altaxo.Gui;
 using Altaxo.Gui.Data.Sorting;
 using Altaxo.Gui.Scripting;
@@ -594,10 +595,12 @@ namespace Altaxo.Worksheet.Commands
       var newTable = new DataTable(newTableName);
       Current.Project.DataTableCollection.Add(newTable);
 
-      var ds = new DataTablesAggregationDataSource(new DataTablesAggregationProcessData([new DataTableProxy(srcTable)], [], true, true), new DataTablesAggregationOptions(), new DataSourceImportOptions());
+      var ds = new DataTablesAggregationDataSource(new DataTablesAggregationProcessData([new DataTableProxy(srcTable)], new AllRows(), [], true, true), new DataTablesAggregationOptions(), new DataSourceImportOptions());
       newTable.DataSource = ds;
 
       Current.Gui.ShowDialog<DataTablesAggregationDataSource>(ref ds, "Aggregation of table data", true);
+
+      Current.ProjectService.OpenOrCreateWorksheetForTable(newTable);
     }
   }
 

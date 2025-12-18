@@ -56,23 +56,23 @@ namespace Altaxo.Gui
 
 
     /// <summary>
-    /// The suspend token of the document being edited. If <see cref="_useDocumentCopy"/> is false, we assume that a controller higher in hierarchy has made a copy
-    /// of the document, thus we do not use a suspendToken for the document.
+    /// The suspend token of the document being edited. If <see cref="_useDocumentCopy"/> is false, we assume that a controller higher in the hierarchy has made a copy
+    /// of the document, thus we do not use a suspend token for the document.
     /// </summary>
     protected Altaxo.Main.ISuspendToken? _suspendToken;
 
     /// <summary>Gets the current document of this controller. If the document is null, an <see cref="InvalidOperationException"/> is thrown. To check whether
-    /// the document is null, check on the member <see cref="_doc"/> directly.</summary>
+    /// the document is null, check the member <see cref="_doc"/> directly.</summary>
     public TModel Doc => _doc ?? throw new InvalidOperationException($"This controller ({this}) is yet not initialized with a document");
 
     /// <summary>
-    /// Initialize the controller with the document. If successfull, the function has to return true.
+    /// Initialize the controller with the document. If successful, the function has to return <see langword="true"/>.
     /// </summary>
-    /// <param name="args">The arguments neccessary to create the controller. Normally, the first argument is the document, the second can be the parent of the document and so on.</param>
+    /// <param name="args">The arguments necessary to create the controller. Normally, the first argument is the document, the second can be the parent of the document, and so on.</param>
     /// <returns>
-    /// Returns <see langword="true" /> if successfull; otherwise <see langword="false" />.
+    /// Returns <see langword="true" /> if successful; otherwise <see langword="false" />.
     /// </returns>
-    /// <exception cref="System.ObjectDisposedException"></exception>
+    /// <exception cref="ObjectDisposedException">Thrown when the controller was already disposed.</exception>
     public virtual bool InitializeDocument(params object[] args)
     {
       if (IsDisposed)
@@ -92,15 +92,21 @@ namespace Altaxo.Gui
       return true;
     }
 
+    /// <summary>
+    /// Gets an exception that is thrown when the controller was not initialized with a document.
+    /// </summary>
     protected InvalidOperationException CreateNotInitializedException =>
       new InvalidOperationException($"Controller {GetType()} was not initialized with a document");
 
+    /// <summary>
+    /// Gets an exception that is thrown when the controller currently has no view.
+    /// </summary>
     protected InvalidOperationException CreateNoViewException =>
       new InvalidOperationException($"Controller {GetType()} has no view currently.");
 
 
     /// <summary>Throws an exception if the controller is not initialized with a document.</summary>
-    /// <exception cref="InvalidOperationException">Controller was not initialized with a document</exception>
+    /// <exception cref="InvalidOperationException">Controller was not initialized with a document.</exception>
     [MemberNotNull(nameof(_doc))]
     protected virtual void ThrowIfNotInitialized()
     {
@@ -111,11 +117,11 @@ namespace Altaxo.Gui
 
     /// <summary>
     /// Basic initialization of the document.
-    /// Here, it is tried to suspend the event handling of the documnt by calling <see cref="GetSuspendTokenForControllerDocument"/> (but only if <see cref="_useDocumentCopy"/> is <c>true</c>).
+    /// Here, it is tried to suspend the event handling of the document by calling <see cref="GetSuspendTokenForControllerDocument"/> (but only if <see cref="_useDocumentCopy"/> is <c>true</c>).
     /// </summary>
-    /// <param name="initData">If set to <c>true</c>, it indicates that the controller should initialize its model classes..</param>
-    /// <exception cref="System.InvalidOperationException">This controller was not initialized with a document.</exception>
-    /// <exception cref="System.ObjectDisposedException">The controller was already disposed.</exception>
+    /// <param name="initData">If set to <c>true</c>, it indicates that the controller should initialize its model classes.</param>
+    /// <exception cref="InvalidOperationException">This controller was not initialized with a document.</exception>
+    /// <exception cref="ObjectDisposedException">The controller was already disposed.</exception>
     protected virtual void Initialize(bool initData)
     {
       if (IsDisposed)
@@ -141,7 +147,7 @@ namespace Altaxo.Gui
     }
 
     /// <summary>
-    /// Override this function to detach the view from the controller, either by unsubscribing to events of the view, or by setting the controller object on the view to null.
+    /// Override this function to detach the view from the controller, either by unsubscribing to events of the view, or by setting the controller object on the view to <c>null</c>.
     /// </summary>
     protected virtual void DetachView()
     {
@@ -152,25 +158,26 @@ namespace Altaxo.Gui
     }
 
     /// <summary>
-    /// Called when the user input has to be applied to the document being controlled. Returns true if Apply is successfull.
+    /// Called when the user input has to be applied to the document being controlled. Returns <see langword="true"/> if applying succeeded.
     /// </summary>
-    /// <param name="disposeController">If the Apply operation was successfull, and this argument is <c>true</c>, the controller should release all temporary resources, because they are not needed any more.
-    /// If this argument is <c>false</c>, the controller should be reinitialized with the current model (the model that results from the Apply operation).</param>
+    /// <param name="disposeController">If the apply operation was successful and this argument is <c>true</c>, the controller should release all temporary resources, because they are not needed any more.
+    /// If this argument is <c>false</c>, the controller should be reinitialized with the current model (the model that results from the apply operation).</param>
     /// <returns>
-    /// True if the apply operation was successfull, otherwise false. If false is returned, the <paramref name="disposeController" /> argument is ignored: thus the controller is not disposed.
+    /// <see langword="true"/> if the apply operation was successful; otherwise <see langword="false"/>.
+    /// If <see langword="false"/> is returned, the <paramref name="disposeController" /> argument is ignored and the controller is not disposed.
     /// </returns>
     /// <remarks>
-    /// This function is called in two cases: Either the user pressed OK or the user pressed Apply.
+    /// This function is called in two cases: either the user pressed OK or the user pressed Apply.
     /// </remarks>
     public abstract bool Apply(bool disposeController);
 
     /// <summary>
-    /// Standard procedure at the end of the Apply phase. If the <paramref name="applyResult"/> is <c>true</c>, the controller is either disposed (if <c>disposeController</c> is <c>true</c>) or
-    /// the document is shortly resumed (if <c>disposeController</c> is <c>false</c>. Nothing is done if <c>applyResult</c> is <c>false</c>.
+    /// Standard procedure at the end of the apply phase. If the <paramref name="applyResult"/> is <c>true</c>, the controller is either disposed (if <paramref name="disposeController"/> is <c>true</c>) or
+    /// the document is temporarily resumed (if <paramref name="disposeController"/> is <c>false</c>). Nothing is done if <paramref name="applyResult"/> is <c>false</c>.
     /// </summary>
     /// <param name="applyResult">If set to <c>true</c>, the apply operation was successful.</param>
     /// <param name="disposeController">If set to <c>true</c>, the controller is no longer needed and should be disposed.</param>
-    /// <returns>The same value as the parameter <c>applyResult</c>. (for the convenience that you can use this function in the return statement of Apply).</returns>
+    /// <returns>The same value as the parameter <paramref name="applyResult"/> (for convenience so you can use this function in the return statement of <see cref="Apply(bool)"/>).</returns>
     protected bool ApplyEnd(bool applyResult, bool disposeController)
     {
       if (applyResult == true)
@@ -191,11 +198,11 @@ namespace Altaxo.Gui
     }
 
     /// <summary>
-    /// Try to revert changes to the model, i.e. restores the original state of the model.
+    /// Tries to revert changes to the model, i.e. restores the original state of the model.
     /// </summary>
-    /// <param name="disposeController">If set to <c>true</c>, the controller should release all temporary resources, since the controller is not needed anymore.</param>
+    /// <param name="disposeController">If set to <c>true</c>, the controller should release all temporary resources, since the controller is not needed any more.</param>
     /// <returns>
-    ///   <c>True</c> if the revert operation was successfull; <c>false</c> if the revert operation was not possible (i.e. because the controller has not stored the original state of the model).
+    ///   <c>true</c> if the revert operation was successful; <c>false</c> if the revert operation was not possible (for example because the controller has not stored the original state of the model).
     /// </returns>
     public virtual bool Revert(bool disposeController)
     {
@@ -230,10 +237,10 @@ namespace Altaxo.Gui
     }
 
     /// <summary>
-    /// Gets the suspend token for the controller document. This default implementation calls SuspendGetToken() on the document.
-    /// By overriding this function you can suspend parent nodes in case it is neccessary to modify nodes at lower levels of the hierarchy.
+    /// Gets the suspend token for the controller document. This default implementation calls <c>SuspendGetToken()</c> on the document if it implements <see cref="Altaxo.Main.ISuspendableByToken"/>.
+    /// By overriding this function, you can suspend parent nodes in case it is necessary to modify nodes at lower levels of the hierarchy.
     /// </summary>
-    /// <returns>The suspend token, provided by the document.</returns>
+    /// <returns>The suspend token, provided by the document, or <c>null</c> if none is available.</returns>
     protected virtual Altaxo.Main.ISuspendToken? GetSuspendTokenForControllerDocument()
     {
       if (_doc is Altaxo.Main.ISuspendableByToken)
@@ -243,9 +250,9 @@ namespace Altaxo.Gui
     }
 
     /// <summary>
-    /// Sets whether or not a copy of the document is used. If set to true, a copy of the document is used, so if the controller is not applied,
-    /// all changes can be reverted. If set to false, no copy must be made. The document is directly changed by the controller, and changes can not be reverted.
-    /// Use the last option if a controller up in the hierarchie has already made a copy of the document.
+    /// Sets whether or not a copy of the document is used. If set to <c>true</c>, a copy of the document is used, so if the controller is not applied,
+    /// all changes can be reverted. If set to <c>false</c>, no copy must be made. The document is directly changed by the controller, and changes can not be reverted.
+    /// Use the last option if a controller up in the hierarchy has already made a copy of the document.
     /// </summary>
     public UseDocument UseDocumentCopy
     {
@@ -253,7 +260,7 @@ namespace Altaxo.Gui
     }
 
     /// <summary>
-    /// Returns the Gui element that shows the model to the user.
+    /// Gets or sets the GUI element that shows the model to the user.
     /// </summary>
     public virtual object? ViewObject
     {
@@ -283,7 +290,7 @@ namespace Altaxo.Gui
     }
 
     /// <summary>
-    /// Returns the document that this controller manages to edit.
+    /// Gets the document that this controller manages to edit.
     /// </summary>
     public virtual object ModelObject
     {
@@ -297,16 +304,13 @@ namespace Altaxo.Gui
 
 
     /// <summary>
-    /// Enumerates the sub controllers. This function is called on <see cref="Dispose(bool)"/> of this controller to dispose the subcontrollers too.
-    /// By overriding this function, there is no need to override <see cref="Dispose(bool)"/>
+    /// Enumerates the sub controllers. This function is called on <see cref="Dispose(bool)"/> of this controller to dispose the sub controllers too.
+    /// By overriding this function, there is no need to override <see cref="Dispose(bool)"/>.
     /// </summary>
-    /// <returns></returns>
+    /// <returns>An enumeration of controller/set-null-method pairs.</returns>
     public abstract IEnumerable<ControllerAndSetNullMethod> GetSubControllers();
 
-    /// <summary>
-    /// Releases unmanaged and - optionally - managed resources.
-    /// </summary>
-    /// <param name="isDisposing"><c>true</c> to release both managed and unmanaged resources; <c>false</c> to release only unmanaged resources.</param>
+    /// <inheritdoc/>
     public override void Dispose(bool isDisposing)
     {
       if (!IsDisposed)
