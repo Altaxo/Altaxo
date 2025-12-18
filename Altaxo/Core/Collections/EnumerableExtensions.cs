@@ -388,13 +388,13 @@ namespace Altaxo.Collections
       {
         if (!it.MoveNext())
         {
-          singleElement = default;
+          singleElement = default!;
           return false;
         }
         var ele = it.Current;
         if (it.MoveNext())
         {
-          singleElement = default;
+          singleElement = default!;
           return false;
         }
         else

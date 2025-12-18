@@ -35,6 +35,7 @@ namespace Altaxo.Calc
   /// This type supports basic arithmetic operations (+, -, *, /) with correctly maintained interval bounds.
   /// Instead of representing a value as a single number, an interval represents each value as a range of possibilities 
   /// that you can performs arithmetic on.
+  /// </summary>
   public struct Interval<T>
     : IAdditionOperators<Interval<T>, Interval<T>, Interval<T>>,
       ISubtractionOperators<Interval<T>, Interval<T>, Interval<T>>,
@@ -453,7 +454,7 @@ namespace Altaxo.Calc
     #region Conversion Operators
 
     /// <summary>
-    /// Performs an implicit conversion from <see cref="T"/> to <see cref="Interval{T}"/>.
+    /// Performs an implicit conversion from <see langword="T"/> to <see cref="Interval{T}"/>.
     /// </summary>
     /// <param name="value">The value.</param>
     /// <returns>The result of the conversion.</returns>
@@ -493,7 +494,7 @@ namespace Altaxo.Calc
     /// <param name="obj">An object to compare with this instance.</param>
     /// <returns>A value that indicates the relative order of the objects being compared. The return value has these meanings:
     /// <list type="table"><listheader><term> Value</term><description> Meaning</description></listheader><item><term> Less than zero</term><description> This instance precedes <paramref name="obj" /> in the sort order.</description></item><item><term> Zero</term><description> This instance occurs in the same position in the sort order as <paramref name="obj" />.</description></item><item><term> Greater than zero</term><description> This instance follows <paramref name="obj" /> in the sort order.</description></item></list></returns>
-    public readonly int CompareTo(object obj)
+    public readonly int CompareTo(object? obj)
     {
       if (obj is Interval<T> other)
       {
@@ -516,7 +517,7 @@ namespace Altaxo.Calc
     /// <returns>A value that indicates the relative order of the objects being compared. The return value has these meanings:
     /// <list type="table"><listheader><term> Value</term><description> Meaning</description></listheader><item><term> Less than zero</term><description> This instance precedes <paramref name="other" /> in the sort order.</description></item><item><term> Zero</term><description> This instance occurs in the same position in the sort order as <paramref name="other" />.</description></item><item><term> Greater than zero</term><description> This instance follows <paramref name="other" /> in the sort order.</description></item></list></returns>
     /// <exception cref="System.Exception"></exception>
-    public int CompareTo(Interval<T> other)
+    public readonly int CompareTo(Interval<T> other)
     {
       if (Interval<T>.Equals(this, other))
       {
@@ -576,7 +577,7 @@ namespace Altaxo.Calc
     /// </summary>
     /// <param name="obj">The object to compare with the current object.</param>
     /// <returns><c>true</c> if the specified <see cref="System.Object" /> is equal to this instance; otherwise, <c>false</c>.</returns>
-    public override bool Equals(object obj) => obj is Interval<T> o ? this.Equals(o) : false;
+    public override bool Equals(object? obj) => obj is Interval<T> o ? this.Equals(o) : false;
 
     /// <summary>
     /// Returns a hash code for this instance.
@@ -606,7 +607,7 @@ namespace Altaxo.Calc
     /// -or-
     /// A null reference (<see langword="Nothing" /> in Visual Basic) to obtain the numeric format information from the current locale setting of the operating system.</param>
     /// <returns>A <see cref="System.String" /> that represents this instance.</returns>
-    public string ToString(string format, IFormatProvider formatProvider)
+    public string ToString(string? format, IFormatProvider formatProvider)
     {
       if (Min == Max)
       {

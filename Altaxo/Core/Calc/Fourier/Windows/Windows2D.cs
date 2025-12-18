@@ -47,10 +47,7 @@ namespace Altaxo.Calc.Fourier.Windows
   /// </summary>
   public class HanningWindow2D : IWindows2D
   {
-    /// <summary>
-    /// Applies the Hanning window function to the specified matrix <paramref name="m" /> by multiplying each matrix element with a factor.
-    /// </summary>
-    /// <param name="m">The matrix to modify.</param>
+    /// <inheritdoc/>
     public void Apply(IMatrix<double> m)
     {
       Application(m);
@@ -87,10 +84,7 @@ namespace Altaxo.Calc.Fourier.Windows
   /// </summary>
   public class BartlettWindow2D : IWindows2D
   {
-    /// <summary>
-    /// Applies the Bartlett window function to the specified matrix <paramref name="m" /> by multiplying each matrix element with a factor.
-    /// </summary>
-    /// <param name="m">The matrix to modify.</param>
+    /// <inheritdoc/>
     public void Apply(IMatrix<double> m)
     {
       Application(m);
@@ -127,10 +121,7 @@ namespace Altaxo.Calc.Fourier.Windows
   /// </summary>
   public class ParzenWindow2D : IWindows2D
   {
-    /// <summary>
-    /// Applies the Parzen window function to the specified matrix <paramref name="m" /> by multiplying each matrix element with a factor.
-    /// </summary>
-    /// <param name="m">The matrix to modify.</param>
+    /// <inheritdoc/>
     public void Apply(IMatrix<double> m)
     {
       Application(m);
@@ -186,10 +177,7 @@ namespace Altaxo.Calc.Fourier.Windows
     /// </value>
     public double Sigma { get { return _sigma; } set { _sigma = value; } }
 
-    /// <summary>
-    /// Applies the Gauss window function to the specified matrix <paramref name="m" /> by multiplying each matrix element with a factor. The <see cref="Sigma"/> value is used to calculate the window.
-    /// </summary>
-    /// <param name="m">The matrix to modify.</param>
+    /// <inheritdoc/>
     public void Apply(IMatrix<double> m)
     {
       Application(m, _sigma);
@@ -248,10 +236,7 @@ namespace Altaxo.Calc.Fourier.Windows
     /// </value>
     public double Kappa { get { return _kappa; } set { _kappa = value; } }
 
-    /// <summary>
-    /// Applies the Supergauss window function to the specified matrix <paramref name="m" /> by multiplying each matrix element with a factor. The <see cref="Kappa"/> value is used to calculate the window.
-    /// </summary>
-    /// <param name="m">The matrix to modify.</param>
+    /// <inheritdoc/>
     public void Apply(IMatrix<double> m)
     {
       Application(m, _kappa);
@@ -298,10 +283,7 @@ namespace Altaxo.Calc.Fourier.Windows
   /// </summary>
   public class EllipticWindow2D : IWindows2D
   {
-    /// <summary>
-    /// Applies the Elliptic window function to the specified matrix <paramref name="m" /> by multiplying each matrix element with a factor.
-    /// </summary>
-    /// <param name="m">The matrix to modify.</param>
+    /// <inheritdoc/>
     public void Apply(IMatrix<double> m)
     {
       Application(m);
@@ -338,10 +320,7 @@ namespace Altaxo.Calc.Fourier.Windows
   /// </summary>
   public class CosineWindow2D : IWindows2D
   {
-    /// <summary>
-    /// Applies the Cosine window function to the specified matrix <paramref name="m" /> by multiplying each matrix element with a factor.
-    /// </summary>
-    /// <param name="m">The matrix to modify.</param>
+    /// <inheritdoc/>
     public void Apply(IMatrix<double> m)
     {
       Application(m);

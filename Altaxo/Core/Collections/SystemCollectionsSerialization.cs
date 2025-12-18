@@ -61,9 +61,9 @@ namespace Altaxo.Collections
   }
 
   /// <summary>
-  /// XML serialization surrogate for <see cref="System.Collections.Generic.List{object}"/>.
+  /// XML serialization surrogate for <see cref="System.Collections.Generic.List{Object}"/>.
   /// </summary>
-  [Altaxo.Serialization.Xml.XmlSerializationSurrogateFor(typeof(System.Collections.Generic.List<object?>), 0)]
+  [Altaxo.Serialization.Xml.XmlSerializationSurrogateFor(typeof(System.Collections.Generic.List<Object>), 0)]
   public class SystemCollectionsListOfObjectListXmlSerializationSurrogate0 : Altaxo.Serialization.Xml.IXmlSerializationSurrogate
   {
     /// <inheritdoc/>

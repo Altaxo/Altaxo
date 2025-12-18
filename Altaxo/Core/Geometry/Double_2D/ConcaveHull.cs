@@ -101,7 +101,8 @@ namespace Altaxo.Geometry.Double_2D
     /// Calculates the convex hull as a list of annotated lines.
     /// </summary>
     /// <param name="nodes">The points for which to calculate the convex hull.</param>
-    [MemberNotNull(nameof(_convexHullPoints), nameof(_hull_convex_edges))]
+    [MemberNotNull(nameof(_convexHullPoints))]
+    [MemberNotNull(nameof(_hull_convex_edges))]
     private void CalculateConvexHullAsLineList(IEnumerable<PointD2DAnnotated> nodes)
     {
       _convexHullPoints = GrahamScan.GetConvexHull(nodes);

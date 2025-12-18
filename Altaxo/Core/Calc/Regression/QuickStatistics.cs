@@ -143,6 +143,11 @@ namespace Altaxo.Calc.Regression
     /// <summary>
     /// Returns the sample standard deviation: square root of the error sum of squares divided by (N-1).
     /// </summary>
+    public double StandardDeviation => SampleStandardDeviation;
+
+    /// <summary>
+    /// Returns the sample standard deviation: square root of the error sum of squares divided by (N-1).
+    /// </summary>
     public double SampleStandardDeviation
     {
       get
@@ -154,7 +159,7 @@ namespace Altaxo.Calc.Regression
     /// <summary>
     /// Returns the standard deviation: square root of the error sum of squares divided by N.
     /// </summary>
-    public double StandardDeviation
+    public double PopulationStandardDeviation
     {
       get
       {
@@ -163,9 +168,25 @@ namespace Altaxo.Calc.Regression
     }
 
     /// <summary>
-    /// Returns the variance: error sum of squares divided by N.
+    /// Returns the sample variance: error sum of squares divided by N-1.
     /// </summary>
-    public double Variance
+    public double Variance => SampleVariance;
+
+    /// <summary>
+    /// Returns the sample variance: error sum of squares divided by N-1.
+    /// </summary>
+    public double SampleVariance
+    {
+      get
+      {
+        return _n > 1 ? _qi / (_n - 1) : double.NaN;
+      }
+    }
+
+    /// <summary>
+    /// Returns the population variance: error sum of squares divided by N.
+    /// </summary>
+    public double PopulationVariance
     {
       get
       {

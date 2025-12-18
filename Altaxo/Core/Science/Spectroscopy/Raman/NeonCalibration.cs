@@ -892,7 +892,8 @@ namespace Altaxo.Science.Spectroscopy.Raman
     /// <see cref="PeakSearchingDescriptions"/> contains the search results, and optionally (if enabled in the options), <see cref="PeakFittingDescriptions"/> contains the
     /// peak fitting results. Additionally, the <see cref="MeasuredPeaks"/> contains the array of peak positions and heights.
     /// </remarks>
-    [MemberNotNull(nameof(PeakSearchingDescriptions), nameof(MeasuredPeaks))]
+    [MemberNotNull(nameof(PeakSearchingDescriptions))]
+    [MemberNotNull(nameof(MeasuredPeaks))]
     public void FindPeaks(NeonCalibrationOptions options, CancellationToken cancellationToken)
     {
       if (_xPreprocessed_nm is null || _yPreprocessed is null)

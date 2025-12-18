@@ -233,7 +233,6 @@ namespace Altaxo.Calc.Fourier
     }
 
     //-------------------------------------------------------------------------------------
-    //-------------------------------------------------------------------------------------
 
     private static int ReverseBits(int index, int numberOfBits)
     {
@@ -809,9 +808,9 @@ namespace Altaxo.Calc.Fourier
     /// <summary>
     /// Compute a 1D fast Fourier transform of a dataset of complex numbers (as pairs of float's).
     /// </summary>
-    /// <param name="data"></param>
-    /// <param name="length"></param>
-    /// <param name="direction"></param>
+    /// <param name="data">Array containing interleaved real and imaginary float values (real0, imag0, real1, imag1, ...).</param>
+    /// <param name="length">Number of complex elements in the dataset (half of <paramref name="data"/>.Length).</param>
+    /// <param name="direction">Direction of the transform (forward or inverse).</param>
     public static void FFT(float[] data, int length, FourierDirection direction)
     {
       if (data is null)
@@ -872,11 +871,11 @@ namespace Altaxo.Calc.Fourier
     }
 
     /// <summary>
-    /// Compute a 1D fast Fourier transform of a dataset of complex numbers (as pairs of float's).
+    /// Compute a 1D fast Fourier transform of a dataset of complex numbers (as pairs of float's) using the quick implementation.
     /// </summary>
-    /// <param name="data"></param>
-    /// <param name="length"></param>
-    /// <param name="direction"></param>
+    /// <param name="data">Array containing interleaved real and imaginary float values.</param>
+    /// <param name="length">Number of complex elements.</param>
+    /// <param name="direction">Direction of the transform (forward or inverse).</param>
     public static void FFT_Quick(float[] data, int length, FourierDirection direction)
     {
       /*Debug.Assert( data != null );
@@ -936,9 +935,9 @@ namespace Altaxo.Calc.Fourier
     /// <summary>
     /// Compute a 1D fast Fourier transform of a dataset of complex numbers.
     /// </summary>
-    /// <param name="data"></param>
-    /// <param name="length"></param>
-    /// <param name="direction"></param>
+    /// <param name="data">Array of complex values expressed as <see cref="Complex32"/>.</param>
+    /// <param name="length">Number of complex elements to process.</param>
+    /// <param name="direction">Direction of the transform (forward or inverse).</param>
     public static void FFT(Complex32[] data, int length, FourierDirection direction)
     {
       if (data is null)
@@ -1003,11 +1002,11 @@ namespace Altaxo.Calc.Fourier
     }
 
     /// <summary>
-    /// Compute a 1D fast Fourier transform of a dataset of complex numbers.
+    /// Compute a 1D fast Fourier transform of a dataset of complex numbers using the quick implementation.
     /// </summary>
-    /// <param name="data"></param>
-    /// <param name="length"></param>
-    /// <param name="direction"></param>
+    /// <param name="data">Array of complex values as <see cref="Complex32"/>.</param>
+    /// <param name="length">Number of complex elements.</param>
+    /// <param name="direction">Direction of the transform (forward or inverse).</param>
     public static void FFT_Quick(Complex32[] data, int length, FourierDirection direction)
     {
       /*if( data == null ) {
@@ -1070,8 +1069,8 @@ namespace Altaxo.Calc.Fourier
     /// <summary>
     /// Compute a 1D fast Fourier transform of a dataset of complex numbers.
     /// </summary>
-    /// <param name="data"></param>
-    /// <param name="direction"></param>
+    /// <param name="data">Array of complex values as <see cref="Complex32"/>.</param>
+    /// <param name="direction">Direction of the transform.</param>
     public static void FFT(Complex32[] data, FourierDirection direction)
     {
       if (data is null)
@@ -1084,9 +1083,9 @@ namespace Altaxo.Calc.Fourier
     /// <summary>
     /// Compute a 1D fast Fourier transform of a dataset of complex numbers.
     /// </summary>
-    /// <param name="data"></param>
-    /// <param name="length"></param>
-    /// <param name="direction"></param>
+    /// <param name="data">Array of complex values as <see cref="Complex64"/>.</param>
+    /// <param name="length">Number of complex elements.</param>
+    /// <param name="direction">Direction of the transform.</param>
     public static void FFT(Complex64[] data, int length, FourierDirection direction)
     {
       if (data is null)
@@ -1153,9 +1152,9 @@ namespace Altaxo.Calc.Fourier
     /// <summary>
     /// Compute a 1D fast Fourier transform of a dataset of complex numbers.
     /// </summary>
-    /// <param name="data"></param>
-    /// <param name="length"></param>
-    /// <param name="direction"></param>
+    /// <param name="data">Array of complex values as <see cref="Complex64"/>.</param>
+    /// <param name="length">Number of complex elements.</param>
+    /// <param name="direction">Direction of the transform.</param>
     public static void FFT_Quick(Complex64[] data, int length, FourierDirection direction)
     {
       /*if( data == null ) {
@@ -1219,8 +1218,8 @@ namespace Altaxo.Calc.Fourier
     /// <summary>
     /// Compute a 1D real-symmetric fast fourier transform.
     /// </summary>
-    /// <param name="data"></param>
-    /// <param name="direction"></param>
+    /// <param name="data">Interleaved real/imaginary float array representing the packed real FFT data.</param>
+    /// <param name="direction">Direction of the transform (forward or inverse).</param>
     public static void RFFT(float[] data, FourierDirection direction)
     {
       if (data is null)
@@ -1231,11 +1230,11 @@ namespace Altaxo.Calc.Fourier
     }
 
     /// <summary>
-    /// Compute a 1D real-symmetric fast fourier transform.
+    /// Compute a 1D real-symmetric fast fourier transform on the specified length.
     /// </summary>
-    /// <param name="data"></param>
-    /// <param name="length"></param>
-    /// <param name="direction"></param>
+    /// <param name="data">Interleaved real/imaginary float array representing the packed real FFT data.</param>
+    /// <param name="length">Number of elements in the array.</param>
+    /// <param name="direction">Direction of the transform (forward or inverse).</param>
     public static void RFFT(float[] data, int length, FourierDirection direction)
     {
       if (data is null)
@@ -1306,10 +1305,10 @@ namespace Altaxo.Calc.Fourier
     /// <summary>
     /// Compute a 2D fast fourier transform on a data set of complex numbers (represented as pairs of floats)
     /// </summary>
-    /// <param name="data"></param>
-    /// <param name="xLength"></param>
-    /// <param name="yLength"></param>
-    /// <param name="direction"></param>
+    /// <param name="data">Interleaved float array containing complex numbers in row-major order.</param>
+    /// <param name="xLength">Number of columns (must be power of two).</param>
+    /// <param name="yLength">Number of rows (must be power of two).</param>
+    /// <param name="direction">Direction of the transform.</param>
     public static void FFT2(float[] data, int xLength, int yLength, FourierDirection direction)
     {
       if (data is null)
@@ -1356,10 +1355,10 @@ namespace Altaxo.Calc.Fourier
     /// <summary>
     /// Compute a 2D fast fourier transform on a data set of complex numbers
     /// </summary>
-    /// <param name="data"></param>
-    /// <param name="xLength"></param>
-    /// <param name="yLength"></param>
-    /// <param name="direction"></param>
+    /// <param name="data">Array of <see cref="Complex32"/> values in row-major order.</param>
+    /// <param name="xLength">Number of columns (power of two required).</param>
+    /// <param name="yLength">Number of rows (power of two required).</param>
+    /// <param name="direction">Direction of the transform.</param>
     public static void FFT2(Complex32[] data, int xLength, int yLength, FourierDirection direction)
     {
       if (data is null)
@@ -1406,10 +1405,10 @@ namespace Altaxo.Calc.Fourier
     /// <summary>
     /// Compute a 2D fast fourier transform on a data set of complex numbers
     /// </summary>
-    /// <param name="data"></param>
-    /// <param name="xLength"></param>
-    /// <param name="yLength"></param>
-    /// <param name="direction"></param>
+    /// <param name="data">Array of <see cref="Complex64"/> values in row-major order.</param>
+    /// <param name="xLength">Number of columns (power of two required).</param>
+    /// <param name="yLength">Number of rows (power of two required).</param>
+    /// <param name="direction">Direction of the transform.</param>
     public static void FFT2(Complex64[] data, int xLength, int yLength, FourierDirection direction)
     {
       if (data is null)
@@ -1456,11 +1455,11 @@ namespace Altaxo.Calc.Fourier
     /// <summary>
     /// Compute a 3D fast fourier transform on a data set of complex numbers
     /// </summary>
-    /// <param name="data"></param>
-    /// <param name="xLength"></param>
-    /// <param name="yLength"></param>
-    /// <param name="zLength"></param>
-    /// <param name="direction"></param>
+    /// <param name="data">Array of <see cref="Complex32"/> values in row-major order.</param>
+    /// <param name="xLength">Size in x dimension (power of two required).</param>
+    /// <param name="yLength">Size in y dimension (power of two required).</param>
+    /// <param name="zLength">Size in z dimension (power of two required).</param>
+    /// <param name="direction">Direction of the transform.</param>
     public static void FFT3(Complex32[] data, int xLength, int yLength, int zLength, FourierDirection direction)
     {
       if (data is null)
@@ -1531,11 +1530,11 @@ namespace Altaxo.Calc.Fourier
     /// <summary>
     /// Compute a 3D fast fourier transform on a data set of complex numbers
     /// </summary>
-    /// <param name="data"></param>
-    /// <param name="xLength"></param>
-    /// <param name="yLength"></param>
-    /// <param name="zLength"></param>
-    /// <param name="direction"></param>
+    /// <param name="data">Array of <see cref="Complex64"/> values in row-major order.</param>
+    /// <param name="xLength">Size in x dimension (power of two required).</param>
+    /// <param name="yLength">Size in y dimension (power of two required).</param>
+    /// <param name="zLength">Size in z dimension (power of two required).</param>
+    /// <param name="direction">Direction of the transform.</param>
     public static void FFT3(Complex64[] data, int xLength, int yLength, int zLength, FourierDirection direction)
     {
       if (data is null)

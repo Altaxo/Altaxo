@@ -27,7 +27,6 @@ using System;
 using System.Collections.Generic;
 using System.Diagnostics.CodeAnalysis;
 using System.Linq;
-using System.Text;
 
 namespace Altaxo.Collections
 {
@@ -894,17 +893,17 @@ namespace Altaxo.Collections
       }
     }
 
+    /// <summary>
+    /// Validates whether the given index points to a valid node in the tree, starting from a collection of nodes and an enumerator over the index array.
+    /// </summary>
+    /// <typeparam name="T">Type of node.</typeparam>
+    /// <param name="nodes">The collection of nodes at the current tree level.</param>
+    /// <param name="it">Enumerator over the index array.</param>
+    /// <param name="level">The current tree level.</param>
+    /// <param name="nodeAtIndex">If valid, contains the node at the given index; otherwise, default.</param>
+    /// <returns>True if the index is valid; otherwise, false.</returns>
     private static bool IsValidIndex<T>(IList<T> nodes, IEnumerator<int> it, int level, [MaybeNullWhen(false)] out T nodeAtIndex) where T : ITreeListNode<T>
     {
-      /// <summary>
-      /// Validates whether the given index points to a valid node in the tree, starting from a collection of nodes and an enumerator over the index array.
-      /// </summary>
-      /// <typeparam name="T">Type of node.</typeparam>
-      /// <param name="nodes">The collection of nodes at the current tree level.</param>
-      /// <param name="it">Enumerator over the index array.</param>
-      /// <param name="level">The current tree level.</param>
-      /// <param name="nodeAtIndex">If valid, contains the node at the given index; otherwise, default.</param>
-      /// <returns>True if the index is valid; otherwise, false.</returns>
       if (nodes is null || 0 == nodes.Count)
       {
         nodeAtIndex = default;

@@ -26,8 +26,6 @@
 using System;
 using System.Collections.Generic;
 using System.Diagnostics.CodeAnalysis;
-using System.Linq;
-using System.Text;
 
 namespace Altaxo.Collections
 {
@@ -88,7 +86,7 @@ namespace Altaxo.Collections
       {
         bool wasSet = _nullValueSet;
         _nullValueSet = false;
-        _nullValue = default;
+        _nullValue = default!;
         return wasSet;
       }
       else
@@ -173,7 +171,7 @@ namespace Altaxo.Collections
     {
       _dict.Clear();
       _nullValueSet = false;
-      _nullValue = default;
+      _nullValue = default!;
     }
 
     /// <inheritdoc/>

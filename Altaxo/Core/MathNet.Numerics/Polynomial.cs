@@ -27,7 +27,7 @@ namespace Altaxo.Calc
     /// </summary>
     [DataMember(Order = 1)]
 #if NET5_0_OR_GREATER
-        [JsonInclude]
+    [JsonInclude]
 #endif
     public double[] Coefficients { get; private set; }
 
@@ -1068,10 +1068,12 @@ namespace Altaxo.Calc
 
     #region Equality
 
-    public bool Equals(Polynomial other)
+    public bool Equals(Polynomial? other)
     {
-      if (ReferenceEquals(null, other)) return false;
-      if (ReferenceEquals(this, other)) return true;
+      if (other is null)
+        return false;
+      if (ReferenceEquals(this, other))
+        return true;
 
       int n = Degree;
       if (n != other.Degree)
@@ -1090,7 +1092,7 @@ namespace Altaxo.Calc
       return true;
     }
 
-    public override bool Equals(object obj)
+    public override bool Equals(object? obj)
     {
       if (ReferenceEquals(null, obj)) return false;
       if (ReferenceEquals(this, obj)) return true;

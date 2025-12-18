@@ -29,13 +29,22 @@ using Altaxo.Calc.LinearAlgebra;
 
 namespace Altaxo.Calc.Fourier.Windows
 {
+  /// <summary>
+  /// Implements the rectangular (box) window function.
+  /// </summary>
   public class RectangleWindow : AbstractWindow
   {
+    /// <summary>
+    /// Initializes a new instance of the <see cref="RectangleWindow"/> class.
+    /// </summary>
+    /// <param name="count">The number of samples of the window.</param>
+    /// <param name="periodic">If set to <c>true</c> the window is periodic.</param>
     public RectangleWindow(int count, bool periodic)
       : base(count, periodic)
     {
     }
 
+    /// <inheritdoc/>
     protected override void InternalCompute(IVector<double> array, bool periodic)
     {
       for (int i = 0; i < array.Count; ++i)

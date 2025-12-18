@@ -29,21 +29,36 @@ using Altaxo.Calc.LinearAlgebra;
 
 namespace Altaxo.Calc.Fourier.Windows
 {
+  /// <summary>
+  /// Implements the Gaussian window function.
+  /// </summary>
   public class GaussianWindow : AbstractWindow
   {
     private double _alpha = 2.5;
 
+    /// <summary>
+    /// Initializes a new instance of the <see cref="GaussianWindow"/> class with the default alpha.
+    /// </summary>
+    /// <param name="count">The number of samples of the window.</param>
+    /// <param name="periodic">If set to <c>true</c> the window is periodic.</param>
     public GaussianWindow(int count, bool periodic)
       : base(count, periodic)
     {
     }
 
+    /// <summary>
+    /// Initializes a new instance of the <see cref="GaussianWindow"/> class with the specified alpha.
+    /// </summary>
+    /// <param name="count">The number of samples of the window.</param>
+    /// <param name="periodic">If set to <c>true</c> the window is periodic.</param>
+    /// <param name="alpha">The alpha parameter controlling the width of the Gaussian window.</param>
     public GaussianWindow(int count, bool periodic, double alpha)
       : base(count, periodic)
     {
       _alpha = alpha;
     }
 
+    /// <inheritdoc/>
     protected override void InternalCompute(IVector<double> array, bool periodic)
     {
       int len = array.Count;

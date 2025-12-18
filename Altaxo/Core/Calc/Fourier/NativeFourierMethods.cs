@@ -43,7 +43,7 @@ namespace Altaxo.Calc.Fourier
     /// </summary>
     /// <param name="arr1">First array (kernel).</param>
     /// <param name="arr2">Second array (data).</param>
-    /// <param name="resultarr">The array that stores the correlation result.</param>
+    /// <param name="resultarr">The array that stores the correlation result. Must not be identical to <paramref name="arr1"/> or <paramref name="arr2"/>.</param>
     /// <param name="count">Number of points to correlate.</param>
     /// <remarks>Correlation of src1 with src2 is not the same as correlation of src2 with src1.
     /// The correlation here is defined as corr(src1,src2)(j)=SUM(k) src1(k) src2(k+j).</remarks>
@@ -64,15 +64,14 @@ namespace Altaxo.Calc.Fourier
     }
 
     /// <summary>
-    /// Performes a cyclic correlation between splitted complex arrays and stores the result in resultarr. Resultarr must be
-    /// different from the input arrays.
+    /// Performes a cyclic correlation between splitted complex arrays and stores the result in the provided destination arrays.
     /// </summary>
     /// <param name="src1real">First array (kernel, real part values).</param>
     /// <param name="src1imag">First array (kernel, imaginary part values).</param>
     /// <param name="src2real">Second array (data, real part values).</param>
     /// <param name="src2imag">Second array (data, imaginary part values).</param>
-    /// <param name="resultreal">The array that stores the correlation result (real part values.</param>
-    /// <param name="resultimag">The array that stores the correlation result (imaginary part values.</param>
+    /// <param name="resultreal">The array that stores the correlation result (real part values). Must not alias any input array.</param>
+    /// <param name="resultimag">The array that stores the correlation result (imaginary part values). Must not alias any input array.</param>
     /// <param name="n">Number of points to correlate.</param>
     /// <remarks>Correlation of src1 with src2 is not the same as correlation of src2 with src1.
     /// The correlation here is defined as corr(src1,src2)(j)=SUM(k) src1(k) src2(k+j).</remarks>
@@ -113,7 +112,7 @@ namespace Altaxo.Calc.Fourier
     /// </summary>
     /// <param name="arr1">First array.</param>
     /// <param name="arr2">Second array.</param>
-    /// <param name="resultarr">The array that stores the correlation result.</param>
+    /// <param name="resultarr">The array that stores the correlation result. Must not alias the input arrays.</param>
     public static void CorrelationNonCyclic(double[] arr1, double[] arr2, double[] resultarr)
     {
       if (object.ReferenceEquals(resultarr, arr1) || object.ReferenceEquals(resultarr, arr2))
@@ -146,7 +145,7 @@ namespace Altaxo.Calc.Fourier
     /// </summary>
     /// <param name="arr1">First array.</param>
     /// <param name="arr2">Second array.</param>
-    /// <param name="resultarr">The array that stores the correleation result.</param>
+    /// <param name="resultarr">The array that stores the correlation result. Must not alias the input arrays.</param>
     /// <param name="count">Number of points to correlate.</param>
     public static void ConvolutionCyclic(double[] arr1, double[] arr2, double[] resultarr, int count)
     {
@@ -165,15 +164,14 @@ namespace Altaxo.Calc.Fourier
     }
 
     /// <summary>
-    /// Performes a cyclic convolution between splitted complex arrays and stores the result in resultarr. Resultarr must be
-    /// different from the input arrays.
+    /// Performes a cyclic convolution between splitted complex arrays and stores the result in the provided destination arrays.
     /// </summary>
     /// <param name="src1real">First array (real part values).</param>
     /// <param name="src1imag">First array (imaginary part values).</param>
     /// <param name="src2real">Second array (real part values).</param>
     /// <param name="src2imag">Second array (imaginary part values).</param>
-    /// <param name="resultreal">The array that stores the correlation result (real part values.</param>
-    /// <param name="resultimag">The array that stores the correlation result (imaginary part values.</param>
+    /// <param name="resultreal">The array that stores the correlation result (real part values). Must not alias any input array.</param>
+    /// <param name="resultimag">The array that stores the correlation result (imaginary part values). Must not alias any input array.</param>
     /// <param name="n">Number of points to correlate.</param>
     public static void ConvolutionCyclic(
       double[] src1real, double[] src1imag,
@@ -212,7 +210,7 @@ namespace Altaxo.Calc.Fourier
     /// </summary>
     /// <param name="arr1">First array.</param>
     /// <param name="arr2">Second array.</param>
-    /// <param name="resultarr">The array that stores the convolution result.</param>
+    /// <param name="resultarr">The array that stores the convolution result. Must not alias the input arrays.</param>
     public static void ConvolutionNonCyclic(double[] arr1, double[] arr2, double[] resultarr)
     {
       if (object.ReferenceEquals(resultarr, arr1) || object.ReferenceEquals(resultarr, arr2))

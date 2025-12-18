@@ -194,7 +194,7 @@ namespace Altaxo.Serialization.Xml
     /// <param name="name">Element name.</param>
     /// <param name="parent">Parent object for context.</param>
     /// <returns>Array of <typeparamref name="T"/>.</returns>
-    T[] GetArrayOfValues<T>(string name, object parent);
+    T[] GetArrayOfValues<T>(string name, object? parent);
 
     /// <summary>Opens the current element.</summary>
     void OpenElement();

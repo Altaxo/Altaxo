@@ -25,8 +25,6 @@
 using System;
 using System.Collections.Generic;
 using System.Diagnostics.CodeAnalysis;
-using System.Linq;
-using System.Text;
 using Altaxo.Calc.LinearAlgebra;
 using Complex64T = System.Numerics.Complex;
 
@@ -312,7 +310,7 @@ namespace Altaxo.Calc.Regression
       }
 
       // for the overall amplitude, take into account the root mean square of the signal
-      return Math.Sqrt(_meanSquareSignal) / (1+denom).MagnitudeSquared();
+      return Math.Sqrt(_meanSquareSignal) / (1 + denom).MagnitudeSquared();
     }
 
 
@@ -321,7 +319,16 @@ namespace Altaxo.Calc.Regression
     /// </summary>
     /// <param name="xLength">Length of the vector to build the model.</param>
     /// <param name="coeffLength">Number of parameters of the model.</param>
-    [MemberNotNull(nameof(_Ak), nameof(_Ak_previous), nameof(_AkWrapper), nameof(_k), nameof(_kWrapper), nameof(_g), nameof(_g_previous),  nameof(_r), nameof(_c), nameof(_deltaRTimesAk))]
+    [MemberNotNull(nameof(_Ak))]
+    [MemberNotNull(nameof(_Ak_previous))]
+    [MemberNotNull(nameof(_AkWrapper))]
+    [MemberNotNull(nameof(_k))]
+    [MemberNotNull(nameof(_kWrapper))]
+    [MemberNotNull(nameof(_g))]
+    [MemberNotNull(nameof(_g_previous))]
+    [MemberNotNull(nameof(_r))]
+    [MemberNotNull(nameof(_c))]
+    [MemberNotNull(nameof(_deltaRTimesAk))]
     private void EnsureAllocation(int xLength, int coeffLength)
     {
       _numberOfCoefficients = coeffLength;
@@ -377,7 +384,7 @@ namespace Altaxo.Calc.Regression
     /// <param name="regularizationFactor">Default 1. Values greater than 1 leads to more and more regularization of the coefficients.</param>
     /// <returns>The coefficient array, and the sum of squared signal values.</returns>
 
-    public static (IReadOnlyList<double> Ak, double SumXsqr) Execution(System.Collections.Generic.IReadOnlyList<double> x, int numberOfCoefficients, double regularizationFactor=1)
+    public static (IReadOnlyList<double> Ak, double SumXsqr) Execution(System.Collections.Generic.IReadOnlyList<double> x, int numberOfCoefficients, double regularizationFactor = 1)
     {
       var (Ak, SumXsqr) = Execution(x, numberOfCoefficients, regularizationFactor, null);
       return (VectorMath.ToROVector(Ak, 1, numberOfCoefficients), SumXsqr);
@@ -390,7 +397,7 @@ namespace Altaxo.Calc.Regression
     /// <param name="coefficients">Vector of coefficients to be filled.</param>
     /// <param name="regularizationFactor">Default 1. Values greater than 1 leads to more and more regularization of the coefficients.</param>
     /// <returns>The sum of squared signal values.</returns>
-    public static double Execution(System.Collections.Generic.IReadOnlyList<double> x, IVector<double> coefficients, double regularizationFactor=1)
+    public static double Execution(System.Collections.Generic.IReadOnlyList<double> x, IVector<double> coefficients, double regularizationFactor = 1)
     {
       var (Ak, SumXsqr) = Execution(x, coefficients.Count, regularizationFactor, null);
       for (int i = 0; i < coefficients.Count; ++i)
@@ -398,7 +405,7 @@ namespace Altaxo.Calc.Regression
       return SumXsqr;
     }
 
-    
+
 
 
     /// <summary>
@@ -458,7 +465,7 @@ namespace Altaxo.Calc.Regression
       NaNArray(r);
       NaNArray(deltaRTimesAk);
       */
-      
+
 
       // Step1: Initialization (26) .. (30) in [1]
       // Calculate autocorrelation array c
@@ -474,7 +481,7 @@ namespace Altaxo.Calc.Regression
 
 
       Ak[0] = 1;
-      g[0] = 2 * c[0] - x[0] *x[0] -x[N] *x[N];
+      g[0] = 2 * c[0] - x[0] * x[0] - x[N] * x[N];
       g[1] = 2 * c[1];
       r[0] = 2 * c[1]; // in contrast to (3) in [1], this must be index 0
 
@@ -485,7 +492,7 @@ namespace Altaxo.Calc.Regression
         // Compute the reflection coefficients, see (31) in [1]
         {
           var nominator = 0.0;
-          var denominator = 1/double.MaxValue; // in order to avoid division by zero
+          var denominator = 1 / double.MaxValue; // in order to avoid division by zero
 
           for (int i = 0; i <= idxIteration; ++i)
           {
@@ -517,9 +524,9 @@ namespace Altaxo.Calc.Regression
 
         // update r array, see step 5. of algorithm and eq. (24) in [1]
         {
-          for (int i = idxIteration-1; i >=0; --i) // downcounting, in order not to overwrite the value we need next
+          for (int i = idxIteration - 1; i >= 0; --i) // downcounting, in order not to overwrite the value we need next
           {
-            r[i + 1] = r[i] - x[i] * x[idxIteration] -  x[N - i] * x[N - idxIteration];
+            r[i + 1] = r[i] - x[i] * x[idxIteration] - x[N - i] * x[N - idxIteration];
           }
           r[0] = 2 * c[idxIteration + 1];
         }
@@ -538,7 +545,7 @@ namespace Altaxo.Calc.Regression
               innerProduct1 += x[iStart - iCol] * Ak[iCol];
               innerProduct2 += x[iEnd + iCol] * Ak[iCol];
             }
-            deltaRTimesAk[iRow] = -x[iStart - iRow] *  innerProduct1 - x[iEnd + iRow] * innerProduct2;
+            deltaRTimesAk[iRow] = -x[iStart - iRow] * innerProduct1 - x[iEnd + iRow] * innerProduct2;
           }
         }
 
@@ -552,7 +559,7 @@ namespace Altaxo.Calc.Regression
           // g.Length is i_iterationCounter + 1
           for (int i = 0; i <= idxIteration; ++i)
           {
-            g[i] = g_previous[i] + k[idxIteration - 1] * g_previous[idxIteration-i] + deltaRTimesAk[i]; // exchanged order see (12) in [1]
+            g[i] = g_previous[i] + k[idxIteration - 1] * g_previous[idxIteration - i] + deltaRTimesAk[i]; // exchanged order see (12) in [1]
           }
 
           double sum = 0;

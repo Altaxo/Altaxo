@@ -8,7 +8,7 @@
     <DefineConstants>MANAGED</DefineConstants>
     <TransformOnBuild>true</TransformOnBuild>
     <nullable>enable</nullable>
-    <NoWarn>1701;1702;1573;1591;3001;3008;</NoWarn>
+    <NoWarn>1701;1702;1573;1591;3001;3002;3003;3008;</NoWarn>
     <CoreCompileDependsOn>GenAssInfo</CoreCompileDependsOn>
   </PropertyGroup>
   <ItemGroup>

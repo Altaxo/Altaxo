@@ -29,13 +29,22 @@ using Altaxo.Calc.LinearAlgebra;
 
 namespace Altaxo.Calc.Fourier.Windows
 {
+  /// <summary>
+  /// Implements the Hanning window function.
+  /// </summary>
   public class HanningWindow : AbstractWindow
   {
+    /// <summary>
+    /// Initializes a new instance of the <see cref="HanningWindow"/> class.
+    /// </summary>
+    /// <param name="count">The number of samples of the window.</param>
+    /// <param name="periodic">If set to <c>true</c> the window is periodic.</param>
     public HanningWindow(int count, bool periodic)
       : base(count, periodic)
     {
     }
 
+    /// <inheritdoc/>
     protected override void InternalCompute(IVector<double> array, bool periodic)
     {
       int len = array.Count;

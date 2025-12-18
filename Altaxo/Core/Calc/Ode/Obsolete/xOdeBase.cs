@@ -8,10 +8,7 @@
 #endregion Copyright © 2009, De Santiago-Castillo JA. All rights reserved.
 
 using System;
-using System.Collections.Generic;
-using System.ComponentModel;
 using System.Diagnostics.CodeAnalysis;
-using System.Text;
 
 namespace Altaxo.Calc.Ode.Obsolete
 {
@@ -273,7 +270,9 @@ namespace Altaxo.Calc.Ode.Obsolete
     /// This method should be invoked before to start the integration.
     /// When this method is invoked, the ODE solver is restarted.
     /// </remarks>
-    [MemberNotNull(nameof(_Y0), nameof(_Y), nameof(_T0))]
+    [MemberNotNull(nameof(_Y0))]
+    [MemberNotNull(nameof(_Y))]
+    [MemberNotNull(nameof(_T0))]
     public virtual void SetInitialValues(double t0, double[] y0)
     {
       if (_InvokeInitializeODEs == true)
@@ -303,7 +302,8 @@ namespace Altaxo.Calc.Ode.Obsolete
     /// Number of equations, Relative tolerances,  Absolute tolerances, Working space
     /// </summary>
     /// <param name="numEquations">The number of equations.</param>
-    [MemberNotNull(nameof(_RelTolArray), nameof(_AbsTolArray))]
+    [MemberNotNull(nameof(_RelTolArray))]
+    [MemberNotNull(nameof(_AbsTolArray))]
     internal void InitializeSizeDependentVariables(int numEquations)
     {
       _NEquations = numEquations;

@@ -22,8 +22,6 @@
 
 #endregion Copyright
 
-using System;
-using Altaxo.Calc;
 using Xunit;
 using Complex32T = Altaxo.Calc.Complex32;
 
@@ -61,16 +59,16 @@ namespace AltaxoTest.Calc.LinearAlgebra
       Assert.Equal(12.1f, test.Imaginary);
 
       test = cf1 / cf2;
-      Assert.Equal(test.Real, -0.44f);
+      Assert.Equal(-0.44f, test.Real);
       AssertEx.Equal(test.Imaginary, 0.08f, TOLERANCE);
 
       test = cf1 + cf2;
-      Assert.Equal(test.Real, (1.1f - 3.3f));
-      Assert.Equal(test.Imaginary, (-2.2f + 4.4f));
+      Assert.Equal((1.1f - 3.3f), test.Real);
+      Assert.Equal((-2.2f + 4.4f), test.Imaginary);
 
       test = cf1 - cf2;
-      Assert.Equal(test.Real, (1.1f + 3.3f));
-      Assert.Equal(test.Imaginary, (-2.2f - 4.4f));
+      Assert.Equal((1.1f + 3.3f), test.Real);
+      Assert.Equal((-2.2f - 4.4f), test.Imaginary);
     }
 
     [Fact]
@@ -99,7 +97,7 @@ namespace AltaxoTest.Calc.LinearAlgebra
       Assert.False(cf.IsInfinity());
     }
 
-  
+
 
     [Fact]
     public void HashTest()
@@ -112,6 +110,6 @@ namespace AltaxoTest.Calc.LinearAlgebra
       Assert.NotEqual(cd2.GetHashCode(), cd3.GetHashCode());
     }
 
-   
+
   }
 }

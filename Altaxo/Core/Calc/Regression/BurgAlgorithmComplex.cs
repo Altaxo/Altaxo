@@ -23,10 +23,7 @@
 #endregion Copyright
 
 using System;
-using System.Collections.Generic;
 using System.Diagnostics.CodeAnalysis;
-using System.Linq;
-using System.Text;
 using Altaxo.Calc.LinearAlgebra;
 using Complex64T = System.Numerics.Complex;
 
@@ -296,7 +293,10 @@ namespace Altaxo.Calc.Regression
     /// </summary>
     /// <param name="xLength">Length of the vector to build the model.</param>
     /// <param name="coeffLength">Number of parameters of the model.</param>
-    [MemberNotNull(nameof(_Ak), nameof(_AkWrapper), nameof(_b), nameof(_f))]
+    [MemberNotNull(nameof(_Ak))]
+    [MemberNotNull(nameof(_AkWrapper))]
+    [MemberNotNull(nameof(_b))]
+    [MemberNotNull(nameof(_f))]
     private void EnsureAllocation(int xLength, int coeffLength)
     {
       if (_AkWrapper is null)

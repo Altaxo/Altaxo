@@ -27,10 +27,9 @@ using System;
 namespace Altaxo.Calc.Fourier
 {
   /// <summary>
-  /// Common interface for real valued fourier transformations of any length.
-  /// Depending of the length, which must be given at creation time and can not be changed afterwards, the
-  /// fastes transformation method is used. The neccessary temporary data is being held in this class, so that repeated transformations
-  /// will not create more temporary storage than neccessary.
+  /// Performs real-valued Fourier transformations for a fixed length.
+  /// Depending on the configured length, the fastest available transformation method is selected.
+  /// Temporary storage required for some algorithms is held by this instance to avoid repeated allocations.
   /// </summary>
   public class RealFourierTransform
   {
@@ -42,6 +41,11 @@ namespace Altaxo.Calc.Fourier
     private double[]? _tempArr1N;
     private object? _fftTempStorage;
 
+    /// <summary>
+    /// Initializes a new instance of the <see cref="RealFourierTransform"/> class for the specified length.
+    /// </summary>
+    /// <param name="length">The length (number of data points) to be transformed. Must be greater than zero.</param>
+    /// <exception cref="ArgumentException">Thrown when <paramref name="length"/> is less than 1.</exception>
     public RealFourierTransform(int length)
     {
       _numberOfData = length;
@@ -71,11 +75,12 @@ namespace Altaxo.Calc.Fourier
     }
 
     /// <summary>
-    /// Performs a out-of-place fourier transformation. The original values are kept.
+    /// Performs an out-of-place Fourier transformation. The original input array is preserved.
     /// </summary>
     /// <param name="inputarr">The data to transform.</param>
     /// <param name="direction">Specify forward or reverse transformation here.</param>
-    /// <param name="outputarr">. On output, contains the fourier transformed data.</param>
+    /// <param name="outputarr">On output, contains the Fourier transformed data.</param>
+    /// <exception cref="ArgumentException">Thrown when the input or output array lengths do not match the configured length.</exception>
     public void Transform(double[] inputarr, FourierDirection direction, double[] outputarr)
     {
       if (inputarr.Length != _numberOfData)
@@ -88,10 +93,11 @@ namespace Altaxo.Calc.Fourier
     }
 
     /// <summary>
-    /// Performs a inplace fourier transformation. The original values are overwritten by the fourier transformed values.
+    /// Performs an in-place Fourier transformation. The original values in <paramref name="arr"/> are overwritten by the transformed values.
     /// </summary>
-    /// <param name="arr">The data to transform. On output, the fourier transformed data.</param>
+    /// <param name="arr">The data to transform. On output, the Fourier transformed data.</param>
     /// <param name="direction">Specify forward or reverse transformation here.</param>
+    /// <exception cref="ArgumentException">Thrown when <paramref name="arr"/> length does not match the configured length.</exception>
     public void Transform(double[] arr, FourierDirection direction)
     {
       if (arr.Length != _numberOfData)
