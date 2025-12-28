@@ -54,9 +54,19 @@ using Altaxo.Calc.LinearAlgebra;
 
 namespace Altaxo.Calc.Interpolation
 {
+  /// <summary>
+  /// Implements polynomial interpolation using the Aitken-Neville tableau for single-valued interpolation functions.
+  /// </summary>
   public class PolynomialInterpolation : CurveBase, IInterpolationFunction
   {
+    /// <summary>
+    /// Working coefficients for the forward branch of the Aitken-Neville tableau.
+    /// </summary>
     protected Vector<double> C = CreateVector.Dense<double>(0);
+
+    /// <summary>
+    /// Working coefficients for the backward branch of the Aitken-Neville tableau.
+    /// </summary>
     protected Vector<double> D = CreateVector.Dense<double>(0);
 
     //----------------------------------------------------------------------------//
@@ -66,6 +76,7 @@ namespace Altaxo.Calc.Interpolation
     //
     //----------------------------------------------------------------------------//
 
+    /// <inheritdoc/>
     public override void Interpolate(IReadOnlyList<double> x, IReadOnlyList<double> y)
     {
       // check input parameters
@@ -77,7 +88,7 @@ namespace Altaxo.Calc.Interpolation
       base.x = x;
       base.y = y;
 
-      // Empty data vectors - free auxilliary storage
+      // Empty data vectors - free auxiliary storage
       if (x.Count == 0)
       {
         C.Clear();
@@ -85,11 +96,13 @@ namespace Altaxo.Calc.Interpolation
       }
     }
 
+    /// <inheritdoc/>
     public override double GetXOfU(double u)
     {
       return u;
     }
 
+    /// <inheritdoc/>
     public double GetYOfX(double x)
     {
       return GetYOfU(x);
@@ -101,12 +114,16 @@ namespace Altaxo.Calc.Interpolation
     //
     // Polynomial interpolation using the Aitken-Neville tableaux.
     // The returned y is the value that corresponds to the value of
-    // the poynomial y = P(x) of degree n = hi-lo
+    // the polynomial y = P(x) of degree n = hi-lo
     // that interpolates the data points (x(i),y(i)), lo <= i <= hi.
-    // In the special case of empty data vectors (x,y) a value of 0.0 is returned.
+    // In the special case of empty data vectors (x,y), a value of 0.0 is returned.
     //
     //----------------------------------------------------------------------------//
 
+    /// <inheritdoc/>
+    /// <remarks>
+    /// Uses the Aitken-Neville tableau to evaluate the interpolating polynomial and returns 0.0 when no data points exist.
+    /// </remarks>
     public override double GetYOfU(double u)
     {
       // special case that there are no data. Return 0.0.
@@ -116,7 +133,7 @@ namespace Altaxo.Calc.Interpolation
       const int lo = 0;
       int hi = x.Count - 1;
 
-      // allocate (resize) auxilliary vectors - the resize method has the property
+      // allocate (resize) auxiliary vectors - the resize method has the property
       // that no (de-)allocation is done, if the size of the vector is not changed.
       // Thus there is no overhead if GetYOfU() is called many times with the
       // same vectors, for instance, if a whole curve is drawn.

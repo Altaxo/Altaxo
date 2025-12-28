@@ -324,7 +324,21 @@ namespace Altaxo.Calc.Integration
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
  */
-
+    /// <summary>
+    /// Internal implementation of the QAGP adaptive integrator.
+    /// </summary>
+    /// <param name="f">The integrand to evaluate.</param>
+    /// <param name="pts">Array of points defining the integration range and known singular points.</param>
+    /// <param name="npts">Number of valid entries in <paramref name="pts"/> (should be at least 2).</param>
+    /// <param name="epsabs">Absolute error tolerance.</param>
+    /// <param name="epsrel">Relative error tolerance.</param>
+    /// <param name="limit">Maximum number of subintervals allowed for the algorithm.</param>
+    /// <param name="workspace">Workspace used to manage subintervals and error estimates.</param>
+    /// <param name="result">On return, contains the computed integral value.</param>
+    /// <param name="abserr">On return, contains the estimated absolute error.</param>
+    /// <param name="q">Quadrature rule used for subinterval evaluations.</param>
+    /// <param name="bDebug">When true, detailed errors include debug information.</param>
+    /// <returns>Null on success, otherwise a <see cref="GSL_ERROR"/> describing the failure.</returns>
     private static GSL_ERROR?
     qagp(Func<double, double> f,
           double[] pts, int npts,

@@ -29,17 +29,23 @@ using Altaxo.Calc.LinearAlgebra;
 
 namespace Altaxo.Calc.Interpolation
 {
+  /// <summary>
+  /// Provides an <see cref="IInterpolationFunction"/> implementation that evaluates a polynomial regression fitted via SVD.
+  /// </summary>
   public class PolynomialRegressionAsInterpolation : IInterpolationFunction
   {
     private Regression.LinearFitBySvd? _fit;
     private double _xMean = 0;
     private double _xScale = 1;
 
+    /// <summary>
+    /// Gets the polynomial regression order (degree) used for fitting.
+    /// </summary>
     public int RegressionOrder { get; init; }
 
     /// <summary>
     /// Gets the fit. This property is only valid after the <see cref="Interpolate(IReadOnlyList{double}, IReadOnlyList{double})"/> function has been called.
-    /// Note that the x-values of the fit were transformed, using <see cref="XMean"/> and <see cref="XScale"/> in the manner of <c>xt = (x - XMean) * XScale</c>, see <see cref="TransformXToInternalRepresentation(double)"/>."/>
+    /// Note that the x-values of the fit were transformed, using <see cref="XMean"/> and <see cref="XScale"/> in the manner of <c>xt = (x - XMean) * XScale</c>; see <see cref="TransformXToInternalRepresentation(double)"/>.
     /// </summary>
     public Regression.LinearFitBySvd? Fit => _fit;
 
@@ -69,11 +75,16 @@ namespace Altaxo.Calc.Interpolation
       RegressionOrder = 2;
     }
 
+    /// <summary>
+    /// Initializes a new instance of the <see cref="PolynomialRegressionAsInterpolation"/> class using the specified regression order.
+    /// </summary>
+    /// <param name="regressionOrder">The polynomial regression order.</param>
     public PolynomialRegressionAsInterpolation(int regressionOrder)
     {
       RegressionOrder = regressionOrder;
     }
 
+    /// <inheritdoc/>
     public void Interpolate(IReadOnlyList<double> xvec, IReadOnlyList<double> yvec)
     {
       // Center and scale x in order
@@ -88,6 +99,7 @@ namespace Altaxo.Calc.Interpolation
       _fit = new Regression.LinearFitBySvd(xScaled, yvec, err, xvec.Count, RegressionOrder + 1, Regression.LinearFitBySvd.GetPolynomialFunctionBase(RegressionOrder), 1E-6);
     }
 
+    /// <inheritdoc/>
     public double GetYOfX(double x)
     {
       if (_fit is null)
@@ -105,11 +117,13 @@ namespace Altaxo.Calc.Interpolation
       return result;
     }
 
+    /// <inheritdoc/>
     public double GetYOfU(double u)
     {
       return GetYOfX(u);
     }
 
+    /// <inheritdoc/>
     public double GetXOfU(double u)
     {
       return u;

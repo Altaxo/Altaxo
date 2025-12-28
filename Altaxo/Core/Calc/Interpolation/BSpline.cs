@@ -63,11 +63,13 @@ namespace Altaxo.Calc.Interpolation
     #endregion
 
 
+    /// <inheritdoc/>
     public IInterpolationFunction Interpolate(IReadOnlyList<double> xvec, IReadOnlyList<double> yvec, IReadOnlyList<double>? yStdDev = null)
     {
       return BSpline1D.InterpolateFunctionSorted(xvec, yvec, _degree);
     }
 
+    /// <inheritdoc/>
     IInterpolationCurve IInterpolationCurveOptions.Interpolate(IReadOnlyList<double> xvec, IReadOnlyList<double> yvec, IReadOnlyList<double>? yStdDev)
     {
       return BSpline1D.InterpolateFunctionSorted(xvec, yvec, _degree);
@@ -104,6 +106,13 @@ namespace Altaxo.Calc.Interpolation
     /// </summary>
     private ThreadLocal<double[,]> _temporaryV = new ThreadLocal<double[,]>();
 
+    /// <summary>
+    /// Initializes a new instance of the <see cref="BSpline1D"/> class using a uniform knot vector of the specified degree.
+    /// </summary>
+    /// <param name="x">The x coordinates of the control points.</param>
+    /// <param name="y">The y coordinates of the control points.</param>
+    /// <param name="degree">The spline degree.</param>
+    /// <exception cref="ArgumentException">Thrown when the x and y lengths differ.</exception>
     public BSpline1D(double[] x, double[] y, int degree)
     {
       if (x.Length != y.Length)
@@ -114,6 +123,13 @@ namespace Altaxo.Calc.Interpolation
       Initialize(x, y, null);
     }
 
+    /// <summary>
+    /// Initializes a new instance of the <see cref="BSpline1D"/> class using the supplied knot vector.
+    /// </summary>
+    /// <param name="x">The x coordinates of the control points.</param>
+    /// <param name="y">The y coordinates of the control points.</param>
+    /// <param name="knots">The complete knot vector.</param>
+    /// <exception cref="ArgumentException">Thrown when the x and y lengths differ or when the knot count is insufficient.</exception>
     public BSpline1D(double[] x, double[] y, double[] knots)
     {
       if (x.Length != y.Length)
@@ -127,6 +143,7 @@ namespace Altaxo.Calc.Interpolation
       Initialize(x, y, knots);
     }
 
+    /// <inheritdoc/>
     public void Interpolate(IReadOnlyList<double> x, IReadOnlyList<double> y)
     {
       throw new NotImplementedException();
@@ -214,41 +231,85 @@ namespace Altaxo.Calc.Interpolation
     }
 
 
+    /// <summary>
+    /// Gets a copy of the x control points.
+    /// </summary>
+    /// <returns>A cloned array containing the x coordinates.</returns>
     public double[] getX()
     {
       return (double[])_x.Clone();
     }
 
+    /// <summary>
+    /// Gets a copy of the y control points.
+    /// </summary>
+    /// <returns>A cloned array containing the y coordinates.</returns>
     public double[] getY()
     {
       return (double[])_y.Clone();
     }
 
+    /// <summary>
+    /// Gets the maximum knot value.
+    /// </summary>
+    /// <returns>The largest entry in the knot vector.</returns>
     public double getMaxKnot()
     {
       return _knots[^1];
     }
 
+    /// <summary>
+    /// Gets the minimum knot value.
+    /// </summary>
+    /// <returns>The smallest entry in the knot vector.</returns>
     public double getMinKnot()
     {
       return _knots[0];
     }
 
+    /// <summary>
+    /// Gets a copy of the knot vector.
+    /// </summary>
+    /// <returns>A cloned array containing the knots.</returns>
     public double[] getKnots()
     {
       return (double[])_knots.Clone();
     }
 
+    /// <summary>
+    /// Builds a spline suitable for interpolation when the input points are already sorted by x.
+    /// </summary>
+    /// <param name="x">The x coordinates of the points to interpolate.</param>
+    /// <param name="y">The y coordinates of the points to interpolate.</param>
+    /// <param name="degree">The spline degree.</param>
+    /// <returns>A configured <see cref="BSpline1D"/> instance.</returns>
     public static BSpline1D InterpolateFunctionSorted(IReadOnlyList<double> x, IReadOnlyList<double> y, int degree = 3)
     {
       return createInterpBSpline(x, y, degree, true, false);
     }
 
+    /// <summary>
+    /// Builds a spline representing a parametric curve without assuming sorted x coordinates.
+    /// </summary>
+    /// <param name="x">The x coordinates of the curve samples.</param>
+    /// <param name="y">The y coordinates of the curve samples.</param>
+    /// <param name="degree">The spline degree.</param>
+    /// <returns>A configured <see cref="BSpline1D"/> instance.</returns>
     public static BSpline1D InterpolateCurve(IReadOnlyList<double> x, IReadOnlyList<double> y, int degree = 3)
     {
       return createInterpBSpline(x, y, degree, false, true);
     }
 
+    /// <summary>
+    /// Creates an interpolating B-spline and optionally enforces sorted data or equally spaced knots.
+    /// </summary>
+    /// <param name="x">The x coordinates of the samples.</param>
+    /// <param name="y">The y coordinates of the samples.</param>
+    /// <param name="degree">The spline degree.</param>
+    /// <param name="areDataSortedByX">True to treat the data as sorted by x.</param>
+    /// <param name="createEquallySpacedKnots">True to force equally spaced knots.</param>
+    /// <returns>A configured <see cref="BSpline1D"/> instance.</returns>
+    /// <exception cref="ArgumentException">Thrown when the data lengths are invalid for the requested degree.</exception>
     protected static BSpline1D createInterpBSpline(IReadOnlyList<double> x, IReadOnlyList<double> y,
                                              int degree, bool areDataSortedByX = false, bool createEquallySpacedKnots = false)
     {
@@ -322,6 +383,17 @@ namespace Altaxo.Calc.Interpolation
       return spline;
     }
 
+    /// <summary>
+    /// Creates an approximating B-spline with the requested number of control points.
+    /// </summary>
+    /// <param name="x">The x coordinates of the samples.</param>
+    /// <param name="y">The y coordinates of the samples.</param>
+    /// <param name="degree">The spline degree.</param>
+    /// <param name="hp1">The number of control points h + 1.</param>
+    /// <param name="createEquallySpacedKnots">True to use uniformly spaced knots.</param>
+    /// <returns>A <see cref="BSpline1D"/> approximating the samples.</returns>
+    /// <exception cref="ArgumentException">Thrown when the data lengths are invalid for the requested degree.</exception>
+    /// <exception cref="ArgumentOutOfRangeException">Thrown when <paramref name="hp1"/> is not greater than the degree.</exception>
     public static BSpline1D createApproxBSpline(IReadOnlyList<double> x, IReadOnlyList<double> y,
                                             int degree, int hp1, bool createEquallySpacedKnots = false)
     {
@@ -539,6 +611,11 @@ namespace Altaxo.Calc.Interpolation
     }
 
 
+    /// <summary>
+    /// Evaluates the spline x-coordinate at the provided normalized parameter.
+    /// </summary>
+    /// <param name="u">The normalized parameter (typically in the range 0..1).</param>
+    /// <returns>The interpolated x value.</returns>
     public double GetXOfU(double u)
     {
       int k = GetTimeInterval(_knots, 0, _knots.Length - 1, u);
@@ -560,6 +637,11 @@ namespace Altaxo.Calc.Interpolation
       return X[_degree, k];
     }
 
+    /// <summary>
+    /// Evaluates the spline y-coordinate at the provided normalized parameter.
+    /// </summary>
+    /// <param name="u">The normalized parameter (typically in the range 0..1).</param>
+    /// <returns>The interpolated y value.</returns>
     public double GetYOfU(double u)
     {
       int k = GetTimeInterval(_knots, 0, _knots.Length - 1, u);
@@ -645,6 +727,15 @@ namespace Altaxo.Calc.Interpolation
      *  @exception ArrayIndexOutOfBoundsException if `start + end` is
      * greater than or equal to the length of `times`.
      */
+    /// <summary>
+    /// Returns the index of the interval containing the queried time using a binary search.
+    /// </summary>
+    /// <param name="times">Array containing the sorted time values.</param>
+    /// <param name="start">The first index to consider.</param>
+    /// <param name="end">The last index (inclusive) to consider.</param>
+    /// <param name="t">The queried time.</param>
+    /// <returns>The index of the matching interval, -1 if the time precedes the range, or n if it is beyond the end.</returns>
+    /// <exception cref="ArgumentException">Thrown when the index bounds are invalid.</exception>
     public static int GetTimeInterval(double[] times, int start, int end, double t)
     {
       if (start < 0)

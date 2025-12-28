@@ -10,19 +10,17 @@
 
 #endregion Copyright
 
-using System;
-
 namespace Altaxo.Calc.Ode
 {
   /// <summary>
   /// Runge-Kutta method of 8th order of Dormand and Prince.
   /// Attention: this method <b>can only provide dense output of order 3.</b>
-  /// If accurate dense output is needed, please use method <see cref="DOP853"/>.
+  /// If accurate dense output is needed, please use <see cref="DOP853"/>.
   /// </summary>
   /// <remarks>
   /// <para>References:</para>
   /// <para>[1] Hairer, Ordinary differential equations I, 2nd edition, 1993.</para>
-  /// <para>[2] Engeln-Müllges et al., Numerik-Algorithmen, Springer, 2011 (in German)</para>
+  /// <para>[2] Engeln-Müllges et al., Numerik-Algorithmen, Springer, 2011 (in German).</para>
   /// </remarks>
   public class RK8713M : RungeKuttaExplicitBase
   {
@@ -50,7 +48,7 @@ namespace Altaxo.Calc.Ode
     /// <summary>Bottom side scheme coefficients 7th order, see [2] p.693</summary>
     private static readonly double[] _sbl = new double[] { 13451932 / 455176623d, 0, 0, 0, 0, -808719846 / 976000145d, 1757004468 / 5645159321d, 656045339 / 265891186d, -3867574721 / 1518517206d, 465885868 / 322736535d, 53011238 / 667516719d, 2 / 45d, 0 };
 
-    /// <summary>Bottom side scheme coefficients 8th order minus scheme coefficents 7th order, see [2] p.693</summary>
+    /// <summary>Bottom side scheme coefficients 8th order minus scheme coefficients 7th order, see [2] p.693</summary>
     private static readonly double[] _sbhml = new double[] { 19478166 / 1597320223d, 0, 0, 0, 0, 151758317 / 196284734d, -73268277 / 1018632277d, -258320912 / 146454165d, 361426111 / 202232399d, -106217201 / 135656655d, 79092227 / 1004066684d, -134149358 / 474774259d, 1 / 4d };
 
     /// <summary>Left side scheme coefficients, see [2] p.693</summary>
@@ -77,7 +75,7 @@ namespace Altaxo.Calc.Ode
     /// <inheritdoc/>
     protected override double[] C => _sc;
 
-    #region Coefficients with still more accuracy (for 16 byte floating point in a future C# version?)
+    #region Coefficients with still more accuracy (for 16 byte floating point in a future C# version? )
 #if false
 
     // for calculation of these coefficients see http://www.peterstone.name/Maplepgs/Maple/nmthds/RKcoeff/Runge_Kutta_schemes/RK8/RKcoeff8d_1.pdf

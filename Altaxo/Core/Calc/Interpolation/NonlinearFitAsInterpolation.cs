@@ -53,12 +53,13 @@ namespace Altaxo.Calc.Interpolation
     #region Serialization
 
     /// <summary>
-    /// 2024-02-27 V0
+    /// 2024-02-27 V0 Serialization surrogate for <see cref="NonlinearFitAsInterpolation"/>.
     /// </summary>
     /// <seealso cref="Altaxo.Serialization.Xml.IXmlSerializationSurrogate" />
     [Altaxo.Serialization.Xml.XmlSerializationSurrogateFor(typeof(NonlinearFitAsInterpolation), 0)]
     public class SerializationSurrogate0 : Altaxo.Serialization.Xml.IXmlSerializationSurrogate
     {
+      /// <inheritdoc />
       public void Serialize(object obj, Altaxo.Serialization.Xml.IXmlSerializationInfo info)
       {
         var s = (NonlinearFitAsInterpolation)obj;
@@ -66,6 +67,7 @@ namespace Altaxo.Calc.Interpolation
         info.AddArray("CurveParameters", s.Parameters, s.Parameters.Count);
       }
 
+      /// <inheritdoc />
       public object Deserialize(object? o, Altaxo.Serialization.Xml.IXmlDeserializationInfo info, object? parent)
       {
         var curve = info.GetValue<IFitFunction>("CurveShape", null);
@@ -76,6 +78,9 @@ namespace Altaxo.Calc.Interpolation
 
     #endregion
 
+    /// <summary>
+    /// Initializes a new instance of the <see cref="NonlinearFitAsInterpolation"/> class with a quadratic polynomial and zero parameters.
+    /// </summary>
     public NonlinearFitAsInterpolation()
     {
       CurveShape = new Altaxo.Calc.FitFunctions.General.Polynomial(2, 0);
@@ -87,6 +92,11 @@ namespace Altaxo.Calc.Interpolation
       Parameters = parameters.ToImmutableList();
     }
 
+    /// <summary>
+    /// Initializes a new instance of the <see cref="NonlinearFitAsInterpolation"/> class using numeric parameter values for the provided fit function.
+    /// </summary>
+    /// <param name="fitFunction">The fit function that defines the curve shape.</param>
+    /// <param name="parameters">The parameter values for the fit function.</param>
     public NonlinearFitAsInterpolation(IFitFunction fitFunction, IReadOnlyList<double> parameters)
     {
       CurveShape = fitFunction ?? throw new ArgumentNullException(nameof(fitFunction));
@@ -103,6 +113,11 @@ namespace Altaxo.Calc.Interpolation
       Parameters = para.ToImmutableList();
     }
 
+    /// <summary>
+    /// Initializes a new instance of the <see cref="NonlinearFitAsInterpolation"/> class using detailed parameter descriptors.
+    /// </summary>
+    /// <param name="fitFunction">The fit function that defines the curve shape.</param>
+    /// <param name="parameters">The parameter descriptors to use for fitting.</param>
     public NonlinearFitAsInterpolation(IFitFunction fitFunction, IReadOnlyList<ParameterSetElement> parameters)
     {
       CurveShape = fitFunction ?? throw new ArgumentNullException(nameof(fitFunction));
@@ -119,6 +134,14 @@ namespace Altaxo.Calc.Interpolation
       Parameters = para.ToImmutableList();
     }
 
+    /// <summary>
+    /// Fits the interpolation model to the provided data vectors.
+    /// </summary>
+    /// <param name="xvec">The x-coordinate data points.</param>
+    /// <param name="yvec">The y-coordinate data points.</param>
+    /// <param name="yStdDev">The standard deviations of the y-coordinates (optional).</param>
+    /// <returns>An interpolation function that represents the fitted model.</returns>
+    /// <inheritdoc />
     public IInterpolationFunction Interpolate(IReadOnlyList<double> xvec, IReadOnlyList<double> yvec, IReadOnlyList<double>? yStdDev = null)
     {
       var regression = new QuickNonlinearRegression(CurveShape);
@@ -127,11 +150,15 @@ namespace Altaxo.Calc.Interpolation
       return new FitFuncAsInterpolationWrapper(CurveShape, regResult.MinimizingPoint.ToArray(), xvec.Min(), xvec.Max());
     }
 
+    /// <inheritdoc />
     IInterpolationCurve IInterpolationCurveOptions.Interpolate(IReadOnlyList<double> xvec, IReadOnlyList<double> yvec, IReadOnlyList<double>? yStdDev)
     {
       return Interpolate(xvec, yvec, yStdDev);
     }
 
+    /// <summary>
+    /// Provides access to the fitted function through the <see cref="IInterpolationFunction"/> interface.
+    /// </summary>
     private class FitFuncAsInterpolationWrapper : IInterpolationFunction
     {
       IFitFunction _fitFunction;
@@ -141,6 +168,13 @@ namespace Altaxo.Calc.Interpolation
       double[] X = new double[1];
       double[] Y = new double[1];
 
+      /// <summary>
+      /// Initializes a new instance of the <see cref="FitFuncAsInterpolationWrapper"/> class.
+      /// </summary>
+      /// <param name="fitFunction">The fit function used for interpolation.</param>
+      /// <param name="parameters">The parameters resulting from the regression.</param>
+      /// <param name="xmin">The minimum x-value observed.</param>
+      /// <param name="xmax">The maximum x-value observed.</param>
       public FitFuncAsInterpolationWrapper(IFitFunction fitFunction, double[] parameters, double xmin, double xmax)
       {
         _fitFunction = fitFunction;
@@ -149,17 +183,20 @@ namespace Altaxo.Calc.Interpolation
         _xmax = xmax;
       }
 
+      /// <inheritdoc />
       public double GetXOfU(double u)
       {
 
         return (1 - u) * _xmin + (u) * _xmax;
       }
 
+      /// <inheritdoc />
       public double GetYOfU(double u)
       {
         return GetYOfX(GetXOfU(u));
       }
 
+      /// <inheritdoc />
       public double GetYOfX(double x)
       {
         X[0] = x;
@@ -167,6 +204,7 @@ namespace Altaxo.Calc.Interpolation
         return Y[0];
       }
 
+      /// <inheritdoc />
       public void Interpolate(IReadOnlyList<double> xvec, IReadOnlyList<double> yvec)
       {
         throw new NotImplementedException();

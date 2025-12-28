@@ -73,6 +73,7 @@ namespace Altaxo.Calc.Interpolation
   /// </remarks>
   public class CardinalCubicSpline : CurveBase
   {
+    /// <inheritdoc/>
     public override void Interpolate(IReadOnlyList<double> x, IReadOnlyList<double> y)
     {
       // verify index range
@@ -86,6 +87,7 @@ namespace Altaxo.Calc.Interpolation
 
     //----------------------------------------------------------------------------//
 
+    /// <inheritdoc/>
     public override double GetXOfU(double t)
     {
       const int lo = 0;
@@ -131,6 +133,7 @@ namespace Altaxo.Calc.Interpolation
       }
     }
 
+    /// <inheritdoc/>
     public override double GetYOfU(double t)
     {
       const int lo = 0;

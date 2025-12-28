@@ -57,7 +57,7 @@ namespace Altaxo.Calc.Interpolation
   /// <summary><para>
   /// Calculate the Fritsch-Carlson monotone cubic spline interpolation for the
   /// given abscissa vector x and ordinate vector y.
-  /// All vectors must have conformant dimenions.
+  /// All vectors must have conformant dimensions.
   /// The abscissa vector must be strictly increasing.
   /// </para>
   /// <para>
@@ -67,7 +67,7 @@ namespace Altaxo.Calc.Interpolation
   /// This is the state of the art to create curves that preserve
   /// monotonicity, although it is not so well known as Akima's
   /// interpolation. The commonly used Akima interpolation doesn't
-  /// produce so pleasant results.
+  /// produce equally pleasant results.
   /// </para>
   /// <code>
   /// Reference:
@@ -81,8 +81,19 @@ namespace Altaxo.Calc.Interpolation
   /// </summary>
   public class FritschCarlsonCubicSpline : CurveBase, IInterpolationFunction
   {
+    /// <summary>
+    /// First derivative estimates for each spline knot.
+    /// </summary>
     protected Vector<double> y1 = CreateVector.Dense<double>(0);
+
+    /// <summary>
+    /// Quadratic coefficients of the cubic spline segments.
+    /// </summary>
     protected Vector<double> y2 = CreateVector.Dense<double>(0);
+
+    /// <summary>
+    /// Cubic coefficients of the spline segments.
+    /// </summary>
     protected Vector<double> y3 = CreateVector.Dense<double>(0);
 
     //----------------------------------------------------------------------------//
@@ -111,6 +122,7 @@ namespace Altaxo.Calc.Interpolation
     //
     //----------------------------------------------------------------------------//
 
+    /// <inheritdoc/>
     public override void Interpolate(IReadOnlyList<double> x, IReadOnlyList<double> y)
     {
       // check input parameters
@@ -180,21 +192,29 @@ namespace Altaxo.Calc.Interpolation
       }
     }
 
+    /// <inheritdoc/>
     public override double GetXOfU(double u)
     {
       return u;
     }
 
+    /// <inheritdoc/>
     public override double GetYOfU(double u)
     {
       return CubicSplineHorner(u, x, y, y1, y2, y3);
     }
 
+    /// <inheritdoc/>
     public double GetYOfX(double u)
     {
       return CubicSplineHorner(u, x, y, y1, y2, y3);
     }
 
+    /// <summary>
+    /// Returns the first derivative of the spline at the specified abscissa value.
+    /// </summary>
+    /// <param name="u">The x value where the derivative should be evaluated.</param>
+    /// <returns>The first derivative of y with respect to x at <paramref name="u"/>.</returns>
     public double GetY1stDerivativeOfX(double u)
     {
       return CubicSplineHorner1stDerivative(u, x, y, y1, y2, y3);
@@ -209,6 +229,14 @@ namespace Altaxo.Calc.Interpolation
     //
     //-----------------------------------------------------------------------------//
 
+    /// <summary>
+    /// Computes boundary derivatives using quadratic Newton interpolation.
+    /// </summary>
+    /// <param name="x">The abscissa vector.</param>
+    /// <param name="y">The ordinate vector.</param>
+    /// <param name="i">The interior index used for the stencil.</param>
+    /// <param name="sgn">The sign applied to the correction term (+1 or -1).</param>
+    /// <returns>The estimated derivative at the boundary point.</returns>
     private static double deriv1(IReadOnlyList<double> x, IReadOnlyList<double> y, int i, int sgn)
     {
       double di, dis, di2, his;
@@ -232,6 +260,13 @@ namespace Altaxo.Calc.Interpolation
     //
     //-----------------------------------------------------------------------------//
 
+    /// <summary>
+    /// Computes interior derivatives using quadratic Newton interpolation.
+    /// </summary>
+    /// <param name="x">The abscissa vector.</param>
+    /// <param name="y">The ordinate vector.</param>
+    /// <param name="i">The index for which to compute the derivative.</param>
+    /// <returns>The estimated derivative at index <paramref name="i"/>.</returns>
     private static double deriv2(IReadOnlyList<double> x, IReadOnlyList<double> y, int i)
     {
       double di0, di1, di2, hi0;
@@ -253,6 +288,12 @@ namespace Altaxo.Calc.Interpolation
     //
     //-----------------------------------------------------------------------------//
 
+    /// <summary>
+    /// Applies the Fritsch-Carlson monotonicity adjustment to the derivative vector.
+    /// </summary>
+    /// <param name="x">The abscissa vector.</param>
+    /// <param name="y">The ordinate vector.</param>
+    /// <param name="d">The derivative vector to adjust.</param>
     private static void fritsch(IReadOnlyList<double> x, IReadOnlyList<double> y, Vector<double> d)
     {
       int i, i1;

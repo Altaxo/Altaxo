@@ -18,13 +18,18 @@ namespace Altaxo.Calc.Ode
   {
 
     /// <summary>
-    /// The core implements functionality common to all Runge-Kutta methods, like stepping, error evaluation, interpolation and initial step finding.
+    /// The core implements functionality common to all Runge-Kutta methods, such as stepping, error evaluation, interpolation, and initial step-size estimation.
     /// </summary>
     protected class Core
     {
-      /// <summary>Safety factor for the step size. Without this factor, the control loop for step size
-      /// would try to set the stepsize so that the relative error would be around 1. But then, if the relative error is slighly above 1, this
-      /// step would be rejected. By having a safety factor of less than 1 we get the relative error safely below 1.</summary>
+      /// <summary>
+      /// Safety factor for the step size.
+      /// </summary>
+      /// <remarks>
+      /// Without this factor, the control loop for step size would try to set the step size so that the relative error is around 1.
+      /// But then, if the relative error is slightly above 1, the step would be rejected. By having a safety factor of less than 1,
+      /// the relative error is kept safely below 1.
+      /// </remarks>
       protected const double StepSize_SafetyFactor = 0.8;
 
       /// <summary>Maximum factor by which the step size can be increased.</summary>
@@ -42,11 +47,14 @@ namespace Altaxo.Calc.Ode
       /// <summary>The number of additional stages for dense output of high order.</summary>
       protected readonly int _numberOfAdditionalStagesForDenseOutput;
 
-      /// <summary>True if the last point is the same as first point (FSAL property). This is for instance true for the Dormand-Prince (<see cref="RK547M"/>) method.</summary>
+      /// <summary>
+      /// <see langword="true"/> if the method has the FSAL (first-same-as-last) property; otherwise, <see langword="false"/>.
+      /// This is, for instance, true for the Dormand-Prince (<see cref="RK547M"/>) method.
+      /// </summary>
       protected readonly bool _isFirstSameAsLastMethod;
 
       /// <summary>
-      /// The vector norm, by which from the vector of relative errors (dimension N) the scalar relative error is calculated.
+      /// Gets the vector norm used to reduce the vector of relative errors (dimension N) to a scalar relative error.
       /// </summary>
       public ErrorNorm ErrorNorm { get; internal set; } = ErrorNorm.InfinityNorm;
 
@@ -73,11 +81,13 @@ namespace Altaxo.Calc.Ode
       protected double[] _c_interpolation;
 
       /// <summary>
-      /// The interpolation coefficients. Note that zero to third order is calculated from the y and slopes at the start and end of the step.
-      /// Thus, this coefficients only have to cover the orders 4.. n of the interpolation.
+      /// The interpolation coefficients.
+      /// Note that zero to third order is calculated from the <c>y</c> values and slopes at the start and end of the step.
+      /// Thus, these coefficients only have to cover the orders 4..n of the interpolation.
       /// </summary>
-      /// <remarks>The length of the spine array is (OrderOfInterpolation-3).
-      /// The length of the 2nd dimension arrays is equal to the length of the spine of <see cref="_k"/>.
+      /// <remarks>
+      /// The length of the spine array is (OrderOfInterpolation-3).
+      /// The length of the second-dimension arrays is equal to the length of the spine of <see cref="_k"/>.
       /// </remarks>
       protected double[][] _interpolationCoefficients;
 
@@ -87,7 +97,8 @@ namespace Altaxo.Calc.Ode
       protected double _stiffnessDetectionThresholdValueSquared;
 
       /// <summary>
-      /// Number of (successfull) steps between calls to stiffness detection. If this is null, then stiffness detection is disabled.
+      /// Number of successful steps between calls to stiffness detection.
+      /// If this value is 0, stiffness detection is disabled.
       /// </summary>
       protected int _stiffnessDetectionEveryNumberOfSteps;
 
@@ -97,8 +108,8 @@ namespace Altaxo.Calc.Ode
       protected bool _wasSolutionPointEvaluated;
 
       /// <summary>
-      /// Designates whether the slope at y_current was evaluated (for non-FSAL methods).
-      /// For FSAL methods, this value is meaningless, because the last stage always contains k_next after a step.
+      /// Designates whether the slope at <c>y_current</c> was evaluated (for non-FSAL methods).
+      /// For FSAL methods, this value is meaningless, because the last stage always contains <c>k_next</c> after a step.
       /// </summary>
       protected bool _isKnextEvaluated;
 
@@ -120,9 +131,10 @@ namespace Altaxo.Calc.Ode
       /// <summary>Step size of the current step.</summary>
       protected double _stepSize_current;
 
-      /// <summary>Array to accomodate y for calculation of the stages.
-      /// At the end of <see cref="EvaluateNextSolutionPoint(double)"/>, this array usually contains the y
-      /// of the last stage (for non-FSAL methods), or the y of the stage before the last stage (FSAL methods).
+      /// <summary>
+      /// Array to accommodate <c>y</c> for calculation of the stages.
+      /// At the end of <see cref="EvaluateNextSolutionPoint(double)"/>, this array usually contains the <c>y</c>
+      /// of the last stage (for non-FSAL methods), or the <c>y</c> of the stage before the last stage (FSAL methods).
       /// </summary>
       protected double[] _y_stages;
 
@@ -132,14 +144,16 @@ namespace Altaxo.Calc.Ode
       protected double[] _y_current_LocalError;
 
       /// <summary>
-      /// The absolute tolerance. This is either an array of length 1 (in this case the absolute tolerances of all y values
-      /// are equal), or an array of the same size than y.
+      /// The absolute tolerances.
+      /// This is either an array of length 1 (in this case, the absolute tolerances of all <c>y</c> values are equal),
+      /// or an array of the same size as <c>y</c>.
       /// </summary>
       public double[] _absoluteTolerances;
 
       /// <summary>
-      /// The relativ tolerances. This is either an array of length 1 (in this case the relative tolerances of all y values
-      /// are equal), or an array of the same size than y.
+      /// The relative tolerances.
+      /// This is either an array of length 1 (in this case, the relative tolerances of all <c>y</c> values are equal),
+      /// or an array of the same size as <c>y</c>.
       /// </summary>
       public double[] _relativeTolerances;
 
@@ -149,18 +163,24 @@ namespace Altaxo.Calc.Ode
       protected StepSizeFilter _stepSizeFilter;
 
       /// <summary>
-      /// The ODE function. First argument is the independent variable (usually named x or t),
-      /// 2nd argument are the current y values, and the 3rd argument adopts the derivatives dy/dx calculated by this function.
+      /// The ODE function.
       /// </summary>
+      /// <remarks>
+      /// The first argument is the independent variable (usually designated with <c>x</c> or <c>t</c>),
+      /// the second argument is the array of current <c>y</c> values, and the third argument is the array that receives
+      /// the derivatives <c>dy/dx</c> calculated by this function.
+      /// </remarks>
       protected Action<double, double[], double[]> _f;
 
-      /// <summary>The number of evaluation results in <see cref="ThrowIfStiffnessDetected()"/>, for which the result was false (non-stiff).
-      /// This counter is re-set to zero if a stiff condition is detected.
+      /// <summary>
+      /// The number of evaluation results in <see cref="ThrowIfStiffnessDetected()"/> for which the result was false (non-stiff).
+      /// This counter is reset to zero if a stiff condition is detected.
       /// </summary>
       protected int _numberOfNonstiffEvaluationResults;
 
-      /// <summary>The number of evaluation results in <see cref="ThrowIfStiffnessDetected()"/>, for which the result was true (stiff).
-      /// This counter is re-set to zero if a non-stiff condition is detected.
+      /// <summary>
+      /// The number of evaluation results in <see cref="ThrowIfStiffnessDetected()"/> for which the result was true (stiff).
+      /// This counter is reset to zero if a non-stiff condition is detected.
       /// </summary>
       protected int _numberOfStiffEvaluationResults;
 
@@ -173,11 +193,12 @@ namespace Altaxo.Calc.Ode
       // Helper variables
 
       /// <summary>Array of derivatives at the different stages.</summary>
-      /// <remarks>The layout is as follows:
+      /// <remarks>
+      /// The layout is as follows:
       /// <para>Element 0 contains the slope at x_previous.</para>
       /// <para>Elements 1..<see cref="_numberOfStages"/>-1 contain the slopes of the stages.</para>
       /// <para>If this is a non-FSAL method, then element[<see cref="_numberOfStages"/>] is reserved for the slope at x_current.</para>
-      /// <para>If <see cref="_numberOfAdditionalStagesForDenseOutput"/> is &gt; 0, then follows <see cref="_numberOfAdditionalStagesForDenseOutput"/> elements to accomodate the slopes of the additional stages needed for dense output.</para>
+      /// <para>If <see cref="_numberOfAdditionalStagesForDenseOutput"/> is &gt; 0, then <see cref="_numberOfAdditionalStagesForDenseOutput"/> elements follow to accommodate the slopes of the additional stages needed for dense output.</para>
       /// </remarks>
       protected double[][] _k;
 
@@ -185,7 +206,7 @@ namespace Altaxo.Calc.Ode
       /// <summary>True if dense output was prepared, i.e. the array <see cref="_rcont"/> contains valid values.</summary>
       protected bool _isDenseOutputPrepared;
 
-      /// <summary>Contains the precalcuated polynomial coefficients for dense output.</summary>
+      /// <summary>Contains the precalculated polynomial coefficients for dense output.</summary>
       protected double[][]? _rcont;
 
 
@@ -208,8 +229,9 @@ namespace Altaxo.Calc.Ode
       public double X_previous => _x_previous;
 
       /// <summary>
-      /// Gets the current values of the variables. <b>Attention:</b> the returned array will change the next time you call <see cref="EvaluateNextSolutionPoint(double)"/>. Therefore,
-      /// if you not intend to use the values immediately, <b>make a copy of this array!</b>.
+      /// Gets the current values of the variables.
+      /// <b>Attention:</b> the returned array will change the next time you call <see cref="EvaluateNextSolutionPoint(double)"/>.
+      /// Therefore, if you do not intend to use the values immediately, <b>make a copy of this array!</b>
       /// </summary>
       /// <value>
       /// The current values of the variables.
@@ -223,6 +245,7 @@ namespace Altaxo.Calc.Ode
       /// The absolute tolerance.
       /// </value>
       /// <exception cref="ArgumentException">Must be &gt;= 0 - AbsoluteTolerance</exception>
+      /// <exception cref="InvalidOperationException">The absolute tolerance is stored as an array and cannot be returned as a scalar.</exception>
       public double AbsoluteTolerance
       {
         get
@@ -246,7 +269,8 @@ namespace Altaxo.Calc.Ode
       /// <value>
       /// The relative tolerance.
       /// </value>
-      /// <exception cref="ArgumentException">Must be >= 0 - RelativeTolerance</exception>
+      /// <exception cref="ArgumentException">Must be &gt;= 0 - RelativeTolerance</exception>
+      /// <exception cref="InvalidOperationException">The relative tolerance is stored as an array and cannot be returned as a scalar.</exception>
       public double RelativeTolerance
       {
         get
@@ -265,7 +289,8 @@ namespace Altaxo.Calc.Ode
       }
 
       /// <summary>
-      /// Gets or sets the relative tolerances. It must be ensured that this array is not altered.
+      /// Gets or sets the relative tolerances.
+      /// It must be ensured that this array is not altered.
       /// </summary>
       public double[] RelativeTolerances
       {
@@ -286,7 +311,8 @@ namespace Altaxo.Calc.Ode
       }
 
       /// <summary>
-      /// Gets or sets the absolute tolerances. It must be ensured that this array is not altered.
+      /// Gets or sets the absolute tolerances.
+      /// It must be ensured that this array is not altered.
       /// </summary>
       public double[] AbsoluteTolerances
       {
@@ -323,11 +349,11 @@ namespace Altaxo.Calc.Ode
       }
 
       /// <summary>
-      /// Gets or sets the number of successful steps between test for stiffness.
+      /// Gets or sets the number of successful steps between tests for stiffness.
       /// Setting this value to 0 disables stiffness detection. The default value is 0.
       /// </summary>
       /// <value>
-      /// The number of successful steps between test for stiffness.
+      /// The number of successful steps between tests for stiffness.
       /// </value>
       public int StiffnessDetectionEveryNumberOfSteps
       {
@@ -340,12 +366,12 @@ namespace Altaxo.Calc.Ode
 
       /// <summary>
       /// Sets the coefficients for the error evaluation.
-      /// These coefficients are the difference of the high order and low order bottom side
+      /// These coefficients are the difference of the high-order and low-order bottom side
       /// coefficients of the Runge-Kutta scheme.
-      /// If set to null, local error calculation, and thus automatic step size control, is not possible.
+      /// If set to <see langword="null"/>, local error calculation (and thus automatic step size control) is not possible.
       /// </summary>
       /// <value>
-      /// The difference of high order and low order coefficients of the Runge-Kutta method.
+      /// The difference of high-order and low-order coefficients of the Runge-Kutta method.
       /// </value>
       public double[]? BHML
       {
@@ -356,10 +382,11 @@ namespace Altaxo.Calc.Ode
       }
 
       /// <summary>
-      /// Sets the coefficients for additional stages that are neccessary for dense output (interpolation).
+      /// Sets the coefficients for additional stages that are necessary for dense output (interpolation).
       /// </summary>
       /// <param name="a_interpolation">Additional central coefficients of the Runge-Kutta scheme.</param>
       /// <param name="c_interpolation">Additional left side coefficients of the Runge-Kutta scheme.</param>
+      /// <exception cref="ArgumentNullException">Thrown if <paramref name="a_interpolation"/> or <paramref name="c_interpolation"/> is <see langword="null"/>.</exception>
       public void SetCoefficientsForAdditionalStages(double[][] a_interpolation, double[] c_interpolation)
       {
         _a_interpolation = a_interpolation ?? throw new ArgumentNullException(nameof(a_interpolation));
@@ -385,14 +412,14 @@ namespace Altaxo.Calc.Ode
       #endregion
 
       /// <summary>
-      /// Initializes a new instance of the <see cref="Core" />.
+      /// Initializes a new instance of the <see cref="Core"/> class.
       /// </summary>
       /// <param name="order">Order of the Runge-Kutta method (the highest order of the embedded pair).</param>
       /// <param name="numberOfStages">Number of stages for the main process (stages for dense output not included).</param>
       /// <param name="numberOfAdditionalStagesForDenseOutput">Number of additional stages needed for dense output of higher order.</param>
       /// <param name="a">The central coefficients of the Runge-Kutta scheme.</param>
       /// <param name="b">The high order bottom side coefficients of the Runge-Kutta scheme used to calculate the next function values.</param>
-      /// <param name="bhml">Differences between high order and low order bottom side coefficents of the Runge-Kutta scheme for local error estimation.</param>
+      /// <param name="bhml">Differences between high order and low order bottom side coefficients of the Runge-Kutta scheme for local error estimation.</param>
       /// <param name="c">The left side coefficients of the Runge-Kutta scheme.</param>
       /// <param name="x0">The initial x value.</param>
       /// <param name="y">The initial y values.</param>
@@ -434,8 +461,8 @@ namespace Altaxo.Calc.Ode
       }
 
       /// <summary>
-      /// Reverts the state of the instance to the former solution point, by
-      /// setting <see cref="X"/> to <see cref="X_previous"/> and <see cref="Y_volatile"/> y_previous.
+      /// Reverts the state of the instance to the former solution point by setting <see cref="X"/> to <see cref="X_previous"/>
+      /// and reverting <see cref="Y_volatile"/>.
       /// </summary>
       public void Revert()
       {
@@ -446,15 +473,14 @@ namespace Altaxo.Calc.Ode
       }
 
       /// <summary>
-      /// Determines whether this is an FSAL (first-same-as-last) Runge-Kutta method. For FSAL methods, the last entry in
-      /// array c is 1, and the last row of array a is the same as c.
+      /// Determines whether this is an FSAL (first-same-as-last) Runge-Kutta method.
+      /// For FSAL methods, the last entry in array <paramref name="c"/> is 1, and the last row of array <paramref name="a"/>
+      /// is equal to <paramref name="b"/>.
       /// </summary>
       /// <param name="a">Central part of the Runge-Kutta scheme.</param>
       /// <param name="b">Bottom side of the Runge-Kutta scheme.</param>
       /// <param name="c">Left side of the Runge-Kutta scheme.</param>
-      /// <returns>
-      ///   <c>true</c> if this is an FSAL method; otherwise, <c>false</c>.
-      /// </returns>
+      /// <returns><see langword="true"/> if this is an FSAL method; otherwise, <see langword="false"/>.</returns>
       private static bool IsFirstSameAsLastMethod(double[][] a, double[] b, double[] c)
       {
 
@@ -472,11 +498,13 @@ namespace Altaxo.Calc.Ode
       /// Evaluates the next solution point in one step.
       /// To get the results, see <see cref="X"/> and <see cref="Y_volatile"/>.
       /// </summary>
-      /// <param name="xnext">The x at the end of this step.</param>
-      /// <remarks>At the end of this call, <see cref="_y_current"/> contains the current y values,
-      /// <see cref="_y_stages"/> contains the y values of the last stage (non-FSAL) or of the stage before
-      /// the last stage (FSAL), <see cref="_y_current_LocalError"/> contains the local errors, and <see cref="_y_previous"/>
-      /// contains the y values at the beginning of the current step.</remarks>
+      /// <param name="xnext">The x value at the end of this step.</param>
+      /// <remarks>
+      /// At the end of this call, <see cref="_y_current"/> contains the current <c>y</c> values,
+      /// <see cref="_y_stages"/> contains the <c>y</c> values of the last stage (non-FSAL) or of the stage before the last stage (FSAL),
+      /// <see cref="_y_current_LocalError"/> contains the local errors, and <see cref="_y_previous"/>
+      /// contains the <c>y</c> values at the beginning of the current step.
+      /// </remarks>
       public virtual void EvaluateNextSolutionPoint(double xnext)
       {
         var a = _a;
@@ -568,10 +596,10 @@ namespace Altaxo.Calc.Ode
 
       #region Stiffness detection
       /// <summary>
-      /// Function that is been called after every <b>successfull</b> step.
-      /// Detects a stiffness condition. If it founds one, an exception will be thrown.
+      /// Called after every <b>successful</b> step.
+      /// Detects a stiffness condition. If one is found, an exception is thrown.
       /// </summary>
-      /// <returns></returns>
+      /// <exception cref="InvalidOperationException">Thrown if a stiffness condition is detected.</exception>
       public virtual void ThrowIfStiffnessDetected()
       {
         if (_stiffnessDetectionEveryNumberOfSteps > 0 &&
@@ -624,7 +652,8 @@ namespace Altaxo.Calc.Ode
       #region Error and step size evaluation
 
       /// <summary>
-      /// Gets or sets the step size filter. For the values see <see cref="Altaxo.Calc.Ode.StepSizeFilter"/>.
+      /// Gets or sets the step size filter.
+      /// For the values see <see cref="Altaxo.Calc.Ode.StepSizeFilter"/>.
       /// </summary>
       public StepSizeFilter StepSizeFilter
       {
@@ -633,9 +662,10 @@ namespace Altaxo.Calc.Ode
       }
 
       /// <summary>
-      /// Gets the relative error by the infinity norm, which should be in the order of 1, if the step size is optimally chosen.
+      /// Gets the relative error by the infinity norm, which should be in the order of 1 if the step size is optimally chosen.
       /// </summary>
-      /// <returns>The relative error (relative to the absolute and relative tolerance).</returns>
+      /// <returns>The relative error (relative to the absolute and relative tolerances).</returns>
+      /// <exception cref="InvalidOperationException">Thrown if the low-order coefficients were not set (<see cref="_bhml"/> is <see langword="null"/>).</exception>
       public virtual double GetRelativeError_InfinityNorm()
       {
         // Compute error (see [1], page 168
@@ -699,9 +729,10 @@ namespace Altaxo.Calc.Ode
 
 
       /// <summary>
-      /// Gets the relative error calculated by the L2-norm, which should be in the order of 1, if the step size is optimally chosen.
+      /// Gets the relative error calculated by the L2-norm, which should be in the order of 1 if the step size is optimally chosen.
       /// </summary>
-      /// <returns>The relative error (relative to the absolute and relative tolerance).</returns>
+      /// <returns>The relative error (relative to the absolute and relative tolerances).</returns>
+      /// <exception cref="InvalidOperationException">Thrown if the low-order coefficients were not set (<see cref="_bhml"/> is <see langword="null"/>).</exception>
       public virtual double GetRelativeError_L2Norm()
       {
         // Compute error (see [1], page 168
@@ -713,7 +744,7 @@ namespace Altaxo.Calc.Ode
           throw new InvalidOperationException("In order to evaluate errors, the evaluation of the low order y has to be done, but the low order coefficients were not set!");
         }
 
-        
+
         var ylocalerror = _y_current_LocalError;
         int n = ylocalerror.Length;
         var ycurrent = _y_current;
@@ -772,7 +803,7 @@ namespace Altaxo.Calc.Ode
       }
 
       /// <summary>
-      /// Gets the recommended step size.  
+      /// Gets the recommended step size.
       /// </summary>
       /// <param name="error_current">The relative error of the current step.</param>
       /// <param name="error_previous">The relative error of the previous step.</param>
@@ -803,7 +834,8 @@ namespace Altaxo.Calc.Ode
       }
 
       /// <summary>
-      /// Gets the initial step size. The absolute and relative tolerances must be set before the call to this function.
+      /// Gets the initial step size.
+      /// The absolute and relative tolerances must be set before the call to this function.
       /// </summary>
       /// <returns>The initial step size in the context of the absolute and relative tolerances.</returns>
       /// <exception cref="InvalidOperationException">Either absolute tolerance or relative tolerance is required to be &gt; 0</exception>
@@ -851,13 +883,17 @@ namespace Altaxo.Calc.Ode
       #region Interpolation (dense output)
 
 
-      /// <summary>Get an interpolated point in the last evaluated interval.
-      /// Please use the result immediately, or else make a copy of the result, since a internal array
-      /// is returned, which is overwritten at the next operation.</summary>
+      /// <summary>
+      /// Gets an interpolated point in the last evaluated interval.
+      /// Please use the result immediately, or else make a copy of the result, since an internal array
+      /// is returned, which is overwritten at the next operation.
+      /// </summary>
       /// <param name="theta">Relative location (0..1) in the last evaluated interval.</param>
       /// <returns>Interpolated y values at the relative point of the last evaluated interval <paramref name="theta"/>.</returns>
-      /// <remarks>This method is intended for FSAL methods only. We assume here, that k[_stages-1] contains
-      /// the derivative of x_current.</remarks>
+      /// <remarks>
+      /// This method is intended for FSAL methods only.
+      /// We assume here that <c>k[_stages-1]</c> contains the derivative at <c>x_current</c>.
+      /// </remarks>
       public virtual double[] GetInterpolatedY_volatile(double theta)
       {
         var k0 = _k[0]; // derivatives at x_previous

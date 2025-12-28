@@ -35,7 +35,7 @@ namespace Altaxo.Calc.Interpolation
     private double _smoothing;
 
     /// <summary>
-    /// Set the value of the smoothing paramenter. A value of 0
+    /// Sets the value of the smoothing parameter. A value of 0
     /// for the smoothing parameter results in a standard cubic spline.
     /// A value of p with -1 &lt; p &lt; 0 results in "unsmoothing" that means
     /// overshooting oscillations. A value of p with p &gt; 0 gives increasing
@@ -88,6 +88,7 @@ namespace Altaxo.Calc.Interpolation
       return spline;
     }
 
+    /// <inheritdoc/>
     IInterpolationCurve IInterpolationCurveOptions.Interpolate(IReadOnlyList<double> xvec, IReadOnlyList<double> yvec, IReadOnlyList<double>? yStdDev)
     {
       return Interpolate(xvec, yvec, yStdDev);

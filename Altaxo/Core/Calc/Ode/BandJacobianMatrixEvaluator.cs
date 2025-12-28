@@ -17,37 +17,52 @@ using Altaxo.Calc.LinearAlgebra;
 namespace Altaxo.Calc.Ode
 {
   /// <summary>
-  /// Approximates the jacobian matrix using finite differences (assuming the jacobian is a band matrix with a fixed lower and upper bandwidth).
+  /// Approximates the Jacobian matrix using finite differences (assuming the Jacobian is a band matrix with a fixed lower and upper bandwidth).
   /// </summary>
   public class BandJacobianMatrixEvaluator
   {
     /// <summary>
-    /// The rates at the current y values.
+    /// The derivatives at the current <c>y</c> values.
     /// </summary>
     private double[] _derivatives_current;
 
     /// <summary>
-    /// The rates at the variated y values.
+    /// The derivatives at the variated <c>y</c> values.
     /// </summary>
     private double[] _derivatives_variated;
 
     /// <summary>
-    /// The function to calculate the derivatives. First argument is the independent variable (usually designated with x or t),
-    /// 2nd argument is the array of y values, and the third array accomodates the calculated derivatives dy/dx.
+    /// The function to calculate the derivatives.
     /// </summary>
+    /// <remarks>
+    /// The first argument is the independent variable (usually designated with <c>x</c> or <c>t</c>),
+    /// the second argument is the array of <c>y</c> values, and the third argument is the array that receives
+    /// the calculated derivatives <c>dy/dx</c>.
+    /// </remarks>
     private Action<double, double[], double[]> _f;
+
+    /// <summary>
+    /// The lower bandwidth of the band matrix.
+    /// </summary>
     private int _lowerBandwidth;
+
+    /// <summary>
+    /// The upper bandwidth of the band matrix.
+    /// </summary>
     private int _upperBandwidth;
 
     /// <summary>
-    /// Initializes a new instance of the <see cref="DenseJacobianMatrixEvaluator"/> class.
+    /// Initializes a new instance of the <see cref="BandJacobianMatrixEvaluator"/> class.
     /// </summary>
     /// <param name="f">
-    /// The function to calculate the derivatives. First argument is the independent variable (usually designated with x or t),
-    /// 2nd argument is the array of y values, and the third array accomodates the calculated derivatives dy/dx.
+    /// The function to calculate the derivatives.
     /// </param>
     /// <param name="lowerBandwidth">The lower bandwidth of the band matrix.</param>
     /// <param name="upperBandwidth">The upper bandwidth of the band matrix.</param>
+    /// <remarks>
+    /// <paramref name="f"/> is called with the independent variable (usually designated with <c>x</c> or <c>t</c>),
+    /// an array of state values <c>y</c>, and an output array that receives the derivatives.
+    /// </remarks>
     public BandJacobianMatrixEvaluator(Action<double, double[], double[]> f, int lowerBandwidth, int upperBandwidth)
     {
       _f = f;
@@ -58,11 +73,17 @@ namespace Altaxo.Calc.Ode
     }
 
     /// <summary>
-    /// Evaluates the jacobian matrix.
+    /// Evaluates the Jacobian matrix.
     /// </summary>
-    /// <param name="x">The value of the independent variable (usually named x or t).</param>
-    /// <param name="y">The array of y values.</param>
-    /// <param name="jac">At return, contains the matrix with jacobian values. If you provide null as this parameter, a new matrix is allocated.</param>
+    /// <param name="x">The value of the independent variable (usually designated with <c>x</c> or <c>t</c>).</param>
+    /// <param name="y">The array of state values <c>y</c>.</param>
+    /// <param name="jac">
+    /// On return, contains the matrix with Jacobian values.
+    /// If <see langword="null"/> is provided, a new matrix is allocated.
+    /// </param>
+    /// <exception cref="InvalidCastException">
+    /// Thrown when <paramref name="jac"/> is not <see langword="null"/> and is not a <see cref="BandDoubleMatrix"/> instance.
+    /// </exception>
     public void EvaluateJacobian(double x, double[] y, [AllowNull][NotNull] ref IMatrix<double> jac)
     {
       int N = y.Length;

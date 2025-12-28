@@ -95,6 +95,12 @@ namespace Altaxo.Calc.Interpolation
       return a.Count == b.Count;
     }
 
+    /// <summary>
+    /// Determines whether the elements of <paramref name="a"/> are strictly monotonically increasing.
+    /// </summary>
+    /// <param name="a">The sequence to test. Must not be empty.</param>
+    /// <returns><c>true</c> when each element is greater than its predecessor; otherwise <c>false</c>.</returns>
+    /// <exception cref="ArgumentException">Thrown when <paramref name="a"/> is empty.</exception>
     protected static bool IsStrictlyMonotonicallyIncreasing(IReadOnlyList<double> a)
     {
       if (a.Count == 0)
@@ -110,11 +116,14 @@ namespace Altaxo.Calc.Interpolation
     }
 
     /// <summary>
-    /// Throws an argument exception if the array a is not strictly monotonically increasing.
-    /// If the array contains NaN, then the function also throws the exception.
+    /// Throws an <see cref="ArgumentException"/> if <paramref name="a"/> is not strictly
+    /// monotonically increasing. Also throws if the array is empty.
+    /// If the array contains <see cref="double.NaN"/>, the comparison will fail and an exception
+    /// will be thrown.
     /// </summary>
-    /// <param name="a"></param>
-    /// <param name="argumentName"></param>
+    /// <param name="a">The array to validate.</param>
+    /// <param name="argumentName">Name of the argument to include in the exception.</param>
+    /// <exception cref="ArgumentException">Thrown when the array is empty or not strictly increasing.</exception>
     protected static void ThrowIfIsNotStrictlyMonotonicallyIncreasing(IReadOnlyList<double> a, string argumentName)
     {
       if (a.Count == 0)
@@ -130,11 +139,13 @@ namespace Altaxo.Calc.Interpolation
     }
 
     /// <summary>
-    /// Throws an argument exception if the array a is not monotonically increasing.
-    /// If the array contains NaN, then the function also throws the exception.
+    /// Throws an <see cref="ArgumentException"/> if <paramref name="a"/> is not monotonically
+    /// increasing (each element is greater than or equal to its predecessor). Also throws if
+    /// the array is empty.
     /// </summary>
-    /// <param name="a"></param>
-    /// <param name="argumentName"></param>
+    /// <param name="a">The array to validate.</param>
+    /// <param name="argumentName">Name of the argument to include in the exception.</param>
+    /// <exception cref="ArgumentException">Thrown when the array is empty or not monotonically increasing.</exception>
     protected static void ThrowIfIsNotMonotonicallyIncreasing(IReadOnlyList<double> a, string argumentName)
     {
       if (a.Count == 0)
@@ -149,6 +160,12 @@ namespace Altaxo.Calc.Interpolation
       }
     }
 
+    /// <summary>
+    /// Throws an <see cref="ArgumentException"/> when the provided array contains NaN or infinite values.
+    /// </summary>
+    /// <param name="a">The array to check.</param>
+    /// <param name="argumentName">Name of the argument to include in the exception.</param>
+    /// <exception cref="ArgumentException">Thrown when an element is NaN or infinite.</exception>
     protected static void ThrowIfContainsNaNOrInfiniteValues(IReadOnlyList<double> a, string argumentName)
     {
       for (int i = 0; i < a.Count; ++i)
@@ -158,6 +175,12 @@ namespace Altaxo.Calc.Interpolation
       }
     }
 
+    /// <summary>
+    /// Throws an <see cref="ArgumentException"/> when the provided array contains negative, NaN or infinite values.
+    /// </summary>
+    /// <param name="a">The array to check.</param>
+    /// <param name="argumentName">Name of the argument to include in the exception.</param>
+    /// <exception cref="ArgumentException">Thrown when an element is negative, NaN or infinite.</exception>
     protected static void ThrowIfContainsNegativeOrNaNOrInfiniteValues(IReadOnlyList<double> a, string argumentName)
     {
       for (int i = 0; i < a.Count; ++i)
@@ -218,18 +241,16 @@ namespace Altaxo.Calc.Interpolation
 
     /// <summary>
     /// Return the interpolation value P(u) for a piecewise cubic curve determined
-    /// by the abscissa vector x, the ordinate vector y, the 1st derivative
-    /// vector y1, the 2nd derivative vector y2, and the 3rd derivative vector y3,
-    /// using the Horner scheme.
+    /// by the abscissa vector <paramref name="x"/>, the ordinate vector <paramref name="y"/>,
+    /// and derivative coefficient vectors <paramref name="y1"/>, <paramref name="y2"/>, and <paramref name="y3"/>, using the Horner scheme.
     /// </summary>
     /// <param name="u">The abscissa value at which the interpolation is to be evaluated.</param>
     /// <param name="x">The vector (lo,hi) of data abscissa (must be strictly increasing).</param>
     /// <param name="y">The vectors (lo,hi) of ordinate</param>
-    /// <param name="y1">contains the 1st derivative y'(x(i))</param>
-    /// <param name="y2">contains the 2nd derivative y''(x(i))</param>
-    /// <param name="y3">contains the 3rd derivative y'''(x(i))</param>
-    /// <returns>P(u) = y(i) + dx * (y1(i) + dx * (y2(i) + dx * y3(i))).
-    /// In the special case of empty data vectors (x,y) a value of 0.0 is returned.</returns>
+    /// <param name="y1">Contains the 1st derivative y'(x(i)).</param>
+    /// <param name="y2">Contains the 2nd derivative y''(x(i)).</param>
+    /// <param name="y3">Contains the 3rd derivative y'''(x(i)).</param>
+    /// <returns>The interpolated value P(u). If <paramref name="x"/> is empty, returns 0.0.</returns>
     /// <remarks><code>
     /// All vectors must have conformant dimenions.
     /// The abscissa x(i) values must be strictly increasing.
@@ -247,7 +268,6 @@ namespace Altaxo.Calc.Interpolation
     ///
     ///    A fast binary search is performed to determine the proper interval.
     /// </code></remarks>
-
     public double CubicSplineHorner(double u,
       IReadOnlyList<double> x,
       IReadOnlyList<double> y,
@@ -269,6 +289,16 @@ namespace Altaxo.Calc.Interpolation
       return (y[i] + dx * (y1[i] + dx * (y2[i] + dx * y3[i])));
     }
 
+    /// <summary>
+    /// Return the first derivative P'(u) of the piecewise cubic curve evaluated using Horner's scheme.
+    /// </summary>
+    /// <param name="u">The abscissa value at which the derivative is to be evaluated.</param>
+    /// <param name="x">The vector (lo,hi) of data abscissa (must be strictly increasing).</param>
+    /// <param name="y">The vectors (lo,hi) of ordinate (not used for derivative calculation but kept for signature compatibility).</param>
+    /// <param name="y1">Contains the 1st derivative y'(x(i)).</param>
+    /// <param name="y2">Contains the 2nd derivative y''(x(i)).</param>
+    /// <param name="y3">Contains the 3rd derivative y'''(x(i)).</param>
+    /// <returns>The value of the first derivative at <paramref name="u"/>. If <paramref name="x"/> is empty, returns 0.0.</returns>
     public double CubicSplineHorner1stDerivative(double u,
     IReadOnlyList<double> x,
     IReadOnlyList<double> y,

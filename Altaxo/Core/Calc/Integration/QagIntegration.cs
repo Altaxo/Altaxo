@@ -6,8 +6,8 @@
 //
 //    This program is free software; you can redistribute it and/or modify
 //    it under the terms of the GNU General Public License as published by
-//    the Free Software Foundation; either version 2 of the License, or
-//    (at your option) any later version.
+//    the Free Software Foundation; either version 2 of the License, or (at
+//    your option) any later version.
 //
 //    This program is distributed in the hope that it will be useful,
 //    but WITHOUT ANY WARRANTY; without even the implied warranty of
@@ -38,7 +38,7 @@ namespace Altaxo.Calc.Integration
   /// around local difficulties in the integrand. These subintervals are managed by a
   /// gsl_integration_workspace struct, which handles the memory for the subinterval ranges,
   /// results and error estimates.
-  /// <para>Ref.: Gnu Scientific library reference manual (<see href="http://www.gnu.org/software/gsl/" />)</para>
+  /// <para>Ref.: GNU Scientific Library reference manual (<see href="http://www.gnu.org/software/gsl/" />)</para>
   /// </remarks>
   public class QagIntegration : IntegrationBase
   {
@@ -63,6 +63,23 @@ namespace Altaxo.Calc.Integration
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
  */
 
+    /// <summary>
+    /// Core implementation of the QAG adaptive integration algorithm.
+    /// Mirrors the behavior of the original QUADPACK/GSL implementation for adaptive bisection
+    /// and error control over the interval [a,b].
+    /// </summary>
+    /// <param name="f">Function to integrate.</param>
+    /// <param name="a">Lower integration limit.</param>
+    /// <param name="b">Upper integration limit.</param>
+    /// <param name="epsabs">Absolute error tolerance. Set to zero to rely on relative tolerance.</param>
+    /// <param name="epsrel">Relative error tolerance. Set to zero to rely on absolute tolerance.</param>
+    /// <param name="limit">Maximum number of subintervals allowed (workspace size).</param>
+    /// <param name="workspace">Workspace used to manage subintervals and store intermediate results.</param>
+    /// <param name="result">On return, contains the integration result when successful.</param>
+    /// <param name="abserr">On return, contains the estimated absolute error of the result.</param>
+    /// <param name="q">Integration rule (quadrature) used for local interval approximations.</param>
+    /// <param name="bDebug">Debug flag that controls whether detailed errors throw exceptions.</param>
+    /// <returns>Null if successful; otherwise a <see cref="GSL_ERROR"/> describing the error.</returns>
     private static GSL_ERROR?
     qag(Func<double, double> f,
          double a, double b,

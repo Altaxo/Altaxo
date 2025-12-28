@@ -29,10 +29,14 @@ using Altaxo.Calc.LinearAlgebra;
 
 namespace Altaxo.Calc.Regression.Nonlinear
 {
+  /// <summary>
+  /// Extends <see cref="IFitFunction"/> with the ability to evaluate the derivative (gradient)
+  /// of the fit function with respect to its parameters for a set of independent variable rows.
+  /// </summary>
   public interface IFitFunctionWithDerivative : IFitFunction
   {
     /// <summary>
-    /// This evaluates the gradient of the function with respect to the parameters.
+    /// Evaluates the gradient of the function with respect to the parameters.
     /// </summary>
     /// <param name="independent">The independent variables (x-values).
     /// Every row of that matrix corresponds to one observation.
@@ -42,7 +46,7 @@ namespace Altaxo.Calc.Regression.Nonlinear
     /// <param name="isFixed">If not null, this list designates the parameters that are fixed. No derivative value
     /// for those parameters need to be calculated.</param>
     /// <param name="DF">On return, this array contains the one (or more) evaluated
-    /// derivatives of the function values with respect to there parameters. See remarks for the order in which they are stored.</param>
+    /// derivatives of the function values with respect to their parameters. See remarks for the order in which they are stored.</param>
     /// <param name="dependentVariableChoice">Determines which output variables are written to the output vector. See remarks.</param>
     /// <remarks>
     /// The derivative values are stored in the array <c>DF</c>. For each dependent variable of the fit function that is included in the output
@@ -53,12 +57,12 @@ namespace Altaxo.Calc.Regression.Nonlinear
     /// DF[0,1] : df0/dp1
     /// DF[0,2] : df0/dp2
     /// DF[1,0] : df1/dp0
-    /// DF[1,1] : df2/dp1
+    /// DF[1,1] : df1/dp1
     /// DF[1,2] : df1/dp2
     /// </code>
     ///
     /// Concerning <paramref name="dependentVariableChoice"/>: if this parameter is null, the derivatives of all dependent variables the fit function provides will be included in the output matrix <paramref name="DF"/>.
-    /// If this parameter is not null, only the derivatives of those dependent variables, for which the element is true, are included in the output vector (at least one element of this array must be true).
+    /// If this parameter is not null, only the derivatives of those dependent variables for which the element is true are included in the output matrix (at least one element of this array must be true).
     /// </remarks>
     void EvaluateDerivative(IROMatrix<double> independent, IReadOnlyList<double> parameters, IReadOnlyList<bool>? isFixed, IMatrix<double> DF, IReadOnlyList<bool>? dependentVariableChoice);
   }

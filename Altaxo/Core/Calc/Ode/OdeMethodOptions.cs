@@ -20,26 +20,26 @@ namespace Altaxo.Calc.Ode
   /// Options for explicit Runge-Kutta methods.
   /// </summary>
   /// <remarks>
-  /// Essentially there are two modi for explicit Runge-Kutta methods:
+  /// Essentially there are two modes for explicit Runge-Kutta methods:
   /// <para> i) With automatic step size control (<see cref="AutomaticStepSizeControl"/> = true) and</para>
   /// <para>ii) Without automatic step size control (<see cref="AutomaticStepSizeControl"/> = false)</para>
   /// <para><b>With</b> automatic step size control, the following parameters are relevant:
   /// <list type="">
-  /// <item><see cref="IncludeInitialValueInOutput"/> determines whether the inital values for x and y should appear as first item in the output sequence.</item>
+  /// <item><see cref="IncludeInitialValueInOutput"/> determines whether the initial values for x and y should appear as the first item in the output sequence.</item>
   /// <item><see cref="AbsoluteTolerance"/> and <see cref="RelativeTolerance"/> and/or <see cref="AbsoluteTolerances"/> and <see cref="RelativeTolerances"/> determine the chosen step size.</item>
   /// <item><see cref="MaxStepSize"/> determines the maximum applied step size.</item>
-  /// <item><see cref="IncludeAutomaticStepsInOutput"/> if the steps that are chosen automatically should appear in the sequence of solution points.</item>
-  /// <item><see cref="InitialStepSize"/> determines the initial step size. If set to null, a reasonable guess of the initial step size will be done.</item>
+  /// <item><see cref="IncludeAutomaticStepsInOutput"/> determines whether the steps that are chosen automatically should appear in the sequence of solution points.</item>
+  /// <item><see cref="InitialStepSize"/> determines the initial step size. If set to <see langword="null"/>, a reasonable guess for the initial step size will be made.</item>
   /// <item><see cref="StepSizeFilter"/> determines the variations of the step size.</item>
   /// <item><see cref="MandatorySolutionPoints"/> are points where the method is forced to have a solution point. At those points the evaluation of the derivative is forced.</item>
-  /// <item><see cref="IncludeMandatorySolutionPointsInOutput"/> determines if the mandatory solution points should appear in the output sequence (default: true).</item>
+  /// <item><see cref="IncludeMandatorySolutionPointsInOutput"/> determines whether the mandatory solution points should appear in the output sequence (default: true).</item>
   /// <item><see cref="OptionalSolutionPoints"/> are points that are evaluated by interpolation between true solution points. Optional solution points always appear in the output sequence.</item>
   /// </list>
   /// </para>
   /// <para><b>Without</b> automatic step size control, the following parameters are relevant:
   /// <list type="">
-  /// <item><see cref="IncludeInitialValueInOutput"/> determines whether the inital values for x and y should appear as first item in the output sequence.</item>
-  /// <item><see cref="StepSize"/> determines the fixed step size. Set this parameter to null if you only want to output <see cref="MandatorySolutionPoints"/>.</item>
+  /// <item><see cref="IncludeInitialValueInOutput"/> determines whether the initial values for x and y should appear as the first item in the output sequence.</item>
+  /// <item><see cref="StepSize"/> determines the fixed step size. Set this parameter to <see langword="null"/> if you only want to output <see cref="MandatorySolutionPoints"/>.</item>
   /// <item><see cref="MandatorySolutionPoints"/> are points where the method is forced to have a solution point. At those points the evaluation of the derivative is forced. In mode without automatic step size control, mandatory solution points always appear in the output sequence.</item>
   /// <item><see cref="OptionalSolutionPoints"/> are points that are evaluated by interpolation between true solution points. Optional solution points always appear in the output sequence.</item>
   /// </list>
@@ -48,29 +48,32 @@ namespace Altaxo.Calc.Ode
   public class OdeMethodOptions
   {
     /// <summary>
-    /// Gets or sets a value indicating whether the inital point should be included in the output.
+    /// Gets or sets a value indicating whether the initial point should be included in the output.
     /// </summary>
     /// <value>
-    ///   <c>true</c> if the initial point should be included in the output; otherwise, <c>false</c>.
+    /// <see langword="true"/> if the initial point should be included in the output; otherwise, <see langword="false"/>.
     /// </value>
     public bool IncludeInitialValueInOutput { get; set; }
 
     /// <summary>
-    /// Gets or sets optional solution points. Optional solution points will be not evaluated directly, but interpolated between two real solution points.
+    /// Gets or sets optional solution points.
+    /// Optional solution points are not evaluated directly, but are interpolated between two real solution points.
     /// </summary>
     /// <value>
-    /// The sequence of optional solution points. Must be a strongly increasing sequence.
+    /// The sequence of optional solution points. Must be a strictly increasing sequence.
     /// </value>
     public IEnumerable<double>? OptionalSolutionPoints { get; set; }
 
 
 
     /// <summary>
-    /// Gets or sets the size of the step. This value is effective only if automatic step size control is not active.
+    /// Gets or sets the step size.
+    /// This value is effective only if automatic step size control is not active.
     /// </summary>
     /// <value>
-    /// The size of one step. Additionally to this value, you can set further mandatory evaluation points by setting <see cref="MandatorySolutionPoints"/>.
+    /// The size of one step. In addition to this value, you can set further mandatory evaluation points by setting <see cref="MandatorySolutionPoints"/>.
     /// </value>
+    /// <exception cref="ArgumentException">Thrown if the assigned value is negative.</exception>
     public double? StepSize
     {
       get => _stepSize;
@@ -93,12 +96,14 @@ namespace Altaxo.Calc.Ode
     private double[] _absoluteTolerances = new double[] { 0 };
 
     /// <summary>
-    /// Gets or sets the absolute tolerance for all y-values. Use <see cref="AbsoluteTolerances"/> if you want to set the absolute tolerance for each individual y-value.
+    /// Gets or sets the absolute tolerance for all <c>y</c> values.
+    /// Use <see cref="AbsoluteTolerances"/> if you want to set the absolute tolerance for each individual <c>y</c> value.
     /// </summary>
     /// <value>
-    /// The absolute tolerance for all y-values.
+    /// The absolute tolerance for all <c>y</c> values.
     /// </value>
-    /// <exception cref="ArgumentException">Must be &gt;= 0 - AbsoluteTolerance</exception>
+    /// <exception cref="ArgumentException">Thrown if the assigned value is negative.</exception>
+    /// <exception cref="InvalidOperationException">Thrown if <see cref="AbsoluteTolerances"/> is not a scalar (length is not 1).</exception>
     public double AbsoluteTolerance
     {
       get
@@ -117,12 +122,14 @@ namespace Altaxo.Calc.Ode
     }
 
     /// <summary>
-    /// Gets or sets the relative tolerance for all y-values. Use <see cref="RelativeTolerances"/> if you want to set the relative tolerance for each individual y-value.
+    /// Gets or sets the relative tolerance for all <c>y</c> values.
+    /// Use <see cref="RelativeTolerances"/> if you want to set the relative tolerance for each individual <c>y</c> value.
     /// </summary>
     /// <value>
     /// The relative tolerance.
     /// </value>
-    /// <exception cref="ArgumentException">Must be &gt;= 0 - RelativeTolerance</exception>
+    /// <exception cref="ArgumentException">Thrown if the assigned value is negative.</exception>
+    /// <exception cref="InvalidOperationException">Thrown if <see cref="RelativeTolerances"/> is not a scalar (length is not 1).</exception>
     public double RelativeTolerance
     {
       get
@@ -141,11 +148,14 @@ namespace Altaxo.Calc.Ode
     }
 
     /// <summary>
-    /// Gets or sets the absolute tolerances. The length of the array must either be 1 (equal tolerances for all y-values), or of length N.
+    /// Gets or sets the absolute tolerances.
+    /// The length of the array must either be 1 (equal tolerances for all <c>y</c> values) or <c>N</c>.
     /// </summary>
     /// <value>
     /// The absolute tolerances.
     /// </value>
+    /// <exception cref="ArgumentNullException">Thrown if the assigned value is <see langword="null"/>.</exception>
+    /// <exception cref="ArgumentException">Thrown if any element of the assigned array is negative.</exception>
     public double[] AbsoluteTolerances
     {
       get => _absoluteTolerances;
@@ -164,11 +174,14 @@ namespace Altaxo.Calc.Ode
     }
 
     /// <summary>
-    /// Gets or sets the relative tolerances. The length of the array must either be 1 (equal tolerances for all y-values), or of length N.
+    /// Gets or sets the relative tolerances.
+    /// The length of the array must either be 1 (equal tolerances for all <c>y</c> values) or <c>N</c>.
     /// </summary>
     /// <value>
     /// The relative tolerances.
     /// </value>
+    /// <exception cref="ArgumentNullException">Thrown if the assigned value is <see langword="null"/>.</exception>
+    /// <exception cref="ArgumentException">Thrown if any element of the assigned array is negative.</exception>
     public double[] RelativeTolerances
     {
       get => _relativeTolerances;
@@ -192,30 +205,33 @@ namespace Altaxo.Calc.Ode
 
     /// <summary>
     /// Gets or sets a value indicating whether steps generated by the automatic step size control should be included in the output.
-    /// This value is true by default. The value is effective only if <see cref="AutomaticStepSizeControl"/> is set to true.
-    /// If <see cref="AutomaticStepSizeControl"/> is true, but this value is false, then <see cref="MandatorySolutionPoints"/> have to be set.
+    /// This value is <see langword="true"/> by default.
+    /// The value is effective only if <see cref="AutomaticStepSizeControl"/> is set to <see langword="true"/>.
+    /// If <see cref="AutomaticStepSizeControl"/> is <see langword="true"/> but this value is <see langword="false"/>, then <see cref="MandatorySolutionPoints"/> must be set.
     /// </summary>
     /// <value>
-    /// <c>true</c> if steps generated by automatic step size control should be included in the output; otherwise, <c>false</c>.
+    /// <see langword="true"/> if steps generated by automatic step size control should be included in the output; otherwise, <see langword="false"/>.
     /// </value>
     public bool IncludeAutomaticStepsInOutput { get; set; } = true;
 
     /// <summary>
-    /// Gets or sets a value indicating whether automatic step size control is switched on.
+    /// Gets or sets a value indicating whether automatic step size control is enabled.
     /// </summary>
     /// <value>
-    /// <c>true</c> if the step size is automatically adjusted according to the absolute and relative error; otherwise, <c>false</c>.
+    /// <see langword="true"/> if the step size is adjusted automatically according to the absolute and relative error; otherwise, <see langword="false"/>.
     /// </value>
     public bool AutomaticStepSizeControl { get; set; }
 
     private double? _maxStepSize;
 
     /// <summary>
-    /// Gets or sets the maximum size of the step. This value is effective only if <see cref="AutomaticStepSizeControl"/> is true.
+    /// Gets or sets the maximum step size.
+    /// This value is effective only if <see cref="AutomaticStepSizeControl"/> is <see langword="true"/>.
     /// </summary>
     /// <value>
-    /// The maximum size of a step, if the step size is evaluated automatically.
+    /// The maximum step size when the step size is evaluated automatically.
     /// </value>
+    /// <exception cref="ArgumentException">Thrown if the assigned value is negative.</exception>
     public double? MaxStepSize
     {
       get => _maxStepSize;
@@ -234,11 +250,13 @@ namespace Altaxo.Calc.Ode
     private double? _initialStepSize;
 
     /// <summary>
-    /// Gets or sets the initial step size. This value is effective only if <see cref="AutomaticStepSizeControl"/> is true.
+    /// Gets or sets the initial step size.
+    /// This value is effective only if <see cref="AutomaticStepSizeControl"/> is <see langword="true"/>.
     /// </summary>
     /// <value>
-    /// The initial step size. If set to null, the initial step size is calculated automatically.
+    /// The initial step size. If set to <see langword="null"/>, the initial step size is calculated automatically.
     /// </value>
+    /// <exception cref="ArgumentException">Thrown if the assigned value is negative.</exception>
     public double? InitialStepSize
     {
       get => _initialStepSize;
@@ -258,7 +276,7 @@ namespace Altaxo.Calc.Ode
 
     private StepSizeFilter _stepSizeFilter;
     /// <summary>
-    /// Set the step size filter (determines the variation of step sizes), see <see cref="StepSizeFilter"/>.
+    /// Gets or sets the step size filter (determines the variation of step sizes), see <see cref="StepSizeFilter"/>.
     /// </summary>
     public StepSizeFilter StepSizeFilter
     {
@@ -270,16 +288,12 @@ namespace Altaxo.Calc.Ode
     }
 
     /// <summary>
-    /// Gets or sets the error norm that is used for
-    /// the evaluation of the relative error, in order to
-    /// control the step size.
+    /// Stores the error norm that is used for the evaluation of the relative error in order to control the step size.
     /// </summary>
     private ErrorNorm _errorNorm;
 
     /// <summary>
-    /// Gets or sets the error norm that is used for
-    /// the evaluation of the relative error, in order to
-    /// control the step size.
+    /// Gets or sets the error norm that is used for the evaluation of the relative error in order to control the step size.
     /// </summary>
     public ErrorNorm ErrorNorm
     {
@@ -293,32 +307,36 @@ namespace Altaxo.Calc.Ode
 
 
     /// <summary>
-    /// Gets or sets the mandatory solution points. Mandatory solution points will be evaluated directly (i.e. not interpolated).
+    /// Gets or sets the mandatory solution points.
+    /// Mandatory solution points are evaluated directly (i.e. not interpolated).
     /// </summary>
     /// <value>
-    /// The sequence of mandatory solution points. If <see cref="StepSize"/> is set too, the sequence of solution points is the
-    /// result of zipping the mandatory solution point sequence with the sequence of k*StepSize.
+    /// The sequence of mandatory solution points.
+    /// If <see cref="StepSize"/> is set too, the sequence of solution points is the
+    /// result of zipping the mandatory solution point sequence with the sequence of <c>k * StepSize</c>.
     /// </value>
     public IEnumerable<double>? MandatorySolutionPoints { get; set; }
 
     /// <summary>
-    /// Default: true. Gets or sets a value indicating whether the mandatory solution points (see <see cref="MandatorySolutionPoints"/>)
-    /// should appear in the output sequence. This value is only effective if <see cref="AutomaticStepSizeControl"/> is true.
+    /// Default: <see langword="true"/>.
+    /// Gets or sets a value indicating whether the mandatory solution points (see <see cref="MandatorySolutionPoints"/>)
+    /// should appear in the output sequence.
+    /// This value is only effective if <see cref="AutomaticStepSizeControl"/> is <see langword="true"/>.
     /// Without automatic step size control, mandatory solution points always appear in the output sequence.
     /// </summary>
     /// <value>
-    /// <c>true</c> if the mandatory solution points should appear in the output sequence (default value); otherwise, <c>false</c>.
+    /// <see langword="true"/> if the mandatory solution points should appear in the output sequence (default value); otherwise, <see langword="false"/>.
     /// </value>
     public bool IncludeMandatorySolutionPointsInOutput { get; set; } = true;
 
     private int _stiffnessDetectionEveryNumberOfSteps;
 
     /// <summary>
-    /// Gets or sets the number of successful steps between test for stiffness.
+    /// Gets or sets the number of successful steps between tests for stiffness.
     /// Setting this value to 0 disables stiffness detection. The default value is 0.
     /// </summary>
     /// <value>
-    /// The number of successful steps between test for stiffness.
+    /// The number of successful steps between tests for stiffness.
     /// </value>
     public int StiffnessDetectionEveryNumberOfSteps
     {
@@ -337,9 +355,10 @@ namespace Altaxo.Calc.Ode
 
 
     /// <summary>
-    /// Checks the consistency of the options. An <see cref="InvalidOperationException"/> is thrown if
-    /// some of the parameters exclude each other.
+    /// Checks the consistency of the options.
+    /// An <see cref="InvalidOperationException"/> is thrown if some of the parameters exclude each other.
     /// </summary>
+    /// <exception cref="InvalidOperationException">Thrown if the options are inconsistent.</exception>
     public virtual void CheckConsistency()
     {
       if (AutomaticStepSizeControl)
@@ -373,12 +392,12 @@ namespace Altaxo.Calc.Ode
 
 
     /// <summary>
-    /// Gets an equidistant sequence, that can be used e.g. for <see cref="OptionalSolutionPoints"/> or <see cref="MandatorySolutionPoints"/>.
+    /// Gets an equidistant sequence that can be used, e.g. for <see cref="OptionalSolutionPoints"/> or <see cref="MandatorySolutionPoints"/>.
     /// </summary>
     /// <param name="start">The first value of the sequence.</param>
-    /// <param name="step">The difference between the values.</param>
-    /// <param name="count">The number of values to generate. If you leave this parameter out, the sequence is not bounded.</param>
-    /// <returns></returns>
+    /// <param name="step">The difference between consecutive values.</param>
+    /// <param name="count">The number of values to generate. If you leave this parameter out, the sequence is unbounded.</param>
+    /// <returns>An enumerable that yields the generated sequence.</returns>
     public static IEnumerable<double> GetEquidistantSequence(double start, double step, long count = long.MaxValue)
     {
       for (long i = 0; i < count; ++i)
@@ -390,17 +409,26 @@ namespace Altaxo.Calc.Ode
   /// Designates the filter method for calculation of the recommended step size of the next step.
   /// </summary>
   /// <remarks>
-  /// See Table 1 in [Söderlind, Adaptive Time-Stepping and Computational Stability, 2003]
+  /// See Table 1 in [Söderlind, Adaptive Time-Stepping and Computational Stability, 2003].
   /// </remarks>
   public enum StepSizeFilter
   {
-    /// <summary>The H211b digital filter (b=4). Takes the current relative error, the previous relative error, and the current and previous step sizes into account</summary>
+    /// <summary>
+    /// The H211b digital filter (b=4).
+    /// Takes the current relative error, the previous relative error, and the current and previous step sizes into account.
+    /// </summary>
     H211b,
 
-    /// <summary>The PI4.2 digital filter. Takes the current relative error and the previous relative error into account.</summary>
+    /// <summary>
+    /// The PI4.2 digital filter.
+    /// Takes the current relative error and the previous relative error into account.
+    /// </summary>
     PI_4_2,
 
-    /// <summary>Elementary controller (not recommended). Takes only the current relative error into account.</summary>
+    /// <summary>
+    /// Elementary controller (not recommended).
+    /// Takes only the current relative error into account.
+    /// </summary>
     Elementary
   }
 

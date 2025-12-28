@@ -60,6 +60,21 @@ namespace Altaxo.Calc.Integration
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
  */
 
+    /// <summary>
+    /// Core QAWS adaptive integrator implementing the algorithm for functions with endpoint algebraic/logarithmic singularities.
+    /// </summary>
+    /// <param name="f">Integrand to evaluate.</param>
+    /// <param name="a">Lower integration limit.</param>
+    /// <param name="b">Upper integration limit.</param>
+    /// <param name="t">Precomputed Chebyshev moments table for the integrand weight.</param>
+    /// <param name="epsabs">Absolute error tolerance.</param>
+    /// <param name="epsrel">Relative error tolerance.</param>
+    /// <param name="limit">Maximum number of subintervals allowed.</param>
+    /// <param name="workspace">Workspace managing subintervals and errors.</param>
+    /// <param name="result">On return, contains computed integral value.</param>
+    /// <param name="abserr">On return, contains estimated absolute error.</param>
+    /// <param name="bDebug">When true, errors include debug information.</param>
+    /// <returns>Null on success or a <see cref="GSL_ERROR"/> describing the failure.</returns>
     private static GSL_ERROR?
     gsl_integration_qaws(Func<double, double> f,
                           double a, double b,
@@ -265,14 +280,33 @@ namespace Altaxo.Calc.Integration
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
  */
 
+    /// <summary>
+    /// Parameters container used by the QC25S evaluation routines.
+    /// </summary>
     private struct fn_qaws_params
     {
+      /// <summary>The integrand function.</summary>
       public Func<double, double> function;
+      /// <summary>Lower integration limit used in the original call.</summary>
       public double a;
+      /// <summary>Upper integration limit used in the original call.</summary>
       public double b;
+      /// <summary>Precomputed Chebyshev moments table describing the singular weight.</summary>
       public gsl_integration_qaws_table table;
     };
 
+    /// <summary>
+    /// Internal QC25S helper. Applies specialised weighted integration on subintervals taking into account endpoint singular behaviour.
+    /// </summary>
+    /// <param name="f">Original integrand.</param>
+    /// <param name="a">Global lower limit of the original integration.</param>
+    /// <param name="b">Global upper limit of the original integration.</param>
+    /// <param name="a1">Subinterval lower limit.</param>
+    /// <param name="b1">Subinterval upper limit.</param>
+    /// <param name="t">Chebyshev moment table for weights.</param>
+    /// <param name="result">On return, the subinterval integral estimate.</param>
+    /// <param name="abserr">On return, the estimated absolute error for the subinterval.</param>
+    /// <param name="err_reliable">On return, indicates whether the error estimate is considered reliable.</param>
     private static void
     qc25s(Func<double, double> f, double a, double b, double a1, double b1,
            gsl_integration_qaws_table t,
@@ -380,6 +414,12 @@ namespace Altaxo.Calc.Integration
       }
     }
 
+    /// <summary>
+    /// Weighted wrapper that applies the algebraic/logarithmic weight to the original function.
+    /// </summary>
+    /// <param name="x">Point at which to evaluate the weighted function.</param>
+    /// <param name="p">Parameters including original function, interval and moment table.</param>
+    /// <returns>The weighted integrand value.</returns>
     private static double
     fn_qaws(double x, fn_qaws_params p)
     {
@@ -403,6 +443,9 @@ namespace Altaxo.Calc.Integration
       return factor * f(x);
     }
 
+    /// <summary>
+    /// Right-endpoint weighted wrapper used when the left endpoint has singular behavior.
+    /// </summary>
     private static double
     fn_qaws_L(double x, fn_qaws_params p)
     {
@@ -420,6 +463,9 @@ namespace Altaxo.Calc.Integration
       return factor * f(x);
     }
 
+    /// <summary>
+    /// Left-endpoint weighted wrapper used when the right endpoint has singular behavior.
+    /// </summary>
     private static double
     fn_qaws_R(double x, fn_qaws_params p)
     {
@@ -437,6 +483,14 @@ namespace Altaxo.Calc.Integration
       return factor * f(x);
     }
 
+    /// <summary>
+    /// Multiply Chebyshev coefficients by precomputed moment arrays to get 12- and 24-point results.
+    /// </summary>
+    /// <param name="r">Moment array to use for the multiplication.</param>
+    /// <param name="cheb12">Chebyshev coefficients for 12-point rule.</param>
+    /// <param name="cheb24">Chebyshev coefficients for 24-point rule.</param>
+    /// <param name="result12">On return, the 12-point rule result.</param>
+    /// <param name="result24">On return, the 24-point rule result.</param>
     private static void
     compute_result(double[] r, double[] cheb12, double[] cheb24,
                     out double result12, out double result24)
@@ -465,15 +519,26 @@ namespace Altaxo.Calc.Integration
 
     /* Workspace for QAWS integrator */
 
+    /// <summary>
+    /// Table of parameters and precomputed Chebyshev moments used by the QAWS integrator.
+    /// </summary>
     private class gsl_integration_qaws_table
     {
+      /// <summary>Power-law exponent at the left endpoint.</summary>
       public double alpha = 0;
+      /// <summary>Power-law exponent at the right endpoint.</summary>
       public double beta = 0;
+      /// <summary>Flag indicating presence of a logarithmic factor at the left endpoint (mu = 1) or not (mu = 0).</summary>
       public int mu = 0;
+      /// <summary>Flag indicating presence of a logarithmic factor at the right endpoint (nu = 1) or not (nu = 0).</summary>
       public int nu = 0;
+      /// <summary>Moments used when left endpoint singular behavior is processed.</summary>
       public double[] ri = new double[25];
+      /// <summary>Moments used when right endpoint singular behavior is processed.</summary>
       public double[] rj = new double[25];
+      /// <summary>Additional moment set for combination with logarithmic left endpoint.</summary>
       public double[] rg = new double[25];
+      /// <summary>Additional moment set for combination with logarithmic right endpoint.</summary>
       public double[] rh = new double[25];
     }
 

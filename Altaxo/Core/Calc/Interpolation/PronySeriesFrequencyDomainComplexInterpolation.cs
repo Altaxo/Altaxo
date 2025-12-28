@@ -31,26 +31,34 @@ using Complex64 = System.Numerics.Complex;
 namespace Altaxo.Calc.Interpolation
 {
   /// <summary>
-  /// Interpolation with a sum of Prony terms of a complex relaxation or retardation function in frequency domain.
-  /// Note that for a relaxation the real part is increasing with frequency (e.g. complex mechanical modulus), whereas for a retardation the real part is decreasing with frequency (e.g. complex electrical permittivity).
-  /// We assume here that even for a retardation the imaginary part is positive: eps* = eps' - i eps''.
+  /// Interpolation with a sum of Prony terms of a complex relaxation or retardation function in the frequency domain.
   /// </summary>
+  /// <remarks>
+  /// Note that for a relaxation the real part is increasing with frequency (e.g. complex mechanical modulus),
+  /// whereas for a retardation the real part is decreasing with frequency (e.g. complex electrical permittivity).
+  /// We assume here that even for a retardation the imaginary part is positive: eps* = eps' - i eps''.
+  /// </remarks>
   public record PronySeriesFrequencyDomainComplexInterpolation : PronySeriesInterpolationBase, IComplexInterpolation
   {
     #region Serialization
 
     /// <summary>
-    /// 2024-02-18 V0: initial version
+    /// Serialization surrogate for version 0.
     /// </summary>
+    /// <remarks>
+    /// 2024-02-18 V0: initial version.
+    /// </remarks>
     [Altaxo.Serialization.Xml.XmlSerializationSurrogateFor(typeof(PronySeriesFrequencyDomainComplexInterpolation), 0)]
     public class SerializationSurrogate0 : Altaxo.Serialization.Xml.IXmlSerializationSurrogate
     {
+      /// <inheritdoc/>
       public void Serialize(object obj, Altaxo.Serialization.Xml.IXmlSerializationInfo info)
       {
         var s = (PronySeriesFrequencyDomainComplexInterpolation)obj;
         s.SerializeV0(info);
       }
 
+      /// <inheritdoc/>
       public object Deserialize(object? o, Altaxo.Serialization.Xml.IXmlDeserializationInfo info, object? parent)
       {
         return new PronySeriesFrequencyDomainComplexInterpolation().DeserializeV0(info);
@@ -59,6 +67,7 @@ namespace Altaxo.Calc.Interpolation
 
     #endregion
 
+    /// <inheritdoc/>
     public IComplexInterpolationFunction Interpolate(IReadOnlyList<double> xvec, IReadOnlyList<Complex64> yvec, IReadOnlyList<Complex64>? yStdDev = null)
     {
       var (workingXMinimum, workingXMaximum, workingNumberOfPoints) = GetWorkingXMinMaxNumberOfPoints(xvec);
@@ -97,6 +106,7 @@ namespace Altaxo.Calc.Interpolation
       }
     }
 
+    /// <inheritdoc/>
     public IComplexInterpolationFunction Interpolate(IReadOnlyList<double> xvec, IReadOnlyList<double> yreal, IReadOnlyList<double> yimaginary)
     {
       var (workingXMinimum, workingXMaximum, workingNumberOfPoints) = GetWorkingXMinMaxNumberOfPoints(xvec);
@@ -135,9 +145,11 @@ namespace Altaxo.Calc.Interpolation
       }
     }
 
+    /// <inheritdoc/>
     public bool IsSupportingSeparateXForRealAndImaginaryPart => false;
 
 
+    /// <inheritdoc/>
     public IComplexInterpolationFunction Interpolate(IReadOnlyList<double> xreal, IReadOnlyList<double> yreal, IReadOnlyList<double> ximaginary, IReadOnlyList<double> yimaginary)
     {
       throw new System.NotImplementedException($"Please ensure that the value of {IsSupportingSeparateXForRealAndImaginaryPart} is true before calling this function");

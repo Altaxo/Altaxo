@@ -28,20 +28,25 @@ using Altaxo.Science.Signals;
 namespace Altaxo.Calc.Interpolation
 {
   /// <summary>
-  /// Interpolation with a sum of Prony terms in time domain, either a relaxation (a time-decreasing function, e.g. a time dependent modulus), or a retardation (a time-increasing function, e.g. a time-dependent compliance).
+  /// Interpolation with a sum of Prony terms in the time domain, either a relaxation (a time-decreasing function, e.g. a time-dependent modulus),
+  /// or a retardation (a time-increasing function, e.g. a time-dependent compliance).
   /// </summary>
   public record PronySeriesTimeDomainInterpolation : PronySeriesInterpolationBase, IInterpolationFunctionOptions
   {
     #region Serialization
 
     /// <summary>
-    /// 2023-06-16 V0 initial version was Altaxo.Calc.Interpolation.PronySeriesAsInterpolationOptions (AltaxoCore)
-    /// 2024-02-01 V1
+    /// Serialization surrogate.
     /// </summary>
+    /// <remarks>
+    /// 2023-06-16 V0: initial version was <c>Altaxo.Calc.Interpolation.PronySeriesAsInterpolationOptions</c> (AltaxoCore).
+    /// 2024-02-01 V1.
+    /// </remarks>
     [Altaxo.Serialization.Xml.XmlSerializationSurrogateFor("AltaxoCore", "Altaxo.Calc.Interpolation.PronySeriesAsInterpolationOptions", 0)]
     [Altaxo.Serialization.Xml.XmlSerializationSurrogateFor(typeof(PronySeriesTimeDomainInterpolation), 1)]
     public class SerializationSurrogate0 : Altaxo.Serialization.Xml.IXmlSerializationSurrogate
     {
+      /// <inheritdoc/>
       public void Serialize(object obj, Altaxo.Serialization.Xml.IXmlSerializationInfo info)
       {
         var s = (PronySeriesTimeDomainInterpolation)obj;
@@ -61,6 +66,7 @@ namespace Altaxo.Calc.Interpolation
         }
       }
 
+      /// <inheritdoc/>
       public object Deserialize(object? o, Altaxo.Serialization.Xml.IXmlDeserializationInfo info, object? parent)
       {
         var isRelaxation = info.GetBoolean("IsRelaxation");

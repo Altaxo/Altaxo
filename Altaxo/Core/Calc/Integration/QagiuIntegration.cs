@@ -254,10 +254,27 @@ namespace Altaxo.Calc.Integration
 
       */
 
+    /// <summary>
+    /// Parameters for the transform used by the QAGIU routine.
+    /// </summary>
     private struct iu_params { public double a; public Func<double, double> f; };
 
     //static double iu_transform (double t, void *params);
 
+    /// <summary>
+    /// Internal wrapper implementing the infinite-interval integration using the transform x = a + (1-t)/t.
+    /// </summary>
+    /// <param name="f">Function to integrate.</param>
+    /// <param name="a">Lower integration limit.</param>
+    /// <param name="epsabs">Absolute error tolerance.</param>
+    /// <param name="epsrel">Relative error tolerance.</param>
+    /// <param name="limit">Maximum number of subintervals.</param>
+    /// <param name="workspace">Workspace used to manage subintervals and errors.</param>
+    /// <param name="result">On return, contains the computed integral result.</param>
+    /// <param name="abserr">On return, contains the estimated absolute error.</param>
+    /// <param name="q">Quadrature rule used for subinterval evaluations.</param>
+    /// <param name="bDebug">Debug flag; when true, detailed errors include debug info.</param>
+    /// <returns>Null on success, or a <see cref="GSL_ERROR"/> describing the problem.</returns>
     internal static GSL_ERROR?
     gsl_integration_qagiu(Func<double, double> f,
                            double a,
@@ -291,6 +308,12 @@ namespace Altaxo.Calc.Integration
       return status;
     }
 
+    /// <summary>
+    /// Transform function used to map t in (0,1] to x in (a, +Infinity) and evaluate the transformed integrand.
+    /// </summary>
+    /// <param name="t">Variable in the transformed domain (0,1].</param>
+    /// <param name="p">Structure containing the original function and parameter a.</param>
+    /// <returns>The value of the transformed integrand at t: f(a+(1-t)/t)/t^2.</returns>
     private static double
     iu_transform(double t, iu_params p)
     {

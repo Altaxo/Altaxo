@@ -28,20 +28,32 @@ using Altaxo.Calc.LinearAlgebra;
 
 namespace Altaxo.Calc.Interpolation
 {
+  /// <summary>
+  /// Provides configuration options for constructing one-dimensional polyharmonic spline interpolations.
+  /// </summary>
   public record PolyharmonicSpline1DOptions : IInterpolationFunctionOptions
   {
+    /// <summary>
+    /// Gets the regularization parameter applied during spline construction.
+    /// </summary>
     public double RegularizationParameter { get; init; } = PolyharmonicSpline.DefaultRegularizationParameter;
 
+    /// <summary>
+    /// Gets the derivative order used to control spline smoothness.
+    /// </summary>
     public int DerivativeOrder { get; init; } = PolyharmonicSpline.DefaultDerivativeOrder;
 
     #region Serialization
 
     /// <summary>
-    /// 2022-08-18 initial version
+    /// Serialization surrogate for <see cref="PolyharmonicSpline1DOptions"/>.
     /// </summary>
+    /// <remarks>2022-08-18 initial version.</remarks>
     [Altaxo.Serialization.Xml.XmlSerializationSurrogateFor(typeof(PolyharmonicSpline1DOptions), 0)]
+
     public class SerializationSurrogate0 : Altaxo.Serialization.Xml.IXmlSerializationSurrogate
     {
+      /// <inheritdoc />
       public void Serialize(object obj, Altaxo.Serialization.Xml.IXmlSerializationInfo info)
       {
         var s = (PolyharmonicSpline1DOptions)obj;
@@ -49,6 +61,7 @@ namespace Altaxo.Calc.Interpolation
         info.AddValue("RegularizationParameter", s.RegularizationParameter);
       }
 
+      /// <inheritdoc />
       public object Deserialize(object? o, Altaxo.Serialization.Xml.IXmlDeserializationInfo info, object? parent)
       {
         var order = info.GetInt32("DerivativeOrder");
@@ -59,6 +72,7 @@ namespace Altaxo.Calc.Interpolation
 
     #endregion
 
+    /// <inheritdoc />
     public IInterpolationFunction Interpolate(IReadOnlyList<double> xvec, IReadOnlyList<double> yvec, IReadOnlyList<double>? yVariance = null)
     {
       var spline = new PolyharmonicSpline() { DerivativeOrder = DerivativeOrder, RegularizationParameter = RegularizationParameter };
@@ -66,6 +80,7 @@ namespace Altaxo.Calc.Interpolation
       return spline;
     }
 
+    /// <inheritdoc />
     IInterpolationCurve IInterpolationCurveOptions.Interpolate(IReadOnlyList<double> xvec, IReadOnlyList<double> yvec, IReadOnlyList<double>? yVariance)
     {
       return Interpolate(xvec, yvec, yVariance);
@@ -318,31 +333,51 @@ namespace Altaxo.Calc.Interpolation
       return _mtx_v.DotProduct(_mtx_orig_k.Multiply(_mtx_v));
     }
 
+    /// <summary>
+    /// Thin-plate spline basis function for even dimensions with positive sign.
+    /// </summary>
     private double tps_base_even_pos(double r)
     {
       return r == 0 ? 0 : RMath.Pow(r, 2 * _derivativeOrder - _coordDim) * Math.Log(r);
     }
 
+    /// <summary>
+    /// Thin-plate spline basis function for even dimensions with negative sign.
+    /// </summary>
     private double tps_base_even_neg(double r)
     {
       return r == 0 ? 0 : -RMath.Pow(r, 2 * _derivativeOrder - _coordDim) * Math.Log(r);
     }
 
+    /// <summary>
+    /// Thin-plate spline basis function for odd dimensions with positive sign.
+    /// </summary>
     private double tps_base_odd_pos(double r)
     {
       return r == 0 ? 0 : RMath.Pow(r, 2 * _derivativeOrder - _coordDim);
     }
 
+    /// <summary>
+    /// Thin-plate spline basis function for odd dimensions with negative sign.
+    /// </summary>
     private double tps_base_odd_neg(double r)
     {
       return r == 0 ? 0 : -RMath.Pow(r, 2 * _derivativeOrder - _coordDim);
     }
 
+    /// <summary>
+    /// Determines whether a number is even.
+    /// </summary>
+    /// <param name="i">The input number.</param>
+    /// <returns><c>true</c> if the number is even; otherwise, <c>false</c>.</returns>
     private bool IsEven(int i)
     {
       return 0 == (i % 2);
     }
 
+    /// <summary>
+    /// Selects and caches the thin-plate spline basis function based on dimension and derivative order.
+    /// </summary>
     private void SetCachedTpsFunction()
     {
       if (IsEven(_coordDim) && ((2 * _derivativeOrder) >= _coordDim)) // even dimension and 2*m>=n
@@ -361,6 +396,11 @@ namespace Altaxo.Calc.Interpolation
       }
     }
 
+    /// <summary>
+    /// Squares a value.
+    /// </summary>
+    /// <param name="x">The input value.</param>
+    /// <returns><paramref name="x"/> squared.</returns>
     private double Pow2(double x)
     {
       return x * x;
@@ -403,7 +443,7 @@ namespace Altaxo.Calc.Interpolation
     }
 
     /// <summary>
-    /// Calculate the matrix for the polyharmonic spline and solves the linear equation to calculate the coefficients.
+    /// Calculates the spline system matrix and solves for the interpolation coefficients.
     /// </summary>
     private void InternalCompute()
     {
@@ -467,6 +507,7 @@ namespace Altaxo.Calc.Interpolation
 
 
     double[] _X1 = new double[1];
+    /// <inheritdoc />
     double IInterpolationFunction.GetYOfX(double x)
     {
       if (_coordDim != 1)
@@ -475,11 +516,13 @@ namespace Altaxo.Calc.Interpolation
       return GetInterpolatedValue(_X1);
     }
 
+    /// <inheritdoc />
     void IInterpolationCurve.Interpolate(IReadOnlyList<double> xvec, IReadOnlyList<double> yvec)
     {
       Construct(xvec, yvec);
     }
 
+    /// <inheritdoc />
     double IInterpolationCurve.GetYOfU(double u)
     {
       if (_coordDim != 1)
@@ -488,6 +531,7 @@ namespace Altaxo.Calc.Interpolation
       return GetInterpolatedValue(_X1);
     }
 
+    /// <inheritdoc />
     double IInterpolationCurve.GetXOfU(double u)
     {
       if (_coordDim != 1)

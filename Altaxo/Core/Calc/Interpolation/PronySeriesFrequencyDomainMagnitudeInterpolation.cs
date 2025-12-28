@@ -29,26 +29,33 @@ using Altaxo.Science.Signals;
 namespace Altaxo.Calc.Interpolation
 {
   /// <summary>
-  /// Interpolation with a sum of Prony terms of the magnitude of a relaxation or retardation function in frequency domain.
+  /// Interpolation with a sum of Prony terms of the magnitude of a relaxation or retardation function in the frequency domain.
+  /// </summary>
+  /// <remarks>
   /// Note that for a relaxation the magnitude is increasing with frequency (e.g. the magnitude of the complex mechanical modulus),
   /// whereas for a retardation the magnitude is decreasing with frequency (e.g. the magnitude of the complex electrical permittivity).
-  /// </summary>
+  /// </remarks>
   public record PronySeriesFrequencyDomainMagnitudeInterpolation : PronySeriesInterpolationBase, IInterpolationFunctionOptions
   {
     #region Serialization
 
     /// <summary>
-    /// 2024-02-18 V0: initial version
+    /// Serialization surrogate for version 0.
     /// </summary>
+    /// <remarks>
+    /// 2024-02-18 V0: initial version.
+    /// </remarks>
     [Altaxo.Serialization.Xml.XmlSerializationSurrogateFor(typeof(PronySeriesFrequencyDomainMagnitudeInterpolation), 0)]
     public class SerializationSurrogate0 : Altaxo.Serialization.Xml.IXmlSerializationSurrogate
     {
+      /// <inheritdoc/>
       public void Serialize(object obj, Altaxo.Serialization.Xml.IXmlSerializationInfo info)
       {
         var s = (PronySeriesFrequencyDomainMagnitudeInterpolation)obj;
         s.SerializeV0(info);
       }
 
+      /// <inheritdoc/>
       public object Deserialize(object? o, Altaxo.Serialization.Xml.IXmlDeserializationInfo info, object? parent)
       {
         return new PronySeriesFrequencyDomainMagnitudeInterpolation().DeserializeV0(info);

@@ -259,6 +259,20 @@ namespace Altaxo.Calc.Integration
 
     //static double il_transform (double t, void *params);
 
+    /// <summary>
+    /// Internal wrapper implementing semi-infinite left-interval integration using the transform x = b - (1-t)/t.
+    /// </summary>
+    /// <param name="f">Function to integrate.</param>
+    /// <param name="b">Upper integration limit.</param>
+    /// <param name="epsabs">Absolute error tolerance.</param>
+    /// <param name="epsrel">Relative error tolerance.</param>
+    /// <param name="limit">Maximum number of subintervals.</param>
+    /// <param name="workspace">Workspace used to manage subintervals and errors.</param>
+    /// <param name="result">On return, contains the computed integral result.</param>
+    /// <param name="abserr">On return, contains the estimated absolute error.</param>
+    /// <param name="q">Quadrature rule used for subinterval evaluations.</param>
+    /// <param name="bDebug">Debug flag; when true, detailed errors include debug info.</param>
+    /// <returns>Null on success, or a <see cref="GSL_ERROR"/> describing the problem.</returns>
     private static GSL_ERROR?
     gsl_integration_qagil(Func<double, double> f,
                            double b,
@@ -290,6 +304,12 @@ namespace Altaxo.Calc.Integration
       return status;
     }
 
+    /// <summary>
+    /// Transform function used to map t in (0,1] to x in (-Infinity, b) and evaluate the transformed integrand.
+    /// </summary>
+    /// <param name="t">Variable in the transformed domain (0,1].</param>
+    /// <param name="p">Structure containing the original function and parameter b.</param>
+    /// <returns>The value of the transformed integrand at t: f(b-(1-t)/t)/t^2.</returns>
     private static double
     il_transform(double t, il_params p)
     {

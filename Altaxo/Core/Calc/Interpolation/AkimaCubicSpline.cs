@@ -60,6 +60,11 @@ namespace Altaxo.Calc.Interpolation
   /// All vectors must have conformant dimenions.
   /// The abscissa vector must be strictly increasing.
   /// </summary>
+  /// <remarks>
+  /// The implementation computes local slopes and constructs a monotone piecewise
+  /// cubic curve. The abscissa vector must be strictly increasing; otherwise an
+  /// <see cref="ArgumentException"/> is thrown.
+  /// </remarks>
   public class AkimaCubicSpline : CurveBase, IInterpolationFunction
   {
     protected Vector<double> y1 = CreateVector.Dense<double>(0);
@@ -81,6 +86,7 @@ namespace Altaxo.Calc.Interpolation
     // The abscissa vector must be strictly increasing.
     //----------------------------------------------------------------------------//
 
+    /// <inheritdoc/>
     public override void Interpolate(IReadOnlyList<double> x, IReadOnlyList<double> y)
     {
       // check input parameters
@@ -197,21 +203,29 @@ namespace Altaxo.Calc.Interpolation
       }
     }
 
+    /// <inheritdoc/>
     public override double GetXOfU(double u)
     {
       return u;
     }
 
+    /// <inheritdoc/>
     public override double GetYOfU(double u)
     {
       return CubicSplineHorner(u, x, y, y1, y2, y3);
     }
 
+    /// <inheritdoc/>
     public double GetYOfX(double u)
     {
       return CubicSplineHorner(u, x, y, y1, y2, y3);
     }
 
+    /// <summary>
+    /// Returns the first derivative of the Akima cubic spline at the given x value.
+    /// </summary>
+    /// <param name="u">The abscissa value at which to evaluate the derivative.</param>
+    /// <returns>The first derivative at <paramref name="u"/>.</returns>
     public double GetY1stDerivativeOfX(double u)
     {
       return CubicSplineHorner1stDerivative(u, x, y, y1, y2, y3);

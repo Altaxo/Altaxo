@@ -43,12 +43,14 @@ namespace Altaxo.Calc.Interpolation
     [Altaxo.Serialization.Xml.XmlSerializationSurrogateFor(typeof(PolynomialRegressionAsInterpolationOptions), 0)]
     public class SerializationSurrogate0 : Altaxo.Serialization.Xml.IXmlSerializationSurrogate
     {
+      /// <inheritdoc/>
       public void Serialize(object obj, Altaxo.Serialization.Xml.IXmlSerializationInfo info)
       {
         var s = (PolynomialRegressionAsInterpolationOptions)obj;
         info.AddValue("Order", s._order);
       }
 
+      /// <inheritdoc/>
       public object Deserialize(object? o, Altaxo.Serialization.Xml.IXmlDeserializationInfo info, object? parent)
       {
         var order = info.GetInt32("Order");
@@ -74,6 +76,9 @@ namespace Altaxo.Calc.Interpolation
       Order = order;
     }
 
+    /// <summary>
+    /// Gets the polynomial order used for the regression-based interpolation.
+    /// </summary>
     public int Order
     {
       get => _order;
@@ -95,6 +100,7 @@ namespace Altaxo.Calc.Interpolation
       return spline;
     }
 
+    /// <inheritdoc/>
     IInterpolationCurve IInterpolationCurveOptions.Interpolate(IReadOnlyList<double> xvec, IReadOnlyList<double> yvec, IReadOnlyList<double>? yStdDev)
     {
       return Interpolate(xvec, yvec, yStdDev);

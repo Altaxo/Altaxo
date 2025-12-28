@@ -19,7 +19,7 @@ using System.Threading.Tasks;
 namespace Altaxo.Calc.Ode
 {
   /// <summary>
-  /// Options for multistep Ode methods.
+  /// Options for multistep ODE methods.
   /// </summary>
   /// <seealso cref="Altaxo.Calc.Ode.OdeMethodOptions" />
   public class MultiStepMethodOptions : OdeMethodOptions
@@ -29,6 +29,7 @@ namespace Altaxo.Calc.Ode
     /// <summary>
     /// Gets or sets the maximum order the method can use.
     /// </summary>
+    /// <value>The maximum order.</value>
     /// <exception cref="ArgumentOutOfRangeException">Value must be greater than or equal to 1.</exception>
     public int MaxOrder
     {
@@ -45,8 +46,12 @@ namespace Altaxo.Calc.Ode
     private int _minOrder;
 
     /// <summary>
-    /// Gets or sets the minimum order the method can use (except in the startup phase, in which the method has to start with an order of 1).
+    /// Gets or sets the minimum order the method can use.
     /// </summary>
+    /// <remarks>
+    /// In the startup phase, the method has to start with an order of 1.
+    /// </remarks>
+    /// <value>The minimum order.</value>
     /// <exception cref="ArgumentOutOfRangeException">Value must be greater than or equal to 1.</exception>
     public int MinOrder
     {
@@ -60,22 +65,34 @@ namespace Altaxo.Calc.Ode
     }
 
     /// <summary>
-    /// Gets or sets the iteration method (see values of <see cref="OdeIterationMethod"/> for explanations). 
+    /// Gets or sets the iteration method.
     /// </summary>
+    /// <remarks>
+    /// See values of <see cref="OdeIterationMethod"/> for details.
+    /// </remarks>
     public OdeIterationMethod IterationMethod { get; set; }
   }
 
   /// <summary>
-  /// Iteration method for implicit Ode method (Gear's, implicit Adam's, and so on).
+  /// Iteration method for implicit ODE methods (Gear's, implicit Adams, and so on).
   /// </summary>
   public enum OdeIterationMethod
   {
-    /// <summary>Use a function to calculate the jacobian. This function has either to be provided by the user,
-    /// or, if the user does not provide such a function, an approximation by finite differences is used.</summary>
+    /// <summary>
+    /// Use a function to calculate the Jacobian.
+    /// </summary>
+    /// <remarks>
+    /// This function either has to be provided by the user or, if the user does not provide such a function,
+    /// an approximation by finite differences is used.
+    /// </remarks>
     UseJacobian,
 
-    /// <summary>Set the jacobian matrix to zero. This will not allow Newton-Raphson iterations,
-    /// that's why the iteration converges only slowly.</summary>
+    /// <summary>
+    /// Set the Jacobian matrix to zero.
+    /// </summary>
+    /// <remarks>
+    /// This does not allow Newton-Raphson iterations; therefore, the iteration converges only slowly.
+    /// </remarks>
     DoNotUseJacobian
   }
 }

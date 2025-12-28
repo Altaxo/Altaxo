@@ -39,10 +39,12 @@ namespace Altaxo.Calc.Interpolation
     [Altaxo.Serialization.Xml.XmlSerializationSurrogateFor(typeof(LinearInterpolationOptions), 0)]
     public class SerializationSurrogate0 : Altaxo.Serialization.Xml.IXmlSerializationSurrogate
     {
+      /// <inheritdoc/>
       public void Serialize(object obj, Altaxo.Serialization.Xml.IXmlSerializationInfo info)
       {
       }
 
+      /// <inheritdoc/>
       public object Deserialize(object? o, Altaxo.Serialization.Xml.IXmlDeserializationInfo info, object? parent)
       {
         return new AkimaCubicSplineOptions();
@@ -60,6 +62,7 @@ namespace Altaxo.Calc.Interpolation
       return spline;
     }
 
+    /// <inheritdoc/>
     IInterpolationCurve IInterpolationCurveOptions.Interpolate(IReadOnlyList<double> xvec, IReadOnlyList<double> yvec, IReadOnlyList<double>? yStdDev)
     {
       return Interpolate(xvec, yvec, yStdDev);

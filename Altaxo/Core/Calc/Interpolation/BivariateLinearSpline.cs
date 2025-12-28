@@ -29,6 +29,9 @@ using Altaxo.Calc.LinearAlgebra;
 
 namespace Altaxo.Calc.Interpolation
 {
+  /// <summary>
+  /// Provides bilinear interpolation across a rectangular grid defined by monotonic x and y coordinates.
+  /// </summary>
   public class BivariateLinearSpline
   {
     #region Member variables
@@ -50,7 +53,7 @@ namespace Altaxo.Calc.Interpolation
     /// </summary>
     /// <param name="x">Vector of x values corresponding to the rows of the data matrix. Must be strongly increasing or decreasing.</param>
     /// <param name="y">Vector of y values corresponding to the columns of the data matrix. Must be strongly increasing or decreasing.</param>
-    /// <param name="datamatrix"></param>
+    /// <param name="datamatrix">Matrix whose rows map to the x coordinates and whose columns map to the y coordinates.</param>
     public BivariateLinearSpline(IReadOnlyList<double> x, IReadOnlyList<double> y, IROMatrix<double> datamatrix)
     {
       _x = x;
@@ -77,6 +80,14 @@ namespace Altaxo.Calc.Interpolation
       _lastIY = 0;
     }
 
+    /// <summary>
+    /// Finds the interval index such that the provided value lies between two adjacent coordinates.
+    /// </summary>
+    /// <param name="v">The monotonic vector of coordinates.</param>
+    /// <param name="isDecreasing">Indicates whether the vector is strictly decreasing.</param>
+    /// <param name="lastIdx">The last successful index to serve as a starting point.</param>
+    /// <param name="x">The coordinate whose interval index is sought.</param>
+    /// <returns>The index of the lower bound of the interval, or -1 if the value is outside the vector range.</returns>
     private static int FindIndex(IReadOnlyList<double> v, bool isDecreasing, int lastIdx, double x)
     {
       if (isDecreasing) // strictly decreasing
@@ -128,12 +139,12 @@ namespace Altaxo.Calc.Interpolation
     }
 
     /// <summary>
-    /// Find the index idx where x is inbetween v[idx] and v[idx+1] by binary search.
+    /// Finds the index idx where x lies between v[idx] and v[idx + 1] by binary search.
     /// </summary>
-    /// <param name="v"></param>
-    /// <param name="isDecreasing"></param>
-    /// <param name="x"></param>
-    /// <returns></returns>
+    /// <param name="v">The monotonic vector of coordinates.</param>
+    /// <param name="isDecreasing">Indicates whether the vector is strictly decreasing.</param>
+    /// <param name="x">The coordinate whose interval index is sought.</param>
+    /// <returns>The lower bound index of the matching interval, or -1 if the value is outside the bounds.</returns>
     private static int BinarySearchForIndex(IReadOnlyList<double> v, bool isDecreasing, double x)
     {
       int lenM1 = v.Count - 1;

@@ -35,36 +35,36 @@ using Altaxo.Calc.LinearAlgebra;
 namespace Altaxo.Calc.Optimization
 {
   /// <summary>
-  /// Extends the <see cref="IObjectiveModel"/>, helping not to allocate memory during execution of Levenberg-Marquardt.
+  /// Extends <see cref="IObjectiveModel"/> to help avoid memory allocations during execution of Levenberg-Marquardt.
   /// </summary>
   /// <seealso cref="Altaxo.Calc.Optimization.IObjectiveModel" />
   public interface IObjectiveModelNonAllocating : IObjectiveModel
   {
     /// <summary>
-    /// Sets the initial parameters, and the information, if some of the parameters are fixed.
+    /// Sets the initial parameters and the information whether some of the parameters are fixed.
     /// </summary>
-    /// <param name="parameters">The parameters.</param>
-    /// <param name="isFixed">Array with the same length as <paramref name="parameters"/>. For every parameter that is fixed, the element is true.</param>
+    /// <param name="parameters">The initial parameter values.</param>
+    /// <param name="isFixed">
+    /// Array with the same length as <paramref name="parameters"/>. For every fixed parameter, the corresponding element is <see langword="true"/>.
+    /// </param>
     void SetParameters(IReadOnlyList<double> parameters, IReadOnlyList<bool> isFixed);
 
     /// <summary>
     /// Evaluates the model with the given parameter set.
-    /// The resulting Chi² value (i.e. the sum of squares of deviations between data and fitmodel) can be accessed with <see cref="IObjectiveModelEvaluation.Value"/>.
+    /// The resulting Chi² value (i.e., the sum of squares of deviations between data and fit model) can be accessed via <see cref="IObjectiveModelEvaluation.Value"/>.
     /// </summary>
-    /// <param name="parameter">The parameter.</param>
-    /// <returns>The ChiSquare value.</returns>
+    /// <param name="parameter">The parameter vector.</param>
     void EvaluateAt(IReadOnlyList<double> parameter);
 
     /// <summary>
-    /// Get the negative gradient vector. -G = -J'(y - f(x; p))
+    /// Gets the negative gradient vector. <c>-G = -J'(y - f(x; p))</c>.
     /// </summary>
     Vector<double> NegativeGradient { get; }
 
     /// <summary>
-    /// Array of the same length as the parameter array. If an element in this vector is true,
-    /// that parameter is either fixed by the user,
-    /// or it is fixed because the corresponding parameter has reached a boundary.
-    /// This array will be updated only at the end of the minimization process.
+    /// Gets or sets an array of the same length as the parameter array.
+    /// If an element in this vector is <see langword="true"/>, that parameter is either fixed by the user or fixed because the corresponding parameter has reached a boundary.
+    /// This array is updated only at the end of the minimization process.
     /// </summary>
     IReadOnlyList<bool> IsFixedByUserOrBoundary { get; set; }
   }

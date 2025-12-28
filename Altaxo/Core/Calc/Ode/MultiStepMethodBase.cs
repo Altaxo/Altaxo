@@ -20,6 +20,9 @@ using Altaxo.Calc.LinearAlgebra;
 
 namespace Altaxo.Calc.Ode
 {
+  /// <summary>
+  /// Provides a base implementation for multistep methods used to solve ordinary differential equations (ODEs).
+  /// </summary>
   public partial class MultiStepMethodBase
   {
     /// <summary>
@@ -29,13 +32,16 @@ namespace Altaxo.Calc.Ode
 
 
     /// <summary>
-    /// Delegate to evaluate the Jacobian, i.e. the derivative of F with respect to y.
+    /// Delegate to evaluate the Jacobian, i.e. the derivative of <c>F</c> with respect to <c>y</c>.
     /// </summary>
-    /// <param name="x">The current x value.</param>
-    /// <param name="y">The current y values.</param>
-    /// <param name="jac">At the end of this call, contains the Jacobian matrix. The implementer must check if a matrix is provided and must check the dimensions of the provided matrix.
-    /// In case the provided matrix is null or does not fit the requirements, the implementer must allocate an appropriate matrix.
-    /// At the end of the call, the matrix must be filled with the elements of the Jacobian.</param>
+    /// <param name="x">The current <c>x</c> value.</param>
+    /// <param name="y">The current <c>y</c> values.</param>
+    /// <param name="jac">
+    /// At the end of this call, contains the Jacobian matrix. The implementer must check whether a matrix is provided and
+    /// must check the dimensions of the provided matrix.
+    /// In case the provided matrix is <see langword="null"/> or does not fit the requirements, the implementer must allocate an appropriate matrix.
+    /// At the end of the call, the matrix must be filled with the elements of the Jacobian.
+    /// </param>
     public delegate void CalculateJacobian(double x, double[] y, [AllowNull][NotNull] ref IMatrix<double> jac);
 
     /// <summary>
@@ -44,17 +50,20 @@ namespace Altaxo.Calc.Ode
     public class InitializationData
     {
       /// <summary>
-      /// Gets or sets the size of the step.
+      /// Gets or sets the step size to be used.
       /// </summary>
+      /// <remarks>
+      /// If <see langword="null"/>, the step size is chosen automatically by the algorithm (if supported by the concrete implementation).
+      /// </remarks>
       public double? StepSize { get; set; }
 
       /// <summary>
-      /// Gets or sets the initial x value.
+      /// Gets or sets the initial <c>x</c> value.
       /// </summary>
       public double X0 { get; set; }
 
       /// <summary>
-      /// Gets or sets the initial y values.
+      /// Gets or sets the initial <c>y</c> values.
       /// </summary>
       public double[] Y0 { get; set; }
 
@@ -64,16 +73,20 @@ namespace Altaxo.Calc.Ode
       public Action<double, double[], double[]> F { get; set; }
 
       /// <summary>
-      /// Gets or sets the function to evaluate the jacobian, i.e. the derivative of <see cref="F"/> with respect to y.
+      /// Gets or sets the function to evaluate the Jacobian, i.e. the derivative of <see cref="F"/> with respect to <c>y</c>.
       /// </summary>
       public CalculateJacobian? EvaluateJacobian { get; set; }
 
       /// <summary>
       /// Initializes a new instance of the <see cref="InitializationData"/> class.
       /// </summary>
-      /// <param name="x0">The initial x value.</param>
-      /// <param name="y0">The initial y values.</param>
-      /// <param name="f">Calculation of the derivatives. First argument is x value, 2nd argument are the current y values. The 3rd argument is an array that store the derivatives.</param>
+      /// <param name="x0">The initial <c>x</c> value.</param>
+      /// <param name="y0">The initial <c>y</c> values.</param>
+      /// <param name="f">
+      /// Function to calculate the derivatives.
+      /// The first argument is the <c>x</c> value, the second argument are the current <c>y</c> values.
+      /// The third argument is an array that stores the derivatives.
+      /// </param>
       public InitializationData(double x0, double[] y0, Action<double, double[], double[]> f)
       {
         X0 = x0;
@@ -85,9 +98,9 @@ namespace Altaxo.Calc.Ode
     #region Static helpers
 
     /// <summary>
-    /// Swaps two values a and b.
+    /// Swaps two values <paramref name="a"/> and <paramref name="b"/>.
     /// </summary>
-    /// <typeparam name="T">The of the values.</typeparam>
+    /// <typeparam name="T">The type of the values.</typeparam>
     /// <param name="a">First value.</param>
     /// <param name="b">Second value.</param>
     public static void Swap<T>(ref T a, ref T b)
@@ -100,7 +113,7 @@ namespace Altaxo.Calc.Ode
     /// <summary>
     /// Creates a new jagged array.
     /// </summary>
-    /// <typeparam name="T">Type of the element.</typeparam>
+    /// <typeparam name="T">Type of the elements.</typeparam>
     /// <param name="i">First dimension of the array (spine dimension).</param>
     /// <param name="k">Second dimension of the array.</param>
     /// <returns>The newly created jagged array.</returns>
@@ -128,10 +141,11 @@ namespace Altaxo.Calc.Ode
 
 
     /// <summary>
-    /// Rotates the elements of the array one position upwards, i.e. ele[0] to ele[1], ele[1] to ele[2].. and the last element back to ele[0].
+    /// Rotates the elements of <paramref name="array"/> one position upwards, i.e. <c>array[0]</c> to <c>array[1]</c>, <c>array[1]</c> to <c>array[2]</c>, etc.
+    /// and the last element back to <c>array[0]</c>.
     /// </summary>
-    /// <typeparam name="T">Type of the array elements</typeparam>
-    /// <param name="array">The jagged array.</param>
+    /// <typeparam name="T">Type of the array elements.</typeparam>
+    /// <param name="array">The array.</param>
     protected static void RotateElementsUpwards<T>(T[] array)
     {
       var last = array[array.Length - 1];
@@ -145,8 +159,8 @@ namespace Altaxo.Calc.Ode
     /// <summary>
     /// Multiplies the elements of array <paramref name="a"/> by the factor <paramref name="b"/>.
     /// </summary>
-    /// <param name="a">Array a.</param>
-    /// <param name="b">Factor b.</param>
+    /// <param name="a">Array <c>a</c>.</param>
+    /// <param name="b">Factor <c>b</c>.</param>
     protected static void Multiply(double[] a, double b)
     {
       for (int i = 0; i < a.Length; ++i)
@@ -158,7 +172,7 @@ namespace Altaxo.Calc.Ode
     /// <summary>
     /// Calculates the L2 norm of array <paramref name="x"/>.
     /// </summary>
-    /// <param name="x">The array x.</param>
+    /// <param name="x">The array <c>x</c>.</param>
     /// <returns>The L2 norm of array <paramref name="x"/>.</returns>
     protected static double L2Norm(double[] x)
     {
@@ -171,10 +185,11 @@ namespace Altaxo.Calc.Ode
     }
 
     /// <summary>
-    /// Calculates the faculty of parameter x (in the range of 1..12).
+    /// Calculates the factorial of parameter <paramref name="x"/> (in the range of 0..12).
     /// </summary>
-    /// <param name="x">The x.</param>
-    /// <returns></returns>
+    /// <param name="x">The value.</param>
+    /// <returns>The factorial of <paramref name="x"/>.</returns>
+    /// <exception cref="NotImplementedException">Thrown if <paramref name="x"/> is outside the supported range.</exception>
     protected static double Faculty(int x)
     {
       return x switch
@@ -197,25 +212,23 @@ namespace Altaxo.Calc.Ode
     }
 
     /// <summary>
-    /// Determines whether the specified two values x1 and x2 are equal due to a given relative tolerance.
+    /// Determines whether <paramref name="x1"/> and <paramref name="x2"/> are equal within a given relative tolerance.
     /// </summary>
-    /// <param name="x1">The value x1.</param>
-    /// <param name="x2">The value x2.</param>
+    /// <param name="x1">The value <c>x1</c>.</param>
+    /// <param name="x2">The value <c>x2</c>.</param>
     /// <param name="relTol">The relative tolerance value.</param>
-    /// <returns>
-    ///   <c>true</c> if the specified x1 and x2 are equal; otherwise, <c>false</c>.
-    /// </returns>
+    /// <returns><see langword="true"/> if the values are equal within tolerance; otherwise, <see langword="false"/>.</returns>
     protected static bool AreEqual(double x1, double x2, double relTol)
     {
       return (0 == x1 && 0 == x2) || Math.Abs(x1 - x2) < relTol * Math.Max(Math.Abs(x1), Math.Abs(x2));
     }
 
     /// <summary>
-    /// Creates an enumerator from the enumeration, and tries to move to the first element.
-    /// If the enumeration is null or is empty, null is returned instead of the enumerator.
+    /// Creates an enumerator from <paramref name="enumerable"/> and tries to move to the first element.
+    /// If the enumeration is <see langword="null"/> or empty, <see langword="null"/> is returned instead of the enumerator.
     /// </summary>
     /// <param name="enumerable">The enumerable.</param>
-    /// <returns>The enumerator, or null, if the enumeration is null or empty.</returns>
+    /// <returns>The enumerator, or <see langword="null"/> if the enumeration is <see langword="null"/> or empty.</returns>
     protected static IEnumerator<double>? EnumerationInitialize(IEnumerable<double>? enumerable)
     {
       var enumerator = enumerable?.GetEnumerator();
@@ -229,11 +242,14 @@ namespace Altaxo.Calc.Ode
     }
 
     /// <summary>
-    /// Moves the enumerator so that the current element is greater than or equal to the provided x value.
+    /// Moves <paramref name="enumerator"/> so that the current element is greater than or equal to the provided <paramref name="x"/> value.
     /// </summary>
-    /// <param name="enumerator">The enumerator. If the enumerator no longer has any elements, this reference is set to null.</param>
-    /// <param name="x">The x value.</param>
-    /// <returns>The current element that is greater than or equal to the provided x value, or null, if the enumeration has run out of elements.</returns>
+    /// <param name="enumerator">The enumerator. If the enumerator no longer has any elements, this reference is set to <see langword="null"/>.</param>
+    /// <param name="x">The <c>x</c> value.</param>
+    /// <returns>
+    /// The current element that is greater than or equal to the provided <paramref name="x"/> value,
+    /// or <see langword="null"/> if the enumeration has run out of elements.
+    /// </returns>
     protected static double? EnumerationForwardToGreaterThanOrEqual(ref IEnumerator<double>? enumerator, double x)
     {
       if (enumerator is not null)
@@ -252,11 +268,14 @@ namespace Altaxo.Calc.Ode
     }
 
     /// <summary>
-    /// Moves the enumerator so that the current element is greater than the provided x value.
+    /// Moves <paramref name="enumerator"/> so that the current element is greater than the provided <paramref name="x"/> value.
     /// </summary>
-    /// <param name="enumerator">The enumerator. If the enumerator no longer has any elements, this reference is set to null.</param>
-    /// <param name="x">The x value.</param>
-    /// <returns>The current element that is greater than the provided x value, or null, if the enumeration has run out of elements.</returns>
+    /// <param name="enumerator">The enumerator. If the enumerator no longer has any elements, this reference is set to <see langword="null"/>.</param>
+    /// <param name="x">The <c>x</c> value.</param>
+    /// <returns>
+    /// The current element that is greater than the provided <paramref name="x"/> value,
+    /// or <see langword="null"/> if the enumeration has run out of elements.
+    /// </returns>
     protected static double? EnumerationForwardToGreaterThan(ref IEnumerator<double>? enumerator, double x)
     {
       if (enumerator is not null)

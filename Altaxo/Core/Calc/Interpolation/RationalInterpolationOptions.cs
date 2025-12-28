@@ -39,11 +39,15 @@ namespace Altaxo.Calc.Interpolation
     #region Serialization
 
     /// <summary>
-    /// 2022-08-14 initial version
+    /// XML serialization surrogate (version 0).
     /// </summary>
+    /// <remarks>
+    /// 2022-08-14 Initial version.
+    /// </remarks>
     [Altaxo.Serialization.Xml.XmlSerializationSurrogateFor(typeof(RationalInterpolationOptions), 0)]
     public class SerializationSurrogate0 : Altaxo.Serialization.Xml.IXmlSerializationSurrogate
     {
+      /// <inheritdoc/>
       public void Serialize(object obj, Altaxo.Serialization.Xml.IXmlSerializationInfo info)
       {
         var s = (RationalInterpolationOptions)obj;
@@ -51,6 +55,7 @@ namespace Altaxo.Calc.Interpolation
         info.AddValue("Precision", s._precision);
       }
 
+      /// <inheritdoc/>
       public object Deserialize(object? o, Altaxo.Serialization.Xml.IXmlDeserializationInfo info, object? parent)
       {
         var numeratorDegree = info.GetInt32("NumeratorDegree");
@@ -61,6 +66,10 @@ namespace Altaxo.Calc.Interpolation
 
     #endregion
 
+    /// <summary>
+    /// Gets the degree of the numerator polynomial used for the rational interpolation.
+    /// </summary>
+    /// <exception cref="ArgumentOutOfRangeException">Thrown if the value is negative.</exception>
     public int NumeratorDegree
     {
       get => _numeratorDegree;
@@ -72,6 +81,10 @@ namespace Altaxo.Calc.Interpolation
       }
     }
 
+    /// <summary>
+    /// Gets the precision parameter used by the interpolation algorithm.
+    /// </summary>
+    /// <exception cref="ArgumentOutOfRangeException">Thrown if the value is less than or equal to zero.</exception>
     public double Precision
     {
       get => _precision;
@@ -91,6 +104,7 @@ namespace Altaxo.Calc.Interpolation
       return spline;
     }
 
+    /// <inheritdoc/>
     IInterpolationCurve IInterpolationCurveOptions.Interpolate(IReadOnlyList<double> xvec, IReadOnlyList<double> yvec, IReadOnlyList<double>? yStdDev)
     {
       return Interpolate(xvec, yvec, yStdDev);

@@ -22,8 +22,9 @@ namespace Altaxo.Calc.Ode
   /// <remarks>
   /// <para>References:</para>
   /// <para>[1] Hairer, Ordinary differential equations I, 2nd edition, 1993.</para>
-  /// <para>[2] Jimenez et al., Locally Linearized Runge Kutta method of Dormand and Prince, arXiv:1209.1415v2, 22 Dec 2013</para>
-  /// <para>[3] Engeln-Müllges et al., Numerik-Algorithmen, Springer, 2011 (in German)</para></remarks>
+  /// <para>[2] Jimenez et al., Locally Linearized Runge Kutta method of Dormand and Prince, arXiv:1209.1415v2, 22 Dec 2013.</para>
+  /// <para>[3] Engeln-Müllges et al., Numerik-Algorithmen, Springer, 2011 (in German).</para>
+  /// </remarks>
   public partial class RK547M : RungeKuttaExplicitBase
   {
     /// <summary>Scheme coefficients, see [3] p.689</summary>
@@ -51,7 +52,7 @@ namespace Altaxo.Calc.Ode
     private static readonly double[] _sc = new double[] { 0, 1 / 5d, 3 / 10d, 4 / 5d, 8 / 9d, 1, 1 };
 
     /// <summary>
-    /// Interpolation coefficients (for the 4th order)
+    /// Interpolation coefficients (for the 4th order).
     /// </summary>
     private static readonly double[][] _sInterpolationAij = new double[][]
         {
@@ -65,9 +66,7 @@ namespace Altaxo.Calc.Ode
     public override int NumberOfStages => 7;
 
 
-    /// <summary>
-    /// Sets the stiffness detection threshold value.
-    /// </summary>
+    /// <inheritdoc/>
     protected override double StiffnessDetectionThresholdValue => 3.25;
 
 

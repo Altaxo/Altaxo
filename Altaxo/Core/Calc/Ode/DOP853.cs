@@ -18,16 +18,16 @@ namespace Altaxo.Calc.Ode
   /// <summary>
   /// Runge-Kutta method of 8th order of Dormand and Prince. Supports step size control, stiffness detection and dense output.
   /// If dense output is not needed, it is recommended to use <see cref="RK8713M"/> instead,
-  /// which gives slighly better accuracy.
+  /// which gives slightly better accuracy.
   /// </summary>
   /// <remarks>
   /// <para>References:</para>
   /// <para>[1] Hairer, Ordinary differential equations I, 2nd edition, 1993.</para>
-  /// <para>[2] Söderlind et al., Adaptive Time-Stepping and Computational Stability, 2003</para>
+  /// <para>[2] Söderlind et al., Adaptive Time-Stepping and Computational Stability, 2003.</para>
   /// <para/>
   /// <para>
-  /// For the coefficients see <see href="https://github.com/jacobwilliams/dop853/blob/master/src/dop853_constants.f90"/> 
-  /// or the original Fortran version: <see href="http://www.unige.ch/~hairer/prog/nonstiff/dop853.f"/>
+  /// For the coefficients see <see href="https://github.com/jacobwilliams/dop853/blob/master/src/dop853_constants.f90"/>
+  /// or the original Fortran version: <see href="http://www.unige.ch/~hairer/prog/nonstiff/dop853.f"/>.
   /// </para>
   /// </remarks>
   public class DOP853 : RungeKuttaExplicitBase
@@ -39,17 +39,30 @@ namespace Altaxo.Calc.Ode
     // thus it should be faster than the standard core.
     // But the results should stay the same.
 #if true 
+    /// <summary>
+    /// Specialized core implementation for <see cref="DOP853"/>, optimized by skipping multiplications with zero coefficients.
+    /// </summary>
     protected class CoreDOP853 : RungeKuttaExplicitBase.Core
     {
+      /// <summary>
+      /// Initializes a new instance of the <see cref="CoreDOP853"/> class.
+      /// </summary>
+      /// <param name="order">The order of the method.</param>
+      /// <param name="numberOfStages">The number of stages of the Runge-Kutta method.</param>
+      /// <param name="numberOfAdditionalStagesForDenseOutput">The number of additional stages used to prepare dense output.</param>
+      /// <param name="a">The left side coefficients of the Runge-Kutta scheme.</param>
+      /// <param name="b">The high order coefficients.</param>
+      /// <param name="bl">The low order bottom side coefficients (or the differences, depending on the scheme implementation).</param>
+      /// <param name="c">The step partitions.</param>
+      /// <param name="x0">The initial <c>x</c> value.</param>
+      /// <param name="y">The initial <c>y</c> values.</param>
+      /// <param name="f">The function evaluating the derivatives.</param>
       public CoreDOP853(int order, int numberOfStages, int numberOfAdditionalStagesForDenseOutput, double[][] a, double[] b, double[]? bl, double[] c, double x0, double[] y, Action<double, double[], double[]> f)
         : base(order, numberOfStages, numberOfAdditionalStagesForDenseOutput, a, b, bl, c, x0, y, f)
       {
       }
 
-      /// <summary>
-      /// Evaluates the next solution point in one step. To get the results, see <see cref="RungeKuttaExplicitBase.Core.X"/> and <see cref="RungeKuttaExplicitBase.Core.Y_volatile"/>.
-      /// </summary>
-      /// <param name="xnext">X at the end of the next step.</param>
+      /// <inheritdoc/>
       public override void EvaluateNextSolutionPoint(double xnext)
       {
         var a = _a;
@@ -187,12 +200,7 @@ namespace Altaxo.Calc.Ode
         _wasSolutionPointEvaluated = true;
       }
 
-      /// <summary>
-      /// Gets the recommended step size.  
-      /// </summary>
-      /// <param name="error_current">The relative error of the current step.</param>
-      /// <param name="error_previous">The relative error of the previous step.</param>
-      /// <returns>The recommended step size in the context of the absolute and relative tolerances.</returns>
+      /// <inheritdoc/>
       public override double GetRecommendedStepSize(double error_current, double error_previous)
       {
         // H211b digital filter, see Table 1 in [Söderlind, 2003, Adaptive Time-Stepping and Computational Stability]
@@ -205,12 +213,8 @@ namespace Altaxo.Calc.Ode
         return fac * _stepSize_current;
       }
 
-      /// <summary>Get an interpolated point in the last evaluated interval.
-      /// Please use the result immediately, or else make a copy of the result, since a internal array
-      /// is returned, which is overwritten at the next operation.</summary>
-      /// <param name="theta">Relative location (0..1) in the last evaluated interval.</param>
-      /// <returns>Interpolated y values at the relative point of the last evaluated interval <paramref name="theta"/>.</returns>
-      /// <remarks>See ref. [2] section 3.3.</remarks>
+      /// <inheritdoc/>
+      /// <remarks>See ref. [2], section 3.3.</remarks>
       public override double[] GetInterpolatedY_volatile(double theta)
       {
         var k = _k;
@@ -310,13 +314,7 @@ namespace Altaxo.Calc.Ode
     }
 
 
-    /// <summary>
-    /// Initializes the Runge-Kutta method.
-    /// </summary>
-    /// <param name="x">The initial x value.</param>
-    /// <param name="y">The initial y values.</param>
-    /// <param name="f">Calculation of the derivatives. First argument is x value, 2nd argument are the current y values. The 3rd argument is an array that store the derivatives.</param>
-    /// <returns>This instance (for a convenient way to chain this method with sequence creation).</returns>
+    /// <inheritdoc/>
     public override RungeKuttaExplicitBase Initialize(double x, double[] y, Action<double, double[], double[]> f)
     {
       _core = new CoreDOP853(Order, NumberOfStages, NumberOfAdditionalStagesForDenseOutput, A, BH, BHML, C, x, y, f);

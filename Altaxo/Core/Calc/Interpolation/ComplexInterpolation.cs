@@ -27,16 +27,19 @@ namespace Altaxo.Calc.Interpolation
     IComplexInterpolationFunction Interpolate(IReadOnlyList<double> xvec, IReadOnlyList<double> yreal, IReadOnlyList<double> yimaginary);
 
     /// <summary>
-    /// Gets a value indicating whether this instance is supporting separate pairs of xreal, yreal and ximag, yimag for the real and imaginary data.
-    /// Only if true is returned, you may use <see cref="Interpolate(IReadOnlyList{double}, IReadOnlyList{double}, IReadOnlyList{double}, IReadOnlyList{double})"/>
-    /// to provide separate pairs of x and y for real and imaginary part.
+    /// Gets a value indicating whether this instance supports independent real and imaginary sample sets.
     /// </summary>
+    /// <remarks>
+    /// Only if this property returns true may you use <see cref="Interpolate(IReadOnlyList{double}, IReadOnlyList{double}, IReadOnlyList{double}, IReadOnlyList{double})"/> to provide separate x and y pairs for the real and imaginary data.
+    /// </remarks>
     bool IsSupportingSeparateXForRealAndImaginaryPart { get; }
 
     /// <summary>
-    /// This call is only supported if <see cref="IsSupportingSeparateXForRealAndImaginaryPart"/> is returning true.
-    /// Sets the interpolation data by providing values for xreal and yreal (both of same length), as well as for ximag and yimag (both also of same length, but length can be different from real pair).
+    /// Sets the interpolation data by providing values for xreal and yreal (both of the same length), as well as for ximag and yimag (both also of the same length, though the length can differ from the real pair).
     /// </summary>
+    /// <remarks>
+    /// This overload is only supported if <see cref="IsSupportingSeparateXForRealAndImaginaryPart"/> returns true.
+    /// </remarks>
     /// <param name="xreal">Vector of x (independent) data, belonging to the real part of y.</param>
     /// <param name="yreal">Vector of the real part of y (dependent) data.</param>
     /// <param name="ximaginary">Vector of x (independent) data, belonging to the imaginary part of y.</param>

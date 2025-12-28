@@ -53,7 +53,7 @@ namespace Altaxo.Calc.Integration
   ///periods so that the contributions from the intervals alternate in sign and are monotonically
   ///decreasing when f is positive and monotonically decreasing. The sum of this
   ///sequence of contributions is accelerated using the epsilon-algorithm.
-  /// <para>Ref.: Gnu Scientific library reference manual (<see href="http://www.gnu.org/software/gsl/" />)</para>
+  /// <para>Ref.: GNU Scientific Library reference manual (<see href="http://www.gnu.org/software/gsl/" />)</para>
   /// </remarks>
   public class QawfIntegration : QawoIntegration
   {
@@ -70,7 +70,7 @@ namespace Altaxo.Calc.Integration
     }
 
     /// <summary>
-    /// Creates an instance of this integration class with specified integration rule and specified debug flag setting.
+    /// Creates an instance of this integration class with the specified debug flag setting.
     /// </summary>
     /// <param name="debug">Setting of the debug flag for this instance. If the integration fails or the specified accuracy
     /// is not reached, an exception is thrown if the debug flag is set to true. If set to false, the return value of the integration
@@ -80,6 +80,18 @@ namespace Altaxo.Calc.Integration
     {
     }
 
+    /// <summary>
+    /// Integrate a Fourier-type integral using the instance's debug setting.
+    /// </summary>
+    /// <param name="f">Function to integrate.</param>
+    /// <param name="a">Lower integration limit.</param>
+    /// <param name="oscTerm">Oscillatory term type (sine or cosine).</param>
+    /// <param name="omega">Angular frequency parameter.</param>
+    /// <param name="epsabs">Absolute error tolerance.</param>
+    /// <param name="limit">Maximum number of iterations/subintervals.</param>
+    /// <param name="result">On return, contains the integration result.</param>
+    /// <param name="abserr">On return, contains the estimated absolute error.</param>
+    /// <returns>Null if successful; otherwise a <see cref="GSL_ERROR"/> describing the error.</returns>
     public GSL_ERROR?
      Integrate(Func<double, double> f,
      double a,
@@ -91,6 +103,19 @@ namespace Altaxo.Calc.Integration
       return Integrate(f, a, oscTerm, omega, epsabs, limit, _debug, out result, out abserr);
     }
 
+    /// <summary>
+    /// Integrate a Fourier-type integral with an explicit debug flag for this call.
+    /// </summary>
+    /// <param name="f">Function to integrate.</param>
+    /// <param name="a">Lower integration limit.</param>
+    /// <param name="oscTerm">Oscillatory term type (sine or cosine).</param>
+    /// <param name="omega">Angular frequency parameter.</param>
+    /// <param name="epsabs">Absolute error tolerance.</param>
+    /// <param name="limit">Maximum number of iterations/subintervals.</param>
+    /// <param name="debug">Debug flag for this call.</param>
+    /// <param name="result">On return, contains the integration result.</param>
+    /// <param name="abserr">On return, contains the estimated absolute error.</param>
+    /// <returns>Null if successful; otherwise a <see cref="GSL_ERROR"/> describing the error.</returns>
     public GSL_ERROR?
       Integrate(Func<double, double> f,
       double a,
@@ -117,6 +142,19 @@ namespace Altaxo.Calc.Integration
       return gsl_integration_qawf(f, a, epsabs, limit, _workSpace, _cycleWorkspace, _qawoTable, out result, out abserr, debug);
     }
 
+    /// <summary>
+    /// Static helper that integrates a Fourier-type integral using a reusable temporary storage object.
+    /// </summary>
+    /// <param name="f">Function to integrate.</param>
+    /// <param name="a">Lower integration limit.</param>
+    /// <param name="oscTerm">Oscillatory term type (sine or cosine).</param>
+    /// <param name="omega">Angular frequency parameter.</param>
+    /// <param name="epsabs">Absolute error tolerance.</param>
+    /// <param name="limit">Maximum number of iterations/subintervals.</param>
+    /// <param name="result">On return, contains the integration result.</param>
+    /// <param name="abserr">On return, contains the estimated absolute error.</param>
+    /// <param name="tempStorage">Reference to an object that may contain a previously created QawfIntegration instance to reuse.</param>
+    /// <returns>Null if successful; otherwise a <see cref="GSL_ERROR"/> describing the error.</returns>
     public static GSL_ERROR?
     Integration(Func<double, double> f,
           double a,
@@ -157,6 +195,21 @@ namespace Altaxo.Calc.Integration
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
  */
 
+    /// <summary>
+    /// Core implementation of the QAWF algorithm for Fourier integrals.
+    /// This method mirrors the original GSL implementation (integration/qawf.c).
+    /// </summary>
+    /// <param name="f">Function to integrate.</param>
+    /// <param name="a">Lower integration limit.</param>
+    /// <param name="epsabs">Absolute error tolerance.</param>
+    /// <param name="limit">Maximum number of iterations/subintervals.</param>
+    /// <param name="workspace">Workspace used for accumulating interval results.</param>
+    /// <param name="cycle_workspace">Workspace used for cycle (per-interval) integration.</param>
+    /// <param name="wf">Oscillatory term table containing frequency and type.</param>
+    /// <param name="result">On return, contains the integration result.</param>
+    /// <param name="abserr">On return, contains the estimated absolute error.</param>
+    /// <param name="bDebug">Debug flag that controls whether detailed errors throw exceptions.</param>
+    /// <returns>Null on success; otherwise a <see cref="GSL_ERROR"/> describing the error.</returns>
     private static GSL_ERROR?
     gsl_integration_qawf(Func<double, double> f,
                           double a,

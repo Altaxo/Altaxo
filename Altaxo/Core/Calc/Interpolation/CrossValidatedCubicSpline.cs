@@ -37,17 +37,20 @@ namespace Altaxo.Calc.Interpolation
     #region Serialization
 
     /// <summary>
-    /// 2022-08-14 initial version
+    /// 2022-08-14: Serialization surrogate for the initial <see cref="CrossValidatedCubicSplineOptions"/> version.
     /// </summary>
+    /// <remarks>Initial version 2022-08-14.</remarks>
     [Altaxo.Serialization.Xml.XmlSerializationSurrogateFor(typeof(CrossValidatedCubicSplineOptions), 0)]
     public class SerializationSurrogate0 : Altaxo.Serialization.Xml.IXmlSerializationSurrogate
     {
+      /// <inheritdoc/>
       public void Serialize(object obj, Altaxo.Serialization.Xml.IXmlSerializationInfo info)
       {
         var s = (CrossValidatedCubicSplineOptions)obj;
         info.AddValue("StandardDeviation", s._errorStandardDeviation);
       }
 
+      /// <inheritdoc/>
       public object Deserialize(object? o, Altaxo.Serialization.Xml.IXmlDeserializationInfo info, object? parent)
       {
         var stddev = info.GetDouble("StandardDeviation");
@@ -174,11 +177,15 @@ namespace Altaxo.Calc.Interpolation
   /// </remarks>
   public class CrossValidatedCubicSpline : SmoothingCubicSplineBase, IInterpolationFunction
   {
+    /// <summary>
+    /// Initializes a new instance of the <see cref="CrossValidatedCubicSpline"/> class.
+    /// </summary>
     public CrossValidatedCubicSpline()
     {
       _standardDeviation = -1.0; // unknown standard deviation
     }
 
+    /// <inheritdoc/>
     protected override void InterpolationKernel(
       double[] x,
       double[] f,

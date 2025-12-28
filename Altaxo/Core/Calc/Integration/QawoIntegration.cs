@@ -28,6 +28,9 @@ using System.Text;
 
 namespace Altaxo.Calc.Integration
 {
+  /// <summary>
+  /// Specifies the oscillatory term type used in weighted Fourier/quadrature integrations.
+  /// </summary>
   public enum OscillatoryTerm { Cosine, Sine };
 
   /// <summary>
@@ -54,7 +57,7 @@ namespace Altaxo.Calc.Integration
   /// Clenshaw-Curtis integration rule, which handles the oscillatory behavior. Subintervals
   /// with a "small" widths where dw &lt; 4 are computed using a 15-point Gauss-Kronrod
   /// integration.
-  /// <para>Ref.: Gnu Scientific library reference manual (<see href="http://www.gnu.org/software/gsl/" />)</para>
+  /// <para>Ref.: GNU Scientific Library reference manual (<see href="http://www.gnu.org/software/gsl/" />)</para>
   /// </remarks>
   public class QawoIntegration : IntegrationBase
   {
@@ -74,16 +77,28 @@ namespace Altaxo.Calc.Integration
     }
 
     /// <summary>
-    /// Creates an instance of this integration class with specified integration rule and specified debug flag setting.
+    /// Creates an instance of this integration class with specified debug flag setting.
     /// </summary>
-    /// <param name="debug">Setting of the debug flag for this instance. If the integration fails or the specified accuracy
-    /// is not reached, an exception is thrown if the debug flag is set to true. If set to false, the return value of the integration
-    /// function will be set to the appropriate error code (an exception will be thrown then only for serious errors).</param>
+    /// <param name="debug">If true, errors may throw exceptions for debugging; otherwise error codes are returned.</param>
     public QawoIntegration(bool debug)
     {
       _debug = debug;
     }
 
+    /// <summary>
+    /// Integrate an oscillatory integral using the instance's debug setting.
+    /// </summary>
+    /// <param name="f">Function to integrate.</param>
+    /// <param name="a">Lower integration limit.</param>
+    /// <param name="b">Upper integration limit.</param>
+    /// <param name="oscTerm">Oscillatory term type (sine or cosine).</param>
+    /// <param name="omega">Angular frequency parameter.</param>
+    /// <param name="epsabs">Absolute error tolerance. Set to zero to rely on relative tolerance.</param>
+    /// <param name="epsrel">Relative error tolerance. Set to zero to rely on absolute tolerance.</param>
+    /// <param name="limit">Maximum number of subintervals allowed.</param>
+    /// <param name="result">On return, contains the integration result.</param>
+    /// <param name="abserr">On return, contains the estimated absolute error of the result.</param>
+    /// <returns>Null if successful; otherwise a <see cref="GSL_ERROR"/> describing the error.</returns>
     public GSL_ERROR?
      Integrate(Func<double, double> f,
      double a, double b,
@@ -95,6 +110,21 @@ namespace Altaxo.Calc.Integration
       return Integrate(f, a, b, oscTerm, omega, epsabs, epsrel, limit, _debug, out result, out abserr);
     }
 
+    /// <summary>
+    /// Integrate an oscillatory integral with an explicit debug flag for this call.
+    /// </summary>
+    /// <param name="f">Function to integrate.</param>
+    /// <param name="a">Lower integration limit.</param>
+    /// <param name="b">Upper integration limit.</param>
+    /// <param name="oscTerm">Oscillatory term type (sine or cosine).</param>
+    /// <param name="omega">Angular frequency parameter.</param>
+    /// <param name="epsabs">Absolute error tolerance. Set to zero to rely on relative tolerance.</param>
+    /// <param name="epsrel">Relative error tolerance. Set to zero to rely on absolute tolerance.</param>
+    /// <param name="limit">Maximum number of subintervals allowed.</param>
+    /// <param name="debug">Debug flag for this call.</param>
+    /// <param name="result">On return, contains the integration result.</param>
+    /// <param name="abserr">On return, contains the estimated absolute error of the result.</param>
+    /// <returns>Null if successful; otherwise a <see cref="GSL_ERROR"/> describing the error.</returns>
     public GSL_ERROR?
       Integrate(Func<double, double> f,
       double a, double b,
@@ -118,6 +148,21 @@ namespace Altaxo.Calc.Integration
       return gsl_integration_qawo(f, a, epsabs, epsrel, limit, _workSpace, _qawoTable, out result, out abserr, debug);
     }
 
+    /// <summary>
+    /// Static helper that integrates an oscillatory integral using a reusable temporary storage object.
+    /// </summary>
+    /// <param name="f">Function to integrate.</param>
+    /// <param name="a">Lower integration limit.</param>
+    /// <param name="b">Upper integration limit.</param>
+    /// <param name="oscTerm">Oscillatory term type (sine or cosine).</param>
+    /// <param name="omega">Angular frequency parameter.</param>
+    /// <param name="epsabs">Absolute error tolerance.</param>
+    /// <param name="epsrel">Relative error tolerance.</param>
+    /// <param name="limit">Maximum number of subintervals allowed.</param>
+    /// <param name="result">On return, contains the integration result.</param>
+    /// <param name="abserr">On return, contains the estimated absolute error of the result.</param>
+    /// <param name="tempStorage">Reference to an object that may contain a previously created QawoIntegration instance to reuse.</param>
+    /// <returns>Null if successful; otherwise a <see cref="GSL_ERROR"/> describing the error.</returns>
     public static GSL_ERROR?
     Integration(Func<double, double> f,
           double a, double b,
@@ -139,6 +184,9 @@ namespace Altaxo.Calc.Integration
 
     protected enum gsl_integration_qawo_enum { GSL_INTEG_COSINE, GSL_INTEG_SINE };
 
+    /// <summary>
+    /// Table of precomputed Chebyshev moments and parameters used by the QAWO algorithm.
+    /// </summary>
     protected class gsl_integration_qawo_table
     {
       public int n;
@@ -148,6 +196,13 @@ namespace Altaxo.Calc.Integration
       public gsl_integration_qawo_enum sine;
       public double[] chebmo;
 
+      /// <summary>
+      /// Construct a new QAWO moment table and precompute moments.
+      /// </summary>
+      /// <param name="omega">Angular frequency.</param>
+      /// <param name="L">Interval length.</param>
+      /// <param name="sine">Specifies whether the table is for sine or cosine weighting.</param>
+      /// <param name="n">Number of scales in the table (must be positive).</param>
       public
         gsl_integration_qawo_table(double omega, double L,
                                   gsl_integration_qawo_enum sine,
@@ -179,6 +234,12 @@ namespace Altaxo.Calc.Integration
         }
       }
 
+      /// <summary>
+      /// Reset the table parameters and recompute moments for the new omega/L settings.
+      /// </summary>
+      /// <param name="omega">Angular frequency.</param>
+      /// <param name="L">Interval length.</param>
+      /// <param name="sine">Specifies whether the table is for sine or cosine weighting.</param>
       public void set(double omega, double L, gsl_integration_qawo_enum sine)
       {
         this.omega = omega;
@@ -202,6 +263,10 @@ namespace Altaxo.Calc.Integration
         return; //GSL_SUCCESS;
       }
 
+      /// <summary>
+      /// Set the table length parameter L and recompute moments if it changed.
+      /// </summary>
+      /// <param name="L">New interval length.</param>
       public void set_length(double L)
       {
         /* return immediately if the length is the same as the old length */
@@ -230,8 +295,14 @@ namespace Altaxo.Calc.Integration
         return; // GSL_SUCCESS;
       }
 
+      /// <summary>
+      /// Compute the Chebyshev moment coefficients for a given parameter and store them into the chebmo array.
+      /// </summary>
+      /// <param name="par">Parameter value used to compute moments.</param>
+      /// <param name="chebmo">Target array for moments.</param>
+      /// <param name="chebmostart">Index in <paramref name="chebmo"/> where storage should begin.</param>
       private static void
- compute_moments(double par, double[] chebmo, int chebmostart)
+     compute_moments(double par, double[] chebmo, int chebmostart)
       {
         double[] v = new double[28], d = new double[25], d1 = new double[25], d2 = new double[25];
 
@@ -373,8 +444,18 @@ namespace Altaxo.Calc.Integration
         }
       }
 
+      /// <summary>
+      /// Solve a tridiagonal linear system A x = b where c,d,e represent the sub-diagonal, diagonal and super-diagonal respectively.
+      /// The right-hand side vector b is replaced by the solution vector on return.
+      /// </summary>
+      /// <param name="n">Matrix dimension.</param>
+      /// <param name="c">Subdiagonal array (modified in-place).</param>
+      /// <param name="d">Diagonal array (modified in-place).</param>
+      /// <param name="e">Superdiagonal array (modified in-place).</param>
+      /// <param name="b">Right-hand side vector (replaced by solution).</param>
+      /// <returns>GSL_ERR.GSL_SUCCESS on success, otherwise an error code.</returns>
       private static GSL_ERR
-dgtsl(int n, double[] c, double[] d, double[] e, LinearAlgebra.IVector<double> b)
+    dgtsl(int n, double[] c, double[] d, double[] e, LinearAlgebra.IVector<double> b)
       {
         /* solves a tridiagonal matrix A x = b
 
@@ -484,6 +565,21 @@ dgtsl(int n, double[] c, double[] d, double[] e, LinearAlgebra.IVector<double> b
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
  */
 
+    /// <summary>
+    /// Core implementation of the QAWO algorithm for oscillatory weighted integrals.
+    /// This method mirrors the original GSL implementation (integration/qawo.c).
+    /// </summary>
+    /// <param name="f">Function to integrate.</param>
+    /// <param name="a">Lower integration limit.</param>
+    /// <param name="epsabs">Absolute error tolerance.</param>
+    /// <param name="epsrel">Relative error tolerance.</param>
+    /// <param name="limit">Maximum number of subintervals allowed.</param>
+    /// <param name="workspace">Workspace used for adaptive subdivision and storage.</param>
+    /// <param name="wf">Precomputed table of Chebyshev moments and parameters.</param>
+    /// <param name="result">On return, contains the integration result.</param>
+    /// <param name="abserr">On return, contains the estimated absolute error of the result.</param>
+    /// <param name="bDebug">Debug flag that controls whether detailed errors throw exceptions.</param>
+    /// <returns>Null on success; otherwise a <see cref="GSL_ERROR"/> describing the error.</returns>
     protected static GSL_ERROR?
     gsl_integration_qawo(Func<double, double> f,
                           double a,
@@ -924,12 +1020,30 @@ return_error:
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
  */
 
+    /// <summary>
+    /// Parameters used by the Fourier-weighted function wrappers.
+    /// </summary>
     private struct fn_fourier_params
     {
+      /// <summary>The original function to integrate.</summary>
       public Func<double, double> function;
+      /// <summary>The angular frequency parameter.</summary>
       public double omega;
     }
 
+    /// <summary>
+    /// Compute a weighted integral on an interval using either a Clenshaw-Curtis rule for large parameter
+    /// or a 15-point Gauss-Kronrod rule when the transformed parameter is small.
+    /// </summary>
+    /// <param name="f">Function to integrate.</param>
+    /// <param name="a">Lower integration limit for the subinterval.</param>
+    /// <param name="b">Upper integration limit for the subinterval.</param>
+    /// <param name="wf">Precomputed weight table.</param>
+    /// <param name="level">Scale level within the moment table.</param>
+    /// <param name="result">On return, the computed integral on the subinterval.</param>
+    /// <param name="abserr">On return, estimated absolute error for the subinterval.</param>
+    /// <param name="resabs">On return, absolute value based integral estimate used for diagnostics.</param>
+    /// <param name="resasc">On return, estimated absolute deviation used for diagnostics.</param>
     private static void
     qc25f(Func<double, double> f, double a, double b,
            gsl_integration_qawo_table wf, int level,
@@ -1035,6 +1149,12 @@ return_error:
       }
     }
 
+    /// <summary>
+    /// Weighted wrapper that returns f(x)*sin(omega*x).
+    /// </summary>
+    /// <param name="x">Evaluation point.</param>
+    /// <param name="p">Parameters containing the original function and omega.</param>
+    /// <returns>Value of f(x)*sin(omega*x).</returns>
     private static double fn_sin(double x, fn_fourier_params p)
     {
       Func<double, double> f = p.function;
@@ -1044,6 +1164,12 @@ return_error:
       return f(x) * sinwx;
     }
 
+    /// <summary>
+    /// Weighted wrapper that returns f(x)*cos(omega*x).
+    /// </summary>
+    /// <param name="x">Evaluation point.</param>
+    /// <param name="p">Parameters containing the original function and omega.</param>
+    /// <returns>Value of f(x)*cos(omega*x).</returns>
     private static double fn_cos(double x, fn_fourier_params p)
     {
       Func<double, double> f = p.function;

@@ -74,6 +74,7 @@ namespace Altaxo.Calc.Interpolation
   /// </remarks>
   public class BezierCubicSpline : CurveBase
   {
+    /// <inheritdoc/>
     public override void Interpolate(IReadOnlyList<double> x, IReadOnlyList<double> y)
     {
       // verify index range
@@ -85,6 +86,7 @@ namespace Altaxo.Calc.Interpolation
       base.y = y;
     }
 
+    /// <inheritdoc/>
     public override double GetXOfU(double t)
     {
       int hi = x.Count - 1;
@@ -129,6 +131,7 @@ namespace Altaxo.Calc.Interpolation
       }
     }
 
+    /// <inheritdoc/>
     public override double GetYOfU(double t)
     {
       int hi = x.Count - 1;

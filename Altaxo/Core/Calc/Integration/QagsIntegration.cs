@@ -38,7 +38,7 @@ namespace Altaxo.Calc.Integration
   /// to the limit can be accelerated using an extrapolation procedure. The QAGS algorithm
   /// combines adaptive bisection with the Wynn epsilon-algorithm to speed up the integration
   /// of many types of integrable singularities.
-  /// <para>Ref.: Gnu Scientific library reference manual (<see href="http://www.gnu.org/software/gsl/" />)</para>
+  /// <para>Ref.: GNU Scientific Library reference manual (<see href="http://www.gnu.org/software/gsl/" />)</para>
   /// </remarks>
   public class QagsIntegration : IntegrationBase
   {
@@ -106,7 +106,7 @@ namespace Altaxo.Calc.Integration
     /// function will be set to the appropriate error code (an exception will be thrown then only for serious errors).</param>
     /// <param name="result">On return, contains the integration result.</param>
     /// <param name="abserr">On return, contains the absolute error of integration.</param>
-    /// <returns>Null if successfull, otherwise the appropriate error code.</returns>
+    /// <returns>Null if successful; otherwise the appropriate error code.</returns>
     public GSL_ERROR? Integrate(Func<double, double> f,
        double a, double b,
        double epsabs, double epsrel, int limit,
@@ -120,7 +120,7 @@ namespace Altaxo.Calc.Integration
     }
 
     /// <summary>
-    /// Adaptive integration with (unknown) singularities using the integration rule and debug setting given in the constructor..
+    /// Adaptive integration with (unknown) singularities using the integration rule and debug setting given in the constructor.
     /// </summary>
     /// <param name="f">Function to integrate.</param>
     /// <param name="a">Lower integration limit.</param>
@@ -130,7 +130,7 @@ namespace Altaxo.Calc.Integration
     /// <param name="limit">Maximum number of subintervals used for integration.</param>
     /// <param name="result">On return, contains the integration result.</param>
     /// <param name="abserr">On return, contains the absolute error of integration.</param>
-    /// <returns>Null if successfull, otherwise the appropriate error code.</returns>
+    /// <returns>Null if successful; otherwise the appropriate error code.</returns>
     public GSL_ERROR? Integrate(Func<double, double> f,
           double a, double b,
           double epsabs, double epsrel, int limit,
@@ -155,7 +155,7 @@ namespace Altaxo.Calc.Integration
     /// <param name="result">On return, contains the integration result.</param>
     /// <param name="abserr">On return, contains the absolute error of integration.</param>
     /// <param name="tempStorage">Provides a temporary storage object that you can reuse for repeating function calls.</param>
-    /// <returns>Null if successfull, otherwise the appropriate error code.</returns>
+    /// <returns>Null if successful; otherwise the appropriate error code.</returns>
     public static GSL_ERROR?
     Integration(Func<double, double> f,
           double a, double b,
@@ -183,7 +183,7 @@ namespace Altaxo.Calc.Integration
     /// <param name="result">On return, contains the integration result.</param>
     /// <param name="abserr">On return, contains the absolute error of integration.</param>
     /// <param name="tempStorage">Provides a temporary storage object that you can reuse for repeating function calls.</param>
-    /// <returns>Null if successfull, otherwise the appropriate error code.</returns>
+    /// <returns>Null if successful; otherwise the appropriate error code.</returns>
     public static GSL_ERROR?
     Integration(Func<double, double> f,
           double a, double b,
@@ -214,7 +214,7 @@ namespace Altaxo.Calc.Integration
     /// function will be set to the appropriate error code (an exception will be thrown then only for serious errors).</param>
     /// <param name="result">On return, contains the integration result.</param>
     /// <param name="abserr">On return, contains the absolute error of integration.</param>
-    /// <returns>Null if successfull, otherwise the appropriate error code.</returns>
+    /// <returns>Null if successful; otherwise the appropriate error code.</returns>
     public static GSL_ERROR?
    Integration(Func<double, double> f,
      double a, double b,
@@ -239,7 +239,7 @@ namespace Altaxo.Calc.Integration
     /// <param name="limit">Maximum number of subintervals used for integration.</param>
     /// <param name="result">On return, contains the integration result.</param>
     /// <param name="abserr">On return, contains the absolute error of integration.</param>
-    /// <returns>Null if successfull, otherwise the appropriate error code.</returns>
+    /// <returns>Null if successful; otherwise the appropriate error code.</returns>
     public static GSL_ERROR?
     Integration(Func<double, double> f,
       double a, double b,

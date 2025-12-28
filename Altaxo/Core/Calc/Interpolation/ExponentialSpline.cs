@@ -79,12 +79,16 @@ namespace Altaxo.Calc.Interpolation
     protected Vector<double> y1 = CreateVector.Dense<double>(0);
     protected Vector<double> tmp = CreateVector.Dense<double>(0);
 
+    /// <summary>
+    /// Initializes a new instance of the <see cref="ExponentialSpline"/> class with default boundary conditions and smoothing.
+    /// </summary>
     public ExponentialSpline()
     {
       boundary = BoundaryConditions.FiniteDifferences;
       sigma = 1.0;
     }
 
+    /// <inheritdoc/>
     public override void Interpolate(IReadOnlyList<double> x, IReadOnlyList<double> y)
     {
       // check input parameters
@@ -211,16 +215,19 @@ namespace Altaxo.Calc.Interpolation
 
     }
 
+    /// <inheritdoc/>
     public override double GetXOfU(double u)
     {
       return u;
     }
 
+    /// <inheritdoc/>
     public double GetYOfX(double x)
     {
       return GetYOfU(x);
     }
 
+    /// <inheritdoc/>
     public override double GetYOfU(double u)
     {
       const int lo = 0;
@@ -253,6 +260,10 @@ namespace Altaxo.Calc.Interpolation
         ((y[i] - y1[i]) * del1 + (y[i - 1] - y1[i - 1]) * del2) / dels;
     }
 
+    /// <summary>
+    /// Gets or sets the smoothing parameter that controls the spline tension.
+    /// </summary>
+    /// <exception cref="ArgumentException">Thrown when the provided value is not greater than zero.</exception>
     public double Smoothing
     {
       get
@@ -268,12 +279,22 @@ namespace Altaxo.Calc.Interpolation
       }
     }
 
+    /// <summary>
+    /// Gets or sets the boundary condition mode used for spline interpolation.
+    /// </summary>
     public BoundaryConditions BoundaryCondition
     {
       get { return boundary; }
       set { SetBoundaryConditions(value, 0, 0); }
     }
 
+    /// <summary>
+    /// Sets the boundary conditions and any supplied endpoint derivatives.
+    /// </summary>
+    /// <param name="bnd">Type of boundary condition to apply.</param>
+    /// <param name="b1">First derivative at the lower boundary when required.</param>
+    /// <param name="b2">First derivative at the upper boundary when required.</param>
+    /// <exception cref="ArgumentException">Thrown when an unsupported boundary condition is specified.</exception>
     public void SetBoundaryConditions(BoundaryConditions bnd, double b1, double b2)
     {
       // check boundary conditions argument
@@ -287,6 +308,12 @@ namespace Altaxo.Calc.Interpolation
         throw new ArgumentException("Only Supply1stDerivative or FiniteDifferences boundary conditions");
     }
 
+    /// <summary>
+    /// Gets the current boundary condition configuration along with endpoint derivatives.
+    /// </summary>
+    /// <param name="b1">Outputs the lower boundary derivative.</param>
+    /// <param name="b2">Outputs the upper boundary derivative.</param>
+    /// <returns>The active boundary condition.</returns>
     public BoundaryConditions GetBoundaryConditions(out double b1, out double b2)
     {
       b1 = r1;

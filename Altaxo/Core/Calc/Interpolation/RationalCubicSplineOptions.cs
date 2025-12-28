@@ -35,13 +35,14 @@ namespace Altaxo.Calc.Interpolation
     private double _smoothing;
 
     /// <summary>
-    /// Set the value of the smoothing paramenter. A value of 0
-    /// for the smoothing parameter results in a standard cubic spline.
-    /// A value of p with -1 &lt; p &lt; 0 results in "unsmoothing" that means
-    /// overshooting oscillations. A value of p with p &gt; 0 gives increasing
-    /// smoothness. p to infinity results in a linear interpolation. A value
-    /// smaller or equal to -1.0 leads to an exception.
+    /// Gets the value of the smoothing parameter.
+    /// A value of <c>0</c> results in a standard cubic spline.
+    /// A value of <c>p</c> with <c>-1 &lt; p &lt; 0</c> results in "unsmoothing", i.e. overshooting oscillations.
+    /// A value of <c>p &gt; 0</c> gives increasing smoothness.
+    /// <c>p</c> to infinity results in a linear interpolation.
+    /// A value smaller than or equal to <c>-1.0</c> leads to an exception.
     /// </summary>
+    /// <exception cref="ArgumentOutOfRangeException">Thrown if the value is less than -1.</exception>
     public double Smoothing
     {
       get
@@ -60,17 +61,22 @@ namespace Altaxo.Calc.Interpolation
     #region Serialization
 
     /// <summary>
-    /// 2022-08-14 initial version
+    /// XML serialization surrogate (version 0).
     /// </summary>
+    /// <remarks>
+    /// 2022-08-14 Initial version.
+    /// </remarks>
     [Altaxo.Serialization.Xml.XmlSerializationSurrogateFor(typeof(RationalCubicSplineOptions), 0)]
     public class SerializationSurrogate0 : Altaxo.Serialization.Xml.IXmlSerializationSurrogate
     {
+      /// <inheritdoc/>
       public void Serialize(object obj, Altaxo.Serialization.Xml.IXmlSerializationInfo info)
       {
         var s = (RationalCubicSplineOptions)obj;
         info.AddValue("Smoothing", s.Smoothing);
       }
 
+      /// <inheritdoc/>
       public object Deserialize(object? o, Altaxo.Serialization.Xml.IXmlDeserializationInfo info, object? parent)
       {
         var smoothing = info.GetDouble("Smoothing");
@@ -88,6 +94,7 @@ namespace Altaxo.Calc.Interpolation
       return spline;
     }
 
+    /// <inheritdoc/>
     IInterpolationCurve IInterpolationCurveOptions.Interpolate(IReadOnlyList<double> xvec, IReadOnlyList<double> yvec, IReadOnlyList<double>? yStdDev)
     {
       return Interpolate(xvec, yvec, yStdDev);

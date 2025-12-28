@@ -29,7 +29,7 @@ using System.Text;
 namespace Altaxo.Calc.Integration
 {
   /// <summary>
-  /// Computes the 12-th order and 24-th order Chebyshev
+  /// Computes the 12th-order and 24th-order Chebyshev
   /// approximations to f(x) on [a,b].
   /// </summary>
   public class Qcheb
@@ -39,15 +39,40 @@ namespace Altaxo.Calc.Integration
     private double[] _fval = new double[25]; // working space
     private double[] _v = new double[12]; // working space
 
+    /// <summary>
+    /// Initializes a new instance of the <see cref="Qcheb"/> class.
+    /// </summary>
     public Qcheb()
     {
     }
 
+    /// <summary>
+    /// Compute the 12th-order and 24th-order Chebyshev approximations for the function <paramref name="f"/>
+    /// on the interval [<paramref name="a"/>, <paramref name="b"/>]. The computed coefficients are written
+    /// into the supplied <paramref name="cheb12"/> and <paramref name="cheb24"/> arrays. This instance method
+    /// uses internal working storage and is therefore slightly more efficient when called repeatedly.
+    /// </summary>
+    /// <param name="f">The function to approximate.</param>
+    /// <param name="a">Lower bound of the approximation interval.</param>
+    /// <param name="b">Upper bound of the approximation interval.</param>
+    /// <param name="cheb12">Array to receive the 12th-order Chebyshev coefficients (length at least 13).</param>
+    /// <param name="cheb24">Array to receive the 24th-order Chebyshev coefficients (length at least 25).</param>
     public void Approximate(Func<double, double> f, double a, double b, double[] cheb12, double[] cheb24)
     {
       gsl_integration_qcheb(f, a, b, cheb12, cheb24, _fval, _v);
     }
 
+    /// <summary>
+    /// Compute the 12th-order and 24th-order Chebyshev approximations for the function <paramref name="f"/>
+    /// on the interval [<paramref name="a"/>, <paramref name="b"/>]. The computed coefficients are written
+    /// into the supplied <paramref name="cheb12"/> and <paramref name="cheb24"/> arrays. This static helper
+    /// allocates temporary working storage for each call.
+    /// </summary>
+    /// <param name="f">The function to approximate.</param>
+    /// <param name="a">Lower bound of the approximation interval.</param>
+    /// <param name="b">Upper bound of the approximation interval.</param>
+    /// <param name="cheb12">Array to receive the 12th-order Chebyshev coefficients (length at least 13).</param>
+    /// <param name="cheb24">Array to receive the 24th-order Chebyshev coefficients (length at least 25).</param>
     public static void Approximation(Func<double, double> f, double a, double b, double[] cheb12, double[] cheb24)
     {
       double[] fval = new double[25]; // working space
@@ -89,16 +114,17 @@ namespace Altaxo.Calc.Integration
                          0.1305261922200516 };
 
     /// <summary>
-    ///This function computes the 12-th order and 24-th order Chebyshev
-    ///approximations to f(x) on [a,b]
+    /// This function computes the 12th-order and 24th-order Chebyshev
+    /// approximations to <paramref name="f"/> on [<paramref name="a"/>, <paramref name="b"/>].
+    /// The routine follows the original QUADPACK/GSL implementation.
     /// </summary>
-    /// <param name="f"></param>
-    /// <param name="a"></param>
-    /// <param name="b"></param>
-    /// <param name="cheb12"></param>
-    /// <param name="cheb24"></param>
-    /// <param name="fval">working space, must be of length 25</param>
-    /// <param name="v">working space, must be of length 12</param>
+    /// <param name="f">Function to approximate.</param>
+    /// <param name="a">Lower bound of the interval.</param>
+    /// <param name="b">Upper bound of the interval.</param>
+    /// <param name="cheb12">Array to receive the 12th-order Chebyshev coefficients (length &gt;= 13).</param>
+    /// <param name="cheb24">Array to receive the 24th-order Chebyshev coefficients (length &gt;= 25).</param>
+    /// <param name="fval">Working space used for function evaluations; must be length 25.</param>
+    /// <param name="v">Working space used internally; must be length 12.</param>
     private static void gsl_integration_qcheb(Func<double, double> f, double a, double b, double[] cheb12, double[] cheb24,
       double[] fval, // working space, must be of length 25
       double[] v     // working space, must be of length 12

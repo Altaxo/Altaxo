@@ -39,10 +39,15 @@ namespace Altaxo.Calc.Interpolation
     [Altaxo.Serialization.Xml.XmlSerializationSurrogateFor(typeof(CardinalCubicSplineOptions), 0)]
     public class SerializationSurrogate0 : Altaxo.Serialization.Xml.IXmlSerializationSurrogate
     {
+      /// <summary>
+      /// Serialization surrogate for the initial CardinalCubicSplineOptions version.
+      /// </summary>
+      /// <inheritdoc/>
       public void Serialize(object obj, Altaxo.Serialization.Xml.IXmlSerializationInfo info)
       {
       }
 
+      /// <inheritdoc/>
       public object Deserialize(object? o, Altaxo.Serialization.Xml.IXmlDeserializationInfo info, object? parent)
       {
         return new CardinalCubicSplineOptions();

@@ -62,14 +62,14 @@ namespace Altaxo.Calc.Ode
 
 
       /// <summary>
-      /// The absolute tolerance. This is either an array of length 1 (in this case the absolute tolerances of all y values
-      /// are equal), or an array of the same size than y.
+      /// The absolute tolerance. This is either an array of length 1 (in this case the absolute tolerances of all <c>y</c> values
+      /// are equal), or an array of the same size as <c>y</c>.
       /// </summary>
       public double[] _absoluteTolerances;
 
       /// <summary>
-      /// The relativ tolerances. This is either an array of length 1 (in this case the relative tolerances of all y values
-      /// are equal), or an array of the same size than y.
+      /// The relative tolerances. This is either an array of length 1 (in this case the relative tolerances of all <c>y</c> values
+      /// are equal), or an array of the same size as <c>y</c>.
       /// </summary>
       public double[] _relativeTolerances;
 
@@ -78,6 +78,9 @@ namespace Altaxo.Calc.Ode
       /// </summary>
       public ErrorNorm _errorNorm;
 
+      /// <summary>
+      /// Specifies the iteration method used to compute the next solution point.
+      /// </summary>
       public OdeIterationMethod _iterationMethod;
 
       /// <summary>
@@ -125,12 +128,12 @@ namespace Altaxo.Calc.Ode
       #region Working variables
 
       /// <summary>
-      /// Contains the value of cn of the previous step (neccessary of error calculation of the higher order, see eq. 2.40 in [1]).
+      /// Contains the value of <c>c_n</c> of the previous step (necessary for error calculation of the higher order, see eq. 2.40 in [1]).
       /// </summary>
       private double _cn_previous;
 
       /// <summary>
-      /// Contains the value of cn of the current step (neccessary of error calculation of the higher order, see eq. 2.40 in [1]).
+      /// Contains the value of <c>c_n</c> of the current step (necessary for error calculation of the higher order, see eq. 2.40 in [1]).
       /// </summary>
       private double _cn_current;
 
@@ -196,52 +199,52 @@ namespace Altaxo.Calc.Ode
       private int _q;
 
       /// <summary>
-      /// The matrix to accomodate the jacobian. The type of matrix (dense, banded, sparse) is determined
-      /// in the function that calculated the jacobian (at first, null is provided for the matrix), which tells
+      /// The matrix to accommodate the Jacobian. The type of matrix (dense, banded, sparse) is determined
+      /// by the function that calculated the Jacobian (at first, <see langword="null"/> is provided for the matrix), which tells
       /// the function to instantiate a new matrix according to its requirements.
       /// </summary>
       private IMatrix<double>? _jacobian;
 
       /// <summary>
-      /// A matrix with the same structure than the jacobian matrix (<see cref="_jacobian"/>),
+      /// A matrix with the same structure as the Jacobian matrix (<see cref="_jacobian"/>),
       /// which is used for Newton iterations.
       /// </summary>
       private IMatrix<double>? _jacobian_aux;
 
       /// <summary>
-      /// Designates the number of iterations that were neccessary for convergence with a freshly calculated jacobian matrix.
+      /// Designates the number of iterations that were necessary for convergence with a freshly calculated Jacobian matrix.
       /// </summary>
       private int? _numberOfIterationsNeccessaryWithFreshJacobian;
 
 
       /// <summary>
-      /// The array to accomodate polynomial coefficients of either eq. 2.15 or eq. 2.49 in Byrne and Hindmarsh [1].
+      /// The array to accommodate polynomial coefficients of either eq. 2.15 or eq. 2.49 in Byrne and Hindmarsh [1].
       /// </summary>
       private double[] _l_array;
 
       /// <summary>
-      /// Auxillary array (length: MaxOrder+1) for calculation of polynomial coefficients.
+      /// Auxiliary array (length: MaxOrder+1) for calculation of polynomial coefficients.
       /// </summary>
       private double[] _aux1 = new double[12];
 
       /// <summary>
-      /// Auxillary array (length: MaxOrder+1) for calculation of polynomial coefficients.
+      /// Auxiliary array (length: MaxOrder+1) for calculation of polynomial coefficients.
       /// </summary>
       private double[] _aux2 = new double[12];
 
       /// <summary>
-      /// Used i) to accomodate the next y values in the iterator loop,
-      /// and ii) to accomodate interpolated output.
+      /// Used i) to accommodate the next y values in the iterator loop,
+      /// and ii) to accommodate interpolated output.
       /// </summary>
       private double[] _y_next;
 
       /// <summary>
-      /// Auxillary array of length <see cref="N"/> for the iteration loop.
+      /// Auxiliary array of length <see cref="N"/> for the iteration loop.
       /// </summary>
       private double[] _naux2;
 
       /// <summary>
-      /// Auxillary array of length <see cref="N"/> for the iteration loop.
+      /// Auxiliary array of length <see cref="N"/> for the iteration loop.
       /// </summary>
       private double[] _naux3;
 
@@ -265,7 +268,7 @@ namespace Altaxo.Calc.Ode
       private double _en_Q;
 
       /// <summary>
-      /// Contains the value of the term in square brackets in eqs. 2.40, 2.41 and 2.44 in [1], which is neccessary for error calculation of the next higher and lower order.
+      /// Contains the value of the term in square brackets in eqs. 2.40, 2.41 and 2.44 in [1], which is necessary for error calculation of the next higher and lower order.
       /// </summary>
       private double _onePlusProductTerm;
 
@@ -274,8 +277,8 @@ namespace Altaxo.Calc.Ode
       #region Nordsieck state
 
       /// <summary>
-      /// Saves the Nordsieck state (makes a copy from <see cref="_nordsieckArray"/> to <see cref="_nordsieckArray_h_Saved"/>),
-      /// and saves the value of the step size in <see cref="_nordsieckArray_h_Saved"/>).
+      /// Saves the Nordsieck state (makes a copy from <see cref="_nordsieckArray"/> to <see cref="_nordsieckArray_Saved"/>),
+      /// and saves the value of the step size in <see cref="_nordsieckArray_h_Saved"/>.
       /// </summary>
       public void SaveNordsieckState()
       {
@@ -299,7 +302,7 @@ namespace Altaxo.Calc.Ode
       }
 
       /// <summary>
-      /// Restores the Nordsieck state ( copies back from <see cref="_nordsieckArray_Saved"/> to <see cref="_nordsieckArray"/>,
+      /// Restores the Nordsieck state (copies back from <see cref="_nordsieckArray_Saved"/> to <see cref="_nordsieckArray"/>),
       /// restores <see cref="_nordsieckArray_h"/>, and also restores the history of x values in <see cref="_x"/>.
       /// </summary>
       public void RestoreNordsieckState()
@@ -336,10 +339,10 @@ namespace Altaxo.Calc.Ode
       }
 
       /// <summary>
-      /// Changes the size to a new value.
+      /// Changes the step size to a new value.
       /// </summary>
       /// <param name="newStepSize">The new value of the step size.</param>
-      /// <param name="newX">The new value of x (only to avoid rounding errors, you can provide null).</param>
+      /// <param name="newX">The new value of x (only to avoid rounding errors; you can provide <see langword="null"/>).</param>
       public void ChangeStepSize(double newStepSize, double? newX = null)
       {
         var scale = newStepSize / _nordsieckArray_h;
@@ -362,7 +365,7 @@ namespace Altaxo.Calc.Ode
       /// Calculates a first guess of the new Nordsieck state from the old state, and
       /// advances the <see cref="_x"/> array to the new point.
       /// </summary>
-      /// <remarks>See equation 2.7 in Byrne and Hindmarsh [1]</remarks>
+      /// <remarks>See equation 2.7 in Byrne and Hindmarsh [1].</remarks>
       public void Predict()
       {
         int q = _q;
@@ -386,10 +389,12 @@ namespace Altaxo.Calc.Ode
       /// <summary>
       /// Corrects the Nordsieck array using the corrected y values and the l array. See eq. 2.19 in [1].
       /// </summary>
-      /// <param name="y_corrected">The y corrected.</param>
-      /// <param name="l_array">The l array.</param>
-      /// <remarks>To calculate the difference between iterated values and the first guess, the
-      /// array y_corrected contains the iterated values, and the array _nordsieckArray[0] contains the first guess.</remarks>
+      /// <param name="y_corrected">The corrected y values.</param>
+      /// <param name="l_array">The coefficients array <c>l</c>.</param>
+      /// <remarks>
+      /// To calculate the difference between iterated values and the first guess, the array <paramref name="y_corrected"/> contains the iterated values,
+      /// and the array <c>_nordsieckArray[0]</c> contains the first guess.
+      /// </remarks>
       public void Correct(ref double[] y_corrected, double[] l_array)
       {
         var yn0 = _nordsieckArray[0];
@@ -440,7 +445,7 @@ namespace Altaxo.Calc.Ode
       /// Decreases the order by 1. This method scales the Nordsieck array by the polynomial coefficients
       /// of eq. 2.49 in Byrne and Hindmarsh [1].
       /// </summary>
-      /// <param name="l_array">An auxillary array to accomodate the polynomial coefficients of eq. 2.49 in [1].</param>
+      /// <param name="l_array">An auxiliary array to accommodate the polynomial coefficients of eq. 2.49 in [1].</param>
       public void DecreaseOrderBy1(double[] l_array)
       {
         // Correction of the Nordsieck array is neccessary only if q >= 3
@@ -485,11 +490,13 @@ namespace Altaxo.Calc.Ode
 
 
       /// <summary>
-      /// Computes the coefficients l. l is used to update the Nordsieck vector if
-      /// the error vector is known: z_n = z_n0 + e_n * l with e_n = y_n - y_n0.
+      /// Computes the coefficients <c>l</c>. <c>l</c> is used to update the Nordsieck vector if
+      /// the error vector is known: <c>z_n = z_n0 + e_n * l</c> with <c>e_n = y_n - y_n0</c>.
       /// </summary>
-      /// <param name="l_array">The array to store the result (index 0.. q).</param>
-      /// <remarks>See equations 2.15 - 2.20 in Byrne and Hindmarsh [1], and recursion rule in the text below eq. 2.20..</remarks>
+      /// <param name="l_array">The array to store the result (index 0..q).</param>
+      /// <remarks>
+      /// See equations 2.15 - 2.20 in Byrne and Hindmarsh [1], and the recursion rule in the text below eq. 2.20.
+      /// </remarks>
       public void ComputeCoefficients_L(double[] l_array)
       {
         var h = _x[0].Step;
@@ -509,9 +516,10 @@ namespace Altaxo.Calc.Ode
       }
 
       /// <summary>
-      /// Calculates the product of the differences of previous x (the term in square brackets in eqs. 2.40, 2.41 and 2.44 in Byrne and Hindmarsh [1]).
+      /// Calculates the product of the ratios of differences of previous <c>x</c> values
+      /// (the term in square brackets in eqs. 2.40, 2.41 and 2.44 in Byrne and Hindmarsh [1]).
       /// </summary>
-      /// <returns></returns>
+      /// <returns>The value of the product term.</returns>
       public double CalculateOnePlusProducts_tn()
       {
         if (_q == 1)
@@ -629,9 +637,11 @@ namespace Altaxo.Calc.Ode
       /// <summary>
       /// Evaluates the next solution point.
       /// </summary>
-      /// <param name="nextMandatoryX">The next mandatory value of the independent variable x. If there
-      /// is no next mandatory value, you should provide <see cref="double.PositiveInfinity"/> instead.</param>
-      /// <exception cref="InvalidOperationException">Ode does not converge</exception>
+      /// <param name="nextMandatoryX">
+      /// The next mandatory value of the independent variable <c>x</c>. If there is no next mandatory value,
+      /// provide <see cref="double.PositiveInfinity"/>.
+      /// </param>
+      /// <exception cref="InvalidOperationException">The ODE does not converge.</exception>
       public void EvaluateNextSolutionPoint(double? nextMandatoryX)
       {
         AdjustNextStepSizeForMandatorySolutionPoint(nextMandatoryX);
@@ -680,7 +690,7 @@ namespace Altaxo.Calc.Ode
 
                 var ydexp = -yexp;
                 var ydcurr = _nordsieckArray[1][0] / _nordsieckArray_h;
-                System.Diagnostics.Debug.Write($"Q={_q} H={_x[0].Step} X={X}, YD={ydev}");
+                System.Diagnostics.Debug.Write($"Q={_q} H={_x[0].Step} X={X}, YD={ydev}"); // for monitoring: log deviations
                 for (int ii = 0; ii <= _q; ++ii)
                 {
                   System.Diagnostics.Debug.Write($" Y{ii}={_nordsieckArray[ii][0] * Faculty(ii) / Math.Pow(_nordsieckArray_h, ii)}");
@@ -705,10 +715,11 @@ namespace Altaxo.Calc.Ode
 
       /// <summary>
       /// Makes small adjustments to the next step size in order to exactly hit the next mandatory solution point.
-      /// Of course, no adjustments are being made if the mandatory point is too far away or does not exist at all.
+      /// Of course, no adjustments are made if the mandatory point is too far away or does not exist at all.
       /// </summary>
-      /// <param name="nextMandatoryX">The next mandatory x value (or null if no such point exist).</param>
-      /// <remarks>The two members <see cref="_nordsieckArray_h"/> and <see cref="_nordsieckArray_x"/> are adjusted if neccessary.
+      /// <param name="nextMandatoryX">The next mandatory <c>x</c> value (or <see langword="null"/> if no such point exists).</param>
+      /// <remarks>
+      /// The two members <see cref="_nordsieckArray_h"/> and <see cref="_nordsieckArray_x"/> are adjusted if necessary.
       /// </remarks>
       private void AdjustNextStepSizeForMandatorySolutionPoint(double? nextMandatoryX)
       {
@@ -740,11 +751,13 @@ namespace Altaxo.Calc.Ode
       }
 
       /// <summary>
-      /// Gets interpolated y values. The independent variable x must lie inbetween the x of the previous step and the current step.
+      /// Gets interpolated <c>y</c> values. The independent variable <c>x</c> must lie between the <c>x</c> of the previous step and the current step.
       /// </summary>
-      /// <param name="x">The independent variable x.</param>
-      /// <returns>Array of interpolated y values. The elements of the array must not be changed, and are
-      /// intended for immediate use only (because they will be changed at the next step).</returns>
+      /// <param name="x">The independent variable <c>x</c>.</param>
+      /// <returns>
+      /// Array of interpolated <c>y</c> values. The elements of the array must not be changed and are intended for immediate use only
+      /// (because they will be changed at the next step).
+      /// </returns>
       public double[] GetInterpolatedY_volatile(double x)
       {
         var r = (x - _x[0].X) / _nordsieckArray_h;
@@ -766,9 +779,7 @@ namespace Altaxo.Calc.Ode
       }
 
       /// <summary>
-      /// Compares the errors at the current order q, at order (q-1) and at order (q+1), using the proposed step
-      /// sizes at these orders. The order which maximizes the step size is then chosen,
-      /// and the step size is adjusted accordingly.
+      /// Optimizes the step size so that the next mandatory solution point will be reached without excessively large or small step sizes.
       /// </summary>
       public void AdjustStepSizeAndOrder(double? nextMandatoryX)
       {
@@ -864,9 +875,9 @@ namespace Altaxo.Calc.Ode
       }
 
       /// <summary>
-      /// Does some iteration steps. At the end, the corrected y-values are stored in <see cref="_aux1"/>.
+      /// Performs Newton iterations using the Jacobian.
       /// </summary>
-      /// <returns>True if the iteration has converged; otherwise, false.</returns>
+      /// <returns><see langword="true"/> if the iteration has converged; otherwise, <see langword="false"/>.</returns>
       public bool IterationUsingJacobian()
       {
         const int MaxNumberOfIterations = 10;
@@ -939,7 +950,7 @@ namespace Altaxo.Calc.Ode
           {
             // either this is no convergence then, or the first correction was already so small, that there could be no improvement in
             // the second correction
-            // we have to check wheter the first correction was an considerable improvement
+            // we have to check whether the first correction was a considerable improvement
 
             if (l2NormOfFirstCorrection < L2Norm(u) * 1E-15)
               return true;  // l2Norm of first correction was already very small, so there was already convergence
@@ -985,9 +996,9 @@ namespace Altaxo.Calc.Ode
       /// <summary>
       /// Does some iteration steps. This iteration method does not use the Jacobian for Newton-Raphson steps,
       /// instead a functional iteration is executed. This takes much longer to reach the same degree of accuracy.
-      /// At the end, the corrected y-values are stored in <see cref="_aux1"/>.
+      /// At the end, the corrected <c>y</c> values are stored in <see cref="_aux1"/>.
       /// </summary>
-      /// <returns>True if the iteration has converged; otherwise, false.</returns>
+      /// <returns><see langword="true"/> if the iteration has converged; otherwise, <see langword="false"/>.</returns>
       public bool IterationUsingFunctionalIteration()
       {
         double l2NormOfThisCorrection;
@@ -1059,12 +1070,13 @@ namespace Altaxo.Calc.Ode
 
       /// <summary>
       /// Gets the proposed step size factor (unclamped). This unclamped version should only be used for
-      /// comparison of the errors of order q-1, q, and q+1. Use the clamped version for step size control.
+      /// comparison of the errors of order <c>q-1</c>, <c>q</c>, and <c>q+1</c>. Use the clamped version for step-size control.
       /// </summary>
       /// <param name="relativeError">The relative error.</param>
-      /// <param name="q">The order q.</param>
-      /// <returns>The factor, by which the step size should be adjusted to reach the accuraccy goal. A safety
-      /// factor is already included.</returns>
+      /// <param name="q">The order.</param>
+      /// <returns>
+      /// The factor by which the step size should be adjusted to reach the accuracy goal. A safety factor is already included.
+      /// </returns>
       public virtual double GetProposedStepSizeFactorUnclamped(double relativeError, int q)
       {
         double result = Math.Pow(relativeError * ErrorSafetyFactor, -1.0 / (q + 1));
@@ -1073,12 +1085,14 @@ namespace Altaxo.Calc.Ode
 
       /// <summary>
       /// Gets the proposed step size factor (clamped). This clamped version should be used for step size control.
-      /// For comparison of the errors of order q-1, q, and q+1, use the unclamped version.
+      /// For comparison of the errors of order <c>q-1</c>, <c>q</c>, and <c>q+1</c>, use the unclamped version.
       /// </summary>
       /// <param name="relativeError">The relative error.</param>
-      /// <param name="q">The order q.</param>
-      /// <returns>The factor, by which the step size should be adjusted to reach the accuraccy goal, clamped to a minimum and a maximum allowed factor. A safety
-      /// factor is already included.</returns>
+      /// <param name="q">The order.</param>
+      /// <returns>
+      /// The factor by which the step size should be adjusted to reach the accuraccy goal, clamped to a minimum and a maximum allowed factor. A safety
+      /// factor is already included.
+      /// </returns>
       public virtual double GetProposedStepSizeFactorClamped(double relativeError, int q)
       {
         return Math.Max(MinStepSizeFactor, Math.Min(MaxStepSizeFactor, GetProposedStepSizeFactorUnclamped(relativeError, q)));
@@ -1086,10 +1100,11 @@ namespace Altaxo.Calc.Ode
 
 
       /// <summary>
-      /// Gets the initial step size. The absolute and relative tolerances must be set before the call to this function.
+      /// Gets the initial step size. The absolute and relative tolerances must be set before calling this function.
       /// </summary>
+      /// <param name="order">The order used for the initial step-size estimate.</param>
       /// <returns>The initial step size in the context of the absolute and relative tolerances.</returns>
-      /// <exception cref="InvalidOperationException">Either absolute tolerance or relative tolerance is required to be &gt; 0</exception>
+      /// <exception cref="InvalidOperationException">Either absolute tolerance or relative tolerance is required to be &gt; 0.</exception>
       public virtual double GetInitialStepSize(int order)
       {
         var n = N;
@@ -1132,16 +1147,22 @@ namespace Altaxo.Calc.Ode
 
 
       /// <summary>
-      /// Calculates the relative error En for the current order q. See eq. 2.41 in [1].
+      /// Calculates the relative error <c>E_n</c> for the current order <c>q</c>. See eq. 2.41 in [1].
       /// </summary>
-      /// <param name="cn">At return, contains the value of cn of the current step (neccessary of error calculation of the higher order, see eq. 2.40 in [1]).</param>
-      /// <param name="onePlusProductTerm">At return, contains the value of the term in square brackets in eqs. 2.40, 2.41 and 2.44 in [1], which is neccessary for error calculation of the next higher and lower order.</param>
-      /// <returns>The error estimate for the current order q.</returns>
-      /// <remarks>This function must be called after <see cref="IterationUsingJacobian"/> is called, and before
-      /// <see cref="Correct(ref double[], double[])"/> is called. It is assumed that the 0th element of the <see cref="_nordsieckArray_Saved"/>
-      /// contains the y of the previous step, and the array <see cref="_y_next"/> contains the corrected (iterated) y of the current step.
-      /// The array <see cref="_en_current"/> must contain the difference between predicted and corrected y of the current step.
-      /// Eq. 2.41 in [1] calculates the absolute error, but here we calculate the relative error.
+      /// <param name="cn">
+      /// On return, contains the value of <c>c_n</c> of the current step (necessary for error calculation of the higher order; see eq. 2.40 in [1]).
+      /// </param>
+      /// <param name="onePlusProductTerm">
+      /// On return, contains the value of the term in square brackets in eqs. 2.40, 2.41 and 2.44 in [1], which is necessary for error calculation
+      /// of the next higher and lower order.
+      /// </param>
+      /// <returns>The error estimate for the current order <c>q</c>.</returns>
+      /// <remarks>
+      /// This function must be called after <see cref="IterationUsingJacobian"/> is called, and before <see cref="Correct(ref double[], double[])"/> is called.
+      /// It is assumed that the 0th element of the <see cref="_nordsieckArray_Saved"/> contains the <c>y</c> of the previous step, and the array
+      /// <see cref="_y_next"/> contains the corrected (iterated) <c>y</c> of the current step.
+      /// The array <see cref="_en_current"/> must contain the difference between the predicted and corrected <c>y</c> of the current step.
+      /// Eq. 2.41 in [1] calculates the absolute error, but here the relative error is calculated.
       /// </remarks>
       public double Calculate_En_Q(out double cn, out double onePlusProductTerm)
       {
@@ -1196,7 +1217,7 @@ namespace Altaxo.Calc.Ode
           ErrorNorm.InfinityNorm => GetRelativeError_InfinityNorm(_en_current, _en_previous, Qn),
           _ => throw new NotImplementedException()
         };
-
+        
 
 
         return Math.Abs(prefactor) * result;

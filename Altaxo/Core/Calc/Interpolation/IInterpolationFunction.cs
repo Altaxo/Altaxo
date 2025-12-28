@@ -28,6 +28,11 @@ namespace Altaxo.Calc.Interpolation
   /// Gives an interpolation function that maps each x to exactly one y value.
   /// Extends <see cref="IInterpolationCurve"/> with the function mapping capability.
   /// </summary>
+  /// <remarks>
+  /// Implementations represent single-valued interpolation functions: for each
+  /// input x the function returns exactly one y. Use <see cref="IInterpolationCurve"/>
+  /// when a parametric curve representation (x(u), y(u)) is required.
+  /// </remarks>
   public interface IInterpolationFunction : IInterpolationCurve
   {
     /// <summary>
@@ -35,6 +40,10 @@ namespace Altaxo.Calc.Interpolation
     /// </summary>
     /// <param name="x">The x value (value of the independent variable).</param>
     /// <returns>The y value at the given x value.</returns>
+    /// <remarks>
+    /// Implementations are expected to have been initialized by calling
+    /// <see cref="IInterpolationCurve.Interpolate(System.Collections.Generic.IReadOnlyList{double}, System.Collections.Generic.IReadOnlyList{double})"/> before use.
+    /// </remarks>
     double GetYOfX(double x);
   }
 }

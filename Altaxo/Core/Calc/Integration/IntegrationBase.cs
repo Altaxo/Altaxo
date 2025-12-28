@@ -52,6 +52,10 @@ using System.Text;
 
 namespace Altaxo.Calc.Integration
 {
+  /// <summary>
+  /// A collection of GSL numeric constants used by the integration routines.
+  /// Values are mapped from the GSL library for double and float limits and epsilons.
+  /// </summary>
   public class GSL_CONST
   {
     public const double GSL_DBL_EPSILON = 2.2204460492503131e-16;
@@ -111,20 +115,61 @@ namespace Altaxo.Calc.Integration
     public const double GSL_LOG_SFLT_EPSILON = (-7.6246189861593985e+00);
   }
 
+  /// <summary>
+  /// Workspace for adaptive integration routines.
+  /// </summary>
   public class gsl_integration_workspace
   {
+    /// <summary>
+    /// Maximum number of subintervals allowed in the workspace.
+    /// </summary>
     public int limit;
+
     private int size;
+
+    /// <summary>
+    /// Index used in ordering error estimates.
+    /// </summary>
     public int nrmax;
+
+    /// <summary>
+    /// Index of current interval with largest error.
+    /// </summary>
     public int i;
+
+    /// <summary>
+    /// Maximum subdivision level reached so far.
+    /// </summary>
     public int maximum_level;
+
+    /// <summary>
+    /// Array of left endpoints of intervals in the workspace.
+    /// </summary>
     public double[] alist;
+
+    /// <summary>
+    /// Array of right endpoints of intervals in the workspace.
+    /// </summary>
     public double[] blist;
+
     private double[] rlist;
+
+    /// <summary>
+    /// Array of error estimates for each interval.
+    /// </summary>
     public double[] elist;
+
     private int[] order;
+
+    /// <summary>
+    /// Array of subdivision levels for each interval.
+    /// </summary>
     public int[] level;
 
+    /// <summary>
+    /// Create a new workspace with capacity <paramref name="n"/> intervals.
+    /// </summary>
+    /// <param name="n">Number of intervals to allocate for the workspace. Must be positive.</param>
     public gsl_integration_workspace(int n)
     {
       if (n == 0)
@@ -141,6 +186,12 @@ namespace Altaxo.Calc.Integration
       maximum_level = 0;
     }
 
+    /// <summary>
+    /// Initialize the workspace with the initial integration interval [a,b].
+    /// Resets internal counters and sets the first interval.
+    /// </summary>
+    /// <param name="a">Left endpoint of the integration interval.</param>
+    /// <param name="b">Right endpoint of the integration interval.</param>
     public void initialise(double a, double b)
     {
       size = 0;
@@ -156,12 +207,21 @@ namespace Altaxo.Calc.Integration
       maximum_level = 0;
     }
 
+    /// <summary>
+    /// Reset the <see cref="nrmax"/> counter and set <see cref="i"/> to the interval
+    /// index indicated by <c>order[0]</c>.
+    /// </summary>
     public void reset_nrmax()
     {
       nrmax = 0;
       i = order[0];
     }
 
+    /// <summary>
+    /// Store the initial integral result and its estimated absolute error.
+    /// </summary>
+    /// <param name="result">Computed integral over the initial interval.</param>
+    /// <param name="error">Estimated absolute error for <paramref name="result"/>.</param>
     public void set_initial_result(
                          double result, double error)
     {
@@ -170,8 +230,15 @@ namespace Altaxo.Calc.Integration
       elist[0] = error;
     }
 
+    /// <summary>
+    /// Retrieve the interval data for the current index <see cref="i"/>.
+    /// </summary>
+    /// <param name="a">Left endpoint of the interval.</param>
+    /// <param name="b">Right endpoint of the interval.</param>
+    /// <param name="r">Integral estimate for the interval.</param>
+    /// <param name="e">Error estimate for the interval.</param>
     public void
-retrieve(out double a, out double b, out double r, out double e)
+  retrieve(out double a, out double b, out double r, out double e)
     {
       a = alist[i];
       b = blist[i];
@@ -179,6 +246,10 @@ retrieve(out double a, out double b, out double r, out double e)
       e = elist[i];
     }
 
+    /// <summary>
+    /// Check whether the current interval can still be subdivided further based on the maximum level.
+    /// </summary>
+    /// <returns><c>true</c> if the interval level is less than <see cref="maximum_level"/>; otherwise <c>false</c>.</returns>
     public bool large_interval()
     {
       if (level[i] < maximum_level)
@@ -192,24 +263,31 @@ retrieve(out double a, out double b, out double r, out double e)
     }
 
     /* integration/append.c
- *
- * Copyright (C) 1996, 1997, 1998, 1999, 2000, 2001 Brian Gough
- *
- * This program is free software; you can redistribute it and/or modify
- * it under the terms of the GNU General Public License as published by
- * the Free Software Foundation; either version 2 of the License, or (at
- * your option) any later version.
- *
- * This program is distributed in the hope that it will be useful, but
- * WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
- * General Public License for more details.
- *
- * You should have received a copy of the GNU General Public License
- * along with this program; if not, write to the Free Software
- * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
- */
+   *
+   * Copyright (C) 1996, 1997, 1998, 1999, 2000, 2001 Brian Gough
+   *
+   * This program is free software; you can redistribute it and/or modify
+   * it under the terms of the GNU General Public License as published by
+   * the Free Software Foundation; either version 2 of the License, or (at
+   * your option) any later version.
+   *
+   * This program is distributed in the hope that it will be useful, but
+   * WITHOUT ANY WARRANTY; without even the implied warranty of
+   * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
+   * General Public License for more details.
+   *
+   * You should have received a copy of the GNU General Public License
+   * along with this program; if not, write to the Free Software
+   * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
+   */
 
+    /// <summary>
+    /// Append an interval with its area and error estimate to the workspace list.
+    /// </summary>
+    /// <param name="a1">Left endpoint of the new interval.</param>
+    /// <param name="b1">Right endpoint of the new interval.</param>
+    /// <param name="area1">Integral estimate for the new interval.</param>
+    /// <param name="error1">Error estimate for the new interval.</param>
     public void append_interval(double a1, double b1, double area1, double error1)
     {
       int i_new = size;
@@ -224,6 +302,10 @@ retrieve(out double a, out double b, out double r, out double e)
       size++;
     }
 
+    /// <summary>
+    /// Increase the <see cref="nrmax"/> counter searching for an interval that can still be subdivided.
+    /// </summary>
+    /// <returns><c>true</c> if an interval with level less than <see cref="maximum_level"/> was found; otherwise <c>false</c>.</returns>
     public bool increase_nrmax()
     {
       int k;
@@ -257,6 +339,10 @@ retrieve(out double a, out double b, out double r, out double e)
       return false;
     }
 
+    /// <summary>
+    /// Sum the integral estimates stored in the workspace.
+    /// </summary>
+    /// <returns>The sum of the interval integral estimates.</returns>
     public double sum_results()
     {
       int n = size;
@@ -272,6 +358,18 @@ retrieve(out double a, out double b, out double r, out double e)
       return result_sum;
     }
 
+    /// <summary>
+    /// Update the workspace by replacing the interval with index <see cref="i"/> with two subintervals.
+    /// Calls <see cref="qpsrt"/> afterwards to maintain ordering of errors.
+    /// </summary>
+    /// <param name="a1">Left endpoint of the first new subinterval.</param>
+    /// <param name="b1">Right endpoint of the first new subinterval.</param>
+    /// <param name="area1">Integral estimate for the first new subinterval.</param>
+    /// <param name="error1">Error estimate for the first new subinterval.</param>
+    /// <param name="a2">Left endpoint of the second new subinterval.</param>
+    /// <param name="b2">Right endpoint of the second new subinterval.</param>
+    /// <param name="area2">Integral estimate for the second new subinterval.</param>
+    /// <param name="error2">Error estimate for the second new subinterval.</param>
     public void update(double a1, double b1, double area1, double error1,
              double a2, double b2, double area2, double error2)
     {
@@ -406,24 +504,27 @@ retrieve(out double a, out double b, out double r, out double e)
     }
 
     /* integration/ptsort.c
- *
- * Copyright (C) 1996, 1997, 1998, 1999, 2000 Brian Gough
- *
- * This program is free software; you can redistribute it and/or modify
- * it under the terms of the GNU General Public License as published by
- * the Free Software Foundation; either version 2 of the License, or (at
- * your option) any later version.
- *
- * This program is distributed in the hope that it will be useful, but
- * WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
- * General Public License for more details.
- *
- * You should have received a copy of the GNU General Public License
- * along with this program; if not, write to the Free Software
- * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
- */
+   *
+   * Copyright (C) 1996, 1997, 1998, 1999, 2000 Brian Gough
+   *
+   * This program is free software; you can redistribute it and/or modify
+   * it under the terms of the GNU General Public License as published by
+   * the Free Software Foundation; either version 2 of the License, or (at
+   * your option) any later version.
+   *
+   * This program is distributed in the hope that it will be useful, but
+   * WITHOUT ANY WARRANTY; without even the implied warranty of
+   * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
+   * General Public License for more details.
+   *
+   * You should have received a copy of the GNU General Public License
+   * along with this program; if not, write to the Free Software
+   * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
+   */
 
+    /// <summary>
+    /// Sort the results in descending order of error estimates and set the current index accordingly.
+    /// </summary>
     public void sort_results()
     {
       int i;
@@ -463,21 +564,46 @@ retrieve(out double a, out double b, out double r, out double e)
     }
   }
 
+  /// <summary>
+  /// Table used by the extrapolation routine qelg.
+  /// </summary>
   public class extrapolation_table
   {
+    /// <summary>
+    /// Number of elements currently in the extrapolation table.
+    /// </summary>
     public int n;
+
+    /// <summary>
+    /// Working storage for extrapolated values.
+    /// </summary>
     public double[] rlist2 = new double[52];
+
+    /// <summary>
+    /// Number of results stored for the res3la sequence.
+    /// </summary>
     public int nres;
+
+    /// <summary>
+    /// Last three results used for error estimation.
+    /// </summary>
     public double[] res3la = new double[3];
 
+    /// <summary>
+    /// Reset the extrapolation table to its initial empty state.
+    /// </summary>
     public void initialise_table()
     {
       n = 0;
       nres = 0;
     }
 
+    /// <summary>
+    /// Append a new value to the extrapolation table.
+    /// </summary>
+    /// <param name="y">Value to append.</param>
     public void
-append_table(double y)
+  append_table(double y)
     {
       int n;
       n = this.n;
@@ -485,8 +611,14 @@ append_table(double y)
       this.n++;
     }
 
+    /// <summary>
+    /// Perform the qelg extrapolation on the table and compute an improved result and error estimate.
+    /// Implements the algorithm used by QUADPACK/GSL to accelerate convergence when possible.
+    /// </summary>
+    /// <param name="result">Extrapolated result (output).</param>
+    /// <param name="abserr">Estimated absolute error for <paramref name="result"/> (output).</param>
     public void
-qelg(out double result, out double abserr)
+  qelg(out double result, out double abserr)
     {
       double[] epstab = rlist2;
       int n = this.n - 1;
@@ -654,20 +786,37 @@ qelg(out double result, out double abserr)
     }
   };
 
+  /// <summary>
+  /// Placeholder for utility methods related to GSL integration.
+  /// Currently empty but kept for API compatibility.
+  /// </summary>
   public class GSL_UTILS
   {
   }
 
+  /// <summary>
+  /// Delegate that represents a quadrature rule used by the integration routines.
+  /// </summary>
+  /// <param name="f">Function to integrate.</param>
+  /// <param name="a">Left endpoint of the interval to integrate.</param>
+  /// <param name="b">Right endpoint of the interval to integrate.</param>
+  /// <param name="result">Integral estimate over [a,b] (output).</param>
+  /// <param name="abserr">Estimated absolute error for <paramref name="result"/> (output).</param>
+  /// <param name="defabs">Description of absolute error component (output).</param>
+  /// <param name="resabs">Absolute result for the rule (output).</param>
   public delegate void gsl_integration_rule(
     Func<double, double> f, double a, double b,
     out double result, out double abserr,
                                   out double defabs, out double resabs);
 
+  /// <summary>
+  /// Base class for integration routines providing shared helpers and the qags adaptive algorithm.
+  /// </summary>
   public class IntegrationBase
   {
     /// <summary>
-    /// Returns the default setting of the debug flag in the derived classes. Default is false, which means that
-    /// errors due to failed integration will not cause an exception.
+    /// Returns the default setting of the debug flag in the derived classes.
+    /// Default is false, which means that errors due to failed integration will not cause an exception.
     /// </summary>
     public static bool DefaultDebugFlag
     {
@@ -677,12 +826,25 @@ qelg(out double result, out double abserr)
       }
     }
 
+    /// <summary>
+    /// Test whether the computed result is consistent with a positive integrand based on the absolute result.
+    /// </summary>
+    /// <param name="result">Computed integral result.</param>
+    /// <param name="resabs">Absolute result used for the positivity check.</param>
+    /// <returns><c>true</c> when the result magnitude is close to the absolute result, indicating a positive integrand.</returns>
     protected static bool test_positivity(double result, double resabs)
     {
       bool status = (Math.Abs(result) >= (1 - 50 * GSL_CONST.GSL_DBL_EPSILON) * resabs);
       return status;
     }
 
+    /// <summary>
+    /// Determine whether a subinterval has become too small for further reliable subdivision.
+    /// </summary>
+    /// <param name="a1">Left endpoint of the current subinterval.</param>
+    /// <param name="a2">Midpoint between the left and right endpoints.</param>
+    /// <param name="b2">Right endpoint of the current subinterval.</param>
+    /// <returns><c>true</c> if the subinterval is considered too small; otherwise <c>false</c>.</returns>
     protected static bool subinterval_too_small(double a1, double a2, double b2)
     {
       const double e = GSL_CONST.GSL_DBL_EPSILON;
@@ -709,6 +871,12 @@ qelg(out double result, out double abserr)
         precision mode unless you compile a separate version of the
         library with HAVE_EXTENDED_PRECISION_REGISTERS turned off. */
 
+    /// <summary>
+    /// Coerce a value to double precision. Presently implemented as identity.
+    /// Use sparingly where forced rounding to double precision is required.
+    /// </summary>
+    /// <param name="x">Value to coerce.</param>
+    /// <returns>The coerced double value.</returns>
     protected static double GSL_COERCE_DBL(double x)
     {
       return (x);
@@ -716,6 +884,21 @@ qelg(out double result, out double abserr)
 
     /* Main integration function */
 
+    /// <summary>
+    /// Adaptive integration routine based on the GSL/QUADPACK qags algorithm.
+    /// </summary>
+    /// <param name="f">Function to integrate.</param>
+    /// <param name="a">Left endpoint of the integration interval.</param>
+    /// <param name="b">Right endpoint of the integration interval.</param>
+    /// <param name="epsabs">Absolute error tolerance.</param>
+    /// <param name="epsrel">Relative error tolerance.</param>
+    /// <param name="limit">Maximum number of subintervals/iterations allowed.</param>
+    /// <param name="workspace">Workspace object to store subintervals and errors.</param>
+    /// <param name="result">Computed integral result (output).</param>
+    /// <param name="abserr">Estimated absolute error for <paramref name="result"/> (output).</param>
+    /// <param name="q">Quadrature rule delegate used to evaluate subintervals.</param>
+    /// <param name="bDebug">When <c>true</c> additional debug information will be included in thrown errors.</param>
+    /// <returns>A <see cref="GSL_ERROR"/> when an error occurred, otherwise <c>null</c> on success.</returns>
     protected static GSL_ERROR?
     qags(Func<double, double> f,
           double a, double b,

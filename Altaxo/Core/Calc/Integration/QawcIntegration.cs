@@ -39,7 +39,7 @@ namespace Altaxo.Calc.Integration
   /// the point x = c or is close to it then a special 25-point modified Clenshaw-Curtis rule
   /// is used to control the singularity. Further away from the singularity the algorithm
   /// uses an ordinary 15-point Gauss-Kronrod integration rule.
-  /// <para>Ref.: Gnu Scientific library reference manual (<see href="http://www.gnu.org/software/gsl/" />)</para>
+  /// <para>Ref.: GNU Scientific Library reference manual (<see href="http://www.gnu.org/software/gsl/" />)</para>
   /// </remarks>
   public class QawcIntegration : IntegrationBase
   {
@@ -57,7 +57,7 @@ namespace Altaxo.Calc.Integration
     }
 
     /// <summary>
-    /// Creates an instance of this integration class with specified integration rule and specified debug flag setting.
+    /// Creates an instance of this integration class with the specified debug flag setting.
     /// </summary>
     /// <param name="debug">Setting of the debug flag for this instance. If the integration fails or the specified accuracy
     /// is not reached, an exception is thrown if the debug flag is set to true. If set to false, the return value of the integration
@@ -67,6 +67,21 @@ namespace Altaxo.Calc.Integration
       _debug = debug;
     }
 
+    /// <summary>
+    /// Compute the Cauchy principal value of the integral of <paramref name="f"/> over the interval (<paramref name="a"/>, <paramref name="b"/>)
+    /// with a singularity at <paramref name="c"/>. This overload allows specifying the debug flag for the call.
+    /// </summary>
+    /// <param name="f">Function to integrate.</param>
+    /// <param name="a">Lower integration limit.</param>
+    /// <param name="b">Upper integration limit.</param>
+    /// <param name="c">Location of the integrable singularity (must not equal <paramref name="a"/> or <paramref name="b"/>).</param>
+    /// <param name="epsabs">Absolute error tolerance. Set to zero to rely on relative tolerance.</param>
+    /// <param name="epsrel">Relative error tolerance. Set to zero to rely on absolute tolerance.</param>
+    /// <param name="limit">Maximum number of subintervals allowed.</param>
+    /// <param name="debug">Debug flag for this function call. If true, exceptions may be thrown on failure.</param>
+    /// <param name="result">On return, contains the integration result.</param>
+    /// <param name="abserr">On return, contains the estimated absolute error of the result.</param>
+    /// <returns>Null if successful; otherwise a <see cref="GSL_ERROR"/> describing the error.</returns>
     public GSL_ERROR? Integrate(Func<double, double> f,
        double a, double b, double c,
        double epsabs, double epsrel,
@@ -80,6 +95,20 @@ namespace Altaxo.Calc.Integration
       return gsl_integration_qawc(f, a, b, c, epsabs, epsrel, limit, _workSpace, out result, out abserr, debug);
     }
 
+    /// <summary>
+    /// Compute the Cauchy principal value of the integral of <paramref name="f"/> over the interval (<paramref name="a"/>, <paramref name="b"/>)
+    /// with a singularity at <paramref name="c"/> using the instance's debug setting.
+    /// </summary>
+    /// <param name="f">Function to integrate.</param>
+    /// <param name="a">Lower integration limit.</param>
+    /// <param name="b">Upper integration limit.</param>
+    /// <param name="c">Location of the integrable singularity (must not equal <paramref name="a"/> or <paramref name="b"/>).</param>
+    /// <param name="epsabs">Absolute error tolerance. Set to zero to rely on relative tolerance.</param>
+    /// <param name="epsrel">Relative error tolerance. Set to zero to rely on absolute tolerance.</param>
+    /// <param name="limit">Maximum number of subintervals allowed.</param>
+    /// <param name="result">On return, contains the integration result.</param>
+    /// <param name="abserr">On return, contains the estimated absolute error of the result.</param>
+    /// <returns>Null if successful; otherwise a <see cref="GSL_ERROR"/> describing the error.</returns>
     public GSL_ERROR? Integrate(Func<double, double> f,
          double a, double b, double c,
           double epsabs, double epsrel,
@@ -89,6 +118,22 @@ namespace Altaxo.Calc.Integration
       return Integrate(f, a, b, c, epsabs, epsrel, limit, _debug, out result, out abserr);
     }
 
+    /// <summary>
+    /// Static helper that computes the Cauchy principal value of the integral of <paramref name="f"/> over (<paramref name="a"/>, <paramref name="b"/>)
+    /// with a singularity at <paramref name="c"/>, using a supplied temporary storage object to reuse the algorithm instance.
+    /// </summary>
+    /// <param name="f">Function to integrate.</param>
+    /// <param name="a">Lower integration limit.</param>
+    /// <param name="b">Upper integration limit.</param>
+    /// <param name="c">Location of the integrable singularity.</param>
+    /// <param name="epsabs">Absolute error tolerance.</param>
+    /// <param name="epsrel">Relative error tolerance.</param>
+    /// <param name="limit">Maximum number of subintervals.</param>
+    /// <param name="debug">Debug flag for this call.</param>
+    /// <param name="result">On return, contains the integration result.</param>
+    /// <param name="abserr">On return, contains the estimated absolute error.</param>
+    /// <param name="tempStorage">Reference to an object that may contain a previously created QawcIntegration instance to reuse.</param>
+    /// <returns>Null if successful; otherwise a <see cref="GSL_ERROR"/> describing the error.</returns>
     public static GSL_ERROR?
     Integration(Func<double, double> f,
          double a, double b, double c,
@@ -104,6 +149,22 @@ namespace Altaxo.Calc.Integration
       return algo.Integrate(f, a, b, c, epsabs, epsrel, limit, debug, out result, out abserr);
     }
 
+    /// <summary>
+    /// Static helper that computes the Cauchy principal value of the integral of <paramref name="f"/> over (<paramref name="a"/>, <paramref name="b"/>)
+    /// with a singularity at <paramref name="c"/>, using a supplied temporary storage object to reuse the algorithm instance.
+    /// This overload uses the instance default debug setting.
+    /// </summary>
+    /// <param name="f">Function to integrate.</param>
+    /// <param name="a">Lower integration limit.</param>
+    /// <param name="b">Upper integration limit.</param>
+    /// <param name="c">Location of the integrable singularity.</param>
+    /// <param name="epsabs">Absolute error tolerance.</param>
+    /// <param name="epsrel">Relative error tolerance.</param>
+    /// <param name="limit">Maximum number of subintervals.</param>
+    /// <param name="result">On return, contains the integration result.</param>
+    /// <param name="abserr">On return, contains the estimated absolute error.</param>
+    /// <param name="tempStorage">Reference to an object that may contain a previously created QawcIntegration instance to reuse.</param>
+    /// <returns>Null if successful; otherwise a <see cref="GSL_ERROR"/> describing the error.</returns>
     public static GSL_ERROR?
     Integration(Func<double, double> f,
           double a, double b, double c,
@@ -119,7 +180,21 @@ namespace Altaxo.Calc.Integration
       return algo.Integrate(f, a, b, c, epsabs, epsrel, limit, out result, out abserr);
     }
 
-    public static GSL_ERROR?
+    /// <summary>
+    /// Static convenience overload that computes the Cauchy principal value using a temporary storage created internally.
+    /// </summary>
+    /// <param name="f">Function to integrate.</param>
+    /// <param name="a">Lower integration limit.</param>
+    /// <param name="b">Upper integration limit.</param>
+    /// <param name="c">Location of the integrable singularity.</param>
+    /// <param name="epsabs">Absolute error tolerance.</param>
+    /// <param name="epsrel">Relative error tolerance.</param>
+    /// <param name="limit">Maximum number of subintervals.</param>
+    /// <param name="debug">Debug flag for this call.</param>
+    /// <param name="result">On return, contains the integration result.</param>
+    /// <param name="abserr">On return, contains the estimated absolute error.</param>
+    /// <returns>Null if successful; otherwise a <see cref="GSL_ERROR"/> describing the error.</returns>
+   public static GSL_ERROR?
    Integration(Func<double, double> f,
         double a, double b, double c,
          double epsabs, double epsrel,
@@ -131,6 +206,20 @@ namespace Altaxo.Calc.Integration
       return Integration(f, a, b, c, epsabs, epsrel, limit, debug, out result, out abserr, ref tempStorage);
     }
 
+    /// <summary>
+    /// Static convenience overload that computes the Cauchy principal value using a temporary storage created internally.
+    /// This overload uses the instance default debug setting.
+    /// </summary>
+    /// <param name="f">Function to integrate.</param>
+    /// <param name="a">Lower integration limit.</param>
+    /// <param name="b">Upper integration limit.</param>
+    /// <param name="c">Location of the integrable singularity.</param>
+    /// <param name="epsabs">Absolute error tolerance.</param>
+    /// <param name="epsrel">Relative error tolerance.</param>
+    /// <param name="limit">Maximum number of subintervals.</param>
+    /// <param name="result">On return, contains the integration result.</param>
+    /// <param name="abserr">On return, contains the estimated absolute error.</param>
+    /// <returns>Null if successful; otherwise a <see cref="GSL_ERROR"/> describing the error.</returns>
     public static GSL_ERROR?
     Integration(Func<double, double> f,
           double a, double b, double c,
@@ -165,6 +254,22 @@ namespace Altaxo.Calc.Integration
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
  */
 
+    /// <summary>
+    /// Core implementation of the QAWC algorithm for computing the Cauchy principal value.
+    /// This method mirrors the original GSL implementation (integration/qawc.c).
+    /// </summary>
+    /// <param name="f">Function to integrate.</param>
+    /// <param name="a">Lower integration limit.</param>
+    /// <param name="b">Upper integration limit.</param>
+    /// <param name="c">Location of the integrable singularity within (a, b).</param>
+    /// <param name="epsabs">Absolute error tolerance.</param>
+    /// <param name="epsrel">Relative error tolerance.</param>
+    /// <param name="limit">Maximum number of subintervals allowed.</param>
+    /// <param name="workspace">Workspace used for adaptive subdivision.</param>
+    /// <param name="result">On return, contains the integration result.</param>
+    /// <param name="abserr">On return, contains the estimated absolute error.</param>
+    /// <param name="bDebug">Debug flag that controls whether detailed errors throw exceptions.</param>
+    /// <returns>Null on success; otherwise a <see cref="GSL_ERROR"/> describing the error.</returns>
     private static GSL_ERROR?
     gsl_integration_qawc(Func<double, double> f,
                           double a, double b, double c,
@@ -369,12 +474,28 @@ namespace Altaxo.Calc.Integration
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
  */
 
+    /// <summary>
+    /// Parameters used by the Cauchy-weighted function wrapper.
+    /// </summary>
     private struct fn_cauchy_params
     {
+      /// <summary>The original function to integrate.</summary>
       public Func<double, double> function;
+      /// <summary>The location of the integrable singularity.</summary>
       public double singularity;
     }
 
+    /// <summary>
+    /// Compute a modified integral using a 25-point Clenshaw-Curtis rule if appropriate,
+    /// otherwise fall back to a standard 15-point Gauss-Kronrod rule on the interval.
+    /// </summary>
+    /// <param name="f">The integrand.</param>
+    /// <param name="a">Lower integration limit.</param>
+    /// <param name="b">Upper integration limit.</param>
+    /// <param name="c">Location of the integrable singularity.</param>
+    /// <param name="result">On return, the computed integral over the interval.</param>
+    /// <param name="abserr">On return, the estimated absolute error for the interval.</param>
+    /// <param name="err_reliable">On return, indicates whether the error estimate is considered reliable.</param>
     private static void
     qc25c(Func<double, double> f, double a, double b, double c,
            out double result, out double abserr, out bool err_reliable)
@@ -432,6 +553,12 @@ namespace Altaxo.Calc.Integration
       }
     }
 
+    /// <summary>
+    /// Wrapper that evaluates the original function divided by (x - c) to implement the Cauchy-weighted integrand.
+    /// </summary>
+    /// <param name="x">Evaluation point.</param>
+    /// <param name="p">Parameters containing the original function and the singularity location.</param>
+    /// <returns>Value of f(x) / (x - c).</returns>
     private static double
     fn_cauchy(double x, fn_cauchy_params p)
     {
@@ -440,6 +567,11 @@ namespace Altaxo.Calc.Integration
       return f(x) / (x - c);
     }
 
+    /// <summary>
+    /// Compute Chebyshev moments used by the modified Clenshaw-Curtis quadrature.
+    /// </summary>
+    /// <param name="cc">Transformed singularity location in the interval [-1,1].</param>
+    /// <param name="moment">Array to receive the computed moments (length must be at least 25).</param>
     private static void
     compute_moments(double cc, double[] moment)
     {

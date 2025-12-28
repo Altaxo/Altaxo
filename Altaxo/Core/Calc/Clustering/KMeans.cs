@@ -24,8 +24,6 @@
 using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 #nullable enable
 
@@ -58,7 +56,7 @@ namespace Altaxo.Calc.Clustering
     private int[] _clusterCounts;
 
     /// <summary>
-    /// The the default data.
+    /// The default data.
     /// </summary>
     private Func<TDataSum> _createDefault;
 
@@ -95,9 +93,10 @@ namespace Altaxo.Calc.Clustering
     private SortDirection _sortingOfClusterValues = SortDirection.None;
 
     /// <summary>
-    /// Get/sets the sorting of cluster values after evaluation. It presumes that the generic type TDataSum
+    /// Gets or sets the sorting of cluster values after evaluation. It presumes that the generic type TDataSum
     /// implements the <see cref="IComparable"/> interface.
     /// </summary>
+    /// <exception cref="ArgumentOutOfRangeException">Thrown when a non-none sorting is specified but <typeparamref name="TDataSum"/> does not implement <see cref="IComparable"/>.</exception>
     public SortDirection SortingOfClusterValues
     {
       get
@@ -139,7 +138,7 @@ namespace Altaxo.Calc.Clustering
     #endregion
 
     /// <summary>
-    /// Initalize a new instance of <see cref="KMeans{TData, TDataSum}"/>.
+    /// Initialize a new instance of <see cref="KMeans{TData, TDataSum}"/>.
     /// </summary>
     /// <param name="createDefaultFunction">Creates the default data. Sum up the default data and other data should result in the same value of the other data.</param>
     /// <param name="distanceFunction">
@@ -219,6 +218,8 @@ namespace Altaxo.Calc.Clustering
     /// <param name="data">The data points.</param>
     /// <param name="numberOfClusters">The number of clusters to create.</param>
     /// <returns>True if successful; otherwise, false.</returns>
+    /// <exception cref="ArgumentNullException">If <paramref name="data"/> is null.</exception>
+    /// <exception cref="ArgumentOutOfRangeException">If <paramref name="numberOfClusters"/> is less than 2 or greater than the number of data points.</exception>
     public bool TryEvaluate(IEnumerable<TData> data, int numberOfClusters)
     {
       if (data is null)
@@ -290,8 +291,8 @@ namespace Altaxo.Calc.Clustering
     }
     /// <summary>
     /// Initializes the cluster mean values using the KMeans++ procedure (<see href="http://en.wikipedia.org/wiki/K-means%2B%2B"/>).
-    /// This is slower than <see cref="InitializeCentroidsAtRandom"/>, but after initializing in this way, significant lesser iterations
-    /// are neccessary.
+    /// This is slower than <see cref="InitializeCentroidsAtRandom"/>, but after initializing in this way, significantly fewer iterations
+    /// are necessary.
     /// </summary>
     protected virtual void InitializeCentroidsUsingKMeansPlusPlus()
     {
@@ -433,14 +434,14 @@ namespace Altaxo.Calc.Clustering
     /// Tries to fill up empty clusters, by searching the biggest cluster, and then use the farthest point
     /// from that biggest cluster to move to the empty cluster.
     /// </summary>
-    /// <returns></returns>
+    /// <returns>True if successful; false if not sucessful.</returns>
     protected bool PatchEmptyClusters()
     {
       for (int ic = 0; ic < _clusterCounts.Length; ++ic)
       {
         if (_clusterCounts[ic] == 0)
         {
-          // Stategy: search the farthest point of the biggest cluster
+          // Strategy: search the farthest point of the biggest cluster
           // and then move this point into the empty cluster
           int ip = GetFarthestPointOfBiggestCluster();
 

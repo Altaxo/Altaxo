@@ -53,19 +53,19 @@ namespace Altaxo.Calc.Interpolation
   /// <summary>Condition how to manage the left and right boundary of a spline.</summary>
   public enum BoundaryConditions
   {
-    /// <summary>natural boundaries, zero 2nd deriv.</summary>
+    /// <summary>Use natural boundaries with zero second derivatives.</summary>
     Natural = 0,
 
-    /// <summary>finite differences for 1st derivatives</summary>
+    /// <summary>Use finite-difference estimates for the first derivatives.</summary>
     FiniteDifferences,
 
-    /// <summary>user supplied f'(x_lo), f'(x_hi)</summary>
+    /// <summary>Expect user-supplied first derivatives f'(x_lo) and f'(x_hi).</summary>
     Supply1stDerivative,
 
-    /// <summary>user supplied f''(x_lo), f''(x_hi)</summary>
+    /// <summary>Expect user-supplied second derivatives f''(x_lo) and f''(x_hi).</summary>
     Supply2ndDerivative,
 
-    /// <summary>periodic boundaries (NOT YET IMPLEMENTED)</summary>
+    /// <summary>Use periodic boundaries (not yet implemented).</summary>
     Periodic
   }
 }

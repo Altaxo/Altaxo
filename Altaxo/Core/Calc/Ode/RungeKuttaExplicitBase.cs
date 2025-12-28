@@ -28,7 +28,7 @@ namespace Altaxo.Calc.Ode
   /// <remarks>
   /// <para>References:</para>
   /// <para>[1] Hairer, Ordinary differential equations I, 2nd edition, 1993.</para>
-  /// <para>[2] Jimenez et al., Locally Linearized Runge Kutta method of Dormand and Prince, arXiv:1209.1415v2, 22 Dec 2013</para>
+  /// <para>[2] Jimenez et al., Locally Linearized Runge Kutta method of Dormand and Prince, arXiv:1209.1415v2, 22 Dec 2013.</para>
   /// </remarks>
   public abstract partial class RungeKuttaExplicitBase
   {
@@ -39,7 +39,7 @@ namespace Altaxo.Calc.Ode
     protected static readonly double[][] _emptyJaggedDoubleArray = new double[0][];
 
     /// <summary>
-    /// Gets the order of the method (the highest of the pair).
+    /// Gets the order of the method (the highest of the embedded pair).
     /// </summary>
     public abstract int Order { get; }
 
@@ -49,7 +49,7 @@ namespace Altaxo.Calc.Ode
     public abstract int NumberOfStages { get; }
 
     /// <summary>
-    /// Gets the number of stages of additional stages needed for dense output.
+    /// Gets the number of additional stages needed for dense output.
     /// </summary>
     public virtual int NumberOfAdditionalStagesForDenseOutput => 0;
 
@@ -66,8 +66,9 @@ namespace Altaxo.Calc.Ode
     protected abstract double[] C { get; }
 
     /// <summary>
-    /// The interpolation coefficients aij. Note that zero to third order interpolation is using y and slope of x_previous and x_current.
-    /// Thus in this array we only need the coefficients for 4th order (and higher) interpolation.
+    /// The interpolation coefficients <c>aij</c>.
+    /// Note that zero to third order interpolation uses <c>y</c> and the slope at <c>x_previous</c> and <c>x_current</c>.
+    /// Thus, in this array we only need the coefficients for 4th order (and higher) interpolation.
     /// </summary>
     protected virtual double[][] InterpolationCoefficients => _emptyJaggedDoubleArray;
 
@@ -82,7 +83,7 @@ namespace Altaxo.Calc.Ode
     protected virtual double[] C_Interpolation => _emptyDoubleArray;
 
     /// <summary>
-    /// Sets the stiffness detection threshold value.
+    /// Gets the stiffness detection threshold value.
     /// </summary>
     /// <value>
     /// The stiffness detection threshold value.
@@ -99,7 +100,7 @@ namespace Altaxo.Calc.Ode
     /// </summary>
     /// <param name="x">The initial x value.</param>
     /// <param name="y">The initial y values.</param>
-    /// <param name="f">Calculation of the derivatives. First argument is x value, 2nd argument are the current y values. The 3rd argument is an array that store the derivatives.</param>
+    /// <param name="f">Calculation of the derivatives. First argument is the x value; the second argument are the current y values; the third argument is an array that stores the derivatives.</param>
     /// <returns>This instance (for a convenient way to chain this method with sequence creation).</returns>
     [MemberNotNull(nameof(_core))]
     public virtual RungeKuttaExplicitBase Initialize(double x, double[] y, Action<double, double[], double[]> f)
@@ -124,7 +125,7 @@ namespace Altaxo.Calc.Ode
     /// </summary>
     /// <param name="x0">The initial x value.</param>
     /// <param name="y0">The initial y values.</param>
-    /// <param name="f">Calculation of the derivatives. First arg is the x variable. 2nd arg are the current y variables. The 3rd argument provides an array, in which the resulting derivatives dyi/dx should be stored.</param>
+    /// <param name="f">Calculation of the derivatives. First arg is the x variable. Second arg are the current y variables. The third argument provides an array, in which the resulting derivatives <c>dy_i/dx</c> should be stored.</param>
     /// <param name="stepSize">Size of a step.</param>
     /// <returns>Endless sequence of solution points. You have to consume the values immediately because the content of the y array is changed in the further course of the evaluation.</returns>
     public virtual IEnumerable<(double X, double[] Y_volatile)> GetSolutionPointsVolatileForStepSize(
@@ -140,10 +141,12 @@ namespace Altaxo.Calc.Ode
     }
 
     /// <summary>
-    /// Gets volatile solution points for constant step size. The method has to be initialized (see <see cref="Initialize(double, double[], Action{double, double[], double[]})"/>) before.
+    /// Gets volatile solution points for constant step size.
+    /// The method has to be initialized (see <see cref="Initialize(double, double[], Action{double, double[], double[]})"/>) before.
     /// </summary>
     /// <param name="stepSize">Size of a step.</param>
     /// <returns>Endless sequence of solution points. You have to consume the values immediately because the content of the y array is changed in the further course of the evaluation.</returns>
+    /// <exception cref="InvalidOperationException">Thrown if the method was not initialized.</exception>
     public virtual IEnumerable<(double X, double[] Y_volatile)> GetSolutionPointsVolatileForStepSize(
           double stepSize)
     {
@@ -160,12 +163,13 @@ namespace Altaxo.Calc.Ode
     }
 
     /// <summary>
-    /// Gets solution points for constant step size. Returns the same results as <see cref="GetSolutionPointsVolatileForStepSize(double, double[], Action{double, double[], double[]}, double)"/>,
+    /// Gets solution points for constant step size.
+    /// Returns the same results as <see cref="GetSolutionPointsVolatileForStepSize(double, double[], Action{double, double[], double[]}, double)"/>,
     /// but the returned solution point already contains a copy of the y array.
     /// </summary>
     /// <param name="x0">The initial x value.</param>
     /// <param name="y0">The initial y values.</param>
-    /// <param name="f">Calculation of the derivatives. First arg is the x variable. 2nd arg are the current y variables. The 3rd argument provides an array, in which the resulting derivatives dyi/dx should be stored.</param>
+    /// <param name="f">Calculation of the derivatives. First arg is the x variable. Second arg are the current y variables. The third argument provides an array, in which the resulting derivatives <c>dy_i/dx</c> should be stored.</param>
     /// <param name="stepSize">Size of a step.</param>
     /// <returns>Endless sequence of solution points. It is safe to store the returned y array permanently.</returns>
     public virtual IEnumerable<(double x, double[] y)> GetSolutionPointsForStepSize(
@@ -175,20 +179,23 @@ namespace Altaxo.Calc.Ode
     }
 
     /// <summary>
-    /// Gets solution points for constant step size. Returns the same results as <see cref="GetSolutionPointsVolatileForStepSize(double, double[], Action{double, double[], double[]}, double)"/>,
+    /// Gets solution points for constant step size.
+    /// Returns the same results as <see cref="GetSolutionPointsVolatileForStepSize(double, double[], Action{double, double[], double[]}, double)"/>,
     /// but the returned solution point already contains a copy of the y array.
     /// </summary>
     /// <param name="stepSize">Size of a step.</param>
     /// <returns>Endless sequence of solution points. It is safe to store the returned y array permanently.</returns>
+    /// <exception cref="InvalidOperationException">Thrown if the method was not initialized.</exception>
     public virtual IEnumerable<(double x, double[] y)> GetSolutionPointsForStepSize(double stepSize)
     {
       return GetSolutionPointsVolatileForStepSize(stepSize).Select(sp => (sp.X, Clone(sp.Y_volatile)));
     }
 
     /// <summary>
-    /// Provides the core with the parameters found in the <paramref name="options"/>.
+    /// Provides the core with the parameters found in <paramref name="options"/>.
     /// </summary>
     /// <param name="options">The options to set.</param>
+    /// <exception cref="InvalidOperationException">Thrown if the method was not initialized.</exception>
     protected virtual void SetOptionsToCore(OdeMethodOptions options)
     {
       if (_core is null)
@@ -204,14 +211,16 @@ namespace Altaxo.Calc.Ode
     }
 
     /// <summary>
-    /// Gets a sequence of solution points, using the settings in the argument. The y-values in the returned tuple
-    /// are intended for immediate consumption, because the content of the array will change in the further course of the
-    /// evaluation.
+    /// Gets a sequence of solution points using the settings in the argument.
+    /// The y-values in the returned tuple are intended for immediate consumption, because the content of the array will change
+    /// during subsequent evaluations.
     /// </summary>
     /// <param name="options">The evaluation options, see <see cref="OdeMethodOptions"/>.</param>
-    /// <returns>Tuple of the current x, and y values. The y-values are intended for immediate consumption,
-    /// because the content of the array will change in the further course of the
-    /// evaluation.</returns>
+    /// <returns>
+    /// Tuple of the current x and y values.
+    /// The y-values are intended for immediate consumption, because the content of the array will change during subsequent evaluations.
+    /// </returns>
+    /// <exception cref="InvalidOperationException">Thrown if the method was not initialized.</exception>
     public virtual IEnumerable<(double X, double[] Y_volatile)> GetSolutionPointsVolatile(OdeMethodOptions options)
     {
       if (_core is null)
@@ -236,21 +245,27 @@ namespace Altaxo.Calc.Ode
     }
 
     /// <summary>
-    /// Gets a sequence of solution points, using the settings in the argument. 
+    /// Gets a sequence of solution points using the settings in the argument.
     /// </summary>
     /// <param name="options">The evaluation options, see <see cref="OdeMethodOptions"/>.</param>
-    /// <returns>Tuple of the current x, and y values. The array of y-values is a copy of the solution vector, and is therefore save be to stored permanently.</returns>
+    /// <returns>
+    /// Tuple of the current x and y values.
+    /// The array of y-values is a copy of the solution vector and is therefore safe to store permanently.
+    /// </returns>
+    /// <exception cref="InvalidOperationException">Thrown if the method was not initialized.</exception>
     public virtual IEnumerable<(double X, double[] Y)> GetSolutionPoints(OdeMethodOptions options)
     {
       return GetSolutionPointsVolatile(options).Select(sp => (sp.X, Clone(sp.Y_volatile)));
     }
 
     /// <summary>
-    /// Gets you an interpolated volative solution point during the enumeration of the solution points.
+    /// Gets an interpolated volatile solution point during enumeration of the solution points.
     /// The returned array must not be modified and has to be immediately consumed, since it is changed in the course of the next ODE evaluation.
     /// </summary>
     /// <param name="x">The x value. Must be in the interval [X-StepSize, X].</param>
-    /// <returns>The interpolated y values. The elements of the array must not be altered, and are intended for immediate use only.</returns>
+    /// <returns>The interpolated y values. The elements of the array must not be altered and are intended for immediate use only.</returns>
+    /// <exception cref="InvalidOperationException">Thrown if the method was not initialized.</exception>
+    /// <exception cref="Exception">Thrown if <paramref name="x"/> is outside the last evaluated interval.</exception>
     public virtual double[] GetInterpolatedSolutionPointVolatile(double x)
     {
       if (_core is null)
@@ -264,10 +279,12 @@ namespace Altaxo.Calc.Ode
     }
 
     /// <summary>
-    /// Gets the initial step size. The absolute and relative tolerances must be set before the call to this function.
+    /// Gets the initial step size.
+    /// The absolute and relative tolerances must be set before the call to this function.
     /// </summary>
     /// <returns>The initial step size in the context of the absolute and relative tolerances.</returns>
-    /// <exception cref="InvalidOperationException">Either absolute tolerance or relative tolerance is required to be &gt; 0</exception>
+    /// <exception cref="InvalidOperationException">Either absolute tolerance or relative tolerance is required to be &gt; 0.</exception>
+    /// <exception cref="InvalidOperationException">Thrown if the method was not initialized.</exception>
     public double GetInitialStepSize()
     {
       if (_core is null)
@@ -282,7 +299,8 @@ namespace Altaxo.Calc.Ode
     /// <value>
     /// The absolute tolerance.
     /// </value>
-    /// <exception cref="ArgumentException">Must be >= 0 - AbsoluteTolerance</exception>
+    /// <exception cref="ArgumentException">Must be &gt;= 0 - AbsoluteTolerance</exception>
+    /// <exception cref="InvalidOperationException">Thrown if the method was not initialized.</exception>
     public double AbsoluteTolerance
     {
       get
@@ -309,7 +327,8 @@ namespace Altaxo.Calc.Ode
     /// <value>
     /// The relative tolerance.
     /// </value>
-    /// <exception cref="ArgumentException">Must be >= 0 - RelativeTolerance</exception>
+    /// <exception cref="ArgumentException">Must be &gt;= 0 - RelativeTolerance</exception>
+    /// <exception cref="InvalidOperationException">Thrown if the method was not initialized.</exception>
     public double RelativeTolerance
     {
       get
@@ -331,11 +350,13 @@ namespace Altaxo.Calc.Ode
     }
 
     /// <summary>
-    /// Gets or sets the relative tolerances. The length of the array must either be 1 (tolerances for all y equal), or of length N.
+    /// Gets or sets the relative tolerances.
+    /// The length of the array must either be 1 (tolerances for all y equal) or of length N.
     /// </summary>
     /// <value>
     /// The relative tolerances.
     /// </value>
+    /// <exception cref="InvalidOperationException">Thrown if the method was not initialized.</exception>
     public double[] RelativeTolerances
     {
       get
@@ -355,11 +376,13 @@ namespace Altaxo.Calc.Ode
     }
 
     /// <summary>
-    /// Gets or sets the absolute tolerances. The length of the array must either be 1 (tolerances for all y equal), or of length N.
+    /// Gets or sets the absolute tolerances.
+    /// The length of the array must either be 1 (tolerances for all y equal) or of length N.
     /// </summary>
     /// <value>
     /// The absolute tolerances.
     /// </value>
+    /// <exception cref="InvalidOperationException">Thrown if the method was not initialized.</exception>
     public double[] AbsoluteTolerances
     {
       get
@@ -379,12 +402,13 @@ namespace Altaxo.Calc.Ode
     }
 
     /// <summary>
-    /// Gets or sets the number of successful steps between test for stiffness.
+    /// Gets or sets the number of successful steps between tests for stiffness.
     /// Setting this value to 0 disables stiffness detection. The default value is 0.
     /// </summary>
     /// <value>
-    /// The number of successful steps between test for stiffness.
+    /// The number of successful steps between tests for stiffness.
     /// </value>
+    /// <exception cref="InvalidOperationException">Thrown if the method was not initialized.</exception>
     public int StiffnessDetectionEveryNumberOfSteps
     {
       get
@@ -405,7 +429,8 @@ namespace Altaxo.Calc.Ode
     /// Gets volatile solution points with step size control.
     /// </summary>
     /// <param name="options">The evaluation options.</param>
-    /// <returns></returns>
+    /// <returns>Endless sequence of solution points.</returns>
+    /// <exception cref="InvalidOperationException">Thrown if the method was not initialized.</exception>
     protected virtual IEnumerable<(double X, double[] Y_volatile)> GetSolutionPointsVolatile_WithStepSizeControl(OdeMethodOptions options)
     {
       if (_core is null)
@@ -556,7 +581,8 @@ namespace Altaxo.Calc.Ode
     /// Gets volatile solution points without step size control.
     /// </summary>
     /// <param name="options">The evaluation options.</param>
-    /// <returns></returns>
+    /// <returns>Sequence of solution points.</returns>
+    /// <exception cref="InvalidOperationException">Thrown if the method was not initialized.</exception>
     protected virtual IEnumerable<(double X, double[] Y_volatile)> GetSolutionPointsVolatile_WithoutStepSizeControl(OdeMethodOptions options)
     {
       if (_core is null)
@@ -613,12 +639,13 @@ namespace Altaxo.Calc.Ode
     }
 
     /// <summary>
-    /// Try to get the smaller value of the two enumerations. After that, the enumeration with the smaller value is advanced by one step.
+    /// Tries to get the smaller value of the two enumerations.
+    /// After that, the enumeration with the smaller value is advanced by one step.
     /// </summary>
     /// <param name="it1">The first enumeration.</param>
     /// <param name="it2">The second enumeration.</param>
-    /// <param name="value">If successfull, the smaller value of the two enumerations; otherwise <see cref="double.NaN"/>.</param>
-    /// <returns>True if a value could be retrieved at least of one of the enumerations; otherwise, false.</returns>
+    /// <param name="value">If successful, the smaller value of the two enumerations; otherwise <see cref="double.NaN"/>.</param>
+    /// <returns><see langword="true"/> if a value could be retrieved from at least one of the enumerations; otherwise, <see langword="false"/>.</returns>
     protected bool TryGetNextValue(ref IEnumerator<double>? it1, ref IEnumerator<double>? it2, out double value)
     {
       if (it1 is not null && it2 is not null)
@@ -715,8 +742,8 @@ namespace Altaxo.Calc.Ode
     /// Exchanges the two instances in the argument.
     /// </summary>
     /// <typeparam name="T">The type of objects to exchange.</typeparam>
-    /// <param name="instance1">The instance1.</param>
-    /// <param name="instance2">The instance2.</param>
+    /// <param name="instance1">The first instance.</param>
+    /// <param name="instance2">The second instance.</param>
     public static void Exchange<T>(ref T instance1, ref T instance2)
     {
       T temp = instance1;
@@ -728,7 +755,8 @@ namespace Altaxo.Calc.Ode
     /// Clones an array of <see cref="double"/>.
     /// </summary>
     /// <param name="toClone">The array to clone.</param>
-    /// <returns>Cloned array.</returns>
+    /// <returns>A clone of the array.</returns>
+    /// <exception cref="ArgumentNullException">Thrown if <paramref name="toClone"/> is <see langword="null"/>.</exception>
     public static double[] Clone(double[] toClone)
     {
       var result = new double[toClone.Length];

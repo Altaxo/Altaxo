@@ -38,13 +38,21 @@ namespace Altaxo.Calc.Ode
     /// <summary>
     /// Initializes this method.
     /// </summary>
-    /// <param name="x0">The initial x value.</param>
-    /// <param name="y0">The initial y values.</param>
-    /// <param name="f">Calculation of the derivatives. First argument is x value, 2nd argument are the current y values. The 3rd argument is an array that store the derivatives.</param>
-    /// <param name="jacobianEvaluation">Calculation of the jacobian. If you provide a method, this method will be used to evaluate the jacobian. Else, if
-    /// no method is provided (null), the behavior depends on the further options: If <see cref="MultiStepMethodOptions.IterationMethod"/> is set to <see cref="OdeIterationMethod.UseJacobian"/>, then
-    /// the jacobian is approximated using finite differences. If <see cref="MultiStepMethodOptions.IterationMethod"/> is set to <see cref="OdeIterationMethod.DoNotUseJacobian"/>,
-    /// then only iteration (and not Newton-Raphson) is used to evaluate y_next, which can take longer.
+    /// <param name="x0">The initial <c>x</c> value.</param>
+    /// <param name="y0">The initial <c>y</c> values.</param>
+    /// <param name="f">
+    /// Evaluates the first derivative <c>dy/dx</c>.
+    /// The first argument is the <c>x</c> value, the second argument is the current <c>y</c> vector,
+    /// and the third argument is the destination array to store the derivatives.
+    /// </param>
+    /// <param name="jacobianEvaluation">
+    /// Evaluates the Jacobian.
+    /// If provided, it is used to evaluate the Jacobian.
+    /// If <see langword="null"/>, the behavior depends on the further options:
+    /// if <see cref="MultiStepMethodOptions.IterationMethod"/> is set to <see cref="OdeIterationMethod.UseJacobian"/>, 
+    /// then the Jacobian is approximated using finite differences; if it is set to
+    /// <see cref="OdeIterationMethod.DoNotUseJacobian"/>, then only iteration (and not Newton-Raphson) is used to evaluate
+    /// <c>y_next</c>, which can take longer.
     /// </param>
     /// <returns>This instance (for a convenient way to chain this method with sequence creation).</returns>
     public GearsBDFWithNordsieckState Initialize(double x0, double[] y0, Action<double, double[], double[]> f, CalculateJacobian? jacobianEvaluation)
@@ -64,15 +72,17 @@ namespace Altaxo.Calc.Ode
     private double[][]? _initDerivatives;
 
     /// <summary>
-    /// This initialization method is intended for debugging and testing purposes only, because you will need 
-    /// the derivatives up to the order k at the initial point.
+    /// This initialization method is intended for debugging and testing purposes only, because you will need
+    /// the derivatives up to order <c>k</c> at the initial point.
     /// </summary>
-    /// <param name="x0">The starting value of the independed variable x.</param>
-    /// <param name="initDerivatives">The starting value of the 0th .. kth derivatives of y, i.e. y, dy/dx, d2y/dx2, etc..</param>
-    /// <param name="f">The function used to evaluate the derivatives dy/dx.</param>
-    /// <param name="jacobianEvaluation">The function used to evaluate the jacobian.</param>
+    /// <param name="x0">The starting value of the independent variable <c>x</c>.</param>
+    /// <param name="initDerivatives">
+    /// The starting values of the 0th .. <c>k</c>-th derivatives of <c>y</c>, i.e. <c>y</c>, <c>dy/dx</c>, <c>d2y/dx2</c>, etc.
+    /// </param>
+    /// <param name="f">The function used to evaluate the first derivatives <c>dy/dx</c>.</param>
+    /// <param name="jacobianEvaluation">The function used to evaluate the Jacobian.</param>
     /// <returns>This instance.</returns>
-    /// <exception cref="InvalidOperationException">ODE is already initialized!</exception>
+    /// <exception cref="InvalidOperationException">ODE is already initialized.</exception>
     public GearsBDFWithNordsieckState Initialize(double x0, double[][] initDerivatives, Action<double, double[], double[]> f, CalculateJacobian jacobianEvaluation)
     {
       if (_core is not null || _initialization is not null)
@@ -109,8 +119,10 @@ namespace Altaxo.Calc.Ode
     /// <summary>
     /// Gets volatile solution points with step size control.
     /// </summary>
-    /// <param name="options">The evaluation options (preferential of type <see cref="MultiStepMethodOptions"/>).</param>
-    /// <returns>Sequence of solution points, either mandatory, optional, or automatically generated (dependent on settings in options).</returns>
+    /// <param name="options">The evaluation options (preferably of type <see cref="MultiStepMethodOptions"/>).</param>
+    /// <returns>
+    /// A sequence of solution points, either mandatory, optional, or automatically generated (depending on the settings in <paramref name="options"/>).
+    /// </returns>
     public virtual IEnumerable<(double X, double[] Y_volatile)> GetSolutionPointsVolatile(OdeMethodOptions options)
     {
       if (_initialization is null)
@@ -218,11 +230,13 @@ namespace Altaxo.Calc.Ode
     }
 
     /// <summary>
-    /// Gets you an interpolated volative solution point during the enumeration of the solution points.
-    /// The returned array must not be modified and has to be immediately consumed, since it is changed in the course of the next ODE evaluation.
+    /// Gets an interpolated volatile solution point during the enumeration of the solution points.
     /// </summary>
-    /// <param name="x">The x value. Must be in the interval [X-StepSize, X].</param>
-    /// <returns>The interpolated y values. The elements of the array must not be altered, and are intended for immediate use only.</returns>
+    /// <param name="x">The <c>x</c> value. Must be in the interval <c>[X - StepSize, X]</c>.</param>
+    /// <returns>
+    /// The interpolated <c>y</c> values.
+    /// The returned array must not be modified and has to be consumed immediately, since it is changed in the course of the next ODE evaluation.
+    /// </returns>
     public double[] GetInterpolatedSolutionPointVolatile(double x)
     {
       if (_core is null)

@@ -50,7 +50,7 @@ namespace Altaxo.Calc.Interpolation
     /// Returns a x value in dependence of a parameter u.
     /// </summary>
     /// <param name="u">The parameter.</param>
-    /// <returns>The y value at the given value of u.</returns>
+    /// <returns>The x value at the given value of u.</returns>
     double GetXOfU(double u);
   }
 }

@@ -25,30 +25,33 @@
 namespace Altaxo.Calc.Interpolation
 {
   /// <summary>
-  /// Specification how the smoothness of the spline is specified.
+  /// Specifies how the smoothness of the spline is interpreted.
   /// </summary>
   public enum SmoothnessSpecification
   {
     /// <summary>
-    /// The smoothness value is used as it is, without modification.
+    /// The smoothness value is used as-is, without modification.
     /// </summary>
     Direct = 0,
 
     /// <summary>
-    /// The smoothness value designates the number of features, i.e. it depends also on the number of points.
-    /// For instance, if one have 4000 points in the spectrum and NumberOfFeatures=10, then the points in one period=4000/10 = 400.
+    /// The smoothness value designates the number of features; i.e. it also depends on the number of points.
+    /// For instance, if one has 4000 points in the spectrum and <c>NumberOfFeatures = 10</c>, then the number
+    /// of points in one period is <c>4000 / 10 = 400</c>.
     /// </summary>
     ByNumberOfFeatures = 1,
 
     /// <summary>
-    /// The smoothness value designates the number of points in a feature span. If the spectrum is a sine signal with a period of this,
-    /// the spline is expected to smooth the sine signal down to an amplitude of 1/e of the original amplitude.
+    /// The smoothness value designates the number of points in a feature span.
+    /// If the spectrum is a sine signal with this period, the spline is expected to smooth the sine signal down
+    /// to an amplitude of <c>1/e</c> of the original amplitude.
     /// </summary>
     ByNumberOfPoints = 2,
 
     /// <summary>
-    /// The smoothness value designates the x-span of a feature. If the spectrum is a sine signal with a period of this,
-    /// the spline is expected to smooth the sine signal down to an amplitude of 1/e of the original amplitude.
+    /// The smoothness value designates the x-span of a feature.
+    /// If the spectrum is a sine signal with this period, the spline is expected to smooth the sine signal down
+    /// to an amplitude of <c>1/e</c> of the original amplitude.
     /// </summary>
     ByXSpan = 3,
   }

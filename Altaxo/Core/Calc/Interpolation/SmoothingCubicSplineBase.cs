@@ -361,6 +361,26 @@ namespace Altaxo.Calc.Interpolation
       }
     }
 
+    /// <summary>
+    /// Core implementation hook for the smoothing/interpolation algorithm.
+    /// Derived classes must implement this method to perform the actual
+    /// computation of the smoothed spline coefficients and optional error estimates.
+    /// </summary>
+    /// <param name="x">Input abscissae.</param>
+    /// <param name="f">Input ordinates.</param>
+    /// <param name="df">Input/output: relative standard deviations for the data points.</param>
+    /// <param name="n">Number of points.</param>
+    /// <param name="y">Output: spline coefficients of order 0.</param>
+    /// <param name="C">Output: spline coefficients of higher order.</param>
+    /// <param name="ic">Input: number of coefficient rows in <paramref name="C"/>.</param>
+    /// <param name="var">Input/output: error variance or control parameter for smoothing.</param>
+    /// <param name="job">Job selection flag: whether to calculate standard error estimates.</param>
+    /// <param name="se">Output: standard error estimates (may be null or unused depending on <paramref name="job"/>).</param>
+    /// <param name="WK0">Work arrays used by the algorithm.</param>
+    /// <param name="WK1">Work arrays used by the algorithm.</param>
+    /// <param name="WK2">Work arrays used by the algorithm.</param>
+    /// <param name="WK3">Work arrays used by the algorithm.</param>
+    /// <param name="ier">Output: error code (0 on success).</param>
     protected abstract void InterpolationKernel(
       double[] x,
       double[] f,

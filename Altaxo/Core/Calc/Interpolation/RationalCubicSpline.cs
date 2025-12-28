@@ -56,9 +56,9 @@ namespace Altaxo.Calc.Interpolation
 {
 
   /// <summary>
-  /// This kind of generalized splines give much more pleasent results
+  /// This kind of generalized spline gives much more pleasant results
   /// than cubic splines when interpolating, e.g., experimental data.
-  /// A control parameter p can be used to tune the interpolation smoothly
+  /// A control parameter <c>p</c> can be used to tune the interpolation smoothly
   /// between cubic splines and a linear interpolation.
   /// But this doesn't mean smoothing of the data - the rational spline curve
   /// will still go through all data points.
@@ -84,12 +84,12 @@ namespace Altaxo.Calc.Interpolation
   ///
   ///      void MpRationalCubicSpline::SetSmoothing (double smoothing)
   ///
-  /// to set the value of the smoothing paramenter. A value of p = 0
+  /// to set the value of the smoothing parameter. A value of p = 0
   /// for the smoothing parameter results in a standard cubic spline.
-  /// A value of p with -1 &lt; p &lt; 0 results in "unsmoothing" that means
+  /// A value of p with -1 &lt; p &lt; 0 results in "unsmoothing", i.e.
   /// overshooting oscillations. A value of p with p &gt; 0 gives increasing
   /// smoothness. p to infinity results in a linear interpolation. A value
-  /// smaller or equal to -1.0 leads to an error.
+  /// smaller than or equal to -1.0 leads to an error.
   ///
   ///
   /// Choosing the boundary conditions:
@@ -103,11 +103,11 @@ namespace Altaxo.Calc.Interpolation
   /// to set the boundary conditions. The following values are possible:
   ///
   ///      Natural
-  ///          natural boundaries, that means the 2nd derivatives are zero
+  ///          natural boundaries, i.e. the 2nd derivatives are zero
   ///          at both boundaries. This is the default value.
   ///
   ///      FiniteDifferences
-  ///          use  finite difference approximation for 1st derivatives.
+  ///          use finite difference approximation for 1st derivatives.
   ///
   ///      Supply1stDerivative
   ///          user supplied values for 1st derivatives are given in b1 and b2
@@ -131,7 +131,7 @@ namespace Altaxo.Calc.Interpolation
   /// -----------------
   ///
   ///      Vector x(lo,hi)  The abscissa vector
-  ///      Vector y(lo,hi)  The ordinata vector
+  ///      Vector y(lo,hi)  The ordinate vector
   ///                       If the spline is not parametric then the
   ///                       abscissa must be strictly monotone increasing
   ///                       or decreasing!
@@ -161,7 +161,7 @@ namespace Altaxo.Calc.Interpolation
     //
     // static double deriv1 (const Vector &x, const Vector &y, int i, int sgn)
     //
-    // Initial derivatives at boundaries of data set using
+    // Computes initial derivatives at the boundaries of the data set using
     // quadratic Newton interpolation
     //
     //-----------------------------------------------------------------------------//
@@ -185,13 +185,14 @@ namespace Altaxo.Calc.Interpolation
     }
 
     /// <summary>
-    /// Set the value of the smoothing paramenter. A value of p = 0
-    /// for the smoothing parameter results in a standard cubic spline.
-    /// A value of p with -1 &lt; p &lt; 0 results in "unsmoothing" that means
-    /// overshooting oscillations. A value of p with p &gt; 0 gives increasing
-    /// smoothness. p to infinity results in a linear interpolation. A value
-    /// smaller or equal to -1.0 leads to an error.
+    /// Gets or sets the value of the smoothing parameter.
+    /// A value of <c>p = 0</c> results in a standard cubic spline.
+    /// A value of <c>-1 &lt; p &lt; 0</c> results in "unsmoothing", i.e. overshooting oscillations.
+    /// A value of <c>p &gt; 0</c> yields increasing smoothness.
+    /// <c>p</c> to infinity results in a linear interpolation.
+    /// A value smaller than or equal to <c>-1.0</c> leads to an error.
     /// </summary>
+    /// <exception cref="ArgumentException">Thrown if the assigned value is less than or equal to -1.0.</exception>
     public double Smoothing
     {
       get
@@ -210,9 +211,9 @@ namespace Altaxo.Calc.Interpolation
     /// <summary>
     /// Sets the boundary conditions.
     /// </summary>
-    /// <param name="bnd"> The boundary condition. See remarks for the possible values.</param>
-    /// <param name="b1"></param>
-    /// <param name="b2"></param>
+    /// <param name="bnd">The boundary condition. See remarks for the possible values.</param>
+    /// <param name="b1">The first boundary condition parameter.</param>
+    /// <param name="b2">The second boundary condition parameter.</param>
     /// <remarks>
     /// <code>
     ///      Natural
@@ -220,7 +221,7 @@ namespace Altaxo.Calc.Interpolation
     ///          at both boundaries. This is the default value.
     ///
     ///      FiniteDifferences
-    ///          use  finite difference approximation for 1st derivatives.
+    ///          use finite difference approximation for 1st derivatives.
     ///
     ///      Supply1stDerivative
     ///          user supplied values for 1st derivatives are given in b1 and b2
@@ -261,7 +262,7 @@ namespace Altaxo.Calc.Interpolation
     }
 
     /// <summary>
-    /// Gets the boundary condition and the two condition parameters.
+    /// Gets the boundary condition.
     /// </summary>
     /// <returns>The boundary condition.</returns>
     public BoundaryConditions GetBoundaryConditions()
@@ -270,13 +271,12 @@ namespace Altaxo.Calc.Interpolation
     }
 
     /// <summary>
-    /// Calculate difference vector dx(i) from vector x(i) and
-    /// assure that x(i) is strictly monotone increasing or decreasing.
-    /// Can be called with both arguments the same vector in order to
-    /// do it inplace!
+    /// Calculates the difference vector <paramref name="dx"/>(i) from vector <paramref name="x"/>(i) and
+    /// ensures that <paramref name="x"/> is strictly monotone increasing or decreasing.
+    /// Can be called with both arguments referring to the same vector in order to do it in place.
     /// </summary>
     /// <param name="x">Input vector.</param>
-    /// <param name="dx">Output vector.</param>
+    /// <param name="dx">Output vector to receive the differences.</param>
     public static void Differences(IReadOnlyList<double> x, Vector<double> dx)
     {
       int sgn;
@@ -303,13 +303,12 @@ namespace Altaxo.Calc.Interpolation
     }
 
     /// <summary>
-    /// Calculate inverse difference vector dx(i) from vector x(i) and
-    /// assure that x(i) is strictly monotone increasing or decreasing.
-    /// Can be called with both arguments the same vector in order to
-    /// do it inplace!
+    /// Calculates the inverse difference vector <paramref name="dx"/>(i) from vector <paramref name="x"/>(i) and
+    /// ensures that <paramref name="x"/> is strictly monotone increasing or decreasing.
+    /// Can be called with both arguments referring to the same vector in order to do it in place.
     /// </summary>
     /// <param name="x">Input vector.</param>
-    /// <param name="dx">Output vector.</param>
+    /// <param name="dx">Output vector to receive the inverse differences.</param>
     public static void InverseDifferences(IReadOnlyList<double> x, Vector<double> dx)
     {
       int sgn;
@@ -336,11 +335,11 @@ namespace Altaxo.Calc.Interpolation
     }
 
     /// <summary>
-    ///
+    /// Computes the coefficient vector used by `SplineB1` and `SplineB2`.
     /// </summary>
-    /// <param name="p">smoothing parameter</param>
-    /// <param name="dx">inverse abscissa difference vector</param>
-    /// <param name="z">output parameter: coefficient vector SplineB1 and SplineB2</param>
+    /// <param name="p">Smoothing parameter.</param>
+    /// <param name="dx">(Inverse) abscissa difference vector, depending on the chosen formulation.</param>
+    /// <param name="z">Output coefficient vector used by `SplineB1` and `SplineB2`.</param>
     protected void SplineA(double p, IReadOnlyList<double> dx, Vector<double> z)
     {
       double h1, h2, p2;
@@ -362,15 +361,18 @@ namespace Altaxo.Calc.Interpolation
     }
 
     /// <summary>
-    ///
+    /// Computes the 1st derivative vector for interior points, given boundary values and
+    /// the coefficients computed by `SplineA`.
     /// </summary>
-    /// <param name="p">smoothing parameter</param>
-    /// <param name="dx">inverse abscissa difference vector</param>
-    /// <param name="y">ordinata vector</param>
-    /// <param name="y1">Input: 1st derivative vector with elements y1(lo) and y1(hi) supplied by the user.
-    /// Output: 1st derivative vector with elements y1(i), i = lo+1...hi-1 calculated newly.</param>
-    /// <param name="f">working vector</param>
-    /// <param name="z">the coefficients computed by SplineA</param>
+    /// <param name="p">Smoothing parameter.</param>
+    /// <param name="dx">Inverse abscissa difference vector.</param>
+    /// <param name="y">Ordinate vector.</param>
+    /// <param name="y1">
+    /// On input, a 1st derivative vector with elements y1(lo) and y1(hi) supplied by the user.
+    /// On output, the 1st derivative vector with elements y1(i), i = lo+1...hi-1, newly calculated.
+    /// </param>
+    /// <param name="f">Working vector.</param>
+    /// <param name="z">The coefficients computed by `SplineA`.</param>
     protected void SplineB1(
       double p,
       IReadOnlyList<double> dx,
@@ -417,19 +419,20 @@ namespace Altaxo.Calc.Interpolation
       }
     }
 
-    //----------------------------------------------------------------------------//
-    //
-    // void MpRationalCubicSpline::SplineC1 (double p,
-    //              const Vector& x, const Vector& dx,
-    //              const Vector& y, const Vector& y1,
-    //              Vector &a, Vector &b, Vector &c, Vector &d)
-    //
-    // Calculates the spline coefficients a(i), b(i), c(i), d(i) for a spline
-    // with given 1st derivative. It uses the coefficients calculated by
-    // SplineA and SplineB1.
-    //
-    //----------------------------------------------------------------------------//
-
+    /// <summary>
+    /// Calculates the spline coefficients a(i), b(i), c(i), d(i) for a spline
+    /// with a given 1st derivative vector. Uses the coefficients calculated by
+    /// `SplineA` and `SplineB1`.
+    /// </summary>
+    /// <param name="p">Smoothing parameter.</param>
+    /// <param name="x">Abscissa vector.</param>
+    /// <param name="dx">(Inverse) abscissa difference vector.</param>
+    /// <param name="y">Ordinate vector.</param>
+    /// <param name="y1">1st derivative vector.</param>
+    /// <param name="a">Output spline coefficient vector a.</param>
+    /// <param name="b">Output spline coefficient vector b.</param>
+    /// <param name="c">Output spline coefficient vector c.</param>
+    /// <param name="d">Output spline coefficient vector d.</param>
     protected void SplineC1(double p,
       IReadOnlyList<double> x, IReadOnlyList<double> dx,
       IReadOnlyList<double> y, IReadOnlyList<double> y1,
@@ -456,25 +459,19 @@ namespace Altaxo.Calc.Interpolation
       a[hi] = b[hi] = c[hi] = d[hi] = 0.0;
     }
 
-    //----------------------------------------------------------------------------//
-    //
-    // void MpRationalCubicSpline::SplineB2 (double p,
-    //                 const Vector& dx, const Vector& y,
-    //                 Vector& y2, Vector& f, const Vector& z)
-    //
-    //  input paramaters:    p  smoothing parameter
-    //                      dx  abscissa difference vector
-    //                       y  ordinata vector
-    //                       z  the coefficients computed by SplineA
-    //                       f  working vector
-    //                      y2  2nd derivative vector with elements y2(lo) and y2(hi)
-    //                          supplied by the user.
-    //
-    //  output parameters:  y2  2nd derivative vector with elements
-    //                          y2(i), i = lo+1...hi-1 calculated newly
-    //
-    //----------------------------------------------------------------------------//
-
+    /// <summary>
+    /// Computes the 2nd derivative vector for interior points, given boundary values and
+    /// the coefficients computed by `SplineA`.
+    /// </summary>
+    /// <param name="p">Smoothing parameter.</param>
+    /// <param name="dx">Abscissa difference vector.</param>
+    /// <param name="y">Ordinate vector.</param>
+    /// <param name="y2">
+    /// On input, a 2nd derivative vector with elements y2(lo) and y2(hi) supplied by the user.
+    /// On output, the 2nd derivative vector with elements y2(i), i = lo+1...hi-1, newly calculated.
+    /// </param>
+    /// <param name="f">Working vector.</param>
+    /// <param name="z">The coefficients computed by `SplineA`.</param>
     protected void SplineB2(double p,
       IReadOnlyList<double> dx, IReadOnlyList<double> y,
       Vector<double> y2, Vector<double> f, IReadOnlyList<double> z)
@@ -526,8 +523,8 @@ namespace Altaxo.Calc.Interpolation
     //                 Vector &a, Vector &b, Vector &c, Vector &d)
     //
     // Calculates the spline coefficients a(i), b(i), c(i), d(i) for a spline
-    // with given 2nd derivative. It uses the coefficients calculated by
-    // SplineA and SplineB2.
+    // with a given 2nd derivative vector. Uses the coefficients calculated by
+    // `SplineA` and `SplineB2`.
     //
     //----------------------------------------------------------------------------//
 
@@ -555,6 +552,9 @@ namespace Altaxo.Calc.Interpolation
       a[hi] = b[hi] = c[hi] = d[hi] = 0.0;
     }
 
+    /// <summary>
+    /// Initializes a new instance of the `RationalCubicSpline` class.
+    /// </summary>
     public RationalCubicSpline()
     {
       boundary = BoundaryConditions.Natural;
@@ -739,16 +739,19 @@ namespace Altaxo.Calc.Interpolation
       }
     }
 
+    /// <inheritdoc/>
     public override double GetXOfU(double u)
     {
       return u;
     }
 
+    /// <inheritdoc/>
     public double GetYOfX(double u)
     {
       return GetYOfU(u);
     }
 
+    /// <inheritdoc/>
     public override double GetYOfU(double u)
     {
       // special case that there are no data. Return 0.0.

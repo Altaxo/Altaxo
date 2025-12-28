@@ -55,6 +55,13 @@ using Altaxo.Collections;
 
 namespace Altaxo.Calc.Interpolation
 {
+  /// <summary>
+  /// Provides rational interpolation through a set of support points.
+  /// </summary>
+  /// <remarks>
+  /// The implementation is based on Matpack sources (see acknowledgements) and computes a rational
+  /// interpolant represented in continued-fraction form.
+  /// </remarks>
   public class RationalInterpolation : CurveBase, IInterpolationFunction
   {
     protected Vector<double> xr = CreateVector.Dense<double>(0);
@@ -63,6 +70,9 @@ namespace Altaxo.Calc.Interpolation
     protected int num;
     protected double epsilon;
 
+    /// <summary>
+    /// Initializes a new instance of the `RationalInterpolation` class.
+    /// </summary>
     public RationalInterpolation()
     {
       num = 2;
@@ -87,7 +97,7 @@ namespace Altaxo.Calc.Interpolation
     //  for the given values of n and N.
     //
     //  The required precision "double epsilon" should be set before calling
-    //  this function.  Use function SetPrecision (double eps) for this purpose.
+    //  this function. Use function SetPrecision (double eps) for this purpose.
     //
     // Arguments:
     // ----------
@@ -104,7 +114,7 @@ namespace Altaxo.Calc.Interpolation
     //
     //   0  everything is ok
     //
-    //   1  Interpolation function doesn't exist. You should  try a numerator
+    //   1  Interpolation function doesn't exist. You should try a numerator
     //      degree N > (n - 1) / 2
     //
     //   2  Number of points still to interpolate and degree of numerator
@@ -120,14 +130,15 @@ namespace Altaxo.Calc.Interpolation
     // Reference:
     // ----------
     //
-    //   H. Werner, A reliable and Numerically Stable Program for Rational
-    //   Interpolation of Lagrange Data, Computing, Vol 31, 269 (1983).
+    //   H. Werner, A reliable and numerically stable program for rational
+    //   interpolation of Lagrange data, Computing, Vol 31, 269 (1983).
     //
     //   H. Werner, R. Schaback, Praktische Mathematik II, Springer,
     //   Berlin, Heidelberg, New York, 1972, 2. Aufl. 1979.
     //
     //----------------------------------------------------------------------------//
 
+    /// <inheritdoc/>
     public override void Interpolate(IReadOnlyList<double> x, IReadOnlyList<double> y)
     {
       // check input parameters
@@ -272,11 +283,13 @@ namespace Altaxo.Calc.Interpolation
 
     }
 
+    /// <inheritdoc/>
     public override double GetXOfU(double u)
     {
       return u;
     }
 
+    /// <inheritdoc/>
     public double GetYOfX(double x)
     {
       return GetYOfU(x);
@@ -284,6 +297,7 @@ namespace Altaxo.Calc.Interpolation
 
     private static readonly double RootMax = Math.Sqrt(double.MaxValue);
 
+    /// <inheritdoc/>
     public override double GetYOfU(double u)
     {
       const double SquareEps = DBL_EPSILON * DBL_EPSILON;
@@ -310,12 +324,19 @@ namespace Altaxo.Calc.Interpolation
         return RootMax;
     }
 
+    /// <summary>
+    /// Gets or sets the precision parameter used to decide whether two values are treated as equal
+    /// during the interpolation algorithm.
+    /// </summary>
     public double Precision
     {
       set { epsilon = value; }
       get { return epsilon; }
     }
 
+    /// <summary>
+    /// Gets or sets the degree of the numerator polynomial used for the rational interpolation.
+    /// </summary>
     public int NumeratorDegree
     {
       set { num = value; }
@@ -330,6 +351,16 @@ namespace Altaxo.Calc.Interpolation
     //
     //----------------------------------------------------------------------------//
 
+    /// <summary>
+    /// Finds the element of <paramref name="y"/> with minimal absolute value within the range
+    /// <c>[0, nend]</c> and swaps it with the element at <paramref name="nend"/> in both
+    /// <paramref name="x"/> and <paramref name="y"/>.
+    /// </summary>
+    /// <param name="nend">Upper bound (inclusive) of the range to search.</param>
+    /// <param name="xj">Receives the selected abscissa value.</param>
+    /// <param name="yj">Receives the selected ordinate value.</param>
+    /// <param name="x">Abscissa working vector.</param>
+    /// <param name="y">Ordinate working vector.</param>
     private static void ymin(int nend, out double xj, out double yj, Vector<double> x, Vector<double> y)
     {
       int j;

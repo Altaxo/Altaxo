@@ -42,6 +42,7 @@ namespace Altaxo.Calc.Interpolation
 
     #region IInterpolationFunction Members
 
+    /// <inheritdoc/>
     public double GetYOfX(double xval)
     {
       int idx = CurveBase.FindInterval(xval, _x);
@@ -60,6 +61,7 @@ namespace Altaxo.Calc.Interpolation
 
     #region IInterpolationCurve Members
 
+    /// <inheritdoc/>
     public void Interpolate(IReadOnlyList<double> xvec, IReadOnlyList<double> yvec)
     {
       if (_x is null)
@@ -71,11 +73,13 @@ namespace Altaxo.Calc.Interpolation
       _y = CreateVector.DenseOfEnumerable(yvec);
     }
 
+    /// <inheritdoc/>
     public double GetYOfU(double u)
     {
       return GetYOfX(u);
     }
 
+    /// <inheritdoc/>
     public double GetXOfU(double u)
     {
       return u;
@@ -85,6 +89,14 @@ namespace Altaxo.Calc.Interpolation
 
     #region Static methods
 
+    /// <summary>
+    /// Finds the next index at or after <paramref name="currentIndex"/> where both <paramref name="xcol"/> and <paramref name="ycol"/> contain valid (non-NaN) values.
+    /// </summary>
+    /// <param name="xcol">The x-values column.</param>
+    /// <param name="ycol">The y-values column.</param>
+    /// <param name="sourceLength">Length of the source arrays to consider.</param>
+    /// <param name="currentIndex">Index to start searching from.</param>
+    /// <returns>The index of the next valid pair, or -1 if none found.</returns>
     public static int GetNextIndexOfValidPair(IReadOnlyList<double> xcol, IReadOnlyList<double> ycol, int sourceLength, int currentIndex)
     {
       for (int sourceIndex = currentIndex; sourceIndex < sourceLength; sourceIndex++)
@@ -96,12 +108,33 @@ namespace Altaxo.Calc.Interpolation
       return -1;
     }
 
+    /// <summary>
+    /// Linearly interpolates between two points (<paramref name="x0"/>, <paramref name="y0"/>) and (<paramref name="x1"/>, <paramref name="y1"/>) at x.
+    /// </summary>
+    /// <param name="x">The x position to interpolate at.</param>
+    /// <param name="x0">The left x value.</param>
+    /// <param name="x1">The right x value.</param>
+    /// <param name="y0">The left y value.</param>
+    /// <param name="y1">The right y value.</param>
+    /// <returns>The interpolated y value.</returns>
     public static double Interpolate(double x, double x0, double x1, double y0, double y1)
     {
       double r = (x - x0) / (x1 - x0);
       return (1 - r) * y0 + r * y1;
     }
 
+    /// <summary>
+    /// Resamples the provided x/y columns to a uniformly spaced output starting at <paramref name="xstart"/> with increment <paramref name="xincrement"/>.
+    /// </summary>
+    /// <param name="xcol">Source x-values.</param>
+    /// <param name="ycol">Source y-values.</param>
+    /// <param name="sourceLength">Number of source entries to consider.</param>
+    /// <param name="xstart">Start of the output sampling grid.</param>
+    /// <param name="xincrement">Increment between output samples.</param>
+    /// <param name="numberOfValues">Number of output values to produce.</param>
+    /// <param name="yOutsideOfBounds">Value to write for x positions outside the interpolation range.</param>
+    /// <param name="resultCol">Output array that receives the interpolated values.</param>
+    /// <returns>Null if successful, or an error message when interpolation cannot be performed.</returns>
     public static string? Interpolate(
       IReadOnlyList<double> xcol,
       IReadOnlyList<double> ycol,
@@ -167,6 +200,17 @@ tryinterpolation:
       return null;
     }
 
+    /// <summary>
+    /// Resamples the provided x/y columns to the x positions provided in <paramref name="xnewsampling"/>.
+    /// </summary>
+    /// <param name="xcol">Source x-values.</param>
+    /// <param name="ycol">Source y-values.</param>
+    /// <param name="sourceLength">Number of source entries to consider.</param>
+    /// <param name="xnewsampling">Array of output x positions.</param>
+    /// <param name="numberOfValues">Number of output values to produce.</param>
+    /// <param name="yOutsideOfBounds">Value to write for x positions outside the interpolation range.</param>
+    /// <param name="resultCol">Output array that receives the interpolated values.</param>
+    /// <returns>Null if successful, or an error message when interpolation cannot be performed.</returns>
     public static string? Interpolate(
       IReadOnlyList<double> xcol,
       IReadOnlyList<double> ycol,

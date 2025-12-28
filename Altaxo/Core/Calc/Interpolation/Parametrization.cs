@@ -50,19 +50,19 @@
 
 namespace Altaxo.Calc.Interpolation
 {
-  /// <summary>curve parametrization methods</summary>
+  /// <summary>Curve parametrization methods.</summary>
   public enum Parametrization
   {
-    /// <summary>don't parametrize (default)</summary>
+    /// <summary>Do not parametrize (default).</summary>
     No = 0,
 
-    /// <summary>use sqrt(dx^2+dy^2)</summary>
+    /// <summary>Use sqrt(dx^2+dy^2).</summary>
     Norm2,
 
-    /// <summary>use (dx^2+dy^2)</summary>
+    /// <summary>Use (dx^2+dy^2).</summary>
     SqrNorm2,
 
-    /// <summary>use |dx| + |dy|</summary>
+    /// <summary>Use |dx| + |dy|.</summary>
     Norm1
   }
 }

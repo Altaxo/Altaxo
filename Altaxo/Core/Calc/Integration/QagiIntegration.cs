@@ -241,6 +241,20 @@ namespace Altaxo.Calc.Integration
 
     //static double i_transform (double t, void *params);
 
+    /// <summary>
+    /// Internal wrapper implementing the infinite-interval integration using the transform
+    /// x = (1 - t) / t and evaluating the transformed integrand (f((1-t)/t) + f(-(1-t)/t))/t^2.
+    /// </summary>
+    /// <param name="f">Function to integrate over (-Infinity,+Infinity).</param>
+    /// <param name="epsabs">Absolute error tolerance.</param>
+    /// <param name="epsrel">Relative error tolerance.</param>
+    /// <param name="limit">Maximum number of subintervals.</param>
+    /// <param name="workspace">Workspace used to manage subintervals and errors.</param>
+    /// <param name="result">On return, contains the computed integral result.</param>
+    /// <param name="abserr">On return, contains the estimated absolute error.</param>
+    /// <param name="q">Quadrature rule used for subinterval evaluations.</param>
+    /// <param name="bDebug">Debug flag; when true, detailed errors include debug info.</param>
+    /// <returns>Null on success, or a <see cref="GSL_ERROR"/> describing the problem.</returns>
     private static GSL_ERROR?
     gsl_integration_qagi(Func<double, double> f,
                           double epsabs, double epsrel, int limit,
@@ -267,6 +281,12 @@ namespace Altaxo.Calc.Integration
       return status;
     }
 
+    /// <summary>
+    /// Transform function used to map t in (0,1] to x in (-Infinity,+Infinity) and evaluate the transformed integrand.
+    /// </summary>
+    /// <param name="t">Variable in the transformed domain (0,1].</param>
+    /// <param name="func">Original function defined on the real line.</param>
+    /// <returns>The value of the transformed integrand at t: (f((1-t)/t) + f(-(1-t)/t))/t^2.</returns>
     private static double i_transform(double t, Func<double, double> func)
     {
       double x = (1 - t) / t;

@@ -29,25 +29,33 @@ using Altaxo.Science.Signals;
 namespace Altaxo.Calc.Interpolation
 {
   /// <summary>
-  /// Interpolation with a sum of Prony terms of the real part of a relaxation or retardation function in frequency domain.
-  /// Note that for a relaxation the real part is increasing with frequency (e.g. real part of mechanical modulus), whereas for a retardation the real part is decreasing with frequency (e.g. real part of electrical permittivity)
+  /// Interpolation with a sum of Prony terms of the imaginary part of a relaxation or retardation function in the frequency domain.
   /// </summary>
+  /// <remarks>
+  /// Note that for a relaxation the real part is increasing with frequency (e.g. real part of mechanical modulus),
+  /// whereas for a retardation the real part is decreasing with frequency (e.g. real part of electrical permittivity).
+  /// </remarks>
   public record PronySeriesFrequencyDomainImaginaryPartInterpolation : PronySeriesInterpolationBase, IInterpolationFunctionOptions
   {
     #region Serialization
 
     /// <summary>
-    /// 2024-02-18 V0: initial version
+    /// Serialization surrogate for version 0.
     /// </summary>
+    /// <remarks>
+    /// 2024-02-18 V0: initial version.
+    /// </remarks>
     [Altaxo.Serialization.Xml.XmlSerializationSurrogateFor(typeof(PronySeriesFrequencyDomainImaginaryPartInterpolation), 0)]
     public class SerializationSurrogate0 : Altaxo.Serialization.Xml.IXmlSerializationSurrogate
     {
+      /// <inheritdoc/>
       public void Serialize(object obj, Altaxo.Serialization.Xml.IXmlSerializationInfo info)
       {
         var s = (PronySeriesFrequencyDomainImaginaryPartInterpolation)obj;
         s.SerializeV0(info);
       }
 
+      /// <inheritdoc/>
       public object Deserialize(object? o, Altaxo.Serialization.Xml.IXmlDeserializationInfo info, object? parent)
       {
         return new PronySeriesFrequencyDomainImaginaryPartInterpolation().DeserializeV0(info);

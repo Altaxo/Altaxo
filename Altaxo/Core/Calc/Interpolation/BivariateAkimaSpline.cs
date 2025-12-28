@@ -36,7 +36,7 @@ namespace Altaxo.Calc.Interpolation
   /// <para>"Algorithm 474: Bivariate Interpolation and smooth surface fitting based on local procedures"</para>
   /// <para>Communications of the ACM, Vol.17 (Jan.1974), Number 1</para>
   /// <para></para>
-  /// <para>and where translated to C# by D.Lellinger 2005.</para>
+  /// <para>and was translated to C# by D.Lellinger in 2005.</para>
   /// </remarks>
   public class BivariateAkimaSpline
   {
@@ -77,6 +77,12 @@ namespace Altaxo.Calc.Interpolation
       }
     }
 
+    /// <summary>
+    /// Interpolates the z value for a single point defined by the provided x and y coordinates.
+    /// </summary>
+    /// <param name="x">The x-coordinate of the point to interpolate.</param>
+    /// <param name="y">The y-coordinate of the point to interpolate.</param>
+    /// <returns>The interpolated z value.</returns>
     public double Interpolate(double x, double y)
     {
       var z = new MatrixMath.ScalarAsMatrix<double>(0);
@@ -428,22 +434,17 @@ namespace Altaxo.Calc.Interpolation
     /// <param name="u">ARRAY OF DIMENSION N STORING THE X COORDINATES OF DESIRED POINTS</param>
     /// <param name="v">ARRAY OF DIMENSION N STORING THE Y COORDINATES OF DESIRED POINTS</param>
     /// <param name="w">ARRAY OF DIMENSION N WHERE THE INTERPOLATED Z VALUES AT DESIRED POINTS ARE TO BE DISPLAYED</param>
-    /// <returns></returns>
+    /// <returns>Zero on success; otherwise the method throws an <see cref="ArgumentException"/>.</returns>
     /// <remarks>
-    ///      SOME VARIABLES INTERNALLY USED ARE
+    /// Some variables internally used are:
     /// ZA  = DIVIDED DIFFERENCE OF Z WITH RESPECT TO X
     /// ZB  = DIVIDED DIFFERENCE OF Z WITH RESPECT TO Y
-    /// ZAB = SECOND ORDER DIVIDED DIFFERENCE OF Z WITH
-    ///       RESPECT TO X AND Y */
+    /// ZAB = SECOND ORDER DIVIDED DIFFERENCE OF Z WITH RESPECT TO X AND Y
     /// ZX  = PARTIAL DERIVATIVE OF Z WITH RESPECT TO X
     /// ZY  = PARTIAL DERIVATIVE OF Z WITH RESPECT TO Y
-    /// ZXY = SECOND ORDER PARTIAL DERIVATIVE OF Z WITH
-    ///       RESPECT TO X AND Y
-    /// DECLARATION STATEMENTS
-    /// PRELIMINARY PROCESSING
-    /// SETTING OF SOME INPUT PARAMETERS TO LOCAL VARIABLES
-    /// Parameter adjustments
-    ///</remarks>
+    /// ZXY = SECOND ORDER PARTIAL DERIVATIVE OF Z WITH RESPECT TO X AND Y
+    /// Declaration statements, preliminary processing, setting of some input parameters to local variables, and parameter adjustments are performed inside this routine.
+    /// </remarks>
     private int itplbv_(int lx, int ly, IReadOnlyList<double> x,
       IReadOnlyList<double> y, IROMatrix<double> z__, int n, IReadOnlyList<double> u, IReadOnlyList<double> v, IVector<double> w)
     {
@@ -1141,7 +1142,7 @@ L740:
 //goto L760;
 L750:
       throw new ArgumentException("X VALUES OUT OF SEQUENCE");
-/*
+      /*
 L760:
 throw new ArgumentException(string.Format("ix ={0} x[ix]={1})", ix, x[ix]));
 goto L800;
