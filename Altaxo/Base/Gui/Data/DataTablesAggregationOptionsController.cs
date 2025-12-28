@@ -88,7 +88,7 @@ namespace Altaxo.Gui.Data
     /// <summary>
     /// Gets or sets a value indicating whether the aggregated column names are treated as property names instead of data column names.
     /// </summary>
-    public bool AggregatedColumnNamesArePropertyNames
+    public bool ExecuteTablesTableScriptBeforeAggregation
     {
       get => field;
       set
@@ -96,10 +96,25 @@ namespace Altaxo.Gui.Data
         if (!(field == value))
         {
           field = value;
-          OnPropertyChanged(nameof(AggregatedColumnNamesArePropertyNames));
+          OnPropertyChanged(nameof(ExecuteTablesTableScriptBeforeAggregation));
         }
       }
     }
+
+
+    public bool ExecuteTablesDataSourceBeforeAggregation
+    {
+      get => field;
+      set
+      {
+        if (!(field == value))
+        {
+          field = value;
+          OnPropertyChanged(nameof(ExecuteTablesDataSourceBeforeAggregation));
+        }
+      }
+    }
+
 
 
 
@@ -135,7 +150,8 @@ namespace Altaxo.Gui.Data
       {
         ClusteredPropertyNames = new ObservableCollection<NotifyChangedValue<string>>(_doc.ClusteredPropertiesNames.Select(e => new NotifyChangedValue<string>(e)));
         AggregatedColumnNames = new ObservableCollection<NotifyChangedValue<string>>(_doc.AggregatedColumnNames.Select(e => new NotifyChangedValue<string>(e)));
-        AggregatedColumnNamesArePropertyNames = _doc.AggregatedColumnNamesArePropertyNames;
+        ExecuteTablesTableScriptBeforeAggregation = _doc.ExecuteTablesTableScriptBeforeAggregation;
+        ExecuteTablesDataSourceBeforeAggregation = _doc.ExecuteTablesDataSourceBeforeAggregation;
         AggregationKinds = new ObservableCollection<NotifyChangedValue<KindOfAggregation>>(_doc.AggregationKinds.Select(x => new NotifyChangedValue<KindOfAggregation>(x)));
       }
     }
@@ -147,7 +163,8 @@ namespace Altaxo.Gui.Data
       {
         ClusteredPropertiesNames = ClusteredPropertyNames.Select(e => e.Value).Where(s => !string.IsNullOrEmpty(s)).ToImmutableList(),
         AggregatedColumnNames = AggregatedColumnNames.Select(e => e.Value).Where(s => !string.IsNullOrEmpty(s)).ToImmutableList(),
-        AggregatedColumnNamesArePropertyNames = AggregatedColumnNamesArePropertyNames,
+        ExecuteTablesTableScriptBeforeAggregation = ExecuteTablesTableScriptBeforeAggregation,
+        ExecuteTablesDataSourceBeforeAggregation = ExecuteTablesDataSourceBeforeAggregation,
         AggregationKinds = AggregationKinds.Select(x => x.Value).Distinct().ToImmutableList(),
       };
 

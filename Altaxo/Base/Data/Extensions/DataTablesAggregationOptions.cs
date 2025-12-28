@@ -43,9 +43,14 @@ namespace Altaxo.Data
     public ImmutableList<string> AggregatedColumnNames { get; init; } = ImmutableList<string>.Empty;
 
     /// <summary>
-    /// If true, the names in <see cref="AggregatedColumnNames"/> are treated as property names of the tables.
+    /// If true, the table scripts of the tables are executed before aggregation.
     /// </summary>
-    public bool AggregatedColumnNamesArePropertyNames { get; init; } = false;
+    public bool ExecuteTablesTableScriptBeforeAggregation { get; init; } = false;
+
+    /// <summary>
+    /// If true, the data sources of the tables are executed before aggregation.
+    /// </summary>
+    public bool ExecuteTablesDataSourceBeforeAggregation { get; init; } = false;
 
     /// <summary>
     /// Gets the kinds of aggregation that should be applied to the aggregated columns.
@@ -74,6 +79,9 @@ namespace Altaxo.Data
         foreach (var v in s.AggregationKinds)
           info.AddEnum("e", v);
         info.CommitArray();
+
+        info.AddValue("ExecuteTablesTableScriptBeforeAggregation", s.ExecuteTablesTableScriptBeforeAggregation);
+        info.AddValue("ExecuteTablesDataSourceBeforeAggregation", s.ExecuteTablesDataSourceBeforeAggregation);
       }
 
 
@@ -90,11 +98,16 @@ namespace Altaxo.Data
           kinds[i] = info.GetEnum<KindOfAggregation>("e");
         info.CloseArray(count);
 
+        bool executeTablesTableScriptBeforeAggregation = info.GetBoolean("ExecuteTablesTableScriptBeforeAggregation");
+        bool executeTablesDataSourceBeforeAggregation = info.GetBoolean("ExecuteTablesDataSourceBeforeAggregation");
+
         return new DataTablesAggregationOptions()
         {
           ClusteredPropertiesNames = clusteredPropertiesNames.ToImmutableList(),
           AggregatedColumnNames = aggregatedColumnNames.ToImmutableList(),
           AggregationKinds = kinds.ToImmutableList(),
+          ExecuteTablesTableScriptBeforeAggregation = executeTablesTableScriptBeforeAggregation,
+          ExecuteTablesDataSourceBeforeAggregation = executeTablesDataSourceBeforeAggregation
         };
       }
     }
@@ -159,26 +172,59 @@ namespace Altaxo.Data
     /// </summary>
     PopulationVariance = 10,
 
+    /// <summary>
+    /// Minimum of the absolute values.
+    /// </summary>
     MinimumAbsolute = 11,
 
+    /// <summary>
+    /// Maximum of the absolute values.
+    /// </summary>
     MaximumAbsolute = 12,
 
+    /// <summary>
+    /// Geometric mean of the values.
+    /// </summary>
     GeometricMean = 13,
 
+    /// <summary>
+    /// Harmonic mean of the values.
+    /// </summary>
     HarmonicMean = 14,
 
+    /// <summary>
+    /// Sample skewness of the values; the divisor is N-1 (sample size minus 1).
+    /// </summary>
     Skewness = 15,
 
+    /// <summary>
+    /// Population skewness estimated from a sample; the divisor is N (population size).
+    /// </summary>
     PopulationSkewness = 16,
 
+    /// <summary>
+    /// Sample kurtosis of the values; the divisor is N-1 (sample size minus 1).
+    /// </summary>
     Kurtosis = 17,
 
+    /// <summary>
+    /// Population kurtosis estimated from a sample; the divisor is N (population size).
+    /// </summary>
     PopulationKurtosis = 18,
 
+    /// <summary>
+    /// Root mean square of the values.
+    /// </summary>
     RootMeanSquare = 19,
 
+    /// <summary>
+    /// Lower quartile (25th percentile) of the values.
+    /// </summary>
     LowerQuartile = 20,
 
+    /// <summary>
+    /// Upper quartile (75th percentile) of the values.
+    /// </summary>
     UpperQuartile = 21,
   }
 }

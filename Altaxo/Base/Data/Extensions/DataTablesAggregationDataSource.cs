@@ -326,6 +326,18 @@ namespace Altaxo.Data
 
       var tablesParticipating = ProcessData.UpdateTableProxiesAndGetSourceTables(destinationTable);
 
+      foreach (var table in tablesParticipating)
+      {
+        if (ProcessOptions.ExecuteTablesDataSourceBeforeAggregation && table.DataSource is { } altaxoTableDataSource)
+        {
+          altaxoTableDataSource.FillData(table, reporter);
+        }
+        if (ProcessOptions.ExecuteTablesTableScriptBeforeAggregation && table.TableScript is { } tableScript)
+        {
+          tableScript.ExecuteWithoutExceptionCatching(table, reporter);
+        }
+      }
+
       var allAggregationResults = new Dictionary<string, Dictionary<AggregationKey, List<AltaxoVariant>>>();
 
       foreach (var columnName in ProcessOptions.AggregatedColumnNames)
@@ -335,77 +347,134 @@ namespace Altaxo.Data
         {
           if (table.DataColumns.Contains(columnName))
           {
-            var column = table.DataColumns[columnName];
-
-            // now we have to collect the other properties to cluster by
-            var propDictColumns = new Dictionary<string, Data.DataColumn>();
-
-            foreach (var clusteredPropertyName in ProcessOptions.ClusteredPropertiesNames)
-            {
-              if (table.DataColumns.Contains(clusteredPropertyName))
-              {
-                var clusteredColumn = table.DataColumns[clusteredPropertyName];
-                propDictColumns[clusteredPropertyName] = clusteredColumn;
-              }
-            }
-            // now we have to find the other properties to cluster by (that are not provided as data columns)
-            var propDictConstants = new Dictionary<string, AltaxoVariant>();
-            foreach (var clusteredPropertyName in ProcessOptions.ClusteredPropertiesNames.Where(name => !propDictColumns.ContainsKey(name)))
-            {
-              var prop = IndependentAndDependentColumns.GetPropertyValueOfColumn(column, clusteredPropertyName, table, null);
-              propDictConstants[clusteredPropertyName] = prop;
-            }
-
-            foreach (var (segmentStart, segmentEndExclusive) in ProcessData.RowSelection.GetSelectedRowIndexSegmentsFromTo(0, column.Count, table.DataColumns, column.Count))
-            {
-              for (int rowIndex = segmentStart; rowIndex < segmentEndExclusive; rowIndex++)
-              {
-                if (column.IsElementEmpty(rowIndex))
-                  continue;
-
-
-                var keyValues = new AltaxoVariant[ProcessOptions.ClusteredPropertiesNames.Count];
-                var keyValuesContainEmpty = false;
-                for (int i = 0; i < ProcessOptions.ClusteredPropertiesNames.Count; i++)
-                {
-                  var clusteredPropertyName = ProcessOptions.ClusteredPropertiesNames[i];
-                  AltaxoVariant keyValue;
-                  if (propDictColumns.TryGetValue(clusteredPropertyName, out var clusteredColumn))
-                  {
-                    if (!clusteredColumn.IsElementEmpty(rowIndex))
-                      keyValue = clusteredColumn[rowIndex];
-                    else
-                      keyValue = new AltaxoVariant();
-                  }
-                  else
-                  {
-                    keyValue = propDictConstants[clusteredPropertyName];
-                  }
-                  keyValuesContainEmpty |= keyValue.IsEmpty;
-                  keyValues[i] = keyValue;
-                }
-                if (!keyValuesContainEmpty)
-                {
-                  var aggregationKey = new AggregationKey(keyValues);
-                  if (!aggregationResults.ContainsKey(aggregationKey))
-                  {
-                    aggregationResults[aggregationKey] = new List<AltaxoVariant>();
-                  }
-                  aggregationResults[aggregationKey].Add(column[rowIndex]);
-                }
-              }
-            }
-          }
+            AggregateDataFromTableColumn(table, columnName, aggregationResults);
+          } // if data table contains column
+          else // if the table does not contain the column, we try to get the data from the table properties
+          {
+            AggregateDataFromTableProperty(table, columnName, aggregationResults);
+          } // else if the table does not contain the column
         } // for all tables
         allAggregationResults.Add(columnName, aggregationResults);
+      } // for each column name (or property name) to aggregate
+
+
+      WriteAggregationResultsToTable(destinationTable, allAggregationResults);
+    }
+
+    /// <summary>
+    /// Aggregates values from a data column across all rows and groups them by the configured clustered properties.
+    /// Collected values per group are added to <paramref name="aggregationResults"/> under an <see cref="AggregationKey"/>
+    /// </summary>
+    /// <param name="table">The source table containing the data column.</param>
+    /// <param name="columnName">The name of the column to aggregate.</param>
+    /// <param name="aggregationResults">A dictionary that collects aggregation lists per aggregation key; entries will be created if missing.</param>
+    public void AggregateDataFromTableColumn(DataTable table, string columnName, Dictionary<AggregationKey, List<AltaxoVariant>> aggregationResults)
+    {
+      var column = table.DataColumns[columnName];
+
+      // now we have to collect the other properties to cluster by
+      var propDictColumns = new Dictionary<string, Data.DataColumn>();
+
+      foreach (var clusteredPropertyName in ProcessOptions.ClusteredPropertiesNames)
+      {
+        if (table.DataColumns.Contains(clusteredPropertyName))
+        {
+          var clusteredColumn = table.DataColumns[clusteredPropertyName];
+          propDictColumns[clusteredPropertyName] = clusteredColumn;
+        }
+      }
+      // now we have to find the other properties to cluster by (that are not provided as data columns)
+      var propDictConstants = new Dictionary<string, AltaxoVariant>();
+      foreach (var clusteredPropertyName in ProcessOptions.ClusteredPropertiesNames.Where(name => !propDictColumns.ContainsKey(name)))
+      {
+        var prop = IndependentAndDependentColumns.GetPropertyValueOfColumn(column, clusteredPropertyName, table, null);
+        propDictConstants[clusteredPropertyName] = prop;
       }
 
+      foreach (var (segmentStart, segmentEndExclusive) in ProcessData.RowSelection.GetSelectedRowIndexSegmentsFromTo(0, column.Count, table.DataColumns, column.Count))
+      {
+        for (int rowIndex = segmentStart; rowIndex < segmentEndExclusive; rowIndex++)
+        {
+          if (column.IsElementEmpty(rowIndex))
+            continue;
+
+
+          var keyValues = new AltaxoVariant[ProcessOptions.ClusteredPropertiesNames.Count];
+          var keyValuesContainEmpty = false;
+          for (int i = 0; i < ProcessOptions.ClusteredPropertiesNames.Count; i++)
+          {
+            var clusteredPropertyName = ProcessOptions.ClusteredPropertiesNames[i];
+            AltaxoVariant keyValue;
+            if (propDictColumns.TryGetValue(clusteredPropertyName, out var clusteredColumn))
+            {
+              if (!clusteredColumn.IsElementEmpty(rowIndex))
+                keyValue = clusteredColumn[rowIndex];
+              else
+                keyValue = new AltaxoVariant();
+            }
+            else
+            {
+              keyValue = propDictConstants[clusteredPropertyName];
+            }
+            keyValuesContainEmpty |= keyValue.IsEmpty;
+            keyValues[i] = keyValue;
+          }
+          if (!keyValuesContainEmpty)
+          {
+            var aggregationKey = new AggregationKey(keyValues);
+            if (!aggregationResults.ContainsKey(aggregationKey))
+            {
+              aggregationResults[aggregationKey] = new List<AltaxoVariant>();
+            }
+            aggregationResults[aggregationKey].Add(column[rowIndex]);
+          }
+        }
+      }
+    }
+
+    /// <summary>
+    /// Aggregates a value from a table property and adds it to <paramref name="aggregationResults"/> grouped by the configured clustered properties.
+    /// If the named property is not present on the table or required clustered properties are missing, nothing is added.
+    /// </summary>
+    /// <param name="table">The source table containing the property.</param>
+    /// <param name="columnName">The name of the table property to aggregate.</param>
+    /// <param name="aggregationResults">A dictionary that collects aggregation lists per aggregation key; entries will be created if missing.</param>
+    public void AggregateDataFromTableProperty(DataTable table, string columnName, Dictionary<AggregationKey, List<AltaxoVariant>> aggregationResults)
+    {
+      var tablePropertyObj = table.GetTableProperty(columnName);
+      if (tablePropertyObj is not null && GetKeyValuesFromTableProperties(table) is { } keyValues)
+      {
+        var tableProperty = new AltaxoVariant();
+        if (tablePropertyObj is AltaxoVariant av)
+          tableProperty = av;
+        else
+          tableProperty = new AltaxoVariant(tablePropertyObj);
+
+
+        var aggregationKey = new AggregationKey(keyValues);
+        if (!aggregationResults.ContainsKey(aggregationKey))
+        {
+          aggregationResults[aggregationKey] = new List<AltaxoVariant>();
+        }
+        aggregationResults[aggregationKey].Add(tableProperty);
+
+      }
+    }
+
+    /// <summary>
+    /// Writes the aggregated results into the destination table, creating clustered columns and aggregation result columns as needed.
+    /// </summary>
+    /// <param name="destinationTable">The table into which aggregation results are written.</param>
+    /// <param name="allAggregationResults">A dictionary mapping column (or property) names to aggregation results grouped by <see cref="AggregationKey"/>.</param>
+    public void WriteAggregationResultsToTable(DataTable destinationTable, Dictionary<string, Dictionary<AggregationKey, List<AltaxoVariant>>> allAggregationResults)
+    {
       // now we have all aggregation results collected, we can create the output table
       // first create the clustered columns
       for (int i = 0; i < ProcessOptions.ClusteredPropertiesNames.Count; i++)
       {
         destinationTable.DataColumns.EnsureExistence(ProcessOptions.ClusteredPropertiesNames[i], GetKindOfClusteredColumn(allAggregationResults, i), ColumnKind.X, 0);
       }
+
       var listOfKeys = allAggregationResults.Values.SelectMany(dict => dict.Keys).Distinct().ToList();
       listOfKeys.Sort();
 
@@ -531,6 +600,30 @@ namespace Altaxo.Data
           ++idxRow;
         }
       }
+    }
+
+    /// <summary>
+    /// Retrieves the clustered property values from the table's properties. Returns <c>null</c> if any clustered property is missing.
+    /// </summary>
+    /// <param name="table">The table from which to read the clustered properties.</param>
+    /// <returns>An array of <see cref="AltaxoVariant"/> representing the clustered property values, or <c>null</c> if a property is missing.</returns>
+    public AltaxoVariant[]? GetKeyValuesFromTableProperties(DataTable table)
+    {
+      var keyValues = new AltaxoVariant[ProcessOptions.ClusteredPropertiesNames.Count];
+      for (int i = 0; i < ProcessOptions.ClusteredPropertiesNames.Count; i++)
+      {
+        var clusteredPropertyName = ProcessOptions.ClusteredPropertiesNames[i];
+        var prop = table.GetTableProperty(clusteredPropertyName);
+        if (prop is null)
+        {
+          return null;
+        }
+        else if (prop is AltaxoVariant pav)
+          keyValues[i] = pav;
+        else
+          keyValues[i] = new AltaxoVariant(prop);
+      }
+      return keyValues;
     }
 
 

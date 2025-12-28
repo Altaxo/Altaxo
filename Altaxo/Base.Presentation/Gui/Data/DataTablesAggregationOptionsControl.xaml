@@ -101,5 +101,13 @@
       </DataGrid.Columns>
     </DataGrid>
 
+    <StackPanel Grid.Row="8"
+                Grid.Column="4"
+                Orientation="Vertical">
+      <CheckBox Content="Execute the table's data source before aggregation"
+                IsChecked="{Binding ExecuteTablesDataSourceBeforeAggregation, Mode=TwoWay}" />
+      <CheckBox Content="Execute the table's table script before aggregation"
+                IsChecked="{Binding ExecuteTablesTableScriptBeforeAggregation, Mode=TwoWay}" />
+    </StackPanel>
   </Grid>
 </UserControl>
