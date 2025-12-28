@@ -33,7 +33,7 @@ namespace Altaxo.Calc.FitFunctions.General
 {
   /// <summary>
   /// A polynomial, with both terms with positive exponent and negative exponent.
-  /// This is for completeness only, fitting should be done with a linear fit instead.
+  /// This is for completeness only; fitting should be done with a linear fit instead.
   /// </summary>
   [FitFunctionClass]
   [System.ComponentModel.Description("${res:Altaxo.Calc.FitFunctions.General.Polynomial}")]
@@ -50,12 +50,14 @@ namespace Altaxo.Calc.FitFunctions.General
     [Altaxo.Serialization.Xml.XmlSerializationSurrogateFor("AltaxoBase", "Altaxo.Calc.FitFunctions.General.PolynomialFit", 0)]
     private class XmlSerializationSurrogate0 : Altaxo.Serialization.Xml.IXmlSerializationSurrogate
     {
+      /// <inheritdoc/>
       public virtual void Serialize(object obj, Altaxo.Serialization.Xml.IXmlSerializationInfo info)
       {
         var s = (Polynomial)obj;
         info.AddValue("Order", s._order_n);
       }
 
+      /// <inheritdoc/>
       public virtual object Deserialize(object? o, Altaxo.Serialization.Xml.IXmlDeserializationInfo info, object? parent)
       {
         var order_n = info.GetInt32("Order");
@@ -92,12 +94,21 @@ namespace Altaxo.Calc.FitFunctions.General
 
 
 
+    /// <summary>
+    /// Creates a default polynomial instance (quadratic, no negative exponents).
+    /// </summary>
     public Polynomial()
     {
       _order_n = 2;
       _order_m = 0;
     }
 
+    /// <summary>
+    /// Creates a polynomial with specified positive and negative exponent orders.
+    /// </summary>
+    /// <param name="polynomialOrder_PositiveExponents">Order of positive exponent terms (>=0).</param>
+    /// <param name="polynomialOrder_NegativeExponents">Order of negative exponent terms (>=0).</param>
+    /// <exception cref="ArgumentOutOfRangeException">Thrown if either order is negative.</exception>
     public Polynomial(int polynomialOrder_PositiveExponents, int polynomialOrder_NegativeExponents)
     {
       _order_n = polynomialOrder_PositiveExponents;
@@ -110,6 +121,10 @@ namespace Altaxo.Calc.FitFunctions.General
 
     }
 
+    /// <summary>
+    /// Factory method used by fit function discovery to create a polynomial of order 2/0.
+    /// </summary>
+    /// <returns>A new <see cref="Polynomial"/> instance representing a quadratic polynomial.</returns>
     [FitFunctionCreator("Polynomial", "General", 1, 1, 3)]
     [System.ComponentModel.Description("${res:Altaxo.Calc.FitFunctions.General.Polynomial}")]
     public static IFitFunction CreatePolynomial_2_0()
@@ -117,6 +132,9 @@ namespace Altaxo.Calc.FitFunctions.General
       return new Polynomial(2, 0);
     }
 
+    /// <summary>
+    /// Gets the order of the polynomial with positive exponents.
+    /// </summary>
     public int PolynomialOrder_PositiveExponents => _order_n;
 
     /// <summary>
@@ -139,6 +157,9 @@ namespace Altaxo.Calc.FitFunctions.General
       }
     }
 
+    /// <summary>
+    /// Gets the order of the polynomial with negative exponents.
+    /// </summary>
     public int PolynomialOrder_NegativeExponents => _order_m;
     /// <summary>
     /// Creates a new instance with the provided order for the positive exponents.
@@ -162,6 +183,7 @@ namespace Altaxo.Calc.FitFunctions.General
 
     #region IFitFunction Members
 
+    /// <inheritdoc/>
     public int NumberOfIndependentVariables
     {
       get
@@ -170,6 +192,7 @@ namespace Altaxo.Calc.FitFunctions.General
       }
     }
 
+    /// <inheritdoc/>
     public int NumberOfDependentVariables
     {
       get
@@ -178,6 +201,7 @@ namespace Altaxo.Calc.FitFunctions.General
       }
     }
 
+    /// <inheritdoc/>
     public int NumberOfParameters
     {
       get
@@ -186,17 +210,20 @@ namespace Altaxo.Calc.FitFunctions.General
       }
     }
 
+    /// <inheritdoc/>
     public string IndependentVariableName(int i)
     {
       // TODO:  Add KohlrauschDecay.IndependentVariableName implementation
       return "x";
     }
 
+    /// <inheritdoc/>
     public string DependentVariableName(int i)
     {
       return "y";
     }
 
+    /// <inheritdoc/>
     public string ParameterName(int i)
     {
       if (i < 0 || i > _order_n + _order_m)
@@ -205,6 +232,7 @@ namespace Altaxo.Calc.FitFunctions.General
       return i <= _order_n ? FormattableString.Invariant($"a{i}") : FormattableString.Invariant($"b{i - _order_n}");
     }
 
+    /// <inheritdoc/>
     public double DefaultParameterValue(int i)
     {
       if (i < 0 || i > _order_n + _order_m)
@@ -213,11 +241,13 @@ namespace Altaxo.Calc.FitFunctions.General
       return 0;
     }
 
+    /// <inheritdoc/>
     public IVarianceScaling? DefaultVarianceScaling(int i)
     {
       return null;
     }
 
+    /// <inheritdoc/>
     public void Evaluate(double[] X, double[] P, double[] Y)
     {
       // evaluation of terms x^0 .. x^n
@@ -249,6 +279,7 @@ namespace Altaxo.Calc.FitFunctions.General
     }
 
 
+    /// <inheritdoc/>
     public void Evaluate(IROMatrix<double> independent, IReadOnlyList<double> P, IVector<double> FV, IReadOnlyList<bool>? dependentVariableChoice)
     {
       var rowCount = independent.RowCount;
@@ -293,6 +324,9 @@ namespace Altaxo.Calc.FitFunctions.General
 
     #endregion IFitFunction Members
 
+    /// <summary>
+    /// Evaluates the derivative with respect to the parameters for all rows.
+    /// </summary>
     public void EvaluateDerivative(IROMatrix<double> X, IReadOnlyList<double> P, IReadOnlyList<bool>? isParameterFixed, IMatrix<double> DY, IReadOnlyList<bool>? dependentVariableChoice)
     {
       var rowCount = X.RowCount;

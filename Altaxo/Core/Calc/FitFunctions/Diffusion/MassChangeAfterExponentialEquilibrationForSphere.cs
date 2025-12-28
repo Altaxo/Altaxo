@@ -30,7 +30,7 @@ using Altaxo.Calc.Regression.Nonlinear;
 namespace Altaxo.Calc.FitFunctions.Diffusion
 {
   /// <summary>
-  /// Describes the mass change of a plane sheet (with given thickness and infinite lateral dimensions) in a diffusion process
+  /// Describes the mass change of a sphere (with given radius) in a diffusion process
   /// after a concentration change that is modeled by an exponential equilibration.
   /// </summary>
   /// <remarks>
@@ -100,6 +100,10 @@ namespace Altaxo.Calc.FitFunctions.Diffusion
 
     #endregion Serialization
 
+    /// <summary>
+    /// Creates the default fit function describing the mass change of a sphere after an exponential equilibration concentration change.
+    /// </summary>
+    /// <returns>A new instance of <see cref="MassChangeAfterExponentialEquilibrationForSphere"/>.</returns>
     [FitFunctionCreator("Mass change of a sphere after an exponential equilibration concentration change", "Diffusion", 1, 1, 5)]
     [System.ComponentModel.Description("${res:Altaxo.Calc.FitFunctions.Diffusion.MassChangeAfterExponentialEquilibrationForSphere}")]
     public static IFitFunction Create()
@@ -167,8 +171,8 @@ namespace Altaxo.Calc.FitFunctions.Diffusion
     /// <summary>
     /// Evaluates the response of a unit step in dependence of the reduced variables.
     /// </summary>
-    /// <param name="rv">Reduced variable rv = D*t/r², where D is the diffusion coefficient, t is the time and r is the radius of the cylinder.</param>
-    /// <param name="rz">Reduced variable rz = D*τ/r², where D is the diffusion coefficient, τ is the time constant of the outer concentration change, and r is the radius of the cylinder.</param>
+    /// <param name="rv">Reduced variable rv = D*t/r², where D is the diffusion coefficient, t is the time and r is the radius of the sphere.</param>
+    /// <param name="rz">Reduced variable rz = D*τ/r², where D is the diffusion coefficient, τ is the time constant of the outer concentration change, and r is the radius of the sphere.</param>
     /// <returns>The response to a unit step in dependence on rv and rz.</returns>
     public static double EvaluateUnitStepWrtReducedVariables(double rv, double rz)
     {
@@ -204,8 +208,8 @@ namespace Altaxo.Calc.FitFunctions.Diffusion
     /// <summary>
     /// Evaluates the response of a unit step in dependence of the reduced variables.
     /// </summary>
-    /// <param name="rv">Reduced variable rv = D*t/r², where D is the diffusion coefficient, t is the time and r is the radius of the cylinder.</param>
-    /// <param name="rz">Reduced variable rz = D*τ/r², where D is the diffusion coefficient, τ is the time constant of the outer concentration change, and r is the radius of the cylinder.</param>
+    /// <param name="rv">Reduced variable rv = D*t/r², where D is the diffusion coefficient, t is the time and r is the radius of the sphere.</param>
+    /// <param name="rz">Reduced variable rz = D*τ/r², where D is the diffusion coefficient, τ is the time constant of the outer concentration change, and r is the radius of the sphere.</param>
     /// <returns>The response to a unit step in dependence on rv and rz, and the derivatives w.r.t. rv and rz.</returns>
     public static (double functionValue, double derivativeWrtRv, double derivativeWrtRz) EvaluateUnitStepAndDerivativesWrtReducedVariables(double rv, double rz)
     {

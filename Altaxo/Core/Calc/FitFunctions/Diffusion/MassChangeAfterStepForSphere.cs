@@ -99,6 +99,10 @@ namespace Altaxo.Calc.FitFunctions.Diffusion
 
     #endregion Serialization
 
+    /// <summary>
+    /// Creates the default fit function describing the mass change of a sphere after a concentration step.
+    /// </summary>
+    /// <returns>A new instance of <see cref="MassChangeAfterStepForSphere"/>.</returns>
     [FitFunctionCreator("Mass change of a sphere after a concentration step", "Diffusion", 1, 1, 4)]
     [System.ComponentModel.Description("${res:Altaxo.Calc.FitFunctions.Diffusion.MassChangeAfterStepForSphere}")]
     public static IFitFunction Create()
@@ -274,7 +278,16 @@ namespace Altaxo.Calc.FitFunctions.Diffusion
       return EvaluateUnitStepWrtReducedVariable(D * t / (d * d));
     }
 
-    /// <inheritdoc/>
+    /// <summary>
+    /// Evaluates the mass change for the given time and parameters: M(t) = M0 + ΔM * unitstep(D*(t - t0)/d^2)
+    /// </summary>
+    /// <param name="t">The time at which to evaluate the mass.</param>
+    /// <param name="d">The characteristic length (radius) used for reduced variable; here provided as radius.</param>
+    /// <param name="t0">The start time of the step.</param>
+    /// <param name="M0">Initial mass before the step.</param>
+    /// <param name="ΔM">Mass change after the step.</param>
+    /// <param name="D">Diffusion coefficient.</param>
+    /// <returns>The mass at time <paramref name="t"/>.</returns>
     public static double Evaluate(double t, double d, double t0, double M0, double ΔM, double D)
     {
       double tDiff = t - t0;

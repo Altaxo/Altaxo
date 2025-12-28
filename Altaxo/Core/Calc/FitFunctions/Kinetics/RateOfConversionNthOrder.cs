@@ -48,11 +48,13 @@ namespace Altaxo.Calc.FitFunctions.Kinetics
     [Altaxo.Serialization.Xml.XmlSerializationSurrogateFor(typeof(RateOfConversionNthOrder), 1)]
     private class XmlSerializationSurrogate0 : Altaxo.Serialization.Xml.IXmlSerializationSurrogate
     {
+      /// <inheritdoc/>
       public virtual void Serialize(object obj, Altaxo.Serialization.Xml.IXmlSerializationInfo info)
       {
         var s = (RateOfConversionNthOrder)obj;
       }
 
+      /// <inheritdoc/>
       public virtual object Deserialize(object? o, Altaxo.Serialization.Xml.IXmlDeserializationInfo info, object? parent)
       {
         return new RateOfConversionNthOrder();
@@ -160,6 +162,7 @@ namespace Altaxo.Calc.FitFunctions.Kinetics
     {
       Y[0] = P[1] * EvaluateConversionRate(X[0], P[0], P[2], P[3]);
     }
+    /// <inheritdoc/>
     public void Evaluate(IROMatrix<double> independent, IReadOnlyList<double> P, IVector<double> FV, IReadOnlyList<bool>? dependentVariableChoice)
     {
       var rowCount = independent.RowCount;

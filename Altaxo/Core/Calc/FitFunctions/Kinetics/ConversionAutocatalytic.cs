@@ -49,11 +49,13 @@ namespace Altaxo.Calc.FitFunctions.Kinetics
     [Altaxo.Serialization.Xml.XmlSerializationSurrogateFor(typeof(ConversionAutocatalytic), 1)]
     private class XmlSerializationSurrogate0 : Altaxo.Serialization.Xml.IXmlSerializationSurrogate
     {
+      /// <inheritdoc/>
       public virtual void Serialize(object obj, Altaxo.Serialization.Xml.IXmlSerializationInfo info)
       {
         var s = (ConversionAutocatalytic)obj;
       }
 
+      /// <inheritdoc/>
       public virtual object Deserialize(object? o, Altaxo.Serialization.Xml.IXmlDeserializationInfo info, object? parent)
       {
         return new ConversionAutocatalytic();
@@ -81,7 +83,7 @@ namespace Altaxo.Calc.FitFunctions.Kinetics
     }
 
     /// <summary>
-    /// Not functional since this instance is immutable.
+    /// Event that would be raised when the instance changes. Not functional since this instance is immutable.
     /// </summary>
     public event EventHandler? Changed { add { } remove { } }
 
@@ -224,12 +226,12 @@ namespace Altaxo.Calc.FitFunctions.Kinetics
       }
     }
     /// <summary>
-    /// Evaluates the conversion rate (without any prefactor). Thus, the resulting value
+    /// Evaluates the conversion rate (without any prefactor). The resulting value
     /// is the time derivative of the conversion (also without prefactor).
     /// </summary>
     /// <param name="X">The x value.</param>
     /// <param name="P">The parameter array.</param>
-    /// <param name="Y">Outpust the y value.</param>
+    /// <param name="Y">Outputs the y value.</param>
     public virtual void EvaluateConversionRate(double[] X, double[] P, double[] Y)
     {
       if (!(X[0] >= P[0]))
@@ -244,11 +246,11 @@ namespace Altaxo.Calc.FitFunctions.Kinetics
     }
 
     /// <summary>
-    /// Evaluates the conversion (from 0..1). Thus, the prefactor A0 is not used here.
+    /// Evaluates the conversion (from 0..1). The prefactor A0 is not used here.
     /// </summary>
     /// <param name="X">The x value.</param>
     /// <param name="P">The parameter array.</param>
-    /// <param name="Y">Outpust the y value.</param>
+    /// <param name="Y">Outputs the y value.</param>
     public virtual void EvaluateConversion(double[] X, double[] P, double[] Y)
     {
       var x = X[0] - P[0];
@@ -320,10 +322,15 @@ namespace Altaxo.Calc.FitFunctions.Kinetics
     }
 
 
+    /// <summary>
+    /// Internal evaluator that computes rates and Jacobians for the ODE solver.
+    /// </summary>
     public class Evaluator
     {
       private double t0, A0, k1, k2, m, n;
 
+      /// <summary>
+      /// Initializes the evaluator with the parameter set.</summary>
       public void Initialize(double[] P)
       {
         t0 = P[0];
@@ -334,6 +341,9 @@ namespace Altaxo.Calc.FitFunctions.Kinetics
         n = P[5];
       }
 
+      /// <summary>
+      /// Checks whether the provided parameter set matches the evaluator's current set.
+      /// </summary>
       public bool IsSameParameterSet(double[] P)
       {
         return
@@ -345,6 +355,9 @@ namespace Altaxo.Calc.FitFunctions.Kinetics
         n == P[5];
       }
 
+      /// <summary>
+      /// Evaluates the rate function for the given state and time.
+      /// </summary>
       public void EvaluateRate(double x, double[] y, double[] dy)
       {
         double yy = y[0];
@@ -362,6 +375,9 @@ namespace Altaxo.Calc.FitFunctions.Kinetics
         }
       }
 
+      /// <summary>
+      /// Evaluates the rate function for a scalar state value.
+      /// </summary>
       public double EvaluateRate(double x, double yy)
       {
         double dy;
@@ -381,6 +397,9 @@ namespace Altaxo.Calc.FitFunctions.Kinetics
       }
 
 
+      /// <summary>
+      /// Evaluates the Jacobian matrix of the rate function with respect to the state variables.
+      /// </summary>
       public void EvaluateJacobian(double x, double[] yy, [AllowNull][NotNull] ref IMatrix<double> jac)
       {
         jac ??= CreateMatrix.Dense<double>(1, 1);

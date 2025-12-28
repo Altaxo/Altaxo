@@ -98,7 +98,13 @@ namespace Altaxo.Calc.FitFunctions.Viscosity
       return null;
     }
 
-    /// <inheritdoc/>
+    /// <summary>
+    /// Evaluates the Bingham plastic model for a single shear rate.
+    /// </summary>
+    /// <param name="gammadot">Shear rate.</param>
+    /// <param name="tau0">Yield stress parameter τ0.</param>
+    /// <param name="etaP">Plastic viscosity ηp.</param>
+    /// <returns>The viscosity η for the given shear rate.</returns>
     public static double Evaluate(double gammadot, double tau0, double etaP)
     {
       return tau0 / gammadot + etaP;

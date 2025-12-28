@@ -30,6 +30,9 @@ using Altaxo.Science;
 
 namespace Altaxo.Calc.FitFunctions.Materials
 {
+  /// <summary>
+  /// Obsolete wrapper for Arrhenius fit functions. Use <see cref="ArrheniusLawTime"/> or <see cref="ArrheniusLawRate"/> instead.
+  /// </summary>
   [Obsolete("Please use ArrheniusLawTime or ArrheniusLawRate")]
   public class ArrheniusLaw : ArrheniusLawTime
   {
@@ -41,19 +44,31 @@ namespace Altaxo.Calc.FitFunctions.Materials
       _dependentVariableTransform = dependentVariableTransform;
     }
 
+    /// <summary>
+    /// Gets the representation used for the dependent variable transformation.
+    /// </summary>
     [Category("OptionsForDependentVariables")]
     public TransformedValueRepresentation DependentVariableRepresentation => _dependentVariableTransform;
+
+    /// <summary>
+    /// Creates a copy of this instance with a changed dependent variable representation.
+    /// This method is not implemented for the obsolete wrapper and throws <see cref="NotImplementedException"/>.
+    /// </summary>
+    /// <param name="value">The new dependent variable representation.</param>
+    /// <returns>A new <see cref="ArrheniusLawTime"/> instance with the provided representation.</returns>
     [Category("OptionsForDependentVariables")]
     public ArrheniusLawTime WithDependentVariableRepresentation(TransformedValueRepresentation value)
     {
       throw new NotImplementedException("Setting the dependent variable transformation is obsolete. Instead, please set the transformation in the fit function view.");
     }
 
+    /// <inheritdoc/>
     public override string DependentVariableName(int i)
     {
       return TransformedValue.GetFormula("y", _dependentVariableTransform);
     }
 
+    /// <inheritdoc/>
     public override double Evaluate(double X, IReadOnlyList<double> P)
     {
       var y = base.Evaluate(X, P);

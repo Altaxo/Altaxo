@@ -66,6 +66,10 @@ namespace Altaxo.Calc.FitFunctions.Chemistry.SorptionIsotherms
     #endregion Serialization
 
 
+    /// <summary>
+    /// Creates the default Smith model fit function.
+    /// </summary>
+    /// <returns>A new instance of <see cref="SmithModel"/>.</returns>
     [FitFunctionCreator("Mass uptake Smith model", "Chemistry/SorptionIsotherms", 1, 1, 2)]
     [System.ComponentModel.Description("${res:Altaxo.Calc.FitFunctions.Chemistry.SorptionIsotherms.SmithModel}")]
     public static IFitFunction Create()

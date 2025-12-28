@@ -229,9 +229,8 @@ namespace Altaxo.Calc.FitFunctions.Transitions
     }
 
     /// <summary>
-    /// This function produces a continuous transition with the Gompertz function from a left to a right polynomial,
-    /// centered at xc, with the width of the transition determined by σ. It is commonly used for
-    /// modeling tumor growth rates, and mortality and survival analysis.
+    /// This function produces a continuous transition with the Gompertz function,
+    /// from a left to a right polynomial, centered at <paramref name="xc"/>, with the width of the transition determined by <paramref name="r"/>.
     /// </summary>
     /// <param name="x">The input value at which to evaluate the function.</param>
     /// <param name="xc">The center point of the transition, where the function value is halfway between the starting and ending values.</param>
@@ -239,6 +238,8 @@ namespace Altaxo.Calc.FitFunctions.Transitions
     /// <param name="coeffs_left">The coefficients of the polynomial for the left segment (before the transition).</param>
     /// <param name="coeffs_right">The coefficients of the polynomial for the right segment (after the transition).</param>
     /// <returns>The value of the smoothed step function at the specified input value.</returns>
+    /// <remarks>The Gompertz function is commonly used for
+    /// modeling tumor growth rates, and mortality and survival analysis.</remarks>
     public static double Evaluate(double x, double xc, double r, ReadOnlySpan<double> coeffs_left, ReadOnlySpan<double> coeffs_right)
     {
       var arg = r * (xc - x);

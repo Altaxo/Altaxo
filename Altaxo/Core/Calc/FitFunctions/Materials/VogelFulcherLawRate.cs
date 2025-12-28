@@ -44,6 +44,9 @@ namespace Altaxo.Calc.FitFunctions.Materials
     private TemperatureRepresentation _temperatureUnitOfT0;
     private TemperatureRepresentation _temperatureUnitOfB;
 
+    /// <summary>
+    /// Initializes a new instance of the <see cref="VogelFulcherLawRate"/> class with Kelvin units.
+    /// </summary>
     public VogelFulcherLawRate()
     {
       _temperatureUnitOfX = TemperatureRepresentation.Kelvin;
@@ -51,6 +54,12 @@ namespace Altaxo.Calc.FitFunctions.Materials
       _temperatureUnitOfB = TemperatureRepresentation.Kelvin;
     }
 
+    /// <summary>
+    /// Initializes a new instance of the <see cref="VogelFulcherLawRate"/> class with the provided temperature unit representations.
+    /// </summary>
+    /// <param name="temperatureUnitOfX">Temperature unit representation for the independent variable.</param>
+    /// <param name="temperatureUnitOfT0">Temperature unit representation for parameter T0.</param>
+    /// <param name="temperatureUnitOfB">Temperature unit representation for parameter B.</param>
     public VogelFulcherLawRate(
     TemperatureRepresentation temperatureUnitOfX,
     TemperatureRepresentation temperatureUnitOfT0,
@@ -63,6 +72,9 @@ namespace Altaxo.Calc.FitFunctions.Materials
 
 
 
+    /// <summary>
+    /// Gets or sets the temperature unit representation of the independent variable.
+    /// </summary>
     [Category("OptionsForIndependentVariables")]
     public TemperatureRepresentation IndependentVariableRepresentation
     {
@@ -70,6 +82,11 @@ namespace Altaxo.Calc.FitFunctions.Materials
       set { _temperatureUnitOfX = value; }
     }
 
+    /// <summary>
+    /// Returns an instance with the provided independent variable representation.
+    /// </summary>
+    /// <param name="value">New temperature representation for the independent variable.</param>
+    /// <returns>Either the same instance if unchanged or a shallow-cloned instance with the updated representation.</returns>
     public VogelFulcherLawRate WithIndependentVariableRepresentation(TemperatureRepresentation value)
     {
       if (value == _temperatureUnitOfX)
@@ -84,12 +101,20 @@ namespace Altaxo.Calc.FitFunctions.Materials
       }
     }
 
+    /// <summary>
+    /// Gets the temperature unit representation for parameter T0.
+    /// </summary>
     [Category("OptionsForParameters")]
     public TemperatureRepresentation ParameterT0Representation
     {
       get { return _temperatureUnitOfT0; }
     }
 
+    /// <summary>
+    /// Returns an instance with the provided T0 parameter temperature representation.
+    /// </summary>
+    /// <param name="value">Temperature representation for parameter T0.</param>
+    /// <returns>Either the same instance if unchanged or a shallow-cloned instance with the updated representation.</returns>
     public VogelFulcherLawRate WithParameterT0Representation(TemperatureRepresentation value)
     {
       if (value == _temperatureUnitOfT0)
@@ -104,12 +129,22 @@ namespace Altaxo.Calc.FitFunctions.Materials
       }
     }
 
+    /// <summary>
+    /// Gets the temperature unit representation for parameter B.
+    /// </summary>
     [Category("OptionsForParameters")]
     public TemperatureRepresentation ParameterBRepresentation
     {
       get { return _temperatureUnitOfB; }
     }
 
+    /// <summary>
+    /// Returns an instance with the provided B parameter temperature representation.
+    /// Celsius and Fahrenheit are not allowed for parameter B because they are offset units.
+    /// </summary>
+    /// <param name="value">Temperature representation for parameter B.</param>
+    /// <returns>Either the same instance if unchanged or a shallow-cloned instance with the updated representation.</returns>
+    /// <exception cref="InvalidOperationException">Thrown when Celsius or Fahrenheit is provided.</exception>
     public VogelFulcherLawRate WithParameterBRepresentation(TemperatureRepresentation value)
     {
       if (value == _temperatureUnitOfB)
@@ -161,11 +196,19 @@ namespace Altaxo.Calc.FitFunctions.Materials
 
     #endregion Serialization
 
+    /// <summary>
+    /// Returns a string that represents the current fit function.
+    /// </summary>
+    /// <returns>Always returns "VogelFulcherLaw".</returns>
     public override string ToString()
     {
       return "VogelFulcherLaw";
     }
 
+    /// <summary>
+    /// Factory method used by discovery to create a default instance of this fit function.
+    /// </summary>
+    /// <returns>A new <see cref="VogelFulcherLawRate"/> instance.</returns>
     [FitFunctionCreator("Vogel-Fulcher law (rate)", "Materials", 1, 1, 3)]
     [System.ComponentModel.Description("${res:Altaxo.Calc.FitFunctions.Materials.VogelFulcherLawRate}")]
     public static IFitFunction CreateDefault()
@@ -175,6 +218,7 @@ namespace Altaxo.Calc.FitFunctions.Materials
 
     #region IFitFunction Members
 
+    /// <inheritdoc/>
     public int NumberOfIndependentVariables
     {
       get
@@ -183,6 +227,7 @@ namespace Altaxo.Calc.FitFunctions.Materials
       }
     }
 
+    /// <inheritdoc/>
     public int NumberOfDependentVariables
     {
       get
@@ -191,6 +236,7 @@ namespace Altaxo.Calc.FitFunctions.Materials
       }
     }
 
+    /// <inheritdoc/>
     public int NumberOfParameters
     {
       get
@@ -199,16 +245,19 @@ namespace Altaxo.Calc.FitFunctions.Materials
       }
     }
 
+    /// <inheritdoc/>
     public string IndependentVariableName(int i)
     {
       return "T_" + _temperatureUnitOfX.ToString();
     }
 
+    /// <inheritdoc/>
     public virtual string DependentVariableName(int i)
     {
       return "y";
     }
 
+    /// <inheritdoc/>
     public string ParameterName(int i)
     {
       switch (i)
@@ -227,6 +276,7 @@ namespace Altaxo.Calc.FitFunctions.Materials
       }
     }
 
+    /// <inheritdoc/>
     public double DefaultParameterValue(int i)
     {
       switch (i)
@@ -246,11 +296,18 @@ namespace Altaxo.Calc.FitFunctions.Materials
       }
     }
 
+    /// <inheritdoc/>
     public IVarianceScaling? DefaultVarianceScaling(int i)
     {
       return null;
     }
 
+    /// <summary>
+    /// Evaluates the Vogel-Fulcher law for rate-like quantities at the specified temperature and stores the result in Y.
+    /// </summary>
+    /// <param name="X">Array where X[0] is the temperature in the unit represented by <see cref="IndependentVariableRepresentation"/>.</param>
+    /// <param name="P">Parameter array where P[0]=y0, P[1]=B and P[2]=T0.</param>
+    /// <param name="Y">Array that receives the evaluated function value at index 0.</param>
     public virtual void Evaluate(double[] X, double[] P, double[] Y)
     {
       double temperature = Temperature.ToKelvin(X[0], _temperatureUnitOfX);
@@ -259,6 +316,13 @@ namespace Altaxo.Calc.FitFunctions.Materials
       Y[0] = P[0] * Math.Exp(-B / (temperature - T0));
     }
 
+    /// <summary>
+    /// Evaluates the Vogel-Fulcher law for multiple rows of independent variables and writes results to <paramref name="FV"/>.
+    /// </summary>
+    /// <param name="independent">Matrix of independent variable values (rows x columns), expected single-column.</param>
+    /// <param name="P">Parameter list where P[0]=y0, P[1]=B and P[2]=T0.</param>
+    /// <param name="FV">Vector that receives the function values for each row.</param>
+    /// <param name="dependentVariableChoice">Not used; retained for compatibility.</param>
     public virtual void Evaluate(IROMatrix<double> independent, IReadOnlyList<double> P, IVector<double> FV, IReadOnlyList<bool>? dependentVariableChoice)
     {
       var rowCount = independent.RowCount;

@@ -48,11 +48,13 @@ namespace Altaxo.Calc.FitFunctions.Kinetics
     [Altaxo.Serialization.Xml.XmlSerializationSurrogateFor(typeof(KineticsNthOrder), 1)]
     private class XmlSerializationSurrogate0 : Altaxo.Serialization.Xml.IXmlSerializationSurrogate
     {
+      /// <inheritdoc/>
       public virtual void Serialize(object obj, Altaxo.Serialization.Xml.IXmlSerializationInfo info)
       {
         var s = (KineticsNthOrder)obj;
       }
 
+      /// <inheritdoc/>
       public virtual object Deserialize(object? o, Altaxo.Serialization.Xml.IXmlDeserializationInfo info, object? parent)
       {
         return new KineticsNthOrder();
@@ -80,7 +82,7 @@ namespace Altaxo.Calc.FitFunctions.Kinetics
     }
 
     /// <summary>
-    /// Not functional since this instance is immutable.
+    /// Event that would be raised when the instance changes. Not functional since this instance is immutable.
     /// </summary>
     public event EventHandler? Changed { add { } remove { } }
 

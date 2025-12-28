@@ -65,6 +65,10 @@ namespace Altaxo.Calc.FitFunctions.Chemistry.SorptionIsotherms
     #endregion Serialization
 
 
+    /// <summary>
+    /// Creates the default Oswin model fit function.
+    /// </summary>
+    /// <returns>A new instance of <see cref="OswinModel"/>.</returns>
     [FitFunctionCreator("Mass uptake Oswin model", "Chemistry/SorptionIsotherms", 1, 1, 3)]
     [System.ComponentModel.Description("${res:Altaxo.Calc.FitFunctions.Chemistry.SorptionIsotherms.OswinModel}")]
     public static IFitFunction Create()

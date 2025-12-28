@@ -121,6 +121,9 @@ namespace Altaxo.Calc.FitFunctions.Relaxation
 
     #endregion Serialization
 
+    /// <summary>
+    /// Initializes a new instance of the <see cref="KohlrauschModulusRetardation"/> class.
+    /// </summary>
     public KohlrauschModulusRetardation()
     {
     }
@@ -132,6 +135,12 @@ namespace Altaxo.Calc.FitFunctions.Relaxation
     ///   <c>true</c> if the independent variable is the frequency; false if the independent variable is the circular frequency.
     /// </value>
     public bool UseFrequencyInsteadOfOmega => _useFrequencyInsteadOmega;
+
+    /// <summary>
+    /// Returns a new instance with the <see cref="UseFrequencyInsteadOfOmega"/> property set to the specified value.
+    /// </summary>
+    /// <param name="value">If set to <c>true</c> the independent variable is interpreted as frequency; otherwise as omega.</param>
+    /// <returns>A new instance with the modified setting, or the same instance if the value is unchanged.</returns>
     public KohlrauschModulusRetardation WithUseFrequencyInsteadOfOmega(bool value)
     {
       if (!(_useFrequencyInsteadOmega == value))
@@ -155,7 +164,7 @@ namespace Altaxo.Calc.FitFunctions.Relaxation
     public bool UseFlowTerm => _useFlowTerm;
 
     /// <summary>
-    /// Sets a value indicating whether to use a flow term.
+    /// Returns a new instance with the <see cref="UseFlowTerm"/> property set to the specified value.
     /// </summary>
     /// <param name="value"><c>true</c> if a flow term is included; otherwise, <c>false</c>.</param>
     /// <returns>New instance with the parameter set accordingly.</returns>
@@ -182,7 +191,7 @@ namespace Altaxo.Calc.FitFunctions.Relaxation
     public bool InvertViscosity => _invertViscosity;
 
     /// <summary>
-    /// Sets a value indicating whether to invert the viscosity (then a general fluidity is used as parameter).
+    /// Returns a new instance with the <see cref="InvertViscosity"/> property set to the specified value.
     /// </summary>
     /// <param name="value"><c>true</c> if a fluidity is used instead of viscosity; otherwise, <c>false</c>.</param>
     /// <returns>New instance with the parameter set accordingly.</returns>
@@ -209,7 +218,7 @@ namespace Altaxo.Calc.FitFunctions.Relaxation
     public bool LogarithmizeResults => _logarithmizeResults;
 
     /// <summary>
-    /// Sets a value indicating whether the real and imaginary part of the dependent variable should be logarithmized (decadic logarithm).
+    /// Returns a new instance with the <see cref="LogarithmizeResults"/> property set to the specified value.
     /// </summary>
     /// <param name="value"><c>true</c> if the real and imaginary part of the dependent variable should be logarithmized; otherwise, <c>false</c>.</param>
     /// <returns>New instance with the parameter set accordingly.</returns>
@@ -229,6 +238,7 @@ namespace Altaxo.Calc.FitFunctions.Relaxation
 
 
 
+    /// <inheritdoc/>
     public override string ToString()
     {
       return "Kohlrausch Modulus Complex " + (_useFrequencyInsteadOmega ? "(Frequency)" : "(Omega)");
@@ -302,6 +312,7 @@ namespace Altaxo.Calc.FitFunctions.Relaxation
 
     #region independent variable definition
 
+    /// <inheritdoc/>
     public int NumberOfIndependentVariables
     {
       get
@@ -310,6 +321,7 @@ namespace Altaxo.Calc.FitFunctions.Relaxation
       }
     }
 
+    /// <inheritdoc/>
     public string IndependentVariableName(int i)
     {
       return _useFrequencyInsteadOmega ? "Frequency" : "Omega";
@@ -319,6 +331,7 @@ namespace Altaxo.Calc.FitFunctions.Relaxation
 
     #region dependent variable definition
 
+    /// <inheritdoc/>
     public int NumberOfDependentVariables
     {
       get
@@ -327,6 +340,7 @@ namespace Altaxo.Calc.FitFunctions.Relaxation
       }
     }
 
+    /// <inheritdoc/>
     public string DependentVariableName(int i)
     {
       return i == 0 ? "M'" : "M''";
@@ -336,6 +350,7 @@ namespace Altaxo.Calc.FitFunctions.Relaxation
 
     #region parameter definition
 
+    /// <inheritdoc/>
     public int NumberOfParameters
     {
       get
@@ -344,6 +359,7 @@ namespace Altaxo.Calc.FitFunctions.Relaxation
       }
     }
 
+    /// <inheritdoc/>
     public string ParameterName(int i)
     {
       return i switch
@@ -357,6 +373,7 @@ namespace Altaxo.Calc.FitFunctions.Relaxation
       };
     }
 
+    /// <inheritdoc/>
     public double DefaultParameterValue(int i)
     {
       return i switch
@@ -370,6 +387,7 @@ namespace Altaxo.Calc.FitFunctions.Relaxation
       };
     }
 
+    /// <inheritdoc/>
     public IVarianceScaling? DefaultVarianceScaling(int i)
     {
       return null;
@@ -377,6 +395,7 @@ namespace Altaxo.Calc.FitFunctions.Relaxation
 
     #endregion parameter definition
 
+    /// <inheritdoc/>
     public void Evaluate(double[] X, double[] P, double[] Y)
     {
       double x = X[0];
@@ -408,6 +427,8 @@ namespace Altaxo.Calc.FitFunctions.Relaxation
         Y[1] = result.Imaginary;
       }
     }
+
+    /// <inheritdoc/>
     public void Evaluate(IROMatrix<double> independent, IReadOnlyList<double> P, IVector<double> FV, IReadOnlyList<bool>? dependentVariableChoice)
     {
       var rowCount = independent.RowCount;

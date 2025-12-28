@@ -206,6 +206,7 @@ namespace Altaxo.Calc.FitFunctions.Probability
 
     #region IFitFunction Members
 
+    /// <inheritdoc/>
     public int NumberOfIndependentVariables
     {
       get
@@ -214,6 +215,7 @@ namespace Altaxo.Calc.FitFunctions.Probability
       }
     }
 
+    /// <inheritdoc/>
     public int NumberOfDependentVariables
     {
       get
@@ -222,6 +224,7 @@ namespace Altaxo.Calc.FitFunctions.Probability
       }
     }
 
+    /// <inheritdoc/>
     public int NumberOfParameters
     {
       get
@@ -230,16 +233,19 @@ namespace Altaxo.Calc.FitFunctions.Probability
       }
     }
 
+    /// <inheritdoc/>
     public string IndependentVariableName(int i)
     {
       return "x";
     }
 
+    /// <inheritdoc/>
     public string DependentVariableName(int i)
     {
       return "y";
     }
 
+    /// <inheritdoc/>
     public string ParameterName(int i)
     {
       int k = i - NumberOfParametersPerPeak * _numberOfTerms;
@@ -264,6 +270,7 @@ namespace Altaxo.Calc.FitFunctions.Probability
       }
     }
 
+    /// <inheritdoc/>
     public double DefaultParameterValue(int i)
     {
       int k = i - NumberOfParametersPerPeak * _numberOfTerms;
@@ -287,11 +294,13 @@ namespace Altaxo.Calc.FitFunctions.Probability
       }
     }
 
+    /// <inheritdoc/>
     public IVarianceScaling? DefaultVarianceScaling(int i)
     {
       return null;
     }
 
+    /// <inheritdoc/>
     public void Evaluate(double[] X, double[] P, double[] Y)
     {
       // evaluation of gaussian terms
@@ -316,6 +325,7 @@ namespace Altaxo.Calc.FitFunctions.Probability
       Y[0] = sumTerms + sumPolynomial;
     }
 
+    /// <inheritdoc/>
     public void Evaluate(IROMatrix<double> independent, IReadOnlyList<double> P, IVector<double> FV, IReadOnlyList<bool>? independentVariableChoice)
     {
       var rowCount = independent.RowCount;
@@ -353,6 +363,7 @@ namespace Altaxo.Calc.FitFunctions.Probability
 
     #endregion IFitFunction Members
 
+    /// <inheritdoc/>
     public void EvaluateDerivative(IROMatrix<double> X, IReadOnlyList<double> P, IReadOnlyList<bool>? isParameterFixed, IMatrix<double> DY, IReadOnlyList<bool>? dependentVariableChoice)
     {
       var rowCount = X.RowCount;

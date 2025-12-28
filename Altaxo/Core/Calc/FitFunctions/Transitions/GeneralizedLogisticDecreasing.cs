@@ -33,8 +33,8 @@ namespace Altaxo.Calc.FitFunctions.Transitions
 {
 
   /// <summary>
-  /// Fit fuction with one or more increasing steps (generalized logistic function), with a background polynomial
-  /// of variable order. 
+  /// Fit function with one or more decreasing steps (generalized logistic function), with a background polynomial
+  /// of variable order.
   /// </summary>
   /// <remarks>
   /// Reference: <see href="https://en.wikipedia.org/wiki/Sigmoid_function"/>
@@ -152,7 +152,7 @@ namespace Altaxo.Calc.FitFunctions.Transitions
     /// <summary>
     /// Creates a new instance with the provided number of logistic step terms.
     /// </summary>
-    /// <param name="numberOfTerms">The number of Llogistic step terms (should be greater than or equal to 1).</param>
+    /// <param name="numberOfTerms">The number of logistic step terms (should be greater than or equal to 1).</param>
     /// <returns>New instance with the provided number of logistic step terms.</returns>
     public GeneralizedLogisticDecreasing WithNumberOfTerms(int numberOfTerms)
     {
@@ -293,6 +293,7 @@ namespace Altaxo.Calc.FitFunctions.Transitions
       Y[0] = sumTerms + sumPolynomial;
     }
 
+    /// <inheritdoc/>
     public void Evaluate(IROMatrix<double> independent, IReadOnlyList<double> P, IVector<double> FV, IReadOnlyList<bool>? dependentVariableChoice)
     {
       var rowCount = independent.RowCount;

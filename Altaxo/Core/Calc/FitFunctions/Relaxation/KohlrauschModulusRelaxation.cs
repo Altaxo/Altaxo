@@ -317,6 +317,7 @@ namespace Altaxo.Calc.FitFunctions.Relaxation
 
     #region independent variable definition
 
+    /// <inheritdoc/>
     public int NumberOfIndependentVariables
     {
       get
@@ -325,6 +326,7 @@ namespace Altaxo.Calc.FitFunctions.Relaxation
       }
     }
 
+    /// <inheritdoc/>
     public string IndependentVariableName(int i)
     {
       return _useFrequencyInsteadOmega ? "Frequency" : "Omega";
@@ -334,7 +336,7 @@ namespace Altaxo.Calc.FitFunctions.Relaxation
 
     #region dependent variable definition
 
-
+    /// <inheritdoc/>
     public int NumberOfDependentVariables
     {
       get
@@ -343,6 +345,7 @@ namespace Altaxo.Calc.FitFunctions.Relaxation
       }
     }
 
+    /// <inheritdoc/>
     public string DependentVariableName(int i)
     {
       if (_logarithmizeResults)
@@ -355,6 +358,7 @@ namespace Altaxo.Calc.FitFunctions.Relaxation
 
     #region parameter definition
 
+    /// <inheritdoc/>
     public int NumberOfParameters
     {
       get
@@ -363,6 +367,7 @@ namespace Altaxo.Calc.FitFunctions.Relaxation
       }
     }
 
+    /// <inheritdoc/>
     public string ParameterName(int i)
     {
       return i switch
@@ -376,6 +381,7 @@ namespace Altaxo.Calc.FitFunctions.Relaxation
       };
     }
 
+    /// <inheritdoc/>
     public double DefaultParameterValue(int i)
     {
       return i switch
@@ -389,6 +395,7 @@ namespace Altaxo.Calc.FitFunctions.Relaxation
       };
     }
 
+    /// <inheritdoc/>
     public IVarianceScaling? DefaultVarianceScaling(int i)
     {
       return null;

@@ -77,12 +77,20 @@ namespace Altaxo.Calc.FitFunctions.Peaks
 
     #endregion Serialization
 
+    /// <summary>
+    /// Initializes a new instance with one term and no baseline polynomial.
+    /// </summary>
     public PseudoVoigtAmplitude()
     {
       _numberOfTerms = 1;
       _orderOfBaselinePolynomial = -1;
     }
 
+    /// <summary>
+    /// Initializes a new instance with the specified number of terms and baseline order.
+    /// </summary>
+    /// <param name="numberOfTerms">Number of terms.</param>
+    /// <param name="orderOfBackgroundPolynomial">Order of the baseline polynomial.</param>
     public PseudoVoigtAmplitude(int numberOfTerms, int orderOfBackgroundPolynomial)
     {
       _numberOfTerms = numberOfTerms;
@@ -150,6 +158,7 @@ namespace Altaxo.Calc.FitFunctions.Peaks
 
     #region IFitFunction Members
 
+    /// <inheritdoc/>
     public int NumberOfIndependentVariables
     {
       get
@@ -158,6 +167,7 @@ namespace Altaxo.Calc.FitFunctions.Peaks
       }
     }
 
+    /// <inheritdoc/>
     public int NumberOfDependentVariables
     {
       get
@@ -166,6 +176,7 @@ namespace Altaxo.Calc.FitFunctions.Peaks
       }
     }
 
+    /// <inheritdoc/>
     public int NumberOfParameters
     {
       get
@@ -174,16 +185,19 @@ namespace Altaxo.Calc.FitFunctions.Peaks
       }
     }
 
+    /// <inheritdoc/>
     public string IndependentVariableName(int i)
     {
       return "x";
     }
 
+    /// <inheritdoc/>
     public string DependentVariableName(int i)
     {
       return "y";
     }
 
+    /// <inheritdoc/>
     public string ParameterName(int i)
     {
       int k = i - NumberOfParametersPerPeak * _numberOfTerms;
@@ -209,6 +223,7 @@ namespace Altaxo.Calc.FitFunctions.Peaks
       }
     }
 
+    /// <inheritdoc/>
     public double DefaultParameterValue(int i)
     {
       int k = i - NumberOfParametersPerPeak * _numberOfTerms;
@@ -232,11 +247,25 @@ namespace Altaxo.Calc.FitFunctions.Peaks
         throw new ArgumentOutOfRangeException(nameof(i), $"Parameter index {i} is out of range.");
       }
     }
+    /// <inheritdoc/>
     public IVarianceScaling? DefaultVarianceScaling(int i)
     {
       return null;
     }
 
+    /// <summary>
+    /// Evaluates one Pseudo-Voigt term for given parameters.
+    /// </summary>
+    public static double GetYOfOneTerm(double x, double a, double xc, double w, double nu)
+    {
+      double arg = (Xor(xc: xc, x: x) - xc) / w; // dummy to avoid unused parameter warning in doc generator
+      arg = (x - xc) / w;
+      return a * ((nu) / (1 + arg * arg) + (1 - nu) * Math.Exp(-Log2 * arg * arg));
+    }
+
+    private static double Xor(double xc, double x) => x; // helper for above comment
+
+    /// <inheritdoc/>
     public void Evaluate(double[] X, double[] P, double[] Y)
     {
       // evaluation of gaussian terms
@@ -261,6 +290,7 @@ namespace Altaxo.Calc.FitFunctions.Peaks
       Y[0] = sumTerms + sumPolynomial;
     }
 
+    /// <inheritdoc/>
     public void Evaluate(IROMatrix<double> independent, IReadOnlyList<double> P, IVector<double> FV, IReadOnlyList<bool>? dependentVariableChoice)
     {
       for (int r = 0; r < independent.RowCount; ++r)
@@ -290,6 +320,7 @@ namespace Altaxo.Calc.FitFunctions.Peaks
       }
     }
 
+    /// <inheritdoc/>
     public void EvaluateDerivative(IROMatrix<double> X, IReadOnlyList<double> P, IReadOnlyList<bool>? isParameterFixed, IMatrix<double> DY, IReadOnlyList<bool>? dependentVariableChoice)
     {
       var rowCount = X.RowCount;
@@ -423,6 +454,7 @@ namespace Altaxo.Calc.FitFunctions.Peaks
 
     private static double SafeSqrt(double x) => Math.Sqrt(Math.Max(0, x));
 
+    /// <inheritdoc/>
     public (double Position, double PositionStdDev, double Area, double AreaStdDev, double Height, double HeightStdDev, double FWHM, double FWHMStdDev)
       GetPositionAreaHeightFWHMFromSinglePeakParameters(IReadOnlyList<double> parameters, IROMatrix<double>? cv)
     {

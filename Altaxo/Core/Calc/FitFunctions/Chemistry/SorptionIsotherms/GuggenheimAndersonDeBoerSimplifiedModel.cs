@@ -68,6 +68,10 @@ namespace Altaxo.Calc.FitFunctions.Chemistry.SorptionIsotherms
     #endregion Serialization
 
 
+    /// <summary>
+    /// Creates the default simplified GAB (Guggenheim-Anderson-de Boer) model fit function.
+    /// </summary>
+    /// <returns>A new instance of <see cref="GuggenheimAndersonDeBoerSimplifiedModel"/>.</returns>
     [FitFunctionCreator("Mass uptake GAB model (simplified)", "Chemistry/SorptionIsotherms", 1, 1, 4)]
     [System.ComponentModel.Description("${res:Altaxo.Calc.FitFunctions.Chemistry.SorptionIsotherms.GuggenheimAndersonDeBoerSimplifiedModel}")]
     public static IFitFunction Create()

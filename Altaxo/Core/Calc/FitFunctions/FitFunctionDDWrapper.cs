@@ -61,6 +61,7 @@ namespace Altaxo.Calc.FitFunctions
     [Altaxo.Serialization.Xml.XmlSerializationSurrogateFor(typeof(FitFunctionDDWrapper), 0)]
     public class SerializationSurrogate0 : Altaxo.Serialization.Xml.IXmlSerializationSurrogate
     {
+      /// <inheritdoc/>
       public void Serialize(object obj, Altaxo.Serialization.Xml.IXmlSerializationInfo info)
       {
         var s = (FitFunctionDDWrapper)obj;
@@ -68,6 +69,7 @@ namespace Altaxo.Calc.FitFunctions
         info.AddArray("Parameters", s._parameters, s._parameters.Length);
       }
 
+      /// <inheritdoc/>
       public object Deserialize(object? o, Altaxo.Serialization.Xml.IXmlDeserializationInfo info, object? parent)
       {
         var fitFunction = info.GetValue<IFitFunction>("Function", parent);
@@ -82,16 +84,8 @@ namespace Altaxo.Calc.FitFunctions
     /// </summary>
     /// <param name="fitFunction">The fit function.</param>
     /// <param name="parameters">The parameters.</param>
-    /// <exception cref="System.ArgumentException">
-    /// Fit function has to be immutable - f
-    /// or
-    /// Fit function must have only one independent variable - f
-    /// or
-    /// Fit function must have only one dependent variable - f
-    /// or
-    /// Number of provided parameters is {param.Count}, but {f.NumberOfParameters} are expected - param
-    /// </exception>
-    /// <exception cref="System.ArgumentNullException">param</exception>
+    /// <exception cref="System.ArgumentException">Thrown if the fit function is not immutable, does not have exactly one independent variable or one dependent variable, or if the number of provided parameters does not match the function's expected number.</exception>
+    /// <exception cref="System.ArgumentNullException">Thrown if <paramref name="fitFunction"/> or <paramref name="parameters"/> is null.</exception>
     public FitFunctionDDWrapper(IFitFunction fitFunction, IReadOnlyList<double> parameters)
     {
       if (fitFunction is null)
@@ -123,6 +117,8 @@ namespace Altaxo.Calc.FitFunctions
       FitFunction = fitFunction;
       _parameters = parameters.ToArray();
     }
+
+    /// <inheritdoc/>
     public double Evaluate(double x)
     {
       var workingArrays = _workingArrays.Value!;

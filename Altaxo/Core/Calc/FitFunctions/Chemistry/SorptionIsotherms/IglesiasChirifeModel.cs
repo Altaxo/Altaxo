@@ -66,6 +66,10 @@ namespace Altaxo.Calc.FitFunctions.Chemistry.SorptionIsotherms
     #endregion Serialization
 
 
+    /// <summary>
+    /// Creates the default Iglesias-Chirife model fit function.
+    /// </summary>
+    /// <returns>A new instance of <see cref="IglesiasChirifeModel"/>.</returns>
     [FitFunctionCreator("Mass uptake Iglesias-Chirife model", "Chemistry/SorptionIsotherms", 1, 1, 4)]
     [System.ComponentModel.Description("${res:Altaxo.Calc.FitFunctions.Chemistry.SorptionIsotherms.IglesiasChirifeModel}")]
     public static IFitFunction Create()

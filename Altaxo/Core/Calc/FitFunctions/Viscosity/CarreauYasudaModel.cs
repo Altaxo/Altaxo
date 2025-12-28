@@ -105,7 +105,16 @@ namespace Altaxo.Calc.FitFunctions.Viscosity
       return null;
     }
 
-    /// <inheritdoc/>
+    /// <summary>
+    /// Evaluates the Carreau-Yasuda viscosity model for a single shear rate.
+    /// </summary>
+    /// <param name="gammadot">Shear rate.</param>
+    /// <param name="eta0">Zero-shear viscosity η0.</param>
+    /// <param name="etaInf">Infinite-shear viscosity η∞.</param>
+    /// <param name="lambda">Time constant λ.</param>
+    /// <param name="a">Yasuda parameter a.</param>
+    /// <param name="n">Power-law exponent n.</param>
+    /// <returns>The viscosity η for the given shear rate.</returns>
     public static double Evaluate(double gammadot, double eta0, double etaInf, double lambda, double a, double n)
     {
       return etaInf + (eta0 - etaInf) * Math.Pow(1 + Math.Pow(lambda * gammadot, a), (n - 1) / a);

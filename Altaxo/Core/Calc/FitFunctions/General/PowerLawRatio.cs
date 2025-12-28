@@ -49,12 +49,14 @@ namespace Altaxo.Calc.FitFunctions.General
     [Altaxo.Serialization.Xml.XmlSerializationSurrogateFor(typeof(PowerLawRatio), 1)]
     private class XmlSerializationSurrogate0 : Altaxo.Serialization.Xml.IXmlSerializationSurrogate
     {
+      /// <inheritdoc/>
       public virtual void Serialize(object obj, Altaxo.Serialization.Xml.IXmlSerializationInfo info)
       {
         var s = (PowerLawRatio)obj;
         info.AddValue("NumberOfTerms", s.NumberOfTerms);
       }
 
+      /// <inheritdoc/>
       public virtual object Deserialize(object? o, Altaxo.Serialization.Xml.IXmlDeserializationInfo info, object? parent)
       {
         var numberOfTerms = info.GetInt32("NumberOfTerms");
@@ -64,11 +66,19 @@ namespace Altaxo.Calc.FitFunctions.General
 
     #endregion Serialization
 
+    /// <summary>
+    /// Initializes a new instance of the <see cref="PowerLawRatio"/> class with a single term.
+    /// </summary>
     public PowerLawRatio()
     {
       NumberOfTerms = 1;
     }
 
+    /// <summary>
+    /// Initializes a new instance of the <see cref="PowerLawRatio"/> class with the specified number of terms.
+    /// </summary>
+    /// <param name="numberOfTerms">The number of terms. Must be greater than or equal to 1.</param>
+    /// <exception cref="ArgumentOutOfRangeException">Thrown when <paramref name="numberOfTerms"/> is less than 1.</exception>
     public PowerLawRatio(int numberOfTerms)
     {
       if (!(numberOfTerms >= 1))
@@ -78,9 +88,9 @@ namespace Altaxo.Calc.FitFunctions.General
     }
 
     /// <summary>
-    /// Creates an power law function
+    /// Creates a power law ratio function configured with one term.
     /// </summary>
-    /// <returns></returns>
+    /// <returns>A new <see cref="PowerLawRatio"/> instance.</returns>
     [FitFunctionCreator("PowerLaw (Ratio)", "General", 1, 1, 3)]
     [System.ComponentModel.Description("${res:Altaxo.Calc.FitFunctions.General.PowerLawRatio}")]
     public static IFitFunction CreatePowerLawRatio_1()
@@ -89,25 +99,22 @@ namespace Altaxo.Calc.FitFunctions.General
     }
 
     /// <summary>
-    /// Not functional since this instance is immutable.
+    /// Event that would be raised when the instance changes. Not functional since this instance is immutable.
     /// </summary>
     public event EventHandler? Changed { add { } remove { } }
 
     /// <summary>
-    /// Gets the number of exponential terms. Must be greater than or equal to 1.
+    /// Gets the number of terms. Must be greater than or equal to 1.
     /// </summary>
-    /// <value>
-    /// The number of terms.
-    /// </value>
-    /// <exception cref="ArgumentOutOfRangeException"></exception>
+    /// <value>The number of terms.</value>
     public int NumberOfTerms { get; }
 
     /// <summary>
     /// Creates a new instance with the provided number of terms.
     /// </summary>
-    /// <param name="value">The number of exponential terms.</param>
-    /// <returns>New instance with the provided number of terms.</returns>
-    /// <exception cref="ArgumentOutOfRangeException">$"{nameof(NumberOfTerms)} must be greater than or equal to 1</exception>
+    /// <param name="value">The number of terms. Must be greater than or equal to 1.</param>
+    /// <returns>A new instance configured with the provided number of terms, or the same instance if unchanged.</returns>
+    /// <exception cref="ArgumentOutOfRangeException">Thrown when <paramref name="value"/> is less than 1.</exception>
     public PowerLawRatio WithNumberOfTerms(int value)
     {
       if (!(value >= 1))
@@ -125,6 +132,7 @@ namespace Altaxo.Calc.FitFunctions.General
 
     #region IFitFunction Members
 
+    /// <inheritdoc/>
     public int NumberOfIndependentVariables
     {
       get
@@ -133,6 +141,7 @@ namespace Altaxo.Calc.FitFunctions.General
       }
     }
 
+    /// <inheritdoc/>
     public int NumberOfDependentVariables
     {
       get
@@ -141,6 +150,7 @@ namespace Altaxo.Calc.FitFunctions.General
       }
     }
 
+    /// <inheritdoc/>
     public int NumberOfParameters
     {
       get
@@ -149,16 +159,19 @@ namespace Altaxo.Calc.FitFunctions.General
       }
     }
 
+    /// <inheritdoc/>
     public string IndependentVariableName(int i)
     {
       return "x";
     }
 
+    /// <inheritdoc/>
     public string DependentVariableName(int i)
     {
       return "y";
     }
 
+    /// <inheritdoc/>
     public string ParameterName(int i)
     {
       if (i == 0)
@@ -178,6 +191,7 @@ namespace Altaxo.Calc.FitFunctions.General
       }
     }
 
+    /// <inheritdoc/>
     public double DefaultParameterValue(int i)
     {
       if (i == 0)
@@ -197,11 +211,13 @@ namespace Altaxo.Calc.FitFunctions.General
       }
     }
 
+    /// <inheritdoc/>
     public IVarianceScaling? DefaultVarianceScaling(int i)
     {
       return null;
     }
 
+    /// <inheritdoc/>
     public void Evaluate(double[] X, double[] P, double[] Y)
     {
       double sum = P[0];
@@ -212,6 +228,7 @@ namespace Altaxo.Calc.FitFunctions.General
       Y[0] = sum;
     }
 
+    /// <inheritdoc/>
     public void Evaluate(IROMatrix<double> independent, IReadOnlyList<double> P, IVector<double> FV, IReadOnlyList<bool>? dependentVariableChoice)
     {
       var rowCount = independent.RowCount;
@@ -230,6 +247,7 @@ namespace Altaxo.Calc.FitFunctions.General
 
     #endregion IFitFunction Members
 
+    /// <inheritdoc/>
     public void EvaluateDerivative(IROMatrix<double> X, IReadOnlyList<double> P, IReadOnlyList<bool>? isParameterFixed, IMatrix<double> DY, IReadOnlyList<bool>? dependentVariableChoice)
     {
       var rowCount = X.RowCount;

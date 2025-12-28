@@ -47,11 +47,13 @@ namespace Altaxo.Calc.FitFunctions.Kinetics
     [Altaxo.Serialization.Xml.XmlSerializationSurrogateFor(typeof(RateOfConversionAutocatalytic), 1)]
     private class XmlSerializationSurrogate0 : Altaxo.Serialization.Xml.IXmlSerializationSurrogate
     {
+      /// <inheritdoc/>
       public virtual void Serialize(object obj, Altaxo.Serialization.Xml.IXmlSerializationInfo info)
       {
         var s = (RateOfConversionAutocatalytic)obj;
       }
 
+      /// <inheritdoc/>
       public virtual object Deserialize(object? o, Altaxo.Serialization.Xml.IXmlDeserializationInfo info, object? parent)
       {
         return new RateOfConversionAutocatalytic();
@@ -80,6 +82,13 @@ namespace Altaxo.Calc.FitFunctions.Kinetics
 
     }
 
+    /// <summary>
+    /// Evaluate multiple points using an ODE solver and fills the provided result vector.
+    /// </summary>
+    /// <param name="independent">The independent variable matrix.</param>
+    /// <param name="P">The parameter vector.</param>
+    /// <param name="independentVariableChoice">The independent variable choice.</param>
+    /// <param name="FV">The result vector to be filled.</param>
     public void EvaluateMultiple(IROMatrix<double> independent, IReadOnlyList<double> P, IReadOnlyList<bool>? independentVariableChoice, IVector<double> FV)
     {
       IEnumerable<double> GetXPoints()

@@ -89,6 +89,9 @@ namespace Altaxo.Calc.FitFunctions.Relaxation
     {
     }
 
+    /// <summary>
+    /// Gets or sets the number of relaxations. This setter is not implemented and will throw.
+    /// </summary>
     public int NumberOfRelaxations
     {
       get
@@ -102,7 +105,7 @@ namespace Altaxo.Calc.FitFunctions.Relaxation
     }
 
     /// <summary>
-    /// Indicates whether the real and imaginary part of the dependent variable should be logarithmized (decadic logarithm).
+    /// Indicates whether the dependent variable should be logarithmized (decadic logarithm).
     /// </summary>
     /// <value>
     ///   <c>true</c> if the result is logarithmized; otherwise, <c>false</c>.
@@ -131,6 +134,7 @@ namespace Altaxo.Calc.FitFunctions.Relaxation
 
     #region IFitFunction Members
 
+    /// <inheritdoc/>
     public int NumberOfIndependentVariables
     {
       get
@@ -139,6 +143,7 @@ namespace Altaxo.Calc.FitFunctions.Relaxation
       }
     }
 
+    /// <inheritdoc/>
     public int NumberOfDependentVariables
     {
       get
@@ -147,6 +152,7 @@ namespace Altaxo.Calc.FitFunctions.Relaxation
       }
     }
 
+    /// <inheritdoc/>
     public int NumberOfParameters
     {
       get
@@ -155,11 +161,13 @@ namespace Altaxo.Calc.FitFunctions.Relaxation
       }
     }
 
+    /// <inheritdoc/>
     public string IndependentVariableName(int i)
     {
       return "x";
     }
 
+    /// <inheritdoc/>
     public string DependentVariableName(int i)
     {
       return _logarithmizeResult ? "lg y" : "y";
@@ -167,6 +175,7 @@ namespace Altaxo.Calc.FitFunctions.Relaxation
 
     private static readonly string[] _parameterNames = new string[] { "offset", "amplitude", "tau", "beta" };
 
+    /// <inheritdoc/>
     public string ParameterName(int i)
     {
       var namearr = _parameterNames;

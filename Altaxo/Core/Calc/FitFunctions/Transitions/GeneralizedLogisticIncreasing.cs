@@ -32,8 +32,8 @@ using Altaxo.Main;
 namespace Altaxo.Calc.FitFunctions.Transitions
 {
   /// <summary>
-  /// Fit fuction with one or more increasing steps (generalized logistic function), with a background polynomial
-  /// of variable order. 
+  /// Fit function with one or more increasing steps (generalized logistic function), with a background polynomial
+  /// of variable order.
   /// </summary>
   /// <remarks>
   /// Reference: <see href="https://en.wikipedia.org/wiki/Sigmoid_function"/>
@@ -151,7 +151,7 @@ namespace Altaxo.Calc.FitFunctions.Transitions
     /// <summary>
     /// Creates a new instance with the provided number of logistic step terms.
     /// </summary>
-    /// <param name="numberOfTerms">The number of Llogistic step terms (should be greater than or equal to 1).</param>
+    /// <param name="numberOfTerms">The number of logistic step terms (should be greater than or equal to 1).</param>
     /// <returns>New instance with the provided number of logistic step terms.</returns>
     public GeneralizedLogisticIncreasing WithNumberOfTerms(int numberOfTerms)
     {

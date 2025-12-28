@@ -54,6 +54,7 @@ namespace Altaxo.Calc.FitFunctions.General
     [Altaxo.Serialization.Xml.XmlSerializationSurrogateFor(typeof(RationalInverse), 1)]
     private class XmlSerializationSurrogate1 : Altaxo.Serialization.Xml.IXmlSerializationSurrogate
     {
+      /// <inheritdoc/>
       public virtual void Serialize(object obj, Altaxo.Serialization.Xml.IXmlSerializationInfo info)
       {
         var s = (RationalInverse)obj;
@@ -61,6 +62,7 @@ namespace Altaxo.Calc.FitFunctions.General
         info.AddValue("OrderDenominator", s._order_m);
       }
 
+      /// <inheritdoc/>
       public virtual object Deserialize(object? o, Altaxo.Serialization.Xml.IXmlDeserializationInfo info, object? parent)
       {
         var order_n = info.GetInt32("OrderNominator");
@@ -74,12 +76,21 @@ namespace Altaxo.Calc.FitFunctions.General
 
 
 
+    /// <summary>
+    /// Creates a default RationalInverse instance with nominator and denominator order 1.
+    /// </summary>
     public RationalInverse()
     {
       _order_n = 1;
       _order_m = 1;
     }
 
+    /// <summary>
+    /// Creates a new instance specifying the orders of the nominator and denominator polynomials.
+    /// </summary>
+    /// <param name="polynomialOrder_Nominator">Order of the nominator polynomial (>= 0).</param>
+    /// <param name="polynomialOrder_Denominator">Order of the denominator polynomial (>= 0).</param>
+    /// <exception cref="ArgumentOutOfRangeException">Thrown when either order is negative.</exception>
     public RationalInverse(int polynomialOrder_Nominator, int polynomialOrder_Denominator)
     {
       _order_n = polynomialOrder_Nominator;
@@ -92,6 +103,9 @@ namespace Altaxo.Calc.FitFunctions.General
 
     }
 
+    /// <summary>
+    /// Factory method for creating a 1/1 RationalInverse instance.
+    /// </summary>
     [FitFunctionCreator("RationalInverse", "General", 1, 1, 3)]
     [System.ComponentModel.Description("${res:Altaxo.Calc.FitFunctions.General.RationalInverse}")]
     public static IFitFunction CreateRationalInverse_1_1()
@@ -99,12 +113,15 @@ namespace Altaxo.Calc.FitFunctions.General
       return new RationalInverse(1, 1);
     }
 
+    /// <summary>
+    /// Gets the order of the nominator polynomial.
+    /// </summary>
     public int PolynomialOrder_Nominator => _order_n;
 
     /// <summary>
-    /// Creates a new instance with the provided order for the nominator polynom.
+    /// Creates a new instance with the provided order for the nominator polynomial.
     /// </summary>
-    /// <param name="polynomialOrder_Nominator">The order for the positive exponents (e.g. 2 will create a quadratic polynom).</param>
+    /// <param name="polynomialOrder_Nominator">The order for the positive exponents (e.g. 2 will create a quadratic polynomial).</param>
     /// <returns>New instance with the provided order.</returns>
     public RationalInverse WithPolynomialOrder_Nominator(int polynomialOrder_Nominator)
     {
@@ -121,6 +138,9 @@ namespace Altaxo.Calc.FitFunctions.General
       }
     }
 
+    /// <summary>
+    /// Gets the order of the denominator polynomial.
+    /// </summary>
     public int PolynomialOrder_Denominator => _order_m;
     /// <summary>
     /// Creates a new instance with the provided order for the positive exponents.
@@ -144,6 +164,7 @@ namespace Altaxo.Calc.FitFunctions.General
 
     #region IFitFunction Members
 
+    /// <inheritdoc/>
     public int NumberOfIndependentVariables
     {
       get
@@ -152,6 +173,7 @@ namespace Altaxo.Calc.FitFunctions.General
       }
     }
 
+    /// <inheritdoc/>
     public int NumberOfDependentVariables
     {
       get
@@ -160,6 +182,7 @@ namespace Altaxo.Calc.FitFunctions.General
       }
     }
 
+    /// <inheritdoc/>
     public int NumberOfParameters
     {
       get
@@ -168,16 +191,19 @@ namespace Altaxo.Calc.FitFunctions.General
       }
     }
 
+    /// <inheritdoc/>
     public string IndependentVariableName(int i)
     {
       return "x";
     }
 
+    /// <inheritdoc/>
     public string DependentVariableName(int i)
     {
       return "y";
     }
 
+    /// <inheritdoc/>
     public string ParameterName(int i)
     {
       if (i < 0 || i >= NumberOfParameters)
@@ -186,6 +212,7 @@ namespace Altaxo.Calc.FitFunctions.General
         return i < _order_n ? FormattableString.Invariant($"a{i + 1}") : FormattableString.Invariant($"b{i - _order_n}");
     }
 
+    /// <inheritdoc/>
     public double DefaultParameterValue(int i)
     {
       if (i < 0 || i >= NumberOfParameters)
@@ -194,11 +221,13 @@ namespace Altaxo.Calc.FitFunctions.General
         return 0;
     }
 
+    /// <inheritdoc/>
     public IVarianceScaling? DefaultVarianceScaling(int i)
     {
       return null;
     }
 
+    /// <inheritdoc/>
     public void Evaluate(double[] X, double[] P, double[] Y)
     {
       // evaluation of nominator terms a0*x^0 .. an*x^n
@@ -229,6 +258,7 @@ namespace Altaxo.Calc.FitFunctions.General
 
       Y[0] = nominator / denominator;
     }
+    /// <inheritdoc/>
     public void Evaluate(IROMatrix<double> independent, IReadOnlyList<double> P, IVector<double> FV, IReadOnlyList<bool>? dependentVariableChoice)
     {
       var rowCount = independent.RowCount;
@@ -274,6 +304,9 @@ namespace Altaxo.Calc.FitFunctions.General
 
     #endregion IFitFunction Members
 
+    /// <summary>
+    /// Evaluates the derivative of the fit function with respect to parameters for all rows.
+    /// </summary>
     public void EvaluateDerivative(IROMatrix<double> X, IReadOnlyList<double> P, IReadOnlyList<bool>? isParameterFixed, IMatrix<double> DY, IReadOnlyList<bool>? dependentVariableChoice)
     {
       var rowCount = X.RowCount;

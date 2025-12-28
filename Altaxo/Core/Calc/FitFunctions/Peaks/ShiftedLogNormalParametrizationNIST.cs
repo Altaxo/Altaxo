@@ -88,12 +88,20 @@ namespace Altaxo.Calc.FitFunctions.Peaks
 
     #endregion Serialization
 
+    /// <summary>
+    /// Initializes a new instance with one peak term and no baseline polynomial.
+    /// </summary>
     public ShiftedLogNormalParametrizationNIST()
     {
       _numberOfTerms = 1;
       _orderOfBaselinePolynomial = -1;
     }
 
+    /// <summary>
+    /// Initializes a new instance with the specified number of peak terms and baseline order.
+    /// </summary>
+    /// <param name="numberOfPeakTerms">Number of peak terms.</param>
+    /// <param name="orderOfBackgroundPolynomial">Order of the baseline polynomial.</param>
     public ShiftedLogNormalParametrizationNIST(int numberOfPeakTerms, int orderOfBackgroundPolynomial)
     {
       _numberOfTerms = numberOfPeakTerms;
@@ -220,6 +228,7 @@ namespace Altaxo.Calc.FitFunctions.Peaks
 
     #region IFitFunction Members
 
+    /// <inheritdoc/>
     public int NumberOfIndependentVariables
     {
       get
@@ -228,6 +237,7 @@ namespace Altaxo.Calc.FitFunctions.Peaks
       }
     }
 
+    /// <inheritdoc/>
     public int NumberOfDependentVariables
     {
       get
@@ -236,6 +246,7 @@ namespace Altaxo.Calc.FitFunctions.Peaks
       }
     }
 
+    /// <inheritdoc/>
     public int NumberOfParameters
     {
       get
@@ -244,16 +255,19 @@ namespace Altaxo.Calc.FitFunctions.Peaks
       }
     }
 
+    /// <inheritdoc/>
     public string IndependentVariableName(int i)
     {
       return "x";
     }
 
+    /// <inheritdoc/>
     public string DependentVariableName(int i)
     {
       return "y";
     }
 
+    /// <inheritdoc/>
     public string ParameterName(int i)
     {
       int k = i - NumberOfParametersPerPeak * _numberOfTerms;
@@ -279,6 +293,7 @@ namespace Altaxo.Calc.FitFunctions.Peaks
       }
     }
 
+    /// <inheritdoc/>
     public double DefaultParameterValue(int i)
     {
       int k = i - NumberOfParametersPerPeak * _numberOfTerms;
@@ -309,6 +324,15 @@ namespace Altaxo.Calc.FitFunctions.Peaks
       return null;
     }
 
+    /// <summary>
+    /// Evaluates a single shifted log-normal peak term for the provided parameters.
+    /// </summary>
+    /// <param name="x">The x value at which to evaluate the term.</param>
+    /// <param name="a">The amplitude (height) of the peak.</param>
+    /// <param name="xc">The position of the center of the peak.</param>
+    /// <param name="w">The width (FWHM) of the peak.</param>
+    /// <param name="rho">The shape parameter of the peak.</param>
+    /// <returns>The y value of the peak term at the given x.</returns>
     public static double GetYOfOneTerm(double x, double a, double xc, double w, double rho)
     {
       double arg = (x - xc) / w;
@@ -332,6 +356,7 @@ namespace Altaxo.Calc.FitFunctions.Peaks
       return Math.Log(y) - ((y - 1) - x) / y;  // cancels errors with IEEE arithmetic
     }
 
+    /// <inheritdoc/>
     public void Evaluate(double[] X, double[] P, double[] Y)
     {
       // evaluation of gaussian terms
@@ -355,6 +380,7 @@ namespace Altaxo.Calc.FitFunctions.Peaks
       Y[0] = sumPeaks + sumPolynomial;
     }
 
+    /// <inheritdoc/>
     public void Evaluate(IROMatrix<double> independent, IReadOnlyList<double> P, IVector<double> FV, IReadOnlyList<bool>? dependentVariableChoice)
     {
       var rowCount = independent.RowCount;

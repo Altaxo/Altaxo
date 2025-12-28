@@ -81,6 +81,9 @@ namespace Altaxo.Calc.FitFunctions.Peaks
 
     #endregion Serialization
 
+    /// <summary>
+    /// Initializes a new instance with one term and no baseline polynomial.
+    /// </summary>
     public CauchyAmplitude()
     {
       _numberOfTerms = 1;
@@ -93,6 +96,11 @@ namespace Altaxo.Calc.FitFunctions.Peaks
       return $"{this.GetType().Name} NumberOfTerms={NumberOfTerms} OrderOfBaseline={OrderOfBaselinePolynomial}";
     }
 
+    /// <summary>
+    /// Initializes a new instance with the specified number of terms and baseline polynomial order.
+    /// </summary>
+    /// <param name="numberOfTerms">Number of peak terms.</param>
+    /// <param name="orderOfBackgroundPolynomial">Order of the baseline polynomial.</param>
     public CauchyAmplitude(int numberOfTerms, int orderOfBackgroundPolynomial)
     {
       _numberOfTerms = numberOfTerms;
@@ -105,6 +113,10 @@ namespace Altaxo.Calc.FitFunctions.Peaks
 
     }
 
+    /// <summary>
+    /// Factory used by discovery to create a default instance (one term, zero-order baseline).
+    /// </summary>
+    /// <returns>A new <see cref="CauchyAmplitude"/> instance.</returns>
     [FitFunctionCreator("LorentzianAmplitude", "General", 1, 1, 4)]
     [FitFunctionCreator("LorentzianAmplitude", "Peaks", 1, 1, 4)]
     [System.ComponentModel.Description("${res:Altaxo.Calc.FitFunctions.Peaks.CauchyAmplitude}")]
@@ -200,6 +212,7 @@ namespace Altaxo.Calc.FitFunctions.Peaks
 
     #region IFitFunction Members
 
+    /// <inheritdoc/>
     public int NumberOfIndependentVariables
     {
       get
@@ -208,6 +221,7 @@ namespace Altaxo.Calc.FitFunctions.Peaks
       }
     }
 
+    /// <inheritdoc/>
     public int NumberOfDependentVariables
     {
       get
@@ -216,6 +230,7 @@ namespace Altaxo.Calc.FitFunctions.Peaks
       }
     }
 
+    /// <inheritdoc/>
     public int NumberOfParameters
     {
       get
@@ -224,16 +239,19 @@ namespace Altaxo.Calc.FitFunctions.Peaks
       }
     }
 
+    /// <inheritdoc/>
     public string IndependentVariableName(int i)
     {
       return "x";
     }
 
+    /// <inheritdoc/>
     public string DependentVariableName(int i)
     {
       return "y";
     }
 
+    /// <inheritdoc/>
     public string ParameterName(int i)
     {
       int k = i - NumberOfParametersPerPeak * _numberOfTerms;
@@ -258,6 +276,7 @@ namespace Altaxo.Calc.FitFunctions.Peaks
       }
     }
 
+    /// <inheritdoc/>
     public double DefaultParameterValue(int i)
     {
       int k = i - NumberOfParametersPerPeak * _numberOfTerms;
@@ -281,11 +300,13 @@ namespace Altaxo.Calc.FitFunctions.Peaks
       }
     }
 
+    /// <inheritdoc/>
     public IVarianceScaling? DefaultVarianceScaling(int i)
     {
       return null;
     }
 
+    /// <inheritdoc/>
     public void Evaluate(double[] X, double[] P, double[] Y)
     {
       // evaluation of terms
@@ -310,6 +331,7 @@ namespace Altaxo.Calc.FitFunctions.Peaks
       Y[0] = sumTerms + sumPolynomial;
     }
 
+    /// <inheritdoc/>
     public void Evaluate(IROMatrix<double> independent, IReadOnlyList<double> P, IVector<double> FV, IReadOnlyList<bool>? independentVariableChoice)
     {
       var rowCount = independent.RowCount;
@@ -347,6 +369,7 @@ namespace Altaxo.Calc.FitFunctions.Peaks
 
     #endregion IFitFunction Members
 
+    /// <inheritdoc/>
     public void EvaluateDerivative(IROMatrix<double> X, IReadOnlyList<double> P, IReadOnlyList<bool>? isParameterFixed, IMatrix<double> DY, IReadOnlyList<bool>? dependentVariableChoice)
     {
       var rowCount = X.RowCount;

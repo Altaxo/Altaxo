@@ -65,6 +65,10 @@ namespace Altaxo.Calc.FitFunctions.Chemistry.SorptionIsotherms
     #endregion Serialization
 
 
+    /// <summary>
+    /// Creates the default Henderson model fit function.
+    /// </summary>
+    /// <returns>A new instance of <see cref="HendersonModel"/>.</returns>
     [FitFunctionCreator("Mass uptake Henderson model", "Chemistry/SorptionIsotherms", 1, 1, 3)]
     [System.ComponentModel.Description("${res:Altaxo.Calc.FitFunctions.Chemistry.SorptionIsotherms.HendersonModel}")]
     public static IFitFunction Create()

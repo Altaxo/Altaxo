@@ -102,6 +102,10 @@ namespace Altaxo.Calc.FitFunctions.Transitions
         throw new ArgumentOutOfRangeException("Order for right segment has to be greater than or equal to zero");
     }
 
+    /// <summary>
+    /// Factory used by the fit function registry.
+    /// </summary>
+    /// <returns>A new <see cref="ErrorFunctionFromTo"/> instance with both polynomial orders set to zero.</returns>
     [FitFunctionCreator("ErrorFunctionFromTo", "Transitions", 1, 1, 4)]
     [System.ComponentModel.Description("${res:Altaxo.Calc.FitFunctions.Transitions.ErrorFunctionFromTo}")]
     public static IFitFunction Create()
@@ -117,7 +121,7 @@ namespace Altaxo.Calc.FitFunctions.Transitions
     /// <summary>
     /// Creates a new instance with the provided order for the left polynomial segment.
     /// </summary>
-    /// <param name="polynomialOrderLeft">The order for the left polynomial segment (e.g. 2 will create a quadratic polynom).</param>
+    /// <param name="polynomialOrderLeft">The order for the left polynomial segment (e.g. 2 will create a quadratic polynomial).</param>
     /// <returns>New instance with the provided order.</returns>
     public ErrorFunctionFromTo WithPolynomialOrderLeft(int polynomialOrderLeft)
     {
@@ -142,7 +146,7 @@ namespace Altaxo.Calc.FitFunctions.Transitions
     /// <summary>
     /// Creates a new instance with the provided order for the right polynomial segment.
     /// </summary>
-    /// <param name="polynomialOrderRight">The order for the right polynomial segment (e.g. 2 will create a quadratic polynom).</param>
+    /// <param name="polynomialOrderRight">The order for the right polynomial segment (e.g. 2 will create a quadratic polynomial).</param>
     /// <returns>New instance with the provided order.</returns>
     public ErrorFunctionFromTo WithPolynomialOrderRight(int polynomialOrderRight)
     {

@@ -40,6 +40,14 @@ namespace Altaxo.Calc.FitFunctions.Materials
   {
     private TransformedValueRepresentation _dependentVariableTransform;
 
+    /// <summary>
+    /// Initializes a new instance of the <see cref="VogelFulcherLaw"/> class with the specified
+    /// dependent variable transformation and temperature unit representations.
+    /// </summary>
+    /// <param name="dependentVariableTransform">Representation of the dependent variable transformation.</param>
+    /// <param name="temperatureUnitOfX">Temperature unit representation for the independent variable.</param>
+    /// <param name="temperatureUnitOfT0">Temperature unit representation for parameter T0.</param>
+    /// <param name="temperatureUnitOfB">Temperature unit representation for parameter B.</param>
     private VogelFulcherLaw(
       TransformedValueRepresentation dependentVariableTransform,
     TemperatureRepresentation temperatureUnitOfX,
@@ -50,6 +58,11 @@ namespace Altaxo.Calc.FitFunctions.Materials
       _dependentVariableTransform = dependentVariableTransform;
     }
 
+    /// <summary>
+    /// Gets the representation used to transform the dependent variable for output.
+    /// Setting this property is obsolete and will always throw a <see cref="NotImplementedException"/>.
+    /// Use the output transformation in the fit function manager instead.
+    /// </summary>
     [Category("OptionsForDependentVariables")]
     public TransformedValueRepresentation DependentVariableRepresentation
     {
@@ -57,17 +70,26 @@ namespace Altaxo.Calc.FitFunctions.Materials
       set { throw new NotImplementedException("Obsolete. Instead, please use the output transformation in the fit function manager"); }
     }
 
+    /// <inheritdoc/>
     public override string DependentVariableName(int i)
     {
       return TransformedValue.GetFormula("y", _dependentVariableTransform);
     }
 
+    /// <inheritdoc/>
     public override void Evaluate(double[] X, double[] P, double[] Y)
     {
       var y = base.Evaluate(X[0], P);
       Y[0] = TransformedValue.BaseValueToTransformedValue(y, _dependentVariableTransform);
     }
 
+    /// <summary>
+    /// Evaluates the fit function for multiple rows of independent variables and stores the transformed results in <paramref name="FV"/>.
+    /// </summary>
+    /// <param name="independent">Matrix of independent variable values (rows x columns), expected single-column.</param>
+    /// <param name="P">Parameter list where P[0]=y0, P[1]=B and P[2]=T0.</param>
+    /// <param name="independentVariableChoice">Not used; retained for compatibility.</param>
+    /// <param name="FV">Vector that receives the transformed function values for each row.</param>
     public void EvaluateMultiple(IROMatrix<double> independent, IReadOnlyList<double> P, IReadOnlyList<bool>? independentVariableChoice, IVector<double> FV)
     {
       var rowCount = independent.RowCount;
@@ -90,6 +112,7 @@ namespace Altaxo.Calc.FitFunctions.Materials
     [Altaxo.Serialization.Xml.XmlSerializationSurrogateFor(typeof(VogelFulcherLaw), 1)]
     private class XmlSerializationSurrogate0 : Altaxo.Serialization.Xml.IXmlSerializationSurrogate
     {
+      /// <inheritdoc/>
       public virtual void Serialize(object obj, Altaxo.Serialization.Xml.IXmlSerializationInfo info)
       {
         var s = (VogelFulcherLaw)obj;
@@ -99,6 +122,7 @@ namespace Altaxo.Calc.FitFunctions.Materials
         info.AddEnum("ParamT0Unit", s.ParameterT0Representation);
       }
 
+      /// <inheritdoc/>
       public virtual object Deserialize(object? o, Altaxo.Serialization.Xml.IXmlDeserializationInfo info, object? parent)
       {
 

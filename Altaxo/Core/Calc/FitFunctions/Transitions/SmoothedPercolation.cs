@@ -56,10 +56,17 @@ namespace Altaxo.Calc.FitFunctions.Transitions
 
     #endregion Serialization
 
+    /// <summary>
+    /// Initializes a new instance of the <see cref="SmoothedPercolation"/> class.
+    /// </summary>
     public SmoothedPercolation()
     {
     }
 
+    /// <summary>
+    /// Factory for creating an instance of <see cref="SmoothedPercolation"/>.
+    /// </summary>
+    /// <returns>A new <see cref="IFitFunction"/> instance.</returns>
     [FitFunctionCreator("SmoothedPercolation", "Transitions", 1, 1, 5)]
     [System.ComponentModel.Description("${res:Altaxo.Calc.FitFunctions.Transitions.SmoothedPercolation}")]
     public static IFitFunction CreateSmoothedPercolation()
@@ -69,6 +76,7 @@ namespace Altaxo.Calc.FitFunctions.Transitions
 
     #region IFitFunction Members
 
+    /// <inheritdoc/>
     public int NumberOfIndependentVariables
     {
       get
@@ -77,6 +85,7 @@ namespace Altaxo.Calc.FitFunctions.Transitions
       }
     }
 
+    /// <inheritdoc/>
     public int NumberOfDependentVariables
     {
       get
@@ -85,6 +94,7 @@ namespace Altaxo.Calc.FitFunctions.Transitions
       }
     }
 
+    /// <inheritdoc/>
     public int NumberOfParameters
     {
       get
@@ -93,16 +103,19 @@ namespace Altaxo.Calc.FitFunctions.Transitions
       }
     }
 
+    /// <inheritdoc/>
     public string IndependentVariableName(int i)
     {
       return "phi";
     }
 
+    /// <inheritdoc/>
     public string DependentVariableName(int i)
     {
       return "y";
     }
 
+    /// <inheritdoc/>
     public string ParameterName(int i)
     {
       return i switch
@@ -116,6 +129,7 @@ namespace Altaxo.Calc.FitFunctions.Transitions
       };
     }
 
+    /// <inheritdoc/>
     public double DefaultParameterValue(int i)
     {
       return i switch
@@ -129,16 +143,19 @@ namespace Altaxo.Calc.FitFunctions.Transitions
       };
     }
 
+    /// <inheritdoc/>
     public IVarianceScaling? DefaultVarianceScaling(int i)
     {
       return null;
     }
 
+    /// <inheritdoc/>
     public void Evaluate(double[] X, double[] P, double[] Y)
     {
       Y[0] = Evaluate(X[0], P[0], P[1], P[2], P[3], P[4]);
     }
 
+    /// <inheritdoc/>
     public void Evaluate(IROMatrix<double> independent, IReadOnlyList<double> P, IVector<double> FV, IReadOnlyList<bool>? dependentVariableChoice)
     {
       var rowCount = independent.RowCount;
@@ -150,6 +167,16 @@ namespace Altaxo.Calc.FitFunctions.Transitions
       }
     }
 
+    /// <summary>
+    /// Evaluates the smoothed percolation function for a single scalar input.
+    /// </summary>
+    /// <param name="phi">Independent variable between 0 and 1 representing the occupation probability.</param>
+    /// <param name="y0">Left-side amplitude (must be greater than 0).</param>
+    /// <param name="y1">Right-side amplitude (must be greater than 0).</param>
+    /// <param name="phi_c">Critical threshold (must be in [0,1]).</param>
+    /// <param name="s">Left exponent parameter (must be non-zero).</param>
+    /// <param name="t">Right exponent parameter (must be non-zero).</param>
+    /// <returns>The function value at the given <paramref name="phi"/> or <c>double.NaN</c> if parameters are invalid.</returns>
     public double Evaluate(double phi, double y0, double y1, double phi_c, double s, double t)
     {
       if (!(y0 > 0))
@@ -183,6 +210,9 @@ namespace Altaxo.Calc.FitFunctions.Transitions
       return Math.Pow(10, lgy);
     }
 
+    /// <summary>
+    /// Container for the parameters used as key in the p1-cache dictionary.
+    /// </summary>
     private struct P1Var
     {
       public double sigmam;
@@ -206,6 +236,15 @@ namespace Altaxo.Calc.FitFunctions.Transitions
     /// </summary>
     private System.Collections.Generic.Dictionary<P1Var, double> _sp1Hash = new System.Collections.Generic.Dictionary<P1Var, double>();
 
+    /// <summary>
+    /// Calculates the lower boundary p1 numerically for the given parameters.
+    /// </summary>
+    /// <param name="sigmam">Left amplitude.</param>
+    /// <param name="sigmat">Right amplitude.</param>
+    /// <param name="pc">Critical threshold.</param>
+    /// <param name="s">Left exponent.</param>
+    /// <param name="t">Right exponent.</param>
+    /// <returns>Computed p1 value.</returns>
     private static double CalculateP1(double sigmam, double sigmat, double pc, double s, double t)
     {
       double co1 = s + t + Math.Log(sigmam / sigmat);
@@ -225,21 +264,33 @@ namespace Altaxo.Calc.FitFunctions.Transitions
       return (pupper + plower) / 2;
     }
 
+    /// <summary>
+    /// Calculates p2 from p1 and other parameters.
+    /// </summary>
     private static double CalculateP2(double p, double pc, double s, double t)
     {
       return (pc * (s + t) - p * t) / s;
     }
 
+    /// <summary>
+    /// Left-side log10(sigma) expression.
+    /// </summary>
     private static double CalculateLgSigmaLeft(double p, double sigmam, double pc, double s)
     {
       return Math.Log10(sigmam * Math.Pow((pc - p) / pc, -s));
     }
 
+    /// <summary>
+    /// Right-side log10(sigma) expression.
+    /// </summary>
     private static double CalculateLgSigmaRight(double p, double sigmat, double pc, double t)
     {
       return Math.Log10(sigmat * Math.Pow((p - pc) / (1 - pc), t));
     }
 
+    /// <summary>
+    /// Calculates the log10(sigma) for the smoothed transition using cached p1 and computed p2.
+    /// </summary>
     private double CalculateLgSigma(double p, double sigmam, double sigmat, double pc, double s, double t)
     {
       var var = new P1Var(sigmam, sigmat, pc, s, t);

@@ -362,6 +362,7 @@ namespace Altaxo.Calc.FitFunctions.Relaxation
 
     #region independent variable definition
 
+    /// <inheritdoc/>
     public int NumberOfIndependentVariables
     {
       get
@@ -370,6 +371,7 @@ namespace Altaxo.Calc.FitFunctions.Relaxation
       }
     }
 
+    /// <inheritdoc/>
     public string IndependentVariableName(int i)
     {
       return _useFrequencyInsteadOmega ? "Frequency" : "Omega";
@@ -379,6 +381,7 @@ namespace Altaxo.Calc.FitFunctions.Relaxation
 
     #region dependent variable definition
 
+    /// <inheritdoc/>
     public int NumberOfDependentVariables
     {
       get
@@ -387,6 +390,7 @@ namespace Altaxo.Calc.FitFunctions.Relaxation
       }
     }
 
+    /// <inheritdoc/>
     public string DependentVariableName(int i)
     {
       var result = (_isDielectricData, _invertResult) switch
@@ -407,6 +411,7 @@ namespace Altaxo.Calc.FitFunctions.Relaxation
     private string[] _parameterNameD = new string[] { "epsR_inf", "delta_epsR", "tau", "beta", "conductivity", };
     private string[] _parameterNameS = new string[] { "chi_inf", "delta_chi", "tau", "beta", "invviscosity" };
 
+    /// <inheritdoc/>
     public int NumberOfParameters
     {
       get
@@ -418,6 +423,7 @@ namespace Altaxo.Calc.FitFunctions.Relaxation
       }
     }
 
+    /// <inheritdoc/>
     public string ParameterName(int i)
     {
       var namearr = _isDielectricData ? _parameterNameD : _parameterNameS;
@@ -448,6 +454,7 @@ namespace Altaxo.Calc.FitFunctions.Relaxation
       }
     }
 
+    /// <inheritdoc/>
     public double DefaultParameterValue(int i)
     {
       if (i < (1 + ParametersPerTerm * _numberOfTerms))
@@ -464,6 +471,7 @@ namespace Altaxo.Calc.FitFunctions.Relaxation
       }
     }
 
+    /// <inheritdoc/>
     public IVarianceScaling? DefaultVarianceScaling(int i)
     {
       return null;
@@ -471,6 +479,7 @@ namespace Altaxo.Calc.FitFunctions.Relaxation
 
     #endregion parameter definition
 
+    /// <inheritdoc/>
     public void Evaluate(double[] X, double[] P, double[] Y)
     {
       double x = X[0];
@@ -519,6 +528,7 @@ namespace Altaxo.Calc.FitFunctions.Relaxation
       Y[0] = result.Real;
       Y[1] = result.Imaginary;
     }
+    /// <inheritdoc/>
     public void Evaluate(IROMatrix<double> independent, IReadOnlyList<double> P, IVector<double> FV, IReadOnlyList<bool>? dependentVariableChoice)
     {
       var rowCount = independent.RowCount;

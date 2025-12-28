@@ -65,6 +65,10 @@ namespace Altaxo.Calc.FitFunctions.Chemistry.SorptionIsotherms
     #endregion Serialization
 
 
+    /// <summary>
+    /// Creates the default Langmuir model fit function.
+    /// </summary>
+    /// <returns>A new instance of <see cref="LangmuirModel"/>.</returns>
     [FitFunctionCreator("Mass uptake Langmuir model", "Chemistry/SorptionIsotherms", 1, 1, 3)]
     [System.ComponentModel.Description("${res:Altaxo.Calc.FitFunctions.Chemistry.SorptionIsotherms.LangmuirModel}")]
     public static IFitFunction Create()

@@ -33,9 +33,7 @@ using Altaxo.Science;
 namespace Altaxo.Calc.FitFunctions.Materials
 {
   /// <summary>
-  /// Represents the Arrhenius law.
-  /// Describes the temperature dependence of reaction rates, etc, i.e.
-  /// quantities which increase with increasing temperature.
+  /// Represents the Arrhenius law for rates. Describes the temperature dependence of reaction rates or similar quantities that increase with temperature.
   /// </summary>
   [FitFunctionClass]
   public class ArrheniusLawRate : IFitFunction, Main.IImmutable
@@ -43,6 +41,9 @@ namespace Altaxo.Calc.FitFunctions.Materials
     private TemperatureRepresentation _temperatureUnitOfX;
     private EnergyRepresentation _paramEnergyUnit;
 
+    /// <summary>
+    /// Initializes a new default instance using Kelvin and Joule per mole.
+    /// </summary>
     public ArrheniusLawRate()
     {
       _temperatureUnitOfX = TemperatureRepresentation.Kelvin;
@@ -55,6 +56,11 @@ namespace Altaxo.Calc.FitFunctions.Materials
       _paramEnergyUnit = paramEnergyUnit;
     }
 
+    /// <summary>
+    /// Initializes a new instance with the specified units for the independent variable and energy parameter.
+    /// </summary>
+    /// <param name="temperatureUnitOfX">The temperature unit used for the independent variable.</param>
+    /// <param name="paramEnergyUnit">The energy unit used for the energy parameter.</param>
     public ArrheniusLawRate(TemperatureRepresentation temperatureUnitOfX, EnergyRepresentation paramEnergyUnit)
     {
       _temperatureUnitOfX = temperatureUnitOfX;
@@ -62,9 +68,16 @@ namespace Altaxo.Calc.FitFunctions.Materials
     }
 
 
+    /// <summary>
+    /// Gets the energy unit used for the parameter representing activation energy.
+    /// </summary>
     [Category("OptionsForParameters")]
     public EnergyRepresentation ParameterEnergyRepresentation => _paramEnergyUnit;
 
+    /// <summary>
+    /// Returns a copy of this instance with the provided energy unit for the parameter.
+    /// </summary>
+    /// <param name="value">The new energy unit.</param>
     [Category("OptionsForParameters")]
     public ArrheniusLawRate WithParameterEnergyRepresentation(EnergyRepresentation value)
     {
@@ -78,10 +91,16 @@ namespace Altaxo.Calc.FitFunctions.Materials
       }
     }
 
+    /// <summary>
+    /// Gets the representation used for the independent temperature variable.
+    /// </summary>
     [Category("OptionsForIndependentVariables")]
     public TemperatureRepresentation IndependentVariableRepresentation => _temperatureUnitOfX;
 
-
+    /// <summary>
+    /// Returns a copy of this instance with the provided temperature unit for the independent variable.
+    /// </summary>
+    /// <param name="value">The new temperature unit.</param>
     [Category("OptionsForIndependentVariables")]
     public ArrheniusLawRate WithIndependentVariableRepresentation(TemperatureRepresentation value)
     {
@@ -128,11 +147,16 @@ namespace Altaxo.Calc.FitFunctions.Materials
 
     #endregion Serialization
 
+    /// <inheritdoc/>
     public override string ToString()
     {
       return "ArrheniusLaw(Rate)";
     }
 
+    /// <summary>
+    /// Factory used by discovery to create the default Arrhenius rate fit function.
+    /// </summary>
+    /// <returns>A new instance of <see cref="ArrheniusLawRate"/> with default units.</returns>
     [FitFunctionCreator("Arrhenius law (rate)", "Materials", 1, 1, 2)]
     [System.ComponentModel.Description("${res:Altaxo.Calc.FitFunctions.Materials.ArrheniusLawRate}")]
     public static IFitFunction CreateDefault()
@@ -142,6 +166,7 @@ namespace Altaxo.Calc.FitFunctions.Materials
 
     #region IFitFunction Members
 
+    /// <inheritdoc/>
     public int NumberOfIndependentVariables
     {
       get
@@ -150,6 +175,7 @@ namespace Altaxo.Calc.FitFunctions.Materials
       }
     }
 
+    /// <inheritdoc/>
     public int NumberOfDependentVariables
     {
       get
@@ -158,6 +184,7 @@ namespace Altaxo.Calc.FitFunctions.Materials
       }
     }
 
+    /// <inheritdoc/>
     public int NumberOfParameters
     {
       get
@@ -166,16 +193,19 @@ namespace Altaxo.Calc.FitFunctions.Materials
       }
     }
 
+    /// <inheritdoc/>
     public string IndependentVariableName(int i)
     {
       return "T_" + _temperatureUnitOfX.ToString();
     }
 
+    /// <inheritdoc/>
     public string DependentVariableName(int i)
     {
       return "y";
     }
 
+    /// <inheritdoc/>
     public string ParameterName(int i)
     {
       return i switch
@@ -186,6 +216,7 @@ namespace Altaxo.Calc.FitFunctions.Materials
       };
     }
 
+    /// <inheritdoc/>
     public double DefaultParameterValue(int i)
     {
       switch (i)
@@ -202,6 +233,7 @@ namespace Altaxo.Calc.FitFunctions.Materials
       }
     }
 
+    /// <inheritdoc/>
     public IVarianceScaling? DefaultVarianceScaling(int i)
     {
       return null;
@@ -216,12 +248,14 @@ namespace Altaxo.Calc.FitFunctions.Materials
 
     #endregion Change event
 
+    /// <inheritdoc/>
     public void Evaluate(double[] X, double[] P, double[] Y)
     {
       double temperature = Temperature.ToKelvin(X[0], _temperatureUnitOfX);
       double energyAsTemperature = Energy.ToTemperatureSI(P[1], _paramEnergyUnit);
       Y[0] = P[0] * Math.Exp(-energyAsTemperature / temperature);
     }
+    /// <inheritdoc/>
     public void Evaluate(IROMatrix<double> independent, IReadOnlyList<double> P, IVector<double> FV, IReadOnlyList<bool>? dependentVariableChoice)
     {
       var rowCount = independent.RowCount;

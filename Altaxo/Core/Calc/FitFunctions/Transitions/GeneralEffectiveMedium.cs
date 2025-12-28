@@ -56,10 +56,17 @@ namespace Altaxo.Calc.FitFunctions.Transitions
 
     #endregion Serialization
 
+    /// <summary>
+    /// Initializes a new instance of the <see cref="GeneralEffectiveMedium"/> class.
+    /// </summary>
     public GeneralEffectiveMedium()
     {
     }
 
+    /// <summary>
+    /// Factory used by the fit function registry.
+    /// </summary>
+    /// <returns>A new <see cref="GeneralEffectiveMedium"/> instance.</returns>
     [FitFunctionCreator("GeneralEffectiveMedium", "Transitions", 1, 1, 5)]
     [System.ComponentModel.Description("${res:Altaxo.Calc.FitFunctions.Transitions.GeneralEffectiveMedium}")]
     public static IFitFunction CreateGeneralEffectiveMedium()
@@ -69,6 +76,7 @@ namespace Altaxo.Calc.FitFunctions.Transitions
 
     #region IFitFunction Members
 
+    /// <inheritdoc/>
     public int NumberOfIndependentVariables
     {
       get
@@ -77,6 +85,7 @@ namespace Altaxo.Calc.FitFunctions.Transitions
       }
     }
 
+    /// <inheritdoc/>
     public int NumberOfDependentVariables
     {
       get
@@ -85,6 +94,7 @@ namespace Altaxo.Calc.FitFunctions.Transitions
       }
     }
 
+    /// <inheritdoc/>
     public int NumberOfParameters
     {
       get
@@ -93,16 +103,23 @@ namespace Altaxo.Calc.FitFunctions.Transitions
       }
     }
 
+    /// <inheritdoc/>
     public string IndependentVariableName(int i)
     {
       return "phi";
     }
 
+    /// <inheritdoc/>
     public string DependentVariableName(int i)
     {
       return "y";
     }
 
+    /// <summary>
+    /// Returns the name of the parameter at index <paramref name="i"/>.
+    /// </summary>
+    /// <param name="i">Parameter index.</param>
+    /// <returns>Name of the parameter.</returns>
     public virtual string ParameterName(int i)
     {
       return i switch
@@ -116,6 +133,7 @@ namespace Altaxo.Calc.FitFunctions.Transitions
       };
     }
 
+    /// <inheritdoc/>
     public double DefaultParameterValue(int i)
     {
       return i switch
@@ -129,6 +147,7 @@ namespace Altaxo.Calc.FitFunctions.Transitions
       };
     }
 
+    /// <inheritdoc/>
     public IVarianceScaling? DefaultVarianceScaling(int i)
     {
       return null;
@@ -139,11 +158,18 @@ namespace Altaxo.Calc.FitFunctions.Transitions
     /// </summary>
     public event EventHandler? Changed { add { } remove { } }
 
+    /// <summary>
+    /// Evaluates the model for a single independent input.
+    /// </summary>
+    /// <param name="X">Array containing the independent variable.</param>
+    /// <param name="P">Array of parameters.</param>
+    /// <param name="Y">Output array for the dependent variable.</param>
     public virtual void Evaluate(double[] X, double[] P, double[] Y)
     {
       Y[0] = Evaluate(X[0], P[0], P[1], P[2], P[3], P[4]);
     }
 
+    /// <inheritdoc/>
     public void Evaluate(IROMatrix<double> independent, IReadOnlyList<double> P, IVector<double> FV, IReadOnlyList<bool>? dependentVariableChoice)
     {
       var rowCount = independent.RowCount;
@@ -155,6 +181,16 @@ namespace Altaxo.Calc.FitFunctions.Transitions
       }
     }
 
+    /// <summary>
+    /// Legacy evaluation method kept for compatibility. Uses older algorithm.
+    /// </summary>
+    /// <param name="phi">Volume fraction parameter.</param>
+    /// <param name="y0">Left value.</param>
+    /// <param name="y1">Right value.</param>
+    /// <param name="phi_c">Critical fraction.</param>
+    /// <param name="s">Parameter s.</param>
+    /// <param name="t">Parameter t.</param>
+    /// <returns>Computed effective medium value or NaN for invalid inputs.</returns>
     public static double EvaluateOld(double phi, double y0, double y1, double phi_c, double s, double t)
     {
       if (!(y0 > 0))
@@ -208,6 +244,16 @@ namespace Altaxo.Calc.FitFunctions.Transitions
       return x * x;
     }
 
+    /// <summary>
+    /// Main evaluation method for the effective medium model.
+    /// </summary>
+    /// <param name="phi">Volume fraction parameter.</param>
+    /// <param name="y0">Left value.</param>
+    /// <param name="y1">Right value.</param>
+    /// <param name="phi_c">Critical fraction.</param>
+    /// <param name="s">Parameter s.</param>
+    /// <param name="t">Parameter t.</param>
+    /// <returns>Computed effective medium value or NaN for invalid inputs.</returns>
     public static double Evaluate(double phi, double y0, double y1, double phi_c, double s, double t)
     {
       if (!(y0 > 0))
@@ -289,10 +335,10 @@ namespace Altaxo.Calc.FitFunctions.Transitions
     /// <summary>
     /// Finds the x where func(x)==0 between x0&lt;x&lt;x1 for a monoton decreasing function func.
     /// </summary>
-    /// <param name="func"></param>
-    /// <param name="x0"></param>
-    /// <param name="x1"></param>
-    /// <returns></returns>
+    /// <param name="func">Function monotone decreasing in the interval.</param>
+    /// <param name="x0">Lower bound of the search interval.</param>
+    /// <param name="x1">Upper bound of the search interval.</param>
+    /// <returns>Approximate x where func(x) == 0.</returns>
     private static double FindDecreasingYEqualToZero(Func<double, double> func, double x0, double x1)
     {
       double low = x0;
@@ -358,10 +404,17 @@ namespace Altaxo.Calc.FitFunctions.Transitions
 
     #endregion Serialization
 
+    /// <summary>
+    /// Initializes a new instance of the <see cref="GeneralEffectiveMediumLog10"/> class.
+    /// </summary>
     public GeneralEffectiveMediumLog10()
     {
     }
 
+    /// <summary>
+    /// Factory used by the fit function registry.
+    /// </summary>
+    /// <returns>A new <see cref="GeneralEffectiveMediumLog10"/> instance.</returns>
     [FitFunctionCreator("GeneralEffectiveMediumLog10", "Transitions", 1, 1, 5)]
     [System.ComponentModel.Description("${res:Altaxo.Calc.FitFunctions.Transitions.Lg10GeneralEffectiveMedium}")]
     public static IFitFunction CreateGeneralEffectiveMediumLog10()
@@ -369,16 +422,28 @@ namespace Altaxo.Calc.FitFunctions.Transitions
       return new GeneralEffectiveMediumLog10();
     }
 
+    /// <inheritdoc/>
     public override void Evaluate(double[] X, double[] P, double[] Y)
     {
       Y[0] = EvaluateLog10(X[0], P[0], P[1], P[2], P[3], P[4]);
     }
 
+    /// <summary>
+    /// Evaluate the model and return the base-10 logarithm of the result.
+    /// </summary>
+    /// <param name="phi">Volume fraction parameter.</param>
+    /// <param name="lg_y0">Log10 of left value.</param>
+    /// <param name="lg_y1">Log10 of right value.</param>
+    /// <param name="phi_c">Critical fraction.</param>
+    /// <param name="s">Parameter s.</param>
+    /// <param name="t">Parameter t.</param>
+    /// <returns>Base-10 logarithm of the computed effective medium value.</returns>
     public static double EvaluateLog10(double phi, double lg_y0, double lg_y1, double phi_c, double s, double t)
     {
       return Math.Log10(GeneralEffectiveMedium.Evaluate(phi, Math.Pow(10, lg_y0), Math.Pow(10, lg_y1), phi_c, s, t));
     }
 
+    /// <inheritdoc/>
     public override string ParameterName(int i)
     {
       return i switch

@@ -117,6 +117,10 @@ namespace Altaxo.Calc.FitFunctions.Diffusion
 
     #endregion Serialization
 
+    /// <summary>
+    /// Creates the default fit function describing the mass change of a long cylinder after a concentration step.
+    /// </summary>
+    /// <returns>A new instance of <see cref="MassChangeAfterStepForCylinder"/>.</returns>
     [FitFunctionCreator("Mass change of a cylinder after a concentration step", "Diffusion", 1, 1, 4)]
     [System.ComponentModel.Description("${res:Altaxo.Calc.FitFunctions.Diffusion.MassChangeAfterStepForCylinder}")]
     public static IFitFunction Create()
@@ -195,8 +199,8 @@ namespace Altaxo.Calc.FitFunctions.Diffusion
     /// <summary>
     /// Evaluates the response of a unit step in dependence of the reduced variable.
     /// </summary>
-    /// <param name="rv">Reduced variable rv = D*t/r², where D is the diffusion coefficient, t is the time and r is the radius of the sphere.</param>
-    /// <returns>The response to a unit step in dependence on rv and rz.</returns>
+    /// <param name="rv">Reduced variable rv = D*t/r², where D is the diffusion coefficient, t is the time and r is the radius of the cylinder.</param>
+    /// <returns>The response to a unit step as a function of the reduced variable.</returns>
     public static double EvaluateUnitStepWrtReducedVariable(double rv)
     {
       if (rv <= 0)
@@ -235,10 +239,10 @@ namespace Altaxo.Calc.FitFunctions.Diffusion
     }
 
     /// <summary>
-    /// Evaluates the response of a unit step in dependence of the reduced variables.
+    /// Evaluates the response of a unit step and its derivative with respect to the reduced variable.
     /// </summary>
-    /// <param name="rv">Reduced variable rv = D*t/r², where D is the diffusion coefficient, t is the time and r is the radius of the sphere.</param>
-    /// <returns>The response to a unit step in dependence on rv and rz, and the derivatives w.r.t. rv and rz.</returns>
+    /// <param name="rv">Reduced variable rv = D*t/r², where D is the diffusion coefficient, t is the time and r is the radius of the cylinder.</param>
+    /// <returns>A tuple containing the function value and its derivative with respect to <paramref name="rv"/>.</returns>
     public static (double functionValue, double derivativeWrtRv) EvaluateUnitStepAndDerivativesWrtReducedVariable(double rv)
     {
       if (rv <= 0)

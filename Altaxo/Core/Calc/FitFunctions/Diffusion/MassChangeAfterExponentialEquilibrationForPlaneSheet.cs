@@ -98,6 +98,10 @@ namespace Altaxo.Calc.FitFunctions.Diffusion
 
     #endregion Serialization
 
+    /// <summary>
+    /// Creates the default fit function describing the mass change of a plane sheet after an exponential equilibration concentration change.
+    /// </summary>
+    /// <returns>A new instance of <see cref="MassChangeAfterExponentialEquilibrationForPlaneSheet"/>.</returns>
     [FitFunctionCreator("Mass change of a plane sheet after an exponential equilibration concentration change", "Diffusion", 1, 1, 5)]
     [System.ComponentModel.Description("${res:Altaxo.Calc.FitFunctions.Diffusion.MassChangeAfterExponentialEquilibrationForPlaneSheet}")]
     public static IFitFunction Create()
@@ -202,11 +206,11 @@ namespace Altaxo.Calc.FitFunctions.Diffusion
     }
 
     /// <summary>
-    /// Evaluates the response of a unit step in dependence of the reduced variables.
+    /// Evaluates the response of a unit step in dependence of the reduced variables and returns derivatives.
     /// </summary>
     /// <param name="rv">Reduced variable rv = D*t/l², where D is the diffusion coefficient, t is the time and l is the half thickness of the plane sheet.</param>
     /// <param name="rz">Reduced variable rz = D*τ/l², where D is the diffusion coefficient, τ is the time constant of the outer concentration change, and l is the half thickness of the plane sheet.</param>
-    /// <returns>The response to a unit step in dependence on rv and rz, and the derivatives w.r.t. rv and rz.</returns>
+    /// <returns>A tuple containing the function value and its derivatives with respect to rv and rz.</returns>
     public static (double functionValue, double derivativeWrtRv, double derivativeWrtRz) EvaluateUnitStepAndDerivativesWrtReducedVariables(double rv, double rz)
     {
 
@@ -262,7 +266,6 @@ namespace Altaxo.Calc.FitFunctions.Diffusion
 
 
 
-
     /// <summary>
     /// Evaluates the response of a unit step (M0 = 0, ΔM = 1) at t0 = 0.
     /// </summary>
@@ -281,6 +284,7 @@ namespace Altaxo.Calc.FitFunctions.Diffusion
       return EvaluateUnitStepWrtReducedVariables(D * t / (l * l), D * tau / (l * l));
     }
 
+
     /// <summary>
     /// Evaluates the response of a concentration step at t0.
     /// </summary>
@@ -291,7 +295,7 @@ namespace Altaxo.Calc.FitFunctions.Diffusion
     /// <param name="ΔM">The total change of mass due to the concentration step.</param>
     /// <param name="D">The diffusion coefficient.</param>
     /// <param name="tau">The time constant of the concentration change tau.</param>
-    /// <returns>The response to a exponential concentration change at t0.</returns>
+    /// <returns>The response to an exponential concentration change at t0.</returns>
     public static double Evaluate(double t, double l, double t0, double M0, double ΔM, double D, double tau)
     {
       return M0 + ΔM * EvaluateUnitStepWrtReducedVariables(D * (t - t0) / (l * l), D * tau / (l * l));

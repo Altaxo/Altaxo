@@ -101,11 +101,23 @@ namespace Altaxo.Calc.FitFunctions.Relaxation
 
     #endregion Serialization
 
+    /// <summary>
+    /// Initializes a new instance of the <see cref="HavriliakNegamiModulusRetardation"/> class.
+    /// </summary>
     public HavriliakNegamiModulusRetardation()
     {
     }
 
+    /// <summary>
+    /// Gets a value indicating whether the independent variable is the frequency instead of circular frequency (omega).
+    /// </summary>
     public bool UseFrequencyInsteadOfOmega => _useFrequencyInsteadOfOmega;
+
+    /// <summary>
+    /// Returns a new instance with the <see cref="UseFrequencyInsteadOfOmega"/> property set to the specified value.
+    /// </summary>
+    /// <param name="value">If set to <c>true</c> the independent variable is interpreted as frequency; otherwise as omega.</param>
+    /// <returns>A new instance with the modified setting, or the same instance if the value is unchanged.</returns>
     public HavriliakNegamiModulusRetardation WithUseFrequencyInsteadOfOmega(bool value)
     {
       if (!(_useFrequencyInsteadOfOmega == value))
@@ -120,7 +132,16 @@ namespace Altaxo.Calc.FitFunctions.Relaxation
       }
     }
 
+    /// <summary>
+    /// Gets a value indicating whether a flow term is included in the model.
+    /// </summary>
     public bool UseFlowTerm => _useFlowTerm;
+
+    /// <summary>
+    /// Returns a new instance with the <see cref="UseFlowTerm"/> property set to the specified value.
+    /// </summary>
+    /// <param name="value">If set to <c>true</c> a flow term is included.</param>
+    /// <returns>A new instance with the modified setting, or the same instance if the value is unchanged.</returns>
     public HavriliakNegamiModulusRetardation WithUseFlowTerm(bool value)
     {
       if (!(_useFlowTerm == value))
@@ -137,7 +158,16 @@ namespace Altaxo.Calc.FitFunctions.Relaxation
 
 
 
+    /// <summary>
+    /// Gets a value indicating whether the viscosity parameter is inverted (i.e. fluidity is used).
+    /// </summary>
     public bool InvertViscosity => _invertViscosity;
+
+    /// <summary>
+    /// Returns a new instance with the <see cref="InvertViscosity"/> property set to the specified value.
+    /// </summary>
+    /// <param name="value">If set to <c>true</c> a fluidity parameter is used instead of viscosity.</param>
+    /// <returns>A new instance with the modified setting, or the same instance if the value is unchanged.</returns>
     public HavriliakNegamiModulusRetardation WithInvertViscosity(bool value)
     {
       if (!(InvertViscosity == value))
@@ -153,12 +183,18 @@ namespace Altaxo.Calc.FitFunctions.Relaxation
     }
 
     /// <summary>
-    /// Indicates whether the real and imaginary part of the dependent variable should be logarithmized (decadic logarithm).
+    /// Indicates whether the real and imaginary parts of the dependent variable should be logarithmized (decadic logarithm).
     /// </summary>
     /// <value>
     ///   <c>true</c> if the result is logarithmized; otherwise, <c>false</c>.
     /// </value>
     public bool LogarithmizeResults => _logarithmizeResults;
+
+    /// <summary>
+    /// Returns a new instance with the <see cref="LogarithmizeResults"/> property set to the specified value.
+    /// </summary>
+    /// <param name="value">If set to <c>true</c> the dependent variable parts are returned as base-10 logarithms.</param>
+    /// <returns>A new instance with the modified setting, or the same instance if the value is unchanged.</returns>
     public HavriliakNegamiModulusRetardation WithLogarithmizeResults(bool value)
     {
       if (!(LogarithmizeResults == value))
@@ -173,6 +209,7 @@ namespace Altaxo.Calc.FitFunctions.Relaxation
       }
     }
 
+    /// <inheritdoc/>
     public override string ToString()
     {
       return "HavriliakNegami Modulus Complex " + (_useFrequencyInsteadOfOmega ? "(Frequency)" : "(Omega)");
@@ -241,6 +278,7 @@ namespace Altaxo.Calc.FitFunctions.Relaxation
 
     #region independent variable definition
 
+    /// <inheritdoc/>
     public int NumberOfIndependentVariables
     {
       get
@@ -249,6 +287,7 @@ namespace Altaxo.Calc.FitFunctions.Relaxation
       }
     }
 
+    /// <inheritdoc/>
     public string IndependentVariableName(int i)
     {
       return _useFrequencyInsteadOfOmega ? "Frequency" : "Omega";
@@ -260,6 +299,7 @@ namespace Altaxo.Calc.FitFunctions.Relaxation
 
     private string[] _dependentVariableNameS = new string[] { "M'", "M''" };
 
+    /// <inheritdoc/>
     public int NumberOfDependentVariables
     {
       get
@@ -268,6 +308,7 @@ namespace Altaxo.Calc.FitFunctions.Relaxation
       }
     }
 
+    /// <inheritdoc/>
     public string DependentVariableName(int i)
     {
       return _dependentVariableNameS[i];
@@ -277,6 +318,7 @@ namespace Altaxo.Calc.FitFunctions.Relaxation
 
     #region parameter definition
 
+    /// <inheritdoc/>
     public int NumberOfParameters
     {
       get
@@ -285,6 +327,7 @@ namespace Altaxo.Calc.FitFunctions.Relaxation
       }
     }
 
+    /// <inheritdoc/>
     public string ParameterName(int i)
     {
 
@@ -300,6 +343,7 @@ namespace Altaxo.Calc.FitFunctions.Relaxation
       };
     }
 
+    /// <inheritdoc/>
     public double DefaultParameterValue(int i)
     {
       return i switch
@@ -315,6 +359,7 @@ namespace Altaxo.Calc.FitFunctions.Relaxation
 
     }
 
+    /// <inheritdoc/>
     public IVarianceScaling? DefaultVarianceScaling(int i)
     {
       return null;
@@ -327,6 +372,7 @@ namespace Altaxo.Calc.FitFunctions.Relaxation
     /// </summary>
     public event EventHandler? Changed { add { } remove { } }
 
+    /// <inheritdoc/>
     public void Evaluate(double[] X, double[] P, double[] Y)
     {
       double x = X[0];
@@ -359,6 +405,7 @@ namespace Altaxo.Calc.FitFunctions.Relaxation
       }
     }
 
+    /// <inheritdoc/>
     public void Evaluate(IROMatrix<double> independent, IReadOnlyList<double> P, IVector<double> FV, IReadOnlyList<bool>? dependentVariableChoice)
     {
       var rowCount = independent.RowCount;

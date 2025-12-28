@@ -53,6 +53,7 @@ namespace Altaxo.Calc.FitFunctions.General
     [Altaxo.Serialization.Xml.XmlSerializationSurrogateFor(typeof(TwoPolynomialSegments), 0)]
     private class XmlSerializationSurrogate0 : Altaxo.Serialization.Xml.IXmlSerializationSurrogate
     {
+      /// <inheritdoc/>
       public virtual void Serialize(object obj, Altaxo.Serialization.Xml.IXmlSerializationInfo info)
       {
         var s = (TwoPolynomialSegments)obj;
@@ -60,6 +61,7 @@ namespace Altaxo.Calc.FitFunctions.General
         info.AddValue("OrderRightSide", s._order_m);
       }
 
+      /// <inheritdoc/>
       public virtual object Deserialize(object? o, Altaxo.Serialization.Xml.IXmlDeserializationInfo info, object? parent)
       {
         var order_n = info.GetInt32("OrderLeftSide");

@@ -97,6 +97,10 @@ namespace Altaxo.Calc.FitFunctions.Diffusion
 
     #endregion Serialization
 
+    /// <summary>
+    /// Creates the default fit function describing the mass change of a plane sheet after a concentration step.
+    /// </summary>
+    /// <returns>A new instance of <see cref="MassChangeAfterStepForPlaneSheet"/>.</returns>
     [FitFunctionCreator("Mass change of a plane sheet after a concentration step", "Diffusion", 1, 1, 4)]
     [System.ComponentModel.Description("${res:Altaxo.Calc.FitFunctions.Diffusion.MassChangeAfterStepForPlaneSheet}")]
     public static IFitFunction Create()

@@ -290,6 +290,7 @@ namespace Altaxo.Calc.FitFunctions.Relaxation
 
     #region independent variable definition
 
+    /// <inheritdoc/>
     public int NumberOfIndependentVariables
     {
       get
@@ -298,6 +299,7 @@ namespace Altaxo.Calc.FitFunctions.Relaxation
       }
     }
 
+    /// <inheritdoc/>
     public string IndependentVariableName(int i)
     {
       return _useFrequencyInsteadOmega ? "Frequency" : "Omega";
@@ -307,6 +309,7 @@ namespace Altaxo.Calc.FitFunctions.Relaxation
 
     #region dependent variable definition
 
+    /// <inheritdoc/>
     public int NumberOfDependentVariables
     {
       get
@@ -315,6 +318,7 @@ namespace Altaxo.Calc.FitFunctions.Relaxation
       }
     }
 
+    /// <inheritdoc/>
     public string DependentVariableName(int i)
     {
       if (_logarithmizeResults)
@@ -327,6 +331,7 @@ namespace Altaxo.Calc.FitFunctions.Relaxation
 
     #region parameter definition
 
+    /// <inheritdoc/>
     public int NumberOfParameters
     {
       get
@@ -335,6 +340,7 @@ namespace Altaxo.Calc.FitFunctions.Relaxation
       }
     }
 
+    /// <inheritdoc/>
     public string ParameterName(int i)
     {
       return i switch
@@ -349,6 +355,7 @@ namespace Altaxo.Calc.FitFunctions.Relaxation
       };
     }
 
+    /// <inheritdoc/>
     public double DefaultParameterValue(int i)
     {
       return i switch
@@ -363,6 +370,7 @@ namespace Altaxo.Calc.FitFunctions.Relaxation
       };
     }
 
+    /// <inheritdoc/>
     public IVarianceScaling? DefaultVarianceScaling(int i)
     {
       return null;
@@ -375,21 +383,36 @@ namespace Altaxo.Calc.FitFunctions.Relaxation
     /// </summary>
     public event EventHandler? Changed { add { } remove { } }
 
+
+    /// <summary>
+    ///
+    /// </summary>
+    /// <param name="X"></param>
+    /// <param name="P"></param>
+    /// <param name="Y"></param>
+    /// <remarks>
+    /// P[0]: M_0,
+    /// P[1]: M_infinity
+    /// P[2]: tau_relax
+    /// P[3]: beta
+    /// P[4]: invviscosity
+    /// </remarks>
     public void Evaluate(double[] X, double[] P, double[] Y)
     {
       double x = X[0];
       if (_useFrequencyInsteadOmega)
         x *= (2 * Math.PI);
 
-      var result = 1 / ComplexMath.Pow(1 + ComplexMath.Pow(Complex64T.ImaginaryOne * x * P[2], P[3]), P[4]);
-      result = P[1] + (P[0] - P[1]) * result;
+      double w_r = x * P[2]; // omega scaled with tau
+
+      Complex64T result = P[1] + (P[0] - P[1]) * Kohlrausch.ReIm(P[3], w_r);
 
       if (_useFlowTerm)
       {
         if (_invertViscosity)
-          result = 1 / ((1 / result) - Complex64T.ImaginaryOne * P[5] / x);
+          result = 1 / ((1 / result) - Complex64T.ImaginaryOne * P[4] / (x));
         else
-          result = 1 / ((1 / result) - Complex64T.ImaginaryOne / (x * P[5]));
+          result = 1 / ((1 / result) - Complex64T.ImaginaryOne / (x * P[4]));
       }
 
       if (_logarithmizeResults)
@@ -403,7 +426,6 @@ namespace Altaxo.Calc.FitFunctions.Relaxation
         Y[1] = result.Imaginary;
       }
     }
-
     public void Evaluate(IROMatrix<double> independent, IReadOnlyList<double> P, IVector<double> FV, IReadOnlyList<bool>? dependentVariableChoice)
     {
       var rowCount = independent.RowCount;
@@ -415,15 +437,16 @@ namespace Altaxo.Calc.FitFunctions.Relaxation
         if (_useFrequencyInsteadOmega)
           x *= (2 * Math.PI);
 
-        var result = 1 / ComplexMath.Pow(1 + ComplexMath.Pow(Complex64T.ImaginaryOne * x * P[2], P[3]), P[4]);
-        result = P[1] + (P[0] - P[1]) * result;
+        double w_r = x * P[2]; // omega scaled with tau
+
+        Complex64T result = P[1] + (P[0] - P[1]) * Kohlrausch.ReIm(P[3], w_r);
 
         if (_useFlowTerm)
         {
           if (_invertViscosity)
-            result = 1 / ((1 / result) - Complex64T.ImaginaryOne * P[5] / x);
+            result = 1 / ((1 / result) - Complex64T.ImaginaryOne * P[4] / (x));
           else
-            result = 1 / ((1 / result) - Complex64T.ImaginaryOne / (x * P[5]));
+            result = 1 / ((1 / result) - Complex64T.ImaginaryOne / (x * P[4]));
         }
 
         double yre, yim;

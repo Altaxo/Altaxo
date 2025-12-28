@@ -33,9 +33,7 @@ using Altaxo.Science;
 namespace Altaxo.Calc.FitFunctions.Materials
 {
   /// <summary>
-  /// Represents the Arrhenius law.
-  /// Describes the temperature dependence of the relaxation time, viscosity, etc, i.e.
-  /// quantities which decrease with increasing temperature.
+  /// Represents the Arrhenius law for times. Describes the temperature dependence of relaxation time, viscosity, etc., i.e. quantities which decrease with increasing temperature.
   /// </summary>
   [FitFunctionClass]
   public class ArrheniusLawTime : IFitFunction, Main.IImmutable
@@ -43,12 +41,20 @@ namespace Altaxo.Calc.FitFunctions.Materials
     private TemperatureRepresentation _temperatureUnitOfX;
     private EnergyRepresentation _paramEnergyUnit;
 
+    /// <summary>
+    /// Initializes a new default instance using Kelvin and Joule per mole.
+    /// </summary>
     public ArrheniusLawTime()
     {
       _temperatureUnitOfX = TemperatureRepresentation.Kelvin;
       _paramEnergyUnit = EnergyRepresentation.JoulePerMole;
     }
 
+    /// <summary>
+    /// Initializes a new instance with specified units.
+    /// </summary>
+    /// <param name="temperatureUnitOfX">Temperature unit for the independent variable.</param>
+    /// <param name="paramEnergyUnit">Energy unit for the energy parameter.</param>
     public ArrheniusLawTime(TemperatureRepresentation temperatureUnitOfX, EnergyRepresentation paramEnergyUnit)
     {
       _temperatureUnitOfX = temperatureUnitOfX;
@@ -128,11 +134,16 @@ namespace Altaxo.Calc.FitFunctions.Materials
 
     #endregion Serialization
 
+    /// <inheritdoc/>
     public override string ToString()
     {
       return "ArrheniusLaw (Time)";
     }
 
+    /// <summary>
+    /// Factory used by discovery to create the default Arrhenius time fit function.
+    /// </summary>
+    /// <returns>A new instance of <see cref="ArrheniusLawTime"/> with default units.</returns>
     [FitFunctionCreator("Arrhenius law (time)", "Materials", 1, 1, 2)]
     [System.ComponentModel.Description("${res:Altaxo.Calc.FitFunctions.Materials.ArrheniusLawTime}")]
     public static IFitFunction CreateDefault()
@@ -142,6 +153,7 @@ namespace Altaxo.Calc.FitFunctions.Materials
 
     #region IFitFunction Members
 
+    /// <inheritdoc/>
     public int NumberOfIndependentVariables
     {
       get
@@ -150,6 +162,7 @@ namespace Altaxo.Calc.FitFunctions.Materials
       }
     }
 
+    /// <inheritdoc/>
     public int NumberOfDependentVariables
     {
       get
@@ -158,6 +171,7 @@ namespace Altaxo.Calc.FitFunctions.Materials
       }
     }
 
+    /// <inheritdoc/>
     public int NumberOfParameters
     {
       get
@@ -166,16 +180,19 @@ namespace Altaxo.Calc.FitFunctions.Materials
       }
     }
 
+    /// <inheritdoc/>
     public string IndependentVariableName(int i)
     {
       return "T_" + _temperatureUnitOfX.ToString();
     }
 
+    /// <inheritdoc/>
     public virtual string DependentVariableName(int i)
     {
       return "y";
     }
 
+    /// <inheritdoc/>
     public string ParameterName(int i)
     {
       switch (i)
@@ -191,6 +208,7 @@ namespace Altaxo.Calc.FitFunctions.Materials
       }
     }
 
+    /// <inheritdoc/>
     public double DefaultParameterValue(int i)
     {
       switch (i)
@@ -207,6 +225,7 @@ namespace Altaxo.Calc.FitFunctions.Materials
       }
     }
 
+    /// <inheritdoc/>
     public IVarianceScaling? DefaultVarianceScaling(int i)
     {
       return null;
@@ -221,6 +240,12 @@ namespace Altaxo.Calc.FitFunctions.Materials
 
     #endregion Change event
 
+    /// <summary>
+    /// Evaluates the Arrhenius time law for a single X value and parameter list.
+    /// </summary>
+    /// <param name="X">The independent variable value (temperature).</param>
+    /// <param name="P">Parameters array, where P[0] is prefactor and P[1] is activation energy.</param>
+    /// <returns>The evaluated value.</returns>
     public virtual double Evaluate(double X, IReadOnlyList<double> P)
     {
       double temperature = Temperature.ToKelvin(X, _temperatureUnitOfX);
@@ -228,11 +253,13 @@ namespace Altaxo.Calc.FitFunctions.Materials
       return P[0] * Math.Exp(energyAsTemperature / temperature);
     }
 
+    /// <inheritdoc/>
     public virtual void Evaluate(double[] X, double[] P, double[] Y)
     {
       Y[0] = Evaluate(X[0], P);
     }
 
+    /// <inheritdoc/>
     public void Evaluate(IROMatrix<double> independent, IReadOnlyList<double> P, IVector<double> FV, IReadOnlyList<bool>? dependentVariableChoice)
     {
       var rowCount = independent.RowCount;

@@ -258,6 +258,7 @@ namespace Altaxo.Calc.FitFunctions.Transitions
       }
     }
 
+    /// <inheritdoc/>
     public IVarianceScaling? DefaultVarianceScaling(int i)
     {
       return null;
@@ -288,6 +289,7 @@ namespace Altaxo.Calc.FitFunctions.Transitions
       Y[0] = sumTerms + sumPolynomial;
     }
 
+    /// <inheritdoc/>
     public void Evaluate(IROMatrix<double> independent, IReadOnlyList<double> P, IVector<double> FV, IReadOnlyList<bool>? dependentVariableChoice)
     {
       var rowCount = independent.RowCount;

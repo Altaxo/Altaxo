@@ -81,12 +81,20 @@ namespace Altaxo.Calc.FitFunctions.Peaks
 
     #endregion Serialization
 
+    /// <summary>
+    /// Initializes a new instance with one Gaussian term and no baseline polynomial.
+    /// </summary>
     public GaussAmplitude()
     {
       _numberOfTerms = 1;
       _orderOfBaselinePolynomial = -1;
     }
 
+    /// <summary>
+    /// Initializes a new instance with the specified number of Gaussian terms and baseline order.
+    /// </summary>
+    /// <param name="numberOfGaussianTerms">Number of Gaussian terms.</param>
+    /// <param name="orderOfBackgroundPolynomial">Order of the baseline polynomial.</param>
     public GaussAmplitude(int numberOfGaussianTerms, int orderOfBackgroundPolynomial)
     {
       _numberOfTerms = numberOfGaussianTerms;
@@ -212,6 +220,7 @@ namespace Altaxo.Calc.FitFunctions.Peaks
 
     #region IFitFunction Members
 
+    /// <inheritdoc/>
     public int NumberOfIndependentVariables
     {
       get
@@ -220,6 +229,7 @@ namespace Altaxo.Calc.FitFunctions.Peaks
       }
     }
 
+    /// <inheritdoc/>
     public int NumberOfDependentVariables
     {
       get
@@ -228,6 +238,7 @@ namespace Altaxo.Calc.FitFunctions.Peaks
       }
     }
 
+    /// <inheritdoc/>
     public int NumberOfParameters
     {
       get
@@ -236,16 +247,19 @@ namespace Altaxo.Calc.FitFunctions.Peaks
       }
     }
 
+    /// <inheritdoc/>
     public string IndependentVariableName(int i)
     {
       return "x";
     }
 
+    /// <inheritdoc/>
     public string DependentVariableName(int i)
     {
       return "y";
     }
 
+    /// <inheritdoc/>
     public string ParameterName(int i)
     {
       int k = i - NumberOfParametersPerPeak * _numberOfTerms;
@@ -270,6 +284,7 @@ namespace Altaxo.Calc.FitFunctions.Peaks
       }
     }
 
+    /// <inheritdoc/>
     public double DefaultParameterValue(int i)
     {
       int k = i - NumberOfParametersPerPeak * _numberOfTerms;
@@ -293,17 +308,27 @@ namespace Altaxo.Calc.FitFunctions.Peaks
       }
     }
 
+    /// <inheritdoc/>
     public IVarianceScaling? DefaultVarianceScaling(int i)
     {
       return null;
     }
 
+    /// <summary>
+    /// Gets the value of a single Gaussian term for the provided parameters.
+    /// </summary>
+    /// <param name="x">The x coordinate.</param>
+    /// <param name="a">Amplitude (height) of the peak.</param>
+    /// <param name="xc">Position of the peak.</param>
+    /// <param name="w">Width parameter.</param>
+    /// <returns>The evaluated value of the Gaussian term.</returns>
     public static double GetYOfOneTerm(double x, double a, double xc, double w)
     {
       double arg = (x - xc) / w;
       return a * Math.Exp(-0.5 * arg * arg);
     }
 
+    /// <inheritdoc/>
     public void Evaluate(double[] X, double[] P, double[] Y)
     {
       // evaluation of gaussian terms
@@ -328,6 +353,7 @@ namespace Altaxo.Calc.FitFunctions.Peaks
       Y[0] = sumGauss + sumPolynomial;
     }
 
+    /// <inheritdoc/>
     public void Evaluate(IROMatrix<double> independent, IReadOnlyList<double> P, IVector<double> FV, IReadOnlyList<bool>? dependentVariableChoice)
     {
       var rowCount = independent.RowCount;
@@ -364,6 +390,7 @@ namespace Altaxo.Calc.FitFunctions.Peaks
 
     #endregion IFitFunction Members
 
+    /// <inheritdoc/>
     public void EvaluateDerivative(IROMatrix<double> X, IReadOnlyList<double> P, IReadOnlyList<bool>? isParameterFixed, IMatrix<double> DY, IReadOnlyList<bool>? dependentVariableChoice)
     {
       var rowCount = X.RowCount;

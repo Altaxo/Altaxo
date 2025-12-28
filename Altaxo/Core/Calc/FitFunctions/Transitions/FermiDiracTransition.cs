@@ -30,6 +30,10 @@ using Altaxo.Calc.Regression.Nonlinear;
 
 namespace Altaxo.Calc.FitFunctions.Transitions
 {
+  /// <summary>
+  /// Base class providing utilities for Fermi-Dirac style transitions and a common
+  /// implementation of the <see cref="IFitFunction"/> interface.
+  /// </summary>
   public abstract class FermiDiracTransitionBase : IFitFunction
   {
     /// <summary>
@@ -37,7 +41,7 @@ namespace Altaxo.Calc.FitFunctions.Transitions
     /// </summary>
     /// <param name="p">Argument (between 0 and 1).</param>
     /// <param name="pc">Location of the transition (between 0 and 1).</param>
-    /// <param name="w">Parameter determing the width of the transition.</param>
+    /// <param name="w">Parameter determining the width of the transition.</param>
     /// <returns>A value between 1 (for p=0) and 0 (for p=1).</returns>
     /// <remarks>
     /// The original formula was y(p)=1/(1+Exp(b*(p-pc)).
@@ -56,14 +60,14 @@ namespace Altaxo.Calc.FitFunctions.Transitions
     }
 
     /// <summary>
-    /// Provides a linear scaled transition y = y1+(y0-y1)*Core(...).
+    /// Provides a linear scaled transition y = y1 + (y0 - y1) * Core(...).
     /// </summary>
-    /// <param name="y0"></param>
-    /// <param name="y1"></param>
-    /// <param name="p"></param>
-    /// <param name="pc"></param>
-    /// <param name="w"></param>
-    /// <returns></returns>
+    /// <param name="p">Independent parameter in range [0,1].</param>
+    /// <param name="y0">Value for p=0.</param>
+    /// <param name="y1">Value for p=1.</param>
+    /// <param name="pc">Location of the transition (between 0 and 1).</param>
+    /// <param name="w">Parameter determining the width of the transition.</param>
+    /// <returns>The transitioned value between <paramref name="y0"/> and <paramref name="y1"/>.</returns>
     public static double LinearScaledTransition(double p, double y0, double y1, double pc, double w)
     {
       double core = Core(p, pc, w);
@@ -71,14 +75,15 @@ namespace Altaxo.Calc.FitFunctions.Transitions
     }
 
     /// <summary>
-    /// Provides a logarithmically scaled transition lg(y) = lg(y1)+(lg(y0)-lg(y1))*Core(...).
+    /// Provides a logarithmically scaled transition lg(y) = lg(y1) + (lg(y0) - lg(y1)) * Core(...).
+    /// The returned value is in linear scale (not logarithm).
     /// </summary>
-    /// <param name="y0"></param>
-    /// <param name="y1"></param>
-    /// <param name="p"></param>
-    /// <param name="pc"></param>
-    /// <param name="w"></param>
-    /// <returns></returns>
+    /// <param name="p">Independent parameter in range [0,1].</param>
+    /// <param name="y0">Value for p=0 (linear scale).</param>
+    /// <param name="y1">Value for p=1 (linear scale).</param>
+    /// <param name="pc">Location of the transition (between 0 and 1).</param>
+    /// <param name="w">Parameter determining the width of the transition.</param>
+    /// <returns>The transitioned value on a logarithmic interpolation between <paramref name="y0"/> and <paramref name="y1"/>.</returns>
     public static double LogarithmicScaledTransition(double p, double y0, double y1, double pc, double w)
     {
       double core = Core(p, pc, w);
@@ -87,31 +92,37 @@ namespace Altaxo.Calc.FitFunctions.Transitions
 
     #region IFitFunction Members
 
+    /// <inheritdoc/>
     public int NumberOfIndependentVariables
     {
       get { return 1; }
     }
 
+    /// <inheritdoc/>
     public int NumberOfDependentVariables
     {
       get { return 1; }
     }
 
+    /// <inheritdoc/>
     public int NumberOfParameters
     {
       get { return 4; }
     }
 
+    /// <inheritdoc/>
     public string IndependentVariableName(int i)
     {
       return "p";
     }
 
+    /// <inheritdoc/>
     public string DependentVariableName(int i)
     {
       return "y";
     }
 
+    /// <inheritdoc/>
     public string ParameterName(int i)
     {
       return i switch
@@ -124,6 +135,7 @@ namespace Altaxo.Calc.FitFunctions.Transitions
       };
     }
 
+    /// <inheritdoc/>
     public double DefaultParameterValue(int i)
     {
       return i switch
@@ -136,10 +148,29 @@ namespace Altaxo.Calc.FitFunctions.Transitions
       };
     }
 
+    /// <summary>
+    /// Returns the default variance scaling for the parameter.
+    /// Implementations in derived classes provide the actual scaling.
+    /// </summary>
+    /// <param name="i">Parameter index.</param>
+    /// <returns>A variance scaling instance or <c>null</c> if none is provided.</returns>
     public abstract IVarianceScaling DefaultVarianceScaling(int i);
 
+    /// <summary>
+    /// Evaluates the function for a single input row.
+    /// </summary>
+    /// <param name="independent">Array containing the independent variable(s).</param>
+    /// <param name="parameters">Array of parameters.</param>
+    /// <param name="FV">Output array for the function value(s).</param>
     public abstract void Evaluate(double[] independent, double[] parameters, double[] FV);
 
+    /// <summary>
+    /// Evaluates the function for multiple input rows.
+    /// </summary>
+    /// <param name="independent">Matrix of independent variables (rows are observations).</param>
+    /// <param name="P">Parameter list.</param>
+    /// <param name="FV">Output vector for function values.</param>
+    /// <param name="dependentVariableChoice">Optional selection of dependent variables.</param>
     public abstract void Evaluate(IROMatrix<double> independent, IReadOnlyList<double> P, IVector<double> FV, IReadOnlyList<bool>? dependentVariableChoice);
 
     /// <summary>
@@ -162,6 +193,9 @@ namespace Altaxo.Calc.FitFunctions.Transitions
     }
   }
 
+  /// <summary>
+  /// Linear scaled Fermi-Dirac transition implementation.
+  /// </summary>
   [FitFunctionClass]
   public class LinearFermiDiracTransition : FermiDiracTransitionBase, Main.IImmutable
   {
@@ -189,10 +223,17 @@ namespace Altaxo.Calc.FitFunctions.Transitions
 
     #endregion Serialization
 
+    /// <summary>
+    /// Initializes a new instance of the <see cref="LinearFermiDiracTransition"/> class.
+    /// </summary>
     public LinearFermiDiracTransition()
     {
     }
 
+    /// <summary>
+    /// Factory method used by the fit function registry.
+    /// </summary>
+    /// <returns>A new <see cref="LinearFermiDiracTransition"/> instance.</returns>
     [FitFunctionCreator("LinearFermiDiracTransition", "Transitions", 1, 1, 4)]
     [System.ComponentModel.Description("${res:Altaxo.Calc.FitFunctions.Transitions.LinearFermiDiracTransition}")]
     public static IFitFunction CreateLinearFermiDiracTransition()
@@ -200,11 +241,13 @@ namespace Altaxo.Calc.FitFunctions.Transitions
       return new LinearFermiDiracTransition();
     }
 
+    /// <inheritdoc/>
     public override void Evaluate(double[] independent, double[] parameters, double[] FV)
     {
       FV[0] = LinearScaledTransition(independent[0], parameters[0], parameters[1], parameters[2], parameters[3]);
     }
 
+    /// <inheritdoc/>
     public override void Evaluate(IROMatrix<double> independent, IReadOnlyList<double> P, IVector<double> FV, IReadOnlyList<bool>? independentVariableChoice)
     {
       var rowCount = independent.RowCount;
@@ -214,12 +257,16 @@ namespace Altaxo.Calc.FitFunctions.Transitions
       }
     }
 
+    /// <inheritdoc/>
     public override IVarianceScaling DefaultVarianceScaling(int i)
     {
       return new ConstantVarianceScaling();
     }
   }
 
+  /// <summary>
+  /// Logarithmically scaled Fermi-Dirac transition implementation.
+  /// </summary>
   [FitFunctionClass]
   public class LogarithmicFermiDiracTransition : FermiDiracTransitionBase, Main.IImmutable
   {
@@ -247,10 +294,17 @@ namespace Altaxo.Calc.FitFunctions.Transitions
 
     #endregion Serialization
 
+    /// <summary>
+    /// Initializes a new instance of the <see cref="LogarithmicFermiDiracTransition"/> class.
+    /// </summary>
     public LogarithmicFermiDiracTransition()
     {
     }
 
+    /// <summary>
+    /// Factory method used by the fit function registry.
+    /// </summary>
+    /// <returns>A new <see cref="LogarithmicFermiDiracTransition"/> instance.</returns>
     [FitFunctionCreator("LogarithmicFermiDiracTransition", "Transitions", 1, 1, 4)]
     [System.ComponentModel.Description("${res:Altaxo.Calc.FitFunctions.Transitions.LogarithmicFermiDiracTransition}")]
     public static IFitFunction CreateLogarithmicFermiDiracTransition()
@@ -258,11 +312,13 @@ namespace Altaxo.Calc.FitFunctions.Transitions
       return new LogarithmicFermiDiracTransition();
     }
 
+    /// <inheritdoc/>
     public override void Evaluate(double[] independent, double[] parameters, double[] FV)
     {
       FV[0] = LogarithmicScaledTransition(independent[0], parameters[0], parameters[1], parameters[2], parameters[3]);
     }
 
+    /// <inheritdoc/>
     public override void Evaluate(IROMatrix<double> independent, IReadOnlyList<double> P, IVector<double> FV, IReadOnlyList<bool>? independentVariableChoice)
     {
       var rowCount = independent.RowCount;
@@ -275,6 +331,7 @@ namespace Altaxo.Calc.FitFunctions.Transitions
       }
     }
 
+    /// <inheritdoc/>
     public override IVarianceScaling DefaultVarianceScaling(int i)
     {
       return new RelativeVarianceScaling();

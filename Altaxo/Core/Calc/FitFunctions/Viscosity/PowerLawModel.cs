@@ -26,11 +26,13 @@ namespace Altaxo.Calc.FitFunctions.Viscosity
     [Altaxo.Serialization.Xml.XmlSerializationSurrogateFor(typeof(PowerLawModel), 0)]
     private class XmlSerializationSurrogate1 : Altaxo.Serialization.Xml.IXmlSerializationSurrogate
     {
+      /// <inheritdoc/>
       public virtual void Serialize(object obj, Altaxo.Serialization.Xml.IXmlSerializationInfo info)
       {
         var s = (PowerLawModel)obj;
       }
 
+      /// <inheritdoc/>
       public virtual object Deserialize(object? o, Altaxo.Serialization.Xml.IXmlDeserializationInfo info, object? parent)
       {
         return new PowerLawModel();
@@ -39,6 +41,10 @@ namespace Altaxo.Calc.FitFunctions.Viscosity
 
     #endregion Serialization
 
+    /// <summary>
+    /// Creates a new instance of <see cref="PowerLawModel"/>.
+    /// </summary>
+    /// <returns>A new <see cref="IFitFunction"/> implementing the power law model.</returns>
     [FitFunctionCreator("Power law model", "Viscosity", 1, 1, 2)]
     [System.ComponentModel.Description("${res:Altaxo.Calc.FitFunctions.Viscosity.PowerLawModel}")]
     public static IFitFunction Create()

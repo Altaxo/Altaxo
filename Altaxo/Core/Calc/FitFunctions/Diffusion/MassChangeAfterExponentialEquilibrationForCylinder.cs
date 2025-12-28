@@ -30,7 +30,7 @@ using Altaxo.Calc.Regression.Nonlinear;
 namespace Altaxo.Calc.FitFunctions.Diffusion
 {
   /// <summary>
-  /// Describes the mass change of a plane sheet (with given thickness and infinite lateral dimensions) in a diffusion process
+  /// Describes the mass change of a cylinder (with given radius) in a diffusion process
   /// after a concentration change that is modeled by an exponential equilibration.
   /// </summary>
   /// <remarks>
@@ -100,6 +100,10 @@ namespace Altaxo.Calc.FitFunctions.Diffusion
 
     #endregion Serialization
 
+    /// <summary>
+    /// Creates the default fit function describing the mass change of a cylinder after an exponential equilibration concentration change.
+    /// </summary>
+    /// <returns>A new instance of <see cref="MassChangeAfterExponentialEquilibrationForCylinder"/>.</returns>
     [FitFunctionCreator("Mass change of a cylinder after an exponential equilibration concentration change", "Diffusion", 1, 1, 5)]
     [System.ComponentModel.Description("${res:Altaxo.Calc.FitFunctions.Diffusion.MassChangeAfterExponentialEquilibrationForCylinder}")]
     public static IFitFunction Create()

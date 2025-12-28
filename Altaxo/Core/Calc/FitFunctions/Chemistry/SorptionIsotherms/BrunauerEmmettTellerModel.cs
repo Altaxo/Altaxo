@@ -51,11 +51,13 @@ namespace Altaxo.Calc.FitFunctions.Chemistry.SorptionIsotherms
     [Altaxo.Serialization.Xml.XmlSerializationSurrogateFor(typeof(BrunauerEmmettTellerModel), 0)]
     private class XmlSerializationSurrogate0 : Altaxo.Serialization.Xml.IXmlSerializationSurrogate
     {
+      /// <inheritdoc/>
       public virtual void Serialize(object obj, Altaxo.Serialization.Xml.IXmlSerializationInfo info)
       {
         var s = (BrunauerEmmettTellerModel)obj;
       }
 
+      /// <inheritdoc/>
       public virtual object Deserialize(object? o, Altaxo.Serialization.Xml.IXmlDeserializationInfo info, object? parent)
       {
         return new BrunauerEmmettTellerModel();
