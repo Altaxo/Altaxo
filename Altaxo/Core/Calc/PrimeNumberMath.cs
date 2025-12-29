@@ -30,26 +30,39 @@ using System.Text;
 namespace Altaxo.Calc
 {
   /// <summary>
-  /// As a result of a prime factorization, this structure is used to represent a natural number (integers greater than or equal to 1) as product of prime numbers.
+  /// Represents a natural number (integer &gt;= 1) as a product of prime factors.
   /// </summary>
   public struct PrimeFactor
   {
     private int _prime;
     private int _power;
 
+    /// <summary>
+    /// Initializes a new instance of the <see cref="PrimeFactor"/> struct.
+    /// </summary>
+    /// <param name="primeNumber">The prime number.</param>
+    /// <param name="power">The exponent of the prime number.</param>
     public PrimeFactor(int primeNumber, int power)
     {
       _prime = primeNumber;
       _power = power;
     }
 
-    /// <summary>Gets the prime number this factor represents.</summary>
+    /// <summary>
+    /// Gets the prime number this factor represents.
+    /// </summary>
     public int PrimeNumber { get { return _prime; } }
 
-    /// <summary>Gets the power of this prime factor in the represented natural number.</summary>
+    /// <summary>
+    /// Gets the exponent of this prime factor in the represented natural number.
+    /// </summary>
     public int Power { get { return _power; } }
   }
 
+  /// <summary>
+  /// Provides helper methods for prime numbers, prime factorizations, divisor enumeration, and
+  /// least common multiple calculations.
+  /// </summary>
   public class PrimeNumberMath
   {
     #region Prime numbers up to 2^16
@@ -715,12 +728,20 @@ namespace Altaxo.Calc
 
     #endregion Prime numbers up to 2^16
 
+    /// <summary>
+    /// Throws an exception if <paramref name="maxNumber"/> exceeds the largest prime number supported
+    /// by this helper.
+    /// </summary>
+    /// <param name="maxNumber">The maximum prime number to be handled.</param>
     private static void ThrowIfMaximumPrimeNumberExceeded(int maxNumber)
     {
       if (maxNumber > _primeNumbers[_primeNumbers.Length - 1])
         throw new NotImplementedException(string.Format("Prime numbers are supported only up to {0}", MaximumSupportedPrimeNumber));
     }
 
+    /// <summary>
+    /// Gets the maximum prime number supported by this implementation.
+    /// </summary>
     public static int MaximumSupportedPrimeNumber
     {
       get
@@ -729,6 +750,18 @@ namespace Altaxo.Calc
       }
     }
 
+    /// <summary>
+    /// Determines whether <paramref name="x"/> is a prime number.
+    /// </summary>
+    /// <param name="x">Number to test (must be &gt; 0).</param>
+    /// <returns>
+    /// <see langword="true"/> if <paramref name="x"/> is prime; otherwise, <see langword="false"/>.
+    /// </returns>
+    /// <exception cref="ArgumentOutOfRangeException">Thrown if <paramref name="x"/> is less than or equal to 0.</exception>
+    /// <exception cref="NotImplementedException">
+    /// Thrown if primality cannot be decided because the number requires trial division by primes
+    /// greater than <see cref="MaximumSupportedPrimeNumber"/>.
+    /// </exception>
     public static bool IsPrime(long x)
     {
       if (x <= 0)
@@ -751,6 +784,11 @@ namespace Altaxo.Calc
       throw new NotImplementedException(string.Format("Can not decide if {0} is a prime number, because full support is guaranteed only for numbers up to {1}", x, MaximumSupportedPrimeNumber * (long)MaximumSupportedPrimeNumber));
     }
 
+    /// <summary>
+    /// Enumerates prime numbers up to and including <paramref name="maxNumber"/>, additionally yielding 1.
+    /// </summary>
+    /// <param name="maxNumber">The largest number to include.</param>
+    /// <returns>An enumeration containing 1 and all prime numbers up to <paramref name="maxNumber"/>.</returns>
     public static IEnumerable<int> GetPrimeNumbersIncludingOneUpTo(int maxNumber)
     {
       ThrowIfMaximumPrimeNumberExceeded(maxNumber);
@@ -764,6 +802,11 @@ namespace Altaxo.Calc
       }
     }
 
+    /// <summary>
+    /// Enumerates prime numbers up to and including <paramref name="maxNumber"/>.
+    /// </summary>
+    /// <param name="maxNumber">The largest number to include.</param>
+    /// <returns>An enumeration of all prime numbers up to <paramref name="maxNumber"/>.</returns>
     public static IEnumerable<int> GetPrimeNumbersExcludingOneUpTo(int maxNumber)
     {
       ThrowIfMaximumPrimeNumberExceeded(maxNumber);
@@ -776,6 +819,16 @@ namespace Altaxo.Calc
       }
     }
 
+    /// <summary>
+    /// Gets the divisors of <paramref name="nominator"/> nearest to <paramref name="searchCenter"/>.
+    /// </summary>
+    /// <param name="nominator">Number for which neighboring divisors are sought.</param>
+    /// <param name="searchCenter">Value around which divisors are searched.</param>
+    /// <param name="searchMaximum">Maximum prime factor allowed when factoring <paramref name="nominator"/>.</param>
+    /// <returns>
+    /// A list containing up to two elements: the closest divisor less than <paramref name="searchCenter"/>
+    /// and the closest divisor greater than <paramref name="searchCenter"/>.
+    /// </returns>
     public static List<int> GetNeighbouringDivisors(long nominator, long searchCenter, long searchMaximum)
     {
       var primeList = PrimeFactorization(nominator, searchMaximum);
@@ -802,6 +855,12 @@ namespace Altaxo.Calc
       return result;
     }
 
+    /// <summary>
+    /// Computes the prime factorization of <paramref name="x"/>.
+    /// </summary>
+    /// <param name="x">The number to factor (must be &gt;= 1).</param>
+    /// <returns>A list of prime factors (prime, power).</returns>
+    /// <exception cref="NotImplementedException">Thrown if <paramref name="x"/> is less than or equal to 0.</exception>
     public static List<PrimeFactor> PrimeFactorization(long x)
     {
       if (x <= 0)
@@ -818,6 +877,11 @@ namespace Altaxo.Calc
       }
     }
 
+    /// <summary>
+    /// Reconstructs a number from its prime factorization.
+    /// </summary>
+    /// <param name="list">Prime factors (prime, power).</param>
+    /// <returns>The reconstructed number.</returns>
     public static long GetNumberFromPrimeFactors(List<PrimeFactor> list)
     {
       long result = 1;
@@ -830,6 +894,13 @@ namespace Altaxo.Calc
       return result;
     }
 
+    /// <summary>
+    /// Computes the prime factorization of <paramref name="nominator"/>, limiting trial division to primes
+    /// up to <paramref name="maxPrime"/>.
+    /// </summary>
+    /// <param name="nominator">The number to factor.</param>
+    /// <param name="maxPrime">The maximum prime to use during factorization.</param>
+    /// <returns>A list of prime factors (prime, power).</returns>
     private static List<PrimeFactor> PrimeFactorization(long nominator, double maxPrime)
     {
       var primeList = new List<PrimeFactor>();
@@ -869,6 +940,13 @@ namespace Altaxo.Calc
       return primeList;
     }
 
+    /// <summary>
+    /// Enumerates the prime factors of <paramref name="nominator"/>, limiting trial division to primes
+    /// up to <paramref name="maxPrime"/>.
+    /// </summary>
+    /// <param name="nominator">The number to factor.</param>
+    /// <param name="maxPrime">The maximum prime to use during factorization.</param>
+    /// <returns>An enumeration of prime factors.</returns>
     private static IEnumerable<PrimeFactor> EnumeratePrimeFactors(long nominator, double maxPrime)
     {
       double sqrtOfCurrentNominator = Math.Sqrt(nominator);
@@ -906,17 +984,35 @@ namespace Altaxo.Calc
         throw new NotImplementedException(string.Format("Unable to decompose number {0} into prime factors because the number contains prime factors greater than {1}, which is not implemented now", nominator, MaximumSupportedPrimeNumber));
     }
 
+    /// <summary>
+    /// Gets all (positive) divisors of <paramref name="x"/>.
+    /// </summary>
+    /// <param name="x">Number for which to enumerate divisors.</param>
+    /// <returns>An enumeration of all divisors of <paramref name="x"/>.</returns>
     public static IEnumerable<int> GetAllDivisors(long x)
     {
       var primeFactors = PrimeFactorization(x);
       return GetDivisorsUpToStage(primeFactors.Count - 1, primeFactors);
     }
 
+    /// <summary>
+    /// Gets all (positive) divisors described by the specified prime factors.
+    /// </summary>
+    /// <param name="primeFactors">Prime factorization (prime, power).</param>
+    /// <returns>An enumeration of all divisors.</returns>
     public static IEnumerable<int> GetAllDivisors(IList<PrimeFactor> primeFactors)
     {
       return GetDivisorsUpToStage(primeFactors.Count - 1, primeFactors);
     }
 
+    /// <summary>
+    /// Enumerates all divisors that can be formed using prime factors up to the specified recursion stage.
+    /// </summary>
+    /// <param name="stage">
+    /// The recursion stage. A negative value represents the neutral factor 1.
+    /// </param>
+    /// <param name="primeFactors">Prime factorization (prime, power).</param>
+    /// <returns>An enumeration of divisors.</returns>
     private static IEnumerable<int> GetDivisorsUpToStage(int stage, IList<PrimeFactor> primeFactors)
     {
       if (stage < 0) // it is assumed that stage[0] is associated with the prime number 2, thus a negative stage is the factor 1
@@ -938,6 +1034,12 @@ namespace Altaxo.Calc
       }
     }
 
+    /// <summary>
+    /// Computes <paramref name="x"/> raised to the power <paramref name="n"/> using repeated squaring.
+    /// </summary>
+    /// <param name="x">The base.</param>
+    /// <param name="n">The exponent (must be &gt;= 0).</param>
+    /// <returns><paramref name="x"/> raised to the power <paramref name="n"/>.</returns>
     private static long Pow(int x, int n)
     {
       long value = 1;

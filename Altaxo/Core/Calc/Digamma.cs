@@ -22,6 +22,12 @@ using Complex64 = System.Numerics.Complex;
 
 namespace Altaxo.Calc
 {
+  /// <summary>
+  /// Provides the Digamma function (the logarithmic derivative of the Gamma function) for complex arguments.
+  /// </summary>
+  /// <remarks>
+  /// This implementation is based on a translation from SciPy.
+  /// </remarks>
   public class SpecialDigamma
   {
     //  Use the asymptotic series for z away from the negative real axis
@@ -132,13 +138,14 @@ namespace Altaxo.Calc
     }
 
     /// <summary>
-    ///  Compute digamma(z + n) using digamma(z) using the recurrence relation digamma(z + 1) = digamma(z) + 1/z.
+    /// Computes digamma(z + n) from digamma(z) using the recurrence relation
+    /// <c>digamma(z + 1) = digamma(z) + 1/z</c>.
     /// </summary>
-    /// <param name="z">The z parameter.</param>
-    /// <param name="psiz">Digamma(z).</param>
-    /// <param name="n">The n parameter.</param>
-    /// <returns>Digamma(z + n).</returns>
-    /// <remarks>See <see nref="https://dlmf.nist.gov/5.5#E2"/></remarks>
+    /// <param name="z">The value z.</param>
+    /// <param name="psiz">The value digamma(z).</param>
+    /// <param name="n">The non-negative integer step count.</param>
+    /// <returns>The value digamma(z + n).</returns>
+    /// <remarks>See <see href="https://dlmf.nist.gov/5.5#E2"/>.</remarks>
     public static Complex64 forward_recurrence(Complex64 z, Complex64 psiz, int n)
     {
       var res = psiz;
@@ -150,12 +157,13 @@ namespace Altaxo.Calc
     }
 
     /// <summary>
-    /// Computes digamma(z - n) using digamma(z) and a recurrence  relation digamma(z-1) = digamma(z) - 1/(z-1).
+    /// Computes digamma(z - n) from digamma(z) using the recurrence relation
+    /// <c>digamma(z - 1) = digamma(z) - 1/(z - 1)</c>.
     /// </summary>
-    /// <param name="z">The z parameter.</param>
-    /// <param name="psiz">Digamma(z).</param>
-    /// <param name="n">The n parameter.</param>
-    /// <returns>Digamma(z-n).</returns>
+    /// <param name="z">The value z.</param>
+    /// <param name="psiz">The value digamma(z).</param>
+    /// <param name="n">The non-negative integer step count.</param>
+    /// <returns>The value digamma(z - n).</returns>
     public static Complex64 backward_recurrence(Complex64 z, Complex64 psiz, int n)
     {
       var res = psiz;
@@ -166,6 +174,14 @@ namespace Altaxo.Calc
       return res;
     }
 
+    /// <summary>
+    /// Evaluates digamma(z) using an asymptotic series expansion.
+    /// </summary>
+    /// <param name="z">The complex argument.</param>
+    /// <returns>The digamma function value at <paramref name="z"/>.</returns>
+    /// <remarks>
+    /// See <see href="https://dlmf.nist.gov/5.11#E2"/>.
+    /// </remarks>
     public static Complex64 asymptotic_series(Complex64 z)
     {
       // Evaluate digamma using an asymptotic series. See
@@ -200,6 +216,13 @@ namespace Altaxo.Calc
       return res;
     }
 
+    /// <summary>
+    /// Evaluates digamma(z) near a simple root using a Taylor series whose coefficients are expressed via the Hurwitz zeta function.
+    /// </summary>
+    /// <param name="z">The complex argument.</param>
+    /// <param name="root">An approximation of the (real) root location around which to expand.</param>
+    /// <param name="rootval">The precomputed value of digamma at <paramref name="root"/> corresponding to the chosen floating-point approximation.</param>
+    /// <returns>The digamma function value at <paramref name="z"/>.</returns>
     public static Complex64 zeta_series(Complex64 z, double root, double rootval)
     {
       /*
@@ -226,6 +249,13 @@ namespace Altaxo.Calc
       return res;
     }
 
+    /// <summary>
+    /// Computes the Hurwitz zeta function c6(s, z) = a3_{k=0}^{c0} 1/(k+z)^s for integer <paramref name="n"/> = s.
+    /// </summary>
+    /// <param name="n">The integer parameter s.</param>
+    /// <param name="z">The real parameter z.</param>
+    /// <returns>The Hurwitz zeta function value.</returns>
+    /// <exception cref="NotImplementedException">Always thrown; this method is currently a stub.</exception>
     public static double zeta(int n, double z)
     {
       throw new NotImplementedException("Needs to be implemented");

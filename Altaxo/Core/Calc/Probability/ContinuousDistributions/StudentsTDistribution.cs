@@ -24,12 +24,12 @@ using System;
 namespace Altaxo.Calc.Probability
 {
   /// <summary>
-  /// Provides generation of t-distributed random numbers.
+  /// Provides generation of Student's t-distributed random numbers.
   /// </summary>
   /// <remarks>
-  /// The implementation of the <see cref="StudentsTDistribution"/> type bases upon information presented on
-  ///   <a href="http://en.wikipedia.org/wiki/Student%27s_t-distribution">Wikipedia - Student's t-distribution</a> and
-  ///   <a href="http://www.xycoon.com/stt_random.htm">Xycoon - Student t Distribution</a>.
+  /// The implementation of the <see cref="StudentsTDistribution"/> type is based on information presented on
+  /// <a href="http://en.wikipedia.org/wiki/Student%27s_t-distribution">Wikipedia - Student's t-distribution</a> and
+  /// <a href="http://www.xycoon.com/stt_random.htm">Xycoon - Student t Distribution</a>.
   /// </remarks>
   public class StudentsTDistribution : ContinuousDistribution
   {
@@ -150,6 +150,10 @@ namespace Altaxo.Calc.Probability
     /// <summary>
     /// Gets the minimum possible value of t-distributed random numbers.
     /// </summary>
+    /// <value>Symbolic constant indicating the smallest possible value.</value>
+    /// <remarks>
+    /// For the t-distribution, this value is always negative infinity.
+    /// </remarks>
     public override double Minimum
     {
       get
@@ -161,6 +165,10 @@ namespace Altaxo.Calc.Probability
     /// <summary>
     /// Gets the maximum possible value of t-distributed random numbers.
     /// </summary>
+    /// <value>Symbolic constant indicating the largest possible value.</value>
+    /// <remarks>
+    /// For the t-distribution, this value is always positive infinity.
+    /// </remarks>
     public override double Maximum
     {
       get
@@ -172,6 +180,10 @@ namespace Altaxo.Calc.Probability
     /// <summary>
     /// Gets the mean value of t-distributed random numbers.
     /// </summary>
+    /// <value>The mean of the distribution.</value>
+    /// <remarks>
+    /// The mean is defined only for <c>nu > 1</c>, and is zero for symmetric cases.
+    /// </remarks>
     public override double Mean
     {
       get
@@ -190,6 +202,10 @@ namespace Altaxo.Calc.Probability
     /// <summary>
     /// Gets the median of t-distributed random numbers.
     /// </summary>
+    /// <value>The median of the distribution.</value>
+    /// <remarks>
+    /// The median is zero, corresponding to the peak of the t-distribution.
+    /// </remarks>
     public override double Median
     {
       get
@@ -201,6 +217,13 @@ namespace Altaxo.Calc.Probability
     /// <summary>
     /// Gets the variance of t-distributed random numbers.
     /// </summary>
+    /// <value>
+    /// The variance of the distribution, finite only for <c>nu > 2</c>.
+    /// </value>
+    /// <remarks>
+    /// The variance measures the spread of the distribution and is defined as
+    /// <c>nu / (nu - 2)</c> for <c>nu > 2</c>.
+    /// </remarks>
     public override double Variance
     {
       get
@@ -219,6 +242,13 @@ namespace Altaxo.Calc.Probability
     /// <summary>
     /// Gets the mode of t-distributed random numbers.
     /// </summary>
+    /// <value>
+    /// An array containing the mode(s) of the distribution.
+    /// </value>
+    /// <remarks>
+    /// The t-distribution is symmetric around the mean for <c>nu > 1</c>,
+    /// and its mode is defined as the value with the highest probability density (i.e., the peak of the distribution).
+    /// </remarks>
     public override double[] Mode
     {
       get
@@ -231,6 +261,10 @@ namespace Altaxo.Calc.Probability
     /// Returns a t-distributed floating point random number.
     /// </summary>
     /// <returns>A t-distributed double-precision floating point number.</returns>
+    /// <remarks>
+    /// This method generates a random value from the t-distribution with the
+    /// specified degrees of freedom, using the Box-Muller transform.
+    /// </remarks>
     public override double NextDouble()
     {
       return normalDistribution.NextDouble() / Math.Sqrt(chiSquareDistribution.NextDouble() / nu);
@@ -240,31 +274,52 @@ namespace Altaxo.Calc.Probability
 
     #region CdfPdfQuantile
 
+    /// <inheritdoc/>
     public override double CDF(double x)
     {
       return CDF(x, nu);
     }
 
+    /// <summary>
+    /// Returns the cumulative distribution function (CDF) of Student's t distribution.
+    /// </summary>
+    /// <param name="x">The value at which to evaluate the CDF.</param>
+    /// <param name="n">The degrees of freedom.</param>
+    /// <returns>The probability that a t-distributed random variable is less than or equal to <paramref name="x"/>.</returns>
     public static double CDF(double x, double n)
     {
       return (1 + (1 - GammaRelated.BetaIR(n / (n + (x * x)), n * 0.5, 0.5)) * Math.Sign(x)) / 2.0;
     }
 
+    /// <inheritdoc/>
     public override double PDF(double x)
     {
       return PDF(x, nu);
     }
 
+    /// <summary>
+    /// Returns the probability density function (PDF) of Student's t distribution.
+    /// </summary>
+    /// <param name="x">The value at which to evaluate the PDF.</param>
+    /// <param name="n">The degrees of freedom.</param>
+    /// <returns>The relative likelihood for the random variable to occur at <paramref name="x"/>.</returns>
     public static double PDF(double x, double n)
     {
       return Math.Pow(n / (n + (x * x)), (1 + n) / 2.0) / (Math.Sqrt(n) * GammaRelated.Beta(n / 2.0, 0.5));
     }
 
+    /// <inheritdoc/>
     public override double Quantile(double p)
     {
       return Quantile(p, nu);
     }
 
+    /// <summary>
+    /// Returns the quantile function (inverse CDF) of Student's t distribution.
+    /// </summary>
+    /// <param name="alpha">A probability in the range [0, 1].</param>
+    /// <param name="n">The degrees of freedom.</param>
+    /// <returns>The value <c>x</c> such that <c>CDF(x) = alpha</c>.</returns>
     public static double Quantile(double alpha, double n)
     {
       return Math.Sqrt(n) * Math.Sqrt(-1 + 1 / GammaRelated.InverseBetaRegularized(1 - Math.Abs(1 - 2 * alpha), n * 0.5, 0.5)) * Math.Sign(-1 + 2 * alpha);
@@ -273,13 +328,15 @@ namespace Altaxo.Calc.Probability
     #endregion CdfPdfQuantile
   }
 
+  /// <summary>
+  /// Backward-compatible alias for <see cref="StudentsTDistribution"/>.
+  /// </summary>
   public class StudentTDistribution : StudentsTDistribution
   {
     #region construction
 
     /// <summary>
-    /// Initializes a new instance of the <see cref="StudentsTDistribution"/> class, using a
-    ///   <see cref="StandardGenerator"/> as underlying random number generator.
+    /// Initializes a new instance of the <see cref="StudentTDistribution"/> class.
     /// </summary>
     public StudentTDistribution()
       : base()
@@ -287,23 +344,30 @@ namespace Altaxo.Calc.Probability
     }
 
     /// <summary>
-    /// Initializes a new instance of the <see cref="StudentTDistribution"/> class, using the specified
-    ///   <see cref="Generator"/> as underlying random number generator.
+    /// Initializes a new instance of the <see cref="StudentTDistribution"/> class using the specified
+    /// random number generator.
     /// </summary>
     /// <param name="generator">A <see cref="Generator"/> object.</param>
-    /// <exception cref="ArgumentNullException">
-    /// <paramref name="generator"/> is NULL (<see langword="Nothing"/> in Visual Basic).
-    /// </exception>
     public StudentTDistribution(Generator generator)
       : base(generator)
     {
     }
 
+    /// <summary>
+    /// Initializes a new instance of the <see cref="StudentTDistribution"/> class with the specified degrees of freedom.
+    /// </summary>
+    /// <param name="nu">The degrees of freedom.</param>
     public StudentTDistribution(double nu)
       : base(nu)
     {
     }
 
+    /// <summary>
+    /// Initializes a new instance of the <see cref="StudentTDistribution"/> class with the specified degrees of freedom,
+    /// using the specified random number generator.
+    /// </summary>
+    /// <param name="nu">The degrees of freedom.</param>
+    /// <param name="generator">A <see cref="Generator"/> object.</param>
     public StudentTDistribution(double nu, Generator generator)
       : base(nu, generator)
     {

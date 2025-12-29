@@ -37,69 +37,70 @@ using Altaxo.Calc.LinearAlgebra;
 
 namespace Altaxo.Calc.Optimization
 {
-  ///<summary>Base Class for Function Minimization Optimization Methods</summary>
+  /// <summary>Base class for function-minimization optimization methods.</summary>
   /// <remarks>
   /// <para>Copyright (c) 2003-2004, dnAnalytics Project. All rights reserved. See <a>http://www.dnAnalytics.net</a> for details.</para>
-  /// <para>Adopted to Altaxo (c) 2005 Dr. Dirk Lellinger.</para>
+  /// <para>Adopted for Altaxo (c) 2005 Dr. Dirk Lellinger.</para>
   /// </remarks>
   public abstract class FunctionMinimizeMethod : OptimizationMethod
   {
 #nullable disable
-    ///<summary> Iteration Solutions </summary>
+    /// <summary>Iteration solutions.</summary>
     protected Vector<double>[] iterationVectors_;
 
-    ///<summary> Iteration Values </summary>
+    /// <summary>Iteration values.</summary>
     protected double[] iterationValues_;
 
-    ///<summary> Iteration Gradient Norms </summary>
+    /// <summary>Iteration gradient norms.</summary>
     protected double[] iterationGradientNorms_;
 
 #nullable enable
 
-    ///<summary> Get solution vectors for all iterations </summary>
+    /// <summary>Gets the solution vectors for all iterations.</summary>
     public Vector<double>[] IterationVectors
     {
       get { return iterationVectors_; }
     }
 
-    ///<summary> Get initial vector </summary>
+    /// <summary>Gets the initial vector.</summary>
     public Vector<double> InitialVector
     {
       get { return iterationVectors_[0]; }
     }
 
-    ///<summary> Get minimum vector </summary>
+    /// <summary>Gets the solution vector (the current best estimate of the minimum).</summary>
     public Vector<double> SolutionVector
     {
       get { return iterationVectors_[endCriteria_.iterationCounter]; }
     }
 
-    ///<summary> Get solution function values for all iterations </summary>
+    /// <summary>Gets the solution function values for all iterations.</summary>
     public double[] IterationValues
     {
       get { return iterationValues_; }
     }
 
-    ///<summary> Get initial value </summary>
+    /// <summary>Gets the initial value.</summary>
     public double InitialValue
     {
       get { return iterationValues_[0]; }
     }
 
-    ///<summary> Get value of minimum vector </summary>
+    /// <summary>Gets the value of the solution vector.</summary>
     public double SolutionValue
     {
       get { return iterationValues_[endCriteria_.iterationCounter]; }
     }
 
-    ///<summary> Get gradient norms  for all iterations </summary>
+    /// <summary>Gets the gradient norms for all iterations.</summary>
     public double[] IterationGradientNorms
     {
       get { return iterationGradientNorms_; }
     }
 
-    ///<summary> Initialize the optimization method </summary>
-    ///<remarks> The use of this function is intended for testing/debugging purposes only </remarks>
+    /// <summary>Initializes the optimization method.</summary>
+    /// <param name="initialvector">The initial guess.</param>
+    /// <remarks>The use of this function is intended for testing/debugging purposes only.</remarks>
     public virtual void InitializeMethod(Vector<double> initialvector)
     {
       // Initialize optimization method
@@ -109,11 +110,12 @@ namespace Altaxo.Calc.Optimization
       iterationValues_[0] = costFunction_.Value(iterationVectors_[0]);
     }
 
-    ///<summary> Perform a single iteration of the optimization method </summary>
-    ///<remarks> The use of this function is intended for testing/debugging purposes only </remarks>
+    /// <summary>Performs a single iteration of the optimization method.</summary>
+    /// <remarks>The use of this function is intended for testing/debugging purposes only.</remarks>
     public abstract void IterateMethod();
 
-    ///<summary> Minimize the given cost function </summary>
+    /// <summary>Minimizes the given cost function.</summary>
+    /// <param name="initialvector">The starting vector for the minimization.</param>
     public virtual void Minimize(Vector<double> initialvector)
     {
       endCriteria_.Reset();
@@ -128,8 +130,9 @@ namespace Altaxo.Calc.Optimization
       } while (endCriteria_.CheckCriteria(iterationValues_[endCriteria_.iterationCounter - 1], iterationValues_[endCriteria_.iterationCounter]));
     }
 
-    ///<summary> Function to check that criteria is still satisfied </summary>
-    ///<remarks> Returns true if criteria is still met and optimization continues </remarks>
+    /// <summary>Checks whether the criteria are still satisfied.</summary>
+    /// <returns><see langword="true"/> if optimization should continue; otherwise, <see langword="false"/>.</returns>
+    /// <remarks>Returns <see langword="true"/> if criteria are still met and optimization continues.</remarks>
     protected virtual bool CheckCriteria()
     {
       return !(

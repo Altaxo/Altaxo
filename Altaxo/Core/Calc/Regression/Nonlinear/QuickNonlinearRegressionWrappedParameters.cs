@@ -38,7 +38,8 @@ using Altaxo.Calc.Optimization.ObjectiveFunctions;
 namespace Altaxo.Calc.Regression.Nonlinear
 {
   /// <summary>
-  /// Allows a quick regression of one dependent variable in dependence on one independent variable, i.e. with a function R=>R.
+  /// Allows a quick regression of one dependent variable in dependence on one independent variable,
+  /// i.e. with a function R =&gt; R.
   /// </summary>
   /// <seealso cref="Altaxo.Calc.Regression.Nonlinear.QuickNonlinearRegressionOld" />
   public class QuickNonlinearRegressionWrappedParameters
@@ -51,37 +52,41 @@ namespace Altaxo.Calc.Regression.Nonlinear
     public double InitialMu { get; set; } = LevenbergMarquardtMinimizerNonAllocatingWrappedParameters.DefaultInitialMu;
 
     /// <summary>
-    /// The stopping threshold for infinity norm of the relative gradient value.
-    /// The relative gradient is the gradient divided by the parameter value.
+    /// Gets or sets the stopping threshold for the infinity norm of the relative gradient.
     /// </summary>
+    /// <remarks>
+    /// The relative gradient is the gradient divided by the parameter value.
+    /// </remarks>
     public double GradientTolerance { get; set; } = LevenbergMarquardtMinimizerNonAllocatingWrappedParameters.DefaultGradientTolerance;
 
     /// <summary>
-    /// The stopping threshold for L2 norm of the change of the parameters.
+    /// Gets or sets the stopping threshold for the L2 norm of the change of the parameters.
     /// </summary>
     public double StepTolerance { get; set; } = LevenbergMarquardtMinimizerNonAllocatingWrappedParameters.DefaultStepTolerance;
 
     /// <summary>
-    /// The stopping threshold for the function value or L2 norm of the residuals.
+    /// Gets or sets the stopping threshold for the function value or the L2 norm of the residuals.
     /// </summary>
     public double FunctionTolerance { get; set; } = LevenbergMarquardtMinimizerNonAllocatingWrappedParameters.DefaultFunctionTolerance;
 
     /// <summary>
-    /// Gets or sets the minimal RSS (Chi²) improvement [0, 1).
-    /// If after 8 iterations the Chi² improvement is smaller than this value, the evaluation is stopped.
+    /// Gets or sets the minimal RSS (Chi²) improvement in the interval [0, 1).
     /// </summary>
+    /// <remarks>
+    /// If, after 8 iterations, the Chi² improvement is smaller than this value, the evaluation is stopped.
+    /// </remarks>
     public double MinimalRSSImprovement { get; set; } = LevenbergMarquardtMinimizerNonAllocatingWrappedParameters.DefaultMinimalRSSImprovement;
 
     /// <summary>
-    /// The maximum number of iterations.
+    /// Gets or sets the maximum number of iterations.
     /// </summary>
     public int? MaximumNumberOfIterations { get; set; }
 
     /// <summary>
-    /// Gets or sets a value indicating whether or not it is allowed to use the derivatives of fit function.
+    /// Gets or sets a value indicating whether it is allowed to use analytic derivatives provided by the fit function.
     /// </summary>
     /// <value>
-    /// If true, numeric approximation of the derivatives is used, even if the fit function supports analytic derivatives.
+    /// If <c>true</c>, numeric approximation of the derivatives is used even if the fit function supports analytic derivatives.
     /// </value>
     public bool DoNotAllowUsingDerivativesOfFitFunction { get; set; }
 
@@ -92,7 +97,7 @@ namespace Altaxo.Calc.Regression.Nonlinear
 
 
     /// <summary>
-    /// Initializes a new instance of the quick nonlinear regression class.
+    /// Initializes a new instance of the <see cref="QuickNonlinearRegressionWrappedParameters"/> class.
     /// </summary>
     /// <param name="fitFunction">The fit function to use for regression.</param>
     public QuickNonlinearRegressionWrappedParameters(IFitFunction fitFunction)
@@ -106,8 +111,8 @@ namespace Altaxo.Calc.Regression.Nonlinear
     /// <param name="xValues">The x-values of the model to fit.</param>
     /// <param name="yValues">The y-values of the model to fit.</param>
     /// <param name="initialGuess">The initially guessed parameter values.</param>
-    /// <param name="cancellationToken">Token to cancel the evaluation</param>
-    /// <returns>The result of the Levenberg-Marquardt minimization</returns>
+    /// <param name="cancellationToken">Token to cancel the evaluation.</param>
+    /// <returns>The result of the Levenberg-Marquardt minimization.</returns>
     public NonlinearMinimizationResult Fit(
       IReadOnlyList<double> xValues,
       IReadOnlyList<double> yValues,
@@ -123,9 +128,9 @@ namespace Altaxo.Calc.Regression.Nonlinear
     /// <param name="xValues">The x-values of the model to fit.</param>
     /// <param name="yValues">The y-values of the model to fit.</param>
     /// <param name="initialGuess">The initially guessed parameter values.</param>
-    /// <param name="isFixed">Array of booleans, which provide which parameters are fixed. Must have the same length as the parameter array. Provide null if not needed.</param>
-    /// <param name="cancellationToken">Token to cancel the evaluation</param>
-    /// <returns>The result of the Levenberg-Marquardt minimization</returns>
+    /// <param name="isFixed">Array of booleans indicating which parameters are fixed. Must have the same length as the parameter array.</param>
+    /// <param name="cancellationToken">Token to cancel the evaluation.</param>
+    /// <returns>The result of the Levenberg-Marquardt minimization.</returns>
     public NonlinearMinimizationResult Fit(
       IReadOnlyList<double> xValues,
       IReadOnlyList<double> yValues,
@@ -142,12 +147,21 @@ namespace Altaxo.Calc.Regression.Nonlinear
     /// <param name="xValues">The x-values of the model to fit.</param>
     /// <param name="yValues">The y-values of the model to fit.</param>
     /// <param name="initialGuess">The initially guessed parameter values.</param>
-    /// <param name="lowerBounds">The lower bounds of the parameters. The array must have the same length as the parameter array. Provide null if not needed.</param>
-    /// <param name="upperBounds">The upper bounds of the parameters. The array must have the same length as the parameter array. Provide null if not needed.</param>
-    /// <param name="scales">The scales of the parameters. The array must have the same length as the parameter array. Provide null if not needed.</param>
-    /// <param name="isFixed">Array of booleans, which provide which parameters are fixed. Must have the same length as the parameter array. Provide null if not needed.</param>
-    /// <param name="cancellationToken">Token to cancel the evaluation</param>
-    /// <returns>The result of the Levenberg-Marquardt minimization</returns>
+    /// <param name="lowerBounds">
+    /// The lower bounds of the parameters. The array must have the same length as the parameter array.
+    /// Provide <see langword="null"/> if not needed.
+    /// </param>
+    /// <param name="upperBounds">
+    /// The upper bounds of the parameters. The array must have the same length as the parameter array.
+    /// Provide <see langword="null"/> if not needed.
+    /// </param>
+    /// <param name="scales">
+    /// The scales of the parameters. The array must have the same length as the parameter array.
+    /// Provide <see langword="null"/> if not needed.
+    /// </param>
+    /// <param name="isFixed">Array of booleans indicating which parameters are fixed. Must have the same length as the parameter array.</param>
+    /// <param name="cancellationToken">Token to cancel the evaluation.</param>
+    /// <returns>The result of the Levenberg-Marquardt minimization.</returns>
     public NonlinearMinimizationResult Fit(
       IReadOnlyList<double> xValues,
       IReadOnlyList<double> yValues,

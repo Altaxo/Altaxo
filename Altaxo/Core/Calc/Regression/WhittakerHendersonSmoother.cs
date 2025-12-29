@@ -18,9 +18,8 @@ using System;
 namespace Altaxo.Calc.Regression
 {
   /// <summary>
-  /// A simple C# implementation of Whittaker-Henderson smoothing for
-  /// data at equally spaced points, popularized by P.H.C.Eilers in
-  ///  "A Perfect Smoother", Anal.Chem. 75, 3631 (2003).
+  /// A simple C# implementation of Whittaker-Henderson smoothing for data at equally spaced points,
+  /// popularized by P. H. C. Eilers in <c>"A Perfect Smoother"</c>, Anal. Chem. 75, 3631 (2003).
   /// <code>
   /// It minimizes
   /// sum(f - y)^2 + sum(lambda* f'(p))
@@ -42,43 +41,44 @@ namespace Altaxo.Calc.Regression
   /// omega = 2 * pi * f / fs, with fs being the sampling frequency
   /// (reciprocal of the distance between the data points).
   /// 
-  /// Note that strong smoothing leads to numerical noise(which is smoothed
-  /// similar to the input data, thus not obvious in the output).
+  /// Note that strong smoothing leads to numerical noise (which is smoothed
+  /// similarly to the input data, thus not obvious in the output).
   /// For lambda = 1e9, the noise is about 1e-6 times the magnitude of the
-  /// data.Since higher p values require a higher value of lambda for
-  ///  the same extent of smoothing (the same band width), numerical noise
-  ///  is increasingly bothersome for large p, not for p &lt;= 2.
-  ///  </code>
+  /// data. Since higher p values require a higher value of lambda for
+  /// the same extent of smoothing (the same bandwidth), numerical noise
+  /// is increasingly bothersome for large p, but not for p &lt;= 2.
+  /// </code>
   /// </summary>
   /// <remarks>
-  /// Reference: Michael Schmid, David Rath, and Ulrike Diebold, 'Why and how Savitzky-Golay filters should be replaced', ACS Measurement Science Au 2022 2 (2), 185-196 DOI: 10.1021/acsmeasuresciau.1c00054
+  /// Reference: Michael Schmid, David Rath, and Ulrike Diebold, <c>"Why and how Savitzky-Golay filters should be replaced"</c>,
+  /// ACS Measurement Science Au 2022 2 (2), 185–196. DOI: 10.1021/acsmeasuresciau.1c00054.
   /// <code>
   /// Implementation notes:
   /// 
   /// Storage of symmetric or triangular band-diagonal matrices:
-  /// For a symmetric band-diagonal matrix with band width 2 m - 1
+  /// For a symmetric band-diagonal matrix with bandwidth 2 m - 1
   /// we store only the lower right side in b:
   /// 
   /// b(0, i)   are diagonal elements a(i, i)
   /// b(1, i)   are elements a(i+1, i)
   ///     ...
-  /// b(m-1, i) are bottommost(leftmost) elements a(i+m-1, i)
+  /// b(m-1, i) are bottommost (leftmost) elements a(i+m-1, i)
   /// 
   /// where i runs from 0 to n-1 for b(0, i) and 0 to n - m for the
   /// further elements at a distance of m from the diagonal.
-  ///
+  /// 
   /// A lower triangular band matrix is stored exactly the same way.
   /// </code>
   /// </remarks>
   public class WhittakerHendersonSmoother
   {
     /// <summary>
-    /// This implementation is for a penalty derivative order p up to 5 
+    /// The maximum supported penalty derivative order (<c>p</c>).
     /// </summary>
     public const int MAX_ORDER = 5;
 
     /// <summary>
-    /// Coefficients for numerical differentiation for p = 1 to<code> MAX_ORDER</code>
+    /// Coefficients for numerical differentiation for <c>p = 1</c> to <see cref="MAX_ORDER"/>.
     /// </summary>
     private readonly static double[][] DIFF_COEFF = [
                 [-1,  1],               // penalty on 1st derivative
@@ -89,26 +89,28 @@ namespace Altaxo.Calc.Regression
             ];
 
     /// <summary>
-    /// Coefficients for converting noise gain to lambda 
+    /// Coefficients for converting noise gain to <c>lambda</c>.
     /// </summary>
     private readonly static double[] LAMBDA_FOR_NOISE_GAIN = [0.06284, 0.005010, 0.0004660, 4.520e-05, 4.467e-06];
 
     /// <summary>
-    /// The Cholesky-decomposed triangular matrix in the form explained above
+    /// The Cholesky-decomposed triangular matrix, stored in band form (see remarks).
     /// </summary>
     private double[][] matrix;
 
     /// <summary>
-    /// Creates a WhittakerHendersonSmoother for data of a given length and with a
-    /// given penalty order and smoothing parameter lambda.This
-    /// constructor is useful for repeated smoothing operations with
-    /// the same parameters and data sets of the same length.
-    /// Otherwise the static <see cref="Smooth(double[], int, double)"/>
-    /// method is more convenient.
+    /// Creates a <see cref="WhittakerHendersonSmoother"/> for data of a given length and with a given penalty order
+    /// and smoothing parameter <paramref name="lambda"/>.
+    /// This constructor is useful for repeated smoothing operations with the same parameters and data sets of the same length.
+    /// Otherwise, the static <see cref="Smooth(double[], int, double)"/> method is more convenient.
     /// </summary>
-    /// <param name="length">Number of data points of the data that will be smoothed.</param>
-    /// <param name="order">Order of the derivative that will be penalized, typically 2 or 3.</param>
-    /// <param name="lambda">Smoothing parameter, <see cref="BandwidthToLambda(int, double)"/>.</param>
+    /// <param name="length">Number of data points in the data set that will be smoothed.</param>
+    /// <param name="order">Order of the derivative that will be penalized (typically 2 or 3).</param>
+    /// <param name="lambda">Smoothing parameter; see <see cref="BandwidthToLambda(int, double)"/>.</param>
+    /// <exception cref="ArgumentOutOfRangeException">
+    /// Thrown if <paramref name="order"/> is outside the supported range, or if <paramref name="length"/> is too small
+    /// for the chosen <paramref name="order"/>.
+    /// </exception>
     public WhittakerHendersonSmoother(int length, int order, double lambda)
     {
       matrix = MakeDprimeD(order, length);
@@ -117,16 +119,18 @@ namespace Altaxo.Calc.Regression
     }
 
     /// <summary>
-    /// Smooths the data with the parameters passed with the constructor.
+    /// Smooths the data with the parameters passed to the constructor.
     /// </summary>
     /// <param name="data">The input data.</param>
-    /// <param name="result">The output array; may be null. If <paramref name="result"/>
-    /// is supplied and has the correct size, it is used for the output. <paramref name="result"/>
-    ///  may be null or the input array <paramref name="data"/>; in the latter case
-    ///  the input is overwritten.</param>
-    /// <returns>The smoothed data. If <paramref name="result"/> is non-null and has the correct
-    /// size, this is the <paramref name="result"/> array.</returns>
-    /// <exception cref="System.ArgumentOutOfRangeException">Data length mismatch</exception>
+    /// <param name="result">
+    /// The output array; may be <see langword="null"/>.
+    /// If supplied and has the correct size, it is used for the output.
+    /// It may also be the same instance as <paramref name="data"/>; in that case the input is overwritten.
+    /// </param>
+    /// <returns>
+    /// The smoothed data. If <paramref name="result"/> is non-null and has the correct size, it is returned.
+    /// </returns>
+    /// <exception cref="ArgumentOutOfRangeException">Thrown if the length of <paramref name="data"/> does not match the configured length.</exception>
     public double[] Smooth(double[] data, double[]? result)
     {
       if (data.Length != matrix[0].Length)
@@ -137,14 +141,13 @@ namespace Altaxo.Calc.Regression
     }
 
     /// <summary>
-    /// Smooths the data and with the given penalty order and smoothing
-    /// parameter lambda.When smoothing multiple data sets with the same
-    /// length, using the constructor and then smooth(double[], double[])
-    /// will be more efficient.
+    /// Smooths the data with the given penalty order and smoothing parameter <paramref name="lambda"/>.
+    /// When smoothing multiple data sets with the same length, using the constructor and then
+    /// <see cref="Smooth(double[], double[])"/> will be more efficient.
     /// </summary>
     /// <param name="data">The input data.</param>
-    /// <param name="order">Order of the derivative that will be penalized, typically 2 or 3.</param>
-    /// <param name="lambda">Smoothing parameter; should not be excessively high, see <see cref="BandwidthToLambda(int, double)"/>.</param>
+    /// <param name="order">Order of the derivative that will be penalized (typically 2 or 3).</param>
+    /// <param name="lambda">Smoothing parameter; should not be excessively high (see <see cref="BandwidthToLambda(int, double)"/>).</param>
     /// <returns>The smoothed data.</returns>
     public static double[] Smooth(double[] data, int order, double lambda)
     {
@@ -153,17 +156,17 @@ namespace Altaxo.Calc.Regression
     }
 
     /// <summary>
-    /// Smooths the data in a way compar able to a tradition>al Savitzky-Golay
-    /// filter with the given parameters <paramref name="degree"/> and <paramref name="m"/>.
+    /// Smooths the data in a way comparable to a traditional Savitzky-Golay filter with the given parameters
+    /// <paramref name="degree"/> and <paramref name="m"/>.
     /// </summary>
     /// <param name="data">The input data.</param>
     /// <param name="degree">The degree of the polynomial fit used in the SG filter.</param>
-    /// <param name="m">The half-width of the SG kernel. The kernel size of the SG
-    /// filter, i.e.the number of points for fitting the polynomial
-    /// is <code>2*m + 1</code>.
-    /// Note that very strong smoothing will lead to numerical noise;
-    /// recommended limits for m are 700, 190, 100, and 75 for
-    /// Savitzky-Golay degrees 2, 4, 6, and 8, respectively.</param>
+    /// <param name="m">
+    /// The half-width of the SG kernel. The kernel size of the SG filter (i.e. the number of points for fitting the polynomial)
+    /// is <c>2*m + 1</c>.
+    /// Note that very strong smoothing will lead to numerical noise; recommended limits for <paramref name="m"/> are 700, 190, 100,
+    /// and 75 for Savitzky-Golay degrees 2, 4, 6, and 8, respectively.
+    /// </param>
     /// <returns>The smoothed data.</returns>
     public static double[] SmoothLikeSavitzkyGolay(double[] data, int degree, int m)
     {
@@ -174,20 +177,22 @@ namespace Altaxo.Calc.Regression
     }
 
     /// <summary>
-    /// Calculates the lambda smoothing parameter for a given penalty derivative
-    /// order, given the desired band width, i.e., the frequency where the response
-    /// decreases to -3 dB, i.e., 1/sqrt(2).
-    /// This band width is valid for points far from the boundaries of the data.
+    /// Calculates the smoothing parameter <c>lambda</c> for a given penalty derivative order and desired bandwidth
+    /// (the frequency where the response decreases to -3 dB, i.e. <c>1/sqrt(2)</c>).
+    /// This bandwidth is valid for points far from the boundaries of the data.
     /// </summary>
-    /// <param name="order">The order p of the penalty derivative, 1 to 5 (typically 2 or 3).</param>
-    /// <param name="bandwidth">The desired band width, with respect to the sampling frequency.
-    /// The value of <paramref name="bandwidth"/> must be less than 0.5  (the Nyquist frequency).</param>
-    /// <returns>The lambda parameter for this band width. Note that very high
-    /// lambda parameters lead to high numerical noise in smoothing.
-    /// It is recommended to use only lambda values below 1e9, which lead to
-    /// relative numerical noise below 1e-6. For a given bandwidth, the
-    /// lambda value can be reduced by chosing a lower order p.</returns>
-    /// <exception cref="System.ArgumentOutOfRangeException">Invalid bandwidth value: " + bandwidth</exception>
+    /// <param name="order">The order <c>p</c> of the penalty derivative (1 to <see cref="MAX_ORDER"/>; typically 2 or 3).</param>
+    /// <param name="bandwidth">
+    /// The desired bandwidth with respect to the sampling frequency.
+    /// The value must be less than 0.5 (the Nyquist frequency).
+    /// </param>
+    /// <returns>
+    /// The <c>lambda</c> parameter for this bandwidth.
+    /// Note that very large <c>lambda</c> values lead to increased numerical noise.
+    /// It is recommended to use only values below 1e9, which typically lead to relative numerical noise below 1e-6.
+    /// For a given bandwidth, the <c>lambda</c> value can be reduced by choosing a lower penalty order.
+    /// </returns>
+    /// <exception cref="ArgumentOutOfRangeException">Thrown if <paramref name="bandwidth"/> is outside the valid range.</exception>
     public static double BandwidthToLambda(int order, double bandwidth)
     {
       if (bandwidth <= 0 || bandwidth >= 0.5)
@@ -201,36 +206,32 @@ namespace Altaxo.Calc.Regression
       return lambda;
     }
 
-
     /// <summary>
     /// Calculates the bandwidth of a traditional Savitzky-Golay (SG) filter.
     /// </summary>
     /// <param name="degree">The degree of the polynomial fit used in the SG filter.</param>
-    /// <param name="m">The half-width of the SG kernel. The kernel size of the SG
-    /// filter, i.e.the number of points for fitting the polynomial
-    /// is <code>2*m + 1</code>..</param>
-    /// <returns>The -3 dB-bandwidth of the SG filter, i.e. the frequency where the
-    /// response is 1/sqrt(2). The sampling frequency is defined as f = 1.
-    /// For <paramref name="degree"/> up to 10, the accuracy is typically much
-    /// better than 1%; higher errors occur only for the lowest
-    /// <paramref name="m"/> values where the SG filter is defined
-    /// (worst case: 4% error at <code>degree = 10, m = 6 </code>).</returns>
+    /// <param name="m">
+    /// The half-width of the SG kernel. The kernel size of the SG filter (i.e. the number of points for fitting the polynomial)
+    /// is <c>2*m + 1</c>.
+    /// </param>
+    /// <returns>
+    /// The -3 dB bandwidth of the SG filter, i.e. the frequency where the response is <c>1/sqrt(2)</c>.
+    /// The sampling frequency is defined as <c>f = 1</c>.
+    /// For <paramref name="degree"/> up to 10, the accuracy is typically much better than 1%; higher errors occur only for the lowest
+    /// <paramref name="m"/> values where the SG filter is defined (worst case: 4% error at <c>degree = 10, m = 6</c>).
+    /// </returns>
     public static double SavitzkyGolayBandwidth(int degree, int m)
     {
       return 1.0 / (6.352 * (m + 0.5) / (degree + 1.379) - (0.513 + 0.316 * degree) / (m + 0.5));
     }
 
     /// <summary>
-    /// Calculates an approximation of the lambda smoothing parameter for a
-    /// given white noise gain.This is for points far from the boundaries of the data;
-    /// the noise gain is much higher near the boundaries.
-    /// The result has good accuracy for noise gains below 0.1. For a noise gain
-    /// of 0.4, the actual noise gains are about 10% higher.For weaker smoothing
-    /// than this, it is advisable to use a penalty order of 2 and/or use other methods.
+    /// Calculates an approximation of the smoothing parameter <c>lambda</c> for a given white-noise gain.
+    /// This is valid for points far from the boundaries of the data; the noise gain is much higher near the boundaries.
     /// </summary>
-    /// <param name="order">The order p of the penalty derivative, 1 to 5 (typically 2 or 3).</param>
+    /// <param name="order">The order <c>p</c> of the penalty derivative (1 to <see cref="MAX_ORDER"/>; typically 2 or 3).</param>
     /// <param name="noiseGain">The factor by which white noise should be suppressed.</param>
-    /// <returns>The lambda parameter for this noise gain.</returns>
+    /// <returns>The <c>lambda</c> parameter for this noise gain.</returns>
     public static double NoiseGainToLambda(int order, double noiseGain)
     {
       double gPower = noiseGain;

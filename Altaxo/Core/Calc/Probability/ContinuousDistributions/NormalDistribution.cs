@@ -94,19 +94,18 @@ namespace Altaxo.Calc.Probability
   /// Provides generation of normal distributed random numbers.
   /// </summary>
   /// <remarks>
-  /// The implementation of the <see cref="NormalDistribution"/> type bases upon information presented on
-  ///   <a href="http://en.wikipedia.org/wiki/Normal_distribution">Wikipedia - Normal distribution</a>
-  ///   and the implementation in the <a href="http://www.lkn.ei.tum.de/lehre/scn/cncl/doc/html/cncl_toc.html">
-  ///   Communication Networks Class Library</a>.
+  /// The implementation of the <see cref="NormalDistribution"/> type is based on information presented on
+  /// <a href="http://en.wikipedia.org/wiki/Normal_distribution">Wikipedia - Normal distribution</a>
+  /// and the implementation in the
+  /// <a href="http://www.lkn.ei.tum.de/lehre/scn/cncl/doc/html/cncl_toc.html">Communication Networks Class Library</a>.
   /// <code>
   /// Return normal (Gaussian) distributed random deviates
-  /// with mean "m" and standard deviation  "s" according to the density:
+  /// with mean "m" and standard deviation "s" according to the density:
   ///
   ///                                           2
   ///                      1               (x-m)
   ///  p   (x) dx =  ------------  exp( - ------- ) dx
   ///   m,s          sqrt(2 pi) s          2 s*s
-  ///
   /// </code></remarks>
   public class NormalDistribution : ContinuousDistribution
   {
@@ -179,7 +178,7 @@ namespace Altaxo.Calc.Probability
     #region construction
 
     /// <summary>
-    /// Initializes a new instance of the <see cref="T:NormalDistribution"/> class, using a
+    /// Initializes a new instance of the <see cref="NormalDistribution"/> class, using a
     ///   <see cref="StandardGenerator"/> as underlying random number generator.
     /// </summary>
     public NormalDistribution()
@@ -188,12 +187,12 @@ namespace Altaxo.Calc.Probability
     }
 
     /// <summary>
-    /// Initializes a new instance of the <see cref="T:NormalDistribution"/> class, using the specified
+    /// Initializes a new instance of the <see cref="NormalDistribution"/> class, using the specified
     ///   <see cref="Generator"/> as underlying random number generator.
     /// </summary>
     /// <param name="generator">A <see cref="Generator"/> object.</param>
     /// <exception cref="ArgumentNullException">
-    /// <paramref name="generator"/> is NULL (<see langword="Nothing"/> in Visual Basic).
+    /// <paramref name="generator"/> is <see langword="null"/>.
     /// </exception>
     public NormalDistribution(Generator generator)
       : this(0, 1, generator)
@@ -201,7 +200,7 @@ namespace Altaxo.Calc.Probability
     }
 
     /// <summary>
-    /// Initializes a new instance of the <see cref="T:NormalDistribution"/> class, using the <see cref="Distribution.DefaultGenerator"/> as underlying random number generator.
+    /// Initializes a new instance of the <see cref="NormalDistribution"/> class, using the <see cref="Distribution.DefaultGenerator"/> as underlying random number generator.
     /// </summary>
     /// <param name="mu">Mean value.</param>
     /// <param name="sigma">Standard deviation.</param>
@@ -211,14 +210,14 @@ namespace Altaxo.Calc.Probability
     }
 
     /// <summary>
-    /// Initializes a new instance of the <see cref="T:NormalDistribution"/> class, using the specified
+    /// Initializes a new instance of the <see cref="NormalDistribution"/> class, using the specified
     ///   <see cref="Generator"/> as underlying random number generator.
     /// </summary>
     /// <param name="mu">Mean value.</param>
     /// <param name="sigma">Standard deviation.</param>
     /// <param name="generator">A <see cref="Generator"/> object.</param>
     /// <exception cref="ArgumentNullException">
-    /// <paramref name="generator"/> is NULL (<see langword="Nothing"/> in Visual Basic).
+    /// <paramref name="generator"/> is <see langword="null"/>.
     /// </exception>
     public NormalDistribution(double mu, double sigma, Generator generator)
       : base(generator)
@@ -230,6 +229,14 @@ namespace Altaxo.Calc.Probability
 
     #region instance methods
 
+    /// <summary>
+    /// Initializes this instance with the specified distribution parameters.
+    /// </summary>
+    /// <param name="mu">Mean value.</param>
+    /// <param name="sigma">Standard deviation (must be positive).</param>
+    /// <exception cref="ArgumentOutOfRangeException">
+    /// <paramref name="mu"/> is not finite, or <paramref name="sigma"/> is not positive.
+    /// </exception>
     public void Initialize(double mu, double sigma)
     {
       if (!IsValidMu(mu))
@@ -270,9 +277,7 @@ namespace Altaxo.Calc.Probability
 
     #region overridden Distribution members
 
-    /// <summary>
-    /// Gets the minimum possible value of normal distributed random numbers.
-    /// </summary>
+    /// <inheritdoc/>
     public override double Minimum
     {
       get
@@ -281,9 +286,7 @@ namespace Altaxo.Calc.Probability
       }
     }
 
-    /// <summary>
-    /// Gets the maximum possible value of normal distributed random numbers.
-    /// </summary>
+    /// <inheritdoc/>
     public override double Maximum
     {
       get
@@ -292,9 +295,7 @@ namespace Altaxo.Calc.Probability
       }
     }
 
-    /// <summary>
-    /// Gets the mean value of normal distributed random numbers.
-    /// </summary>
+    /// <inheritdoc/>
     public override double Mean
     {
       get
@@ -303,9 +304,7 @@ namespace Altaxo.Calc.Probability
       }
     }
 
-    /// <summary>
-    /// Gets the median of normal distributed random numbers.
-    /// </summary>
+    /// <inheritdoc/>
     public override double Median
     {
       get
@@ -314,9 +313,7 @@ namespace Altaxo.Calc.Probability
       }
     }
 
-    /// <summary>
-    /// Gets the variance of normal distributed random numbers.
-    /// </summary>
+    /// <inheritdoc/>
     public override double Variance
     {
       get
@@ -325,9 +322,7 @@ namespace Altaxo.Calc.Probability
       }
     }
 
-    /// <summary>
-    /// Gets the mode of normal distributed random numbers.
-    /// </summary>
+    /// <inheritdoc/>
     public override double[] Mode
     {
       get
@@ -336,10 +331,7 @@ namespace Altaxo.Calc.Probability
       }
     }
 
-    /// <summary>
-    /// Returns a normal distributed floating point random number.
-    /// </summary>
-    /// <returns>A normal distributed double-precision floating point number.</returns>
+    /// <inheritdoc/>
     public override double NextDouble()
     {
       // We don't have an extra deviate
@@ -384,31 +376,55 @@ namespace Altaxo.Calc.Probability
       return x * x;
     }
 
+    /// <inheritdoc/>
     public override double CDF(double z)
     {
       return CDF(z, mu, sigma);
     }
 
+    /// <summary>
+    /// Computes the cumulative distribution function (CDF) for a normal distribution with the given parameters.
+    /// </summary>
+    /// <param name="z">The value at which to evaluate the CDF.</param>
+    /// <param name="m">Mean value.</param>
+    /// <param name="s">Standard deviation.</param>
+    /// <returns>The value of the cumulative distribution function at <paramref name="z"/>.</returns>
     public static double CDF(double z, double m, double s)
     {
       return 0.5 * Altaxo.Calc.ErrorFunction.Erfc(_OneBySqrt2 * (m - z) / s);
     }
 
+    /// <inheritdoc/>
     public override double PDF(double z)
     {
       return PDF(z, mu, sigma);
     }
 
+    /// <summary>
+    /// Computes the probability density function (PDF) for a normal distribution with the given parameters.
+    /// </summary>
+    /// <param name="z">The value at which to evaluate the PDF.</param>
+    /// <param name="m">Mean value.</param>
+    /// <param name="s">Standard deviation.</param>
+    /// <returns>The value of the probability density function at <paramref name="z"/>.</returns>
     public static double PDF(double z, double m, double s)
     {
       return _OneBySqrt2Pi * Math.Exp(-0.5 * Sqr((z - m) / s)) / s;
     }
 
+    /// <inheritdoc/>
     public override double Quantile(double p)
     {
       return Quantile(p, mu, sigma);
     }
 
+    /// <summary>
+    /// Computes the quantile (inverse CDF) for a normal distribution with the given parameters.
+    /// </summary>
+    /// <param name="p">The probability for which to compute the quantile.</param>
+    /// <param name="m">Mean value.</param>
+    /// <param name="s">Standard deviation.</param>
+    /// <returns>The quantile corresponding to <paramref name="p"/>.</returns>
     public static double Quantile(double p, double m, double s)
     {
       return m + s * ErrorFunction.QuantileOfNormalDistribution01(p);

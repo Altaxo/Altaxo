@@ -30,8 +30,17 @@ using Altaxo.Calc.LinearAlgebra;
 
 namespace Altaxo.Calc.Probability
 {
+  /// <summary>
+  /// Provides bandwidth selection rules (primarily for kernel density estimation).
+  /// </summary>
   public static class Bandwidths
   {
+    /// <summary>
+    /// Computes the normal reference bandwidth (R's <c>bw.nrd0</c>) for kernel density estimation.
+    /// </summary>
+    /// <param name="x">The sample values.</param>
+    /// <returns>The selected bandwidth.</returns>
+    /// <exception cref="ArgumentException">Thrown when fewer than 2 data points are provided.</exception>
     public static double Nrd0(IReadOnlyList<double> x)
     {
       if (x.Count < 2)

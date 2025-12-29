@@ -31,7 +31,7 @@ namespace Altaxo.Calc.Probability
   using Altaxo.Calc.RootFinding;
 
   /// <summary>
-  ///  Represents a stable distribution in Nolan's S1 parametrization.
+  /// Represents a stable distribution in Nolan's S1 parametrization.
   /// </summary>
   /// <remarks>
   /// The characteristic function in Nolan's S1 parametrization is:
@@ -42,11 +42,11 @@ namespace Altaxo.Calc.Probability
   /// <code>
   /// log(phi(t)) = -scale |t| (1+i beta Sign(t) (2/pi) Log(|t|)) + i location t  (for alpha equal to 1)
   /// </code>
-  /// <para>Reference: J.P.Nolan, Numerical calculation of stable densities and distribution functions. Communication is statistics - Stochastic models, 13, 759-774, 1999</para>
-  /// <para>Reference: S.Borak, W.Härdle, R.Weron, Stable distributions. SFB 649 Discussion paper 2005-2008, http://sfb649.wiwi.hu-berlin.de, ISSN 1860-5664</para>
+  /// <para>Reference: J.P. Nolan, Numerical calculation of stable densities and distribution functions. Communication in Statistics - Stochastic Models, 13, 759-774, 1999</para>
+  /// <para>Reference: S. Borak, W. Härdle, R. Weron, Stable distributions. SFB 649 Discussion paper 2005-2008, http://sfb649.wiwi.hu-berlin.de, ISSN 1860-5664</para>
   /// <para/>
-  /// <para>If you are interested in accurate calculations when beta is close to 1 or -1, you should use those functions which allow you to provide the parameter <c>abe</c>. This helps
-  /// specifying beta with higher accuracy close to +1 or -1. For instance, by using abe=1E-30 and beta=1, it is possible to specify beta=1-1E-30, which is impossible otherwise since with the 64-bit representation of numbers.</para>
+  /// <para>If you are interested in accurate calculations when beta is close to 1 or -1, you should use those functions that allow you to provide the parameter <c>abe</c>. This helps
+  /// specify beta with higher accuracy close to +1 or -1. For instance, by using abe=1E-30 and beta=1, it is possible to specify beta=1-1E-30, which is otherwise impossible with the 64-bit representation of numbers.</para>
   /// </remarks>
   public class StableDistributionS1 : StableDistributionBase
   {
@@ -79,7 +79,7 @@ namespace Altaxo.Calc.Probability
     }
 
     /// <summary>
-    /// Creates a new instance of he stable distribution in Nolan's parametrization with default parameters (alpha=1, beta=0).
+    /// Creates a new instance of the stable distribution in Nolan's parametrization with default parameters (alpha=1, beta=0).
     /// </summary>
     /// <param name="generator">Random number generator to be used with this distribution.</param>
     public StableDistributionS1(Generator generator)
@@ -88,7 +88,7 @@ namespace Altaxo.Calc.Probability
     }
 
     /// <summary>
-    /// Creates a new instance of he stable distribution in Nolan's parametrization with given parameters (alpha, beta) and the default random number generator.
+    /// Creates a new instance of the stable distribution in Nolan's parametrization with given parameters (alpha, beta) and the default random number generator.
     /// </summary>
     /// <param name="alpha">Characteristic exponent of the distribution.</param>
     /// <param name="beta">Skewness parameter of the distribution, in the range [-1,1].</param>
@@ -98,7 +98,7 @@ namespace Altaxo.Calc.Probability
     }
 
     /// <summary>
-    /// Creates a new instance of he stable distribution in Nolan's parametrization with given parameters (alpha, beta, abe) and the default random number generator.
+    /// Creates a new instance of the stable distribution in Nolan's parametrization with given parameters (alpha, beta, abe) and the default random number generator.
     /// </summary>
     /// <param name="alpha">Characteristic exponent of the distribution, in the range (0,2].</param>
     /// <param name="beta">Skewness parameter of the distribution, in the range [-1,1].</param>
@@ -109,7 +109,7 @@ namespace Altaxo.Calc.Probability
     }
 
     /// <summary>
-    /// Creates a new instance of he stable distribution in Nolan's parametrization with given parameters (alpha, beta, scale, location) and the default random number generator.
+    /// Creates a new instance of the stable distribution in Nolan's parametrization with given parameters (alpha, beta, scale, location) and the default random number generator.
     /// </summary>
     /// <param name="alpha">Distribution parameter alpha (broadness exponent).</param>
     /// <param name="beta">Distribution parameter beta (skew).</param>
@@ -121,7 +121,7 @@ namespace Altaxo.Calc.Probability
     }
 
     /// <summary>
-    /// Creates a new instance of he stable distribution in Nolan's parametrization with given parameters (alpha, beta, scale, location) and the provided random number generator.
+    /// Creates a new instance of the stable distribution in Nolan's parametrization with given parameters (alpha, beta, scale, location) and the provided random number generator.
     /// </summary>
     /// <param name="alpha">Characteristic exponent of the distribution.</param>
     /// <param name="beta">Skewness parameter of the distribution, in the range [-1,1].</param>
@@ -147,7 +147,7 @@ namespace Altaxo.Calc.Probability
     }
 
     /// <summary>
-    /// Creates a new instance of he stable distribution in Nolan's parametrization with given parameters (alpha, beta, abe, scale, location) and the provided random number generator.
+    /// Creates a new instance of the stable distribution in Nolan's parametrization with given parameters (alpha, beta, abe, scale, location) and the provided random number generator.
     /// </summary>
     /// <param name="alpha">Distribution parameter alpha (broadness exponent).</param>
     /// <param name="beta">Distribution parameter beta (skew).</param>
@@ -201,27 +201,47 @@ namespace Altaxo.Calc.Probability
       }
     }
 
+    /// <summary>
+    /// Determines whether <paramref name="alpha"/> is valid for this distribution.
+    /// </summary>
+    /// <param name="alpha">Characteristic exponent in the range (0,2].</param>
+    /// <returns><see langword="true"/> if <paramref name="alpha"/> is in the range (0,2]; otherwise, <see langword="false"/>.</returns>
     public static bool IsValidAlpha(double alpha)
     {
       return alpha > 0 && alpha <= 2;
     }
 
+    /// <summary>
+    /// Determines whether <paramref name="beta"/> is valid for this distribution.
+    /// </summary>
+    /// <param name="beta">Skewness parameter in the range [-1,1].</param>
+    /// <returns><see langword="true"/> if <paramref name="beta"/> is in the range [-1,1]; otherwise, <see langword="false"/>.</returns>
     public static bool IsValidBeta(double beta)
     {
       return beta >= -1 && beta <= 1;
     }
 
+    /// <summary>
+    /// Determines whether <paramref name="scale"/> is valid for this distribution.
+    /// </summary>
+    /// <param name="scale">Scale parameter (must be &gt; 0).</param>
+    /// <returns><see langword="true"/> if <paramref name="scale"/> is greater than 0; otherwise, <see langword="false"/>.</returns>
     public static bool IsValidScale(double scale)
     {
       return scale > 0;
     }
 
+    /// <summary>
+    /// Determines whether <paramref name="location"/> is valid for this distribution.
+    /// </summary>
+    /// <param name="location">Location parameter (must be finite).</param>
+    /// <returns><see langword="true"/> if <paramref name="location"/> is finite; otherwise, <see langword="false"/>.</returns>
     public static bool IsValidLocation(double location)
     {
       return location >= double.MinValue && location <= double.MaxValue;
     }
 
-    /// <summary>Gets the minimum possible value of distributed random numbers.</summary>
+    /// <inheritdoc/>
     public override double Minimum
     {
       get
@@ -233,7 +253,7 @@ namespace Altaxo.Calc.Probability
       }
     }
 
-    /// <summary>Gets the maximum possible value of distributed random numbers.</summary>
+    /// <inheritdoc/>
     public override double Maximum
     {
       get
@@ -245,13 +265,15 @@ namespace Altaxo.Calc.Probability
       }
     }
 
-    /// <summary>Gets the mean of distributed random numbers. For alpha&lt;=1, it is not defined. For alpha&gt;1, it is the <see cref="_location"/> parameter.</summary>
+    /// <inheritdoc/>
     public override double Mean
     {
       get { return _alpha <= 1 ? double.NaN : _location; }
     }
 
-    /// <summary>Gets the median of distributed random numbers. If beta=0, it is <see cref="_location"/>. For beta!=0, it is also defined, but not analytically expressable, and is not calcuated here (TODO, please help!).</summary>
+    /// <summary>
+    /// Gets the median of distributed random numbers. If beta=0, it is <see cref="_location"/>. For beta!=0, it is also defined, but not analytically expressible, and is not calculated here (TODO: please help!).
+    /// </summary>
     public override double Median
     {
       get
@@ -263,7 +285,7 @@ namespace Altaxo.Calc.Probability
       }
     }
 
-    /// <summary>Gets the variance of distributed random numbers. Is finite only for alpha=2.</summary>
+    /// <inheritdoc/>
     public override double Variance
     {
       get
@@ -275,7 +297,7 @@ namespace Altaxo.Calc.Probability
       }
     }
 
-    /// <summary>Gets the mode of distributed random numbers.</summary>
+    /// <inheritdoc/>
     public override double[] Mode
     {
       get
@@ -287,8 +309,7 @@ namespace Altaxo.Calc.Probability
       }
     }
 
-    /// <summary>Returns a distributed floating point random number.</summary>
-    /// <returns>A distributed double-precision floating point number.</returns>
+    /// <inheritdoc/>
     public override double NextDouble()
     {
       if (_beta == 0)
@@ -302,27 +323,19 @@ namespace Altaxo.Calc.Probability
       }
     }
 
-    /// <summary>Calculates the probability density function.</summary>
-    /// <param name="x">Argument.</param>
-    /// <returns>The relative likelihood for the random variable to occur at the point <paramref name="x"/>.</returns>
+    /// <inheritdoc/>
     public override double PDF(double x)
     {
       return PDF(x, _alpha, _beta, _abe, _scale, _location, ref _tempStorePDF, DefaultPrecision);
     }
 
-    /// <summary>Calculates the cumulative distribution function.</summary>
-    /// <param name="x">Argument.</param>
-    /// <returns>
-    /// The probability that the random variable of this probability distribution will be found at a value less than or equal to <paramref name="x"/>.
-    /// </returns>
+    /// <inheritdoc/>
     public override double CDF(double x)
     {
       return CDF(x, _alpha, _beta, _abe, _scale, _location, ref _tempStorePDF, DefaultPrecision);
     }
 
-    /// <summary>Calculates the quantile of the distribution function.</summary>
-    /// <param name="p">The probability p.</param>
-    /// <returns>The point x at which the cumulative distribution function <see cref="M:CDF"/>() of argument x is equal to <paramref name="p"/>.</returns>
+    /// <inheritdoc/>
     public override double Quantile(double p)
     {
       return _location + _scale * Quantile(p, _alpha, _beta, _abe);
@@ -584,6 +597,17 @@ namespace Altaxo.Calc.Probability
 
     #region Calculation of integration parameters
 
+    /// <summary>
+    /// Gets integration parameters for an alternative integrand for alpha &lt; 1 (negative branch).
+    /// </summary>
+    /// <param name="x">Integration argument (positive).</param>
+    /// <param name="alpha">Characteristic exponent of the distribution, in the range (0,2].</param>
+    /// <param name="beta">Skewness parameter of the distribution, in the range [-1,1].</param>
+    /// <param name="abe">Parameter to specify beta with higher accuracy around -1 and 1.</param>
+    /// <param name="factorp">Receives the main factor (power term) used by the integrand.</param>
+    /// <param name="facdiv">Receives the divisor part of the factor without the power.</param>
+    /// <param name="dev">Receives the phase deviation term.</param>
+    /// <param name="logPdfPrefactor">Receives the logarithm of the PDF prefactor.</param>
     public static void GetAlt1GnParameter(double x, double alpha, double beta, double abe,
                                           out double factorp, out double facdiv, out double dev, out double logPdfPrefactor)
     {
@@ -597,6 +621,17 @@ namespace Altaxo.Calc.Probability
       logPdfPrefactor = Math.Log(alpha / (Math.PI * Math.Abs(alpha - 1) * (x)));
     }
 
+    /// <summary>
+    /// Gets integration parameters for an alternative integrand for alpha &lt; 1 (positive branch).
+    /// </summary>
+    /// <param name="x">Integration argument (positive).</param>
+    /// <param name="alpha">Characteristic exponent of the distribution, in the range (0,2].</param>
+    /// <param name="beta">Skewness parameter of the distribution, in the range [-1,1].</param>
+    /// <param name="abe">Parameter to specify beta with higher accuracy around -1 and 1.</param>
+    /// <param name="factorp">Receives the main factor (power term) used by the integrand.</param>
+    /// <param name="facdiv">Receives the divisor part of the factor without the power.</param>
+    /// <param name="dev">Receives the phase deviation term.</param>
+    /// <param name="logPdfPrefactor">Receives the logarithm of the PDF prefactor.</param>
     public static void GetAlt1GpParameter(double x, double alpha, double beta, double abe,
                                           out double factorp, out double facdiv, out double dev, out double logPdfPrefactor)
     {
@@ -610,6 +645,17 @@ namespace Altaxo.Calc.Probability
       logPdfPrefactor = Math.Log(alpha / (Math.PI * Math.Abs(alpha - 1) * x));
     }
 
+    /// <summary>
+    /// Gets integration parameters for alpha &gt; 1 (negative branch).
+    /// </summary>
+    /// <param name="x">Integration argument (positive).</param>
+    /// <param name="alpha">Characteristic exponent of the distribution, in the range (0,2].</param>
+    /// <param name="beta">Skewness parameter of the distribution, in the range [-1,1].</param>
+    /// <param name="abe">Parameter to specify beta with higher accuracy around -1 and 1.</param>
+    /// <param name="factorp">Receives the main factor used by the integrand.</param>
+    /// <param name="factorw">Receives the weight factor.</param>
+    /// <param name="dev">Receives the phase deviation term.</param>
+    /// <param name="logPrefactor">Receives the logarithm of the prefactor.</param>
     public static void GetAgt1GnParameter(double x, double alpha, double beta, double abe,
                                                  out double factorp, out double factorw, out double dev, out double logPrefactor)
     {

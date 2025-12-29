@@ -64,6 +64,11 @@ namespace Altaxo.Calc.Probability
     protected int A;
     protected double B, a1, sq, scale, scale2, lambda;
 
+    /// <summary>
+    /// Initializes the distribution with the specified order and rate parameter.
+    /// </summary>
+    /// <param name="order">The (integer) order of the Erlang distribution.</param>
+    /// <param name="lambda">The rate parameter (must be non-zero).</param>
     public void Initialize(int order, double lambda)
     {
       if (order < 1)
@@ -82,27 +87,48 @@ namespace Altaxo.Calc.Probability
       }
     }
 
+    /// <summary>
+    /// Initializes a new instance of the <see cref="ErlangDistribution"/> class, using a
+    /// <see cref="StandardGenerator"/> as underlying random number generator.
+    /// </summary>
     public ErlangDistribution()
       : this(DefaultGenerator)
     {
     }
 
+    /// <summary>
+    /// Initializes a new instance of the <see cref="ErlangDistribution"/> class, using the specified
+    /// <see cref="Generator"/> as underlying random number generator.
+    /// </summary>
+    /// <param name="gen">A <see cref="Generator"/> object.</param>
     public ErlangDistribution(Generator gen)
       : this(1, 1, gen)
     {
     }
 
+    /// <summary>
+    /// Initializes a new instance of the <see cref="ErlangDistribution"/> class with the given parameters.
+    /// </summary>
+    /// <param name="order">The (integer) order of the Erlang distribution.</param>
+    /// <param name="lambda">The rate parameter.</param>
     public ErlangDistribution(int order, double lambda)
       : this(order, lambda, DefaultGenerator)
     {
     }
 
+    /// <summary>
+    /// Initializes a new instance of the <see cref="ErlangDistribution"/> class with the given parameters and generator.
+    /// </summary>
+    /// <param name="order">The (integer) order of the Erlang distribution.</param>
+    /// <param name="lambda">The rate parameter.</param>
+    /// <param name="ran">A <see cref="Generator"/> object.</param>
     public ErlangDistribution(int order, double lambda, Generator ran)
       : base(ran)
     {
       Initialize(order, lambda);
     }
 
+    /// <inheritdoc/>
     public override double NextDouble()
     {
       if (A < 6)
@@ -138,8 +164,14 @@ namespace Altaxo.Calc.Probability
       }
     }
 
+    /// <summary>
+    /// Gets the order (shape) parameter of the Erlang distribution.
+    /// </summary>
     public int Order { get { return A; } }
 
+    /// <summary>
+    /// Gets the location/scale value used internally for the distribution.
+    /// </summary>
     public double Location { get { return B; } }
 
     /// <summary>
@@ -287,31 +319,55 @@ namespace Altaxo.Calc.Probability
 
     #region CdfPdfQuantile
 
+    /// <inheritdoc/>
     public override double CDF(double x)
     {
       return CDF(x, A, lambda);
     }
 
+    /// <summary>
+    /// Returns the cumulative distribution function (CDF) for the Erlang distribution.
+    /// </summary>
+    /// <param name="x">The function argument.</param>
+    /// <param name="A">The order (shape) parameter.</param>
+    /// <param name="B">The rate parameter.</param>
+    /// <returns>The cumulative probability at <paramref name="x"/>.</returns>
     public static double CDF(double x, double A, double B)
     {
       return GammaRelated.GammaRegularized(A, 0, x / B);
     }
 
+    /// <inheritdoc/>
     public override double PDF(double x)
     {
       return PDF(x, A, lambda);
     }
 
+    /// <summary>
+    /// Returns the probability density function (PDF) for the Erlang distribution.
+    /// </summary>
+    /// <param name="x">The function argument.</param>
+    /// <param name="A">The order (shape) parameter.</param>
+    /// <param name="B">The rate parameter.</param>
+    /// <returns>The probability density at <paramref name="x"/>.</returns>
     public static double PDF(double x, double A, double B)
     {
       return Math.Exp(-x / B) * Math.Pow(x / B, A) / (x * Calc.GammaRelated.Gamma(A));
     }
 
+    /// <inheritdoc/>
     public override double Quantile(double p)
     {
       return Quantile(p, A, lambda);
     }
 
+    /// <summary>
+    /// Returns the quantile function (inverse CDF) for the Erlang distribution.
+    /// </summary>
+    /// <param name="x">The cumulative probability.</param>
+    /// <param name="A">The order (shape) parameter.</param>
+    /// <param name="B">The rate parameter.</param>
+    /// <returns>The value <c>q</c> such that <c>CDF(q) == x</c>.</returns>
     public static double Quantile(double x, double A, double B)
     {
       //return GammaRelated.InverseGammaRegularized(A, 1 - p) / B;

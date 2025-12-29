@@ -28,21 +28,21 @@ using System;
 namespace Altaxo.Calc.Probability
 {
   /// <summary>
-  /// Provides generation of pareto distributed random numbers.
+  /// Provides generation of Pareto distributed random numbers.
   /// </summary>
   /// <remarks>
-  /// The implementation of the <see cref="ParetoDistribution"/> type bases upon information presented on
-  ///   <a href="http://en.wikipedia.org/wiki/Pareto_distribution">Wikipedia - Pareto distribution</a> and
-  ///   <a href="http://www.xycoon.com/par_random.htm">Xycoon - Pareto Distribution</a>.
+  /// The implementation of the <see cref="ParetoDistribution"/> type is based on information presented on
+  /// <a href="http://en.wikipedia.org/wiki/Pareto_distribution">Wikipedia - Pareto distribution</a> and
+  /// <a href="http://www.xycoon.com/par_random.htm">Xycoon - Pareto distribution</a>.
   /// </remarks>
   public class ParetoDistribution : ContinuousDistribution
   {
     #region instance fields
 
     /// <summary>
-    /// Gets or sets the parameter alpha which is used for generation of pareto distributed random numbers.
+    /// Gets or sets the parameter alpha which is used for generation of Pareto distributed random numbers.
     /// </summary>
-    /// <remarks>Call <see cref="IsValidAlpha"/> to determine whether a value is valid and therefor assignable.</remarks>
+    /// <remarks>Call <see cref="IsValidAlpha"/> to determine whether a value is valid and therefore assignable.</remarks>
     public double Alpha
     {
       get
@@ -61,9 +61,9 @@ namespace Altaxo.Calc.Probability
     private double alpha;
 
     /// <summary>
-    /// Gets or sets the parameter beta which is used for generation of pareto distributed random numbers.
+    /// Gets or sets the parameter beta which is used for generation of Pareto distributed random numbers.
     /// </summary>
-    /// <remarks>Call <see cref="IsValidBeta"/> to determine whether a value is valid and therefor assignable.</remarks>
+    /// <remarks>Call <see cref="IsValidBeta"/> to determine whether a value is valid and therefore assignable.</remarks>
     public double Beta
     {
       get
@@ -85,8 +85,8 @@ namespace Altaxo.Calc.Probability
     /// Stores an intermediate result for generation of pareto distributed random numbers.
     /// </summary>
     /// <remarks>
-    /// Speeds up random number generation cause this value only depends on distribution parameters
-    ///   and therefor doesn't need to be recalculated in successive executions of <see cref="NextDouble"/>.
+    /// Speeds up random number generation because this value only depends on the distribution parameters and therefore
+    /// doesn't need to be recalculated in successive executions of <see cref="NextDouble"/>.
     /// </remarks>
     private double helper1;
 
@@ -116,11 +116,28 @@ namespace Altaxo.Calc.Probability
     {
     }
 
+    /// <summary>
+    /// Initializes a new instance of the <see cref="ParetoDistribution"/> class.
+    /// </summary>
+    /// <param name="alpha">The shape parameter (must be positive).</param>
+    /// <param name="beta">The scale parameter (must be positive).</param>
     public ParetoDistribution(double alpha, double beta)
       : this(alpha, beta, DefaultGenerator)
     {
     }
 
+    /// <summary>
+    /// Initializes a new instance of the <see cref="ParetoDistribution"/> class.
+    /// </summary>
+    /// <param name="alpha">The shape parameter (must be positive).</param>
+    /// <param name="beta">The scale parameter (must be positive).</param>
+    /// <param name="generator">A <see cref="Generator"/> object.</param>
+    /// <exception cref="ArgumentNullException">
+    /// <paramref name="generator"/> is <see langword="null"/>.
+    /// </exception>
+    /// <exception cref="ArgumentOutOfRangeException">
+    /// <paramref name="alpha"/> or <paramref name="beta"/> is out of range.
+    /// </exception>
     public ParetoDistribution(double alpha, double beta, Generator generator)
       : base(generator)
     {
@@ -131,6 +148,14 @@ namespace Altaxo.Calc.Probability
 
     #region instance methods
 
+    /// <summary>
+    /// Initializes this instance with the specified distribution parameters.
+    /// </summary>
+    /// <param name="alpha">The shape parameter (must be positive).</param>
+    /// <param name="beta">The scale parameter (must be positive).</param>
+    /// <exception cref="ArgumentOutOfRangeException">
+    /// <paramref name="alpha"/> or <paramref name="beta"/> is out of range.
+    /// </exception>
     public void Initialize(double alpha, double beta)
     {
       if (!IsValidAlpha(alpha))
@@ -172,9 +197,7 @@ namespace Altaxo.Calc.Probability
 
     #region overridden Distribution members
 
-    /// <summary>
-    /// Gets the minimum possible value of pareto distributed random numbers.
-    /// </summary>
+    /// <inheritdoc/>
     public override double Minimum
     {
       get
@@ -183,9 +206,7 @@ namespace Altaxo.Calc.Probability
       }
     }
 
-    /// <summary>
-    /// Gets the maximum possible value of pareto distributed random numbers.
-    /// </summary>
+    /// <inheritdoc/>
     public override double Maximum
     {
       get
@@ -194,9 +215,7 @@ namespace Altaxo.Calc.Probability
       }
     }
 
-    /// <summary>
-    /// Gets the mean value of pareto distributed random numbers.
-    /// </summary>
+    /// <inheritdoc/>
     public override double Mean
     {
       get
@@ -212,9 +231,7 @@ namespace Altaxo.Calc.Probability
       }
     }
 
-    /// <summary>
-    /// Gets the median of pareto distributed random numbers.
-    /// </summary>
+    /// <inheritdoc/>
     public override double Median
     {
       get
@@ -223,9 +240,7 @@ namespace Altaxo.Calc.Probability
       }
     }
 
-    /// <summary>
-    /// Gets the variance of pareto distributed random numbers.
-    /// </summary>
+    /// <inheritdoc/>
     public override double Variance
     {
       get
@@ -241,9 +256,7 @@ namespace Altaxo.Calc.Probability
       }
     }
 
-    /// <summary>
-    /// Gets the mode of pareto distributed random numbers.
-    /// </summary>
+    /// <inheritdoc/>
     public override double[] Mode
     {
       get
@@ -252,10 +265,7 @@ namespace Altaxo.Calc.Probability
       }
     }
 
-    /// <summary>
-    /// Returns a pareto distributed floating point random number.
-    /// </summary>
-    /// <returns>A pareto distributed double-precision floating point number.</returns>
+    /// <inheritdoc/>
     public override double NextDouble()
     {
       return alpha / Math.Pow(1.0 - Generator.NextDouble(), helper1);
@@ -265,31 +275,55 @@ namespace Altaxo.Calc.Probability
 
     #region CdfPdfQuantile
 
+    /// <inheritdoc/>
     public override double CDF(double x)
     {
       return CDF(x, alpha, beta);
     }
 
+    /// <summary>
+    /// Computes the cumulative distribution function (CDF) for a Pareto distribution with the given parameters.
+    /// </summary>
+    /// <param name="x">The value at which to evaluate the CDF.</param>
+    /// <param name="alpha">The shape parameter (must be positive).</param>
+    /// <param name="beta">The scale parameter (must be positive).</param>
+    /// <returns>The value of the cumulative distribution function at <paramref name="x"/>.</returns>
     public static double CDF(double x, double alpha, double beta)
     {
       return 1 - Math.Pow(alpha / x, beta);
     }
 
+    /// <inheritdoc/>
     public override double PDF(double x)
     {
       return PDF(x, alpha, beta);
     }
 
+    /// <summary>
+    /// Computes the probability density function (PDF) for a Pareto distribution with the given parameters.
+    /// </summary>
+    /// <param name="x">The value at which to evaluate the PDF.</param>
+    /// <param name="alpha">The shape parameter (must be positive).</param>
+    /// <param name="beta">The scale parameter (must be positive).</param>
+    /// <returns>The value of the probability density function at <paramref name="x"/>.</returns>
     public static double PDF(double x, double alpha, double beta)
     {
       return Math.Pow(alpha, beta) * beta * Math.Pow(x, -1 - beta);
     }
 
+    /// <inheritdoc/>
     public override double Quantile(double p)
     {
       return Quantile(p, alpha, beta);
     }
 
+    /// <summary>
+    /// Computes the quantile (inverse CDF) for a Pareto distribution with the given parameters.
+    /// </summary>
+    /// <param name="p">The probability for which to compute the quantile.</param>
+    /// <param name="alpha">The shape parameter (must be positive).</param>
+    /// <param name="beta">The scale parameter (must be positive).</param>
+    /// <returns>The quantile corresponding to <paramref name="p"/>.</returns>
     public static double Quantile(double p, double alpha, double beta)
     {
       return alpha * Math.Pow(1 - p, -1 / beta);

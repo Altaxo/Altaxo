@@ -28,11 +28,11 @@ using System;
 namespace Altaxo.Calc.Probability
 {
   /// <summary>
-  /// Provides generation of weibull distributed random numbers.
+  /// Provides generation of Weibull-distributed random numbers.
   /// </summary>
   /// <remarks>
-  /// The implementation of the <see cref="WeibullDistribution"/> type bases upon information presented on
-  ///   <a href="http://en.wikipedia.org/wiki/Weibull_distribution">Wikipedia - Weibull distribution</a>.
+  /// The implementation of the <see cref="WeibullDistribution"/> type is based on information presented on
+  /// <a href="http://en.wikipedia.org/wiki/Weibull_distribution">Wikipedia - Weibull distribution</a>.
   /// </remarks>
   public class WeibullDistribution : ContinuousDistribution
   {
@@ -125,11 +125,25 @@ namespace Altaxo.Calc.Probability
     {
     }
 
+    /// <summary>
+    /// Initializes a new instance of the <see cref="WeibullDistribution"/> class with the specified
+    /// shape (<paramref name="alpha"/>) and scale (<paramref name="lambda"/>) parameters.
+    /// </summary>
+    /// <param name="alpha">The shape parameter.</param>
+    /// <param name="lambda">The scale parameter.</param>
     public WeibullDistribution(double alpha, double lambda)
       : this(alpha, lambda, DefaultGenerator)
     {
     }
 
+    /// <summary>
+    /// Initializes a new instance of the <see cref="WeibullDistribution"/> class with the specified
+    /// shape (<paramref name="alpha"/>) and scale (<paramref name="lambda"/>) parameters, using the specified
+    /// random number generator.
+    /// </summary>
+    /// <param name="alpha">The shape parameter.</param>
+    /// <param name="lambda">The scale parameter.</param>
+    /// <param name="generator">The underlying random number generator.</param>
     public WeibullDistribution(double alpha, double lambda, Generator generator)
       : base(generator)
     {
@@ -140,6 +154,17 @@ namespace Altaxo.Calc.Probability
 
     #region instance methods
 
+    /// <summary>
+    /// Initializes the distribution with the specified parameters.
+    /// </summary>
+    /// <param name="alpha">The shape parameter.</param>
+    /// <param name="lambda">The scale parameter.</param>
+    /// <exception cref="ArgumentOutOfRangeException">
+    /// <paramref name="alpha"/> is not valid.
+    /// </exception>
+    /// <exception cref="ArgumentOutOfRangeException">
+    /// <paramref name="lambda"/> is not valid.
+    /// </exception>
     public void Initialize(double alpha, double lambda)
     {
       if (!IsValidAlpha(alpha))
@@ -198,9 +223,7 @@ namespace Altaxo.Calc.Probability
 
     #region overridden Distribution members
 
-    /// <summary>
-    /// Gets the minimum possible value of weibull distributed random numbers.
-    /// </summary>
+    /// <inheritdoc/>
     public override double Minimum
     {
       get
@@ -209,9 +232,7 @@ namespace Altaxo.Calc.Probability
       }
     }
 
-    /// <summary>
-    /// Gets the maximum possible value of weibull distributed random numbers.
-    /// </summary>
+    /// <inheritdoc/>
     public override double Maximum
     {
       get
@@ -220,9 +241,7 @@ namespace Altaxo.Calc.Probability
       }
     }
 
-    /// <summary>
-    /// Gets the mean value of weibull distributed random numbers.
-    /// </summary>
+    /// <inheritdoc/>
     public override double Mean
     {
       get
@@ -231,9 +250,7 @@ namespace Altaxo.Calc.Probability
       }
     }
 
-    /// <summary>
-    /// Gets the median of weibull distributed random numbers.
-    /// </summary>
+    /// <inheritdoc/>
     public override double Median
     {
       get
@@ -242,9 +259,7 @@ namespace Altaxo.Calc.Probability
       }
     }
 
-    /// <summary>
-    /// Gets the variance of weibull distributed random numbers.
-    /// </summary>
+    /// <inheritdoc/>
     public override double Variance
     {
       get
@@ -253,9 +268,7 @@ namespace Altaxo.Calc.Probability
       }
     }
 
-    /// <summary>
-    /// Gets the mode of weibull distributed random numbers.
-    /// </summary>
+    /// <inheritdoc/>
     public override double[] Mode
     {
       get
@@ -271,10 +284,7 @@ namespace Altaxo.Calc.Probability
       }
     }
 
-    /// <summary>
-    /// Returns a weibull distributed floating point random number.
-    /// </summary>
-    /// <returns>A weibull distributed double-precision floating point number.</returns>
+    /// <inheritdoc/>
     public override double NextDouble()
     {
       // Subtract random number from 1.0 to avoid Math.Log(0.0)
@@ -285,31 +295,55 @@ namespace Altaxo.Calc.Probability
 
     #region CdfPdfQuantile
 
+    /// <inheritdoc/>
     public override double CDF(double x)
     {
       return CDF(x, alpha, lambda);
     }
 
+    /// <summary>
+    /// Returns the cumulative distribution function (CDF) of the Weibull distribution.
+    /// </summary>
+    /// <param name="x">The value at which to evaluate the CDF.</param>
+    /// <param name="alpha">The shape parameter.</param>
+    /// <param name="lambda">The scale parameter.</param>
+    /// <returns>The probability that a Weibull-distributed random variable is less than or equal to <paramref name="x"/>.</returns>
     public static double CDF(double x, double alpha, double lambda)
     {
       return 1 - Math.Exp(-Math.Pow(x / lambda, alpha));
     }
 
+    /// <inheritdoc/>
     public override double PDF(double x)
     {
       return PDF(x, alpha, lambda);
     }
 
+    /// <summary>
+    /// Returns the probability density function (PDF) of the Weibull distribution.
+    /// </summary>
+    /// <param name="x">The value at which to evaluate the PDF.</param>
+    /// <param name="alpha">The shape parameter.</param>
+    /// <param name="lambda">The scale parameter.</param>
+    /// <returns>The relative likelihood for the random variable to occur at <paramref name="x"/>.</returns>
     public static double PDF(double x, double alpha, double lambda)
     {
       return (alpha * Math.Pow(x, -1 + alpha)) / (Math.Exp(Math.Pow(x / lambda, alpha)) * Math.Pow(lambda, alpha));
     }
 
+    /// <inheritdoc/>
     public override double Quantile(double p)
     {
       return Quantile(p, alpha, lambda);
     }
 
+    /// <summary>
+    /// Returns the quantile function (inverse CDF) of the Weibull distribution.
+    /// </summary>
+    /// <param name="p">A probability in the range [0, 1].</param>
+    /// <param name="alpha">The shape parameter.</param>
+    /// <param name="lambda">The scale parameter.</param>
+    /// <returns>The value <c>x</c> such that <c>CDF(x) = p</c>.</returns>
     public static double Quantile(double p, double alpha, double lambda)
     {
       return lambda * Math.Pow(-Math.Log(1 - p), 1 / alpha);

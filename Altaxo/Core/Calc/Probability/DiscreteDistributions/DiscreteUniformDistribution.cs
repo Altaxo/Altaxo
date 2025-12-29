@@ -69,7 +69,7 @@ namespace Altaxo.Calc.Probability
     #region instance fields
 
     /// <summary>
-    /// Gets or sets the parameter lower bound which is used for generation of uniformly distributed random numbers.
+    /// Gets the parameter lower bound which is used for generation of uniformly distributed random numbers.
     /// </summary>
     public int LowerBound
     {
@@ -85,7 +85,7 @@ namespace Altaxo.Calc.Probability
     private int _lowerBound;
 
     /// <summary>
-    /// Gets or sets the upper boundary which is used for generation of uniformly distributed random numbers.
+    /// Gets the upper boundary which is used for generation of uniformly distributed random numbers.
     /// </summary>
     public int UpperBound
     {
@@ -113,11 +113,20 @@ namespace Altaxo.Calc.Probability
 
     #region construction
 
+    /// <summary>
+    /// Initializes a new instance of the <see cref="DiscreteUniformDistribution"/> class, using a
+    /// <see cref="StandardGenerator"/> as the underlying random number generator.
+    /// </summary>
     public DiscreteUniformDistribution()
       : this(DefaultGenerator)
     {
     }
 
+    /// <summary>
+    /// Initializes a new instance of the <see cref="DiscreteUniformDistribution"/> class, using the specified
+    /// <see cref="Generator"/> as the underlying random number generator.
+    /// </summary>
+    /// <param name="gen">A <see cref="Generator"/> object.</param>
     public DiscreteUniformDistribution(Generator gen)
       : this(0, 1, gen)
     {
@@ -127,6 +136,8 @@ namespace Altaxo.Calc.Probability
     /// Initializes a new instance of the <see cref="DiscreteUniformDistribution"/> class, using a
     ///   <see cref="StandardGenerator"/> as underlying random number generator.
     /// </summary>
+    /// <param name="lower">Lower boundary of the distributed values.</param>
+    /// <param name="upper">Upper boundary of the distributed values.</param>
     public DiscreteUniformDistribution(int lower, int upper)
       : this(lower, upper, DefaultGenerator)
     {
@@ -206,9 +217,7 @@ namespace Altaxo.Calc.Probability
 
     #region overridden Distribution members
 
-    /// <summary>
-    /// Gets the minimum possible value of uniformly distributed random numbers.
-    /// </summary>
+    /// <inheritdoc />
     public override double Minimum
     {
       get
@@ -217,9 +226,7 @@ namespace Altaxo.Calc.Probability
       }
     }
 
-    /// <summary>
-    /// Gets the maximum possible value of uniformly distributed random numbers.
-    /// </summary>
+    /// <inheritdoc />
     public override double Maximum
     {
       get
@@ -228,9 +235,7 @@ namespace Altaxo.Calc.Probability
       }
     }
 
-    /// <summary>
-    /// Gets the mean value of the uniformly distributed random numbers.
-    /// </summary>
+    /// <inheritdoc />
     public override double Mean
     {
       get
@@ -239,9 +244,7 @@ namespace Altaxo.Calc.Probability
       }
     }
 
-    /// <summary>
-    /// Gets the median of uniformly distributed random numbers.
-    /// </summary>
+    /// <inheritdoc />
     public override double Median
     {
       get
@@ -250,9 +253,7 @@ namespace Altaxo.Calc.Probability
       }
     }
 
-    /// <summary>
-    /// Gets the variance of uniformly distributed random numbers.
-    /// </summary>
+    /// <inheritdoc />
     public override double Variance
     {
       get
@@ -261,9 +262,7 @@ namespace Altaxo.Calc.Probability
       }
     }
 
-    /// <summary>
-    /// Gets the mode of the uniformly distributed random numbers.
-    /// </summary>
+    /// <inheritdoc />
     public override double[] Mode
     {
       get
@@ -272,10 +271,7 @@ namespace Altaxo.Calc.Probability
       }
     }
 
-    /// <summary>
-    /// Returns a uniformly distributed floating point random number.
-    /// </summary>
-    /// <returns>A uniformly distributed double-precision floating point number.</returns>
+    /// <inheritdoc />
     public override double NextDouble()
     {
       return Generator.Next(_lowerBound, _upperPlus1);
@@ -285,11 +281,19 @@ namespace Altaxo.Calc.Probability
 
     #region CdfPdf
 
+    /// <inheritdoc />
     public override double CDF(double x)
     {
       return CDF(x, LowerBound, UpperBound);
     }
 
+    /// <summary>
+    /// Returns the cumulative distribution function (CDF) of a discrete uniform distribution.
+    /// </summary>
+    /// <param name="x">The value at which to evaluate the CDF.</param>
+    /// <param name="low">The lower bound (inclusive).</param>
+    /// <param name="high">The upper bound (inclusive).</param>
+    /// <returns>The probability that a discrete-uniformly distributed random variable is less than or equal to <paramref name="x"/>.</returns>
     public static double CDF(double x, double low, double high)
     {
       double xi = Math.Floor(x);
@@ -301,11 +305,19 @@ namespace Altaxo.Calc.Probability
         return 0;
     }
 
+    /// <inheritdoc />
     public override double PDF(double x)
     {
       return PDF(x, LowerBound, UpperBound);
     }
 
+    /// <summary>
+    /// Returns the probability mass function (PMF) of a discrete uniform distribution.
+    /// </summary>
+    /// <param name="x">The value at which to evaluate the PMF.</param>
+    /// <param name="low">The lower bound (inclusive).</param>
+    /// <param name="high">The upper bound (inclusive).</param>
+    /// <returns>The probability for <paramref name="x"/>.</returns>
     public static double PDF(double x, double low, double high)
     {
       double xi = Math.Ceiling(x);

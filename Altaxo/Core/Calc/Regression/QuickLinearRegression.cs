@@ -29,7 +29,7 @@ namespace Altaxo.Calc.Regression
 {
   /// <summary>
   /// Class for doing a quick and dirty regression of order 1 only returning intercept and slope.
-  /// Can not handle too big or too input values.
+  /// Cannot handle input values that are very large or very small.
   /// </summary>
   public class QuickLinearRegression
   {
@@ -157,6 +157,10 @@ namespace Altaxo.Calc.Regression
       }
     }
 
+    /// <summary>
+    /// Gets the arithmetic mean of the x values.
+    /// </summary>
+    /// <value>The mean of the added x values.</value>
     public double MeanX
     {
       get
@@ -165,6 +169,10 @@ namespace Altaxo.Calc.Regression
       }
     }
 
+    /// <summary>
+    /// Gets the arithmetic mean of the y values.
+    /// </summary>
+    /// <value>The mean of the added y values.</value>
     public double MeanY
     {
       get
@@ -173,6 +181,10 @@ namespace Altaxo.Calc.Regression
       }
     }
 
+    /// <summary>
+    /// Gets the Pearson correlation coefficient (r).
+    /// </summary>
+    /// <value>The Pearson correlation coefficient (r).</value>
     public double PearsonCorrelationCoefficient
     {
       get
@@ -349,17 +361,18 @@ namespace Altaxo.Calc.Regression
     }
 
     /// <summary>
-    /// Gets the relative distance of a point (x,y) between two regression lines.
+    /// Gets the relative distance of a point (x, y) between two regression lines.
     /// </summary>
     /// <param name="a">The first regression line.</param>
-    /// <param name="b">The other regression line.</param>
+    /// <param name="b">The second regression line.</param>
     /// <param name="x">The x value of the point.</param>
     /// <param name="y">The y value of the point.</param>
-    /// <returns>The relative y value. If the point (x,y) is located on the regression line a, then 0 is returned.
-    /// If the point (x,y) is located on the regression line b, then 1 is returned. Likewise, if the point is located between
-    /// the two regression lines, then a value inbetween 0 and 1 is returned.
-    /// The value is not clamped to the interval [0, 1]. Thus if the point is outside the two regression lines,
-    /// then a value less than 0 or greater than 1 could be returned.
+    /// <returns>
+    /// The relative y value. If the point (x, y) is located on regression line <paramref name="a"/>, then 0 is returned.
+    /// If the point (x, y) is located on regression line <paramref name="b"/>, then 1 is returned.
+    /// If the point is between the two regression lines, a value between 0 and 1 is returned.
+    /// The value is not clamped to the interval [0, 1]. Thus, if the point is outside the two regression lines,
+    /// a value less than 0 or greater than 1 may be returned.
     /// </returns>
     public static double GetRelativeYBetweenRegressions(QuickLinearRegression a, QuickLinearRegression b, double x, double y)
     {

@@ -1,4 +1,5 @@
-﻿#region Copyright
+﻿#nullable disable
+#region Copyright
 
 /////////////////////////////////////////////////////////////////////////////
 //    Altaxo:  a data processing and data plotting program
@@ -31,7 +32,7 @@ namespace Altaxo.Calc.Probability
   using Altaxo.Calc.RootFinding;
 
   /// <summary>
-  ///  Represents a stable distribution in Nolan's S0 parametrization.
+  /// Represents a stable distribution in Nolan's S0 parametrization.
   /// </summary>
   /// <remarks>
   /// The characteristic function in Nolan's S0 parametrization is:
@@ -42,11 +43,21 @@ namespace Altaxo.Calc.Probability
   /// <code>
   /// log(phi(t)) = -scale |t| (1+i beta Sign(t) (2/pi) Log(scale |t|)) + i location t  (for alpha equal to 1)
   /// </code>
-  /// <para>Reference: J.P.Nolan, Numerical calculation of stable densities and distribution functions. Communication is statistics - Stochastic models, 13, 759-774, 1999</para>
-  /// <para>Reference: S.Borak, W.Härdle, R.Weron, Stable distributions. SFB 649 Discussion paper 2005-2008, http://sfb649.wiwi.hu-berlin.de, ISSN 1860-5664</para>
+  /// <para>
+  /// Reference: J. P. Nolan, Numerical calculation of stable densities and distribution functions.
+  /// Communications in Statistics - Stochastic Models, 13, 759-774, 1999
+  /// </para>
+  /// <para>
+  /// Reference: S. Borak, W. H0rdle, R. Weron, Stable distributions. SFB 649 Discussion paper 2005-2008,
+  /// http://sfb649.wiwi.hu-berlin.de, ISSN 1860-5664
+  /// </para>
   /// <para/>
-  /// <para>If you are interested in accurate calculations when beta is close to 1 or -1, you should use those functions which allow you to provide the parameter <c>abe</c>. This helps
-  /// specifying beta with higher accuracy close to +1 or -1. For instance, by using abe=1E-30 and beta=1, it is possible to specify beta=1-1E-30, which is impossible otherwise since with the 64-bit representation of numbers.</para>
+  /// <para>
+  /// If you are interested in accurate calculations when beta is close to 1 or -1, you should use those functions which
+  /// allow you to provide the parameter <c>abe</c>. This helps specify beta with higher accuracy close to +1 or -1.
+  /// For instance, by using abe = 1E-30 and beta = 1, it is possible to specify beta = 1 - 1E-30, which is otherwise
+  /// impossible with the 64-bit floating-point representation.
+  /// </para>
   /// </remarks>
   public class StableDistributionS0 : StableDistributionBase
   {
@@ -159,9 +170,17 @@ namespace Altaxo.Calc.Probability
     #region Distribution members
 
     /// <summary>
-    /// Updates the helper variables that store intermediate results for generation of exponential distributed random
-    ///   numbers.
+    /// Initializes this distribution instance with the given parameters.
     /// </summary>
+    /// <param name="alpha">Distribution parameter alpha (broadness exponent).</param>
+    /// <param name="beta">Distribution parameter beta (skew).</param>
+    /// <param name="abe">
+    /// Parameter to specify beta with higher accuracy around -1 and 1.
+    /// It is 1 - beta for beta &gt;= 0 or 1 + beta for beta &lt; 0.
+    /// </param>
+    /// <param name="sigma">Scaling parameter (broadness of the distribution). Must be positive.</param>
+    /// <param name="mu">Location parameter of the distribution.</param>
+    /// <exception cref="ArgumentOutOfRangeException">Thrown if any parameter is outside its valid range.</exception>
     public void Initialize(double alpha, double beta, double abe, double sigma, double mu)
     {
       if (!IsValidAlpha(alpha))
@@ -191,26 +210,47 @@ namespace Altaxo.Calc.Probability
       }
     }
 
+    /// <summary>
+    /// Checks whether <paramref name="alpha"/> is valid for a stable distribution.
+    /// </summary>
+    /// <param name="alpha">The alpha parameter to validate.</param>
+    /// <returns><see langword="true"/> if 0 &lt; alpha &lt;= 2; otherwise, <see langword="false"/>.</returns>
     public static bool IsValidAlpha(double alpha)
     {
       return alpha > 0 && alpha <= 2;
     }
 
+    /// <summary>
+    /// Checks whether <paramref name="beta"/> is valid for a stable distribution.
+    /// </summary>
+    /// <param name="beta">The beta parameter to validate.</param>
+    /// <returns><see langword="true"/> if -1 &lt;= beta &lt;= 1; otherwise, <see langword="false"/>.</returns>
     public static bool IsValidBeta(double beta)
     {
       return beta >= -1 && beta <= 1;
     }
 
+    /// <summary>
+    /// Checks whether <paramref name="sigma"/> is a valid scale parameter.
+    /// </summary>
+    /// <param name="sigma">The scale parameter to validate.</param>
+    /// <returns><see langword="true"/> if <paramref name="sigma"/> is positive; otherwise, <see langword="false"/>.</returns>
     public static bool IsValidSigma(double sigma)
     {
       return sigma > 0;
     }
 
+    /// <summary>
+    /// Checks whether <paramref name="mu"/> is a valid location parameter.
+    /// </summary>
+    /// <param name="mu">The location parameter to validate.</param>
+    /// <returns><see langword="true"/> if <paramref name="mu"/> is finite; otherwise, <see langword="false"/>.</returns>
     public static bool IsValidMu(double mu)
     {
       return mu >= double.MinValue && mu <= double.MaxValue;
     }
 
+    /// <inheritdoc/>
     public override double Minimum
     {
       get
@@ -222,6 +262,7 @@ namespace Altaxo.Calc.Probability
       }
     }
 
+    /// <inheritdoc/>
     public override double Maximum
     {
       get
@@ -233,11 +274,13 @@ namespace Altaxo.Calc.Probability
       }
     }
 
+    /// <inheritdoc/>
     public override double Mean
     {
       get { return _alpha <= 1 ? double.NaN : _mu - _beta * _scale * Math.Tan(0.5 * Math.PI * _alpha); }
     }
 
+    /// <inheritdoc/>
     public override double Median
     {
       get
@@ -249,6 +292,7 @@ namespace Altaxo.Calc.Probability
       }
     }
 
+    /// <inheritdoc/>
     public override double Variance
     {
       get
@@ -260,6 +304,7 @@ namespace Altaxo.Calc.Probability
       }
     }
 
+    /// <inheritdoc/>
     public override double[] Mode
     {
       get
@@ -271,6 +316,7 @@ namespace Altaxo.Calc.Probability
       }
     }
 
+    /// <inheritdoc/>
     public override double NextDouble()
     {
       if (_beta == 0)
@@ -284,16 +330,19 @@ namespace Altaxo.Calc.Probability
       }
     }
 
+    /// <inheritdoc/>
     public override double PDF(double x)
     {
       return PDF(x, _alpha, _beta, _abe, _scale, _mu, ref _tempStorePDF, DefaultPrecision);
     }
 
+    /// <inheritdoc/>
     public override double CDF(double x)
     {
       return CDF(x, _alpha, _beta, _abe, _scale, _mu, ref _tempStorePDF, DefaultPrecision);
     }
 
+    /// <inheritdoc/>
     public override double Quantile(double p)
     {
       return _mu + _scale * Quantile(p, _alpha, _beta, _abe);
@@ -303,34 +352,98 @@ namespace Altaxo.Calc.Probability
 
     #region PDF
 
+    /// <summary>
+    /// Gets the probability density function (PDF) of the (standardized) S0 stable distribution.
+    /// </summary>
+    /// <param name="x">The value where the density is evaluated.</param>
+    /// <param name="alpha">Distribution parameter alpha (broadness exponent).</param>
+    /// <param name="beta">Distribution parameter beta (skew).</param>
+    /// <returns>The probability density at <paramref name="x"/>.</returns>
     public static double PDF(double x, double alpha, double beta)
     {
       object? tempStore = null;
       return PDF(x, alpha, beta, ref tempStore, Math.Sqrt(DoubleConstants.DBL_EPSILON));
     }
 
+    /// <summary>
+    /// Gets the probability density function (PDF) for the specified scale and location.
+    /// </summary>
+    /// <param name="x">The value where the density is evaluated.</param>
+    /// <param name="alpha">Distribution parameter alpha (broadness exponent).</param>
+    /// <param name="beta">Distribution parameter beta (skew).</param>
+    /// <param name="sigma">Scale parameter.</param>
+    /// <param name="mu">Location parameter.</param>
+    /// <returns>The probability density at <paramref name="x"/>.</returns>
     public static double PDF(double x, double alpha, double beta, double sigma, double mu)
     {
       object? tempStore = null;
       return PDF(x, alpha, beta, sigma, mu, ref tempStore, Math.Sqrt(DoubleConstants.DBL_EPSILON));
     }
 
+    /// <summary>
+    /// Gets the probability density function (PDF) for the specified scale and location.
+    /// </summary>
+    /// <param name="x">The value where the density is evaluated.</param>
+    /// <param name="alpha">Distribution parameter alpha (broadness exponent).</param>
+    /// <param name="beta">Distribution parameter beta (skew).</param>
+    /// <param name="sigma">Scale parameter.</param>
+    /// <param name="mu">Location parameter.</param>
+    /// <param name="tempStorage">Temporary storage that can be reused between calls.</param>
+    /// <param name="precision">Goal for the relative precision.</param>
+    /// <returns>The probability density at <paramref name="x"/>.</returns>
     public static double PDF(double x, double alpha, double beta, double sigma, double mu, ref object? tempStorage, double precision)
     {
       return PDF((x - mu) / sigma, alpha, beta, ref tempStorage, precision) / sigma;
     }
 
+    /// <summary>
+    /// Gets the probability density function (PDF) for the specified S0 parameters, scale, and location.
+    /// </summary>
+    /// <param name="x">The value where the density is evaluated.</param>
+    /// <param name="alpha">Distribution parameter alpha (broadness exponent).</param>
+    /// <param name="beta">Distribution parameter beta (skew).</param>
+    /// <param name="abe">
+    /// Parameter to specify beta with higher accuracy around -1 and 1.
+    /// It is 1 - beta for beta &gt;= 0 or 1 + beta for beta &lt; 0.
+    /// </param>
+    /// <param name="sigma">Scale parameter.</param>
+    /// <param name="mu">Location parameter.</param>
+    /// <param name="tempStorage">Temporary storage that can be reused between calls.</param>
+    /// <param name="precision">Goal for the relative precision.</param>
+    /// <returns>The probability density at <paramref name="x"/>.</returns>
     public static double PDF(double x, double alpha, double beta, double abe, double sigma, double mu, ref object? tempStorage, double precision)
     {
       return PDF((x - mu) / sigma, alpha, beta, abe, ref tempStorage, precision) / sigma;
     }
 
+    /// <summary>
+    /// Gets the probability density function (PDF) of the standardized S0 stable distribution.
+    /// </summary>
+    /// <param name="x">The value where the density is evaluated.</param>
+    /// <param name="alpha">Distribution parameter alpha (broadness exponent).</param>
+    /// <param name="beta">Distribution parameter beta (skew).</param>
+    /// <param name="tempStorage">Temporary storage that can be reused between calls.</param>
+    /// <param name="precision">Goal for the relative precision.</param>
+    /// <returns>The probability density at <paramref name="x"/>.</returns>
     public static double PDF(double x, double alpha, double beta, ref object? tempStorage, double precision)
     {
       double abe = beta >= 0 ? 1 - beta : 1 + beta;
       return PDF(x, alpha, beta, abe, ref tempStorage, precision);
     }
 
+    /// <summary>
+    /// Gets the probability density function (PDF) of the standardized S0 stable distribution.
+    /// </summary>
+    /// <param name="x">The value where the density is evaluated.</param>
+    /// <param name="alpha">Distribution parameter alpha (broadness exponent).</param>
+    /// <param name="beta">Distribution parameter beta (skew).</param>
+    /// <param name="abe">
+    /// Parameter to specify beta with higher accuracy around -1 and 1.
+    /// It is 1 - beta for beta &gt;= 0 or 1 + beta for beta &lt; 0.
+    /// </param>
+    /// <param name="tempStorage">Temporary storage that can be reused between calls.</param>
+    /// <param name="precision">Goal for the relative precision.</param>
+    /// <returns>The probability density at <paramref name="x"/>.</returns>
     public static double PDF(double x, double alpha, double beta, double abe, ref object? tempStorage, double precision)
     {
       // Test for special case of symmetric destribution, this can be handled much better
@@ -366,6 +479,18 @@ namespace Altaxo.Calc.Probability
       }
     }
 
+    /// <summary>
+    /// Calculates the PDF for the special case alpha = 1.
+    /// </summary>
+    /// <param name="x">The standardized argument.</param>
+    /// <param name="beta">Distribution parameter beta (skew).</param>
+    /// <param name="abe">
+    /// Parameter to specify beta with higher accuracy around -1 and 1.
+    /// It is 1 - beta for beta &gt;= 0 or 1 + beta for beta &lt; 0.
+    /// </param>
+    /// <param name="tempStorage">Temporary storage that can be reused between calls.</param>
+    /// <param name="precision">Goal for the relative precision.</param>
+    /// <returns>The probability density at <paramref name="x"/>.</returns>
     public static double PDFMethodAlphaOne(double x, double beta, double abe, ref object? tempStorage, double precision)
     {
       if (0 == beta)
@@ -391,6 +516,13 @@ namespace Altaxo.Calc.Probability
 
     #region CDF
 
+    /// <summary>
+    /// Gets the cumulative distribution function (CDF) of the standardized S0 stable distribution.
+    /// </summary>
+    /// <param name="x">The value where the distribution function is evaluated.</param>
+    /// <param name="alpha">Distribution parameter alpha (broadness exponent).</param>
+    /// <param name="beta">Distribution parameter beta (skew).</param>
+    /// <returns>The cumulative probability P(X &lt;= x).</returns>
     public static double CDF(double x, double alpha, double beta)
     {
       object? tempStorage = null;
@@ -398,6 +530,15 @@ namespace Altaxo.Calc.Probability
       return CDF(x, alpha, beta, abe, 1, 0, ref tempStorage, DefaultPrecision);
     }
 
+    /// <summary>
+    /// Gets the cumulative distribution function (CDF) for the specified scale and location.
+    /// </summary>
+    /// <param name="x">The value where the distribution function is evaluated.</param>
+    /// <param name="alpha">Distribution parameter alpha (broadness exponent).</param>
+    /// <param name="beta">Distribution parameter beta (skew).</param>
+    /// <param name="scale">Scale parameter.</param>
+    /// <param name="location">Location parameter.</param>
+    /// <returns>The cumulative probability P(X &lt;= x).</returns>
     public static double CDF(double x, double alpha, double beta, double scale, double location)
     {
       object? tempStorage = null;
@@ -405,30 +546,89 @@ namespace Altaxo.Calc.Probability
       return CDF(x, alpha, beta, abe, scale, location, ref tempStorage, DefaultPrecision);
     }
 
+    /// <summary>
+    /// Gets the cumulative distribution function (CDF) of the standardized S0 stable distribution.
+    /// </summary>
+    /// <param name="x">The value where the distribution function is evaluated.</param>
+    /// <param name="alpha">Distribution parameter alpha (broadness exponent).</param>
+    /// <param name="beta">Distribution parameter beta (skew).</param>
+    /// <param name="tempStorage">Temporary storage that can be reused between calls.</param>
+    /// <param name="precision">Goal for the relative precision.</param>
+    /// <returns>The cumulative probability P(X &lt;= x).</returns>
     public static double CDF(double x, double alpha, double beta, ref object? tempStorage, double precision)
     {
       double abe = GetAbeFromBeta(beta);
       return CDF(x, alpha, beta, abe, 1, 0, ref tempStorage, DefaultPrecision);
     }
 
+    /// <summary>
+    /// Gets the cumulative distribution function (CDF) for the specified scale and location.
+    /// </summary>
+    /// <param name="x">The value where the distribution function is evaluated.</param>
+    /// <param name="alpha">Distribution parameter alpha (broadness exponent).</param>
+    /// <param name="beta">Distribution parameter beta (skew).</param>
+    /// <param name="scale">Scale parameter.</param>
+    /// <param name="location">Location parameter.</param>
+    /// <param name="tempStorage">Temporary storage that can be reused between calls.</param>
+    /// <param name="precision">Goal for the relative precision.</param>
+    /// <returns>The cumulative probability P(X &lt;= x).</returns>
     public static double CDF(double x, double alpha, double beta, double scale, double location, ref object? tempStorage, double precision)
     {
       double abe = GetAbeFromBeta(beta);
       return CDF(x, alpha, beta, abe, scale, location, ref tempStorage, DefaultPrecision);
     }
 
+    /// <summary>
+    /// Gets the cumulative distribution function (CDF) of the standardized S0 stable distribution.
+    /// </summary>
+    /// <param name="x">The value where the distribution function is evaluated.</param>
+    /// <param name="alpha">Distribution parameter alpha (broadness exponent).</param>
+    /// <param name="beta">Distribution parameter beta (skew).</param>
+    /// <param name="abe">
+    /// Parameter to specify beta with higher accuracy around -1 and 1.
+    /// It is 1 - beta for beta &gt;= 0 or 1 + beta for beta &lt; 0.
+    /// </param>
+    /// <returns>The cumulative probability P(X &lt;= x).</returns>
     public static double CDF(double x, double alpha, double beta, double abe)
     {
       object? temp = null;
       return CDF(x, alpha, beta, abe, 1, 0, ref temp, DefaultPrecision);
     }
 
+    /// <summary>
+    /// Gets the cumulative distribution function (CDF) for the specified scale and location.
+    /// </summary>
+    /// <param name="x">The value where the distribution function is evaluated.</param>
+    /// <param name="alpha">Distribution parameter alpha (broadness exponent).</param>
+    /// <param name="beta">Distribution parameter beta (skew).</param>
+    /// <param name="abe">
+    /// Parameter to specify beta with higher accuracy around -1 and 1.
+    /// It is 1 - beta for beta &gt;= 0 or 1 + beta for beta &lt; 0.
+    /// </param>
+    /// <param name="scale">Scale parameter.</param>
+    /// <param name="location">Location parameter.</param>
+    /// <returns>The cumulative probability P(X &lt;= x).</returns>
     public static double CDF(double x, double alpha, double beta, double abe, double scale, double location)
     {
       object? temp = null;
       return CDF(x, alpha, beta, abe, scale, location, ref temp, DefaultPrecision);
     }
 
+    /// <summary>
+    /// Gets the cumulative distribution function (CDF) for the specified S0 parameters, scale, and location.
+    /// </summary>
+    /// <param name="x">The value where the distribution function is evaluated.</param>
+    /// <param name="alpha">Distribution parameter alpha (broadness exponent).</param>
+    /// <param name="beta">Distribution parameter beta (skew).</param>
+    /// <param name="abe">
+    /// Parameter to specify beta with higher accuracy around -1 and 1.
+    /// It is 1 - beta for beta &gt;= 0 or 1 + beta for beta &lt; 0.
+    /// </param>
+    /// <param name="scale">Scale parameter.</param>
+    /// <param name="location">Location parameter.</param>
+    /// <param name="tempStorage">Temporary storage that can be reused between calls.</param>
+    /// <param name="precision">Goal for the relative precision.</param>
+    /// <returns>The cumulative probability P(X &lt;= x).</returns>
     public static double CDF(double x, double alpha, double beta, double abe, double scale, double location, ref object? tempStorage, double precision)
     {
       // test input parameter
@@ -448,6 +648,18 @@ namespace Altaxo.Calc.Probability
       }
     }
 
+    /// <summary>
+    /// Calculates the CDF for the special case alpha = 1.
+    /// </summary>
+    /// <param name="x">The standardized argument.</param>
+    /// <param name="beta">Distribution parameter beta (skew).</param>
+    /// <param name="abe">
+    /// Parameter to specify beta with higher accuracy around -1 and 1.
+    /// It is 1 - beta for beta &gt;= 0 or 1 + beta for beta &lt; 0.
+    /// </param>
+    /// <param name="tempStorage">Temporary storage that can be reused between calls.</param>
+    /// <param name="precision">Goal for the relative precision.</param>
+    /// <returns>The cumulative probability P(X &lt;= x).</returns>
     public static double CDFMethodAlphaOne(double x, double beta, double abe, ref object? tempStorage, double precision)
     {
       if (0 == beta)
@@ -469,6 +681,13 @@ namespace Altaxo.Calc.Probability
 
     #region Quantile
 
+    /// <summary>
+    /// Gets the quantile (inverse CDF) for the standardized S0 stable distribution.
+    /// </summary>
+    /// <param name="p">The probability in [0, 1].</param>
+    /// <param name="alpha">Distribution parameter alpha (broadness exponent).</param>
+    /// <param name="beta">Distribution parameter beta (skew).</param>
+    /// <returns>The value x such that CDF(x) = <paramref name="p"/>.</returns>
     public static double Quantile(double p, double alpha, double beta)
     {
       object? tempStorage = null;
@@ -476,12 +695,36 @@ namespace Altaxo.Calc.Probability
       return Quantile(p, alpha, beta, abe, ref tempStorage, DefaultPrecision);
     }
 
+    /// <summary>
+    /// Gets the quantile (inverse CDF) for the standardized S0 stable distribution.
+    /// </summary>
+    /// <param name="p">The probability in [0, 1].</param>
+    /// <param name="alpha">Distribution parameter alpha (broadness exponent).</param>
+    /// <param name="beta">Distribution parameter beta (skew).</param>
+    /// <param name="abe">
+    /// Parameter to specify beta with higher accuracy around -1 and 1.
+    /// It is 1 - beta for beta &gt;= 0 or 1 + beta for beta &lt; 0.
+    /// </param>
+    /// <returns>The value x such that CDF(x) = <paramref name="p"/>.</returns>
     public static double Quantile(double p, double alpha, double beta, double abe)
     {
       object? tempStorage = null;
       return Quantile(p, alpha, beta, abe, ref tempStorage, DefaultPrecision);
     }
 
+    /// <summary>
+    /// Gets the quantile (inverse CDF) for the standardized S0 stable distribution.
+    /// </summary>
+    /// <param name="p">The probability in [0, 1].</param>
+    /// <param name="alpha">Distribution parameter alpha (broadness exponent).</param>
+    /// <param name="beta">Distribution parameter beta (skew).</param>
+    /// <param name="abe">
+    /// Parameter to specify beta with higher accuracy around -1 and 1.
+    /// It is 1 - beta for beta &gt;= 0 or 1 + beta for beta &lt; 0.
+    /// </param>
+    /// <param name="tempStorage">Temporary storage that can be reused between calls.</param>
+    /// <param name="precision">Goal for the relative precision.</param>
+    /// <returns>The value x such that CDF(x) = <paramref name="p"/>, or <see cref="double.NaN"/> if no root was found.</returns>
     public static double Quantile(double p, double alpha, double beta, double abe, ref object? tempStorage, double precision)
     {
       double xguess = Math.Exp(2 / alpha); // guess value for a nearly constant p value in dependence of alpha
@@ -506,6 +749,20 @@ namespace Altaxo.Calc.Probability
 
     #region Calculation of integration parameters
 
+    /// <summary>
+    /// Computes parameters used for the direct integration approach for alpha &lt; 1 (Gn variant).
+    /// </summary>
+    /// <param name="x">The standardized argument.</param>
+    /// <param name="alpha">Distribution parameter alpha (broadness exponent).</param>
+    /// <param name="beta">Distribution parameter beta (skew).</param>
+    /// <param name="abe">
+    /// Parameter to specify beta with higher accuracy around -1 and 1.
+    /// It is 1 - beta for beta &gt;= 0 or 1 + beta for beta &lt; 0.
+    /// </param>
+    /// <param name="factorp">Returned scaling factor p used by the integrand.</param>
+    /// <param name="facdiv">Returned divisor/scaling factor used by the integrand.</param>
+    /// <param name="dev">Returned phase shift value.</param>
+    /// <param name="logPdfPrefactor">Returned logarithm of the multiplicative PDF prefactor.</param>
     public static void GetAlt1GnParameter(double x, double alpha, double beta, double abe,
                                           out double factorp, out double facdiv, out double dev, out double logPdfPrefactor)
     {
@@ -522,6 +779,20 @@ namespace Altaxo.Calc.Probability
       logPdfPrefactor = Math.Log(alpha / (Math.PI * Math.Abs(alpha - 1) * (xx)));
     }
 
+    /// <summary>
+    /// Computes parameters used for the direct integration approach for alpha &lt; 1 (Gp variant).
+    /// </summary>
+    /// <param name="x">The standardized argument.</param>
+    /// <param name="alpha">Distribution parameter alpha (broadness exponent).</param>
+    /// <param name="beta">Distribution parameter beta (skew).</param>
+    /// <param name="abe">
+    /// Parameter to specify beta with higher accuracy around -1 and 1.
+    /// It is 1 - beta for beta &gt;= 0 or 1 + beta for beta &lt; 0.
+    /// </param>
+    /// <param name="factorp">Returned scaling factor p used by the integrand.</param>
+    /// <param name="facdiv">Returned divisor/scaling factor used by the integrand.</param>
+    /// <param name="dev">Returned phase shift value.</param>
+    /// <param name="logPdfPrefactor">Returned logarithm of the multiplicative PDF prefactor.</param>
     public static void GetAlt1GpParameter(double x, double alpha, double beta, double abe,
                                           out double factorp, out double facdiv, out double dev, out double logPdfPrefactor)
     {
@@ -537,6 +808,20 @@ namespace Altaxo.Calc.Probability
       logPdfPrefactor = Math.Log(alpha / (Math.PI * Math.Abs(alpha - 1) * xx));
     }
 
+    /// <summary>
+    /// Computes parameters used for the direct integration approach for alpha &gt; 1 (Gn variant).
+    /// </summary>
+    /// <param name="x">The standardized argument.</param>
+    /// <param name="alpha">Distribution parameter alpha (broadness exponent).</param>
+    /// <param name="beta">Distribution parameter beta (skew).</param>
+    /// <param name="abe">
+    /// Parameter to specify beta with higher accuracy around -1 and 1.
+    /// It is 1 - beta for beta &gt;= 0 or 1 + beta for beta &lt; 0.
+    /// </param>
+    /// <param name="factorp">Returned scaling factor p used by the integrand.</param>
+    /// <param name="factorw">Returned scaling factor w used by the integrand.</param>
+    /// <param name="dev">Returned phase shift value.</param>
+    /// <param name="logPrefactor">Returned logarithm of the multiplicative prefactor.</param>
     public static void GetAgt1GnParameter(double x, double alpha, double beta, double abe,
                                                  out double factorp, out double factorw, out double dev, out double logPrefactor)
     {
@@ -558,6 +843,20 @@ namespace Altaxo.Calc.Probability
       logPrefactor = Math.Log(alpha / (Math.PI * Math.Abs(alpha - 1) * xx));
     }
 
+    /// <summary>
+    /// Computes parameters used for the direct integration approach for alpha &gt; 1 (Gp variant).
+    /// </summary>
+    /// <param name="x">The standardized argument.</param>
+    /// <param name="alpha">Distribution parameter alpha (broadness exponent).</param>
+    /// <param name="beta">Distribution parameter beta (skew).</param>
+    /// <param name="abe">
+    /// Parameter to specify beta with higher accuracy around -1 and 1.
+    /// It is 1 - beta for beta &gt;= 0 or 1 + beta for beta &lt; 0.
+    /// </param>
+    /// <param name="factorp">Returned scaling factor p used by the integrand.</param>
+    /// <param name="factorw">Returned scaling factor w used by the integrand.</param>
+    /// <param name="dev">Returned phase shift value.</param>
+    /// <param name="logPrefactor">Returned logarithm of the multiplicative prefactor.</param>
     public static void GetAgt1GpParameter(double x, double alpha, double beta, double abe,
                                                  out double factorp, out double factorw, out double dev, out double logPrefactor)
     {

@@ -27,7 +27,7 @@
 namespace Altaxo.Calc.Regression.Nonlinear
 {
   /// <summary>
-  /// The default scaling variance returns always 1.
+  /// Variance scaling that returns a constant weight (by default, <c>1</c>) for all data points.
   /// </summary>
   public class ConstantVarianceScaling : IVarianceScaling
   {
@@ -39,6 +39,7 @@ namespace Altaxo.Calc.Regression.Nonlinear
     [Altaxo.Serialization.Xml.XmlSerializationSurrogateFor(typeof(ConstantVarianceScaling), 1)]
     public class XmlSerializationSurrogate0 : Altaxo.Serialization.Xml.IXmlSerializationSurrogate
     {
+      /// <inheritdoc/>
       public virtual void Serialize(object obj, Altaxo.Serialization.Xml.IXmlSerializationInfo info)
       {
         var s = (ConstantVarianceScaling)obj;
@@ -46,6 +47,7 @@ namespace Altaxo.Calc.Regression.Nonlinear
         info.AddValue("ScalingFactor", s._scaling);
       }
 
+      /// <inheritdoc/>
       public virtual object Deserialize(object? o, Altaxo.Serialization.Xml.IXmlDeserializationInfo info, object? parent)
       {
         ConstantVarianceScaling s = (ConstantVarianceScaling?)o ?? new ConstantVarianceScaling();
@@ -59,7 +61,7 @@ namespace Altaxo.Calc.Regression.Nonlinear
     #endregion Serialization
 
     /// <summary>
-    /// Returns true when the scaling factor is 1 (one).
+    /// Gets a value indicating whether the scaling factor is <c>1</c>.
     /// </summary>
     public bool IsDefault
     {
@@ -69,16 +71,19 @@ namespace Altaxo.Calc.Regression.Nonlinear
       }
     }
 
+    /// <inheritdoc/>
     public double GetWeight(double yr, int i)
     {
       return _scaling;
     }
 
+    /// <inheritdoc/>
     public string ShortName
     {
       get { return "N2"; }
     }
 
+    /// <inheritdoc/>
     public object Clone()
     {
       var result = new ConstantVarianceScaling

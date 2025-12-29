@@ -36,18 +36,21 @@ using Altaxo.Calc.LinearAlgebra;
 
 namespace Altaxo.Calc.Optimization
 {
-  ///<summary>Base class for Line Search method declaration</summary>
+  /// <summary>Base class for line search method declarations.</summary>
   /// <remarks>
   /// <para>Copyright (c) 2003-2004, dnAnalytics Project. All rights reserved. See <a>http://www.dnAnalytics.net</a> for details.</para>
-  /// <para>Adopted to Altaxo (c) 2005 Dr. Dirk Lellinger.</para>
+  /// <para>Adopted for Altaxo (c) 2005 Dr. Dirk Lellinger.</para>
   /// </remarks>
   public abstract class LineSearchMethod : OptimizationMethod
   {
-    /// <summary>Minimize the given cost function</summary>
-    /// <param name="x">Start point of search.</param>
-    /// <param name="direction">Direction of search.</param>
-    /// <param name="step">Scaling factor to calculate the second evaluation point after the start point. The second evaluation point is calculated from <c>x+direction*step</c>.</param>
-    /// <returns>The point where the given const function is minimal.</returns>
+    /// <summary>Minimizes the given cost function along a search direction.</summary>
+    /// <param name="x">Start point of the search.</param>
+    /// <param name="direction">Search direction.</param>
+    /// <param name="step">
+    /// Scaling factor used to calculate the second evaluation point after the start point.
+    /// The second evaluation point is calculated from <c>x + direction * step</c>.
+    /// </param>
+    /// <returns>The point where the given cost function is minimal along the search direction.</returns>
     public abstract Vector<double> Search(Vector<double> x, Vector<double> direction, double step);
   }
 }

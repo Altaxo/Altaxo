@@ -28,20 +28,20 @@ using System;
 namespace Altaxo.Calc.Probability
 {
   /// <summary>
-  /// Provides generation of laplace distributed random numbers.
+  /// Provides generation of Laplace distributed random numbers.
   /// </summary>
   /// <remarks>
-  /// The implementation of the <see cref="LaplaceDistribution"/> type bases upon information presented on
-  ///   <a href="http://en.wikipedia.org/wiki/Laplace_distribution">Wikipedia - Laplace distribution</a>.
+  /// The implementation of the <see cref="LaplaceDistribution"/> type is based on information presented on
+  /// <a href="http://en.wikipedia.org/wiki/Laplace_distribution">Wikipedia - Laplace distribution</a>.
   /// </remarks>
   public class LaplaceDistribution : ContinuousDistribution
   {
     #region instance fields
 
     /// <summary>
-    /// Gets or sets the parameter alpha which is used for generation of laplace distributed random numbers.
+    /// Gets or sets the parameter alpha which is used for generation of Laplace distributed random numbers.
     /// </summary>
-    /// <remarks>Call <see cref="IsValidAlpha"/> to determine whether a value is valid and therefor assignable.</remarks>
+    /// <remarks>Call <see cref="IsValidAlpha"/> to determine whether a value is valid and therefore assignable.</remarks>
     public double Alpha
     {
       get
@@ -60,9 +60,9 @@ namespace Altaxo.Calc.Probability
     private double alpha;
 
     /// <summary>
-    /// Gets or sets the parameter mu which is used for generation of laplace distributed random numbers.
+    /// Gets or sets the parameter mu which is used for generation of Laplace distributed random numbers.
     /// </summary>
-    /// <remarks>Call <see cref="IsValidMu"/> to determine whether a value is valid and therefor assignable.</remarks>
+    /// <remarks>Call <see cref="IsValidMu"/> to determine whether a value is valid and therefore assignable.</remarks>
     public double Mu
     {
       get
@@ -106,11 +106,28 @@ namespace Altaxo.Calc.Probability
     {
     }
 
+    /// <summary>
+    /// Initializes a new instance of the <see cref="LaplaceDistribution"/> class.
+    /// </summary>
+    /// <param name="mu">Location parameter.</param>
+    /// <param name="alpha">Scale parameter (must be positive).</param>
     public LaplaceDistribution(double mu, double alpha)
       : this(mu, alpha, DefaultGenerator)
     {
     }
 
+    /// <summary>
+    /// Initializes a new instance of the <see cref="LaplaceDistribution"/> class.
+    /// </summary>
+    /// <param name="mu">Location parameter.</param>
+    /// <param name="alpha">Scale parameter (must be positive).</param>
+    /// <param name="generator">A <see cref="Generator"/> object.</param>
+    /// <exception cref="ArgumentNullException">
+    /// <paramref name="generator"/> is <see langword="null"/>.
+    /// </exception>
+    /// <exception cref="ArgumentOutOfRangeException">
+    /// <paramref name="alpha"/> is out of range, or <paramref name="mu"/> is not finite.
+    /// </exception>
     public LaplaceDistribution(double mu, double alpha, Generator generator)
       : base(generator)
     {
@@ -121,6 +138,14 @@ namespace Altaxo.Calc.Probability
 
     #region instance methods
 
+    /// <summary>
+    /// Initializes this instance with the specified distribution parameters.
+    /// </summary>
+    /// <param name="mu">Location parameter.</param>
+    /// <param name="alpha">Scale parameter (must be positive).</param>
+    /// <exception cref="ArgumentOutOfRangeException">
+    /// <paramref name="alpha"/> is out of range, or <paramref name="mu"/> is not finite.
+    /// </exception>
     public void Initialize(double mu, double alpha)
     {
       if (!IsValidMu(mu))
@@ -158,9 +183,7 @@ namespace Altaxo.Calc.Probability
 
     #region overridden Distribution members
 
-    /// <summary>
-    /// Gets the minimum possible value of laplace distributed random numbers.
-    /// </summary>
+    /// <inheritdoc/>
     public override double Minimum
     {
       get
@@ -169,9 +192,7 @@ namespace Altaxo.Calc.Probability
       }
     }
 
-    /// <summary>
-    /// Gets the maximum possible value of laplace distributed random numbers.
-    /// </summary>
+    /// <inheritdoc/>
     public override double Maximum
     {
       get
@@ -180,9 +201,7 @@ namespace Altaxo.Calc.Probability
       }
     }
 
-    /// <summary>
-    /// Gets the mean value of laplace distributed random numbers.
-    /// </summary>
+    /// <inheritdoc/>
     public override double Mean
     {
       get
@@ -191,9 +210,7 @@ namespace Altaxo.Calc.Probability
       }
     }
 
-    /// <summary>
-    /// Gets the median of laplace distributed random numbers.
-    /// </summary>
+    /// <inheritdoc/>
     public override double Median
     {
       get
@@ -202,9 +219,7 @@ namespace Altaxo.Calc.Probability
       }
     }
 
-    /// <summary>
-    /// Gets the variance of laplace distributed random numbers.
-    /// </summary>
+    /// <inheritdoc/>
     public override double Variance
     {
       get
@@ -213,9 +228,7 @@ namespace Altaxo.Calc.Probability
       }
     }
 
-    /// <summary>
-    /// Gets the mode of laplace distributed random numbers.
-    /// </summary>
+    /// <inheritdoc/>
     public override double[] Mode
     {
       get
@@ -224,10 +237,7 @@ namespace Altaxo.Calc.Probability
       }
     }
 
-    /// <summary>
-    /// Returns a laplace distributed floating point random number.
-    /// </summary>
-    /// <returns>A laplace distributed double-precision floating point number.</returns>
+    /// <inheritdoc/>
     public override double NextDouble()
     {
       double rand = 0.5 - Generator.NextDouble();
@@ -238,31 +248,55 @@ namespace Altaxo.Calc.Probability
 
     #region CdfPdfQuantile
 
+    /// <inheritdoc/>
     public override double CDF(double x)
     {
       return CDF(x, mu, alpha);
     }
 
+    /// <summary>
+    /// Computes the cumulative distribution function (CDF) for a Laplace distribution with the given parameters.
+    /// </summary>
+    /// <param name="x">The value at which to evaluate the CDF.</param>
+    /// <param name="mu">Location parameter.</param>
+    /// <param name="beta">Scale parameter (must be positive).</param>
+    /// <returns>The value of the cumulative distribution function at <paramref name="x"/>.</returns>
     public static double CDF(double x, double mu, double beta)
     {
       return (1 + (1 - Math.Exp(-((-mu + x) * Math.Sign(-mu + x)) / beta)) * Math.Sign(-mu + x)) / 2;
     }
 
+    /// <inheritdoc/>
     public override double PDF(double x)
     {
       return PDF(x, mu, alpha);
     }
 
+    /// <summary>
+    /// Computes the probability density function (PDF) for a Laplace distribution with the given parameters.
+    /// </summary>
+    /// <param name="x">The value at which to evaluate the PDF.</param>
+    /// <param name="mu">Location parameter.</param>
+    /// <param name="beta">Scale parameter (must be positive).</param>
+    /// <returns>The value of the probability density function at <paramref name="x"/>.</returns>
     public static double PDF(double x, double mu, double beta)
     {
       return Math.Exp((mu - x) * Math.Sign(x - mu) / beta) / (2 * beta);
     }
 
+    /// <inheritdoc/>
     public override double Quantile(double p)
     {
       return Quantile(p, mu, alpha);
     }
 
+    /// <summary>
+    /// Computes the quantile (inverse CDF) for a Laplace distribution with the given parameters.
+    /// </summary>
+    /// <param name="p">The probability for which to compute the quantile.</param>
+    /// <param name="mu">Location parameter.</param>
+    /// <param name="beta">Scale parameter (must be positive).</param>
+    /// <returns>The quantile corresponding to <paramref name="p"/>.</returns>
     public static double Quantile(double p, double mu, double beta)
     {
       return mu - beta * Math.Log(1 - (-1 + 2 * p) * Math.Sign(-1 + 2 * p)) * Math.Sign(-1 + 2 * p);

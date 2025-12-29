@@ -37,16 +37,15 @@ using System;
 namespace Altaxo.Calc.Probability
 {
   /// <summary>
-  /// Generates Beta distributed random numbers.
+  /// Generates beta distributed random numbers.
   /// </summary>
-  /// /// <remarks>
-  /// The implementation of the <see cref="BetaDistribution"/> type bases upon information presented on
-  ///   <a href="http://en.wikipedia.org/wiki/Beta_distribution">Wikipedia - Beta distribution</a> and
-  ///   <a href="http://www.xycoon.com/beta_randomnumbers.htm">Xycoon - Beta Distribution</a>.
+  /// <remarks>
+  /// The implementation of the <see cref="BetaDistribution"/> type is based upon information presented on
+  /// <a href="http://en.wikipedia.org/wiki/Beta_distribution">Wikipedia - Beta distribution</a> and
+  /// <a href="http://www.xycoon.com/beta_randomnumbers.htm">Xycoon - Beta Distribution</a>.
   /// </remarks>
   /// <remarks><code>
-  ///
-  /// Return Beta distributed random deviates according to the density
+  /// Return beta distributed random deviates according to the density
   ///
   ///                 a-1       b-1
   ///                x     (1-x)
@@ -57,20 +56,20 @@ namespace Altaxo.Calc.Probability
   ///
   /// References:
   ///
-  /// R. C. H. Cheng, Generating Beta Variatew with Non-integral Shape
+  /// R. C. H. Cheng, Generating Beta Variates with Non-integral Shape
   /// Parameters, Comm. ACM, 21, 317-322 (1978). (Algorithms BB and BC).
-  ///
-  /// </code>
-  ///   ///   <a href="http://en.wikipedia.org/wiki/Beta_distribution">Wikipedia - Beta distribution</a> and
-  ///   <a href="http://www.xycoon.com/beta_randomnumbers.htm">Xycoon - Beta Distribution</a>.
-  ///</remarks>
-
+  /// </code></remarks>
   public class BetaDistribution : ContinuousDistribution
   {
     protected double _alpha, _beta;
     protected double scale, a, hlpalpha, b, hlpbeta, delta, gamma, k1, k2, maxexp;
     protected bool algorithmBB;
 
+    /// <summary>
+    /// Initializes the distribution with the specified parameters.
+    /// </summary>
+    /// <param name="alpha">First parameter of the distribution.</param>
+    /// <param name="beta">Second parameter of the distribution.</param>
     public void Initialize(double alpha, double beta)
     {
       // check parameters
@@ -170,6 +169,7 @@ namespace Altaxo.Calc.Probability
     /// Returns a beta distributed floating point random number.
     /// </summary>
     /// <returns>A beta distributed double-precision floating point number.</returns>
+    /// <inheritdoc/>
     public override double NextDouble()
     {
       // returned on overflow
@@ -244,7 +244,7 @@ fin:
     /// <summary>
     /// Gets or sets the parameter alpha which is used for generation of beta distributed random numbers.
     /// </summary>
-    /// <remarks>Call <see cref="IsValidAlpha"/> to determine whether a value is valid and therefor assignable.</remarks>
+    /// <remarks>Call <see cref="IsValidAlpha"/> to determine whether a value is valid and therefore assignable.</remarks>
     public double Alpha
     {
       get
@@ -260,7 +260,7 @@ fin:
     /// <summary>
     /// Gets or sets the parameter beta which is used for generation of beta distributed random numbers.
     /// </summary>
-    /// <remarks>Call <see cref="IsValidBeta"/> to determine whether a value is valid and therefor assignable.</remarks>
+    /// <remarks>Call <see cref="IsValidBeta"/> to determine whether a value is valid and therefore assignable.</remarks>
     public double Beta
     {
       get
@@ -304,6 +304,7 @@ fin:
     /// <summary>
     /// Gets the minimum possible value of beta distributed random numbers.
     /// </summary>
+    /// <inheritdoc/>
     public override double Minimum
     {
       get
@@ -315,6 +316,7 @@ fin:
     /// <summary>
     /// Gets the maximum possible value of beta distributed random numbers.
     /// </summary>
+    /// <inheritdoc/>
     public override double Maximum
     {
       get
@@ -326,6 +328,7 @@ fin:
     /// <summary>
     /// Gets the mean value of beta distributed random numbers.
     /// </summary>
+    /// <inheritdoc/>
     public override double Mean
     {
       get
@@ -337,6 +340,7 @@ fin:
     /// <summary>
     /// Gets the median of beta distributed random numbers.
     /// </summary>
+    /// <inheritdoc/>
     public override double Median
     {
       get
@@ -348,6 +352,7 @@ fin:
     /// <summary>
     /// Gets the variance of beta distributed random numbers.
     /// </summary>
+    /// <inheritdoc/>
     public override double Variance
     {
       get
@@ -359,6 +364,7 @@ fin:
     /// <summary>
     /// Gets the mode of beta distributed random numbers.
     /// </summary>
+    /// <inheritdoc/>
     public override double[] Mode
     {
       get
@@ -390,21 +396,39 @@ fin:
 
     #region CdfPdfQuantile
 
+    /// <inheritdoc/>
     public override double CDF(double x)
     {
       return CDF(x, _alpha, _beta);
     }
 
+    /// <summary>
+    /// Calculates the cumulative distribution function for the specified parameters.
+    /// </summary>
+    /// <param name="x">Argument.</param>
+    /// <param name="A">First parameter of the distribution.</param>
+    /// <param name="B">Second parameter of the distribution.</param>
+    /// <returns>
+    /// The probability that the random variable is less than or equal to <paramref name="x"/>.
+    /// </returns>
     public static double CDF(double x, double A, double B)
     {
       return Calc.GammaRelated.BetaRegularized(x, A, B);
     }
 
+    /// <inheritdoc/>
     public override double PDF(double x)
     {
       return PDF(x, _alpha, _beta);
     }
 
+    /// <summary>
+    /// Calculates the probability density function for the specified parameters.
+    /// </summary>
+    /// <param name="x">Argument.</param>
+    /// <param name="A">First parameter of the distribution.</param>
+    /// <param name="B">Second parameter of the distribution.</param>
+    /// <returns>The relative likelihood for the random variable to occur at <paramref name="x"/>.</returns>
     public static double PDF(double x, double A, double B)
     {
       if (x < 0 || x > 1)
@@ -425,11 +449,21 @@ fin:
       }
     }
 
+    /// <inheritdoc/>
     public override double Quantile(double p)
     {
       return Quantile(p, _alpha, _beta);
     }
 
+    /// <summary>
+    /// Calculates the quantile function for the specified parameters.
+    /// </summary>
+    /// <param name="p">The probability.</param>
+    /// <param name="A">First parameter of the distribution.</param>
+    /// <param name="B">Second parameter of the distribution.</param>
+    /// <returns>
+    /// The point <c>x</c> at which the cumulative distribution function is equal to <paramref name="p"/>.
+    /// </returns>
     public static double Quantile(double p, double A, double B)
     {
       return Calc.GammaRelated.InverseBetaRegularized(p, A, B);

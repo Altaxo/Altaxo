@@ -47,7 +47,7 @@ using System;
 namespace Altaxo.Calc.Probability
 {
   /// <summary>
-  /// Provides generation of triangular distributed random numbers.
+  /// Provides generation of triangular-distributed random numbers.
   /// </summary>
   /// <remarks>
   /// The parametrization is equal to the parametrization in Mathematica.
@@ -174,7 +174,7 @@ namespace Altaxo.Calc.Probability
     /// </summary>
     /// <param name="min">The left boundary of the PDF.</param>
     /// <param name="max">The right boundary of the PDF.</param>
-    /// <param name="c">The location of the maximum of the PDF (has to be inbetween (min, max).</param>
+    /// <param name="c">The location of the maximum of the PDF (must be between <paramref name="min"/> and <paramref name="max"/>).</param>
     public TriangularDistribution(double min, double max, double c)
       : this(min, max, c, DefaultGenerator)
         {
@@ -185,8 +185,8 @@ namespace Altaxo.Calc.Probability
     /// </summary>
     /// <param name="min">The left boundary of the PDF.</param>
     /// <param name="max">The right boundary of the PDF.</param>
-    /// <param name="c">The location of the maximum of the PDF (has to be inbetween (min, max).</param>
-    /// <param name="generator">The generator.</param>
+    /// <param name="c">The location of the maximum of the PDF (must be between <paramref name="min"/> and <paramref name="max"/>).</param>
+    /// <param name="generator">The random number generator.</param>
     public TriangularDistribution(double min, double max, double c, Generator generator)
       : base(generator)
     {
@@ -202,7 +202,10 @@ namespace Altaxo.Calc.Probability
     /// </summary>
     /// <param name="min">The left boundary of the PDF.</param>
     /// <param name="max">The right boundary of the PDF.</param>
-    /// <param name="c">The location of the maximum of the PDF (has to be inbetween (min, max).</param>
+    /// <param name="c">The location of the maximum of the PDF (must be between <paramref name="min"/> and <paramref name="max"/>).</param>
+    /// <exception cref="ArgumentOutOfRangeException">
+    /// The parameter combination is invalid.
+    /// </exception>
     public void Initialize(double min, double max, double c)
         {
       if (!(min < max && min <= c))
@@ -277,6 +280,7 @@ namespace Altaxo.Calc.Probability
     /// <summary>
     /// Gets the minimum possible value of triangular distributed random numbers.
     /// </summary>
+    /// <inheritdoc/>
     public override double Minimum
     {
       get
@@ -288,6 +292,7 @@ namespace Altaxo.Calc.Probability
     /// <summary>
     /// Gets the maximum possible value of triangular distributed random numbers.
     /// </summary>
+    /// <inheritdoc/>
     public override double Maximum
     {
       get
@@ -299,6 +304,7 @@ namespace Altaxo.Calc.Probability
     /// <summary>
     /// Gets the mean value of triangular distributed random numbers.
     /// </summary>
+    /// <inheritdoc/>
     public override double Mean
     {
       get
@@ -310,6 +316,7 @@ namespace Altaxo.Calc.Probability
     /// <summary>
     /// Gets the median of triangular distributed random numbers.
     /// </summary>
+    /// <inheritdoc/>
     public override double Median
     {
       get
@@ -330,6 +337,7 @@ namespace Altaxo.Calc.Probability
     /// <summary>
     /// Gets the variance of triangular distributed random numbers.
     /// </summary>
+    /// <inheritdoc/>
     public override double Variance
     {
       get
@@ -342,6 +350,7 @@ namespace Altaxo.Calc.Probability
     /// <summary>
     /// Gets the mode of triangular distributed random numbers.
     /// </summary>
+    /// <inheritdoc/>
     public override double[] Mode
     {
       get
@@ -354,6 +363,7 @@ namespace Altaxo.Calc.Probability
     /// Returns a triangular distributed floating point random number.
     /// </summary>
     /// <returns>A triangular distributed double-precision floating point number.</returns>
+    /// <inheritdoc/>
     public override double NextDouble()
     {
       double genNum = Generator.NextDouble();

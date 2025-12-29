@@ -30,22 +30,41 @@ using System;
 
 namespace Altaxo.Calc.RootFinding
 {
+  /// <summary>
+  /// Root finder using Newton's method.
+  /// </summary>
   public class NewtonRootFinder : AbstractRootFinder
   {
+    /// <summary>
+    /// Derivative of the function used by Newton's method.
+    /// </summary>
     protected Func<double, double> _derivativeOfFunction;
 
+    /// <summary>
+    /// Initializes a new instance of the <see cref="NewtonRootFinder"/> class.
+    /// </summary>
+    /// <param name="function">A continuous function.</param>
+    /// <param name="derivativeOfFunction">Derivative of <paramref name="function"/>.</param>
     public NewtonRootFinder(Func<double, double> function, Func<double, double> derivativeOfFunction)
       : base(function)
     {
       _derivativeOfFunction = derivativeOfFunction;
     }
 
+    /// <summary>
+    /// Initializes a new instance of the <see cref="NewtonRootFinder"/> class.
+    /// </summary>
+    /// <param name="function">A continuous function.</param>
+    /// <param name="derivativeOfFunction">Derivative of <paramref name="function"/>.</param>
+    /// <param name="maxNumberOfIterations">Maximum number of iterations allowed.</param>
+    /// <param name="accuracy">Desired accuracy for the computed root.</param>
     public NewtonRootFinder(Func<double, double> function, Func<double, double> derivativeOfFunction, int maxNumberOfIterations, double accuracy)
       : base(function, maxNumberOfIterations, accuracy)
     {
       _derivativeOfFunction = derivativeOfFunction;
     }
 
+    /// <inheritdoc/>
     protected override double Find()
     {
       double dx = 0;

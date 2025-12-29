@@ -29,25 +29,27 @@ using Altaxo.Calc.LinearAlgebra;
 namespace Altaxo.Calc.Regression.Multivariate
 {
   /// <summary>
-  /// Provides a strategie for grouping the data (spectra etc.) according to their corresponding
-  /// calibration values (concentration etc).
+  /// Provides a strategy for grouping observation data (spectra, etc.) according to their corresponding
+  /// calibration values (concentrations, etc.).
   /// </summary>
   public interface ICrossValidationGroupingStrategy
   {
     /// <summary>
-    /// Divides observations into groups according to the y-values (calibration values) in argument <c>matrixY</c>.
+    /// Divides observations into groups according to the <c>Y</c> values (calibration values) in <paramref name="matrixY"/>.
     /// </summary>
-    /// <param name="matrixY">Contains the y-values. Each observation corresponds to one or more y-values,
-    /// for instance concentrations, size etc.). The matrix consists of many observations (each row is one observation). Each observation
-    /// corresponds to one or more y-values, which are the columns of the matrix.
+    /// <param name="matrixY">
+    /// Contains the <c>Y</c> values. Each observation corresponds to one or more <c>Y</c> values (for instance concentrations, size, etc.).
+    /// The matrix consists of many observations (each row is one observation). The columns contain the <c>Y</c> values.
     /// </param>
-    /// <returns>An array of integer arrays. Each element of the main array is one group. The elements of each
-    /// subarray are the indices of the observations (==row numbers in matrixY), that are grouped together.</returns>
+    /// <returns>
+    /// An array of integer arrays. Each element of the main array is one group. The elements of each subarray are the indices of the
+    /// observations (row indices in <paramref name="matrixY"/>) that are grouped together.
+    /// </returns>
     int[][] Group(IROMatrix<double> matrixY);
   }
 
   /// <summary>
-  /// Represents the no-grouping strategy. Thus a call to <see cref="ICrossValidationGroupingStrategy.Group(IROMatrix{double})"/> will result in
+  /// Represents the no-grouping strategy. Thus, a call to <see cref="ICrossValidationGroupingStrategy.Group(IROMatrix{double})"/> will throw
   /// a <see cref="NotImplementedException"/>.
   /// </summary>
   public record CrossValidationGroupingStrategyNone : ICrossValidationGroupingStrategy
@@ -57,10 +59,12 @@ namespace Altaxo.Calc.Regression.Multivariate
     [Altaxo.Serialization.Xml.XmlSerializationSurrogateFor(typeof(CrossValidationGroupingStrategyNone), 0)]
     public class SerializationSurrogate0 : Altaxo.Serialization.Xml.IXmlSerializationSurrogate
     {
+      /// <inheritdoc/>
       public void Serialize(object obj, Altaxo.Serialization.Xml.IXmlSerializationInfo info)
       {
       }
 
+      /// <inheritdoc/>
       public object Deserialize(object? o, Altaxo.Serialization.Xml.IXmlDeserializationInfo info, object? parent)
       {
         return new CrossValidationGroupingStrategyNone();
@@ -69,6 +73,7 @@ namespace Altaxo.Calc.Regression.Multivariate
     #endregion
 
 
+    /// <inheritdoc/>
     public int[][] Group(IROMatrix<double> matrixY)
     {
       throw new NotImplementedException();
@@ -76,7 +81,7 @@ namespace Altaxo.Calc.Regression.Multivariate
   }
 
   /// <summary>
-  /// This strategy groups together similar observations, i.e. observations that have exactly the same target values.
+  /// Groups together similar observations, i.e. observations that have exactly the same target values.
   /// </summary>
   public record CrossValidationGroupingStrategyExcludeGroupsOfSimilarMeasurements : ICrossValidationGroupingStrategy, Main.IImmutable
   {
@@ -85,10 +90,12 @@ namespace Altaxo.Calc.Regression.Multivariate
     [Altaxo.Serialization.Xml.XmlSerializationSurrogateFor(typeof(CrossValidationGroupingStrategyExcludeGroupsOfSimilarMeasurements), 0)]
     public class SerializationSurrogate0 : Altaxo.Serialization.Xml.IXmlSerializationSurrogate
     {
+      /// <inheritdoc/>
       public void Serialize(object obj, Altaxo.Serialization.Xml.IXmlSerializationInfo info)
       {
       }
 
+      /// <inheritdoc/>
       public object Deserialize(object? o, Altaxo.Serialization.Xml.IXmlDeserializationInfo info, object? parent)
       {
         return new CrossValidationGroupingStrategyExcludeGroupsOfSimilarMeasurements();
@@ -97,11 +104,7 @@ namespace Altaxo.Calc.Regression.Multivariate
     #endregion
 
 
-    /// <summary>
-    /// <see cref="ICrossValidationGroupingStrategy.Group" />
-    /// </summary>
-    /// <param name="Y"></param>
-    /// <returns></returns>
+    /// <inheritdoc/>
     public int[][] Group(IROMatrix<double> Y)
     {
       var groups = new List<List<int>>();
@@ -154,8 +157,8 @@ namespace Altaxo.Calc.Regression.Multivariate
   }
 
   /// <summary>
-  /// This strategy groups the observations into two groups. It try to part observations with the same target values
-  /// equally into the one group and the other group.
+  /// Groups the observations into two groups. It tries to split observations with the same target values
+  /// as evenly as possible between the one group and the other group.
   /// </summary>
   public record CrossValidationGroupingStrategyExcludeHalfObservations : ICrossValidationGroupingStrategy, Main.IImmutable
   {
@@ -164,10 +167,12 @@ namespace Altaxo.Calc.Regression.Multivariate
     [Altaxo.Serialization.Xml.XmlSerializationSurrogateFor(typeof(CrossValidationGroupingStrategyExcludeHalfObservations), 0)]
     public class SerializationSurrogate0 : Altaxo.Serialization.Xml.IXmlSerializationSurrogate
     {
+      /// <inheritdoc/>
       public void Serialize(object obj, Altaxo.Serialization.Xml.IXmlSerializationInfo info)
       {
       }
 
+      /// <inheritdoc/>
       public object Deserialize(object? o, Altaxo.Serialization.Xml.IXmlDeserializationInfo info, object? parent)
       {
         return new CrossValidationGroupingStrategyExcludeHalfObservations();
@@ -175,6 +180,7 @@ namespace Altaxo.Calc.Regression.Multivariate
     }
     #endregion
 
+    /// <inheritdoc/>
     public int[][] Group(IROMatrix<double> Y)
     {
       var groups = new List<int>[2];
@@ -201,7 +207,7 @@ namespace Altaxo.Calc.Regression.Multivariate
   }
 
   /// <summary>
-  /// Stragegy that groups each observation in an own group.
+  /// Strategy that groups each observation into its own group.
   /// </summary>
   public record CrossValidationGroupingStrategyExcludeSingleMeasurements : ICrossValidationGroupingStrategy, Main.IImmutable
   {
@@ -210,10 +216,12 @@ namespace Altaxo.Calc.Regression.Multivariate
     [Altaxo.Serialization.Xml.XmlSerializationSurrogateFor(typeof(CrossValidationGroupingStrategyExcludeSingleMeasurements), 0)]
     public class SerializationSurrogate0 : Altaxo.Serialization.Xml.IXmlSerializationSurrogate
     {
+      /// <inheritdoc/>
       public void Serialize(object obj, Altaxo.Serialization.Xml.IXmlSerializationInfo info)
       {
       }
 
+      /// <inheritdoc/>
       public object Deserialize(object? o, Altaxo.Serialization.Xml.IXmlDeserializationInfo info, object? parent)
       {
         return new CrossValidationGroupingStrategyExcludeSingleMeasurements();
@@ -222,6 +230,7 @@ namespace Altaxo.Calc.Regression.Multivariate
     #endregion
 
 
+    /// <inheritdoc/>
     public int[][] Group(IROMatrix<double> Y)
     {
       int[][] groups = new int[Y.RowCount][];

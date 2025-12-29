@@ -27,16 +27,16 @@ using System;
 namespace Altaxo.Calc
 {
   /// <summary>
-  /// Rounding of numbers
+  /// Rounding of numbers.
   /// </summary>
   public class Rounding
   {
     /// <summary>
-    /// This returns the next number k with k greater or equal i, and k mod n == 0.
+    /// Returns the next number <c>k</c> with <c>k &gt;= i</c> and <c>k mod n == 0</c>.
     /// </summary>
     /// <param name="i">The number to round up.</param>
     /// <param name="n">The rounding step.</param>
-    /// <returns></returns>
+    /// <returns>The smallest number <c>k</c> such that <c>k &gt;= i</c> and <c>k mod n == 0</c>.</returns>
     public static int RoundUp(int i, int n)
     {
       if (n <= 0)
@@ -47,11 +47,11 @@ namespace Altaxo.Calc
     }
 
     /// <summary>
-    /// This returns the next number k with k lesser or equal i, and k mod n == 0.
+    /// Returns the next number <c>k</c> with <c>k &lt;= i</c> and <c>k mod n == 0</c>.
     /// </summary>
     /// <param name="i">The number to round down.</param>
     /// <param name="n">The rounding step.</param>
-    /// <returns></returns>
+    /// <returns>The greatest number <c>k</c> such that <c>k &lt;= i</c> and <c>k mod n == 0</c>.</returns>
     public static int RoundDown(int i, int n)
     {
       if (n <= 0)
@@ -62,11 +62,11 @@ namespace Altaxo.Calc
     }
 
     /// <summary>
-    /// This returns the next number k with k greater or equal i, and k mod n == 0.
+    /// Returns the next number <c>k</c> with <c>k &gt;= i</c> and <c>k mod n == 0</c>.
     /// </summary>
     /// <param name="i">The number to round up.</param>
     /// <param name="n">The rounding step.</param>
-    /// <returns></returns>
+    /// <returns>The smallest number <c>k</c> such that <c>k &gt;= i</c> and <c>k mod n == 0</c>.</returns>
     public static long RoundUp(long i, long n)
     {
       if (n <= 0)
@@ -77,11 +77,11 @@ namespace Altaxo.Calc
     }
 
     /// <summary>
-    /// This returns the next number k with k lesser or equal i, and k mod n == 0.
+    /// Returns the next number <c>k</c> with <c>k &lt;= i</c> and <c>k mod n == 0</c>.
     /// </summary>
     /// <param name="i">The number to round down.</param>
     /// <param name="n">The rounding step.</param>
-    /// <returns></returns>
+    /// <returns>The greatest number <c>k</c> such that <c>k &lt;= i</c> and <c>k mod n == 0</c>.</returns>
     public static long RoundDown(long i, long n)
     {
       if (n <= 0)
@@ -92,12 +92,12 @@ namespace Altaxo.Calc
     }
 
     /// <summary>
-    /// Rounds a double number to the provided number of significant digits.
+    /// Rounds a double-precision value to the provided number of significant digits.
     /// </summary>
     /// <param name="x">The value to round.</param>
     /// <param name="significantDigits">The number of significant digits.</param>
+    /// <param name="rounding">The midpoint rounding rule that should be applied.</param>
     /// <returns>The number, rounded to the provided number of significant digits.</returns>
-    /// <param name="rounding">The rounding rule that should be applied.</param>
     public static double RoundToNumberOfSignificantDigits(double x, int significantDigits, MidpointRounding rounding)
     {
       if (significantDigits < 0)
@@ -127,13 +127,17 @@ namespace Altaxo.Calc
     /// <summary>
     /// Decomposes a double-precision floating-point number into its decimal mantissa and exponent.
     /// </summary>
-    /// <remarks>If the input value is <see cref="double.NaN"/>, <see cref="double.PositiveInfinity"/>,  <see
-    /// cref="double.NegativeInfinity"/>, or zero, the method returns the input value as the  mantissa and 0 as the
-    /// exponent.</remarks>
+    /// <remarks>
+    /// If the input value is <see cref="double.NaN"/>, <see cref="double.PositiveInfinity"/>,  <see
+    /// cref="double.NegativeInfinity"/>, or zero, the method returns the input value as the mantissa
+    /// and 0 as the exponent.
+    /// </remarks>
     /// <param name="x">The number to decompose. Must be a finite value or zero.</param>
-    /// <returns>A tuple containing the decimal mantissa and exponent. The mantissa is a double-precision  value in the range
-    /// -10 &lt; x &lt; 10, and the exponent is an integer representing the power of 10  such that <c> x == mantissa * 10^exponent</c>
-    /// approximates the input value.</returns>
+    /// <returns>
+    /// A tuple containing the decimal mantissa and exponent. The mantissa is a double-precision value in the range
+    /// <c>-10 &lt; mantissa &lt; 10</c>, and the exponent is an integer representing the power of 10 such that
+    /// <c>x == mantissa * 10^exponent</c> approximates the input value.
+    /// </returns>
     public static (double mantissa, int exponent) SplitIntoDecimalMantissaAndExponent(double x)
     {
       if (double.IsNaN(x) || double.IsInfinity(x) || x == 0)

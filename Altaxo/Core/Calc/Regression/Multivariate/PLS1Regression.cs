@@ -29,7 +29,8 @@ using Altaxo.Calc.LinearAlgebra;
 namespace Altaxo.Calc.Regression.Multivariate
 {
   /// <summary>
-  /// Summary description for PLS1Regression.
+  /// Implements Partial Least Squares regression (PLS1), i.e. PLS regression for multiple target variables
+  /// by running a separate PLS2 model for each target variable.
   /// </summary>
   public class PLS1Regression : MultivariateRegression
   {
@@ -38,15 +39,21 @@ namespace Altaxo.Calc.Regression.Multivariate
     protected IExtensibleVector<double> _PRESS;
 #nullable enable
 
+    /// <summary>
+    /// Gets the predicted error sum of squares (PRESS) values accumulated during analysis.
+    /// </summary>
     public IReadOnlyList<double> PRESS { get { return _PRESS; } }
 
+    /// <inheritdoc/>
     public override IReadOnlyList<double> GetPRESSFromPreprocessed(IROMatrix<double> matrixX)
     {
       return _PRESS;
     }
 
+    /// <inheritdoc/>
     protected override MultivariateCalibrationModel InternalCalibrationModel { get { return _calib; } }
 
+    /// <inheritdoc/>
     public override void SetCalibrationModel(IMultivariateCalibrationModel calib)
     {
       if (calib is PLS1CalibrationModel)
@@ -55,8 +62,10 @@ namespace Altaxo.Calc.Regression.Multivariate
         throw new ArgumentException("Expecting argument of type PLS1CalibrationModel, but actual type is " + calib.GetType().ToString());
     }
 
+    /// <inheritdoc/>
     public override int NumberOfSpectralResiduals { get { return _calib.NumberOfY; } }
 
+    /// <inheritdoc/>
     public override void Reset()
     {
       _calib = new PLS1CalibrationModel();
@@ -64,12 +73,12 @@ namespace Altaxo.Calc.Regression.Multivariate
     }
 
     /// <summary>
-    /// Creates an analyis from preprocessed spectra and preprocessed concentrations.
+    /// Creates a PLS1 regression from preprocessed spectra and preprocessed target variables.
     /// </summary>
-    /// <param name="matrixX">The spectral matrix (each spectrum is a row in the matrix). They must at least be centered.</param>
-    /// <param name="matrixY">The matrix of concentrations (each experiment is a row in the matrix). They must at least be centered.</param>
+    /// <param name="matrixX">The spectral matrix (each spectrum is a row in the matrix). It must at least be centered.</param>
+    /// <param name="matrixY">The matrix of target variables (each experiment is a row in the matrix). It must at least be centered.</param>
     /// <param name="maxFactors">Maximum number of factors for analysis.</param>
-    /// <returns>A regression object, which holds all the loads and weights neccessary for further calculations.</returns>
+    /// <returns>A regression instance containing the loads and weights necessary for further calculations.</returns>
     public static PLS1Regression CreateFromPreprocessed(IROMatrix<double> matrixX, IROMatrix<double> matrixY, int maxFactors)
     {
       var result = new PLS1Regression();
@@ -77,13 +86,7 @@ namespace Altaxo.Calc.Regression.Multivariate
       return result;
     }
 
-    /// <summary>
-    /// Creates an analyis from preprocessed spectra and preprocessed concentrations.
-    /// </summary>
-    /// <param name="matrixX">The spectral matrix (each spectrum is a row in the matrix). They must at least be centered.</param>
-    /// <param name="matrixY">The matrix of concentrations (each experiment is a row in the matrix). They must at least be centered.</param>
-    /// <param name="maxFactors">Maximum number of factors for analysis.</param>
-    /// <returns>A regression object, which holds all the loads and weights neccessary for further calculations.</returns>
+    /// <inheritdoc/>
     protected override void AnalyzeFromPreprocessedWithoutReset(IROMatrix<double> matrixX, IROMatrix<double> matrixY, int maxFactors)
     {
       int numberOfFactors = _calib.NumberOfFactors = Math.Min(matrixX.ColumnCount, maxFactors);
@@ -110,13 +113,7 @@ namespace Altaxo.Calc.Regression.Multivariate
       }
     }
 
-    /// <summary>
-    /// This predicts concentrations of unknown spectra.
-    /// </summary>
-    /// <param name="XU">Matrix of unknown spectra (preprocessed the same way as the calibration spectra).</param>
-    /// <param name="numFactors">Number of factors used for prediction.</param>
-    /// <param name="predictedY">On return, holds the predicted y values. (They are centered).</param>
-    /// <param name="spectralResiduals">On return, holds the spectral residual values.</param>
+    /// <inheritdoc/>
     public override void PredictedYAndSpectralResidualsFromPreprocessed(
       IROMatrix<double> XU, // unknown spectrum or spectra,  horizontal oriented
       int numFactors, // number of factors to use for prediction
@@ -149,11 +146,7 @@ namespace Altaxo.Calc.Regression.Multivariate
       }
     }
 
-    /// <summary>
-    /// Calculates the prediction scores (for use withthe preprocessed spectra).
-    /// </summary>
-    /// <param name="numFactors">Number of factors used to calculate the prediction scores.</param>
-    /// <param name="predictionScores">Supplied matrix for holding the prediction scores.</param>
+    /// <inheritdoc/>
     protected override void InternalGetPredictionScores(int numFactors, IMatrix<double> predictionScores)
     {
       IMatrix<double> pred = new MatrixMath.LeftSpineJaggedArrayMatrix<double>(predictionScores.RowCount, 1);
@@ -164,6 +157,7 @@ namespace Altaxo.Calc.Regression.Multivariate
       }
     }
 
+    /// <inheritdoc/>
     protected override void InternalGetXLeverageFromPreprocessed(IROMatrix<double> matrixX, int numFactors, IMatrix<double> xLeverage)
     {
       for (int i = 0; i < _calib.NumberOfY; i++)

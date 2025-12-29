@@ -37,10 +37,14 @@ using Altaxo.Calc.LinearAlgebra;
 
 namespace Altaxo.Calc.Optimization
 {
+  /// <summary>
+  /// Base class for nonlinear minimizers that avoid allocating intermediate arrays by working with internal/external
+  /// parameter projections and pre-allocated vectors.
+  /// </summary>
   public abstract class NonlinearMinimizerBaseNonAllocating
   {
     /// <summary>
-    /// The default function tolerance. Since function tolerance is an absolute value and thus dependends on the scale of the y-values,
+    /// The default function tolerance. Since function tolerance is an absolute value and thus depends on the scale of the y-values,
     /// the default value for it is zero.
     /// </summary>
     public const double DefaultFunctionTolerance = 0;
@@ -63,22 +67,22 @@ namespace Altaxo.Calc.Optimization
 
 
     /// <summary>
-    /// The stopping threshold for the function value or L2 norm of the residuals.
+    /// Gets or sets the stopping threshold for the function value or L2 norm of the residuals.
     /// </summary>
     public double FunctionTolerance { get; set; } = DefaultFunctionTolerance;
 
     /// <summary>
-    /// The stopping threshold for L2 norm of the change of the parameters.
+    /// Gets or sets the stopping threshold for the L2 norm of the change of the parameters.
     /// </summary>
     public double StepTolerance { get; set; } = DefaultStepTolerance;
 
     /// <summary>
-    /// The stopping threshold for infinity norm of the gradient.
+    /// Gets or sets the stopping threshold for the infinity norm of the gradient.
     /// </summary>
     public double GradientTolerance { get; set; } = DefaultGradientTolerance;
 
     /// <summary>
-    /// The maximum number of iterations. If null, the maximal number of iterations is determined automatically.
+    /// Gets or sets the maximum number of iterations. If <see langword="null"/>, the maximum number of iterations is determined automatically.
     /// </summary>
     public int? MaximumIterations { get; set; }
 
@@ -91,22 +95,34 @@ namespace Altaxo.Calc.Optimization
     public double MinimalRSSImprovement { get; set; } = DefaultMinimalRSSImprovement;
 
     /// <summary>
-    /// The lower bound of the parameters.
+    /// Gets the lower bound of the parameters.
     /// </summary>
     public IReadOnlyList<double?>? LowerBound { get; private set; }
 
     /// <summary>
-    /// The upper bound of the parameters.
+    /// Gets the upper bound of the parameters.
     /// </summary>
     public IReadOnlyList<double?>? UpperBound { get; private set; }
 
     /// <summary>
-    /// The scale factors for the parameters.
+    /// Gets the scale factors for the parameters.
     /// </summary>
     public Vector<double>? Scales { get; protected set; }
 
+    /// <summary>
+    /// Gets a value indicating whether bounded optimization is active (bounds and/or scales are configured).
+    /// </summary>
     protected bool IsBounded => LowerBound is not null || UpperBound is not null || Scales is not null;
 
+    /// <summary>
+    /// Validates and stores parameter bounds and scale factors.
+    /// </summary>
+    /// <param name="parameters">The initial parameter values (external representation).</param>
+    /// <param name="lowerBound">Optional lower bounds corresponding to <paramref name="parameters"/>.</param>
+    /// <param name="upperBound">Optional upper bounds corresponding to <paramref name="parameters"/>.</param>
+    /// <param name="scales">Optional scale factors corresponding to <paramref name="parameters"/>.</param>
+    /// <exception cref="ArgumentNullException">Thrown if <paramref name="parameters"/> is <see langword="null"/>.</exception>
+    /// <exception cref="ArgumentException">Thrown if bounds or scales are invalid or inconsistent with <paramref name="parameters"/>.</exception>
     protected void ValidateBounds(IReadOnlyList<double> parameters, IReadOnlyList<double?>? lowerBound = null, IReadOnlyList<double?>? upperBound = null, IReadOnlyList<double>? scales = null)
     {
       if (parameters is null)
@@ -201,6 +217,13 @@ namespace Altaxo.Calc.Optimization
       }
     }
 
+    /// <summary>
+    /// Evaluates the objective function at the provided internal parameter values.
+    /// </summary>
+    /// <param name="objective">The objective model.</param>
+    /// <param name="Pint">The parameters (internal representation).</param>
+    /// <param name="pExt">A pre-allocated vector that receives the external parameter representation.</param>
+    /// <returns>The objective function value at the specified parameters.</returns>
     protected double EvaluateFunction(IObjectiveModelNonAllocating objective, IReadOnlyList<double> Pint, IVector<double> pExt)
     {
 
@@ -210,12 +233,12 @@ namespace Altaxo.Calc.Optimization
     }
 
     /// <summary>
-    /// Evaluates the jacobian, and the hessian of the objective function.
+    /// Evaluates the Jacobian-derived gradient and the Hessian of the objective function.
     /// </summary>
     /// <param name="objective">The objective.</param>
     /// <param name="pInt">The parameters (internal representation).</param>
     /// <param name="scaleFactors">The scale factors for the Jacobian.</param>
-    /// <returns>The negative gradient and the hessian.</returns>
+    /// <returns>The negative gradient and the Hessian.</returns>
     protected (Vector<double> NegativeGradient, Matrix<double> Hessian) EvaluateJacobian(IObjectiveModelNonAllocating objective, IReadOnlyList<double> pInt, Vector<double> scaleFactors)
     {
       var negativeGradient = objective.NegativeGradient;
@@ -278,6 +301,11 @@ namespace Altaxo.Calc.Optimization
     // Except when it is initial guess, the parameters argument is always internal parameter.
     // So, first map the parameters argument to the external parameters in order to calculate function values.
 
+    /// <summary>
+    /// Projects external to internal parameters.
+    /// </summary>
+    /// <param name="Pext">The external parameters.</param>
+    /// <param name="Pint">On return, contains the internal parameters.</param>
     protected void ProjectToInternalParameters(IReadOnlyList<double> Pext, IVector<double> Pint)
     {
       if (LowerBound is not null || UpperBound is not null)
@@ -362,10 +390,10 @@ namespace Altaxo.Calc.Optimization
     }
 
     /// <summary>
-    /// Calculates the scale factor of the jacobian, taking into account the parameter transformations , and the parameter scales.
+    /// Calculates the scale factor of the Jacobian, taking into account the parameter transformations and the parameter scales.
     /// </summary>
-    /// <param name="Pint">The pint.</param>
-    /// <param name="result">On return, contains the scale factors. The provided vector needs to have the same length as <paramref name="Pint"/></param>
+    /// <param name="Pint">The internal parameters.</param>
+    /// <param name="result">On return, contains the scale factors. The provided vector needs to have the same length as <paramref name="Pint"/>.</param>
     protected void ScaleFactorsOfJacobian(IReadOnlyList<double> Pint, IVector<double> result)
     {
       if (LowerBound is not null || UpperBound is not null)

@@ -35,26 +35,29 @@ namespace Altaxo.Calc.Regression
   public record SavitzkyGolayParameters
   {
     /// <summary>
-    /// Number of points used for Savitzky Golay Coefficients. Must be a odd positive number.
+    /// Gets the number of points used for Savitzky-Golay coefficients.
+    /// Must be a positive odd number.
     /// </summary>
     public int NumberOfPoints { get; init; } = 7;
 
     /// <summary>
-    /// Polynomial order used to calculate Savitzky-Golay coefficients. Has to be a positive number.
+    /// Gets the polynomial order used to calculate Savitzky-Golay coefficients.
+    /// Must be a positive number.
     /// </summary>
     public int PolynomialOrder { get; init; } = 2;
 
     /// <summary>
-    /// Derivative order. Has to be zero or positive. A value of zero is used to smooth a function.
+    /// Gets the derivative order.
+    /// Must be zero or positive. A value of zero is used to smooth a function.
     /// </summary>
     public int DerivativeOrder { get; init; } = 0;
   }
 
   /// <summary>
-  /// SavitzkyGolay implements the calculation of the Savitzky-Golay filter coefficients and their application
-  /// to smoth data, and to calculate derivatives.
+  /// Implements the calculation of Savitzky-Golay filter coefficients and their application to smooth data,
+  /// and to calculate derivatives.
   /// </summary>
-  /// <remarks>Ref.: "Numerical recipes in C", chapter 14.8</remarks>
+  /// <remarks>Ref.: <c>"Numerical Recipes in C"</c>, chapter 14.8.</remarks>
   public class SavitzkyGolay
   {
     /// <summary>
@@ -70,13 +73,20 @@ namespace Altaxo.Calc.Regression
     }
 
     /// <summary>
-    /// Calculate Savitzky-Golay coefficients.
+    /// Calculates Savitzky-Golay coefficients.
     /// </summary>
     /// <param name="leftpoints">Points on the left side included in the regression.</param>
-    /// <param name="rightpoints">Points to the right side included in the regression.</param>
+    /// <param name="rightpoints">Points on the right side included in the regression.</param>
     /// <param name="derivativeorder">Order of derivative for which the coefficients are calculated.</param>
     /// <param name="polynomialorder">Order of the regression polynomial.</param>
-    /// <param name="coefficients">Output: On return, contains the calculated coefficients. The length must be leftPoints + rightPoints +1-</param>
+    /// <param name="coefficients">
+    /// Output: on return, contains the calculated coefficients.
+    /// The length must be at least <c>leftpoints + rightpoints + 1</c>.
+    /// </param>
+    /// <exception cref="ArgumentException">
+    /// Thrown if any input argument is invalid (e.g., negative point counts, inconsistent derivative/polynomial order,
+    /// or an output vector that is <see langword="null"/> or too short).
+    /// </exception>
     public static void GetCoefficients(int leftpoints, int rightpoints, int derivativeorder, int polynomialorder, IVector<double> coefficients)
     {
       int totalpoints = leftpoints + rightpoints + 1;
@@ -140,21 +150,28 @@ namespace Altaxo.Calc.Regression
       }
     }
 
-    /// <summary>Filters to apply to the left edge of the array.</summary>
+    /// <summary>
+    /// Filters to apply to the left edge of the array.
+    /// </summary>
     private double[][] _left;
 
-    /// <summary>Filters to apply to the right edge of the array. Note: the rightmost filter is in index 0</summary>
+    /// <summary>
+    /// Filters to apply to the right edge of the array.
+    /// Note: the rightmost filter is at index 0.
+    /// </summary>
     private double[][] _right;
 
-    /// <summary>Filter to apply to the middle of the array.</summary>
+    /// <summary>
+    /// Filter to apply to the middle of the array.
+    /// </summary>
     private double[] _middle;
 
     /// <summary>
-    /// This sets up a Savitzky-Golay filter.
+    /// Initializes a Savitzky-Golay filter.
     /// </summary>
-    /// <param name="numberOfPoints">Number of points. Must be an odd number, otherwise it is rounded up.</param>
-    /// <param name="derivativeOrder">Order of derivative you want to obtain. Set 0 for smothing.</param>
-    /// <param name="polynomialOrder">Order of the fitting polynomial. Usual values are 2 or 4.</param>
+    /// <param name="numberOfPoints">Number of points. Must be an odd number; otherwise it is rounded up.</param>
+    /// <param name="derivativeOrder">Order of derivative to obtain. Set to 0 for smoothing.</param>
+    /// <param name="polynomialOrder">Order of the fitting polynomial. Typical values are 2 or 4.</param>
     public SavitzkyGolay(int numberOfPoints, int derivativeOrder, int polynomialOrder)
     {
       numberOfPoints = 1 + 2 * (numberOfPoints / 2);
@@ -174,7 +191,7 @@ namespace Altaxo.Calc.Regression
     }
 
     /// <summary>
-    /// This sets up a Savitzky-Golay filter.
+    /// Initializes a Savitzky-Golay filter.
     /// </summary>
     /// <param name="parameters">Set of parameters used for Savitzky-Golay filtering.</param>
     public SavitzkyGolay(SavitzkyGolayParameters parameters)
@@ -183,11 +200,16 @@ namespace Altaxo.Calc.Regression
     }
 
     /// <summary>
-    /// This applies the set-up filter to an array of numbers. The left and right side is special treated by
-    /// applying Savitzky-Golay with appropriate adjusted left and right number of points.
+    /// Applies the configured filter to an array of numbers.
+    /// The left and right sides are treated specially by applying Savitzky-Golay filters with appropriately adjusted
+    /// left and right numbers of points.
     /// </summary>
     /// <param name="array">The array of numbers to filter.</param>
-    /// <param name="result">The resulting array. Must not be identical to the input array!</param>
+    /// <param name="result">The resulting array. Must not be identical to <paramref name="array"/>.</param>
+    /// <exception cref="ArgumentException">
+    /// Thrown if <paramref name="array"/> and <paramref name="result"/> are identical, or if the input array is shorter than
+    /// the filter length.
+    /// </exception>
     public void Apply(double[] array, double[] result)
     {
       int filterPoints = _middle.Length;
@@ -233,11 +255,16 @@ namespace Altaxo.Calc.Regression
     }
 
     /// <summary>
-    /// This applies the set-up filter to an array of numbers. The left and right side is special treated by
-    /// applying Savitzky-Golay with appropriate adjusted left and right number of points.
+    /// Applies the configured filter to an array of numbers.
+    /// The left and right sides are treated specially by applying Savitzky-Golay filters with appropriately adjusted
+    /// left and right numbers of points.
     /// </summary>
     /// <param name="array">The array of numbers to filter.</param>
-    /// <param name="result">The resulting array. Must not be identical to the input array!</param>
+    /// <param name="result">The resulting array. Must not be identical to <paramref name="array"/>.</param>
+    /// <exception cref="ArgumentException">
+    /// Thrown if <paramref name="array"/> and <paramref name="result"/> are identical, or if the input array is shorter than
+    /// the filter length.
+    /// </exception>
     public void Apply(IReadOnlyList<double> array, IVector<double> result)
     {
       int filterPoints = _middle.Length;

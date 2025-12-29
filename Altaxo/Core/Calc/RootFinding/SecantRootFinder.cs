@@ -30,18 +30,32 @@ using System;
 
 namespace Altaxo.Calc.RootFinding
 {
+  /// <summary>
+  /// Root finder that implements the secant method for locating a root of a real-valued function.
+  /// </summary>
   public class SecantRootFinder : AbstractRootFinder
   {
+    /// <summary>
+    /// Initializes a new instance of the <see cref="SecantRootFinder"/> class.
+    /// </summary>
+    /// <param name="function">The function for which a root should be found.</param>
     public SecantRootFinder(Func<double, double> function)
       : base(function)
     {
     }
 
+    /// <summary>
+    /// Initializes a new instance of the <see cref="SecantRootFinder"/> class.
+    /// </summary>
+    /// <param name="function">The function for which a root should be found.</param>
+    /// <param name="maxNumberOfIterations">The maximum number of iterations.</param>
+    /// <param name="accuracy">The desired accuracy for the root location.</param>
     public SecantRootFinder(Func<double, double> function, int maxNumberOfIterations, double accuracy)
       : base(function, maxNumberOfIterations, accuracy)
     {
     }
 
+    /// <inheritdoc/>
     protected override double Find()
     {
       double x1 = _xMin;

@@ -36,20 +36,29 @@ using Altaxo.Calc.LinearAlgebra;
 
 namespace Altaxo.Calc.Optimization
 {
-  ///<summary>Newton-Raphson Line Search Method</summary>
+  /// <summary>Newton-Raphson line search method.</summary>
   /// <remarks>
   /// <para>Copyright (c) 2003-2004, dnAnalytics Project. All rights reserved. See <a>http://www.dnAnalytics.net</a> for details.</para>
-  /// <para>Adopted to Altaxo (c) 2005 Dr. Dirk Lellinger.</para>
+  /// <para>Adopted for Altaxo (c) 2005 Dr. Dirk Lellinger.</para>
   /// </remarks>
   public class NewtonRaphsonLineSearch : LineSearchMethod
   {
-    ///<summary>Constructor for Newton-Raphson Line Search</summary>
+    /// <summary>Initializes a new instance of the <see cref="NewtonRaphsonLineSearch"/> class.</summary>
+    /// <param name="costfunction">Nonlinear cost function to minimize.</param>
     public NewtonRaphsonLineSearch(CostFunction costfunction)
       : this(costfunction, new EndCriteria()) { }
 
+    /// <summary>Initializes a new instance of the <see cref="NewtonRaphsonLineSearch"/> class.</summary>
+    /// <param name="costfunction">Nonlinear cost function to minimize.</param>
+    /// <param name="endcriteria">User-specified ending criteria.</param>
     public NewtonRaphsonLineSearch(CostFunction costfunction, EndCriteria endcriteria)
       : this(costfunction, new EndCriteria(), 50, 1e-8) { }
 
+    /// <summary>Initializes a new instance of the <see cref="NewtonRaphsonLineSearch"/> class.</summary>
+    /// <param name="costfunction">Nonlinear cost function to minimize.</param>
+    /// <param name="endcriteria">User-specified ending criteria.</param>
+    /// <param name="maxiteration">Maximum number of Newton iterations.</param>
+    /// <param name="tolerance">Termination tolerance (based on the step size along the search direction).</param>
     public NewtonRaphsonLineSearch(CostFunction costfunction, EndCriteria endcriteria,
       int maxiteration, double tolerance)
     {
@@ -59,16 +68,19 @@ namespace Altaxo.Calc.Optimization
       this.tolerance = tolerance;
     }
 
+    /// <summary>Maximum number of Newton iterations.</summary>
     private int maxIteration;
+
+    /// <summary>Termination tolerance.</summary>
     private double tolerance;
 
-    ///<summary> Method Name </summary>
+    /// <inheritdoc/>
     public override string MethodName
     {
       get { return "Newton-Raphson Line Search Method"; }
     }
 
-    ///<summary> Minimize the given cost function </summary>
+    /// <inheritdoc/>
     public override Vector<double> Search(Vector<double> x, Vector<double> d, double stp)
     {
       var ret = x.Clone();

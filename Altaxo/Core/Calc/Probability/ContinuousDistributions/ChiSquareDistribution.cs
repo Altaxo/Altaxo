@@ -47,14 +47,14 @@ namespace Altaxo.Calc.Probability
   ///
   ///                -f/2   f/2-1  -x/2
   ///               2      x      e
-  ///  p (x) dx =  --------------------- dx  for x > 0
+  ///  p (x) dx =  --------------------- dx  for x &gt; 0
   ///   f               Gamma(f/2)
   ///
   ///           =  0                         otherwise
   ///
-  /// The calculation uses the relation between chi-square and gamma distribution:
+  /// The calculation uses the relation between the chi-square and gamma distributions:
   ///
-  ///  ChiSquare(f) = GammaDistribution(f/2,1/2)
+  ///  ChiSquare(f) = GammaDistribution(f/2, 1/2)
   ///
   /// References:
   ///    K. Behnen, G. Neuhaus, "Grundkurs Stochastik", Teubner Studienbuecher
@@ -63,25 +63,48 @@ namespace Altaxo.Calc.Probability
   /// </code></remarks>
   public class ChiSquareDistribution : ContinuousDistribution
   {
+    /// <summary>
+    /// Gets the degrees of freedom.
+    /// </summary>
     protected double F;
+
+    /// <summary>
+    /// Stores the underlying <see cref="GammaDistribution"/> used for number generation.
+    /// </summary>
     protected GammaDistribution gamma;
 
+    /// <summary>
+    /// Initializes a new instance of the <see cref="ChiSquareDistribution"/> class using the default generator.
+    /// </summary>
     public ChiSquareDistribution()
       : this(DefaultGenerator)
     {
     }
 
+    /// <summary>
+    /// Initializes a new instance of the <see cref="ChiSquareDistribution"/> class using the specified random number generator.
+    /// </summary>
+    /// <param name="gen">A <see cref="Generator"/> instance.</param>
     public ChiSquareDistribution(Generator gen)
       : this(1, gen)
     {
     }
 
+    /// <summary>
+    /// Initializes a new instance of the <see cref="ChiSquareDistribution"/> class using the specified degrees of freedom and the default generator.
+    /// </summary>
+    /// <param name="f">Degrees of freedom.</param>
     public ChiSquareDistribution(double f)
       : this(f, DefaultGenerator)
     {
     }
 
 #pragma warning disable CS8618 // Non-nullable field is uninitialized. Consider declaring as nullable.
+    /// <summary>
+    /// Initializes a new instance of the <see cref="ChiSquareDistribution"/> class using the specified degrees of freedom and random number generator.
+    /// </summary>
+    /// <param name="f">Degrees of freedom.</param>
+    /// <param name="ran">The random number generator used.</param>
     public ChiSquareDistribution(double f, Generator ran)
 #pragma warning restore CS8618 // Non-nullable field is uninitialized. Consider declaring as nullable.
       : base(ran)
@@ -89,6 +112,10 @@ namespace Altaxo.Calc.Probability
       Initialize(f);
     }
 
+    /// <summary>
+    /// Initializes this instance with the specified degrees of freedom.
+    /// </summary>
+    /// <param name="F">Degrees of freedom.</param>
     public void Initialize(double F)
     {
       if (!IsValidAlpha(F))
@@ -113,17 +140,21 @@ namespace Altaxo.Calc.Probability
       return value > 0;
     }
 
+    /// <inheritdoc/>
     public override double NextDouble()
     {
       return 2.0 * gamma.NextDouble();
     }
 
+    /// <summary>
+    /// Gets the degrees of freedom of the distribution.
+    /// </summary>
     public double Freedom { get { return F; } }
 
     /// <summary>
     /// Gets or sets the parameter alpha which is used for generation of chi-square distributed random numbers.
     /// </summary>
-    /// <remarks>Call <see cref="IsValidAlpha"/> to determine whether a value is valid and therefor assignable.</remarks>
+    /// <remarks>Call <see cref="IsValidAlpha"/> to determine whether a value is valid and therefore assignable.</remarks>
     public double Alpha
     {
       get
@@ -138,9 +169,7 @@ namespace Altaxo.Calc.Probability
 
     #region overridden Distribution members
 
-    /// <summary>
-    /// Gets the minimum possible value of chi-square distributed random numbers.
-    /// </summary>
+    /// <inheritdoc/>
     public override double Minimum
     {
       get
@@ -149,9 +178,7 @@ namespace Altaxo.Calc.Probability
       }
     }
 
-    /// <summary>
-    /// Gets the maximum possible value of chi-square distributed random numbers.
-    /// </summary>
+    /// <inheritdoc/>
     public override double Maximum
     {
       get
@@ -160,9 +187,7 @@ namespace Altaxo.Calc.Probability
       }
     }
 
-    /// <summary>
-    /// Gets the mean value of chi-square distributed random numbers.
-    /// </summary>
+    /// <inheritdoc/>
     public override double Mean
     {
       get
@@ -171,9 +196,7 @@ namespace Altaxo.Calc.Probability
       }
     }
 
-    /// <summary>
-    /// Gets the median of chi-square distributed random numbers.
-    /// </summary>
+    /// <inheritdoc/>
     public override double Median
     {
       get
@@ -182,9 +205,7 @@ namespace Altaxo.Calc.Probability
       }
     }
 
-    /// <summary>
-    /// Gets the variance of chi-square distributed random numbers.
-    /// </summary>
+    /// <inheritdoc/>
     public override double Variance
     {
       get
@@ -193,9 +214,7 @@ namespace Altaxo.Calc.Probability
       }
     }
 
-    /// <summary>
-    /// Gets the mode of chi-square distributed random numbers.
-    /// </summary>
+    /// <inheritdoc/>
     public override double[] Mode
     {
       get
@@ -215,31 +234,56 @@ namespace Altaxo.Calc.Probability
 
     #region CdfPdfQuantile
 
+    /// <inheritdoc/>
     public override double CDF(double x)
     {
       return CDF(x, F);
     }
 
+    /// <summary>
+    /// Calculates the cumulative distribution function for the specified degrees of freedom.
+    /// </summary>
+    /// <param name="x">Argument.</param>
+    /// <param name="F">Degrees of freedom.</param>
+    /// <returns>
+    /// The probability that the random variable is less than or equal to <paramref name="x"/>.
+    /// </returns>
     public static double CDF(double x, double F)
     {
       return Calc.GammaRelated.GammaRegularized(0.5 * F, 0, 0.5 * x);
     }
 
+    /// <inheritdoc/>
     public override double PDF(double x)
     {
       return PDF(x, F);
     }
 
+    /// <summary>
+    /// Calculates the probability density function for the specified degrees of freedom.
+    /// </summary>
+    /// <param name="x">Argument.</param>
+    /// <param name="F">Degrees of freedom.</param>
+    /// <returns>The relative likelihood for the random variable to occur at <paramref name="x"/>.</returns>
     public static double PDF(double x, double F)
     {
       return Math.Pow(x, -1 + 0.5 * F) / (Math.Pow(2, 0.5 * F) * Math.Exp(0.5 * x) * Calc.GammaRelated.Gamma(0.5 * F));
     }
 
+    /// <inheritdoc/>
     public override double Quantile(double p)
     {
       return Quantile(p, F);
     }
 
+    /// <summary>
+    /// Calculates the quantile function for the specified degrees of freedom.
+    /// </summary>
+    /// <param name="p">The probability.</param>
+    /// <param name="F">Degrees of freedom.</param>
+    /// <returns>
+    /// The point <c>x</c> at which the cumulative distribution function is equal to <paramref name="p"/>.
+    /// </returns>
     public static double Quantile(double p, double F)
     {
       return 2 * GammaRelated.InverseGammaRegularized(0.5 * F, 1 - p);

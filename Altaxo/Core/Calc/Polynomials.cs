@@ -37,21 +37,21 @@ using Complex64T = System.Numerics.Complex;
 namespace Altaxo.Calc
 {
   /// <summary>
-  /// Polynomials.
+  /// Provides routines to evaluate selected orthogonal polynomials and related special functions.
   /// </summary>
   public class Polynomials
   {
     #region HermiteH
 
     /// <summary>
-    /// Computes the value of the Hermite polynomial of degree n
+    /// Computes the value of the Hermite polynomial of degree <paramref name="n"/>
     /// and its first and second derivatives at a given point.
     /// </summary>
-    /// <param name="n">Degree of the polynomial &gt;= 0.</param>
-    /// <param name="x">Point in which the computation is performed.</param>
-    /// <param name="y">Output: value of the polynomial in x.</param>
-    /// <param name="dy">Output: value of the first derivative in x.</param>
-    /// <param name="d2y">Output: value of the second derivative in x.</param>
+    /// <param name="n">Degree of the polynomial (&gt;= 0).</param>
+    /// <param name="x">Point at which the computation is performed.</param>
+    /// <param name="y">Output: value of the polynomial at <paramref name="x"/>.</param>
+    /// <param name="dy">Output: value of the first derivative at <paramref name="x"/>.</param>
+    /// <param name="d2y">Output: value of the second derivative at <paramref name="x"/>.</param>
     /// <remarks><code>
     /// Note:
     ///   This C++ implementation is based on the Fortran function
@@ -104,15 +104,15 @@ namespace Altaxo.Calc
     #region LaguerreL
 
     /// <summary>
-    /// Computes the value of the Laguerre polynomial of degree n
+    /// Computes the value of the Laguerre polynomial of degree <paramref name="n"/>
     /// and its first and second derivatives at a given point.
     /// </summary>
-    /// <param name="n">Degree of the polynomial </param>
-    /// <param name="a">Parameter &gt; -1 </param>
-    /// <param name="x">Point in which the computation is performed, x &gt;= 0</param>
-    /// <param name="y">Output: value of the polynomial in x </param>
-    /// <param name="dy">Output: value of the first derivative in x </param>
-    /// <param name="d2y">Output: value of the second derivative in x</param>
+    /// <param name="n">Degree of the polynomial (&gt;= 0).</param>
+    /// <param name="a">Parameter (&gt; -1).</param>
+    /// <param name="x">Point at which the computation is performed (<c>x</c> &gt;= 0).</param>
+    /// <param name="y">Output: value of the polynomial at <paramref name="x"/>.</param>
+    /// <param name="dy">Output: value of the first derivative at <paramref name="x"/>.</param>
+    /// <param name="d2y">Output: value of the second derivative at <paramref name="x"/>.</param>
     /// <remarks><code>
     /// Note:
     ///   This C++ implementation is based on the Fortran function
@@ -171,16 +171,16 @@ namespace Altaxo.Calc
     #region JacobiP
 
     /// <summary>
-    /// Computes the value of the Jacobi polynomial of degree n
+    /// Computes the value of the Jacobi polynomial of degree <paramref name="n"/>
     /// and its first and second derivatives at a given point.
     /// </summary>
-    /// <param name="n">Degree of the polynomial &gt;= 0.</param>
-    /// <param name="a">Parameter &gt; -1.</param>
-    /// <param name="b">Parameter &gt; -1.</param>
-    /// <param name="x">Point in which the computation is performed, -1 &lt;= x &lt;= 1.</param>
-    /// <param name="y">Output: value of the polynomial in x.</param>
-    /// <param name="dy">Output: value of the first derivative in x.</param>
-    /// <param name="d2y">Output: value of the second derivative in x.</param>
+    /// <param name="n">Degree of the polynomial (&gt;= 0).</param>
+    /// <param name="a">Parameter (&gt; -1).</param>
+    /// <param name="b">Parameter (&gt; -1).</param>
+    /// <param name="x">Point at which the computation is performed (-1 &lt;= <c>x</c> &lt;= 1).</param>
+    /// <param name="y">Output: value of the polynomial at <paramref name="x"/>.</param>
+    /// <param name="dy">Output: value of the first derivative at <paramref name="x"/>.</param>
+    /// <param name="d2y">Output: value of the second derivative at <paramref name="x"/>.</param>
     /// <remarks><code>
     /// Note:
     ///   This C++ implementation is based on the Fortran function
@@ -244,14 +244,14 @@ namespace Altaxo.Calc
     #region ChebyshevT
 
     /// <summary>
-    /// Computes the value of the Chebyshev polynomial of degree n
+    /// Computes the value of the Chebyshev polynomial of degree <paramref name="n"/>
     /// and its first and second derivatives at a given point.
     /// </summary>
-    /// <param name="n">Degree of the polynomial &gt;= 0.</param>
-    /// <param name="x">Point in which the computation is performed, -1 &lt;= x &lt;= 1.</param>
-    /// <param name="y">Output: value of the polynomial in x.</param>
-    /// <param name="dy">Output: value of the first derivative in x.</param>
-    /// <param name="d2y">Output: value of the second derivative in x.</param>
+    /// <param name="n">Degree of the polynomial (&gt;= 0).</param>
+    /// <param name="x">Point at which the computation is performed (-1 &lt;= <c>x</c> &lt;= 1).</param>
+    /// <param name="y">Output: value of the polynomial at <paramref name="x"/>.</param>
+    /// <param name="dy">Output: value of the first derivative at <paramref name="x"/>.</param>
+    /// <param name="d2y">Output: value of the second derivative at <paramref name="x"/>.</param>
     /// <remarks><code>
     /// Note:
     ///   This C++ implementation is based on the Fortran function
@@ -307,14 +307,14 @@ namespace Altaxo.Calc
     #region LegendreP
 
     /// <summary>
-    /// Computes the value of the Legendre polynomial of degree n
+    /// Computes the value of the Legendre polynomial of degree <paramref name="n"/>
     /// and its first and second derivatives at a given point.
     /// </summary>
-    /// <param name="n">Degree of the polynomial  &gt;= 0.</param>
-    /// <param name="x">Point in which the computation is performed, -1 &lt;= x &lt;= 1.</param>
-    /// <param name="y">Output: value of the polynomial in x.</param>
-    /// <param name="dy">Output: value of the first derivative in x.</param>
-    /// <param name="d2y">Output: value of the second derivative in x.</param>
+    /// <param name="n">Degree of the polynomial (&gt;= 0).</param>
+    /// <param name="x">Point at which the computation is performed (-1 &lt;= <c>x</c> &lt;= 1).</param>
+    /// <param name="y">Output: value of the polynomial at <paramref name="x"/>.</param>
+    /// <param name="dy">Output: value of the first derivative at <paramref name="x"/>.</param>
+    /// <param name="d2y">Output: value of the second derivative at <paramref name="x"/>.</param>
     /// <remarks><code>
     /// Note:
     ///   This C++ implementation is based on the Fortran function
@@ -384,6 +384,13 @@ namespace Altaxo.Calc
     //
     //-----------------------------------------------------------------------------//
 
+    /// <summary>
+    /// Computes the value of the associated Legendre polynomial <c>P</c><sub><paramref name="l"/>,<paramref name="m"/></sub>(<paramref name="x"/>).
+    /// </summary>
+    /// <param name="l">Degree of the polynomial (&gt;= 0).</param>
+    /// <param name="m">Order of the polynomial (0 &lt;= <paramref name="m"/> &lt;= <paramref name="l"/>).</param>
+    /// <param name="x">Point at which the computation is performed (-1 &lt;= <c>x</c> &lt;= 1).</param>
+    /// <returns>Value of the polynomial at <paramref name="x"/>.</returns>
     public static double LegendreP(int l, int m, double x)
     {
       // check parameters
@@ -426,6 +433,11 @@ namespace Altaxo.Calc
 
     #region SphericalHarmonicY
 
+    /// <summary>
+    /// Determines whether the specified integer is odd.
+    /// </summary>
+    /// <param name="x">The value to test.</param>
+    /// <returns><see langword="true"/> if <paramref name="x"/> is odd; otherwise, <see langword="false"/>.</returns>
     private static bool odd(int x)
     {
       return (x & 1) != 0;
@@ -434,14 +446,14 @@ namespace Altaxo.Calc
     private const double M_4PI = 12.56637061435917295385057;
 
     /// <summary>
-    /// Computes the spherical harmonics Y_lm(theta,phi) with l and m
-    /// integers satisfying -l &lt;= m &lt;= l and arbitrary angles theta and phi.
+    /// Computes the spherical harmonic Y<sub>l,m</sub>(theta, phi) with integer parameters
+    /// satisfying -<paramref name="l"/> &lt;= <paramref name="m"/> &lt;= <paramref name="l"/>.
     /// </summary>
-    /// <param name="l">First integer.</param>
-    /// <param name="m">Second integer, must be in the range -l &lt;= m &lt;= l.</param>
-    /// <param name="theta">First angle.</param>
-    /// <param name="phi">Second angle.</param>
-    /// <returns>The spherical harmonics Y_lm(theta,phi).</returns>
+    /// <param name="l">Degree (must be &gt;= 0).</param>
+    /// <param name="m">Order (must satisfy -<paramref name="l"/> &lt;= <paramref name="m"/> &lt;= <paramref name="l"/>).</param>
+    /// <param name="theta">Polar angle (theta).</param>
+    /// <param name="phi">Azimuthal angle (phi).</param>
+    /// <returns>The spherical harmonic Y<sub>l,m</sub>(theta, phi).</returns>
     public static Complex64T SphericalHarmonicY(int l, int m, double theta, double phi)
     {
       Complex64T e;

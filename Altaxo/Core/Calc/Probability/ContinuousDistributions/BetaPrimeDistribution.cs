@@ -24,10 +24,10 @@ using System;
 namespace Altaxo.Calc.Probability
 {
   /// <summary>
-  /// Provides generation of beta-prime distributed random numbers. This distribution is alsow known as inverted beta distribution.
+  /// Provides generation of beta-prime distributed random numbers. This distribution is also known as the inverted beta distribution.
   /// </summary>
   /// <remarks>
-  /// The implementation of the <see cref="BetaPrimeDistribution"/> type bases upon information presented on
+  /// The implementation of the <see cref="BetaPrimeDistribution"/> type is based upon information presented on
   ///   <a href="http://www.xycoon.com/ibeta.htm">Xycoon - Inverted Beta Distribution</a>.
   /// </remarks>
   public class BetaPrimeDistribution : ContinuousDistribution
@@ -37,7 +37,7 @@ namespace Altaxo.Calc.Probability
     /// <summary>
     /// Gets or sets the parameter alpha which is used for generation of beta-prime distributed random numbers.
     /// </summary>
-    /// <remarks>Call <see cref="IsValidAlpha"/> to determine whether a value is valid and therefor assignable.</remarks>
+    /// <remarks>Call <see cref="IsValidAlpha"/> to determine whether a value is valid and therefore assignable.</remarks>
     public double Alpha
     {
       get
@@ -58,7 +58,7 @@ namespace Altaxo.Calc.Probability
     /// <summary>
     /// Gets or sets the parameter beta which is used for generation of beta-prime distributed random numbers.
     /// </summary>
-    /// <remarks>Call <see cref="IsValidBeta"/> to determine whether a value is valid and therefor assignable.</remarks>
+    /// <remarks>Call <see cref="IsValidBeta"/> to determine whether a value is valid and therefore assignable.</remarks>
     public double Beta
     {
       get

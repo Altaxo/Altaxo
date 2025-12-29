@@ -27,7 +27,7 @@ namespace Altaxo.Calc.Probability
   /// Provides generation of chi distributed random numbers.
   /// </summary>
   /// <remarks>
-  /// The implementation of the <see cref="ChiDistribution"/> type bases upon information presented on
+  /// The implementation of the <see cref="ChiDistribution"/> type is based upon information presented on
   ///   <a href="http://en.wikipedia.org/wiki/Chi_distribution">Wikipedia - Chi distribution</a>.
   /// </remarks>
   public class ChiDistribution : ContinuousDistribution
@@ -125,10 +125,14 @@ namespace Altaxo.Calc.Probability
 
     #region instance methods
 
+    /// <summary>
+    /// Initializes the distribution with the specified degrees of freedom.
+    /// </summary>
+    /// <param name="N">Degrees of freedom.</param>
     public void Initialize(int N)
     {
       if (!IsValidN(N))
-        throw new ArgumentOutOfRangeException("N out of range (must be >0)");
+        throw new ArgumentOutOfRangeException("N out of range (must be &gt;0)");
       _N = N;
     }
 
@@ -165,9 +169,7 @@ namespace Altaxo.Calc.Probability
 
     #region overridden Distribution members
 
-    /// <summary>
-    /// Gets the minimum possible value of chi distributed random numbers.
-    /// </summary>
+    /// <inheritdoc/>
     public override double Minimum
     {
       get
@@ -176,9 +178,7 @@ namespace Altaxo.Calc.Probability
       }
     }
 
-    /// <summary>
-    /// Gets the maximum possible value of chi distributed random numbers.
-    /// </summary>
+    /// <inheritdoc/>
     public override double Maximum
     {
       get
@@ -187,9 +187,7 @@ namespace Altaxo.Calc.Probability
       }
     }
 
-    /// <summary>
-    /// Gets the mean value of chi distributed random numbers.
-    /// </summary>
+    /// <inheritdoc/>
     public override double Mean
     {
       get
@@ -198,9 +196,7 @@ namespace Altaxo.Calc.Probability
       }
     }
 
-    /// <summary>
-    /// Gets the median of chi distributed random numbers.
-    /// </summary>
+    /// <inheritdoc/>
     public override double Median
     {
       get
@@ -209,9 +205,7 @@ namespace Altaxo.Calc.Probability
       }
     }
 
-    /// <summary>
-    /// Gets the variance of chi distributed random numbers.
-    /// </summary>
+    /// <inheritdoc/>
     public override double Variance
     {
       get
@@ -220,9 +214,7 @@ namespace Altaxo.Calc.Probability
       }
     }
 
-    /// <summary>
-    /// Gets the mode of chi distributed random numbers.
-    /// </summary>
+    /// <inheritdoc/>
     public override double[] Mode
     {
       get
@@ -238,10 +230,7 @@ namespace Altaxo.Calc.Probability
       }
     }
 
-    /// <summary>
-    /// Returns a chi distributed floating point random number.
-    /// </summary>
-    /// <returns>A chi distributed double-precision floating point number.</returns>
+    /// <inheritdoc/>
     public override double NextDouble()
     {
       double sum = 0.0;
@@ -257,31 +246,56 @@ namespace Altaxo.Calc.Probability
 
     #region CdfPdfQuantile
 
+    /// <inheritdoc/>
     public override double CDF(double x)
     {
       return CDF(x, _N);
     }
 
+    /// <summary>
+    /// Calculates the cumulative distribution function for the specified degrees of freedom.
+    /// </summary>
+    /// <param name="x">Argument.</param>
+    /// <param name="N">Degrees of freedom.</param>
+    /// <returns>
+    /// The probability that the random variable is less than or equal to <paramref name="x"/>.
+    /// </returns>
     public static double CDF(double x, double N)
     {
       return Calc.GammaRelated.GammaRegularized(0.5 * N, 0, 0.5 * x * x);
     }
 
+    /// <inheritdoc/>
     public override double PDF(double x)
     {
       return PDF(x, _N);
     }
 
+    /// <summary>
+    /// Calculates the probability density function for the specified degrees of freedom.
+    /// </summary>
+    /// <param name="x">Argument.</param>
+    /// <param name="N">Degrees of freedom.</param>
+    /// <returns>The relative likelihood for the random variable to occur at <paramref name="x"/>.</returns>
     public static double PDF(double x, double N)
     {
       return (Math.Pow(2, 1 - N / 2) * Math.Pow(x, -1 + N)) / (Math.Exp(x * x * 0.5) * GammaRelated.Gamma(N / 2));
     }
 
+    /// <inheritdoc/>
     public override double Quantile(double p)
     {
       return Quantile(p, _N);
     }
 
+    /// <summary>
+    /// Calculates the quantile function for the specified degrees of freedom.
+    /// </summary>
+    /// <param name="p">The probability.</param>
+    /// <param name="N">Degrees of freedom.</param>
+    /// <returns>
+    /// The point <c>x</c> at which the cumulative distribution function is equal to <paramref name="p"/>.
+    /// </returns>
     public static double Quantile(double p, double N)
     {
       return Math.Sqrt(2) * Math.Sqrt(GammaRelated.InverseGammaRegularized(N / 2, 1 - p));

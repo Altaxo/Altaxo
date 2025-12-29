@@ -44,7 +44,10 @@ namespace Altaxo.Calc.Regression
     /// <summary>Backward prediction errors.</summary>
     private double[]? _b;
 
-    /// <summary>Prediction coefficients. Note that for technical reasons _Ak[0] is always 1 and the calculated coefficients start with _Ak[1].</summary>
+    /// <summary>
+    /// Prediction coefficients.
+    /// Note that for technical reasons <c>_Ak[0]</c> is always 1 and the calculated coefficients start with <c>_Ak[1]</c>.
+    /// </summary>
     private double[]? _Ak;
 
     /// <summary>Wrapper for the coefficients that can be returned by <see cref="Coefficients"/>.</summary>
@@ -57,7 +60,7 @@ namespace Altaxo.Calc.Regression
     private double _meanSquareError;
 
     /// <summary>
-    /// Returns the number of coefficients that were used for the last run of the algorithm.
+    /// Gets the number of coefficients that were used for the last run of the algorithm.
     /// </summary>
     public int NumberOfCoefficients
     {
@@ -68,8 +71,11 @@ namespace Altaxo.Calc.Regression
     }
 
     /// <summary>
-    /// Returns the coefficients that were calculated during the last run of the algorithm.
+    /// Gets the coefficients that were calculated during the last run of the algorithm.
     /// </summary>
+    /// <exception cref="InvalidOperationException">
+    /// Thrown if the algorithm has not been executed yet.
+    /// </exception>
     public IReadOnlyList<double> Coefficients
     {
       get
@@ -81,7 +87,9 @@ namespace Altaxo.Calc.Regression
       }
     }
 
-    /// <summary>Mean square error calculated during the last run of the algorithm.</summary>
+    /// <summary>
+    /// Gets the mean square error calculated during the last run of the algorithm.
+    /// </summary>
     public double MeanSquareError
     {
       get
@@ -91,57 +99,65 @@ namespace Altaxo.Calc.Regression
     }
 
     /// <summary>
-    /// Uses the signal in vector x to build a model with <c>numberOfCoefficients</c> parameter.
+    /// Uses the signal in <paramref name="x"/> to build a model with <paramref name="numberOfCoefficients"/> parameters.
     /// </summary>
     /// <param name="x">Signal for building the model.</param>
     /// <param name="numberOfCoefficients">Number of coefficients of the model.</param>
-    public void Execute(System.Collections.Generic.IReadOnlyList<double> x, int numberOfCoefficients)
+    public void Execute(IReadOnlyList<double> x, int numberOfCoefficients)
     {
       EnsureAllocation(x.Count, numberOfCoefficients);
       _meanSquareError = Execution(x, _AkWrapper, null, null, this);
     }
 
     /// <summary>
-    /// Uses th signal in vector x to build a model with <c>numberOfCoefficients</c> parameter.
+    /// Uses the signal in <paramref name="x"/> to build a model with as many parameters as there is space in <paramref name="coefficients"/>.
     /// </summary>
     /// <param name="x">Signal for building the model.</param>
     /// <param name="coefficients">Vector to be filled with the coefficients of the model.</param>
-    public void Execute(System.Collections.Generic.IReadOnlyList<double> x, IVector<double> coefficients)
+    public void Execute(IReadOnlyList<double> x, IVector<double> coefficients)
     {
       _meanSquareError = Execution(x, coefficients, null, null, this);
     }
 
     /// <summary>
-    /// Uses the signal in vector x to build a model with <c>numberOfCoefficients</c> parameter.
+    /// Uses the signal in <paramref name="x"/> to build a model with as many parameters as there is space in <paramref name="coefficients"/>.
     /// </summary>
     /// <param name="x">Signal for building the model.</param>
     /// <param name="coefficients">Vector to be filled with the coefficients of the model.</param>
     /// <param name="errors">Vector to be filled with the sum of forward and backward prediction error for every stage of the model.</param>
-    public void Execute(System.Collections.Generic.IReadOnlyList<double> x, IVector<double> coefficients, IVector<double> errors)
+    public void Execute(IReadOnlyList<double> x, IVector<double> coefficients, IVector<double> errors)
     {
       _meanSquareError = Execution(x, coefficients, errors, null, this);
     }
 
     /// <summary>
-    /// Uses the signal in vector x to build a model with <c>numberOfCoefficients</c> parameter.
+    /// Uses the signal in <paramref name="x"/> to build a model with as many parameters as there is space in <paramref name="coefficients"/>.
     /// </summary>
     /// <param name="x">Signal for building the model.</param>
     /// <param name="coefficients">Vector to be filled with the coefficients of the model.</param>
     /// <param name="errors">Vector to be filled with the sum of forward and backward prediction error for every stage of the model.</param>
     /// <param name="reflectionCoefficients">Vector to be filled with the reflection coefficients.</param>
-    public void Execute(System.Collections.Generic.IReadOnlyList<double> x, IVector<double> coefficients, IVector<double> errors, IVector<double> reflectionCoefficients)
+    public void Execute(IReadOnlyList<double> x, IVector<double> coefficients, IVector<double> errors, IVector<double> reflectionCoefficients)
     {
       _meanSquareError = Execution(x, coefficients, errors, reflectionCoefficients, this);
     }
 
     /// <summary>
-    /// Predict values towards the end of the vector. The predicted values are then used to predict more values. See remarks for details.
+    /// Predicts values towards the end of the vector.
+    /// The predicted values are then used to predict further values.
     /// </summary>
-    /// <param name="x">Signal which holds at least <see cref="NumberOfCoefficients"/> valid points (the signal window to start the prediction with) from index (firstPoint-NumberOfCoefficents) to (firstPoint-1). The predicted values are then stored in this vector.</param>
+    /// <param name="x">
+    /// Signal which holds at least <see cref="NumberOfCoefficients"/> valid points (the signal window to start the prediction with)
+    /// from index <c>(firstPoint - NumberOfCoefficients)</c> to <c>(firstPoint - 1)</c>. The predicted values are stored into this
+    /// vector.
+    /// </param>
     /// <param name="firstPoint">Index of the first point to predict.</param>
     /// <remarks>
-    /// The algorithm uses a signal window of <c>NumberOfCoefficients</c> signal points before the <c>firstPoint</c> to predict the value at <c>firstPoint</c>.
-    /// Then the window is shifted by one towards the end of the vecctor, hence including the predicted value, and the point at <c>firstPoint+1</c> is predicted. The procedure is repeated until all points to the end of the vector are predicted.
+    /// The algorithm uses a signal window of <see cref="NumberOfCoefficients"/> signal points before <paramref name="firstPoint"/>
+    /// to predict the value at <paramref name="firstPoint"/>.
+    /// Then the window is shifted by one towards the end of the vector (thus including the predicted value), and the point at
+    /// <c>firstPoint + 1</c> is predicted.
+    /// The procedure is repeated until all points to the end of the vector are predicted.
     /// </remarks>
     public void PredictRecursivelyForward(IVector<double> x, int firstPoint)
     {
@@ -149,15 +165,26 @@ namespace Altaxo.Calc.Regression
     }
 
     /// <summary>
-    /// Predict values towards the end of the vector. The predicted values are then used to predict more values. See remarks for details.
+    /// Predicts values towards the end of the vector.
+    /// The predicted values are then used to predict further values.
     /// </summary>
-    /// <param name="x">Signal which holds at least <see cref="NumberOfCoefficients"/> valid points (the signal window to start the prediction with) from index (firstPoint-NumberOfCoefficents) to (firstPoint-1). The predicted values are then stored in this vector.</param>
+    /// <param name="x">
+    /// Signal which holds at least <see cref="NumberOfCoefficients"/> valid points (the signal window to start the prediction with)
+    /// from index <c>(firstPoint - NumberOfCoefficients)</c> to <c>(firstPoint - 1)</c>. The predicted values are stored into this
+    /// vector.
+    /// </param>
     /// <param name="firstPoint">Index of the first point to predict.</param>
     /// <param name="count">Number of points to predict.</param>
     /// <remarks>
-    /// The algorithm uses a signal window of <c>NumberOfCoefficients</c> signal points before the <c>firstPoint</c> to predict the value at <c>firstPoint</c>.
-    /// Then the window is shifted by one towards the end of the vecctor, hence including the predicted value, and the point at <c>firstPoint+1</c> is predicted. The procedure is repeated until <c>count</c> points are predicted.
+    /// The algorithm uses a signal window of <see cref="NumberOfCoefficients"/> signal points before <paramref name="firstPoint"/>
+    /// to predict the value at <paramref name="firstPoint"/>.
+    /// Then the window is shifted by one towards the end of the vector (thus including the predicted value), and the point at
+    /// <c>firstPoint + 1</c> is predicted.
+    /// The procedure is repeated until <paramref name="count"/> points are predicted.
     /// </remarks>
+    /// <exception cref="InvalidOperationException">
+    /// Thrown if the algorithm has not been executed yet.
+    /// </exception>
     public void PredictRecursivelyForward(IVector<double> x, int firstPoint, int count)
     {
       if (_Ak is null)
@@ -177,18 +204,31 @@ namespace Altaxo.Calc.Regression
     }
 
     /// <summary>
-    /// This algorithm determines the mean forward prediction error using the model stored in this instance. See remarks for details.
+    /// Determines the mean forward prediction error using the model stored in this instance.
     /// </summary>
     /// <param name="x">Signal for which to determine the mean forward prediction error.</param>
-    /// <returns>Mean backward prediction error.</returns>
+    /// <returns>Mean forward prediction error.</returns>
     /// <remarks>
-    /// 1. The prediction is done non recursively, i.e. part of the signal (the signal window) is used to predict the signal value immediately after the window, and this predicted signal value is
-    /// then compared with the original signal value stored in x to build the sum of errors. But the predicted signal value is <b>not</b> used to make further predictions.
-    /// Instead, the signal window is moved by one point to the right and another prediction is made, with the original signal in x. This is repeated until the last point
-    /// is predicted. The return value is the square root of the sum of squared differences between predicted signal values and original values, divided by the number of predicted values.
-    /// The number of predicted values is the length of the signal x minus the number of coefficents of the model.
+    /// <para>
+    /// The prediction is done non-recursively, i.e. a part of the signal (the signal window) is used to predict the signal value
+    /// immediately after the window, and this predicted signal value is then compared with the original signal value stored in
+    /// <paramref name="x"/> to build the sum of errors.
+    /// </para>
+    /// <para>
+    /// The predicted signal value is <b>not</b> used to make further predictions. Instead, the signal window is moved by one point
+    /// to the right and another prediction is made, using the original signal in <paramref name="x"/>. This is repeated until the
+    /// last point is predicted.
+    /// </para>
+    /// <para>
+    /// The return value is the square root of the sum of squared differences between predicted signal values and original values,
+    /// divided by the number of predicted values. The number of predicted values is the length of the signal <paramref name="x"/>
+    /// minus the number of coefficients of the model.
+    /// </para>
     /// </remarks>
-    public double GetMeanPredictionErrorNonrecursivelyForward(System.Collections.Generic.IReadOnlyList<double> x)
+    /// <exception cref="InvalidOperationException">
+    /// Thrown if the algorithm has not been executed yet.
+    /// </exception>
+    public double GetMeanPredictionErrorNonrecursivelyForward(IReadOnlyList<double> x)
     {
       if (_Ak is null)
         throw new InvalidOperationException(ErrorNoExecution);
@@ -210,13 +250,21 @@ namespace Altaxo.Calc.Regression
     }
 
     /// <summary>
-    /// Predict values towards the start of the vector. The predicted values are then used to predict more values. See remarks for details.
+    /// Predicts values towards the start of the vector.
+    /// The predicted values are then used to predict further values.
     /// </summary>
-    /// <param name="x">Signal which holds at least <see cref="NumberOfCoefficients"/> valid points (the signal window to start the prediction with) from index (lastPoint+1) to (lastPoint+NumberOfCoefficents). The predicted values are then stored in the first part of this vector from indices (0) to (lastPoint).</param>
+    /// <param name="x">
+    /// Signal which holds at least <see cref="NumberOfCoefficients"/> valid points (the signal window to start the prediction with)
+    /// from index <c>(lastPoint + 1)</c> to <c>(lastPoint + NumberOfCoefficients)</c>. The predicted values are stored in the first
+    /// part of this vector from indices <c>0</c> to <paramref name="lastPoint"/>.
+    /// </param>
     /// <param name="lastPoint">Index of the last point to predict.</param>
     /// <remarks>
-    /// The algorithm uses a signal window of <c>NumberOfCoefficients</c> signal points after the <c>lastPoint</c> to predict the value at <c>lastPoint</c>.
-    /// Then the window is shifted by one towards the start of the vecctor, hence including the predicted value, and the point at <c>lastPoint-1</c> is predicted. The procedure is repeated until the value at index 0 is predicted.
+    /// The algorithm uses a signal window of <see cref="NumberOfCoefficients"/> signal points after <paramref name="lastPoint"/>
+    /// to predict the value at <paramref name="lastPoint"/>.
+    /// Then the window is shifted by one towards the start of the vector (thus including the predicted value), and the point at
+    /// <c>lastPoint - 1</c> is predicted.
+    /// The procedure is repeated until the value at index 0 is predicted.
     /// </remarks>
     public void PredictRecursivelyBackward(IVector<double> x, int lastPoint)
     {
@@ -224,15 +272,26 @@ namespace Altaxo.Calc.Regression
     }
 
     /// <summary>
-    /// Predict values towards the start of the vector. The predicted values are then used to predict more values. See remarks for details.
+    /// Predicts values towards the start of the vector.
+    /// The predicted values are then used to predict further values.
     /// </summary>
-    /// <param name="x">Signal which holds at least <see cref="NumberOfCoefficients"/> valid points (the signal window to start the prediction with) from index (lastPoint+1) to (lastPoint+NumberOfCoefficents). The predicted values are then stored in the first part of this vector from indices (lastPoint-count+1) to (lastPoint).</param>
+    /// <param name="x">
+    /// Signal which holds at least <see cref="NumberOfCoefficients"/> valid points (the signal window to start the prediction with)
+    /// from index <c>(lastPoint + 1)</c> to <c>(lastPoint + NumberOfCoefficients)</c>. The predicted values are stored in the first
+    /// part of this vector from indices <c>(lastPoint - count + 1)</c> to <paramref name="lastPoint"/>.
+    /// </param>
     /// <param name="lastPoint">Index of the last point to predict.</param>
     /// <param name="count">Number of points to predict.</param>
     /// <remarks>
-    /// The algorithm uses a signal window of <c>NumberOfCoefficients</c> signal points after the <c>lastPoint</c> to predict the value at <c>lastPoint</c>.
-    /// Then the window is shifted by one towards the start of the vecctor, hence including the predicted value, and the point at <c>lastPoint-1</c> is predicted. The procedure is repeated until <c>count</c> points are predicted.
+    /// The algorithm uses a signal window of <see cref="NumberOfCoefficients"/> signal points after <paramref name="lastPoint"/>
+    /// to predict the value at <paramref name="lastPoint"/>.
+    /// Then the window is shifted by one towards the start of the vector (thus including the predicted value), and the point at
+    /// <c>lastPoint - 1</c> is predicted.
+    /// The procedure is repeated until <paramref name="count"/> points are predicted.
     /// </remarks>
+    /// <exception cref="InvalidOperationException">
+    /// Thrown if the algorithm has not been executed yet.
+    /// </exception>
     public void PredictRecursivelyBackward(IVector<double> x, int lastPoint, int count)
     {
       if (_Ak is null)
@@ -251,18 +310,31 @@ namespace Altaxo.Calc.Regression
     }
 
     /// <summary>
-    /// This algorithm determines the mean backward prediction error using the model stored in this instance. See remarks for details.
+    /// Determines the mean backward prediction error using the model stored in this instance.
     /// </summary>
     /// <param name="x">Signal for which to determine the mean backward prediction error.</param>
     /// <returns>Mean backward prediction error.</returns>
     /// <remarks>
-    /// 1. The prediction is done non recursively, i.e. part of the signal (the signal window) is used to predict the signal value before, and this predicted signal value is
-    /// then compared with the original signal value stored in x to build the sum of errors. But the predicted signal value is <b>not</b> used to make further predictions.
-    /// Instead, the signal window is moved by one point to the left and another prediction is made, with the original signal in x. This is repeated until the first point (index 0)
-    /// is predicted. The return value is the square root of the sum of squared differences between predicted signal values and original values, divided by the number of predicted values.
-    /// The number of predicted values is the length of the signal x minus the number of coefficents of the model.
+    /// <para>
+    /// The prediction is done non-recursively, i.e. a part of the signal (the signal window) is used to predict the signal value
+    /// before the window, and this predicted signal value is then compared with the original signal value stored in
+    /// <paramref name="x"/> to build the sum of errors.
+    /// </para>
+    /// <para>
+    /// The predicted signal value is <b>not</b> used to make further predictions. Instead, the signal window is moved by one point
+    /// to the left and another prediction is made, using the original signal in <paramref name="x"/>. This is repeated until the
+    /// first point (index 0) is predicted.
+    /// </para>
+    /// <para>
+    /// The return value is the square root of the sum of squared differences between predicted signal values and original values,
+    /// divided by the number of predicted values. The number of predicted values is the length of the signal <paramref name="x"/>
+    /// minus the number of coefficients of the model.
+    /// </para>
     /// </remarks>
-    public double GetMeanPredictionErrorNonrecursivelyBackward(System.Collections.Generic.IReadOnlyList<double> x)
+    /// <exception cref="InvalidOperationException">
+    /// Thrown if the algorithm has not been executed yet.
+    /// </exception>
+    public double GetMeanPredictionErrorNonrecursivelyBackward(IReadOnlyList<double> x)
     {
       if (_Ak is null)
         throw new InvalidOperationException(ErrorNoExecution);
@@ -284,8 +356,13 @@ namespace Altaxo.Calc.Regression
     /// <summary>
     /// Calculates the frequency response for a given frequency.
     /// </summary>
-    /// <param name="fdt">Frequency. Must be given as f*dt, meaning the product of frequency and sample interval.</param>
-    /// <returns>The complex frequency response at the given frequency.</returns>
+    /// <param name="fdt">
+    /// Frequency specified as <c>f * dt</c>, i.e. the product of frequency and sample interval.
+    /// </param>
+    /// <returns>The (real-valued) power spectrum estimate at the given frequency.</returns>
+    /// <exception cref="InvalidOperationException">
+    /// Thrown if the algorithm has not been executed yet.
+    /// </exception>
     public virtual double GetFrequencyResponse(double fdt)
     {
       var Ak = _Ak ?? throw new InvalidOperationException(ErrorNoExecution);
@@ -333,43 +410,43 @@ namespace Altaxo.Calc.Regression
     }
 
     /// <summary>
-    /// Uses the signal in vector x to build a model with <c>numberOfCoefficients</c> parameter.
+    /// Uses the signal in <paramref name="x"/> to build a model with as many parameters as there is space in <paramref name="coefficients"/>.
     /// </summary>
     /// <param name="x">Signal for building the model.</param>
     /// <param name="coefficients">Vector to be filled with the coefficients of the model.</param>
     /// <returns>The mean square error of backward and forward prediction.</returns>
-    public static double Execution(System.Collections.Generic.IReadOnlyList<double> x, IVector<double> coefficients)
+    public static double Execution(IReadOnlyList<double> x, IVector<double> coefficients)
     {
       return Execution(x, coefficients, null, null, null);
     }
 
     /// <summary>
-    /// Uses the signal in vector x to build a model with <c>numberOfCoefficients</c> parameter.
+    /// Uses the signal in <paramref name="x"/> to build a model with as many parameters as there is space in <paramref name="coefficients"/>.
     /// </summary>
     /// <param name="x">Signal for building the model.</param>
     /// <param name="coefficients">Vector to be filled with the coefficients of the model.</param>
     /// <param name="errors">Vector to be filled with the sum of forward and backward prediction error for every stage of the model.</param>
     /// <returns>The mean square error of backward and forward prediction.</returns>
-    public static double Execution(System.Collections.Generic.IReadOnlyList<double> x, IVector<double> coefficients, IVector<double> errors)
+    public static double Execution(IReadOnlyList<double> x, IVector<double> coefficients, IVector<double> errors)
     {
       return Execution(x, coefficients, errors, null, null);
     }
 
     /// <summary>
-    /// Uses the signal in vector x to build a model with <c>numberOfCoefficients</c> parameter.
+    /// Uses the signal in <paramref name="x"/> to build a model with as many parameters as there is space in <paramref name="coefficients"/>.
     /// </summary>
     /// <param name="x">Signal for building the model.</param>
     /// <param name="coefficients">Vector to be filled with the coefficients of the model.</param>
     /// <param name="errors">Vector to be filled with the sum of forward and backward prediction error for every stage of the model.</param>
     /// <param name="reflectionCoefficients">Vector to be filled with the reflection coefficients.</param>
     /// <returns>The mean square error of backward and forward prediction.</returns>
-    public static double Execution(System.Collections.Generic.IReadOnlyList<double> x, IVector<double> coefficients, IVector<double> errors, IVector<double> reflectionCoefficients)
+    public static double Execution(IReadOnlyList<double> x, IVector<double> coefficients, IVector<double> errors, IVector<double> reflectionCoefficients)
     {
       return Execution(x, coefficients, errors, reflectionCoefficients, null);
     }
 
     /// <summary>
-    /// Uses the signal in vector x to build a model with <c>numberOfCoefficients</c> parameter.
+    /// Uses the signal in <paramref name="x"/> to build a model with as many parameters as there is space in <paramref name="coefficients"/>.
     /// </summary>
     /// <param name="x">Signal for building the model.</param>
     /// <param name="coefficients">Vector to be filled with the coefficients of the model.</param>
@@ -377,7 +454,7 @@ namespace Altaxo.Calc.Regression
     /// <param name="reflectionCoefficients">Vector to be filled with the reflection coefficients.</param>
     /// <param name="tempStorage">Instance of this class used to hold the temporary arrays.</param>
     /// <returns>The mean square error of backward and forward prediction.</returns>
-    private static double Execution(System.Collections.Generic.IReadOnlyList<double> x, IVector<double> coefficients, IVector<double>? errors, IVector<double>? reflectionCoefficients, BurgAlgorithm? tempStorage)
+    private static double Execution(IReadOnlyList<double> x, IVector<double> coefficients, IVector<double>? errors, IVector<double>? reflectionCoefficients, BurgAlgorithm? tempStorage)
     {
       int N = x.Count - 1;
       int m = coefficients.Count;
@@ -473,9 +550,11 @@ namespace Altaxo.Calc.Regression
       return sumE / (2 * (N - k));
     }
 
-    /// <summary>Square of x.</summary>
-    /// <param name="x">x</param>
-    /// <returns>Square of x.</returns>
+    /// <summary>
+    /// Returns the square of <paramref name="x"/>.
+    /// </summary>
+    /// <param name="x">Value.</param>
+    /// <returns>The square of <paramref name="x"/>.</returns>
     private static double Square(double x)
     {
       return x * x;

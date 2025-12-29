@@ -31,6 +31,9 @@ namespace Altaxo.Calc.Probability
 {
   using Altaxo.Calc.RootFinding;
 
+  /// <summary>
+  /// Represents the stable distribution in Feller's parametrization.
+  /// </summary>
   public class StableDistributionFeller : StableDistributionBase
   {
     private double _alpha;
@@ -190,11 +193,18 @@ namespace Altaxo.Calc.Probability
       }
     }
 
+    /// <summary>Validates whether the provided alpha value is within the supported range.</summary>
+    /// <param name="alpha">Distribution parameter alpha.</param>
+    /// <returns><see langword="true"/> if alpha is greater than 0 and less than or equal to 2; otherwise, <see langword="false"/>.</returns>
     public static bool IsValidAlpha(double alpha)
     {
       return alpha > 0 && alpha <= 2;
     }
 
+    /// <summary>Validates whether the provided gamma value is within the supported range for the given alpha.</summary>
+    /// <param name="alpha">Distribution parameter alpha.</param>
+    /// <param name="gamma">Distribution parameter gamma.</param>
+    /// <returns><see langword="true"/> if gamma is valid for the specified alpha; otherwise, <see langword="false"/>.</returns>
     public static bool IsValidGamma(double alpha, double gamma)
     {
       if (alpha <= 1)
@@ -203,16 +213,23 @@ namespace Altaxo.Calc.Probability
         return Math.Abs(gamma) <= (2 - alpha);
     }
 
+    /// <summary>Validates whether the provided scale value is within the supported range.</summary>
+    /// <param name="scale">Scaling parameter.</param>
+    /// <returns><see langword="true"/> if scale is positive; otherwise, <see langword="false"/>.</returns>
     public static bool IsValidScale(double scale)
     {
       return scale > 0;
     }
 
+    /// <summary>Validates whether the provided location value is within the supported range.</summary>
+    /// <param name="location">Location parameter.</param>
+    /// <returns><see langword="true"/> if the location is finite; otherwise, <see langword="false"/>.</returns>
     public static bool IsValidLocation(double location)
     {
       return location >= double.MinValue && location <= double.MaxValue;
     }
 
+    /// <inheritdoc/>
     public override double Minimum
     {
       get
@@ -224,6 +241,7 @@ namespace Altaxo.Calc.Probability
       }
     }
 
+    /// <inheritdoc/>
     public override double Maximum
     {
       get
@@ -235,11 +253,13 @@ namespace Altaxo.Calc.Probability
       }
     }
 
+    /// <inheritdoc/>
     public override double Mean
     {
       get { throw new NotImplementedException(); }
     }
 
+    /// <inheritdoc/>
     public override double Median
     {
       get
@@ -248,6 +268,7 @@ namespace Altaxo.Calc.Probability
       }
     }
 
+    /// <inheritdoc/>
     public override double Variance
     {
       get
@@ -256,6 +277,7 @@ namespace Altaxo.Calc.Probability
       }
     }
 
+    /// <inheritdoc/>
     public override double[] Mode
     {
       get
@@ -264,6 +286,7 @@ namespace Altaxo.Calc.Probability
       }
     }
 
+    /// <inheritdoc/>
     public override double NextDouble()
     {
       if (_gamma == 0)
@@ -283,6 +306,7 @@ namespace Altaxo.Calc.Probability
       }
     }
 
+    /// <inheritdoc/>
     public override double PDF(double x)
     {
       return PDF(x, _alpha, _gamma, _aga, _scale, _location, ref _tempStorePDF, _pdfPrecision);
@@ -298,6 +322,12 @@ namespace Altaxo.Calc.Probability
       return PDF(x, alpha, gamma, ref store, Math.Sqrt(DoubleConstants.DBL_EPSILON));
     }
 
+    /// <summary>Calculates the probability density for the specified arguments with enhanced gamma precision.</summary>
+    /// <param name="x">Argument.</param>
+    /// <param name="alpha">Distribution parameter alpha.</param>
+    /// <param name="gamma">Distribution parameter gamma.</param>
+    /// <param name="aga">Alternative gamma parameter to improve precision.</param>
+    /// <returns>The probability density value.</returns>
     public static double PDF(double x, double alpha, double gamma, double aga)
     {
       object? store = null;
@@ -345,7 +375,7 @@ namespace Altaxo.Calc.Probability
         x = -x;
         gamma = -gamma;
         // note: aga remains invariant
-      }
+    }
       if (!(x > 0))
         return double.NaN;
 
@@ -380,6 +410,12 @@ namespace Altaxo.Calc.Probability
       return CDF(x, alpha, gamma, aga, ref tempStorage, DefaultPrecision);
     }
 
+    /// <summary>Computes the cumulative distribution function for the specified arguments with enhanced gamma precision.</summary>
+    /// <param name="x">Argument.</param>
+    /// <param name="alpha">Distribution parameter alpha.</param>
+    /// <param name="gamma">Distribution parameter gamma.</param>
+    /// <param name="aga">Alternative gamma parameter to improve precision.</param>
+    /// <returns>The cumulative probability.</returns>
     public static double CDF(double x, double alpha, double gamma, double aga)
     {
       object? temp = null;
@@ -451,6 +487,11 @@ namespace Altaxo.Calc.Probability
       }
     }
 
+    /// <summary>Computes the complementary cumulative distribution function for the specified arguments.</summary>
+    /// <param name="x">Argument.</param>
+    /// <param name="alpha">Distribution parameter alpha.</param>
+    /// <param name="gamma">Distribution parameter gamma.</param>
+    /// <returns>The complementary cumulative probability.</returns>
     public static double CCDF(double x, double alpha, double gamma)
     {
       object? tempStorage = null;
@@ -458,12 +499,26 @@ namespace Altaxo.Calc.Probability
       return CCDF(x, alpha, gamma, aga, ref tempStorage, DefaultPrecision);
     }
 
+    /// <summary>Computes the complementary cumulative distribution function for the specified arguments with enhanced gamma precision.</summary>
+    /// <param name="x">Argument.</param>
+    /// <param name="alpha">Distribution parameter alpha.</param>
+    /// <param name="gamma">Distribution parameter gamma.</param>
+    /// <param name="aga">Alternative gamma parameter to improve precision.</param>
+    /// <returns>The complementary cumulative probability.</returns>
     public static double CCDF(double x, double alpha, double gamma, double aga)
     {
       object? tempStorage = null;
       return CCDF(x, alpha, gamma, aga, ref tempStorage, DefaultPrecision);
     }
 
+    /// <summary>Computes the complementary cumulative distribution function for the specified arguments.</summary>
+    /// <param name="x">Argument.</param>
+    /// <param name="alpha">Distribution parameter alpha.</param>
+    /// <param name="gamma">Distribution parameter gamma.</param>
+    /// <param name="aga">Alternative gamma parameter to improve precision.</param>
+    /// <param name="tempStorage">Temporary storage reused between calls.</param>
+    /// <param name="precision">Relative precision goal.</param>
+    /// <returns>The complementary cumulative probability.</returns>
     public static double CCDF(double x, double alpha, double gamma, double aga, ref object? tempStorage, double precision)
     {
       // test input parameter
@@ -487,6 +542,11 @@ namespace Altaxo.Calc.Probability
       }
     }
 
+    /// <summary>Computes the odd extension of the CDF around zero.</summary>
+    /// <param name="x">Argument.</param>
+    /// <param name="alpha">Distribution parameter alpha.</param>
+    /// <param name="gamma">Distribution parameter gamma.</param>
+    /// <returns>The value of the XZCDF.</returns>
     public static double XZCDF(double x, double alpha, double gamma)
     {
       object? tempStorage = null;
@@ -494,12 +554,26 @@ namespace Altaxo.Calc.Probability
       return XZCDF(x, alpha, gamma, aga, ref tempStorage, DefaultPrecision);
     }
 
+    /// <summary>Computes the odd extension of the CDF around zero with enhanced gamma precision.</summary>
+    /// <param name="x">Argument.</param>
+    /// <param name="alpha">Distribution parameter alpha.</param>
+    /// <param name="gamma">Distribution parameter gamma.</param>
+    /// <param name="aga">Alternative gamma parameter to improve precision.</param>
+    /// <returns>The value of the XZCDF.</returns>
     public static double XZCDF(double x, double alpha, double gamma, double aga)
     {
       object? tempStorage = null;
       return XZCDF(x, alpha, gamma, aga, ref tempStorage, DefaultPrecision);
     }
 
+    /// <summary>Computes the odd extension of the CDF around zero for the specified arguments.</summary>
+    /// <param name="x">Argument.</param>
+    /// <param name="alpha">Distribution parameter alpha.</param>
+    /// <param name="gamma">Distribution parameter gamma.</param>
+    /// <param name="aga">Alternative gamma parameter to improve precision.</param>
+    /// <param name="tempStorage">Temporary storage reused between calls.</param>
+    /// <param name="precision">Relative precision goal.</param>
+    /// <returns>The value of the XZCDF.</returns>
     public static double XZCDF(double x, double alpha, double gamma, double aga, ref object? tempStorage, double precision)
     {
       // test input parameter
@@ -526,6 +600,16 @@ namespace Altaxo.Calc.Probability
       return result;
     }
 
+    /// <summary>Evaluates the CDF integration for positive x values.</summary>
+    /// <param name="x">Argument.</param>
+    /// <param name="alpha">Distribution parameter alpha.</param>
+    /// <param name="gamma">Distribution parameter gamma.</param>
+    /// <param name="aga">Alternative gamma parameter to improve precision.</param>
+    /// <param name="tempStorage">Temporary storage reused between calls.</param>
+    /// <param name="precision">Relative precision goal.</param>
+    /// <param name="integFromXZero">Resulting integral from zero to x.</param>
+    /// <param name="integFromXInfinity">Resulting integral from x to infinity.</param>
+    /// <param name="offs">Offset used for balancing the symmetric parts.</param>
     public static void CDFMethodForPositiveX(double x, double alpha, double gamma, double aga, ref object? tempStorage, double precision, out double integFromXZero, out double integFromXInfinity, out double offs)
     {
       if (alpha <= 0)
@@ -624,10 +708,11 @@ namespace Altaxo.Calc.Probability
       }
     }
 
-    #endregion CDF dispatcher
-
-    #region Quantile
-
+    /// <summary>Calculates the quantile for the specified probability.</summary>
+    /// <param name="p">Probability in the range [0,1].</param>
+    /// <param name="alpha">Distribution parameter alpha.</param>
+    /// <param name="gamma">Distribution parameter gamma.</param>
+    /// <returns>The quantile corresponding to the probability.</returns>
     public static double Quantile(double p, double alpha, double gamma)
     {
       object? tempStorage = null;
@@ -635,12 +720,26 @@ namespace Altaxo.Calc.Probability
       return Quantile(p, alpha, gamma, aga, ref tempStorage, DefaultPrecision);
     }
 
+    /// <summary>Computes the quantile for the specified probability with enhanced gamma precision.</summary>
+    /// <param name="p">Probability in the range [0,1].</param>
+    /// <param name="alpha">Distribution parameter alpha.</param>
+    /// <param name="gamma">Distribution parameter gamma.</param>
+    /// <param name="aga">Alternative gamma parameter to improve precision.</param>
+    /// <returns>The quantile corresponding to the probability.</returns>
     public static double Quantile(double p, double alpha, double gamma, double aga)
     {
       object? tempStorage = null;
       return Quantile(p, alpha, gamma, aga, ref tempStorage, DefaultPrecision);
     }
 
+    /// <summary>Computes the quantile for the specified probability.</summary>
+    /// <param name="p">Probability in the range [0,1].</param>
+    /// <param name="alpha">Distribution parameter alpha.</param>
+    /// <param name="gamma">Distribution parameter gamma.</param>
+    /// <param name="aga">Alternative gamma parameter to improve precision.</param>
+    /// <param name="tempStorage">Temporary storage reused between calls.</param>
+    /// <param name="precision">Relative precision goal.</param>
+    /// <returns>The quantile corresponding to the probability.</returns>
     public static double Quantile(double p, double alpha, double gamma, double aga, ref object? tempStorage, double precision)
     {
       if (p == 0.5)
@@ -673,6 +772,11 @@ namespace Altaxo.Calc.Probability
       return root;
     }
 
+    /// <summary>Computes the quantile of the complementary cumulative distribution for the specified probability.</summary>
+    /// <param name="p">Probability in the range [0,1].</param>
+    /// <param name="alpha">Distribution parameter alpha.</param>
+    /// <param name="gamma">Distribution parameter gamma.</param>
+    /// <returns>The quantile corresponding to the complementary cumulative probability.</returns>
     public static double QuantileCCDF(double p, double alpha, double gamma)
     {
       object? tempStorage = null;
@@ -680,12 +784,26 @@ namespace Altaxo.Calc.Probability
       return QuantileCCDF(p, alpha, gamma, aga, ref tempStorage, DefaultPrecision);
     }
 
+    /// <summary>Computes the quantile of the complementary cumulative distribution for the specified probability with enhanced gamma precision.</summary>
+    /// <param name="p">Probability in the range [0,1].</param>
+    /// <param name="alpha">Distribution parameter alpha.</param>
+    /// <param name="gamma">Distribution parameter gamma.</param>
+    /// <param name="aga">Alternative gamma parameter to improve precision.</param>
+    /// <returns>The quantile corresponding to the complementary cumulative probability.</returns>
     public static double QuantileCCDF(double p, double alpha, double gamma, double aga)
     {
       object? tempStorage = null;
       return QuantileCCDF(p, alpha, gamma, aga, ref tempStorage, DefaultPrecision);
     }
 
+    /// <summary>Computes the quantile of the complementary cumulative distribution for the specified probability.</summary>
+    /// <param name="q">Probability in the range [0,1].</param>
+    /// <param name="alpha">Distribution parameter alpha.</param>
+    /// <param name="gamma">Distribution parameter gamma.</param>
+    /// <param name="aga">Alternative gamma parameter to improve precision.</param>
+    /// <param name="tempStorage">Temporary storage reused between calls.</param>
+    /// <param name="precision">Relative precision goal.</param>
+    /// <returns>The quantile corresponding to the complementary cumulative probability.</returns>
     public static double QuantileCCDF(double q, double alpha, double gamma, double aga, ref object? tempStorage, double precision)
     {
       if (q == 0.5)

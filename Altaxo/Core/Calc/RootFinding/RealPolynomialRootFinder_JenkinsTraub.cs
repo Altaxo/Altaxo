@@ -27,8 +27,10 @@ namespace Altaxo.Calc.RootFinding
     /// <summary>
     /// The Jenkins–Traub algorithm for finding the roots of a polynomial.
     /// </summary>
-    /// <param name="Input">The coefficients for the polynomial starting with the constant (zero degree) and ends with the highest degree. Missing coefficients must be provided as zeros.</param>
-    /// <returns>All the real and complex roots that are found are returned in a list of complex numbers. The list is not neccessarily sorted.</returns>
+    /// <param name="Input">The coefficients for the polynomial starting with the constant (zero degree) and ending with the highest degree. Missing coefficients must be provided as zeros.</param>
+    /// <returns>
+    /// All real and complex roots that are found, returned as a list of complex numbers. The list is not necessarily sorted.
+    /// </returns>
     public List<Complex64T> Execute(params double[] Input)
     {
       return FindRoots(Input);
@@ -37,8 +39,12 @@ namespace Altaxo.Calc.RootFinding
     /// <summary>
     /// The Jenkins–Traub algorithm for finding the roots of a polynomial.
     /// </summary>
-    /// <param name="Input">The coefficients for the polynomial starting with the constant (zero degree) and ends with the highest degree. Missing coefficients must be provided as zeros.</param>
-    /// <returns>All the real and complex roots that are found are returned in a list of complex numbers. The list is not neccessarily sorted.</returns>
+    /// <param name="Input">The coefficients for the polynomial starting with the constant (zero degree) and ending with the highest degree. Missing coefficients must be provided as zeros.</param>
+    /// <returns>
+    /// All real and complex roots that are found, returned as a list of complex numbers. The list is not necessarily sorted.
+    /// </returns>
+    /// <exception cref="ArgumentNullException">Thrown if <paramref name="Input"/> is <see langword="null"/>.</exception>
+    /// <exception cref="ArgumentException">Thrown if the provided polynomial has a degree of zero.</exception>
     public static List<Complex64T> FindRoots(params double[] Input)
     {
       if (Input is null)
@@ -374,6 +380,24 @@ namespace Altaxo.Calc.RootFinding
       return result;
     }
 
+    /// <summary>
+    /// Computes up to <paramref name="L2"/> fixed shift <c>K</c>-polynomials, testing for convergence in the linear or
+    /// quadratic case.
+    /// </summary>
+    /// <param name="L2">Limit of fixed shift steps.</param>
+    /// <param name="NZ">Number of zeros found.</param>
+    /// <param name="sr">Real part of the shift.</param>
+    /// <param name="v">Shift modulus parameter.</param>
+    /// <param name="K">The K-polynomial coefficients.</param>
+    /// <param name="N">Degree (or effective order) of the current polynomial.</param>
+    /// <param name="p">Current polynomial coefficients.</param>
+    /// <param name="NN">Polynomial coefficient count (<c>N + 1</c>).</param>
+    /// <param name="qp">Quotient polynomial coefficients (output).</param>
+    /// <param name="u">Quadratic coefficient used for synthetic division.</param>
+    /// <param name="lzi">Imaginary part of the larger root (output).</param>
+    /// <param name="lzr">Real part of the larger root (output).</param>
+    /// <param name="szi">Imaginary part of the smaller root (output).</param>
+    /// <param name="szr">Real part of the smaller root (output).</param>
     private static void Fxshfr_ak1(int L2, ref int NZ, double sr, double v, double[] K, int N, double[] p, int NN, double[] qp, double u,
 
     ref double lzi, ref double lzr, ref double szi, ref double szr)
@@ -615,6 +639,16 @@ namespace Altaxo.Calc.RootFinding
       }
     }
 
+    /// <summary>
+    /// Divides <paramref name="p"/> by the quadratic <c>1, u, v</c>, placing the quotient in <paramref name="q"/> and the remainder in <paramref name="a"/> and <paramref name="b"/>.
+    /// </summary>
+    /// <param name="NN">Polynomial coefficient count.</param>
+    /// <param name="u">Linear coefficient of the quadratic divisor.</param>
+    /// <param name="v">Constant coefficient of the quadratic divisor.</param>
+    /// <param name="p">Dividend polynomial coefficients.</param>
+    /// <param name="q">Quotient polynomial coefficients (output).</param>
+    /// <param name="a">Remainder coefficient (output).</param>
+    /// <param name="b">Remainder coefficient (output).</param>
     private static void QuadSD_ak1(int NN, double u, double v, double[] p, double[] q, ref double a, ref double b)
     {
       // Divides p by the quadratic 1, u, v placing the quotient in q and the remainder in a, b
@@ -635,6 +669,28 @@ namespace Altaxo.Calc.RootFinding
       }
     }
 
+    /// <summary>
+    /// Calculates scalar quantities used to compute the next K-polynomial and new estimates of the quadratic coefficients.
+    /// </summary>
+    /// <param name="N">Degree (or effective order) of the current polynomial.</param>
+    /// <param name="a">Remainder coefficient from synthetic division.</param>
+    /// <param name="b">Remainder coefficient from synthetic division.</param>
+    /// <param name="a1">Scalar quantity (output).</param>
+    /// <param name="a3">Scalar quantity (output).</param>
+    /// <param name="a7">Scalar quantity (output).</param>
+    /// <param name="c">Remainder coefficient from synthetic division of K (output).</param>
+    /// <param name="d">Remainder coefficient from synthetic division of K (output).</param>
+    /// <param name="e">Scalar quantity (output).</param>
+    /// <param name="f">Scalar quantity (output).</param>
+    /// <param name="g">Scalar quantity (output).</param>
+    /// <param name="h">Scalar quantity (output).</param>
+    /// <param name="K">The K-polynomial coefficients.</param>
+    /// <param name="u">Quadratic coefficient used for synthetic division.</param>
+    /// <param name="v">Quadratic coefficient used for synthetic division.</param>
+    /// <param name="qk">Quotient of K divided by the quadratic (output).</param>
+    /// <returns>
+    /// An integer flag indicating how the calculations are normalized to avoid overflow.
+    /// </returns>
     private static int calcSC_ak1(int N, double a, double b, ref double a1, ref double a3, ref double a7, ref double c, ref double d, ref double e, ref double f,
     ref double g, ref double h, double[] K, double u, double v, double[] qk)
     {
@@ -685,6 +741,19 @@ namespace Altaxo.Calc.RootFinding
       return dumFlag;
     }
 
+    /// <summary>
+    /// Computes the next K-polynomial using the scalars computed in <see cref="calcSC_ak1"/>.
+    /// </summary>
+    /// <param name="N">Degree (or effective order) of the current polynomial.</param>
+    /// <param name="tFlag">Normalization mode flag returned by <see cref="calcSC_ak1"/>.</param>
+    /// <param name="a">Remainder coefficient from synthetic division.</param>
+    /// <param name="b">Remainder coefficient from synthetic division.</param>
+    /// <param name="a1">Scalar quantity.</param>
+    /// <param name="a3">Scalar quantity (input/output).</param>
+    /// <param name="a7">Scalar quantity (input/output).</param>
+    /// <param name="K">The K-polynomial coefficients (input/output).</param>
+    /// <param name="qk">Quotient of K divided by the quadratic.</param>
+    /// <param name="qp">Quotient of p divided by the quadratic.</param>
     private static void nextK_ak1(int N, int tFlag, double a, double b, double a1, ref double a3, ref double a7, double[] K, double[] qk, double[] qp)
     {
       // Computes the next K polynomials using the scalars computed in calcSC_ak1
@@ -743,6 +812,27 @@ namespace Altaxo.Calc.RootFinding
       }
     }
 
+    /// <summary>
+    /// Computes new estimates of the quadratic coefficients using the scalars computed in <see cref="calcSC_ak1"/>.
+    /// </summary>
+    /// <param name="tFlag">Normalization mode flag returned by <see cref="calcSC_ak1"/>.</param>
+    /// <param name="uu">Estimated quadratic <c>u</c> coefficient (output).</param>
+    /// <param name="vv">Estimated quadratic <c>v</c> coefficient (output).</param>
+    /// <param name="a">Remainder coefficient.</param>
+    /// <param name="a1">Scalar quantity.</param>
+    /// <param name="a3">Scalar quantity.</param>
+    /// <param name="a7">Scalar quantity.</param>
+    /// <param name="b">Remainder coefficient.</param>
+    /// <param name="c">Remainder coefficient.</param>
+    /// <param name="d">Remainder coefficient.</param>
+    /// <param name="f">Scalar quantity.</param>
+    /// <param name="g">Scalar quantity.</param>
+    /// <param name="h">Scalar quantity.</param>
+    /// <param name="u">Current estimate for the quadratic <c>u</c> coefficient.</param>
+    /// <param name="v">Current estimate for the quadratic <c>v</c> coefficient.</param>
+    /// <param name="K">The K-polynomial coefficients.</param>
+    /// <param name="N">Degree (or effective order) of the current polynomial.</param>
+    /// <param name="p">Current polynomial coefficients.</param>
     private static void newest_ak1(int tFlag, ref double uu, ref double vv, double a, double a1, double a3, double a7, double b, double c, double d,
     double f, double g, double h, double u, double v, double[] K, int N, double[] p)
     {
@@ -792,6 +882,33 @@ namespace Altaxo.Calc.RootFinding
       }
     }
 
+    /// <summary>
+    /// Performs variable-shift K-polynomial iteration for a quadratic factor; converges only if the zeros are equimodular or nearly so.
+    /// </summary>
+    /// <param name="N">Degree (or effective order) of the current polynomial.</param>
+    /// <param name="NZ">Number of zeros found (output).</param>
+    /// <param name="uu">Initial estimate for the quadratic <c>u</c> coefficient.</param>
+    /// <param name="vv">Initial estimate for the quadratic <c>v</c> coefficient.</param>
+    /// <param name="szr">Real part of the smaller root (output).</param>
+    /// <param name="szi">Imaginary part of the smaller root (output).</param>
+    /// <param name="lzr">Real part of the larger root (output).</param>
+    /// <param name="lzi">Imaginary part of the larger root (output).</param>
+    /// <param name="qp">Quotient polynomial coefficients (output).</param>
+    /// <param name="NN">Polynomial coefficient count (<c>N + 1</c>).</param>
+    /// <param name="a">Remainder coefficient (output).</param>
+    /// <param name="b">Remainder coefficient (output).</param>
+    /// <param name="p">Current polynomial coefficients.</param>
+    /// <param name="qk">Quotient of K divided by the quadratic.</param>
+    /// <param name="a1">Scalar quantity (output).</param>
+    /// <param name="a3">Scalar quantity (output).</param>
+    /// <param name="a7">Scalar quantity (output).</param>
+    /// <param name="c">Remainder coefficient from synthetic division of K (output).</param>
+    /// <param name="d">Remainder coefficient from synthetic division of K (output).</param>
+    /// <param name="e">Scalar quantity (output).</param>
+    /// <param name="f">Scalar quantity (output).</param>
+    /// <param name="g">Scalar quantity (output).</param>
+    /// <param name="h">Scalar quantity (output).</param>
+    /// <param name="K">The K-polynomial coefficients (input/output).</param>
     private static void QuadIT_ak1(int N, ref int NZ, double uu, double vv, ref double szr, ref double szi, ref double lzr, ref double lzi, double[] qp, int NN,
     ref double a, ref double b, double[] p, double[] qk, ref double a1, ref double a3, ref double a7, ref double c, ref double d, ref double e,
 
@@ -919,6 +1036,20 @@ namespace Altaxo.Calc.RootFinding
       } while ((vi != 0));
     }
 
+    /// <summary>
+    /// Performs variable-shift H-polynomial iteration for a real zero.
+    /// </summary>
+    /// <param name="iFlag">Flag indicating a pair of zeros near the real axis (output).</param>
+    /// <param name="NZ">Number of zeros found (output).</param>
+    /// <param name="sss">Starting iterate (input/output).</param>
+    /// <param name="N">Degree (or effective order) of the current polynomial.</param>
+    /// <param name="p">Current polynomial coefficients.</param>
+    /// <param name="NN">Polynomial coefficient count (<c>N + 1</c>).</param>
+    /// <param name="qp">Quotient polynomial coefficients (output).</param>
+    /// <param name="szr">Real part of the root (output).</param>
+    /// <param name="szi">Imaginary part of the root (output).</param>
+    /// <param name="K">The K-polynomial coefficients (input/output).</param>
+    /// <param name="qk">Intermediate polynomial coefficients (output).</param>
     private static void RealIT_ak1(ref int iFlag, ref int NZ, ref double sss, int N, double[] p, int NN, double[] qp, ref double szr, ref double szi, double[] K,
 
     double[] qk)
@@ -1045,6 +1176,16 @@ namespace Altaxo.Calc.RootFinding
       } while (true);
     }
 
+    /// <summary>
+    /// Calculates the zeros of the quadratic <c>a*Z^2 + b*Z + c</c>.
+    /// </summary>
+    /// <param name="a">Quadratic coefficient.</param>
+    /// <param name="b1">Linear coefficient.</param>
+    /// <param name="c">Constant coefficient.</param>
+    /// <param name="sr">Real part of the smaller root (output).</param>
+    /// <param name="si">Imaginary part of the smaller root (output).</param>
+    /// <param name="lr">Real part of the larger root (output).</param>
+    /// <param name="li">Imaginary part of the larger root (output).</param>
     private static void Quad_ak1(double a, double b1, double c, ref double sr, ref double si, ref double lr, ref double li)
     {
       // Calculates the zeros of the quadratic a*Z^2 + b1*Z + c

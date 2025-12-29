@@ -37,26 +37,62 @@ using Altaxo.Calc.LinearAlgebra;
 
 namespace Altaxo.Calc.Regression.Nonlinear
 {
+  /// <summary>
+  /// Legacy implementation of a quick nonlinear regression for one dependent variable in dependence on one independent variable.
+  /// </summary>
+  /// <remarks>
+  /// This type is kept for compatibility. Use <see cref="QuickNonlinearRegression"/> instead.
+  /// </remarks>
   [Obsolete("Please use QuickNonlinearRegression instead.")]
   public class QuickNonlinearRegressionOld
   {
+    /// <summary>
+    /// The fit function used for regression.
+    /// </summary>
     protected IFitFunction _fitFunction;
 
+    /// <summary>
+    /// The sum of squared residuals (Chi²) computed by the last fit.
+    /// </summary>
     protected double _sumChiSquare;
+
+    /// <summary>
+    /// The estimated sigma squared computed by the last fit.
+    /// </summary>
     protected double _sigmaSquare;
 
+    /// <summary>
+    /// The fitted parameters (full parameter vector, including fixed parameters).
+    /// </summary>
     protected double[] _parameters = new double[0];
+
+    /// <summary>
+    /// The variances of the fitted parameters (full parameter vector, including fixed parameters).
+    /// </summary>
     protected double[] _parameterVariances = new double[0];
+
+    /// <summary>
+    /// The covariances of the free parameters as computed by the last fit.
+    /// </summary>
     protected IROMatrix<double>? _covariances;
 
+    /// <summary>
+    /// Indicates whether the fit has been executed and results are available.
+    /// </summary>
     protected bool _isExecuted;
 
+    /// <summary>
+    /// Throws an exception if the fit has not been executed yet.
+    /// </summary>
     private void CheckExecuted()
     {
       if (!_isExecuted)
         throw new InvalidOperationException("Please execute the fit before accessing the results");
     }
 
+    /// <summary>
+    /// Gets the sum of squared residuals (Chi²) of the last fit.
+    /// </summary>
     public double SumChiSquare
     {
       get
@@ -66,6 +102,9 @@ namespace Altaxo.Calc.Regression.Nonlinear
       }
     }
 
+    /// <summary>
+    /// Gets the estimated sigma squared of the last fit.
+    /// </summary>
     public double SigmaSquare
     {
       get
@@ -75,6 +114,9 @@ namespace Altaxo.Calc.Regression.Nonlinear
       }
     }
 
+    /// <summary>
+    /// Gets the variances of the fitted parameters.
+    /// </summary>
     public IReadOnlyList<double> ParameterVariances
     {
       get
@@ -84,6 +126,9 @@ namespace Altaxo.Calc.Regression.Nonlinear
       }
     }
 
+    /// <summary>
+    /// Gets the fitted parameters.
+    /// </summary>
     public IReadOnlyList<double> Parameters
     {
       get
@@ -109,16 +154,40 @@ namespace Altaxo.Calc.Regression.Nonlinear
     }
 
 
+    /// <summary>
+    /// Initializes a new instance of the <see cref="QuickNonlinearRegressionOld"/> class.
+    /// </summary>
+    /// <param name="fitFunction">The fit function to use for regression.</param>
+    /// <exception cref="ArgumentNullException"><paramref name="fitFunction"/> is <see langword="null"/>.</exception>
     public QuickNonlinearRegressionOld(IFitFunction fitFunction)
     {
       _fitFunction = fitFunction ?? throw new ArgumentNullException(nameof(fitFunction));
     }
 
+    /// <summary>
+    /// Performs nonlinear least-squares fitting.
+    /// </summary>
+    /// <param name="xValues">The x-values of the model to fit.</param>
+    /// <param name="yValues">The y-values of the model to fit.</param>
+    /// <param name="initialGuess">The initially guessed parameter values.</param>
+    /// <param name="cancellationToken">Token to cancel the evaluation.</param>
+    /// <returns>The fitted parameter vector.</returns>
     public double[] Fit(double[] xValues, double[] yValues, double[] initialGuess, CancellationToken cancellationToken)
     {
       return Fit(xValues, yValues, initialGuess, new bool[initialGuess.Length], cancellationToken);
     }
 
+    /// <summary>
+    /// Performs nonlinear least-squares fitting.
+    /// </summary>
+    /// <param name="xValues">The x-values of the model to fit.</param>
+    /// <param name="yValues">The y-values of the model to fit.</param>
+    /// <param name="initialGuess">The initially guessed parameter values.</param>
+    /// <param name="isFixed">
+    /// Array of booleans indicating which parameters are fixed. Must have the same length as <paramref name="initialGuess"/>.
+    /// </param>
+    /// <param name="cancellationToken">Token to cancel the evaluation.</param>
+    /// <returns>The fitted parameter vector.</returns>
     public virtual double[] Fit(double[] xValues, double[] yValues, double[] initialGuess, bool[] isFixed, CancellationToken cancellationToken)
     {
       _isExecuted = false;
@@ -150,6 +219,9 @@ namespace Altaxo.Calc.Regression.Nonlinear
       return _parameters;
     }
 
+    /// <summary>
+    /// Adapter that maps between the fit function API and the delegate-based API expected by the legacy LM implementation.
+    /// </summary>
     private class Adapter
     {
       private double[] _xValues;
@@ -160,10 +232,24 @@ namespace Altaxo.Calc.Regression.Nonlinear
       private double[] _xx = new double[1];
       private double[] _yy = new double[1];
 
+      /// <summary>
+      /// Gets the number of free (non-fixed) parameters.
+      /// </summary>
       public int FreeParameterCount => _parameterMapping.Length;
 
+      /// <summary>
+      /// Gets the mapping from free parameter indices to indices in the full parameter vector.
+      /// </summary>
       public int[] ParameterMapping => _parameterMapping;
 
+      /// <summary>
+      /// Initializes a new instance of the <see cref="Adapter"/> class.
+      /// </summary>
+      /// <param name="x">The x-values.</param>
+      /// <param name="y">The y-values.</param>
+      /// <param name="initialGuess">The initial parameter vector.</param>
+      /// <param name="fitFunc">The fit function to use.</param>
+      /// <param name="isFixed">Boolean flags indicating which parameters are fixed.</param>
       public Adapter(double[] x, double[] y, double[] initialGuess, IFitFunction fitFunc, bool[] isFixed)
       {
         _xValues = x;
@@ -182,6 +268,14 @@ namespace Altaxo.Calc.Regression.Nonlinear
         _parameterMapping = l.ToArray();
       }
 
+      /// <summary>
+      /// Evaluates the function differences (residuals) for the current parameter vector.
+      /// </summary>
+      /// <param name="numberOfYs">The number of y-values.</param>
+      /// <param name="numberOfParameter">The number of parameters.</param>
+      /// <param name="param">The current free parameter vector.</param>
+      /// <param name="ys">Receives the calculated residuals.</param>
+      /// <param name="info">Status information as used by the LM implementation.</param>
       public void EvaluateFunctionDifferences(int numberOfYs, int numberOfParameter, double[] param, double[] ys, ref int info)
       {
         for (int i = 0; i < param.Length; ++i)

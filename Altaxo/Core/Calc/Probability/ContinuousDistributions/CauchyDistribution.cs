@@ -27,10 +27,10 @@ using System;
 namespace Altaxo.Calc.Probability
 {
   /// <summary>
-  /// Provides generation of cauchy distributed random numbers.
+  /// Provides generation of Cauchy distributed random numbers.
   /// </summary>
   /// <remarks>
-  /// The implementation of the <see cref="CauchyDistribution"/> type bases upon information presented on
+  /// The implementation of the <see cref="CauchyDistribution"/> type is based upon information presented on
   ///   <a href="http://en.wikipedia.org/wiki/Cauchy_distribution">Wikipedia - Cauchy distribution</a> and
   ///   <a href="http://www.xycoon.com/cauchy2p_random.htm">Xycoon - Cauchy Distribution</a>.
   /// </remarks>
@@ -39,9 +39,9 @@ namespace Altaxo.Calc.Probability
     #region instance fields
 
     /// <summary>
-    /// Gets or sets the parameter alpha (location parameter - designates the median) of cauchy distributed random numbers which is used for their generation.
+    /// Gets or sets the parameter alpha (location parameter; designates the median) which is used for generation of Cauchy distributed random numbers.
     /// </summary>
-    /// <remarks>Call <see cref="IsValidAlpha"/> to determine whether a value is valid and therefor assignable.</remarks>
+    /// <remarks>Call <see cref="IsValidAlpha"/> to determine whether a value is valid and therefore assignable.</remarks>
     public double Alpha
     {
       get
@@ -55,14 +55,14 @@ namespace Altaxo.Calc.Probability
     }
 
     /// <summary>
-    /// Stores the parametera alpha (location parameter - designates the median) of cauchy distributed random numbers which is used for their generation.
+    /// Stores the parameter alpha (location parameter; designates the median) which is used for generation of Cauchy distributed random numbers.
     /// </summary>
     private double alpha;
 
     /// <summary>
-    /// Gets or sets the parameter gamma (scale parameter - designates half with at half maximum) which is used for generation of cauchy distributed random numbers.
+    /// Gets or sets the parameter gamma (scale parameter; designates the half-width at half-maximum) which is used for generation of Cauchy distributed random numbers.
     /// </summary>
-    /// <remarks>Call <see cref="IsValidGamma"/> to determine whether a value is valid and therefor assignable.</remarks>
+    /// <remarks>Call <see cref="IsValidGamma"/> to determine whether a value is valid and therefore assignable.</remarks>
     public double Gamma
     {
       get
@@ -140,7 +140,9 @@ namespace Altaxo.Calc.Probability
     /// Determines whether the specified value is valid for parameter <see cref="Alpha"/>.
     /// </summary>
     /// <param name="value">The value to check.</param>
-    /// <returns><see langword="true"/>.</returns>
+    /// <returns>
+    /// <see langword="true"/> if the value is within the range of <see cref="double"/>; otherwise, <see langword="false"/>.
+    /// </returns>
     public bool IsValidAlpha(double value)
     {
       return value > double.MinValue && value < double.MaxValue;
@@ -158,6 +160,11 @@ namespace Altaxo.Calc.Probability
       return value > 0.0;
     }
 
+    /// <summary>
+    /// Initializes this instance with the specified parameters.
+    /// </summary>
+    /// <param name="alpha">Location parameter.</param>
+    /// <param name="gamma">Scale parameter.</param>
     public void Initialize(double alpha, double gamma)
     {
       if (!IsValidAlpha(alpha))
@@ -173,9 +180,7 @@ namespace Altaxo.Calc.Probability
 
     #region overridden Distribution members
 
-    /// <summary>
-    /// Gets the minimum possible value of cauchy distributed random numbers.
-    /// </summary>
+    /// <inheritdoc/>
     public override double Minimum
     {
       get
@@ -184,9 +189,7 @@ namespace Altaxo.Calc.Probability
       }
     }
 
-    /// <summary>
-    /// Gets the maximum possible value of cauchy distributed random numbers.
-    /// </summary>
+    /// <inheritdoc/>
     public override double Maximum
     {
       get
@@ -195,9 +198,7 @@ namespace Altaxo.Calc.Probability
       }
     }
 
-    /// <summary>
-    /// Gets the mean value of cauchy distributed random numbers. It's undefined, so the return value is <see cref="double.NaN"/>.
-    /// </summary>
+    /// <inheritdoc/>
     public override double Mean
     {
       get
@@ -206,9 +207,7 @@ namespace Altaxo.Calc.Probability
       }
     }
 
-    /// <summary>
-    /// Gets the median of cauchy distributed random numbers.
-    /// </summary>
+    /// <inheritdoc/>
     public override double Median
     {
       get
@@ -217,9 +216,7 @@ namespace Altaxo.Calc.Probability
       }
     }
 
-    /// <summary>
-    /// Gets the variance of cauchy distributed random numbers.
-    /// </summary>
+    /// <inheritdoc/>
     public override double Variance
     {
       get
@@ -228,9 +225,7 @@ namespace Altaxo.Calc.Probability
       }
     }
 
-    /// <summary>
-    /// Gets the mode of cauchy distributed random numbers.
-    /// </summary>
+    /// <inheritdoc/>
     public override double[] Mode
     {
       get
@@ -239,10 +234,7 @@ namespace Altaxo.Calc.Probability
       }
     }
 
-    /// <summary>
-    /// Returns a cauchy distributed floating point random number.
-    /// </summary>
-    /// <returns>A cauchy distributed double-precision floating point number.</returns>
+    /// <inheritdoc/>
     public override double NextDouble()
     {
       return alpha + gamma * Math.Tan(Math.PI * (Generator.NextDouble() - 0.5));
@@ -252,36 +244,69 @@ namespace Altaxo.Calc.Probability
 
     #region CdfPdfQuantile
 
+    /// <summary>
+    /// Computes the square of the specified value.
+    /// </summary>
+    /// <param name="x">The value.</param>
+    /// <returns>The square of <paramref name="x"/>.</returns>
     private static double Pow2(double x)
     {
       return x * x;
     }
 
+    /// <inheritdoc/>
     public override double CDF(double x)
     {
       return CDF(x, alpha, gamma);
     }
 
+    /// <summary>
+    /// Calculates the cumulative distribution function for the specified parameters.
+    /// </summary>
+    /// <param name="x">Argument.</param>
+    /// <param name="a">Location parameter.</param>
+    /// <param name="b">Scale parameter.</param>
+    /// <returns>
+    /// The probability that the random variable is less than or equal to <paramref name="x"/>.
+    /// </returns>
     public static double CDF(double x, double a, double b)
     {
       return 0.5 + Math.Atan((-a + x) / b) / Math.PI;
     }
 
+    /// <inheritdoc/>
     public override double PDF(double x)
     {
       return PDF(x, alpha, gamma);
     }
 
+    /// <summary>
+    /// Calculates the probability density function for the specified parameters.
+    /// </summary>
+    /// <param name="x">Argument.</param>
+    /// <param name="a">Location parameter.</param>
+    /// <param name="b">Scale parameter.</param>
+    /// <returns>The relative likelihood for the random variable to occur at <paramref name="x"/>.</returns>
     public static double PDF(double x, double a, double b)
     {
       return 1 / (b * Math.PI * (1 + Pow2(-a + x) / Pow2(b)));
     }
 
+    /// <inheritdoc/>
     public override double Quantile(double p)
     {
       return Quantile(p, alpha, gamma);
     }
 
+    /// <summary>
+    /// Calculates the quantile function for the specified parameters.
+    /// </summary>
+    /// <param name="p">The probability.</param>
+    /// <param name="a">Location parameter.</param>
+    /// <param name="b">Scale parameter.</param>
+    /// <returns>
+    /// The point <c>x</c> at which the cumulative distribution function is equal to <paramref name="p"/>.
+    /// </returns>
     public static double Quantile(double p, double a, double b)
     {
       return a + b * Math.Tan((-0.5 + p) * Math.PI);

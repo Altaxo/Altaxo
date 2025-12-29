@@ -30,6 +30,9 @@ using System;
 
 namespace Altaxo.Calc.RootFinding
 {
+  /// <summary>
+  /// Base class for one-dimensional root-finding algorithms.
+  /// </summary>
   public abstract class AbstractRootFinder
   {
     #region Constants
@@ -41,18 +44,39 @@ namespace Altaxo.Calc.RootFinding
     private static readonly StringResourceKey SRK_RootNotBracketed = new StringResourceKey("RootFinding.RootNotBracketed", "The algorithm could not start because the root seemed not to be bracketed", "");
     private static readonly StringResourceKey SRK_InadequateAlgorithm = new StringResourceKey("RootFinding.InadequateAlgorithm", "This algorithm is not able to solve this equation", "");
 
+    /// <summary>
+    /// Gets the localized error message used when the provided range argument is not valid.
+    /// </summary>
     protected static string MessageRangeArgumentInvalid { get { return StringResources.AltaxoCore.GetString(SRK_RangeArgumentInvalid); } }
 
+    /// <summary>
+    /// Gets the localized error message used when an invalid range is encountered while finding a root.
+    /// </summary>
     protected static string MessageInvalidRange { get { return StringResources.AltaxoCore.GetString(SRK_InvalidRange); } }
 
+    /// <summary>
+    /// Gets the localized error message used when the requested accuracy cannot be reached within the maximum number of iterations.
+    /// </summary>
     protected static string MessageAccuracyNotReached { get { return StringResources.AltaxoCore.GetString(SRK_AccuracyNotReached); } }
 
+    /// <summary>
+    /// Gets the localized error message used when the algorithm ends without finding a root in the range.
+    /// </summary>
     protected static string MessageRootNotFound { get { return StringResources.AltaxoCore.GetString(SRK_RootNotFound); } }
 
+    /// <summary>
+    /// Gets the localized error message used when the algorithm cannot start because the root does not seem to be bracketed.
+    /// </summary>
     protected static string MessageRootNotBracketed { get { return StringResources.AltaxoCore.GetString(SRK_RootNotBracketed); } }
 
+    /// <summary>
+    /// Gets the localized error message used when the chosen algorithm cannot solve the equation.
+    /// </summary>
     protected static string MessageInadequateAlgorithm { get { return StringResources.AltaxoCore.GetString(SRK_InadequateAlgorithm); } }
 
+    /// <summary>
+    /// Machine epsilon-like accuracy threshold, used as an internal constant.
+    /// </summary>
     protected const double double_Accuracy = 9.99200722162641E-16;
 
     #endregion Constants
@@ -62,25 +86,57 @@ namespace Altaxo.Calc.RootFinding
     private static int _defaultMaximumNumberOfIterations = 30;
     private static double _defaultAccuracy = 1.0E-04;
 
+    /// <summary>
+    /// Maximum number of iterations used by the algorithm.
+    /// </summary>
     protected int _maximumNumberOfIterations;
+
+    /// <summary>
+    /// Lower bound of the current search interval.
+    /// </summary>
     protected double _xMin;
+
+    /// <summary>
+    /// Upper bound of the current search interval.
+    /// </summary>
     protected double _xMax;
+
+    /// <summary>
+    /// Desired accuracy for the computed root.
+    /// </summary>
     protected double _accuracy;
+
+    /// <summary>
+    /// Function for which a root should be found.
+    /// </summary>
     protected Func<double, double> _function;
+
+    /// <summary>
+    /// Stores the original function when the solver is temporarily configured to solve f(x) == y.
+    /// </summary>
     protected Func<double, double>? _originalFunction;
+
     private double _bracketingFactor = 1.6;
 
     #endregion Variables
 
     #region Construction
 
-    /// <summary>Constructor.</summary>
+    /// <summary>
+    /// Initializes a new instance of the <see cref="AbstractRootFinder"/> class.
+    /// </summary>
     /// <param name="f">A continuous function.</param>
     public AbstractRootFinder(Func<double, double> f)
       : this(f, _defaultMaximumNumberOfIterations, _defaultAccuracy)
     {
     }
 
+    /// <summary>
+    /// Initializes a new instance of the <see cref="AbstractRootFinder"/> class.
+    /// </summary>
+    /// <param name="function">A continuous function.</param>
+    /// <param name="maxNumberOfIterations">Maximum number of iterations allowed.</param>
+    /// <param name="accuracy">Desired accuracy for the computed root.</param>
     public AbstractRootFinder(Func<double, double> function, int maxNumberOfIterations, double accuracy)
     {
       _function = function;
@@ -92,6 +148,10 @@ namespace Altaxo.Calc.RootFinding
 
     #region Properties
 
+    /// <summary>
+    /// Gets or sets the factor used for outward bracketing when searching for an interval that contains a root.
+    /// </summary>
+    /// <exception cref="ArgumentOutOfRangeException">Thrown if the value is less than or equal to 0.</exception>
     public double BracketingFactor
     {
       get { return _bracketingFactor; }
@@ -103,6 +163,10 @@ namespace Altaxo.Calc.RootFinding
       }
     }
 
+    /// <summary>
+    /// Sets the maximum number of iterations.
+    /// </summary>
+    /// <exception cref="ArgumentOutOfRangeException">Thrown if the value is less than or equal to 0.</exception>
     public int MaximumNumberOfIterations
     {
       set
@@ -113,6 +177,9 @@ namespace Altaxo.Calc.RootFinding
       }
     }
 
+    /// <summary>
+    /// Gets or sets the desired accuracy for the computed root.
+    /// </summary>
     public double Accuracy
     {
       get { return _accuracy; }
@@ -123,12 +190,16 @@ namespace Altaxo.Calc.RootFinding
 
     #region Methods
 
-    /// <summary>Detect a range containing at least one root.</summary>
+    /// <summary>
+    /// Detects a range containing at least one root.
+    /// </summary>
     /// <param name="xmin">Lower value of the range.</param>
-    /// <param name="xmax">Upper value of the range</param>
-    /// <param name="factor">The growing factor of research. Usually 1.6.</param>
-    /// <returns>True if the bracketing operation succeeded, else otherwise.</returns>
-    /// <remarks>This iterative methods stops when two values with opposite signs are found.</remarks>
+    /// <param name="xmax">Upper value of the range.</param>
+    /// <param name="factor">Growing factor of the search (typically 1.6).</param>
+    /// <returns><see langword="true"/> if the bracketing operation succeeded; otherwise, an exception is thrown.</returns>
+    /// <remarks>
+    /// This iterative method stops when two values with opposite signs are found.
+    /// </remarks>
     public bool SearchBracketsOutward(ref double xmin, ref double xmax, double factor)
     {
       // Check the range
@@ -152,9 +223,11 @@ namespace Altaxo.Calc.RootFinding
       throw new RootFinderException(MessageRootNotFound, iiter, new Range(fmin, fmax), 0.0);
     }
 
-    /// <summary>Prototype algorithm for solving the equation f(x)==0.</summary>
-    /// <param name="x1">The low value of the range where the root is supposed to be.</param>
-    /// <param name="x2">The high value of the range where the root is supposed to be.</param>
+    /// <summary>
+    /// Solves the equation f(x) == 0.
+    /// </summary>
+    /// <param name="x1">The lower value of the range where the root is supposed to be.</param>
+    /// <param name="x2">The higher value of the range where the root is supposed to be.</param>
     /// <param name="bracket">Determines whether a bracketing operation is required.</param>
     /// <returns>Returns the root with the specified accuracy.</returns>
     public virtual double Solve(double x1, double x2, bool bracket)
@@ -167,7 +240,9 @@ namespace Altaxo.Calc.RootFinding
       return Find();
     }
 
-    /// <summary>Prototype algorithm for solving the equation f(x)==y.</summary>
+    /// <summary>
+    /// Solves the equation f(x) == y.
+    /// </summary>
     /// <param name="x1">The lower value of the range where the root is supposed to be.</param>
     /// <param name="x2">The higher value of the range where the root is supposed to be.</param>
     /// <param name="y">The function value to find the function's argument for.</param>
@@ -185,12 +260,21 @@ namespace Altaxo.Calc.RootFinding
       return x;
     }
 
+    /// <summary>
+    /// Performs the algorithm-specific root search on the currently configured interval.
+    /// </summary>
+    /// <returns>The computed root.</returns>
     protected abstract double Find();
 
     #endregion Methods
 
     #region Helper methods
 
+    /// <summary>
+    /// Swaps the values of two <see cref="double"/> variables.
+    /// </summary>
+    /// <param name="x">First value.</param>
+    /// <param name="y">Second value.</param>
     protected void Swap(ref double x, ref double y)
     {
       var t = x;
@@ -198,13 +282,22 @@ namespace Altaxo.Calc.RootFinding
       y = t;
     }
 
-    /// <summary>Helper method useful for preventing rounding errors.</summary>
+    /// <summary>
+    /// Helper method useful for preventing rounding errors.
+    /// </summary>
+    /// <param name="a">The magnitude to return.</param>
+    /// <param name="b">The value providing the sign.</param>
     /// <returns>a*sign(b)</returns>
     protected double Sign(double a, double b)
     {
       return b >= 0 ? (a >= 0 ? a : -a) : (a >= 0 ? -a : a);
     }
 
+    /// <summary>
+    /// Returns the sign of <paramref name="x"/>.
+    /// </summary>
+    /// <param name="x">Input value.</param>
+    /// <returns>1.0 if <paramref name="x"/> is greater than 0; otherwise -1.0.</returns>
     internal static double Sign(double x)
     {
       return x > 0 ? 1.0 : -1.0;

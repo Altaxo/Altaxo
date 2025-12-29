@@ -31,8 +31,8 @@ using System.Text;
 namespace Altaxo.Calc.Regression.Nonlinear
 {
   /// <summary>
-  /// Holds the properties of one fit parameter, as <see cref="Name"/>, the value of the parameter <see cref="Parameter"/>, the <see cref="Variance"/>
-  /// and whether this parameter is fixed or can be varied.
+  /// Holds the properties of one fit parameter, such as <see cref="Name"/>, the value of the parameter (<see cref="Parameter"/>),
+  /// the <see cref="Variance"/>, and whether this parameter is fixed or can be varied.
   /// </summary>
   /// <seealso cref="System.ICloneable" />
   public record ParameterSetElement : Main.IImmutable
@@ -76,7 +76,7 @@ namespace Altaxo.Calc.Regression.Nonlinear
     /// Gets or sets a value indicating whether this <see cref="ParameterSetElement"/> can vary during the fitting calculation.
     /// </summary>
     /// <value>
-    ///   <c>true</c> if the parameter can vary; otherwise, <c>false</c>.
+    /// <c>true</c> if the parameter can vary; otherwise, <c>false</c>.
     /// </value>
     public bool Vary { get; init; }
 
@@ -91,12 +91,12 @@ namespace Altaxo.Calc.Regression.Nonlinear
     public bool IsLowerBoundExclusive { get; init; }
 
     /// <summary>
-    /// Gets or sets the lower bound for the parameter.
+    /// Gets or sets the upper bound for the parameter.
     /// </summary>
     public double? UpperBound { get; init; }
 
     /// <summary>
-    /// Gets or sets a value indicating whether the lower bound value is exclusive.
+    /// Gets or sets a value indicating whether the upper bound value is exclusive.
     /// </summary>
     public bool IsUpperBoundExclusive { get; init; }
 
@@ -105,6 +105,7 @@ namespace Altaxo.Calc.Regression.Nonlinear
     [Altaxo.Serialization.Xml.XmlSerializationSurrogateFor("AltaxoBase", "Altaxo.Calc.Regression.Nonlinear.ParameterSetElement", 0)]
     private class XmlSerializationSurrogate0 : Altaxo.Serialization.Xml.IXmlSerializationSurrogate
     {
+      /// <inheritdoc/>
       public virtual void Serialize(object obj, Altaxo.Serialization.Xml.IXmlSerializationInfo info)
       {
         throw new InvalidOperationException();
@@ -118,6 +119,7 @@ namespace Altaxo.Calc.Regression.Nonlinear
         */
       }
 
+      /// <inheritdoc/>
       public virtual object Deserialize(object? o, Altaxo.Serialization.Xml.IXmlDeserializationInfo info, object? parent)
       {
         var name = info.GetString("Name");
@@ -129,13 +131,17 @@ namespace Altaxo.Calc.Regression.Nonlinear
     }
 
     /// <summary>
-    /// 2023-06-08 V1: Extended by LowerBound, IsLowerBoundExclusive, UpperBound, IsUpperBoundExclusive
-    /// 2024-02-27 V2: Moved to AltaxoCore, now immutable
+    /// Serialization surrogate.
     /// </summary>
+    /// <remarks>
+    /// 2023-06-08 V1: Extended by <see cref="LowerBound"/>, <see cref="IsLowerBoundExclusive"/>, <see cref="UpperBound"/>, <see cref="IsUpperBoundExclusive"/>.
+    /// 2024-02-27 V2: Moved to AltaxoCore; now immutable.
+    /// </remarks>
     [Altaxo.Serialization.Xml.XmlSerializationSurrogateFor("AltaxoBase", "Altaxo.Calc.Regression.Nonlinear.ParameterSetElement", 1)]
     [Altaxo.Serialization.Xml.XmlSerializationSurrogateFor(typeof(ParameterSetElement), 2)]
     private class XmlSerializationSurrogate2 : Altaxo.Serialization.Xml.IXmlSerializationSurrogate
     {
+      /// <inheritdoc/>
       public virtual void Serialize(object obj, Altaxo.Serialization.Xml.IXmlSerializationInfo info)
       {
         var s = (ParameterSetElement)obj;
@@ -150,6 +156,7 @@ namespace Altaxo.Calc.Regression.Nonlinear
         info.AddValue("IsUpperBoundExclusive", s.IsUpperBoundExclusive);
       }
 
+      /// <inheritdoc/>
       public virtual object Deserialize(object? o, Altaxo.Serialization.Xml.IXmlDeserializationInfo info, object? parent)
       {
         var name = info.GetString("Name");
@@ -166,12 +173,21 @@ namespace Altaxo.Calc.Regression.Nonlinear
 
     #endregion Serialization
 
+    /// <summary>
+    /// Initializes a new instance of the <see cref="ParameterSetElement"/> class with the specified parameter name.
+    /// </summary>
+    /// <param name="name">The parameter name.</param>
     public ParameterSetElement(string name)
     {
       Name = name;
       Vary = true;
     }
 
+    /// <summary>
+    /// Initializes a new instance of the <see cref="ParameterSetElement"/> class with the specified parameter name and value.
+    /// </summary>
+    /// <param name="name">The parameter name.</param>
+    /// <param name="value">The parameter value.</param>
     public ParameterSetElement(string name, double value)
     {
       Name = name;
@@ -179,6 +195,13 @@ namespace Altaxo.Calc.Regression.Nonlinear
       Vary = true;
     }
 
+    /// <summary>
+    /// Initializes a new instance of the <see cref="ParameterSetElement"/> class.
+    /// </summary>
+    /// <param name="name">The parameter name.</param>
+    /// <param name="value">The parameter value.</param>
+    /// <param name="variance">The variance of the parameter value.</param>
+    /// <param name="vary"><c>true</c> if the parameter can vary; otherwise, <c>false</c>.</param>
     public ParameterSetElement(string name, double value, double variance, bool vary)
     {
       Name = name;
@@ -187,6 +210,17 @@ namespace Altaxo.Calc.Regression.Nonlinear
       Vary = vary;
     }
 
+    /// <summary>
+    /// Initializes a new instance of the <see cref="ParameterSetElement"/> class.
+    /// </summary>
+    /// <param name="name">The parameter name.</param>
+    /// <param name="value">The parameter value.</param>
+    /// <param name="variance">The variance of the parameter value.</param>
+    /// <param name="vary"><c>true</c> if the parameter can vary; otherwise, <c>false</c>.</param>
+    /// <param name="lowerBound">The lower bound for the parameter (can be <see langword="null"/>).</param>
+    /// <param name="isLowerBoundExclusive"><c>true</c> if the lower bound is exclusive; otherwise, <c>false</c>.</param>
+    /// <param name="upperBound">The upper bound for the parameter (can be <see langword="null"/>).</param>
+    /// <param name="isUpperBoundExclusive"><c>true</c> if the upper bound is exclusive; otherwise, <c>false</c>.</param>
     public ParameterSetElement(string name, double value, double variance, bool vary, double? lowerBound, bool isLowerBoundExclusive, double? upperBound, bool isUpperBoundExclusive)
     {
       Name = name;
@@ -200,9 +234,12 @@ namespace Altaxo.Calc.Regression.Nonlinear
     }
 
     /// <summary>
-    /// Gets the effective (inclusive) lower bound. The <see cref="LowerBound"/> value is slightly increased,
-    /// if <see cref="IsLowerBoundExclusive"/> is true in order to get the inclusive lower bound.
+    /// Gets the effective (inclusive) lower bound.
     /// </summary>
+    /// <remarks>
+    /// The <see cref="LowerBound"/> value is slightly increased if <see cref="IsLowerBoundExclusive"/> is <c>true</c>
+    /// in order to obtain an inclusive lower bound.
+    /// </remarks>
     public double? LowerBoundInclusive
     {
       get
@@ -223,9 +260,12 @@ namespace Altaxo.Calc.Regression.Nonlinear
     }
 
     /// <summary>
-    /// Gets the effective (inclusive) upper bound. The <see cref="UpperBound"/> value is slightly decreased,
-    /// if <see cref="IsUpperBoundExclusive"/> is true in order to get the inclusive upper bound.
+    /// Gets the effective (inclusive) upper bound.
     /// </summary>
+    /// <remarks>
+    /// The <see cref="UpperBound"/> value is slightly decreased if <see cref="IsUpperBoundExclusive"/> is <c>true</c>
+    /// in order to obtain an inclusive upper bound.
+    /// </remarks>
     public double? UpperBoundInclusive
     {
       get
@@ -246,12 +286,13 @@ namespace Altaxo.Calc.Regression.Nonlinear
     }
 
     /// <summary>
-    /// Gets the arrays of parameter values, isFixed, lowerBounds and upperBounds for nonlinear fitting.
-    /// The arrays have the same length as the provided list of elements has.
+    /// Gets arrays of parameter values, fixed flags, lower bounds, and upper bounds for nonlinear fitting.
     /// </summary>
     /// <param name="elements">The parameter set elements.</param>
-    /// <returns>Tuple of the arrays parameter values, isFixed, lowerBounds (inclusive) and upperBounds (inclusive) for nonlinear fitting.
-    /// If lowerBounds or upperBounds not contain any value, the corresponding returned array is null.
+    /// <returns>
+    /// A tuple containing arrays of parameter values, fixed flags, lower bounds (inclusive), and upper bounds (inclusive)
+    /// for nonlinear fitting. If <paramref name="elements"/> does not contain any lower bounds or upper bounds, the
+    /// corresponding array is <see langword="null"/>.
     /// </returns>
     public static (double[] parameterValues, bool[] isFixed, double?[]? lowerBounds, double?[]? upperBounds) GetFitArrays(IReadOnlyList<ParameterSetElement> elements)
     {
@@ -277,11 +318,16 @@ namespace Altaxo.Calc.Regression.Nonlinear
     }
 
     /// <summary>
-    /// Collects a list of only the varying parameters (!) and their corresponding boundaries.
-    /// The returned lists have the same length or less length than the provided elements.
+    /// Collects only the varying parameters and their corresponding bounds.
     /// </summary>
+    /// <remarks>
+    /// The returned lists have the same length as, or a shorter length than, the provided <paramref name="parameters"/>.
+    /// </remarks>
     /// <param name="parameters">The parameters.</param>
-    /// <returns>A tuple of three lists, one with the parameters, one with the lower bounds (inclusive, can be null), and one with the upper bounds (inclusive, can be null).</returns>
+    /// <returns>
+    /// A tuple of three lists: parameter values, lower bounds (inclusive, can be <see langword="null"/>),
+    /// and upper bounds (inclusive, can be <see langword="null"/>).
+    /// </returns>
     public static (List<double> varyingParameterValues, List<double?>? lowerBounds, List<double?>? upperBounds) CollectVaryingParametersAndBoundaries(IReadOnlyList<ParameterSetElement> parameters)
     {
       var varyingParameters = new List<double>();
@@ -307,11 +353,14 @@ namespace Altaxo.Calc.Regression.Nonlinear
     }
 
     /// <summary>
-    /// Tests the value of the parameter and the lower and upper boundaries for inconsistencies, and corrects them.
+    /// Tests the parameter value and the lower and upper bounds for inconsistencies, and corrects them.
     /// </summary>
     /// <param name="stb">The <see cref="StringBuilder"/> that is used to collect error messages.</param>
-    /// <param name="isFatal">If the returned value is true, then the error is fatal, i.e. it can not be corrected. This is the case if
-    /// both <see cref="LowerBound"/> and <see cref="UpperBound"/> are set, and <see cref="LowerBoundInclusive"/> is greater than <see cref="UpperBoundInclusive"/>.</param>
+    /// <param name="isFatal">
+    /// If the returned value is <c>true</c>, then the error is fatal, i.e. it cannot be corrected. This is the case if
+    /// both <see cref="LowerBound"/> and <see cref="UpperBound"/> are set, and <see cref="LowerBoundInclusive"/> is
+    /// greater than <see cref="UpperBoundInclusive"/>.
+    /// </param>
     /// <returns>The corrected instance of the <see cref="ParameterSetElement"/>.</returns>
     public ParameterSetElement TestAndCorrectParameterAndBoundaries(StringBuilder stb, ref bool isFatal)
     {

@@ -60,6 +60,11 @@ namespace Altaxo.Calc
       }
     }
 
+    /// <summary>
+    /// Hyperbolic area sine.
+    /// </summary>
+    /// <param name="x">The argument.</param>
+    /// <returns>Hyperbolic area sine.</returns>
     public static double Asinh(double x) => RMath.Asinh(x);
 
     /// <summary>
@@ -72,6 +77,11 @@ namespace Altaxo.Calc
       return 0.5 * (Math.Exp(x) + Math.Exp(-x));
     }
 
+    /// <summary>
+    /// Hyperbolic area cosine.
+    /// </summary>
+    /// <param name="x">The argument.</param>
+    /// <returns>Hyperbolic area cosine.</returns>
     public static double Acosh(double x) => RMath.Acosh(x);
 
 
@@ -85,6 +95,11 @@ namespace Altaxo.Calc
       return Sinh(x) / Cosh(x);
     }
 
+    /// <summary>
+    /// Hyperbolic area tangent.
+    /// </summary>
+    /// <param name="x">The argument.</param>
+    /// <returns>Hyperbolic area tangent.</returns>
     public static double Atanh(double x) => RMath.Atanh(x);
 
 
@@ -99,10 +114,10 @@ namespace Altaxo.Calc
     }
 
     /// <summary>
-    /// Hyperbolic cosecant, i.e. 1/Cosh(x) = 2/(Exp(x)+Exp(-x)).
+    /// Hyperbolic secant, i.e. 1/Cosh(x) = 2/(Exp(x)+Exp(-x)).
     /// </summary>
     /// <param name="x">The argument.</param>
-    /// <returns>Hyperbolic cosecant.</returns>
+    /// <returns>Hyperbolic secant.</returns>
     public static double Sech(double x)
     {
       return 2 / (Math.Exp(x) + Math.Exp(-x));
@@ -208,7 +223,7 @@ namespace Altaxo.Calc
     /// <summary>
     /// Calculates the natural logarithm of 1+x with better accuracy for very small x.
     /// </summary>
-    /// <param name="x">The x value</param>
+    /// <param name="x">The x value.</param>
     /// <returns>Log(1+x) with better accuracy for very small x.</returns>
     public static double Log1p(double x) => RMath.Log1p(x);
 
@@ -216,15 +231,15 @@ namespace Altaxo.Calc
     /// <summary>
     /// Calculates 1-Exp(x) with better accuracy around x=0.
     /// </summary>
-    /// <param name="x">Function argument</param>
-    /// <returns>The value 1-Exp(x)</returns>
+    /// <param name="x">Function argument.</param>
+    /// <returns>The value 1-Exp(x).</returns>
     public static double OneMinusExp(double x) => RMath.OneMinusExp(x);
 
     /// <summary>
     /// Calculates Exp(x)-1 with better accuracy around x=0.
     /// </summary>
-    /// <param name="x">Function argument</param>
-    /// <returns>The value Exp(x)-1</returns>
+    /// <param name="x">Function argument.</param>
+    /// <returns>The value Exp(x)-1.</returns>
     public static double ExpMinusOne(double x) => -RMath.OneMinusExp(x);
 
   }

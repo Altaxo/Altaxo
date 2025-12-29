@@ -18,27 +18,26 @@ using System;
 namespace Altaxo.Calc.Regression
 {
   /// <summary>
-  /// A C# implementation of smoothing by a modified sinc
-  /// kernel(MS or MS1), as described in M.Schmid and U.Diebold,
-  /// 'Why and how Savitzky-Golay filters should be replaced'
-  /// The term 'degree' is defined in analogy to Savitzky-Golay(SG) filters;
-  /// the current MS filters have a similar frequency response as SG filters
-  /// of the same degree(2, 4, ... 10).
+  /// Provides smoothing using a modified sinc kernel (MS or MS1), as described by M. Schmid and U. Diebold,
+  /// <c>"Why and how Savitzky-Golay filters should be replaced"</c>.
+  /// The term <c>degree</c> is defined in analogy to Savitzky-Golay (SG) filters; the current MS filters have a
+  /// similar frequency response as SG filters of the same degree (2, 4, …, 10).
   /// </summary>
   /// <remarks>
-  /// Reference: Michael Schmid, David Rath, and Ulrike Diebold, 'Why and how Savitzky-Golay filters should be replaced', ACS Measurement Science Au 2022 2 (2), 185-196 DOI: 10.1021/acsmeasuresciau.1c00054
+  /// Reference: Michael Schmid, David Rath, and Ulrike Diebold, <c>"Why and how Savitzky-Golay filters should be replaced"</c>,
+  /// ACS Measurement Science Au 2022 2 (2), 185–196. DOI: 10.1021/acsmeasuresciau.1c00054.
   /// </remarks>
   public class ModifiedSincSmoother
   {
     /// <summary>
-    /// This implementation is for a maximum degree of 10.
+    /// The maximum supported filter degree.
     /// </summary>
     public const int MAX_DEGREE = 10;
 
     /// <summary>
-    /// Coefficients for the MS filters, for obtaining a flat passband.
-    /// The innermost arrays contain a, b, c for the fit
-    /// kappa = a + b/(c - m) 
+    /// Coefficients for the MS filters for obtaining a flat passband.
+    /// The innermost arrays contain parameters <c>a</c>, <c>b</c>, <c>c</c> for the fit
+    /// <c>kappa = a + b/(c - m)</c>.
     /// </summary>
     private static readonly double[][]?[] CORRECTION_DATA = [
             null, //not defined for degree 0
@@ -53,10 +52,11 @@ namespace Altaxo.Calc.Regression
              [[0.0011840032, 0.04219344, 2.746875],
              [0.0036718843, 0.12780383, 2.7703125]]
     ];
+
     /// <summary>
-    /// Coefficients for the MS1 filters, for obtaining a flat passband.
-    /// The innermost arrays contain a, b, c for the fit
-    /// kappa = a + b/(c - m) 
+    /// Coefficients for the MS1 filters for obtaining a flat passband.
+    /// The innermost arrays contain parameters <c>a</c>, <c>b</c>, <c>c</c> for the fit
+    /// <c>kappa = a + b/(c - m)</c>.
     /// </summary>
     private static readonly double[][]?[] CORRECTION_DATA1 = [
             null, //not defined for degree 0
@@ -78,49 +78,49 @@ namespace Altaxo.Calc.Regression
     ];
 
     /// <summary>
-    /// Whether MS1 (not MS) filtering should be used
+    /// Gets a value indicating whether MS1 (instead of MS) filtering is used.
     /// </summary>
     private bool isMS1;
 
     /// <summary>
-    /// The degree (2, 4, ... 10).
+    /// Gets the filter degree (2, 4, …, 10).
     /// </summary>
     private int degree;
 
     /// <summary>
-    /// The kernel for filtering.
+    /// The symmetric convolution kernel (stored as the center and one side, i.e. <c>m + 1</c> elements).
     /// </summary>
     private double[] kernel;
 
     /// <summary>
-    /// The weights for linear fitting for extending the data at the boundaries
+    /// The weights for the linear fit used to extrapolate the data at the boundaries.
     /// </summary>
     private double[] fitWeights;
 
     /// <summary>
-    /// Creates a ModifiedSincSmoother with given degree and given kernel size.
-    /// This constructor is useful for repeated smoothing operations with
-    /// the same parameter; then the non-static <see cref="Smooth(double[], double[])"/> 
-    /// can be used without calculating the kernel and boundary fit weights each
-    /// time.
-    /// Otherwise the static <see cref="Smooth(double[], bool, int, int)"/>
-    /// method is more convenient.
+    /// Creates a <see cref="ModifiedSincSmoother"/> with the given degree and kernel size.
+    /// This constructor is useful for repeated smoothing operations with the same parameters; then the
+    /// instance method <see cref="Smooth(double[], double[])"/> can be used without calculating the kernel and
+    /// boundary fit weights each time.
+    /// Otherwise, the static <see cref="Smooth(double[], bool, int, int)"/> method is more convenient.
     /// </summary>
-    /// <param name="isMS1">isMS1 if true, uses the MS1 variant, which has a smaller kernel size,
-    /// at the cost of reduced stopband suppression and more gradual cutoff
-    /// for degree=2. Otherwise, standard MS kernels are used.</param>
-    /// <param name="degree">Degree of the filter, must be 2, 4, ... MAX_DEGREE.
-    /// As for Savitzky-Golay filters, higher degree results in
-    /// a sharper cutoff in the frequency domain.</param>
-    /// <param name="m">The half-width of the kernel, must be larger than degree/2.
-    /// The kernel size is <code>2*m + 1</code>.
-    /// The <paramref name="m"/> parameter can be determined with bandwidthToM.</param>
+    /// <param name="isMS1">
+    /// If <see langword="true"/>, uses the MS1 variant, which has a smaller kernel size at the cost of
+    /// reduced stopband suppression and a more gradual cutoff for <c>degree = 2</c>.
+    /// Otherwise, standard MS kernels are used.
+    /// </param>
+    /// <param name="degree">
+    /// Degree of the filter. Must be 2, 4, …, <see cref="MAX_DEGREE"/>.
+    /// As for Savitzky-Golay filters, higher degree results in a sharper cutoff in the frequency domain.
+    /// </param>
+    /// <param name="m">
+    /// The half-width of the kernel. The kernel size is <c>2*m + 1</c>.
+    /// The parameter must be larger than <c>degree/2</c>. It can be determined with <see cref="BandwidthToM"/>.
+    /// </param>
     /// <exception cref="ArgumentOutOfRangeException">
-    /// Invalid degree " + degree + "; only 2, 4, ... " + MAX_DEGREE + " supported
-    /// or
-    /// Invalid kernel half-width " + m + "; must be >= " + mMin
+    /// Thrown if <paramref name="degree"/> is invalid, or if <paramref name="m"/> is below the minimum required
+    /// half-width for the chosen filter family.
     /// </exception>
-
     public ModifiedSincSmoother(bool isMS1, int degree, int m)
     {
       this.isMS1 = isMS1;
@@ -135,20 +135,18 @@ namespace Altaxo.Calc.Regression
     }
 
     /// <summary>
-    /// Smooths the data with the parameters passed with the constructor,
-    /// except for the near-end points.
+    /// Smooths the data with the parameters passed to the constructor, except for the near-end points.
     /// </summary>
     /// <param name="data">The input data.</param>
-    /// <param name="result">The output array; may be null. If <paramref name="result"/> is
-    /// supplied, has the correct size, and is not the input array,
-    /// it is used for the output.</param>
-    /// <returns>The smoothed data. If <paramref name="result"/> is non-null and has
-    /// the correct size, this is the <paramref name="result"/> array.
-    /// Values within <code>m</code> points from boundaries, where
-    /// the convolution is undefined remain 0 (or retain the
-    /// previous value, if the supplied <paramref name="result"/> array
-    /// is used).</returns>
-
+    /// <param name="result">
+    /// The output array; may be <see langword="null"/>.
+    /// If supplied, has the correct size, and is not the input array, it is used for the output.
+    /// </param>
+    /// <returns>
+    /// The smoothed data. If <paramref name="result"/> is non-null and has the correct size, it is returned.
+    /// Values within <c>m</c> points from the boundaries, where the convolution is undefined, remain 0
+    /// (or retain the previous value if the supplied <paramref name="result"/> array is used).
+    /// </returns>
     public double[] SmoothExceptBoundaries(double[] data, double[]? result)
     {
       if (result is null || result.Length != data.Length || object.ReferenceEquals(result, data))
@@ -167,15 +165,17 @@ namespace Altaxo.Calc.Regression
     }
 
     /// <summary>
-    /// Smooths the data with the parameters passed with the constructor,
-    /// including the near-boundary points. The near-boundary points are
-    /// handled by weighted linear extrapolation of the data before smoothing.
+    /// Smooths the data with the parameters passed to the constructor, including the near-boundary points.
+    /// The near-boundary points are handled by weighted linear extrapolation of the data before smoothing.
     /// </summary>
     /// <param name="data">The input data.</param>
-    /// <param name="result">The output array; may be null. If <paramref name="result"/> is
-    /// supplied and has the correct size, it is used for the output.</param>
-    /// <returns>The smoothed data. If <paramref name="result"/> is non-null and has
-    /// the correct size, this is the <paramref name="result"/> array.</returns>
+    /// <param name="result">
+    /// The output array; may be <see langword="null"/>.
+    /// If supplied and has the correct size, it is used for the output.
+    /// </param>
+    /// <returns>
+    /// The smoothed data. If <paramref name="result"/> is non-null and has the correct size, it is returned.
+    /// </returns>
     public double[] Smooth(double[] data, double[]? result)
     {
       int radius = kernel.Length - 1;
@@ -189,23 +189,28 @@ namespace Altaxo.Calc.Regression
     }
 
     /// <summary>
-    /// Smooths the data and with the given parameters.
-    /// When smoothing multiple data sets with the same parameters,
-    /// using the constructor and then smooth(double[], double[])
-    /// will be more efficient.
+    /// Smooths the data with the given parameters.
+    /// When smoothing multiple data sets with the same parameters, using the constructor and then
+    /// <see cref="Smooth(double[], double[])"/> will be more efficient.
     /// </summary>
     /// <param name="data">The input data.</param>
-    /// <param name="isMS1">if true, uses the MS1 variant, which has a smaller kernel size,
-    /// at the cost of reduced stopband suppression and more gradual cutoff
-    /// for degree=2. Otherwise, standard MS kernels are used.</param>
-    /// <param name="degree">Degree of the filter, must be 2, 4, 6, ... MAX_DEGREE.
-    /// As for Savitzky-Golay filters, higher degree results in
-    /// a sharper cutoff in the frequency domain.</param>
-    /// <param name="m">The half-width of the kernel. The kernel size is
-    /// <code>2*m + 1</code>. The <paramref name="m"/> parameter can be
-    /// determined with bandwidthToM.</param>
-    /// <returns>The smoothed data. Values within <paramref name="m"/> points from
-    /// boundaries, where the convolution is undefined, are set to 0.</returns>
+    /// <param name="isMS1">
+    /// If <see langword="true"/>, uses the MS1 variant, which has a smaller kernel size at the cost of
+    /// reduced stopband suppression and a more gradual cutoff for <c>degree = 2</c>.
+    /// Otherwise, standard MS kernels are used.
+    /// </param>
+    /// <param name="degree">
+    /// Degree of the filter. Must be 2, 4, 6, …, <see cref="MAX_DEGREE"/>.
+    /// As for Savitzky-Golay filters, higher degree results in a sharper cutoff in the frequency domain.
+    /// </param>
+    /// <param name="m">
+    /// The half-width of the kernel. The kernel size is <c>2*m + 1</c>.
+    /// The parameter can be determined with <see cref="BandwidthToM"/>.
+    /// </param>
+    /// <returns>
+    /// The smoothed data. Values within <paramref name="m"/> points from the boundaries, where the convolution
+    /// is undefined, are set to 0.
+    /// </returns>
     public static double[] Smooth(double[] data, bool isMS1, int degree, int m)
     {
       ModifiedSincSmoother smoother = new ModifiedSincSmoother(isMS1, degree, m);
@@ -213,16 +218,19 @@ namespace Altaxo.Calc.Regression
     }
 
     /// <summary>
-    /// Smooths the data in a way comparable to a traditional Savitzky-Golay
-    /// filter with the given parameters <paramref name="degree"/> and <paramref name="m"/>.
+    /// Smooths the data in a way comparable to a traditional Savitzky-Golay filter with the given parameters
+    /// <paramref name="degree"/> and <paramref name="m"/>.
     /// </summary>
     /// <param name="data">The input data.</param>
-    /// <param name="isMS1">if true, uses the MS1 variant, which has a smaller kernel size,
-    /// at the cost of reduced stopband suppression and more gradual cutoff
-    /// for degree=2. Otherwise, standard MS kernels are used.</param>
-    /// <param name="degree"> Degree of the Savitzky-Golay filter that should be replaced,
-    /// must be 2, 4, 6, ... MAX_DEGREE.</param>
-    /// <param name="m">The half-width of a Savitzky-Golay filter that should be replaced.</param>
+    /// <param name="isMS1">
+    /// If <see langword="true"/>, uses the MS1 variant, which has a smaller kernel size at the cost of
+    /// reduced stopband suppression and a more gradual cutoff for <c>degree = 2</c>.
+    /// Otherwise, standard MS kernels are used.
+    /// </param>
+    /// <param name="degree">
+    /// Degree of the Savitzky-Golay filter that should be replaced. Must be 2, 4, 6, …, <see cref="MAX_DEGREE"/>.
+    /// </param>
+    /// <param name="m">The half-width of the Savitzky-Golay filter that should be replaced.</param>
     /// <returns>The smoothed data.</returns>
     public static double[] SmoothLikeSavitzkyGolay(double[] data, bool isMS1, int degree, int m)
     {
@@ -232,21 +240,24 @@ namespace Altaxo.Calc.Regression
     }
 
     /// <summary>
-    /// Calculates the kernel halfwidth m that comes closest to the desired
-    /// band width, i.e., the frequency where the response decreases to
-    /// -3 dB, i.e., 1/sqrt(2).
+    /// Calculates the kernel half-width <c>m</c> that comes closest to the desired bandwidth, i.e. the
+    /// frequency where the response decreases to -3 dB (i.e. <c>1/sqrt(2)</c>).
     /// </summary>
-    /// <param name="isMS1">isMS1 if true, calculates for the MS1 variant, which has a smaller kernel size,
-    /// at the cost of reduced stopband suppression and more gradual cutoff
-    /// for degree=2. Otherwise, standard MS kernels are used.</param>
-    /// <param name="degree">Degree of the filter, must be 2, 4, 6, ... MAX_DEGREE.
-    /// As for Savitzky-Golay filters, higher degree results in
-    /// a sharper cutoff in the frequency domain.</param>
-    /// <param name="bandwidth">The desired band width, with respect to the sampling frequency.
-    /// The value of <paramref name="bandwidth"/> must be less than 0.5
-    /// (the Nyquist frequency).</param>
-    /// <returns>The kernel halfwidth m.</returns>
-    /// <exception cref="ArgumentOutOfRangeException">Invalid bandwidth value: " + bandwidth</exception>
+    /// <param name="isMS1">
+    /// If <see langword="true"/>, calculates for the MS1 variant, which has a smaller kernel size at the cost of
+    /// reduced stopband suppression and a more gradual cutoff for <c>degree = 2</c>.
+    /// Otherwise, standard MS kernels are used.
+    /// </param>
+    /// <param name="degree">
+    /// Degree of the filter. Must be 2, 4, 6, …, <see cref="MAX_DEGREE"/>.
+    /// As for Savitzky-Golay filters, higher degree results in a sharper cutoff in the frequency domain.
+    /// </param>
+    /// <param name="bandwidth">
+    /// The desired bandwidth with respect to the sampling frequency.
+    /// The value must be less than 0.5 (the Nyquist frequency).
+    /// </param>
+    /// <returns>The kernel half-width <c>m</c>.</returns>
+    /// <exception cref="ArgumentOutOfRangeException">Thrown if <paramref name="bandwidth"/> is outside the valid range.</exception>
     public static int BandwidthToM(bool isMS1, int degree, double bandwidth)
     {
       if (bandwidth <= 0 || bandwidth >= 0.5)
@@ -258,14 +269,16 @@ namespace Altaxo.Calc.Regression
     }
 
     /// <summary>
-    /// Calculates the kernel halfwidth m best suited for obtaining a given noise gain.
+    /// Calculates the kernel half-width <c>m</c> best suited for obtaining a given noise gain.
     /// </summary>
-    /// <param name="isMS1">if true, calculates for the MS1 variant, which has a smaller kernel size,
-    /// at the cost of reduced stopband suppression and more gradual cutoff
-    /// for degree=2. Otherwise, standard MS kernels are used.</param>
-    /// <param name="degree">The degree n of the kernel</param>
+    /// <param name="isMS1">
+    /// If <see langword="true"/>, calculates for the MS1 variant, which has a smaller kernel size at the cost of
+    /// reduced stopband suppression and a more gradual cutoff for <c>degree = 2</c>.
+    /// Otherwise, standard MS kernels are used.
+    /// </param>
+    /// <param name="degree">The degree of the kernel.</param>
     /// <param name="noiseGain">The factor by which white noise should be suppressed.</param>
-    /// <returns>The kernel halfwidth m required.</returns>
+    /// <returns>The required kernel half-width <c>m</c>.</returns>
     public static int NoiseGainToM(bool isMS1, int degree, double noiseGain)
     {
       double invNoiseGainSqr = 1.0 / (noiseGain * noiseGain);
@@ -281,14 +294,18 @@ namespace Altaxo.Calc.Regression
     /// <summary>
     /// Creates a kernel and returns it.
     /// </summary>
-    /// <param name="isMS1">if true, calculates the kernel for the MS1 variant.
-    /// Otherwise, standard MS kernels are used.</param>
-    /// <param name="degree">The degree n of the kernel</param>
-    /// <param name="m">The half-width of the SG kernel. The kernel size of the
-    /// filter is <code>2*m + 1</code>.</param>
-    /// <returns>One side of the kernel, starting with the element at the
-    /// center.Since the kernel is symmetric, only one side with
-    /// <code>m+1</code> elements is needed.</returns>
+    /// <param name="isMS1">
+    /// If <see langword="true"/>, calculates the kernel for the MS1 variant.
+    /// Otherwise, standard MS kernels are used.
+    /// </param>
+    /// <param name="degree">The degree of the kernel.</param>
+    /// <param name="m">
+    /// The half-width of the kernel. The kernel size of the filter is <c>2*m + 1</c>.
+    /// </param>
+    /// <returns>
+    /// One side of the kernel, starting with the element at the center.
+    /// Since the kernel is symmetric, only one side with <c>m + 1</c> elements is needed.
+    /// </returns>
     private static double[] MakeKernel(bool isMS1, int degree, int m)
     {
       var coeffs = GetCoefficients(isMS1, degree, m);
@@ -298,18 +315,21 @@ namespace Altaxo.Calc.Regression
     /// <summary>
     /// Creates a kernel and returns it.
     /// </summary>
-    /// <param name="isMS1">If true, calculates the kernel for the MS1 variant.
-    /// Otherwise, standard MS kernels are used.</param>
-    /// <param name="degree">The degree n of the kernel, i.e. the polynomial degree of a Savitzky-Golay filter
-    /// with similar passband, must be 2, 4, ... MAX_DEGREE.</param>
-    /// <param name="m">The half-width of the kernel (the resulting kernel
-    /// has <code>2*m+1</code> elements).</param>
-    /// <param name="coeffs">Correction parameters for a flatter passband, or
-    /// null for no correction (used for degree 2).</param>
-    /// <returns>One side of the kernel, starting with the element at the
-    /// center. Since the kernel is symmetric, only one side with
-    /// <code>m+1</code> elements is needed.</returns>
-    /// <exception cref="ArgumentOutOfRangeException">Unsupported degree " + degree</exception>
+    /// <param name="isMS1">
+    /// If <see langword="true"/>, calculates the kernel for the MS1 variant.
+    /// Otherwise, standard MS kernels are used.
+    /// </param>
+    /// <param name="degree">
+    /// The degree of the kernel; i.e. the polynomial degree of a Savitzky-Golay filter with similar passband.
+    /// Must be 2, 4, …, <see cref="MAX_DEGREE"/>.
+    /// </param>
+    /// <param name="m">The half-width of the kernel (the resulting kernel has <c>2*m + 1</c> elements).</param>
+    /// <param name="coeffs">Correction parameters for a flatter passband, or <see langword="null"/> for no correction.</param>
+    /// <returns>
+    /// One side of the kernel, starting with the element at the center.
+    /// Since the kernel is symmetric, only one side with <c>m + 1</c> elements is needed.
+    /// </returns>
+    /// <exception cref="ArgumentOutOfRangeException">Thrown if <paramref name="degree"/> is unsupported.</exception>
     private static double[] MakeKernel(bool isMS1, int degree, int m, double[]? coeffs)
     {
       if (degree < 2 || degree > MAX_DEGREE || (degree & 0x01) != 0)
@@ -345,16 +365,20 @@ namespace Altaxo.Calc.Regression
     }
 
     /// <summary>
-    /// Returns the correction coefficients for a Sinc*Gaussian kernel
-    /// to flatten the passband.
+    /// Returns the correction coefficients for a Sinc*Gaussian kernel to flatten the passband.
     /// </summary>
-    /// <param name="isMS1">If true, returns the coefficients for the MS1 variant.
-    /// Otherwise, coefficients for the standard MS kernels returned.</param>
-    /// <param name="degree">The polynomial degree of a Savitzky-Golay filter
-    /// with similar passband, must be 2, 4, ... MAX_DEGREE.</param>
+    /// <param name="isMS1">
+    /// If <see langword="true"/>, returns the coefficients for the MS1 variant.
+    /// Otherwise, coefficients for the standard MS kernels are returned.
+    /// </param>
+    /// <param name="degree">
+    /// The polynomial degree of a Savitzky-Golay filter with similar passband.
+    /// Must be 2, 4, …, <see cref="MAX_DEGREE"/>.
+    /// </param>
     /// <param name="m">The half-width of the kernel.</param>
-    /// <returns>Coefficients z for the x*sin((j+1)*PI*x) terms, or null
-    /// if no correction is required.</returns>
+    /// <returns>
+    /// Coefficients <c>z</c> for the <c>x*sin((j+1)*PI*x)</c> terms, or <see langword="null"/> if no correction is required.
+    /// </returns>
     private static double[]? GetCoefficients(bool isMS1, int degree, int m)
     {
       var correctionData = isMS1 ? CORRECTION_DATA1 : CORRECTION_DATA;
@@ -372,16 +396,15 @@ namespace Altaxo.Calc.Regression
     }
 
     /// <summary>
-    /// Returns the weights for the linear fit used for linear extrapolation
-    /// at the end. The weight function is a Hann (cos^2) function. For beta=1
-    /// (the beta value for n=4), it decays to zero at the position of the
-    /// first zero of the sinc function in the kernel. Larger beta values lead
-    /// to stronger noise suppression near the edges, but the smoothed curve
-    /// does not follow the input as well as for lower beta (for high degrees,
-    /// also leading to more ringing near the boundaries).    /// </summary>
-    /// <param name="isMS1">if true, returns weights for the MS1 variant. Otherwise, returns weights for the standard MS kernels.</param>
-    /// <param name="degree">The polynomial degree of a Savitzky-Golay filter with similar passband, must be 2, 4, ... MAX_DEGREE.</param>
-    /// <param name="m">The half-width of the kernel (the resulting kernel has 2*m+1 elements).</param>
+    /// Returns the weights for the linear fit used for linear extrapolation at the ends.
+    /// The weight function is a Hann (<c>cos^2</c>) function. For <c>beta = 1</c> (the beta value for <c>n = 4</c>),
+    /// it decays to zero at the position of the first zero of the sinc function in the kernel.
+    /// Larger beta values lead to stronger noise suppression near the edges, but the smoothed curve does not follow
+    /// the input as well as for lower beta (for high degrees, also leading to more ringing near the boundaries).
+    /// </summary>
+    /// <param name="isMS1">If <see langword="true"/>, returns weights for the MS1 variant; otherwise, for the standard MS kernels.</param>
+    /// <param name="degree">The polynomial degree of a Savitzky-Golay filter with similar passband, must be 2, 4, …, <see cref="MAX_DEGREE"/>.</param>
+    /// <param name="m">The half-width of the kernel (the resulting kernel has <c>2*m + 1</c> elements).</param>
     /// <returns>The fit weights, with array element [0] corresponding to the data value at the very end.</returns>
     private static double[] MakeFitWeights(bool isMS1, int degree, int m)
     {
@@ -402,13 +425,17 @@ namespace Altaxo.Calc.Regression
     /// Calculates the bandwidth of a traditional Savitzky-Golay (SG) filter.
     /// </summary>
     /// <param name="degree">The degree of the polynomial fit used in the Savitzky-Golay filter.</param>
-    /// <param name="m">The half-width of the SG kernel. The kernel size of the SG filter, i.e. the number of points for fitting the polynomial is <code>2*m + 1</code>.</param>
-    /// <returns>The -3 dB-bandwidth of the SG filter, i.e. the frequency where the
-    /// response is 1/sqrt(2). The sampling frequency is defined as f = 1.
-    /// For <paramref name="degree"/> up to 10, the accuracy is typically much
-    /// better than 1%; higher errors occur only for the lowest
-    /// <paramref name="m"/> values where the SG filter is defined
-    /// (worst case: 4% error at <code>degree = 10, m = 6</code>).</returns>
+    /// <param name="m">
+    /// The half-width of the SG kernel. The kernel size of the SG filter (i.e. the number of points for fitting the
+    /// polynomial) is <c>2*m + 1</c>.
+    /// </param>
+    /// <returns>
+    /// The -3 dB bandwidth of the SG filter, i.e. the frequency where the response is <c>1/sqrt(2)</c>.
+    /// The sampling frequency is defined as <c>f = 1</c>.
+    /// For <paramref name="degree"/> up to 10, the accuracy is typically much better than 1%; higher errors occur only
+    /// for the lowest <paramref name="m"/> values where the SG filter is defined (worst case: 4% error at
+    /// <c>degree = 10, m = 6</c>).
+    /// </returns>
     public static double SavitzkyGolayBandwidth(int degree, int m)
     {
       return 1.0 / (6.352 * (m + 0.5) / (degree + 1.379) - (0.513 + 0.316 * degree) / (m + 0.5));
@@ -418,8 +445,13 @@ namespace Altaxo.Calc.Regression
     /// Extends the data by a weighted fit to a linear function (linear regression).
     /// </summary>
     /// <param name="data">The input data.</param>
-    /// <param name="m">The halfwidth of the kernel. The number of data points contributing to one output value is <code>2*m + 1</code>.</param>
-    /// <returns>The input data with extrapolated values appended at both ends. At each end, <paramref name="m"/> extrapolated points are appended.</returns>
+    /// <param name="m">
+    /// The half-width of the kernel. The number of data points contributing to one output value is <c>2*m + 1</c>.
+    /// </param>
+    /// <returns>
+    /// The input data with extrapolated values appended at both ends. At each end, <paramref name="m"/> extrapolated
+    /// points are appended.
+    /// </returns>
     private double[] ExtendData(double[] data, int m)
     {
       double[] extendedData = new double[data.Length + 2 * m];
@@ -447,39 +479,66 @@ namespace Altaxo.Calc.Regression
     /// <summary>
     /// Returns the square of a number.
     /// </summary>
-    /// <param name="x">The x value.</param>
-    /// <returns>The square of a number.</returns>
+    /// <param name="x">The value.</param>
+    /// <returns>The square of <paramref name="x"/>.</returns>
     private static double Sqr(double x)
     { return x * x; }
 
   }
 
   /// <summary>
-  /// Linear regression is used for extrapolating the data at the boundaries.
+  /// Performs (weighted) linear regression.
+  /// Used for extrapolating the data at the boundaries.
   /// </summary>
   internal class LinearRegression
   {
-    /** sum of weights (number of points if all weights are one */
+    /// <summary>
+    /// Sum of weights (number of points if all weights are one).
+    /// </summary>
     protected double sumWeights = 0;
-    /** sum of all x values */
+
+    /// <summary>
+    /// Sum of all <c>x</c> values.
+    /// </summary>
     protected double sumX = 0;
-    /** sum of all y values */
+
+    /// <summary>
+    /// Sum of all <c>y</c> values.
+    /// </summary>
     protected double sumY = 0;
-    /** sum of all x*y products */
+
+    /// <summary>
+    /// Sum of all <c>x*y</c> products.
+    /// </summary>
     protected double sumXY = 0;
-    /** sum of all squares of x */
+
+    /// <summary>
+    /// Sum of all squares of <c>x</c>.
+    /// </summary>
     protected double sumX2 = 0;
-    /** sum of all squares of y */
+
+    /// <summary>
+    /// Sum of all squares of <c>y</c>.
+    /// </summary>
     protected double sumY2 = 0;
-    /** result of the regression: offset */
+
+    /// <summary>
+    /// Result of the regression: offset.
+    /// </summary>
     protected double offset = double.NaN;
-    /** result of the regression: slope */
+
+    /// <summary>
+    /// Result of the regression: slope.
+    /// </summary>
     protected double slope = double.NaN;
-    /** whether the results (offset, slope) have been calculated already */
+
+    /// <summary>
+    /// Gets a value indicating whether the results (<see cref="offset"/>, <see cref="slope"/>) have already been calculated.
+    /// </summary>
     protected bool calculated = false;
 
     /// <summary>
-    ///  Clear the linefit.
+    /// Clears the accumulated data for the fit.
     /// </summary>
     public void Clear()
     {
@@ -493,7 +552,7 @@ namespace Altaxo.Calc.Regression
     }
 
     /// <summary>
-    /// Add a point x,y with weight.
+    /// Adds a point (<paramref name="x"/>, <paramref name="y"/>) with the specified weight.
     /// </summary>
     /// <param name="x">The x value.</param>
     /// <param name="y">The y value.</param>
@@ -510,7 +569,7 @@ namespace Altaxo.Calc.Regression
     }
 
     /// <summary>
-    ///  Do the actual regression calculation.
+    /// Performs the regression calculation.
     /// </summary>
     public void Calculate()
     {
@@ -529,9 +588,9 @@ namespace Altaxo.Calc.Regression
     }
 
     /// <summary>
-    /// Gets the offset(intersection on y axis) of the fit.
+    /// Gets the offset (intersection with the y-axis) of the fit.
     /// </summary>
-    /// <returns>the offset (intersection on y axis) of the fit.</returns>
+    /// <returns>The offset (intersection with the y-axis) of the fit.</returns>
     public double GetOffset()
     {
       if (!calculated) Calculate();
@@ -539,9 +598,9 @@ namespace Altaxo.Calc.Regression
     }
 
     /// <summary>
-    /// Gets the slope of the line of the fit.
+    /// Gets the slope of the fitted line.
     /// </summary>
-    /// <returns>The slope of the line of the fit</returns>
+    /// <returns>The slope of the fitted line.</returns>
     public double GetSlope()
     {
       if (!calculated) Calculate();

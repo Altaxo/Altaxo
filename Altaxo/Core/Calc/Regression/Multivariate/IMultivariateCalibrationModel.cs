@@ -1,4 +1,5 @@
-﻿#region Copyright
+﻿#nullable disable
+#region Copyright
 
 /////////////////////////////////////////////////////////////////////////////
 //    Altaxo:  a data processing and data plotting program
@@ -27,50 +28,83 @@ using System;
 namespace Altaxo.Calc.Regression.Multivariate
 {
   /// <summary>
-  /// IMultivariateCalibrationModel contains the basic data for a
-  /// multivariate calibration model
+  /// Contains the basic data for a multivariate calibration model.
   /// </summary>
   public interface IMultivariateCalibrationModel
   {
+    /// <summary>
+    /// Gets the number of <c>X</c> variables (e.g. spectral points).
+    /// </summary>
     int NumberOfX
     {
       get;
     }
 
+    /// <summary>
+    /// Gets the number of <c>Y</c> variables (e.g. concentrations).
+    /// </summary>
     int NumberOfY
     {
       get;
     }
 
+    /// <summary>
+    /// Gets the number of factors used by the calibration model.
+    /// </summary>
     int NumberOfFactors
     {
       get;
     }
 
+    /// <summary>
+    /// Gets the preprocessing model associated with this calibration model.
+    /// </summary>
     IMultivariatePreprocessingModel PreprocessingModel
     {
       get;
     }
   }
 
+  /// <summary>
+  /// Default implementation of <see cref="IMultivariateCalibrationModel"/>.
+  /// </summary>
   public class MultivariateCalibrationModel : IMultivariateCalibrationModel
   {
+    /// <summary>
+    /// Backing field for <see cref="NumberOfX"/>.
+    /// </summary>
     protected int _numberOfX;
+
+    /// <summary>
+    /// Backing field for <see cref="NumberOfY"/>.
+    /// </summary>
     protected int _numberOfY;
+
+    /// <summary>
+    /// Backing field for <see cref="NumberOfFactors"/>.
+    /// </summary>
     protected int _numberOfFactors;
 
     private MultivariatePreprocessingModel? _preprocessingData;
 
+    /// <inheritdoc/>
     public IMultivariatePreprocessingModel PreprocessingModel
     {
       get { return _preprocessingData ?? throw new InvalidOperationException($"{nameof(PreprocessingModel)} not set yet!"); }
     }
 
+    /// <summary>
+    /// Sets the preprocessing model.
+    /// </summary>
+    /// <param name="val">The preprocessing model, or <see langword="null"/> to clear it.</param>
     public void SetPreprocessingModel(MultivariatePreprocessingModel? val)
     {
       _preprocessingData = val;
     }
 
+    /// <summary>
+    /// Resets the model to its initial state.
+    /// </summary>
     public void Reset()
     {
       _preprocessingData = null;
@@ -78,18 +112,27 @@ namespace Altaxo.Calc.Regression.Multivariate
 
     }
 
+    /// <summary>
+    /// Gets or sets the number of <c>X</c> variables (e.g. spectral points).
+    /// </summary>
     public int NumberOfX
     {
       get { return _numberOfX; }
       set { _numberOfX = value; }
     }
 
+    /// <summary>
+    /// Gets or sets the number of <c>Y</c> variables (e.g. concentrations).
+    /// </summary>
     public virtual int NumberOfY
     {
       get { return _numberOfY; }
       set { _numberOfY = value; }
     }
 
+    /// <summary>
+    /// Gets or sets the number of factors used by the calibration model.
+    /// </summary>
     public int NumberOfFactors
     {
       get { return _numberOfFactors; }

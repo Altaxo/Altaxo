@@ -35,38 +35,55 @@ using Altaxo.Calc.LinearAlgebra;
 
 namespace Altaxo.Calc.Optimization
 {
-  ///<summary>More-Thuente Line Search Method</summary>
+  /// <summary>More-Thuente line search method.</summary>
   /// <remarks>
   /// <para>Copyright (c) 2003-2004, dnAnalytics Project. All rights reserved. See <a>http://www.dnAnalytics.net</a> for details.</para>
-  /// <para>Adopted to Altaxo (c) 2005 Dr. Dirk Lellinger.</para>
+  /// <para>Adopted for Altaxo (c) 2005 Dr. Dirk Lellinger.</para>
   /// </remarks>
   public class MoreThuenteLineSearch : LineSearchMethod
   {
-    ///<summary>Constructor for More-Thuente Line Search.</summary>
+    /// <summary>Initializes a new instance of the <see cref="MoreThuenteLineSearch"/> class.</summary>
+    /// <param name="costfunction">Nonlinear cost function to minimize.</param>
     public MoreThuenteLineSearch(CostFunction costfunction)
       : this(costfunction, new EndCriteria()) { }
 
+    /// <summary>Initializes a new instance of the <see cref="MoreThuenteLineSearch"/> class.</summary>
+    /// <param name="costfunction">Nonlinear cost function to minimize.</param>
+    /// <param name="endcriteria">User-specified ending criteria.</param>
     public MoreThuenteLineSearch(CostFunction costfunction, EndCriteria endcriteria)
     {
       costFunction_ = costfunction;
       endCriteria_ = endcriteria;
     }
 
-    ///<summary> Method Name </summary>
+    /// <inheritdoc/>
     public override string MethodName
     {
       get { return "More-Thuente Line Search Method"; }
     }
 
+    /// <summary>Function-value tolerance (non-negative).</summary>
     public double ftol_ = 1.0e-4;  //non-negative
+
+    /// <summary>Gradient tolerance (non-negative).</summary>
     public double gtol_ = 1.0e-1;  //non-negative
+
+    /// <summary>Relative tolerance for an acceptable step (non-negative).</summary>
     public double xtol_ = 1.0e-17; //non-negative
+
+    /// <summary>Minimum step size (non-negative).</summary>
     public double stpmin_ = 1.0e-20; //non-negative
+
+    /// <summary>Maximum step size (non-negative).</summary>
     public double stpmax_ = 1.0e20; //non-negative
+
+    /// <summary>Maximum number of function evaluations (positive).</summary>
     public int maxfev_ = 40; // positive
+
+    /// <summary>Maximum number of internal iterations (positive).</summary>
     public int maxiter_ = 20; // positive
 
-    ///<summary> Minimize the given cost function </summary>
+    /// <inheritdoc/>
     public override Vector<double> Search(Vector<double> x, Vector<double> s, double stp)
     {
       var grad = GradientEvaluation(x);
@@ -252,6 +269,22 @@ namespace Altaxo.Calc.Optimization
       return retx;
     }
 
+    /// <summary>
+    /// Updates the interval of uncertainty and computes a safeguarded new step.
+    /// </summary>
+    /// <param name="stx">The best step obtained so far.</param>
+    /// <param name="fx">The function value at <paramref name="stx"/>.</param>
+    /// <param name="dx">The derivative value at <paramref name="stx"/>.</param>
+    /// <param name="sty">The other endpoint of the uncertainty interval.</param>
+    /// <param name="fy">The function value at <paramref name="sty"/>.</param>
+    /// <param name="dy">The derivative value at <paramref name="sty"/>.</param>
+    /// <param name="stp">The current trial step; updated to the new trial step.</param>
+    /// <param name="fp">The function value at <paramref name="stp"/>.</param>
+    /// <param name="dp">The derivative value at <paramref name="stp"/>.</param>
+    /// <param name="brackt">Indicates whether a minimizer has been bracketed.</param>
+    /// <param name="stpmin">The minimum allowable step.</param>
+    /// <param name="stpmax">The maximum allowable step.</param>
+    /// <param name="info">Output status flag.</param>
     private void Cstepm(ref double stx, ref double fx, ref double dx, ref double sty, ref double fy, ref double dy,
       ref double stp, ref double fp, ref double dp, ref bool brackt, ref double stpmin, ref double stpmax, ref int info)
     {
@@ -423,6 +456,7 @@ namespace Altaxo.Calc.Optimization
       return;
     }
 
+    /// <summary>Holds the convergence/termination status code for the most recent search.</summary>
     private int info;
   }
 }

@@ -24,11 +24,11 @@ using System;
 namespace Altaxo.Calc.Probability
 {
   /// <summary>
-  /// Provides generation of rayleigh distributed random numbers.
+  /// Provides generation of Rayleigh-distributed random numbers.
   /// </summary>
   /// <remarks>
-  /// The implementation of the <see cref="RayleighDistribution"/> type bases upon information presented on
-  ///   <a href="http://en.wikipedia.org/wiki/Rayleigh_distribution">Wikipedia - Rayleigh Distribution</a>.
+  /// The implementation of the <see cref="RayleighDistribution"/> type is based on information presented on
+  /// <a href="http://en.wikipedia.org/wiki/Rayleigh_distribution">Wikipedia - Rayleigh distribution</a>.
   /// </remarks>
   public class RayleighDistribution : ContinuousDistribution
   {
@@ -141,6 +141,7 @@ namespace Altaxo.Calc.Probability
     /// <summary>
     /// Gets the minimum possible value of rayleigh distributed random numbers.
     /// </summary>
+    /// <inheritdoc />
     public override double Minimum
     {
       get
@@ -152,6 +153,7 @@ namespace Altaxo.Calc.Probability
     /// <summary>
     /// Gets the maximum possible value of rayleigh distributed random numbers.
     /// </summary>
+    /// <inheritdoc />
     public override double Maximum
     {
       get
@@ -163,6 +165,7 @@ namespace Altaxo.Calc.Probability
     /// <summary>
     /// Gets the mean value of rayleigh distributed random numbers.
     /// </summary>
+    /// <inheritdoc />
     public override double Mean
     {
       get
@@ -174,6 +177,7 @@ namespace Altaxo.Calc.Probability
     /// <summary>
     /// Gets the median of rayleigh distributed random numbers.
     /// </summary>
+    /// <inheritdoc />
     public override double Median
     {
       get
@@ -185,6 +189,7 @@ namespace Altaxo.Calc.Probability
     /// <summary>
     /// Gets the variance of rayleigh distributed random numbers.
     /// </summary>
+    /// <inheritdoc />
     public override double Variance
     {
       get
@@ -196,6 +201,7 @@ namespace Altaxo.Calc.Probability
     /// <summary>
     /// Gets the mode of rayleigh distributed random numbers.
     /// </summary>
+    /// <inheritdoc />
     public override double[] Mode
     {
       get
@@ -208,6 +214,7 @@ namespace Altaxo.Calc.Probability
     /// Returns a rayleigh distributed floating point random number.
     /// </summary>
     /// <returns>A rayleigh distributed double-precision floating point number.</returns>
+    /// <inheritdoc />
     public override double NextDouble()
     {
       return Math.Sqrt(Math.Pow(normalDistribution1.NextDouble(), 2) + Math.Pow(normalDistribution2.NextDouble(), 2));
@@ -222,31 +229,64 @@ namespace Altaxo.Calc.Probability
       return x * x;
     }
 
+    /// <summary>
+    /// Returns the cumulative distribution function (CDF) of the Rayleigh distribution.
+    /// </summary>
+    /// <param name="x">The value at which to evaluate the CDF.</param>
+    /// <returns>The probability that a Rayleigh-distributed random variable is less than or equal to <paramref name="x"/>.</returns>
     public override double CDF(double x)
     {
       return CDF(x, sigma);
     }
 
+    /// <summary>
+    /// Returns the cumulative distribution function (CDF) of the Rayleigh distribution.
+    /// </summary>
+    /// <param name="x">The value at which to evaluate the CDF.</param>
+    /// <param name="sigma">The scale parameter.</param>
+    /// <returns>The probability that a Rayleigh-distributed random variable is less than or equal to <paramref name="x"/>.</returns>
     public static double CDF(double x, double sigma)
     {
       return 1 - Math.Exp(-Pow2(x) / (2.0 * Pow2(sigma)));
     }
 
+    /// <summary>
+    /// Returns the probability density function (PDF) of the Rayleigh distribution.
+    /// </summary>
+    /// <param name="x">The value at which to evaluate the PDF.</param>
+    /// <returns>The relative likelihood for the random variable to occur at <paramref name="x"/>.</returns>
     public override double PDF(double x)
     {
       return PDF(x, sigma);
     }
 
+    /// <summary>
+    /// Returns the probability density function (PDF) of the Rayleigh distribution.
+    /// </summary>
+    /// <param name="x">The value at which to evaluate the PDF.</param>
+    /// <param name="sigma">The scale parameter.</param>
+    /// <returns>The relative likelihood for the random variable to occur at <paramref name="x"/>.</returns>
     public static double PDF(double x, double sigma)
     {
       return x / (Math.Exp(Pow2(x) / (2.0 * Pow2(sigma))) * Pow2(sigma));
     }
 
+    /// <summary>
+    /// Returns the quantile function (inverse CDF) of the Rayleigh distribution.
+    /// </summary>
+    /// <param name="p">A probability in the range [0, 1].</param>
+    /// <returns>The value <c>x</c> such that <c>CDF(x) = p</c>.</returns>
     public override double Quantile(double p)
     {
       return Quantile(p, sigma);
     }
 
+    /// <summary>
+    /// Returns the quantile function (inverse CDF) of the Rayleigh distribution.
+    /// </summary>
+    /// <param name="p">A probability in the range [0, 1].</param>
+    /// <param name="sigma">The scale parameter.</param>
+    /// <returns>The value <c>x</c> such that <c>CDF(x) = p</c>.</returns>
     public static double Quantile(double p, double sigma)
     {
       return sigma * Math.Sqrt(-Math.Log((1 - p) * (1 - p)));

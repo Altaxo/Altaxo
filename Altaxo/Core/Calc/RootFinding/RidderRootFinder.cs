@@ -30,18 +30,32 @@ using System;
 
 namespace Altaxo.Calc.RootFinding
 {
+  /// <summary>
+  /// Root finder that implements Ridder's method for locating a root of a continuous real-valued function on an interval.
+  /// </summary>
   public class RidderRootFinder : AbstractRootFinder
   {
+    /// <summary>
+    /// Initializes a new instance of the <see cref="RidderRootFinder"/> class.
+    /// </summary>
+    /// <param name="function">The function for which a root should be found.</param>
     public RidderRootFinder(Func<double, double> function)
       : base(function)
     {
     }
 
+    /// <summary>
+    /// Initializes a new instance of the <see cref="RidderRootFinder"/> class.
+    /// </summary>
+    /// <param name="function">The function for which a root should be found.</param>
+    /// <param name="maxNumberOfIterations">The maximum number of iterations.</param>
+    /// <param name="accuracy">The desired accuracy for the root location.</param>
     public RidderRootFinder(Func<double, double> function, int maxNumberOfIterations, double accuracy)
       : base(function, maxNumberOfIterations, accuracy)
     {
     }
 
+    /// <inheritdoc/>
     protected override double Find()
     {
       // Vérifications d'usage

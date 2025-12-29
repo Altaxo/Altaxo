@@ -35,10 +35,14 @@ namespace Altaxo.Calc.Probability
   /// </summary>
   /// <remarks>
   /// <para>References:</para>
-  /// <para>[1] Matsui M., Takemura A.: "Some Improvements in Numerical Evaluation of Symmetric Stable Densities and its Derivatives", Discussion Paper, CIRJE-F-292, Tokio, August 2004</para>
-  ///</remarks>
+  /// <para>[1] Matsui M., Takemura A.: "Some Improvements in Numerical Evaluation of Symmetric Stable Densities and its Derivatives", Discussion Paper, CIRJE-F-292, Tokyo, August 2004</para>
+  /// </remarks>
   public class StableDistributionSymmetric : StableDistributionBase
   {
+    /// <summary>
+    /// Initializes a new instance of the <see cref="StableDistributionSymmetric"/> class.
+    /// </summary>
+    /// <param name="gen">The random number generator used by the base distribution implementation.</param>
     public StableDistributionSymmetric(Generator gen)
       : base(gen)
     {
@@ -46,6 +50,12 @@ namespace Altaxo.Calc.Probability
 
     #region PDF
 
+    /// <summary>
+    /// Gets the probability density function (PDF) of the symmetric stable distribution.
+    /// </summary>
+    /// <param name="x">The value where the density is evaluated.</param>
+    /// <param name="alpha">The stability parameter (0 &lt; alpha &lt;= 2).</param>
+    /// <returns>The probability density at <paramref name="x"/>.</returns>
     public static double PDF(double x, double alpha)
     {
       object? store = null;
@@ -53,14 +63,18 @@ namespace Altaxo.Calc.Probability
     }
 
     /// <summary>
-    /// Calculates the probability density using either series expansion for small or big arguments, or a integration
+    /// Calculates the probability density using either a series expansion for small or large arguments, or an integration
     /// in the intermediate range.
     /// </summary>
-    /// <param name="x">The argument.</param>
-    /// <param name="alpha"></param>
-    /// <param name="tempStorage">Object which can be used to speed up subsequent calculations of the function. At the first call, provide an object initialized with <see langword="null"/> and provide this object for the following calculations.</param>
+    /// <param name="x">The value where the density is evaluated.</param>
+    /// <param name="alpha">The stability parameter (0 &lt; alpha &lt;= 2).</param>
+    /// <param name="tempStorage">
+    /// Object which can be used to speed up subsequent calculations of the function.
+    /// At the first call, provide an object initialized with <see langword="null"/>, and provide this object for the
+    /// following calculations.
+    /// </param>
     /// <param name="precision">Goal for the relative precision.</param>
-    /// <returns></returns>
+    /// <returns>The probability density at <paramref name="x"/>.</returns>
     public static double PDF(double x, double alpha, ref object? tempStorage, double precision)
     {
       if (!(alpha > 0))
@@ -97,13 +111,16 @@ namespace Altaxo.Calc.Probability
     }
 
     /// <summary>
-    /// Calculation of the PDF if alpha is inbetween 0.1 and 0.2. For small x (1E-16), the accuracy at alpha=0.1 is only 1E-7.
+    /// Calculates the PDF for <paramref name="alpha"/> in the interval [0.1, 0.2].
     /// </summary>
-    /// <param name="x"></param>
-    /// <param name="alpha"></param>
-    /// <param name="precision"></param>
-    /// <param name="tempStorage"></param>
-    /// <returns></returns>
+    /// <param name="x">The value where the density is evaluated.</param>
+    /// <param name="alpha">The stability parameter (0.1 &lt;= alpha &lt;= 0.2).</param>
+    /// <param name="precision">Goal for the relative precision.</param>
+    /// <param name="tempStorage">Temporary storage that can be reused between calls.</param>
+    /// <returns>The probability density at <paramref name="x"/>.</returns>
+    /// <remarks>
+    /// For small <paramref name="x"/> (around 1E-16), the accuracy at alpha = 0.1 is only about 1E-7.
+    /// </remarks>
     public static double PDFAlphaBetween01And02(double x, double alpha, double precision, ref object? tempStorage)
     {
       x = Math.Abs(x);
@@ -123,13 +140,16 @@ namespace Altaxo.Calc.Probability
     }
 
     /// <summary>
-    /// Calculation of the PDF if alpha is inbetween 0.2 and 0.99. For small x (1E-8), the accuracy at alpha=0.2 is only 1E-7.
+    /// Calculates the PDF for <paramref name="alpha"/> in the interval (0.2, 0.99].
     /// </summary>
-    /// <param name="x"></param>
-    /// <param name="alpha"></param>
-    /// <param name="precision"></param>
-    /// <param name="tempStorage"></param>
-    /// <returns></returns>
+    /// <param name="x">The value where the density is evaluated.</param>
+    /// <param name="alpha">The stability parameter (0.2 &lt; alpha &lt;= 0.99).</param>
+    /// <param name="precision">Goal for the relative precision.</param>
+    /// <param name="tempStorage">Temporary storage that can be reused between calls.</param>
+    /// <returns>The probability density at <paramref name="x"/>.</returns>
+    /// <remarks>
+    /// For small <paramref name="x"/> (around 1E-8), the accuracy at alpha = 0.2 is only about 1E-7.
+    /// </remarks>
     public static double PDFAlphaBetween02And099(double x, double alpha, double precision, ref object? tempStorage)
     {
       x = Math.Abs(x);
@@ -152,13 +172,13 @@ namespace Altaxo.Calc.Probability
     }
 
     /// <summary>
-    /// Calculation of the PDF if alpha is inbetween 0.99 and 1.01.
+    /// Calculates the PDF for <paramref name="alpha"/> in the interval [0.99, 1.01].
     /// </summary>
-    /// <param name="x"></param>
-    /// <param name="alpha"></param>
-    /// <param name="precision"></param>
-    /// <param name="tempStorage"></param>
-    /// <returns></returns>
+    /// <param name="x">The value where the density is evaluated.</param>
+    /// <param name="alpha">The stability parameter (0.99 &lt;= alpha &lt;= 1.01).</param>
+    /// <param name="precision">Goal for the relative precision.</param>
+    /// <param name="tempStorage">Temporary storage that can be reused between calls.</param>
+    /// <returns>The probability density at <paramref name="x"/>.</returns>
     public static double PDFAlphaBetween099And101(double x, double alpha, double precision, ref object? tempStorage)
     {
       if (alpha == 1)
@@ -174,13 +194,13 @@ namespace Altaxo.Calc.Probability
     }
 
     /// <summary>
-    /// Calculation of the PDF if alpha is inbetween 0.2 and 0.99. For small x (1E-8), the accuracy at alpha=0.2 is only 1E-7.
+    /// Calculates the PDF for <paramref name="alpha"/> in the interval (1.01, 1.99995].
     /// </summary>
-    /// <param name="x"></param>
-    /// <param name="alpha"></param>
-    /// <param name="precision"></param>
-    /// <param name="tempStorage"></param>
-    /// <returns></returns>
+    /// <param name="x">The value where the density is evaluated.</param>
+    /// <param name="alpha">The stability parameter (1.01 &lt; alpha &lt;= 1.99995).</param>
+    /// <param name="precision">Goal for the relative precision.</param>
+    /// <param name="tempStorage">Temporary storage that can be reused between calls.</param>
+    /// <returns>The probability density at <paramref name="x"/>.</returns>
     public static double PDFAlphaBetween101And199999(double x, double alpha, double precision, ref object? tempStorage)
     {
       x = Math.Abs(x);
@@ -194,14 +214,18 @@ namespace Altaxo.Calc.Probability
     }
 
     /// <summary>
-    /// Calculation of the PDF if alpha is inbetween 1.99999 and 2. For small x ( max 7), the asymptotic expansion is used.
-    /// For big x, the maximum value resulting from direct integration and series expansion w.r.t. alpha is used.
+    /// Calculates the PDF for <paramref name="alpha"/> in the interval [1.99999, 2].
     /// </summary>
-    /// <param name="x"></param>
-    /// <param name="alpha"></param>
-    /// <param name="precision"></param>
-    /// <param name="tempStorage"></param>
-    /// <returns></returns>
+    /// <param name="x">The value where the density is evaluated.</param>
+    /// <param name="alpha">The stability parameter (1.99999 &lt;= alpha &lt;= 2).</param>
+    /// <param name="precision">Goal for the relative precision.</param>
+    /// <param name="tempStorage">Temporary storage that can be reused between calls.</param>
+    /// <returns>The probability density at <paramref name="x"/>.</returns>
+    /// <remarks>
+    /// For small <paramref name="x"/> (up to about 4), an asymptotic expansion is used.
+    /// For large <paramref name="x"/>, the maximum of the value resulting from direct integration and a series expansion
+    /// with respect to alpha is used.
+    /// </remarks>
     public static double PDFAlphaBetween199999And2(double x, double alpha, double precision, ref object? tempStorage)
     {
       if (alpha == 2)
@@ -227,14 +251,18 @@ namespace Altaxo.Calc.Probability
     #region Series expansion for small x
 
     /// <summary>
-    /// Imaginary part of the Fourier transformed derivative of the Kohlrausch function for low frequencies.
+    /// Series expansion of the PDF for small <paramref name="z"/>.
     /// </summary>
-    /// <param name="alpha">Beta parameter.</param>
-    /// <param name="z">Circular frequency.</param>
-    /// <returns>Imaginary part of the Fourier transformed derivative of the Kohlrausch function for high frequencies, or double.NaN if the series not converges.</returns>
-    /// <returns>Imaginary part of the Fourier transformed derivative of the Kohlrausch function for high frequencies, or double.NaN if the series not converges.</returns>
-    /// <remarks>This is the imaginary part of the Fourier transform (in Mathematica notation): Im[Integrate[D[Exp[-t^beta],t]*Exp[-I w t],{t, 0, Infinity}]]. The sign of
-    /// the return value here is positive!.</remarks>
+    /// <param name="z">The non-negative argument (|x|) where the series is evaluated.</param>
+    /// <param name="alpha">The stability parameter (0 &lt; alpha &lt;= 2).</param>
+    /// <returns>
+    /// The probability density at <paramref name="z"/>, or <see cref="double.NaN"/> if the series does not converge.
+    /// </returns>
+    /// <remarks>
+    /// Historically, this routine was described as the imaginary part of the Fourier transformed derivative of the
+    /// Kohlrausch function; it is used here as a numerically convenient series representation of the symmetric stable PDF.
+    /// The sign of the return value here is positive.
+    /// </remarks>
     public static double PDFSeriesSmallX(double z, double alpha)
     {
       int k = 1;
@@ -290,14 +318,19 @@ namespace Altaxo.Calc.Probability
     }
 
     /// <summary>
-    /// Imaginary part of the Fourier transformed derivative of the Kohlrausch function for low frequencies, and beta&lt;=1/20..
+    /// Series expansion of the PDF for small <paramref name="z"/> and small <paramref name="alpha"/>, using logarithmic
+    /// evaluation for improved numerical stability.
     /// </summary>
-    /// <param name="z">Circular frequency.</param>
-    /// <param name="alpha">Alpha (broadness) parameter.</param>
-    /// <returns>Imaginary part of the Fourier transformed derivative of the Kohlrausch function for low frequencies, or double.NaN if the series not converges.</returns>
-    /// <returns>Imaginary part of the Fourier transformed derivative of the Kohlrausch function for high frequencies, or double.NaN if the series not converges.</returns>
-    /// <remarks>This is the imaginary part of the Fourier transform (in Mathematica notation): Im[Integrate[D[Exp[-t^beta],t]*Exp[-I w t],{t, 0, Infinity}]]. The sign of
-    /// the return value here is positive!.</remarks>
+    /// <param name="z">The positive argument (|x|) where the series is evaluated.</param>
+    /// <param name="alpha">The stability parameter.</param>
+    /// <returns>
+    /// The probability density at <paramref name="z"/>, or <see cref="double.NaN"/> if the series does not converge.
+    /// </returns>
+    /// <remarks>
+    /// Historically, this routine was described as the imaginary part of the Fourier transformed derivative of the
+    /// Kohlrausch function; it is used here as a numerically convenient series representation of the symmetric stable PDF.
+    /// The sign of the return value here is positive.
+    /// </remarks>
     public static double PDFSeriesSmallXSmallAlpha(double z, double alpha)
     {
       int k = 1;
@@ -346,13 +379,18 @@ namespace Altaxo.Calc.Probability
     #region Series expansion for big x
 
     /// <summary>
-    /// Imaginary part of the Fourier transformed derivative of the Kohlrausch function for high frequencies.
+    /// Series expansion of the PDF for large <paramref name="z"/>.
     /// </summary>
-    /// <param name="z">Circular frequency.</param>
-    /// <param name="alpha">Alpha (broadness) parameter.</param>
-    /// <returns>Imaginary part of the Fourier transformed derivative of the Kohlrausch function for high frequencies, or double.NaN if the series not converges.</returns>
-    /// <remarks>This is the imaginary part of the Fourier transform (in Mathematica notation): Im[Integrate[D[Exp[-t^beta],t]*Exp[-I w t],{t, 0, Infinity}]]. The sign of
-    /// the return value here is positive!.</remarks>
+    /// <param name="z">The positive argument (|x|) where the series is evaluated.</param>
+    /// <param name="alpha">The stability parameter (0 &lt; alpha &lt;= 2).</param>
+    /// <returns>
+    /// The probability density at <paramref name="z"/>, or <see cref="double.NaN"/> if the series does not converge.
+    /// </returns>
+    /// <remarks>
+    /// Historically, this routine was described as the imaginary part of the Fourier transformed derivative of the
+    /// Kohlrausch function; it is used here as a numerically convenient series representation of the symmetric stable PDF.
+    /// The sign of the return value here is positive.
+    /// </remarks>
     public static double PDFSeriesBigX(double z, double alpha)
     {
       int k = 1;
@@ -392,6 +430,15 @@ namespace Altaxo.Calc.Probability
 
     #region Direct integration
 
+    /// <summary>
+    /// Computes parameters used for the direct integration approach for alpha &lt; 1 (Gn variant).
+    /// </summary>
+    /// <param name="x">The positive argument (|x|).</param>
+    /// <param name="alpha">The stability parameter (0 &lt; alpha &lt; 1).</param>
+    /// <param name="factorp">Returned scaling factor p.</param>
+    /// <param name="facdiv">Returned divisor factor.</param>
+    /// <param name="dev">Returned phase shift value.</param>
+    /// <param name="logPdfPrefactor">Returned logarithm of the multiplicative PDF prefactor.</param>
     public static void GetAlt1GnParameter(double x, double alpha,
                         out double factorp, out double facdiv, out double dev, out double logPdfPrefactor)
     {
@@ -401,6 +448,15 @@ namespace Altaxo.Calc.Probability
       logPdfPrefactor = Math.Log(alpha / (Math.PI * Math.Abs(alpha - 1) * x));
     }
 
+    /// <summary>
+    /// Computes parameters used for the direct integration approach for alpha &lt; 1 (Gp variant), parameterized by gamma.
+    /// </summary>
+    /// <param name="x">The positive argument (|x|).</param>
+    /// <param name="alpha">The stability parameter (0 &lt; alpha &lt; 1).</param>
+    /// <param name="factorp">Returned scaling factor p.</param>
+    /// <param name="facdiv">Returned divisor factor.</param>
+    /// <param name="dev">Returned phase shift value.</param>
+    /// <param name="logPdfPrefactor">Returned logarithm of the multiplicative PDF prefactor.</param>
     public static void GetAlt1GpParameterByGamma(double x, double alpha,
                         out double factorp, out double facdiv, out double dev, out double logPdfPrefactor)
     {
@@ -410,6 +466,15 @@ namespace Altaxo.Calc.Probability
       logPdfPrefactor = Math.Log(alpha / (Math.PI * Math.Abs(alpha - 1) * x));
     }
 
+    /// <summary>
+    /// Computes parameters used for the direct integration approach for alpha &gt; 1 (Gn variant).
+    /// </summary>
+    /// <param name="x">The positive argument (|x|).</param>
+    /// <param name="alpha">The stability parameter (1 &lt; alpha &lt;= 2).</param>
+    /// <param name="factorp">Returned scaling factor p.</param>
+    /// <param name="factorw">Returned scaling factor w.</param>
+    /// <param name="dev">Returned phase shift value.</param>
+    /// <param name="logPrefactor">Returned logarithm of the multiplicative prefactor.</param>
     public static void GetAgt1GnParameter(double x, double alpha,
                         out double factorp, out double factorw, out double dev, out double logPrefactor)
     {
@@ -419,6 +484,14 @@ namespace Altaxo.Calc.Probability
       logPrefactor = Math.Log(alpha / (Math.PI * Math.Abs(alpha - 1) * x));
     }
 
+    /// <summary>
+    /// Calculates the PDF by direct numerical integration.
+    /// </summary>
+    /// <param name="x">The non-negative argument (|x|).</param>
+    /// <param name="alpha">The stability parameter (0 &lt; alpha &lt;= 2).</param>
+    /// <param name="precision">Goal for the relative precision.</param>
+    /// <param name="tempStorage">Temporary storage that can be reused between calls.</param>
+    /// <returns>The probability density at <paramref name="x"/>.</returns>
     public static double PDFIntegration(double x, double alpha, double precision, ref object? tempStorage)
     {
       if (alpha < 1)
@@ -445,6 +518,12 @@ namespace Altaxo.Calc.Probability
 
     #region Taylor expansion around a=1
 
+    /// <summary>
+    /// Calculates the PDF by a Taylor expansion around alpha = 1.
+    /// </summary>
+    /// <param name="x">The non-negative argument (|x|).</param>
+    /// <param name="alpha">The stability parameter near 1.</param>
+    /// <returns>The probability density at <paramref name="x"/>.</returns>
     public static double PDFTaylorExpansionAroundAlphaOne(double x, double alpha)
     {
       const double EulerGamma = 0.57721566490153286061;
@@ -483,12 +562,26 @@ namespace Altaxo.Calc.Probability
 
     #region CDF
 
+    /// <summary>
+    /// Gets the cumulative distribution function (CDF) value.
+    /// </summary>
+    /// <param name="x">The value where the distribution function is evaluated.</param>
+    /// <param name="alpha">The stability parameter (0 &lt; alpha &lt;= 2).</param>
+    /// <returns>The cumulative probability P(X &lt;= x).</returns>
     public static double CDF(double x, double alpha)
     {
       object? tempStorage = null;
       return CDF(x, alpha, ref tempStorage, DefaultPrecision);
     }
 
+    /// <summary>
+    /// Gets the cumulative distribution function (CDF) value.
+    /// </summary>
+    /// <param name="x">The value where the distribution function is evaluated.</param>
+    /// <param name="alpha">The stability parameter (0 &lt; alpha &lt;= 2).</param>
+    /// <param name="tempStorage">Temporary storage that can be reused between calls.</param>
+    /// <param name="precision">Goal for the relative precision.</param>
+    /// <returns>The cumulative probability P(X &lt;= x).</returns>
     public static double CDF(double x, double alpha, ref object? tempStorage, double precision)
     {
       // test input parameter
@@ -512,12 +605,26 @@ namespace Altaxo.Calc.Probability
       }
     }
 
+    /// <summary>
+    /// Gets the complementary cumulative distribution function (CCDF) value.
+    /// </summary>
+    /// <param name="x">The value where the complementary distribution function is evaluated.</param>
+    /// <param name="alpha">The stability parameter (0 &lt; alpha &lt;= 2).</param>
+    /// <returns>The complementary cumulative probability P(X &gt; x).</returns>
     public static double CCDF(double x, double alpha)
     {
       object? tempStorage = null;
       return CCDF(x, alpha, ref tempStorage, DefaultPrecision);
     }
 
+    /// <summary>
+    /// Gets the complementary cumulative distribution function (CCDF) value.
+    /// </summary>
+    /// <param name="x">The value where the complementary distribution function is evaluated.</param>
+    /// <param name="alpha">The stability parameter (0 &lt; alpha &lt;= 2).</param>
+    /// <param name="tempStorage">Temporary storage that can be reused between calls.</param>
+    /// <param name="precision">Goal for the relative precision.</param>
+    /// <returns>The complementary cumulative probability P(X &gt; x).</returns>
     public static double CCDF(double x, double alpha, ref object? tempStorage, double precision)
     {
       // test input parameter
@@ -541,12 +648,26 @@ namespace Altaxo.Calc.Probability
       }
     }
 
+    /// <summary>
+    /// Gets the CDF relative to 0, i.e. <c>CDF(x) - 0.5</c>, preserving the sign of <paramref name="x"/>.
+    /// </summary>
+    /// <param name="x">The value where the function is evaluated.</param>
+    /// <param name="alpha">The stability parameter (0 &lt; alpha &lt;= 2).</param>
+    /// <returns>The signed probability mass between 0 and <paramref name="x"/>.</returns>
     public static double XZCDF(double x, double alpha)
     {
       object? tempStorage = null;
       return XZCDF(x, alpha, ref tempStorage, DefaultPrecision);
     }
 
+    /// <summary>
+    /// Gets the CDF relative to 0, i.e. <c>CDF(x) - 0.5</c>, preserving the sign of <paramref name="x"/>.
+    /// </summary>
+    /// <param name="x">The value where the function is evaluated.</param>
+    /// <param name="alpha">The stability parameter (0 &lt; alpha &lt;= 2).</param>
+    /// <param name="tempStorage">Temporary storage that can be reused between calls.</param>
+    /// <param name="precision">Goal for the relative precision.</param>
+    /// <returns>The signed probability mass between 0 and <paramref name="x"/>.</returns>
     public static double XZCDF(double x, double alpha, ref object? tempStorage, double precision)
     {
       // test input parameter
@@ -570,11 +691,25 @@ namespace Altaxo.Calc.Probability
       }
     }
 
+    /// <summary>
+    /// Determines whether <paramref name="x"/> is numerically close to zero.
+    /// </summary>
+    /// <param name="x">The value to test.</param>
+    /// <returns><see langword="true"/> if <paramref name="x"/> is close to zero; otherwise, <see langword="false"/>.</returns>
     private static bool IsXNearlyEqualToZero(double x)
     {
       return Math.Abs(x) < DoubleConstants.DBL_EPSILON;
     }
 
+    /// <summary>
+    /// Computes the integrals needed to evaluate the CDF for a positive <paramref name="x"/>.
+    /// </summary>
+    /// <param name="x">A positive argument.</param>
+    /// <param name="alpha">The stability parameter (0 &lt; alpha &lt;= 2).</param>
+    /// <param name="tempStorage">Temporary storage that can be reused between calls.</param>
+    /// <param name="precision">Goal for the relative precision.</param>
+    /// <param name="integFromXZero">Returned integral from 0 to x (scaled so it can be added to 0.5).</param>
+    /// <param name="integFromXInfinity">Returned integral from x to infinity (scaled so it can be added to 0.5).</param>
     private static void CDFMethodForPositiveX(double x, double alpha, ref object? tempStorage, double precision, out double integFromXZero, out double integFromXInfinity)
     {
       const double offs = 0.5;
@@ -628,6 +763,12 @@ namespace Altaxo.Calc.Probability
 
     #region Quantile
 
+    /// <summary>
+    /// Gets the quantile (inverse CDF) for the given probability <paramref name="p"/>.
+    /// </summary>
+    /// <param name="p">The probability in [0, 1].</param>
+    /// <param name="alpha">The stability parameter (0 &lt; alpha &lt;= 2).</param>
+    /// <returns>The value x such that CDF(x) = <paramref name="p"/>, or <see cref="double.NaN"/> if no root was found.</returns>
     public static double Quantile(double p, double alpha)
     {
       if (p == 0.5)
@@ -658,6 +799,12 @@ namespace Altaxo.Calc.Probability
       return double.NaN;
     }
 
+    /// <summary>
+    /// Gets the quantile (inverse CCDF) for the given complementary probability <paramref name="q"/>.
+    /// </summary>
+    /// <param name="q">The complementary probability in [0, 1].</param>
+    /// <param name="alpha">The stability parameter (0 &lt; alpha &lt;= 2).</param>
+    /// <returns>The value x such that CCDF(x) = <paramref name="q"/>, or <see cref="double.NaN"/> if no root was found.</returns>
     public static double QuantileCCDF(double q, double alpha)
     {
       if (q == 0.5)

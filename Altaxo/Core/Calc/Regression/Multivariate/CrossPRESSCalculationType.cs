@@ -27,29 +27,31 @@ using System;
 namespace Altaxo.Calc.Regression.Multivariate
 {
   /// <summary>
-  /// Determines how to do the calculation of Cross Validated Predicted Error Sum of Squares.
+  /// Determines how to calculate the cross-validated predicted error sum of squares (Cross PRESS).
   /// </summary>
-  /// <remarks>The serialization code for this enumeration is located in AltaxoBase.</remarks>
+  /// <remarks>
+  /// The serialization code for this enumeration is located in AltaxoBase.
+  /// </remarks>
   public enum CrossPRESSCalculationType
   {
     /// <summary>
-    /// No cross PRESS calculation.
+    /// No Cross PRESS calculation.
     /// </summary>
     None,
 
     /// <summary>
-    /// Every measurement is excluded to calculate Cross PRESS.
+    /// Excludes every measurement to calculate Cross PRESS.
     /// </summary>
     ExcludeEveryMeasurement,
 
     /// <summary>
-    /// Measurements (which have the same concentration values) are excluded as groups to calculate Cross PRESS.
+    /// Excludes measurements (with identical concentration values) as groups to calculate Cross PRESS.
     /// </summary>
     ExcludeGroupsOfSimilarMeasurements,
 
     /// <summary>
-    /// Measurements are divided into two groups, so that measurements with similar y-values should be equally distributed
-    /// into one group and the other.
+    /// Divides measurements into two groups such that measurements with similar <c>Y</c> values are distributed
+    /// as evenly as possible between the two groups.
     /// </summary>
     ExcludeHalfEnsemblyOfMeasurements
   }

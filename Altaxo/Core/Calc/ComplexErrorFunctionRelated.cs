@@ -96,6 +96,11 @@ namespace Altaxo.Calc
     /* Lookup-table for Chebyshev polynomials for smaller |x|                     */
     /******************************************************************************/
 
+    /// <summary>
+    /// Computes the underflow-compensating complementary error function for a lookup table entry with y scaled by 100.
+    /// </summary>
+    /// <param name="y100">The scaled value y * 100 used for selecting the Chebyshev polynomial interval.</param>
+    /// <returns>The value of erfcx for the corresponding x derived from the given y.</returns>
     private static double erfcx_y100(double y100)
     {
       // Steven G. Johnson, October 2012.

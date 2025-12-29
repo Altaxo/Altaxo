@@ -68,9 +68,9 @@ namespace Altaxo.Calc.Probability
     #region instance fields
 
     /// <summary>
-    /// Gets or sets the parameter alpha which is used for generation of bernoulli distributed random numbers.
+    /// Gets or sets the parameter p which is used for generation of Bernoulli-distributed random numbers.
     /// </summary>
-    /// <remarks>Call <see cref="IsValidProbability"/> to determine whether a value is valid and therefor assignable.</remarks>
+    /// <remarks>Call <see cref="IsValidProbability"/> to determine whether a value is valid and therefore assignable.</remarks>
     public double Probability
     {
       get
@@ -83,6 +83,11 @@ namespace Altaxo.Calc.Probability
       }
     }
 
+    /// <summary>
+    /// Initializes this instance with the specified probability.
+    /// </summary>
+    /// <param name="probability">The success probability p in the range [0, 1].</param>
+    /// <exception cref="ArgumentOutOfRangeException">Thrown when <paramref name="probability"/> is outside [0, 1].</exception>
     public void Initialize(double probability)
     {
       if (!IsValidProbability(probability))
@@ -122,11 +127,22 @@ namespace Altaxo.Calc.Probability
     {
     }
 
+    /// <summary>
+    /// Initializes a new instance of the <see cref="BernoulliDistribution"/> class with the specified probability,
+    /// using a <see cref="StandardGenerator"/> as the underlying random number generator.
+    /// </summary>
+    /// <param name="probability">The success probability p in the range [0, 1].</param>
     public BernoulliDistribution(double probability)
       : this(probability, DefaultGenerator)
     {
     }
 
+    /// <summary>
+    /// Initializes a new instance of the <see cref="BernoulliDistribution"/> class with the specified probability,
+    /// using the specified <see cref="Generator"/> as the underlying random number generator.
+    /// </summary>
+    /// <param name="probability">The success probability p in the range [0, 1].</param>
+    /// <param name="generator">A <see cref="Generator"/> object.</param>
     public BernoulliDistribution(double probability, Generator generator)
       : base(generator)
     {
@@ -169,9 +185,7 @@ namespace Altaxo.Calc.Probability
 
     #region overridden Distribution members
 
-    /// <summary>
-    /// Gets the minimum possible value of bernoulli distributed random numbers.
-    /// </summary>
+    /// <inheritdoc />
     public override double Minimum
     {
       get
@@ -180,9 +194,7 @@ namespace Altaxo.Calc.Probability
       }
     }
 
-    /// <summary>
-    /// Gets the maximum possible value of bernoulli distributed random numbers.
-    /// </summary>
+    /// <inheritdoc />
     public override double Maximum
     {
       get
@@ -191,9 +203,7 @@ namespace Altaxo.Calc.Probability
       }
     }
 
-    /// <summary>
-    /// Gets the mean value of bernoulli distributed random numbers.
-    /// </summary>
+    /// <inheritdoc />
     public override double Mean
     {
       get
@@ -202,9 +212,7 @@ namespace Altaxo.Calc.Probability
       }
     }
 
-    /// <summary>
-    /// Gets the median of bernoulli distributed random numbers.
-    /// </summary>
+    /// <inheritdoc />
     public override double Median
     {
       get
@@ -213,9 +221,7 @@ namespace Altaxo.Calc.Probability
       }
     }
 
-    /// <summary>
-    /// Gets the variance of bernoulli distributed random numbers.
-    /// </summary>
+    /// <inheritdoc />
     public override double Variance
     {
       get
@@ -224,9 +230,7 @@ namespace Altaxo.Calc.Probability
       }
     }
 
-    /// <summary>
-    /// Gets the mode of bernoulli distributed random numbers.
-    /// </summary>
+    /// <inheritdoc />
     public override double[] Mode
     {
       get
@@ -246,10 +250,7 @@ namespace Altaxo.Calc.Probability
       }
     }
 
-    /// <summary>
-    /// Returns a bernoulli distributed floating point random number.
-    /// </summary>
-    /// <returns>A bernoulli distributed double-precision floating point number.</returns>
+    /// <inheritdoc />
     public override double NextDouble()
     {
       if (Generator.NextDouble() < _probability)
@@ -266,11 +267,18 @@ namespace Altaxo.Calc.Probability
 
     #region CdfPdf
 
+    /// <inheritdoc />
     public override double CDF(double x)
     {
       return CDF(x, Probability);
     }
 
+    /// <summary>
+    /// Returns the cumulative distribution function (CDF) of a Bernoulli distribution.
+    /// </summary>
+    /// <param name="x">The value at which to evaluate the CDF.</param>
+    /// <param name="p">The success probability p in the range [0, 1].</param>
+    /// <returns>The probability that a Bernoulli-distributed random variable is less than or equal to <paramref name="x"/>.</returns>
     public static double CDF(double x, double p)
     {
       if (x >= 0 && x < 1)
@@ -281,11 +289,18 @@ namespace Altaxo.Calc.Probability
         return 0;
     }
 
+    /// <inheritdoc />
     public override double PDF(double x)
     {
       return PDF(x, Probability);
     }
 
+    /// <summary>
+    /// Returns the probability mass function (PMF) of a Bernoulli distribution.
+    /// </summary>
+    /// <param name="x">The value at which to evaluate the PMF.</param>
+    /// <param name="p">The success probability p in the range [0, 1].</param>
+    /// <returns>The probability for <paramref name="x"/>.</returns>
     public static double PDF(double x, double p)
     {
       if (x == 0)

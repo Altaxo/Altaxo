@@ -18,45 +18,51 @@ using System;
 namespace Altaxo.Calc.Regression
 {
   /// <summary>
-  /// A simple C# implementation of Savitzky-Golay smoothing with
-  /// weights for a better suppression of the stopband than traditional
-  /// Savitzky-Golay(SG). It can also do traditional SG smoothing with
-  /// weights = NONE.
+  /// A C# implementation of Savitzky-Golay smoothing with optional weighting.
+  /// Weights provide improved stopband suppression compared to traditional Savitzky-Golay (SG).
+  /// Traditional SG smoothing can be obtained by using <see cref="WeightType.NONE"/>.
   /// </summary>
   /// <remarks>
-  /// Reference: Michael Schmid, David Rath, and Ulrike Diebold, 'Why and how Savitzky-Golay filters should be replaced', ACS Measurement Science Au 2022 2 (2), 185-196 DOI: 10.1021/acsmeasuresciau.1c00054
+  /// Reference: Michael Schmid, David Rath, and Ulrike Diebold, <c>"Why and how Savitzky-Golay filters should be replaced"</c>,
+  /// ACS Measurement Science Au 2022 2 (2), 185–196. DOI: 10.1021/acsmeasuresciau.1c00054.
   /// </remarks>
   public class WeightedSavitzkyGolaySmoother
   {
     /// <summary>
-    /// The type of weight function to use. The default is NONE, which results in traditional SG smoothing.
+    /// Specifies the weight function to use.
+    /// The default is <see cref="NONE"/>, which results in traditional SG smoothing.
     /// </summary>
     public enum WeightType
     {
       /// <summary>
-      /// Weight type 'none', this results in traditional SG smoothing
+      /// No weighting; results in traditional SG smoothing.
       /// </summary>
       NONE = 0,
+
       /// <summary>
-      /// Weight type for a modified Gaussian with alpha=2, as described in the paper by Schmid and Diebold
+      /// Modified Gaussian with <c>alpha = 2</c>, as described in the paper by Schmid and Diebold.
       /// </summary>
       GAUSS2 = 1,
+
       /// <summary>
-      /// Weight type for a Hann window function (also known as raised cosine or cosine-square)
+      /// Hann window function (also known as raised cosine or cosine-square).
       /// </summary>
       HANN = 2,
+
       /// <summary>
-      /// Weight type for a Hann-square window function (also known as cos^4)
+      /// Hann-squared window function (also known as <c>cos^4</c>).
       /// </summary>
       HANNSQR = 3,
+
       /// <summary>
-      /// Weight type for a Hann-cube window function (also known as cos^6)
+      /// Hann-cubed window function (also known as <c>cos^6</c>).
       /// </summary>
       HANNCUBE = 4
     };
 
     /// <summary>
-    /// Coefficients a,b,c for x-scale of near-end kernel functions of the SGW filters, for equation scale s = 1-a/(1+b* Math.pow(x, c))
+    /// Coefficients <c>a</c>, <c>b</c>, <c>c</c> for scaling the x-axis of near-edge kernel functions of the SGW filters.
+    /// Used in the equation <c>s = 1 - a / (1 + b * pow(x, c))</c>.
     /// </summary>
     private static readonly double[][] weightScaleCoeffs = [
         [1, 1, -1],                     //weightType=NONE
@@ -72,32 +78,34 @@ namespace Altaxo.Calc.Regression
     private double[][] kernels;
 
     /// <summary>
-    ///  Creates a WeightedSavitzkyGolaySmoother with a given weight
-    /// function, given degree and kernel halfwidth.This
-    /// constructor is useful for repeated smoothing operations with
-    /// the same parameters and data sets of the same length.
-    /// Otherwise the static <see cref="Smooth(double[], double[], WeightType, int, int)"/>
-    /// method is more convenient.
+    /// Creates a <see cref="WeightedSavitzkyGolaySmoother"/> with the given weight function, polynomial degree, and kernel half-width.
+    /// This constructor is useful for repeated smoothing operations with the same parameters.
+    /// Otherwise, the static <see cref="Smooth(double[], double[], WeightType, int, int)"/> method is more convenient.
     /// </summary>
-    /// <param name="weightType">Type of the weight.</param>
-    /// <param name="degree">Degree ofthe polynomial fit.</param>
-    /// <param name="m">The halfwidth of the kernel.</param>
+    /// <param name="weightType">Type of the weight function.</param>
+    /// <param name="degree">Degree of the polynomial fit.</param>
+    /// <param name="m">Half-width of the kernel.</param>
+    /// <exception cref="ArgumentOutOfRangeException">Thrown if <paramref name="m"/> is too small for <paramref name="degree"/>.</exception>
     public WeightedSavitzkyGolaySmoother(WeightType weightType, int degree, int m)
     {
       kernels = MakeKernels(weightType, degree, m);
     }
 
     /// <summary>
-    /// Smooths the data with the parameters passed with the constructor.
-    /// This function is implemented only for data arrays that have least 2m+1 elements,
-    /// where m is the kernel halfwidth.    /// </summary>
+    /// Smooths the data with the parameters passed to the constructor.
+    /// This method is implemented only for data arrays that have at least <c>2*m + 1</c> elements,
+    /// where <c>m</c> is the kernel half-width.
+    /// </summary>
     /// <param name="data">The input data.</param>
-    /// <param name="result">The output array; may be null. If <paramref name="result"/> is supplied
-    /// and has the correct size, it is used for the output. <paramref name="result"/>
-    /// may be null or the input array <paramref name="data"/>; in the latter case
-    /// the input is overwritten.</param>
-    /// <returns>The smoothed data. If <paramref name="result"/> is non-null, has the correct
-    /// size, and is not the input array, this is the <paramref name="result"/> array.</returns>
+    /// <param name="result">
+    /// The output array; may be <see langword="null"/>.
+    /// If supplied and has the correct size, it is used for the output.
+    /// It may also be the same instance as <paramref name="data"/>; in that case the input is overwritten.
+    /// </param>
+    /// <returns>
+    /// The smoothed data. If <paramref name="result"/> is non-null and has the correct size, it is returned.
+    /// </returns>
+    /// <exception cref="ArgumentException">Thrown if the input array is too short.</exception>
     public double[] Smooth(double[] data, double[]? result)
     {
       result = Convolve(data, result, kernels);
@@ -105,16 +113,20 @@ namespace Altaxo.Calc.Regression
     }
 
     /// <summary>
-    /// Smooths the data with the parameters passed with a given weight
-    /// function, given degree and kernel halfwidth m.
-    /// This function is implemented only for data arrays that have least 2m+1 elements.
+    /// Smooths the data with the specified weight function, polynomial degree, and kernel half-width <paramref name="m"/>.
+    /// This method is implemented only for data arrays that have at least <c>2*m + 1</c> elements.
     /// </summary>
     /// <param name="data">The input data.</param>
-    /// <param name="result">The output array; may be null. If <paramref name="result"/> is supplied, has the correct size and is not the input, it is used for the output.</param>
-    /// <param name="weightType">Type of the Weight function, NONE for traditional SG, HANNSQR for the filters described in the paper</param>
+    /// <param name="result">
+    /// The output array; may be <see langword="null"/>.
+    /// If supplied and has the correct size and is not the input array, it is used for the output.
+    /// </param>
+    /// <param name="weightType">Type of the weight function; <see cref="WeightType.NONE"/> for traditional SG, <see cref="WeightType.HANNSQR"/> for the filters described in the paper.</param>
     /// <param name="degree">Degree of the polynomial fit.</param>
-    /// <param name="m">Halfwidth of the kernel.</param>
-    /// <returns>The smoothed data. If <paramref name="result"/> is non-null, has the correct size, and is not the input array, this is the <code>result</code> array.</returns>
+    /// <param name="m">Half-width of the kernel.</param>
+    /// <returns>
+    /// The smoothed data. If <paramref name="result"/> is non-null, has the correct size, and is not the input array, it is returned.
+    /// </returns>
     public static double[] Smooth(double[] data, double[]? result, WeightType weightType, int degree, int m)
     {
       WeightedSavitzkyGolaySmoother smoother = new WeightedSavitzkyGolaySmoother(weightType, degree, m);
@@ -122,15 +134,14 @@ namespace Altaxo.Calc.Regression
     }
 
     /// <summary>
-    /// Smooths the data in a way comparable to a traditional Savitzky-Golay
-    /// filter with the given parameters <paramref name="degree"/> and <paramref name="m"/>,
-    /// but with Hann-square weights, resulting substantially better noise rejection.
-    /// This function is implemented only for data arrays that have least as many
-    /// elements as the SGW kernel.This is more than 2m+1, but never more than 4m+1.
+    /// Smooths the data in a way comparable to a traditional Savitzky-Golay filter with parameters <paramref name="degree"/> and
+    /// <paramref name="m"/>, but using Hann-squared weights, resulting in substantially better noise rejection.
+    /// This method is implemented only for arrays that have at least as many elements as the SGW kernel.
+    /// This is more than <c>2*m + 1</c>, but never more than <c>4*m + 1</c>.
     /// </summary>
     /// <param name="data">The input data.</param>
     /// <param name="degree">The degree of the polynomial fit used in the SG(W) filter.</param>
-    /// <param name="m">The half-width of the SG kernel. The kernel size of the SG filter, i.e.the number of points for fitting the polynomial is <code>2*m + 1</code>.</param>
+    /// <param name="m">The half-width of the SG kernel to be matched (<c>2*m + 1</c> points).</param>
     /// <returns>The smoothed data.</returns>
     public static double[] SmoothLikeSG(double[] data, int degree, int m)
     {
@@ -140,14 +151,16 @@ namespace Altaxo.Calc.Regression
     }
 
     /// <summary>
-    /// Calculates the kernel halfwidth m for a given band width, i.e.,
-    /// the frequency where the response decreases to -3 dB, corresponding to 1/sqrt(2),
-    /// for a SGW filter with HANNSQR weights.
+    /// Calculates the kernel half-width <c>m</c> for a given bandwidth (the frequency where the response decreases to -3 dB,
+    /// corresponding to <c>1/sqrt(2)</c>) for an SGW filter with <see cref="WeightType.HANNSQR"/> weights.
     /// </summary>
     /// <param name="degree">The degree of the polynomial fit used in the SGW filter.</param>
-    /// <param name="bandwidth">The desired band width, with respect to the sampling frequency. The value of <paramref name="bandwidth"/> must be less than 0.5 (the Nyquist frequency).</param>
-    /// <returns>The kernel halfwidth m for this band width.</returns>
-    /// <exception cref="System.ArgumentOutOfRangeException">Invalid bandwidth value: " + bandwidth</exception>
+    /// <param name="bandwidth">
+    /// The desired bandwidth with respect to the sampling frequency.
+    /// The value must be less than 0.5 (the Nyquist frequency).
+    /// </param>
+    /// <returns>The kernel half-width <c>m</c> for this bandwidth.</returns>
+    /// <exception cref="ArgumentOutOfRangeException">Thrown if <paramref name="bandwidth"/> is outside the valid range.</exception>
     public static int BandwidthToHalfwidth(int degree, double bandwidth)
     {
       if (bandwidth <= 0 || bandwidth >= 0.5)
@@ -160,32 +173,31 @@ namespace Altaxo.Calc.Regression
     /// Calculates the bandwidth of a traditional Savitzky-Golay (SG) filter.
     /// </summary>
     /// <param name="degree">The degree of the polynomial fit used in the SG filter.</param>
-    /// <param name="m">The half-width of the SG kernel. The kernel size of the SG
-    /// filter, i.e.the number of points for fitting the polynomial
-    /// is <code>2*m + 1</code>.</param>
-    /// <returns>The -3 dB-bandwidth of the SG filter, i.e. the frequency where the
-    /// response is 1/sqrt(2). The sampling frequency is defined as f = 1.
-    /// For <paramref name="degree"/> up to 10, the accuracy is typically much
-    /// better than 1%; higher errors occur only for the lowest
-    /// <paramref name="m"/> values where the SG filter is defined
-    /// (worst case: 4% error at <code>degree = 10, m = 6 </code>).     
-    ///</returns>
+    /// <param name="m">
+    /// The half-width of the SG kernel. The kernel size of the SG filter (i.e. the number of points for fitting the polynomial)
+    /// is <c>2*m + 1</c>.
+    /// </param>
+    /// <returns>
+    /// The -3 dB bandwidth of the SG filter, i.e. the frequency where the response is <c>1/sqrt(2)</c>.
+    /// The sampling frequency is defined as <c>f = 1</c>.
+    /// For <paramref name="degree"/> up to 10, the accuracy is typically much better than 1%; higher errors occur only for the lowest
+    /// <paramref name="m"/> values where the SG filter is defined (worst case: 4% error at <c>degree = 10, m = 6</c>).
+    /// </returns>
     public static double SavitzkyGolayBandwidth(int degree, int m)
     {
       return 1.0 / (6.352 * (m + 0.5) / (degree + 1.379) - (0.513 + 0.316 * degree) / (m + 0.5));
     }
 
     /// <summary>
-    /// Convolves the data, for each point using the appropriate kernel for interior
-    /// or near-boundary points from the kernels supplied.
-    /// This function is implemented only for data arrays that have least 2m+1 elements.
-    /// The output array may be supplied; if null or unsuitable a new output array is created.
+    /// Convolves the data, using for each point the appropriate kernel for interior or near-boundary points.
+    /// The output array may be supplied; if <see langword="null"/> or unsuitable, a new output array is created.
+    /// This method is implemented only for data arrays that have at least <c>2*m + 1</c> elements.
     /// </summary>
-    /// <param name="data">The data.</param>
-    /// <param name="result">The output.</param>
-    /// <param name="kernels">The kernels.</param>
-    /// <returns></returns>
-    /// <exception cref="System.ArgumentException">Data array too short; min length: " + (2 * m + 1)</exception>
+    /// <param name="data">The input data.</param>
+    /// <param name="result">The output data (may be <see langword="null"/>).</param>
+    /// <param name="kernels">The per-position kernels (near-edge kernels plus the interior kernel).</param>
+    /// <returns>The convolved (smoothed) data.</returns>
+    /// <exception cref="ArgumentException">Thrown if the input data array is too short.</exception>
     private static double[] Convolve(double[] data, double[]? result, double[][] kernels)
     {
       int m = kernels[^1].Length / 2;
@@ -215,18 +227,16 @@ namespace Altaxo.Calc.Regression
     /**  */
     /// <summary>
     /// Creates Savitzky-Golay kernels with weights for near-boundary points and interior points.
-    /// Returns as array element[0] the kernel for the first data point, where no
-    /// earlier points are present, as [1] the kernel where one earlier data point is present,
-    /// and the last array element[m] is the kernel to apply in the interior.
-    /// For the readonly points of the data series, the near-edge kernels[0, ... m - 1] must be reversed.
-    /// For the near-edge kernels, the first array element is the kernel element
-    /// that should be applied to the edge point.
+    /// Returns as array element [0] the kernel for the first data point (where no earlier points are present),
+    /// as [1] the kernel where one earlier data point is present, and the last array element [m] is the kernel to apply in the interior.
+    /// For the last points of the data series, the near-edge kernels [0, …, m - 1] must be reversed.
+    /// For near-edge kernels, the first array element is the kernel element that should be applied to the edge point.
     /// </summary>
     /// <param name="weightType">Type of the weight.</param>
-    /// <param name="degree">The degree.</param>
-    /// <param name="m">The m.</param>
-    /// <returns></returns>
-    /// <exception cref="System.ArgumentOutOfRangeException">Kernel half-width m too low for degree, min m=" + (degree + 1) / 2</exception>
+    /// <param name="degree">The polynomial degree.</param>
+    /// <param name="m">The kernel half-width.</param>
+    /// <returns>The kernels for near-boundary points and for interior points.</returns>
+    /// <exception cref="ArgumentOutOfRangeException">Thrown if <paramref name="m"/> is too small for <paramref name="degree"/>.</exception>
     private static double[][] MakeKernels(WeightType weightType, int degree, int m)
     {
       if (degree > 2 * m)
@@ -238,15 +248,15 @@ namespace Altaxo.Calc.Regression
     }
 
     /// <summary>
-    /// Creates one Savitzky-Golay kernel with weights, for a given point near the left boundary,
-    ///  where pLeft is the number of data points to the left, or the kernel for interior points
-    ///  if pLeft = m.
+    /// Creates one weighted Savitzky-Golay kernel for a point near the left boundary.
+    /// <paramref name="pLeft"/> is the number of data points to the left; if <paramref name="pLeft"/> equals <paramref name="m"/>,
+    /// the kernel for interior points is created.
     /// </summary>
     /// <param name="weightType">Type of the weight.</param>
-    /// <param name="degree">The degree.</param>
-    /// <param name="m">The m.</param>
+    /// <param name="degree">The polynomial degree.</param>
+    /// <param name="m">The kernel half-width.</param>
     /// <param name="pLeft">Number of data points to the left.</param>
-    /// <returns></returns>
+    /// <returns>The kernel coefficients.</returns>
     private static double[] MakeLeftKernel(WeightType weightType, int degree, int m, int pLeft)
     {
       double scale = WeightFunctionScale((double)(m - pLeft) / m, weightType);
@@ -293,12 +303,12 @@ namespace Altaxo.Calc.Regression
     }
 
     /// <summary>
-    ///The weight function of the SGW, where x=0 is the center, and the weight function becomes zero at x=1
+    /// Returns the weight function value, where <c>x = 0</c> is the center and the weight becomes zero at <c>|x| = 1</c>.
     /// </summary>
     /// <param name="weightType">Type of the weight.</param>
     /// <param name="x">The x value.</param>
     /// <returns>The weight value at <paramref name="x"/>.</returns>
-    /// <exception cref="System.ArgumentException">Undefined weight function: " + weightType</exception>
+    /// <exception cref="ArgumentException">Thrown if <paramref name="weightType"/> is not defined.</exception>
     private static double WeightFunction(WeightType weightType, double x)
     {
       const double decay = 2; //for GAUSS only
@@ -318,25 +328,24 @@ namespace Altaxo.Calc.Regression
     }
 
     /// <summary>
-    /// Returns the scale factor for x for the weight function at near-edge points.
+    /// Returns the scale factor for <c>x</c> for the weight function at near-edge points.
     /// </summary>
-    /// <param name="missingFrac">The fraction of points that are outside the data range over the half-width m of the 'normal' kernel</param>
+    /// <param name="missingFrac">The fraction of points outside the data range over the half-width <c>m</c> of the normal kernel.</param>
     /// <param name="weightType">Type of the weight.</param>
-    /// <returns>The scale factor for x for the weight function at near-edge points.</returns>
+    /// <returns>The scale factor for <c>x</c> for the weight function at near-edge points.</returns>
     private static double WeightFunctionScale(double missingFrac, WeightType weightType)
     {
       double[] coeffs = weightScaleCoeffs[(int)weightType];
       return missingFrac <= 0 ? 1 : 1 - coeffs[0] / (1 + coeffs[1] * Math.Pow(missingFrac, coeffs[2]));
     }
 
-
     /// <summary>
-    /// Dot product of two vectors with weights
+    /// Calculates the weighted dot product of two vectors.
     /// </summary>
-    /// <param name="vector1">The vector1.</param>
-    /// <param name="vector2">The vector2.</param>
+    /// <param name="vector1">The first vector.</param>
+    /// <param name="vector2">The second vector.</param>
     /// <param name="weights">The weights.</param>
-    /// <returns>The dot product of two vectors with weights.</returns>
+    /// <returns>The weighted dot product of <paramref name="vector1"/> and <paramref name="vector2"/>.</returns>
     private static double DotProduct(double[] vector1, double[] vector2, double[] weights)
     {
       double sum = 0;
@@ -346,9 +355,9 @@ namespace Altaxo.Calc.Regression
     }
 
     /// <summary>
-    /// Normalizes a vector to length=1 (with the given weights)
+    /// Normalizes a vector to length 1, using the given weights.
     /// </summary>
-    /// <param name="vector">The vector. Is modified (normalized) to length 1.</param>
+    /// <param name="vector">The vector. It is modified (normalized) to length 1.</param>
     /// <param name="weights">The weights.</param>
     private static void Normalize(double[] vector, double[] weights)
     {
@@ -358,9 +367,9 @@ namespace Altaxo.Calc.Regression
     }
 
     /// <summary>
-    /// Calculates the square of <paramref name="x"/>.
+    /// Returns the square of <paramref name="x"/>.
     /// </summary>
-    /// <param name="x">The x value.</param>
+    /// <param name="x">The value.</param>
     /// <returns>The square of <paramref name="x"/>.</returns>
     private static double Sqr(double x)
     { return x * x; }

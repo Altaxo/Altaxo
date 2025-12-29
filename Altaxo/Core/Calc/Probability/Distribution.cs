@@ -36,17 +36,18 @@ namespace Altaxo.Calc.Probability
   public abstract class Distribution
   {
     /// <summary>
-    /// Stores a generator object that is by default common to all distributions. Note: It is better to have only <b>one</b> generator object,
-    /// than to instantiate a new one for every distribution instance. Only with one generator object it can be assured that the
-    /// generated numbers of different distribution instances are independent from each other. (Many generators with the same seed value
-    /// will create the same numbers).
+    /// Stores a generator object that is, by default, common to all distributions.
+    /// Note: It is better to have only <b>one</b> generator object than to instantiate a new one for every
+    /// distribution instance. Only with one generator object can it be assured that the generated numbers of
+    /// different distribution instances are independent from each other. (Many generators with the same seed value
+    /// will create the same numbers.)
     /// </summary>
     private static readonly ThreadLocal<Generator> _defaultGenerator = new ThreadLocal<Generator>(() => new StandardGenerator());
 
     #region instance fields
 
     /// <summary>
-    /// Gets or sets a <see cref="Generator"/> object that can be used as underlying random number generator.
+    /// Gets or sets a <see cref="Probability.Generator"/> object that can be used as the underlying random number generator.
     /// </summary>
     public Generator Generator
     {
@@ -61,10 +62,13 @@ namespace Altaxo.Calc.Probability
     }
 
     /// <summary>
-    /// Stores a <see cref="Generator"/> object that can be used as underlying random number generator.
+    /// Stores a <see cref="Probability.Generator"/> object that can be used as the underlying random number generator.
     /// </summary>
     protected Generator generator;
 
+    /// <summary>
+    /// Gets the default <see cref="Probability.Generator"/> instance used when no generator is specified.
+    /// </summary>
     public static Generator DefaultGenerator
     {
       get
@@ -74,8 +78,8 @@ namespace Altaxo.Calc.Probability
     }
 
     /// <summary>
-    /// Gets a value indicating whether the random number distribution can be reset, so that it produces the same
-    ///   random number sequence again.
+    /// Gets a value indicating whether the random number distribution can be reset so that it produces the same
+    /// random number sequence again.
     /// </summary>
     public bool CanReset
     {
@@ -91,7 +95,7 @@ namespace Altaxo.Calc.Probability
 
     /// <summary>
     /// Initializes a new instance of the <see cref="Distribution"/> class, using a
-    ///   <see cref="StandardGenerator"/> as underlying random number generator.
+    /// <see cref="StandardGenerator"/> as the underlying random number generator.
     /// </summary>
     protected Distribution()
       : this(new StandardGenerator())
@@ -100,11 +104,11 @@ namespace Altaxo.Calc.Probability
 
     /// <summary>
     /// Initializes a new instance of the <see cref="Distribution"/> class, using the specified
-    ///   <see cref="Generator"/> as underlying random number generator.
+    /// <see cref="Probability.Generator"/> as the underlying random number generator.
     /// </summary>
-    /// <param name="generator">A <see cref="Generator"/> object.</param>
+    /// <param name="generator">A <see cref="Probability.Generator"/> object.</param>
     /// <exception cref="ArgumentNullException">
-    /// <paramref name="generator"/> is NULL (<see langword="Nothing"/> in Visual Basic).
+    /// <paramref name="generator"/> is <see langword="null"/> (<see langword="Nothing"/> in Visual Basic).
     /// </exception>
     protected Distribution(Generator generator)
     {
@@ -121,10 +125,10 @@ namespace Altaxo.Calc.Probability
     #region instance methods
 
     /// <summary>
-    /// Resets the random number distribution, so that it produces the same random number sequence again.
+    /// Resets the random number distribution so that it produces the same random number sequence again.
     /// </summary>
     /// <returns>
-    /// <see langword="true"/>, if the random number distribution was reset; otherwise, <see langword="false"/>.
+    /// <see langword="true"/> if the random number distribution was reset; otherwise, <see langword="false"/>.
     /// </returns>
     public bool Reset()
     {
@@ -184,9 +188,9 @@ namespace Altaxo.Calc.Probability
     }
 
     /// <summary>
-    /// Returns a distributed floating point random number.
+    /// Returns a distributed floating-point random number.
     /// </summary>
-    /// <returns>A distributed double-precision floating point number.</returns>
+    /// <returns>A distributed double-precision floating-point number.</returns>
     public abstract double NextDouble();
 
     #endregion abstract members

@@ -50,12 +50,12 @@ namespace Altaxo.Calc.Probability
   ///             =  0                    otherwise
   ///                             //
   /// The arguments must satisfy the conditions:
-  /// a > 0   (positive)
+  /// a &gt; 0   (positive)
   /// b != 0  (non-zero)
   ///
   /// References:
   ///
-  /// For parameter a >= 1 corresponds to algorithm GD in:
+  /// For parameter a &gt;= 1 corresponds to algorithm GD in:
   /// J. H. Ahrens and U. Dieter, Generating Gamma Variates by a
   /// Modified Rejection Technique, Comm. ACM, 25, 1, 47-54 (1982).
   /// For parameter 0 &lt; a &lt; 1 corresponds to algorithm GS in:
@@ -63,7 +63,6 @@ namespace Altaxo.Calc.Probability
   /// from Gamma, Beta, Poisson and Binomial Distributions,
   /// Computing, 12, 223-246 (1974).
   /// </code></remarks>
-
   public class GammaDistribution : ContinuousDistribution // , public ExponentialDistribution
   {
     protected NormalDistribution normalDistribution;
@@ -71,6 +70,14 @@ namespace Altaxo.Calc.Probability
     protected double alpha, theta, _invTheta, s, s2, d, r, q0, b, si, c, scale;
     protected bool algorithmGD;
 
+    /// <summary>
+    /// Initializes this instance with the specified distribution parameters.
+    /// </summary>
+    /// <param name="alpha">Order (shape) parameter (must be positive).</param>
+    /// <param name="theta">Scale parameter (must be non-zero).</param>
+    /// <exception cref="ArgumentException">
+    /// <paramref name="alpha"/> is not positive, or <paramref name="theta"/> is zero.
+    /// </exception>
     public void Initialize(double alpha, double theta)
     {
       // check parameters
@@ -143,21 +150,41 @@ namespace Altaxo.Calc.Probability
       }
     }
 
+    /// <summary>
+    /// Initializes a new instance of the <see cref="GammaDistribution"/> class, using a
+    /// <see cref="StandardGenerator"/> as underlying random number generator.
+    /// </summary>
     public GammaDistribution()
       : this(DefaultGenerator)
     {
     }
 
+    /// <summary>
+    /// Initializes a new instance of the <see cref="GammaDistribution"/> class, using the specified
+    /// <see cref="Generator"/> as underlying random number generator.
+    /// </summary>
+    /// <param name="gen">A <see cref="Generator"/> object.</param>
     public GammaDistribution(Generator gen)
       : this(1, 1, gen)
     {
     }
 
+    /// <summary>
+    /// Initializes a new instance of the <see cref="GammaDistribution"/> class.
+    /// </summary>
+    /// <param name="alpha">Order (shape) parameter (must be positive).</param>
+    /// <param name="theta">Scale parameter (must be non-zero).</param>
     public GammaDistribution(double alpha, double theta)
       : this(alpha, theta, DefaultGenerator)
     {
     }
 
+    /// <summary>
+    /// Initializes a new instance of the <see cref="GammaDistribution"/> class.
+    /// </summary>
+    /// <param name="alpha">Order (shape) parameter (must be positive).</param>
+    /// <param name="theta">Scale parameter (must be non-zero).</param>
+    /// <param name="ran">A <see cref="Generator"/> object.</param>
     public GammaDistribution(double alpha, double theta, Generator ran)
       : base(ran)
     {
@@ -167,6 +194,7 @@ namespace Altaxo.Calc.Probability
       Initialize(alpha, theta);
     }
 
+    /// <inheritdoc/>
     public override double NextDouble()
     {
       // algorithm GD for A >= 1
@@ -288,12 +316,15 @@ loop:
 
     #region instance fields
 
+    /// <summary>
+    /// Gets the order (shape) parameter of the distribution.
+    /// </summary>
     public double Order { get { return alpha; } }
 
     /// <summary>
-    /// Gets or sets the parameter alpha which is used for generation of gamma distributed random numbers.
+    /// Gets or sets the parameter alpha which is used for generation of Gamma distributed random numbers.
     /// </summary>
-    /// <remarks>Call <see cref="IsValidAlpha"/> to determine whether a value is valid and therefor assignable.</remarks>
+    /// <remarks>Call <see cref="IsValidAlpha"/> to determine whether a value is valid and therefore assignable.</remarks>
     public double Alpha
     {
       get
@@ -306,6 +337,9 @@ loop:
       }
     }
 
+    /// <summary>
+    /// Gets or sets the location parameter.
+    /// </summary>
     public double Location
     {
       get { return _invTheta; }
@@ -316,9 +350,9 @@ loop:
     }
 
     /// <summary>
-    /// Gets or sets the parameter theta which is used for generation of gamma distributed random numbers.
+    /// Gets or sets the parameter theta which is used for generation of Gamma distributed random numbers.
     /// </summary>
-    /// <remarks>Call <see cref="IsValidTheta"/> to determine whether a value is valid and therefor assignable.</remarks>
+    /// <remarks>Call <see cref="IsValidTheta"/> to determine whether a value is valid and therefore assignable.</remarks>
     public double Theta
     {
       get
@@ -359,9 +393,7 @@ loop:
 
     #region overridden Distribution members
 
-    /// <summary>
-    /// Gets the minimum possible value of gamma distributed random numbers.
-    /// </summary>
+    /// <inheritdoc/>
     public override double Minimum
     {
       get
@@ -370,9 +402,7 @@ loop:
       }
     }
 
-    /// <summary>
-    /// Gets the maximum possible value of gamma distributed random numbers.
-    /// </summary>
+    /// <inheritdoc/>
     public override double Maximum
     {
       get
@@ -381,9 +411,7 @@ loop:
       }
     }
 
-    /// <summary>
-    /// Gets the mean value of gamma distributed random numbers.
-    /// </summary>
+    /// <inheritdoc/>
     public override double Mean
     {
       get
@@ -392,9 +420,7 @@ loop:
       }
     }
 
-    /// <summary>
-    /// Gets the median of gamma distributed random numbers.
-    /// </summary>
+    /// <inheritdoc/>
     public override double Median
     {
       get
@@ -403,9 +429,7 @@ loop:
       }
     }
 
-    /// <summary>
-    /// Gets the variance of gamma distributed random numbers.
-    /// </summary>
+    /// <inheritdoc/>
     public override double Variance
     {
       get
@@ -414,9 +438,7 @@ loop:
       }
     }
 
-    /// <summary>
-    /// Gets the mode of gamma distributed random numbers.
-    /// </summary>
+    /// <inheritdoc/>
     public override double[] Mode
     {
       get
@@ -436,31 +458,55 @@ loop:
 
     #region CdfPdfQuantile
 
+    /// <inheritdoc/>
     public override double CDF(double x)
     {
       return CDF(x, alpha, theta);
     }
 
+    /// <summary>
+    /// Computes the cumulative distribution function (CDF) for a Gamma distribution with the given parameters.
+    /// </summary>
+    /// <param name="x">The value at which to evaluate the CDF.</param>
+    /// <param name="A">Order (shape) parameter.</param>
+    /// <param name="B">Scale parameter.</param>
+    /// <returns>The value of the cumulative distribution function at <paramref name="x"/>.</returns>
     public static double CDF(double x, double A, double B)
     {
       return GammaRelated.GammaRegularized(A, 0, x / B);
     }
 
+    /// <inheritdoc/>
     public override double PDF(double x)
     {
       return PDF(x, alpha, theta);
     }
 
+    /// <summary>
+    /// Computes the probability density function (PDF) for a Gamma distribution with the given parameters.
+    /// </summary>
+    /// <param name="x">The value at which to evaluate the PDF.</param>
+    /// <param name="A">Order (shape) parameter.</param>
+    /// <param name="B">Scale parameter.</param>
+    /// <returns>The value of the probability density function at <paramref name="x"/>.</returns>
     public static double PDF(double x, double A, double B)
     {
       return Math.Exp(-x / B) * Math.Pow(x / B, A) / (x * Calc.GammaRelated.Gamma(A));
     }
 
+    /// <inheritdoc/>
     public override double Quantile(double p)
     {
       return Quantile(p, alpha, theta);
     }
 
+    /// <summary>
+    /// Computes the quantile (inverse CDF) for a Gamma distribution with the given parameters.
+    /// </summary>
+    /// <param name="x">The probability for which to compute the quantile.</param>
+    /// <param name="A">Order (shape) parameter.</param>
+    /// <param name="B">Scale parameter.</param>
+    /// <returns>The quantile corresponding to <paramref name="x"/>.</returns>
     public static double Quantile(double x, double A, double B)
     {
       //return GammaRelated.InverseGammaRegularized(A, 1 - p) / B;

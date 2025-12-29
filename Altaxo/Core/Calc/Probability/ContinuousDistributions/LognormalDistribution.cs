@@ -78,16 +78,16 @@ namespace Altaxo.Calc.Probability
   /// Provides generation of lognormal distributed random numbers.
   /// </summary>
   /// <remarks>
-  /// The implementation of the <see cref="LognormalDistribution"/> type bases upon information presented on
-  ///   <a href="http://en.wikipedia.org/wiki/Log-normal_distribution">Wikipedia - Lognormal Distribution</a> and
-  ///   the implementation in the <a href="http://www.boost.org/libs/random/index.html">Boost Random Number Library</a>.
+  /// The implementation of the <see cref="LognormalDistribution"/> type is based on information presented on
+  /// <a href="http://en.wikipedia.org/wiki/Log-normal_distribution">Wikipedia - Lognormal distribution</a> and
+  /// the implementation in the <a href="http://www.boost.org/libs/random/index.html">Boost Random Number Library</a>.
   /// <code>
   /// Return log-normal distributed random deviates
   /// with given mean and standard deviation stdev
   /// according to the density function:
   ///                                                2
   ///                     1                (ln x - m)
-  /// p   (x) dx =  -------------- exp( - ------------ ) dx  for x > 0
+  /// p   (x) dx =  -------------- exp( - ------------ ) dx  for x &gt; 0
   ///  m,s          sqrt(2 pi x) s               2
   ///                                         2 s
   ///
@@ -106,8 +106,6 @@ namespace Altaxo.Calc.Probability
   /// s = sqrt( ln( -------------- ) )
   ///                        2
   ///                    mean
-  ///
-  ///
   /// </code></remarks>
   public class LognormalDistribution : ContinuousDistribution
   {
@@ -116,7 +114,7 @@ namespace Altaxo.Calc.Probability
     /// <summary>
     /// Gets or sets the parameter mu which is used for generation of lognormal distributed random numbers.
     /// </summary>
-    /// <remarks>Call <see cref="IsValidMu"/> to determine whether a value is valid and therefor assignable.</remarks>
+    /// <remarks>Call <see cref="IsValidMu"/> to determine whether a value is valid and therefore assignable.</remarks>
     public double Mu
     {
       get
@@ -137,7 +135,7 @@ namespace Altaxo.Calc.Probability
     /// <summary>
     /// Gets or sets the parameter sigma which is used for generation of lognormal distributed random numbers.
     /// </summary>
-    /// <remarks>Call <see cref="IsValidSigma"/> to determine whether a value is valid and therefor assignable.</remarks>
+    /// <remarks>Call <see cref="IsValidSigma"/> to determine whether a value is valid and therefore assignable.</remarks>
     public double Sigma
     {
       get
@@ -173,11 +171,20 @@ namespace Altaxo.Calc.Probability
     {
     }
 
+    /// <summary>
+    /// Initializes a new instance of the <see cref="LognormalDistribution"/> class.
+    /// </summary>
+    /// <param name="generator">A <see cref="Generator"/> object.</param>
     public LognormalDistribution(Generator generator)
       : this(0, 1, generator)
     {
     }
 
+    /// <summary>
+    /// Initializes a new instance of the <see cref="LognormalDistribution"/> class.
+    /// </summary>
+    /// <param name="mu">First parameter of the distribution.</param>
+    /// <param name="sigma">Second parameter of the distribution (must be non-negative).</param>
     public LognormalDistribution(double mu, double sigma)
       : this(mu, sigma, DefaultGenerator)
     {
@@ -204,6 +211,14 @@ namespace Altaxo.Calc.Probability
 
     #region instance methods
 
+    /// <summary>
+    /// Initializes this instance with the specified distribution parameters.
+    /// </summary>
+    /// <param name="mu">First parameter of the distribution.</param>
+    /// <param name="sigma">Second parameter of the distribution (must be non-negative).</param>
+    /// <exception cref="ArgumentOutOfRangeException">
+    /// <paramref name="mu"/> is not finite, or <paramref name="sigma"/> is negative.
+    /// </exception>
     public void Initialize(double mu, double sigma)
     {
       if (!IsValidMu(mu))
@@ -241,9 +256,7 @@ namespace Altaxo.Calc.Probability
 
     #region overridden Distribution members
 
-    /// <summary>
-    /// Gets the minimum possible value of lognormal distributed random numbers.
-    /// </summary>
+    /// <inheritdoc/>
     public override double Minimum
     {
       get
@@ -252,9 +265,7 @@ namespace Altaxo.Calc.Probability
       }
     }
 
-    /// <summary>
-    /// Gets the maximum possible value of lognormal distributed random numbers.
-    /// </summary>
+    /// <inheritdoc/>
     public override double Maximum
     {
       get
@@ -263,9 +274,7 @@ namespace Altaxo.Calc.Probability
       }
     }
 
-    /// <summary>
-    /// Gets the mean value of lognormal distributed random numbers.
-    /// </summary>
+    /// <inheritdoc/>
     public override double Mean
     {
       get
@@ -274,9 +283,7 @@ namespace Altaxo.Calc.Probability
       }
     }
 
-    /// <summary>
-    /// Gets the median of lognormal distributed random numbers.
-    /// </summary>
+    /// <inheritdoc/>
     public override double Median
     {
       get
@@ -285,9 +292,7 @@ namespace Altaxo.Calc.Probability
       }
     }
 
-    /// <summary>
-    /// Gets the variance of lognormal distributed random numbers.
-    /// </summary>
+    /// <inheritdoc/>
     public override double Variance
     {
       get
@@ -296,9 +301,7 @@ namespace Altaxo.Calc.Probability
       }
     }
 
-    /// <summary>
-    /// Gets the mode of lognormal distributed random numbers.
-    /// </summary>
+    /// <inheritdoc/>
     public override double[] Mode
     {
       get
@@ -307,10 +310,7 @@ namespace Altaxo.Calc.Probability
       }
     }
 
-    /// <summary>
-    /// Returns a lognormal distributed floating point random number.
-    /// </summary>
-    /// <returns>A lognormal distributed double-precision floating point number.</returns>
+    /// <inheritdoc/>
     public override double NextDouble()
     {
       return Math.Exp(normalDistribution.NextDouble() * sigma + mu);
@@ -328,21 +328,40 @@ namespace Altaxo.Calc.Probability
     private static readonly double _OneBySqrt2Pi = 1 / Math.Sqrt(2 * Math.PI);
     private static readonly double _OneBySqrt2 = 1 / Math.Sqrt(2);
 
+    /// <summary>
+    /// Evaluates the cumulative distribution function (CDF).
+    /// </summary>
+    /// <inheritdoc/>
     public override double CDF(double z)
     {
       return CDF(z, mu, sigma);
     }
 
+    /// <summary>
+    /// Computes the cumulative distribution function (CDF) for a lognormal distribution with the given parameters.
+    /// </summary>
+    /// <param name="z">The value at which to evaluate the CDF.</param>
+    /// <param name="m">The mu parameter.</param>
+    /// <param name="s">The sigma parameter.</param>
+    /// <returns>The value of the cumulative distribution function at <paramref name="z"/>.</returns>
     public static double CDF(double z, double m, double s)
     {
       return 0.5 * (1 + Altaxo.Calc.ErrorFunction.Erf(_OneBySqrt2 * (Math.Log(z) - m) / s));
     }
 
+    /// <inheritdoc/>
     public override double PDF(double z)
     {
       return PDF(z, mu, sigma);
     }
 
+    /// <summary>
+    /// Computes the probability density function (PDF) for a lognormal distribution with the given parameters.
+    /// </summary>
+    /// <param name="z">The value at which to evaluate the PDF.</param>
+    /// <param name="m">The mu parameter.</param>
+    /// <param name="s">The sigma parameter.</param>
+    /// <returns>The value of the probability density function at <paramref name="z"/>.</returns>
     public static double PDF(double z, double m, double s)
     {
       if (z <= 0)
@@ -351,11 +370,19 @@ namespace Altaxo.Calc.Probability
         return _OneBySqrt2Pi * Math.Exp(-0.5 * Sqr((Math.Log(z) - m) / s)) / (s * z);
     }
 
+    /// <inheritdoc/>
     public override double Quantile(double p)
     {
       return Quantile(p, mu, sigma);
     }
 
+    /// <summary>
+    /// Computes the quantile (inverse CDF) for a lognormal distribution with the given parameters.
+    /// </summary>
+    /// <param name="p">The probability for which to compute the quantile.</param>
+    /// <param name="m">The mu parameter.</param>
+    /// <param name="s">The sigma parameter.</param>
+    /// <returns>The quantile corresponding to <paramref name="p"/>.</returns>
     public static double Quantile(double p, double m, double s)
     {
       return Math.Exp(m + s * ErrorFunction.QuantileOfNormalDistribution01(p));

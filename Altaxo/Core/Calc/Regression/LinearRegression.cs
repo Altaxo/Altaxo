@@ -29,13 +29,15 @@ using Altaxo.Calc.LinearAlgebra;
 namespace Altaxo.Calc.Regression
 {
   /// <summary>
-  /// Evaluates a function base of the variable x. The function base is returned in
-  /// array <c>functionbase</c>.
+  /// Evaluates a function base at a given value of <paramref name="x"/>.
+  /// The evaluated base function values are written into <paramref name="functionbase"/>.
   /// </summary>
+  /// <param name="x">The value of the independent variable.</param>
+  /// <param name="functionbase">The destination array that receives the function base values.</param>
   public delegate void FunctionBaseEvaluator(double x, double[] functionbase);
 
   /// <summary>
-  /// Performs a linear fit to a given function base using singular value decomposition.
+  /// Performs a linear least-squares fit to a given function base using singular value decomposition (SVD).
   /// </summary>
   public class LinearFitBySvd
   {
@@ -76,15 +78,15 @@ namespace Altaxo.Calc.Regression
     private MatrixMath.SingularValueDecomposition? _decomposition;
 
     /// <summary>
-    /// Fits a data set linear to a given function base.
+    /// Fits a data set linearly to a given function base.
     /// </summary>
     /// <param name="xarr">The array of x values of the data set.</param>
     /// <param name="yarr">The array of y values of the data set.</param>
-    /// <param name="stddev">The array of y standard deviations of the data set. Can be null if the standard deviation is unkown.</param>
+    /// <param name="stddev">The array of y standard deviations of the data set. Can be <see langword="null"/> if the standard deviations are unknown.</param>
     /// <param name="numberOfData">The number of data points (may be smaller than the array sizes of the data arrays).</param>
-    /// <param name="numberOfParameter">The number of parameters to fit == size of the function base.</param>
-    /// <param name="evaluateFunctionBase">The function base used to fit.</param>
-    /// <param name="threshold">A treshold value (usually 1E-5) used to chop the unimportant singular values away.</param>
+    /// <param name="numberOfParameter">The number of parameters to fit (equals the size of the function base).</param>
+    /// <param name="evaluateFunctionBase">The function base used for fitting.</param>
+    /// <param name="threshold">A threshold value (usually 1E-5) used to discard unimportant singular values.</param>
     public LinearFitBySvd(
         double[] xarr,
         double[] yarr,
@@ -117,15 +119,15 @@ namespace Altaxo.Calc.Regression
     }
 
     /// <summary>
-    /// Fits a data set linear to a given function base.
+    /// Fits a data set linearly to a given function base.
     /// </summary>
     /// <param name="xarr">The array of x values of the data set.</param>
     /// <param name="yarr">The array of y values of the data set.</param>
-    /// <param name="stddev">The array of y standard deviations of the data set. Can be null if the standard deviation is unkown.</param>
+    /// <param name="stddev">The array of y standard deviations of the data set. Can be <see langword="null"/> if the standard deviations are unknown.</param>
     /// <param name="numberOfData">The number of data points (may be smaller than the array sizes of the data arrays).</param>
-    /// <param name="numberOfParameter">The number of parameters to fit == size of the function base.</param>
-    /// <param name="evaluateFunctionBase">The function base used to fit.</param>
-    /// <param name="threshold">A treshold value (usually 1E-5) used to chop the unimportant singular values away.</param>
+    /// <param name="numberOfParameter">The number of parameters to fit (equals the size of the function base).</param>
+    /// <param name="evaluateFunctionBase">The function base used for fitting.</param>
+    /// <param name="threshold">A threshold value (usually 1E-5) used to discard unimportant singular values.</param>
     public LinearFitBySvd(
         IReadOnlyList<double> xarr,
         IReadOnlyList<double> yarr,
@@ -158,14 +160,14 @@ namespace Altaxo.Calc.Regression
     }
 
     /// <summary>
-    /// Fits a data set linear to a given x base.
+    /// Fits a data set linearly to a given design matrix.
     /// </summary>
-    /// <param name="xbase">The matrix of x values of the data set. Dimensions: numberOfData x numberOfParameters. The matrix is changed during calculation!</param>
+    /// <param name="xbase">The matrix of x base values of the data set. Dimensions: numberOfData x numberOfParameters. The matrix is changed during the calculation.</param>
     /// <param name="yarr">The array of y values of the data set.</param>
-    /// <param name="stddev">The array of y standard deviations of the data set. Can be null if the standard deviation is unkown.</param>
+    /// <param name="stddev">The array of y standard deviations of the data set. Can be <see langword="null"/> if the standard deviations are unknown.</param>
     /// <param name="numberOfData">The number of data points (may be smaller than the array sizes of the data arrays).</param>
-    /// <param name="numberOfParameter">The number of parameters to fit == size of the function base.</param>
-    /// <param name="threshold">A treshold value (usually 1E-5) used to chop the unimportant singular values away.</param>
+    /// <param name="numberOfParameter">The number of parameters to fit (equals the number of columns of <paramref name="xbase"/>).</param>
+    /// <param name="threshold">A threshold value (usually 1E-5) used to discard unimportant singular values.</param>
     public LinearFitBySvd(
         IROMatrix<double> xbase, // NumberOfData, NumberOfParameters
         double[] yarr,
@@ -178,9 +180,9 @@ namespace Altaxo.Calc.Regression
     }
 
     /// <summary>
-    /// Fits a data set linear to a given x base.
+    /// Fits a data set linearly to a given design matrix.
     /// </summary>
-    /// <param name="xbase">The matrix of x values of the data set. Dimensions: numberOfData x numberOfParameters. The matrix is changed during calculation!</param>
+    /// <param name="xbase">The matrix of x base values of the data set. Dimensions: numberOfData x numberOfParameters. The matrix is changed during the calculation!</param>
     /// <param name="yarr">The array of y values of the data set.</param>
     /// <param name="stddev">The array of y standard deviations of the data set. Can be null if the standard deviation is unkown.</param>
     /// <param name="numberOfData">The number of data points (may be smaller than the array sizes of the data arrays).</param>
@@ -274,12 +276,12 @@ namespace Altaxo.Calc.Regression
     }
 
     /// <summary>
-    /// Calculates the mean value of <c>length</c> elements in array x starting from index <c>start</c>.
+    /// Calculates the mean value of <paramref name="length"/> elements in <paramref name="x"/>, starting at index <paramref name="start"/>.
     /// </summary>
-    /// <param name="x">The array of values.</param>
-    /// <param name="start">First element.</param>
-    /// <param name="length">Number of elements used for calculation.</param>
-    /// <returns></returns>
+    /// <param name="x">The sequence of values.</param>
+    /// <param name="start">The index of the first element.</param>
+    /// <param name="length">The number of elements used for the calculation.</param>
+    /// <returns>The mean value.</returns>
     public static double Mean(IReadOnlyList<double> x, int start, int length)
     {
       double sum = 0;
@@ -291,14 +293,13 @@ namespace Altaxo.Calc.Regression
     }
 
     /// <summary>
-    /// Calculates the corrected sum of squares of <c>length</c> elements of array x starting from index <c>start</c>. The corrected sum
-    /// of squares is defined as sum of squares of the elements minus their mean value.
+    /// Calculates the corrected sum of squares of <paramref name="length"/> elements in <paramref name="x"/>, starting at index <paramref name="start"/>.
     /// </summary>
-    /// <param name="x">Array of values.</param>
-    /// <param name="mean">Mean value of the values.</param>
-    /// <param name="start">Starting index.</param>
-    /// <param name="length">Number of elements used for calculation.</param>
-    /// <returns></returns>
+    /// <param name="x">The sequence of values.</param>
+    /// <param name="mean">The mean value of the sequence.</param>
+    /// <param name="start">The starting index.</param>
+    /// <param name="length">The number of elements used for the calculation.</param>
+    /// <returns>The corrected sum of squares (sum of squared deviations from <paramref name="mean"/>).</returns>
     public static double CorrectedSumOfSquares(IReadOnlyList<double> x, double mean, int start, int length)
     {
       int end = start + length;
@@ -313,38 +314,37 @@ namespace Altaxo.Calc.Regression
     }
 
     /// <summary>
-    /// Returns the number of parameter (=Order+1) of the fit.
+    /// Gets the number of parameters of the fit.
     /// </summary>
     public int NumberOfParameter { get { return _numberOfParameter; } }
 
     /// <summary>
-    /// Returns the number of data value.
+    /// Gets the number of data points used by the fit.
     /// </summary>
     public int NumberOfData { get { return _numberOfData; } }
 
     /// <summary>
-    /// Get the resulting parameters, so that the model y = SUM(parameter[i]*functionbase[i])
+    /// Gets the fitted parameters such that <c>y = Σ(parameter[i] * functionBase[i])</c>.
     /// </summary>
     public double[] Parameter { get { return _parameter ?? throw new InvalidOperationException(ErrorNoExecutionYet); } }
 
     /// <summary>
-    /// Gets the sum of ChiSquare for the fit. This is SUM(yi-yi`)^2, where yi is the ith y value and yi` is the ith predicted y.
+    /// Gets the residual sum of squares (RSS) of the fit, i.e. <c>Σ(yi - ŷi)^2</c>.
     /// </summary>
     public double ResidualSumOfSquares { get { return _chiSquare; } }
 
     /// <summary>
-    /// Gets the regression sum of squares, i.e. SUM(yi`-ymean), where yi` is the predicted ith y value and y mean is the mean value of all y values.
+    /// Gets the regression corrected sum of squares, i.e. <c>Σ(ŷi - ȳ)^2</c>.
     /// </summary>
     public double RegressionCorrectedSumOfSquares { get { return _yCorrectedSumOfSquares - _chiSquare; } }
 
     /// <summary>
-    /// Gives the corrected sum of squares of y, i.e. SUM(yi-ymean), where yi is the ith y value and ymean is the mean of all y values.
+    /// Gets the total corrected sum of squares of <c>y</c>, i.e. <c>Σ(yi - ȳ)^2</c>.
     /// </summary>
     public double TotalCorrectedSumOfSquares { get { return _yCorrectedSumOfSquares; } }
 
     /// <summary>
-    /// Gives the coefficient of determination, also called R^2, squared correlation coefficient. It is a measure, how  much
-    /// of the variability of the y data is accounted for by the regression model.
+    /// Gets the coefficient of determination (R²).
     /// </summary>
     public double RSquared { get { return 1 - _chiSquare / _yCorrectedSumOfSquares; } }
 
@@ -362,11 +362,11 @@ namespace Altaxo.Calc.Regression
     }
 
     /// <summary>
-    /// Gets the condition number. The decadic logarithm of the condition number is roughly the loss of precision (in digits) during the calculation.
+    /// Gets the condition number.
     /// </summary>
-    /// <value>
-    /// The condition number.
-    /// </value>
+    /// <remarks>
+    /// The decadic logarithm of the condition number roughly estimates the loss of precision (in digits) during the calculation.
+    /// </remarks>
     public double ConditionNumber
     {
       get
@@ -376,23 +376,28 @@ namespace Altaxo.Calc.Regression
     }
 
     /// <summary>
-    /// Gets the estimated standard error of parameter <c>i</c>.
+    /// Gets the estimated standard error of parameter <paramref name="i"/>.
     /// </summary>
-    /// <param name="i">Index of the parameter.</param>
-    /// <returns>The estimated standard error of parameter <c>i</c>.</returns>
+    /// <param name="i">The index of the parameter.</param>
+    /// <returns>The estimated standard error of parameter <paramref name="i"/>.</returns>
     public double StandardErrorOfParameter(int i)
     {
       var covarianceMatrix = _covarianceMatrix ?? throw new InvalidOperationException(ErrorNoExecutionYet);
       return Math.Sqrt(EstimatedVariance * covarianceMatrix[i][i]);
     }
 
+    /// <summary>
+    /// Gets the absolute t-statistic of parameter <paramref name="i"/>.
+    /// </summary>
+    /// <param name="i">The index of the parameter.</param>
+    /// <returns>The absolute t-statistic of parameter <paramref name="i"/>.</returns>
     public double TofParameter(int i)
     {
       return Math.Abs(Parameter[i]) / StandardErrorOfParameter(i);
     }
 
     /// <summary>
-    /// Gets the array of residual values defined as the difference y[i]-ypredicted[i].
+    /// Gets the residual values defined as <c>y[i] - ŷ[i]</c>.
     /// </summary>
     public double[] ResidualValues
     {
@@ -400,7 +405,7 @@ namespace Altaxo.Calc.Regression
     }
 
     /// <summary>
-    /// Gets the predicted dependent values
+    /// Gets the predicted dependent values <c>ŷ[i]</c>.
     /// </summary>
     public double[] PredictedValues
     {
@@ -408,14 +413,14 @@ namespace Altaxo.Calc.Regression
     }
 
     /// <summary>
-    /// Gives the ith PRESS residual.
+    /// Returns the i-th PRESS residual.
     /// </summary>
     /// <param name="i">The index of the PRESS residual.</param>
-    /// <returns>The ith PRESS residual.</returns>
-    /// <remarks>The PRESS residual is the prediction error of the ith value, if the ith value itself
-    /// is not used in the prediction model.
-    /// <para>Ref: Introduction to linear regression analysis, 3rd ed., Wiley, p.135</para></remarks>
-
+    /// <returns>The i-th PRESS residual.</returns>
+    /// <remarks>
+    /// The PRESS residual is the prediction error of the i-th value, if the i-th value itself is not used in the prediction model.
+    /// <para>Ref: Introduction to linear regression analysis, 3rd ed., Wiley, p.135</para>
+    /// </remarks>
     public double PRESSResidual(int i)
     {
       if (_residual is null || _decomposition is null)
@@ -425,12 +430,14 @@ namespace Altaxo.Calc.Regression
     }
 
     /// <summary>
-    /// Gives the ith studentized residual.
+    /// Returns the i-th studentized residual.
     /// </summary>
     /// <param name="i">The index of the residual.</param>
-    /// <returns>The ith studentized residual.</returns>
-    /// <remarks>The studentized residual has constant variance of 1, regardless of the location of xi.
-    /// <para>Ref: Introduction to linear regression analysis, 3rd ed., Wiley, p.134</para></remarks>
+    /// <returns>The i-th studentized residual.</returns>
+    /// <remarks>
+    /// The studentized residual has constant variance of 1, regardless of the location of xi.
+    /// <para>Ref: Introduction to linear regression analysis, 3rd ed., Wiley, p.134</para>
+    /// </remarks>
     public double StudentizedResidual(int i)
     {
       if (_residual is null || _decomposition is null)
@@ -440,14 +447,13 @@ namespace Altaxo.Calc.Regression
     }
 
     /// <summary>
-    /// Gives the ith studentized residual, with the ith observation removed from the model.
+    /// Returns the i-th studentized residual, with the i-th observation removed from the model.
     /// </summary>
-    /// <param name="i">The index to the residual.</param>
-    /// <returns>The ith externally studentized residual.</returns>
+    /// <param name="i">The index of the residual.</param>
+    /// <returns>The i-th externally studentized residual.</returns>
     /// <remarks>
-    /// As with the studentized residual, the expected variance of this residual is 1. Since the ith
-    /// observation is excluded from the model, the externally studentized residual is better suited
-    /// for outlier detection than the (normal) studentized residual.
+    /// As with the studentized residual, the expected variance of this residual is 1. Since the i-th observation is excluded from the model,
+    /// the externally studentized residual is better suited for outlier detection than the (normal) studentized residual.
     /// <para>Ref: Introduction to linear regression analysis, 3rd ed., Wiley, p.136</para>
     /// </remarks>
     public double ExternallyStudentizedResidual(int i)
@@ -462,13 +468,16 @@ namespace Altaxo.Calc.Regression
     }
 
     /// <summary>
-    /// Get the variance-covariance-matrix for the fit.
+    /// Gets the variance-covariance matrix of the fitted parameters.
     /// </summary>
     public double[][] Covariances { get { return _covarianceMatrix ?? throw new InvalidOperationException(ErrorNoExecutionYet); } }
 
-    /// <summary>Get the estimated residual mean square, also called SigmaSquare..</summary>
-    /// <remarks>The estimated mean square is defined as SumChiSquare(n-p), where n is the number of data
-    /// points and p is the number of (free) parameters.</remarks>
+    /// <summary>
+    /// Gets the estimated residual mean square (also called sigma square).
+    /// </summary>
+    /// <remarks>
+    /// The estimated mean square is defined as <c>RSS / (n - p)</c>, where <c>n</c> is the number of data points and <c>p</c> is the number of (free) parameters.
+    /// </remarks>
     public double EstimatedVariance
     {
       get
@@ -481,10 +490,10 @@ namespace Altaxo.Calc.Regression
     }
 
     /// <summary>
-    /// Gives the variance of the prediction of the ith y-value.
+    /// Returns the variance of the prediction of the i-th y-value.
     /// </summary>
-    /// <param name="i">The index to the ith observation.</param>
-    /// <returns>The variance of the ith prediction value.</returns>
+    /// <param name="i">The index of the i-th observation.</param>
+    /// <returns>The variance of the i-th predicted value.</returns>
     public double PredictionVariance(int i)
     {
       if (_reducedPredictionVariance is null)
@@ -493,11 +502,21 @@ namespace Altaxo.Calc.Regression
       return EstimatedVariance * _reducedPredictionVariance[i];
     }
 
-    /// <summary>Get the standard error of regression, defined as <c>Sqrt(SigmaSquare)</c>.</summary>
+    /// <summary>
+    /// Gets the standard error of regression.
+    /// </summary>
+    /// <remarks>
+    /// This value is currently computed as <c>Sqrt(RSS)</c>.
+    /// </remarks>
     public double Sigma { get { return Math.Sqrt(ResidualSumOfSquares); } }
 
     #region Helper
 
+    /// <summary>
+    /// Returns <paramref name="x"/> squared.
+    /// </summary>
+    /// <param name="x">The value.</param>
+    /// <returns><paramref name="x"/> squared.</returns>
     private double square(double x)
     {
       return x * x;
@@ -507,15 +526,27 @@ namespace Altaxo.Calc.Regression
 
     #region Default function bases
 
+    /// <summary>
+    /// Polynomial function base factory.
+    /// </summary>
     private class PolynomialFunction
     {
       private int _order;
 
+      /// <summary>
+      /// Initializes a new instance of the <see cref="PolynomialFunction"/> class.
+      /// </summary>
+      /// <param name="order">The polynomial order.</param>
       public PolynomialFunction(int order)
       {
         _order = order;
       }
 
+      /// <summary>
+      /// Evaluates the polynomial function base for the specified <paramref name="x"/>.
+      /// </summary>
+      /// <param name="x">The value of the independent variable.</param>
+      /// <param name="result">The destination array that receives the function base values.</param>
       public void Evaluate(double x, double[] result)
       {
         double sum = 1;
@@ -528,9 +559,9 @@ namespace Altaxo.Calc.Regression
     }
 
     /// <summary>
-    /// Gets a default polynomial function base with intercept, i.e. f(y)=a+b*x+c*x*x ...
+    /// Gets a default polynomial function base with intercept, i.e. <c>y = a + b*x + c*x*x + ...</c>.
     /// </summary>
-    /// <param name="order">Order of the polynomial (0: only intercept, 1: linear, 2: quadratic ...</param>
+    /// <param name="order">The order of the polynomial (0: intercept only, 1: linear, 2: quadratic, ...).</param>
     /// <returns>The function base to use with this fit.</returns>
     public static FunctionBaseEvaluator GetPolynomialFunctionBase(int order)
     {
@@ -541,16 +572,18 @@ namespace Altaxo.Calc.Regression
     }
 
     /// <summary>
-    /// Fits data provided as xcolumn and ycolumn with a polynomial base. Here special measures are taken (scaling of the x-variable) in order
-    /// to keep the precision high.
+    /// Fits data provided as x and y sequences with a polynomial base.
     /// </summary>
-    /// <param name="order">The order of the fit (1:linear, 2:quadratic, etc.)</param>
-    /// <param name="xValues">The column of x-values. Only those values are used, that are not NaN</param>
-    /// <param name="yValues">The column of y-values.</param>
-    /// <param name="start">Index of first data point to use.</param>
+    /// <remarks>
+    /// Special measures are taken (scaling of the x-variable) in order to keep precision high.
+    /// </remarks>
+    /// <param name="order">The order of the fit (1: linear, 2: quadratic, etc.).</param>
+    /// <param name="xValues">The sequence of x-values. Only those values are used that are not NaN.</param>
+    /// <param name="yValues">The sequence of y-values.</param>
+    /// <param name="start">Index of the first data point to use.</param>
     /// <param name="count">Number of data points to use.</param>
-    /// <param name="doRemoveNaNValues">If true, value pairs containing NaN are removed before calculation of the fit.</param>
-    /// <returns>The fit.</returns>
+    /// <param name="doRemoveNaNValues">If <see langword="true"/>, value pairs containing NaN are removed before calculation of the fit.</param>
+    /// <returns>The fitted model.</returns>
     public static LinearFitBySvd FitPolymomial(int order, IReadOnlyList<double> xValues, IReadOnlyList<double> yValues, int start, int count, bool doRemoveNaNValues)
     {
       if (xValues is null)
@@ -602,15 +635,17 @@ namespace Altaxo.Calc.Regression
     }
 
     /// <summary>
-    /// Fits data provided as xcolumn and ycolumn with a polynomial base. Here special measures are taken (scaling of the x-variable) in order
-    /// to keep the precision high.
+    /// Fits data provided as x and y arrays with a polynomial base.
     /// </summary>
-    /// <param name="order">The order of the fit (1:linear, 2:quadratic, etc.)</param>
-    /// <param name="xValues">The array of x-values. The values of the array are destroyed (altered) during the evaluation!</param>
+    /// <remarks>
+    /// Special measures are taken (scaling of the x-variable) in order to keep precision high.
+    /// </remarks>
+    /// <param name="order">The order of the fit (1: linear, 2: quadratic, etc.).</param>
+    /// <param name="xValues">The array of x-values. The values of the array are modified during evaluation.</param>
     /// <param name="yValues">The array of y-values.</param>
-    /// <param name="errorValues">The column of errorValues. If null, errorValues are set to 1 for each element.</param>
-    /// <param name="count">Number of values to use (array[0] ... array[count-1].</param>
-    /// <returns>The fit.</returns>
+    /// <param name="errorValues">The array of error values. If <see langword="null"/>, error values are set to 1 for each element.</param>
+    /// <param name="count">Number of values to use (<c>array[0]</c> ... <c>array[count-1]</c>).</param>
+    /// <returns>The fitted model.</returns>
     public static LinearFitBySvd FitPolymomialDestructive(int order, double[] xValues, double[] yValues, double[]? errorValues, int count)
     {
       if (xValues is null)

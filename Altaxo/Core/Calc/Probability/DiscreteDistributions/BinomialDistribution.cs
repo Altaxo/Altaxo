@@ -60,6 +60,11 @@ namespace Altaxo.Calc.Probability
     protected int n;
     protected bool sym;
 
+    /// <summary>
+    /// Initializes this instance with the specified distribution parameters.
+    /// </summary>
+    /// <param name="pp">The success probability p in the range [0, 1].</param>
+    /// <param name="nn">The number of trials n (must be greater than or equal to 0).</param>
     protected void Initialize(double pp, int nn)
     {
       if (nn < 0)
@@ -94,27 +99,50 @@ namespace Altaxo.Calc.Probability
       sq = Math.Sqrt(2 * np * pc);
     }
 
+    /// <summary>
+    /// Initializes a new instance of the <see cref="BinomialDistribution"/> class, using a
+    /// <see cref="StandardGenerator"/> as the underlying random number generator.
+    /// </summary>
     public BinomialDistribution()
       : this(DefaultGenerator)
     {
     }
 
+    /// <summary>
+    /// Initializes a new instance of the <see cref="BinomialDistribution"/> class, using the specified
+    /// <see cref="Generator"/> as the underlying random number generator.
+    /// </summary>
+    /// <param name="generator">A <see cref="Generator"/> object.</param>
     public BinomialDistribution(Generator generator)
       : this(1, 0.5, generator)
     {
     }
 
+    /// <summary>
+    /// Initializes a new instance of the <see cref="BinomialDistribution"/> class with the specified parameters,
+    /// using a <see cref="StandardGenerator"/> as the underlying random number generator.
+    /// </summary>
+    /// <param name="num">The number of trials n.</param>
+    /// <param name="prob">The success probability p in the range [0, 1].</param>
     public BinomialDistribution(int num, double prob)
       : this(num, prob, DefaultGenerator)
     {
     }
 
+    /// <summary>
+    /// Initializes a new instance of the <see cref="BinomialDistribution"/> class with the specified parameters,
+    /// using the specified <see cref="Generator"/> as the underlying random number generator.
+    /// </summary>
+    /// <param name="num">The number of trials n.</param>
+    /// <param name="prob">The success probability p in the range [0, 1].</param>
+    /// <param name="ran">A <see cref="Generator"/> object.</param>
     public BinomialDistribution(int num, double prob, Generator ran)
       : base(ran)
     {
       Initialize(prob, num);
     }
 
+    /// <inheritdoc />
     public override double NextDouble()
     {
       double bnl;
@@ -260,21 +288,37 @@ namespace Altaxo.Calc.Probability
 
     #region CdfPdf
 
+    /// <inheritdoc />
     public override double CDF(double x)
     {
       return CDF(x, Probability, n);
     }
 
+    /// <summary>
+    /// Returns the cumulative distribution function (CDF) of a binomial distribution.
+    /// </summary>
+    /// <param name="x">The value at which to evaluate the CDF.</param>
+    /// <param name="p">The success probability p in the range [0, 1].</param>
+    /// <param name="n">The number of trials.</param>
+    /// <returns>The probability that a binomially distributed random variable is less than or equal to <paramref name="x"/>.</returns>
     public static double CDF(double x, double p, int n)
     {
       return Calc.GammaRelated.BetaRegularized(1 - p, n - Math.Floor(x), 1 + Math.Floor(x));
     }
 
+    /// <inheritdoc />
     public override double PDF(double x)
     {
       return PDF(x, Probability, n);
     }
 
+    /// <summary>
+    /// Returns the probability mass function (PMF) of a binomial distribution.
+    /// </summary>
+    /// <param name="x">The value at which to evaluate the PMF.</param>
+    /// <param name="p">The success probability p in the range [0, 1].</param>
+    /// <param name="n">The number of trials.</param>
+    /// <returns>The probability for <paramref name="x"/>.</returns>
     public static double PDF(double x, double p, int n)
     {
       return Math.Pow(1 - p, n - x) * Math.Pow(p, x) * Calc.GammaRelated.Binomial(n, x);
@@ -282,6 +326,7 @@ namespace Altaxo.Calc.Probability
 
     #endregion CdfPdf
 
+    /// <inheritdoc />
     public override double Quantile(double x)
     {
       throw new NotSupportedException("Sorry, Quantile is not supported here since it is a discrete distribution");

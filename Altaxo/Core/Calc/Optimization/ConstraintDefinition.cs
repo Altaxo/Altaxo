@@ -36,36 +36,40 @@ using Altaxo.Calc.LinearAlgebra;
 
 namespace Altaxo.Calc.Optimization
 {
-  ///<summary>Interface for constraint definitions</summary>
+  /// <summary>Interface for constraint definitions.</summary>
   /// <remarks>
   /// <para>Copyright (c) 2003-2004, dnAnalytics Project. All rights reserved. See <a>http://www.dnAnalytics.net</a> for details.</para>
-  /// <para>Adopted to Altaxo (c) 2005 Dr. Dirk Lellinger.</para>
+  /// <para>Adopted for Altaxo (c) 2005 Dr. Dirk Lellinger.</para>
   /// </remarks>
   public interface IConstraintDefinition
   {
-    ///<summary>Test whether constraint is satisfied</summary>
-    ///<param name="solution"><c>DoubleVector</c> with solution to test against constraints</param>
-    ///<returns>Returns true if solution satisfies constraints</returns>
+    /// <summary>Tests whether the constraint is satisfied.</summary>
+    /// <param name="solution">Solution vector to test against the constraints.</param>
+    /// <returns><see langword="true"/> if <paramref name="solution"/> satisfies the constraints; otherwise, <see langword="false"/>.</returns>
     bool Check(Vector<double> solution);
 
-    ///<summary>
-    /// Find a beta so that a new solution = old solution + beta * direction satifies the constraint
-    ///</summary>
-    ///<param name="solution"><c>DoubleVector</c> with current solution vector</param>
-    ///<param name="direction"><c>DoubleVector</c> with direction to add to current solution vector</param>
-    ///<param name="beta">Scale factor representing the size of the step in the direction of 'direction' vector</param>
+    /// <summary>
+    /// Finds a <paramref name="beta"/> so that a new solution defined as
+    /// <c>solution + beta * direction</c> satisfies the constraint.
+    /// </summary>
+    /// <param name="solution">The current solution vector.</param>
+    /// <param name="direction">The direction vector to add to <paramref name="solution"/>.</param>
+    /// <param name="beta">Scale factor representing the size of the step in the direction of <paramref name="direction"/>.</param>
+    /// <returns>A <paramref name="beta"/> value that satisfies the constraint.</returns>
     double Update(Vector<double> solution, Vector<double> direction, double beta);
   }
 
-  ///<summary>Base class for constraint definitions</summary>
+  /// <summary>Base class for constraint definitions.</summary>
   /// <remarks>
   /// <para>Copyright (c) 2003-2004, dnAnalytics Project. All rights reserved. See <a>http://www.dnAnalytics.net</a> for details.</para>
-  /// <para>Adopted to Altaxo (c) 2005 Dr. Dirk Lellinger.</para>
+  /// <para>Adopted for Altaxo (c) 2005 Dr. Dirk Lellinger.</para>
   /// </remarks>
   public abstract class ConstraintDefinition : IConstraintDefinition
   {
+    /// <inheritdoc/>
     public abstract bool Check(Vector<double> solution);
 
+    /// <inheritdoc/>
     public double Update(Vector<double> solution, Vector<double> direction, double beta)
     {
       Vector<double> newSolution;
@@ -83,13 +87,14 @@ namespace Altaxo.Calc.Optimization
     }
   }
 
-  ///<summary>Class defining no constraints</summary>
+  /// <summary>Constraint definition representing no constraints.</summary>
   /// <remarks>
   /// <para>Copyright (c) 2003-2004, dnAnalytics Project. All rights reserved. See <a>http://www.dnAnalytics.net</a> for details.</para>
-  /// <para>Adopted to Altaxo (c) 2005 Dr. Dirk Lellinger.</para>
+  /// <para>Adopted for Altaxo (c) 2005 Dr. Dirk Lellinger.</para>
   /// </remarks>
   public class NoConstraint : ConstraintDefinition
   {
+    /// <inheritdoc/>
     public override bool Check(Vector<double> solution)
     {
       return true;

@@ -26,6 +26,10 @@ using System;
 
 namespace Altaxo.Calc
 {
+  /// <summary>
+  /// Provides helper methods for rounding <see cref="DateTime"/> values to natural boundaries (year, month, day, hour, minute, second)
+  /// and to multiples of a given <see cref="TimeSpan"/>.
+  /// </summary>
   public static class DateTimeMath
   {
     /// <summary>
@@ -33,7 +37,7 @@ namespace Altaxo.Calc
     /// </summary>
     /// <param name="x">The date argument.</param>
     /// <returns>
-    ///  The date x is rounded down to the start of a year. If <paramref name="x"/> designates exactly the start of a year, then x is returned unchanged.
+    /// The date x is rounded down to the start of a year. If <paramref name="x"/> designates exactly the start of a year, then x is returned unchanged.
     /// The time zone information of the return value is copied from <paramref name="x"/>.
     /// </returns>
     public static DateTime RoundDownToStartOfYear(DateTime x)
@@ -187,11 +191,11 @@ namespace Altaxo.Calc
     }
 
     /// <summary>
-    /// The date x is rounded up to the start of a second. If x designates exactly the start of a second , then x is returned unchanged.
+    /// The date x is rounded up to the start of a second. If x designates exactly the start of a second, then x is returned unchanged.
     /// </summary>
     /// <param name="x">The date argument.</param>
     /// <returns>
-    ///  The date x is rounded up to the next start of a second. If <paramref name="x"/> designates exactly the start of a second, then x is returned unchanged.
+    /// The date x is rounded up to the next start of a second. If <paramref name="x"/> designates exactly the start of a second, then x is returned unchanged.
     /// The time zone information of the return value is copied from <paramref name="x"/>.
     /// </returns>
     public static DateTime RoundUpToStartOfSecond(DateTime x)
@@ -256,6 +260,14 @@ namespace Altaxo.Calc
         return new DateTime(1 + (totalMonth / 12), 1 + (totalMonth % 12), 1, 0, 0, 0, x.Kind);
     }
 
+    /// <summary>
+    /// Gets a rounding origin (start offset) that depends on the size of <paramref name="span"/>.
+    /// </summary>
+    /// <param name="d">The date that should be rounded.</param>
+    /// <param name="span">The rounding span.</param>
+    /// <returns>
+    /// A <see cref="DateTime"/> that is used as the origin for rounding <paramref name="d"/> to multiples of <paramref name="span"/>.
+    /// </returns>
     private static DateTime GetStartOffset(DateTime d, TimeSpan span)
     {
       DateTime start;
@@ -275,6 +287,14 @@ namespace Altaxo.Calc
       return start;
     }
 
+    /// <summary>
+    /// Rounds the date <paramref name="d"/> up to the next multiple of <paramref name="span"/>, using a span-dependent origin.
+    /// </summary>
+    /// <param name="d">The date to round.</param>
+    /// <param name="span">The rounding span.</param>
+    /// <returns>
+    /// A date that is greater than or equal to <paramref name="d"/>, and whose offset from the chosen origin is a multiple of <paramref name="span"/>.
+    /// </returns>
     public static DateTime RoundUpSpan(DateTime d, TimeSpan span)
     {
       //if span is a day or greater, it should be rounded with respect to the start of the month
@@ -289,6 +309,14 @@ namespace Altaxo.Calc
       return start + TimeSpan.FromTicks(roundedTicks);
     }
 
+    /// <summary>
+    /// Rounds the date <paramref name="d"/> down to the previous multiple of <paramref name="span"/>, using a span-dependent origin.
+    /// </summary>
+    /// <param name="d">The date to round.</param>
+    /// <param name="span">The rounding span.</param>
+    /// <returns>
+    /// A date that is less than or equal to <paramref name="d"/>, and whose offset from the chosen origin is a multiple of <paramref name="span"/>.
+    /// </returns>
     public static DateTime RoundDownSpan(DateTime d, TimeSpan span)
     {
       //if span is a day or greater, it should be rounded with respect to the start of the month

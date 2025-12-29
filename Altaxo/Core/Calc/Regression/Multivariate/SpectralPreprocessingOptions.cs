@@ -30,27 +30,39 @@ using Altaxo.Calc.LinearAlgebra;
 
 namespace Altaxo.Calc.Regression.Multivariate
 {
-  /// <summary>Gives the list of basic processing methods</summary>
+  /// <summary>
+  /// Lists the available basic preprocessing methods.
+  /// </summary>
   public enum SpectralPreprocessingMethod
   {
-    /// <summary>No basic preprocessing.</summary>
+    /// <summary>
+    /// No basic preprocessing.
+    /// </summary>
     None,
 
-    /// <summary>Multiple scattering correction.</summary>
+    /// <summary>
+    /// Multiplicative scattering correction.
+    /// </summary>
     MultiplicativeScatteringCorrection,
 
-    /// <summary>Standard normal variate correction.</summary>
+    /// <summary>
+    /// Standard normal variate correction.
+    /// </summary>
     StandardNormalVariate,
 
-    /// <summary>Taking the 1st derivative of each spectrum.</summary>
+    /// <summary>
+    /// Takes the first derivative of each spectrum.
+    /// </summary>
     FirstDerivative,
 
-    /// <summary>Taking the 2nd derivative of each spectrum.</summary>
+    /// <summary>
+    /// Takes the second derivative of each spectrum.
+    /// </summary>
     SecondDerivative
   }
 
   /// <summary>
-  /// SpectralPreprocessingOptions holds the options applied to all spectra before processed by PLS or PCR.
+  /// Holds options that are applied to all spectra before they are processed by PLS or PCR.
   /// </summary>
   public class SpectralPreprocessingOptions : System.ICloneable
   {
@@ -60,9 +72,9 @@ namespace Altaxo.Calc.Regression.Multivariate
     private int[] _regions;
 
     /// <summary>
-    /// Sets up the main method used for spectral preprocessing.
+    /// Gets or sets the main method used for spectral preprocessing.
     /// </summary>
-    /// <value>The spectal preprocessing method.</value>
+    /// <value>The spectral preprocessing method.</value>
     public SpectralPreprocessingMethod Method
     {
       get { return _method; }
@@ -70,10 +82,13 @@ namespace Altaxo.Calc.Regression.Multivariate
     }
 
     /// <summary>
-    /// Gets/sets the indices to regions. By default, this array is empty (zero length).
-    /// Each element of this array is an index into the spectrum. Each index parts the spectrum in two regions: one before up to the index-1, and a second
-    /// beginning from the index (to the next index or to the end).
+    /// Gets or sets the indices delimiting regions.
     /// </summary>
+    /// <remarks>
+    /// By default, this array is empty (length 0). Each element of this array is an index into the spectrum.
+    /// Each index divides the spectrum into two regions: one before (up to index - 1) and a second starting at the index
+    /// (up to the next index or to the end).
+    /// </remarks>
     public int[] Regions
     {
       get { return _regions; }
@@ -81,7 +96,8 @@ namespace Altaxo.Calc.Regression.Multivariate
     }
 
     /// <summary>
-    /// Default constructor. Set all options to none.
+    /// Initializes a new instance of the <see cref="SpectralPreprocessingOptions"/> class.
+    /// All options are set to their defaults.
     /// </summary>
     public SpectralPreprocessingOptions()
     {
@@ -92,9 +108,9 @@ namespace Altaxo.Calc.Regression.Multivariate
     }
 
     /// <summary>
-    /// Copy constructor.
+    /// Initializes a new instance of the <see cref="SpectralPreprocessingOptions"/> class by copying values from another instance.
     /// </summary>
-    /// <param name="from"></param>
+    /// <param name="from">The instance to copy options from.</param>
     public SpectralPreprocessingOptions(SpectralPreprocessingOptions from)
     {
       CopyFrom(from);
@@ -117,9 +133,12 @@ namespace Altaxo.Calc.Regression.Multivariate
     }
 
     /// <summary>
-    /// Indicates if Detrending is applied to each spectrum.
+    /// Gets or sets a value indicating whether detrending is applied to each spectrum.
     /// </summary>
-    /// <value>True if detrending is currently used. If set to true, a default detrending order of 0 will be assumed.</value>
+    /// <value>
+    /// <see langword="true"/> if detrending is currently used; otherwise, <see langword="false"/>.
+    /// If set to <see langword="true"/>, a default detrending order of 0 will be assumed.
+    /// </value>
     public bool UseDetrending
     {
       get { return _detrendingOrder >= 0; }
@@ -138,11 +157,16 @@ namespace Altaxo.Calc.Regression.Multivariate
     }
 
     /// <summary>
-    /// Sets up the order used for detrending. Zero order means that from a given spectrum the mean of all spectral slots is subtracted.
-    /// One (first order) means that a regression is made over all spectral wavelength (using index as x-value), and that line is then subtracted
-    /// from the spectrum.
+    /// Gets or sets the order used for detrending.
     /// </summary>
-    /// <value>Order of detrending. Available values are: 0, 1 and 2. A negative value indicates that detrending is not used.</value>
+    /// <remarks>
+    /// Zero order means that, from a given spectrum, the mean of all spectral slots is subtracted.
+    /// First order means that a regression is fitted over all spectral wavelengths (using the index as the <c>X</c> value),
+    /// and that line is then subtracted from the spectrum.
+    /// </remarks>
+    /// <value>
+    /// Order of detrending. Available values are 0, 1, and 2. A negative value indicates that detrending is not used.
+    /// </value>
     public int DetrendingOrder
     {
       get { return _detrendingOrder; }
@@ -158,10 +182,10 @@ namespace Altaxo.Calc.Regression.Multivariate
     }
 
     /// <summary>
-    /// Sets up if the spectral ensemble should be scaled so that each spectral slot (wavelength) has a variance of 1
-    /// over the ensemble of spectra.
+    /// Gets or sets a value indicating whether the spectral ensemble should be scaled so that each spectral slot (wavelength)
+    /// has a variance of 1 over the ensemble of spectra.
     /// </summary>
-    /// <value>True if ensemble scale is used. False otherwise.</value>
+    /// <value><see langword="true"/> if ensemble scaling is used; otherwise, <see langword="false"/>.</value>
     public bool EnsembleScale
     {
       get { return _ensembleScale; }
@@ -169,34 +193,37 @@ namespace Altaxo.Calc.Regression.Multivariate
     }
 
     /// <summary>
-    /// Indicates that the ensemble mean should be taken after the spectral preprocessing. This is the normal case.
-    /// Only in case of MultipleScatteringCorrection the ensemble mean is taken by this method itself, so that it is unneccessary
-    /// to do it again after the processing.
+    /// Gets a value indicating whether the ensemble mean should be taken after spectral preprocessing.
     /// </summary>
-    /// <value>True if ensemble mean should be subtracted after the preprocessing (usually the case).</value>
+    /// <remarks>
+    /// This is the normal case. Only in case of <see cref="SpectralPreprocessingMethod.MultiplicativeScatteringCorrection"/>
+    /// the ensemble mean is taken by the preprocessing method itself, so that it is unnecessary to do it again after processing.
+    /// </remarks>
+    /// <value><see langword="true"/> if the ensemble mean should be subtracted after preprocessing (usually the case).</value>
     public bool EnsembleMeanAfterProcessing
     {
       get { return true; }
     }
 
     /// <summary>
-    /// Trys to identify spectral regions by supplying the spectral x values.
-    /// A end_of_region is recognized when the gap between two x-values is ten times higher
-    /// than the previous gap, or if the sign of the gap value changes.
-    /// This method fails if a spectral region contains only a single point (since no gap value can be obtained then).
-    /// (But in this case almost all spectral correction methods also fails).
+    /// Tries to identify spectral regions by analyzing the spectral <c>X</c> values.
     /// </summary>
-    /// <param name="xvalues">The vector of x values for the spectra (wavelength, frequencies...).</param>
+    /// <remarks>
+    /// An end of a region is recognized when the gap between two consecutive <c>X</c> values is ten times larger than the previous gap,
+    /// or if the sign of the gap changes.
+    /// This method fails if a spectral region contains only a single point (since no gap value can be obtained then).
+    /// (But in this case almost all spectral correction methods also fail.)
+    /// </remarks>
+    /// <param name="xvalues">The vector of <c>X</c> values for the spectra (wavelengths, frequencies, ...).</param>
     public void SetRegionsByIdentification(IReadOnlyList<double> xvalues)
     {
       _regions = IdentifyRegions(xvalues);
     }
 
     /// <summary>
-    /// Set the regions by providing an array of indices. These indices are the starting indices of the
-    /// different regions.
+    /// Sets the regions by providing an array of starting indices.
     /// </summary>
-    /// <param name="regions">Starting indices of the regions. Must be ascending. You can provide null as an argument.</param>
+    /// <param name="regions">Starting indices of the regions. Must be ascending. You can provide <see langword="null"/> as an argument.</param>
     public void SetRegions(int[] regions)
     {
       if (regions is null)
@@ -206,14 +233,16 @@ namespace Altaxo.Calc.Regression.Multivariate
     }
 
     /// <summary>
-    /// Trys to identify spectral regions by supplying the spectral x values.
-    /// A end_of_region is recognized when the gap between two x-values is ten times higher
-    /// than the previous gap, or if the sign of the gap value changes.
-    /// This method fails if a spectral region contains only a single point (since no gap value can be obtained then).
-    /// (But in this case almost all spectral correction methods also fails).
+    /// Tries to identify spectral regions by analyzing the spectral <c>X</c> values.
     /// </summary>
-    /// <param name="xvalues">The vector of x values for the spectra (wavelength, frequencies...).</param>
-    /// <returns>The array of regions. Each element in the array is the starting index of a new region into the vector xvalues.</returns>
+    /// <remarks>
+    /// An end of a region is recognized when the gap between two consecutive <c>X</c> values is ten times larger than the previous gap,
+    /// or if the sign of the gap changes.
+    /// This method fails if a spectral region contains only a single point (since no gap value can be obtained then).
+    /// (But in this case almost all spectral correction methods also fail.)
+    /// </remarks>
+    /// <param name="xvalues">The vector of <c>X</c> values for the spectra (wavelengths, frequencies, ...).</param>
+    /// <returns>The array of regions. Each element in the array is the starting index of a new region into <paramref name="xvalues"/>.</returns>
     public static int[] IdentifyRegions(IReadOnlyList<double> xvalues)
     {
       var list = new List<int>();
@@ -243,6 +272,10 @@ namespace Altaxo.Calc.Regression.Multivariate
 
     #region ICloneable Members
 
+    /// <summary>
+    /// Creates a copy of this instance.
+    /// </summary>
+    /// <returns>A copy of this instance.</returns>
     public object Clone()
     {
       return new SpectralPreprocessingOptions(this);

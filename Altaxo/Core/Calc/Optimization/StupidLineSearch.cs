@@ -36,12 +36,15 @@ namespace Altaxo.Calc.Optimization
   /// </summary>
   public class StupidLineSearch : LineSearchMethod
   {
+    /// <summary>Initializes a new instance of the <see cref="StupidLineSearch"/> class.</summary>
+    /// <param name="cost">The cost function to minimize.</param>
     public StupidLineSearch(ICostFunction cost)
     {
       costFunction_ = cost;
       endCriteria_ = new EndCriteria();
     }
 
+    /// <inheritdoc/>
     public override Vector<double> Search(Vector<double> x, Vector<double> direction, double step)
     {
       var retx = x.Clone();

@@ -30,8 +30,16 @@ using Altaxo.Calc.LinearAlgebra;
 
 namespace Altaxo.Calc.Probability
 {
+  /// <summary>
+  /// Provides statistical helper methods (mostly as extension methods) for sequences of <see cref="double"/>
+  /// </summary>
   public static class Statistics
   {
+    /// <summary>
+    /// Calculates the arithmetic mean of the sequence.
+    /// </summary>
+    /// <param name="x">The data values.</param>
+    /// <returns>The arithmetic mean of <paramref name="x"/>.</returns>
     public static double Mean(this System.Collections.Generic.IReadOnlyList<double> x)
     {
       double result = 0;
@@ -41,6 +49,15 @@ namespace Altaxo.Calc.Probability
       return result / x.Count;
     }
 
+    /// <summary>
+    /// Calculates the arithmetic mean of the sequence, optionally ignoring <see cref="double.NaN"/> values.
+    /// </summary>
+    /// <param name="x">The data values.</param>
+    /// <param name="ignoreNaN">
+    /// If <see langword="true"/>, <see cref="double.NaN"/> values are ignored.
+    /// If <see langword="false"/>, an <see cref="ArgumentException"/> is thrown when a NaN is encountered.
+    /// </param>
+    /// <returns>The arithmetic mean of the (filtered) data.</returns>
     public static double Mean(this System.Collections.Generic.IReadOnlyList<double> x, bool ignoreNaN)
     {
       double result = 0;
@@ -72,6 +89,11 @@ namespace Altaxo.Calc.Probability
       return result / n;
     }
 
+    /// <summary>
+    /// Calculates the (sample) standard deviation of the sequence.
+    /// </summary>
+    /// <param name="x">The data values.</param>
+    /// <returns>The sample standard deviation of <paramref name="x"/>.</returns>
     public static double StandardDeviation(this System.Collections.Generic.IReadOnlyList<double> x)
     {
       double mean = Mean(x);
@@ -82,16 +104,24 @@ namespace Altaxo.Calc.Probability
       return Math.Sqrt(sum / (x.Count - 1));
     }
 
+    /// <summary>
+    /// Calculates the interquartile range (IQR) of the sequence.
+    /// </summary>
+    /// <param name="x">Sorted data values (ascending). No check is performed.</param>
+    /// <returns>The interquartile range (IQR), computed as Q3 - Q1.</returns>
     public static double InterQuartileRange(this System.Collections.Generic.IReadOnlyList<double> x)
     {
       return Math.Abs(Quantile(x, 0.75) - Quantile(x, 0.25));
     }
 
     /// <summary>
-    /// The quantile value of x.
+    /// Calculates the quantile value of <paramref name="x"/>.
     /// </summary>
-    /// <param name="x">Sorted array (in ascending order) of data. No check is made whether the array is sorted or contains missing data (NaNs).</param>
-    /// <param name="f">The quantile [0,1].</param>
+    /// <param name="x">
+    /// Sorted array (in ascending order) of data. No check is made whether the array is sorted or contains missing
+    /// data (NaNs).
+    /// </param>
+    /// <param name="f">The quantile in the interval [0, 1].</param>
     /// <returns>The quantile value of the array of data.</returns>
     public static double Quantile(this System.Collections.Generic.IReadOnlyList<double> x, double f)
     {
@@ -99,13 +129,19 @@ namespace Altaxo.Calc.Probability
     }
 
     /// <summary>
-    /// The quantile value of x.
+    /// Calculates the quantile value of <paramref name="x"/>.
     /// </summary>
-    /// <param name="x">Sorted array (in ascending order) of data. No check is made whether the array is sorted or contains missing data (NaNs).</param>
-    /// <param name="f">The quantile [0,1].</param>
+    /// <param name="x">
+    /// Sorted array (in ascending order) of data. No check is made whether the array is sorted or contains missing
+    /// data (NaNs), unless <paramref name="checkArray"/> is set.
+    /// </param>
+    /// <param name="f">The quantile in the interval [0, 1].</param>
     /// <param name="n">Number of values to test. Normally set to <c>x.Length</c>.</param>
     /// <param name="stride">Stride. Normally set to 1.</param>
-    /// <param name="checkArray">If true, checks the array for missing values and whether the array is sorted. An exception is thrown if the array contains missing values or is not sorted.</param>
+    /// <param name="checkArray">
+    /// If <see langword="true"/>, checks the array for missing values and whether the array is sorted.
+    /// An exception is thrown if the array contains missing values or is not sorted.
+    /// </param>
     /// <returns>The quantile value of the array of data.</returns>
     public static double Quantile(this System.Collections.Generic.IReadOnlyList<double> x, double f, int n, int stride, bool checkArray)
     {
@@ -146,42 +182,65 @@ namespace Altaxo.Calc.Probability
       return result;
     }
 
+    /// <summary>
+    /// Supported kernel types for kernel density estimation.
+    /// </summary>
     public enum ConvolutionKernel
     {
+      /// <summary>Gaussian kernel.</summary>
       Gaussian,
+      /// <summary>Epanechnikov kernel.</summary>
       Epanechnikov,
+      /// <summary>Rectangular (uniform) kernel.</summary>
       Rectangular,
+      /// <summary>Triangular kernel.</summary>
       Triangular,
+      /// <summary>Biweight kernel.</summary>
       Biweight,
+      /// <summary>Cosine kernel.</summary>
       Cosine,
+      /// <summary>Optimal cosine kernel.</summary>
       Optcosine
     }
 
+    /// <summary>
+    /// Result of a kernel density estimation.
+    /// </summary>
     public struct ProbabilityDensityResult
     {
+      /// <summary>
+      /// Gets or sets the x-coordinates at which the density was evaluated.
+      /// </summary>
       public IReadOnlyList<double> X { get; set; }
 
+      /// <summary>
+      /// Gets or sets the estimated density values corresponding to <see cref="X"/>.
+      /// </summary>
       public IReadOnlyList<double> Y { get; set; }
 
+      /// <summary>
+      /// Gets or sets the bandwidth used for the density estimation.
+      /// </summary>
       public double Bandwidth { get; set; }
     }
 
     /// <summary>
-    ///
+    /// Estimates a probability density function using kernel density estimation.
     /// </summary>
-    /// <param name="x"></param>
-    /// <param name="bw"></param>
-    /// <param name="bwSel"></param>
-    /// <param name="adjust"></param>
-    /// <param name="kernel"></param>
-    /// <param name="weights"></param>
-    /// <param name="width"></param>
-    /// <param name="widthSel"></param>
-    /// <param name="n"></param>
-    /// <param name="from"></param>
-    /// <param name="to"></param>
-    /// <param name="cut"></param>
-    /// <remarks>Adapted from the R-project (www.r-project.org), Version 2.72, file density.R</remarks>
+    /// <param name="x">The sample values.</param>
+    /// <param name="bw">The bandwidth. Use <see cref="double.NaN"/> to select it via <paramref name="bwSel"/> / <paramref name="widthSel"/>.</param>
+    /// <param name="bwSel">Bandwidth selection rule (e.g. "nrd0", "nrd").</param>
+    /// <param name="adjust">Scaling factor applied to the bandwidth.</param>
+    /// <param name="kernel">The kernel to use.</param>
+    /// <param name="weights">Optional weights; if <see langword="null"/>, equal weights are used.</param>
+    /// <param name="width">Kernel width (alternative to specifying <paramref name="bw"/> directly). Use <see cref="double.NaN"/> if unused.</param>
+    /// <param name="widthSel">Width selection rule (used when <paramref name="bw"/> and <paramref name="width"/> are unspecified).</param>
+    /// <param name="n">Number of evaluation points.</param>
+    /// <param name="from">Lower bound of the evaluation interval. Use <see cref="double.NaN"/> to choose automatically.</param>
+    /// <param name="to">Upper bound of the evaluation interval. Use <see cref="double.NaN"/> to choose automatically.</param>
+    /// <param name="cut">Number of bandwidths to extend the range beyond the data extremes (default: 3).</param>
+    /// <returns>A <see cref="ProbabilityDensityResult"/> containing the evaluation points and density values.</returns>
+    /// <remarks>Adapted from the R project (www.r-project.org), Version 2.72, file density.R.</remarks>
     public static ProbabilityDensityResult ProbabilityDensity(
       this System.Collections.Generic.IReadOnlyList<double> x,
       double bw,
@@ -390,15 +449,15 @@ namespace Altaxo.Calc.Probability
     }
 
     /// <summary>
-    ///
+    /// Computes a mass distribution (binned weighted counts) for use in kernel density estimation.
     /// </summary>
-    /// <param name="x"></param>
-    /// <param name="xmass"></param>
-    /// <param name="xlow"></param>
-    /// <param name="xhigh"></param>
-    /// <param name="y"></param>
-    /// <param name="ny"></param>
-    /// <remarks>Adapted from the R-project (www.r-project.org), Version 2.72, file massdist.c</remarks>
+    /// <param name="x">The sample values.</param>
+    /// <param name="xmass">The mass (weight) of each sample value.</param>
+    /// <param name="xlow">Lower bound of the binning interval.</param>
+    /// <param name="xhigh">Upper bound of the binning interval.</param>
+    /// <param name="y">The output vector that receives the binned masses.</param>
+    /// <param name="ny">The number of bins (length of <paramref name="y"/>).</param>
+    /// <remarks>Adapted from the R project (www.r-project.org), Version 2.72, file massdist.c.</remarks>
     public static void MassDistribution(
         this System.Collections.Generic.IReadOnlyList<double> x,
         System.Collections.Generic.IReadOnlyList<double> xmass,

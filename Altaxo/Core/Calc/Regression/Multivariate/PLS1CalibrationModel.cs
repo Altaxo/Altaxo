@@ -27,6 +27,13 @@ using Altaxo.Calc.LinearAlgebra;
 
 namespace Altaxo.Calc.Regression.Multivariate
 {
+  /// <summary>
+  /// Calibration model for PLS1 regression.
+  /// </summary>
+  /// <remarks>
+  /// PLS1 performs a separate PLS model for each target variable. Accordingly, this model stores one set of
+  /// matrices per y variable.
+  /// </remarks>
   public class PLS1CalibrationModel : MultivariateCalibrationModel
   {
 #nullable disable
@@ -36,6 +43,7 @@ namespace Altaxo.Calc.Regression.Multivariate
     private IROMatrix<double>[] _crossProduct;
 #nullable enable
 
+    /// <inheritdoc/>
     public override int NumberOfY
     {
       get { return _numberOfY; }
@@ -46,6 +54,10 @@ namespace Altaxo.Calc.Regression.Multivariate
       }
     }
 
+    /// <summary>
+    /// Allocates the per-target-variable model arrays.
+    /// </summary>
+    /// <param name="numberOfY">Number of target variables.</param>
     protected void Allocate(int numberOfY)
     {
       _xWeights = new IROMatrix<double>[numberOfY];
@@ -54,21 +66,33 @@ namespace Altaxo.Calc.Regression.Multivariate
       _crossProduct = new IROMatrix<double>[numberOfY];
     }
 
+    /// <summary>
+    /// Gets the per-target-variable x weight matrices.
+    /// </summary>
     public IROMatrix<double>[] XWeights
     {
       get { return _xWeights; }
     }
 
+    /// <summary>
+    /// Gets the per-target-variable x loading matrices.
+    /// </summary>
     public IROMatrix<double>[] XLoads
     {
       get { return _xLoads; }
     }
 
+    /// <summary>
+    /// Gets the per-target-variable y loading matrices.
+    /// </summary>
     public IROMatrix<double>[] YLoads
     {
       get { return _yLoads; }
     }
 
+    /// <summary>
+    /// Gets the per-target-variable cross-product matrices.
+    /// </summary>
     public IROMatrix<double>[] CrossProduct
     {
       get { return _crossProduct; }

@@ -5,6 +5,9 @@ using Altaxo.Calc.LinearAlgebra;
 
 namespace Altaxo.Calc.Optimization.ObjectiveFunctions
 {
+  /// <summary>
+  /// Non-allocating nonlinear objective function implementation wrapping user-provided model and (optionally) derivative delegates.
+  /// </summary>
   public class NonlinearObjectiveFunctionNonAllocating : NonlinearObjectiveFunctionNonAllocatingBase
   {
     #region Private Variables
@@ -14,6 +17,14 @@ namespace Altaxo.Calc.Optimization.ObjectiveFunctions
 
     #endregion Private Variables
 
+    /// <summary>
+    /// Initializes a new instance of the <see cref="NonlinearObjectiveFunctionNonAllocating"/> class.
+    /// </summary>
+    /// <param name="function">User function delegate computing the model values for given observations and parameters.</param>
+    /// <param name="derivative">Optional user derivative delegate computing the Jacobian matrix.</param>
+    /// <param name="accuracyOrder">
+    /// Desired accuracy order used when numerically approximating the Jacobian if <paramref name="derivative"/> is not provided.
+    /// </param>
     public NonlinearObjectiveFunctionNonAllocating(
       Action<IROMatrix<double>, IReadOnlyList<double>, IVector<double>, IReadOnlyList<bool>?> function,
       Action<IROMatrix<double>, IReadOnlyList<double>, IReadOnlyList<bool>?, IMatrix<double>, IReadOnlyList<bool>?>? derivative = null,
@@ -24,6 +35,7 @@ namespace Altaxo.Calc.Optimization.ObjectiveFunctions
       _userDerivative = derivative;
     }
 
+    /// <inheritdoc/>
     public override IObjectiveModel Fork()
     {
       return new NonlinearObjectiveFunctionNonAllocating(_userFunction, _userDerivative, _accuracyOrder)
@@ -44,6 +56,7 @@ namespace Altaxo.Calc.Optimization.ObjectiveFunctions
       };
     }
 
+    /// <inheritdoc/>
     public override IObjectiveModel CreateNew()
     {
       return new NonlinearObjectiveFunctionNonAllocating(_userFunction, _userDerivative, _accuracyOrder);
@@ -52,10 +65,9 @@ namespace Altaxo.Calc.Optimization.ObjectiveFunctions
     #region Private Methods
 
     /// <summary>
-    /// Set parameters and bounds.
+    /// Sets model parameters and allocates scratch vectors for numerical Jacobian evaluation when necessary.
     /// </summary>
-    /// <param name="initialGuess">The initial values of parameters.</param>
-    /// <param name="isFixed">The list to the parameters fix or free.</param>
+    /// <inheritdoc/>
     public override void SetParameters(IReadOnlyList<double> initialGuess, IReadOnlyList<bool>? isFixed = null)
     {
       base.SetParameters(initialGuess, isFixed);
@@ -87,6 +99,7 @@ namespace Altaxo.Calc.Optimization.ObjectiveFunctions
       }
     }
 
+    /// <inheritdoc/>
     protected override void EvaluateFunction()
     {
       // Calculates the residuals, (y[i] - f(x[i]; p)) * L[i]
@@ -107,6 +120,7 @@ namespace Altaxo.Calc.Optimization.ObjectiveFunctions
       _functionValue = _residuals.DotProduct(_residuals);
     }
 
+    /// <inheritdoc/>
     protected override void EvaluateJacobian()
     {
       // Calculates the jacobian of x and p.
@@ -164,6 +178,7 @@ namespace Altaxo.Calc.Optimization.ObjectiveFunctions
       _jacobianValueTransposed.Multiply(_jacobianValue, _hessianValue);
     }
 
+    /// <inheritdoc/>
     protected override Matrix<double> NumericalJacobian(Vector<double> parameters, Vector<double> currentValues, int accuracyOrder = 2)
     {
       const double deltaFactor = 0.000003;
@@ -272,7 +287,7 @@ namespace Altaxo.Calc.Optimization.ObjectiveFunctions
     protected IReadOnlyList<double> _observedXAsVector;
 
     /// <summary>
-    /// Set or get the values of the independent variable.
+    /// Gets or sets the values of the independent variable.
     /// </summary>
     public IReadOnlyList<double> ObservedX
     {
@@ -285,8 +300,13 @@ namespace Altaxo.Calc.Optimization.ObjectiveFunctions
     }
 
     /// <summary>
-    /// Set observed data to fit.
+    /// Sets the observed data to fit.
     /// </summary>
+    /// <param name="observedX">The observed values of the independent variable.</param>
+    /// <param name="observedY">The observed values of the dependent variable.</param>
+    /// <param name="weights">Optional weight values for each observation.</param>
+    /// <exception cref="ArgumentNullException">Thrown when <paramref name="observedX"/> or <paramref name="observedY"/> is <see langword="null"/>.</exception>
+    /// <exception cref="ArgumentException">Thrown when input arrays have inconsistent lengths or contain invalid weights.</exception>
     public void SetObserved(IReadOnlyList<double> observedX, IReadOnlyList<double> observedY, IReadOnlyList<double>? weights = null)
     {
       if (observedX is null || observedY is null)
@@ -334,15 +354,15 @@ namespace Altaxo.Calc.Optimization.ObjectiveFunctions
 
     /// <summary>
     /// If a parameter is zero, it is hard to find the right order of magnitude for a variation of that parameter.
-    /// Here, the variation is guessed by starting with the lowest possible variation, and increase the variation, until
+    /// Here, the variation is guessed by starting with the lowest possible variation, and increasing the variation until
     /// the function values deviate from the original value.
     /// </summary>
-    /// <param name="EvaluateModelValues">Function that evaluate the model values. Argument are the parameters, result are the model values.</param>
+    /// <param name="EvaluateModelValues">Function that evaluates the model values. Argument is the parameters; result is the model values.</param>
     /// <param name="currentValues">The current function values.</param>
     /// <param name="idxParameter">The index of the parameter for which to find a good guess for the variation.</param>
     /// <param name="parameters">The parameters.</param>
     /// <param name="h">A scratch array.</param>
-    /// <returns>The lowest variation (increased in steps of 2), for which the function values deviate from the original values.</returns>
+    /// <returns>The lowest variation (increased in steps of 2) for which the function values deviate from the original values.</returns>
     public static double GetLowestParameterVariationToChangeFunctionValues(Func<Vector<double>, Vector<double>> EvaluateModelValues, Vector<double> currentValues, int idxParameter, Vector<double> parameters, Vector<double> h)
     {
       // because we have no idea what the order of magnitude of the parameter is, we start from the lowest possible

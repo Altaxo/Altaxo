@@ -35,36 +35,30 @@ namespace Altaxo.Calc
   public class ExpIntegralRelated
   {
     /// <summary>
-    /// This function program computes approximate values for the
-    /// exponential integral  Ei(x), where  x  is real.
+    /// Computes approximate values for the exponential integral <c>Ei(x)</c>, where <paramref name="x"/> is real.
     /// </summary>
     /// <param name="x">The function argument.</param>
-    /// <returns>Exponential integral  Ei(x)</returns>
+    /// <returns>The exponential integral <c>Ei(x)</c>.</returns>
     public static double ExpIntegralEi(double x)
     {
       return calcei(x, 1);
     }
 
     /// <summary>
-    /// This function program computes approximate values for the
-    /// function  exp(-x) * Ei(x), where  Ei(x)  is the exponential
-    /// integral, and  x  is real.
+    /// Computes approximate values for the function <c>exp(-x) * Ei(x)</c>, where <c>Ei(x)</c> is the exponential integral and <paramref name="x"/> is real.
     /// </summary>
     /// <param name="x">The function argument.</param>
-    /// <returns>The
-    /// function  exp(-x) * Ei(x), where  Ei(x)  is the exponential
-    /// integral.</returns>
+    /// <returns>The function <c>exp(-x) * Ei(x)</c>, where <c>Ei(x)</c> is the exponential integral.</returns>
     public static double ExpIntegralExpEi(double x)
     {
       return calcei(x, 3);
     }
 
     /// <summary>
-    /// This function program computes approximate values for the
-    /// exponential integral E1(x), where  x  is real.
+    /// Computes approximate values for the exponential integral <c>E1(x)</c>, where <paramref name="x"/> is real.
     /// </summary>
     /// <param name="x">The function argument.</param>
-    /// <returns>The exponential integral E1(x).</returns>
+    /// <returns>The exponential integral <c>E1(x)</c>.</returns>
     public static double ExpIntegralE1(double x)
     {
       return calcei(x, 2);
@@ -188,13 +182,13 @@ namespace Altaxo.Calc
     //-----------------------------------------------------------------------------//
     //
     //  Original Author: W. J. Cody
-    //                   Mathematics abd Computer Science Division
+    //                   Mathematics and Computer Science Division
     //                   Argonne National Laboratory
     //                   Argonne, IL 60439
     //                   Latest modification: September 9, 1988
     //
     // Recoding in C++:  Dr. Berndt M. Gammel
-    //                   Physik Department TU Muenchen
+    //                   Physics Department, TU Muenchen
     //                   85747 Garching, Germany
     //                   Latest modification: October 30, 1996
     //-----------------------------------------------------------------------------//
@@ -224,7 +218,7 @@ namespace Altaxo.Calc
       x0 = 3.7250741078136663466e-1;
 
     //-------------------------------------------------------------------------//
-    // Machine-dependent constants for IEEE arithmetics
+    // Machine-dependent constants for IEEE arithmetic
     //-------------------------------------------------------------------------//
 
     private const double xinf = 1.79e+308,
@@ -399,6 +393,19 @@ namespace Altaxo.Calc
       1.99999999999048104167e00
     };
 
+    /// <summary>
+    /// Internal worker routine that computes various exponential-integral related functions.
+    /// </summary>
+    /// <param name="arg">The function argument.</param>
+    /// <param name="ii">
+    /// Selects the function to compute:
+    /// <list type="table">
+    /// <item><term>1</term><description><c>Ei(x)</c> for <paramref name="arg"/> ≠ 0.</description></item>
+    /// <item><term>2</term><description><c>E1(x)</c> for <paramref name="arg"/> &gt; 0 (computed as <c>-Ei(-x)</c>).</description></item>
+    /// <item><term>3</term><description><c>exp(-x) * Ei(x)</c> for <paramref name="arg"/> ≠ 0.</description></item>
+    /// </list>
+    /// </param>
+    /// <returns>The selected exponential-integral related function value.</returns>
     private static double calcei(double arg, int ii)
     {
       int i;

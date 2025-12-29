@@ -307,6 +307,11 @@ namespace Altaxo.Calc
 
     #endregion Number tests
 
+    /// <summary>
+    /// Computes <c>log(1 + x)</c> with improved accuracy for small values of <paramref name="x"/>.
+    /// </summary>
+    /// <param name="x">The argument.</param>
+    /// <returns>The value of <c>log(1 + x)</c>.</returns>
     public static double Log1p(double x)
     {
       double y;
@@ -452,10 +457,10 @@ namespace Altaxo.Calc
 
 
     /// <summary>
-    /// Calculates 1-Exp(x) with better accuracy around x=0.
+    /// Calculates <c>1 - exp(x)</c> with improved accuracy around <c>x = 0</c>.
     /// </summary>
-    /// <param name="x">Function argument</param>
-    /// <returns>The value 1-Exp(x)</returns>
+    /// <param name="x">Function argument.</param>
+    /// <returns>The value <c>1 - exp(x)</c>.</returns>
     public static double OneMinusExp(double x)
     {
       const double A1 = 1;
@@ -482,6 +487,11 @@ namespace Altaxo.Calc
       }
     }
 
+    /// <summary>
+    /// Computes the inverse hyperbolic cosine of <paramref name="x"/>.
+    /// </summary>
+    /// <param name="x">The argument.</param>
+    /// <returns>The value of <c>acosh(x)</c>. Returns <see cref="double.NaN"/> if <paramref name="x"/> is less than 1.</returns>
     public static double Acosh(double x)
     {
       if (x > 1.0 / GSL_SQRT_DBL_EPSILON)
@@ -507,6 +517,11 @@ namespace Altaxo.Calc
       }
     }
 
+    /// <summary>
+    /// Computes the inverse hyperbolic sine of <paramref name="x"/>.
+    /// </summary>
+    /// <param name="x">The argument.</param>
+    /// <returns>The value of <c>asinh(x)</c>.</returns>
     public static double Asinh(double x)
     {
       double a = Math.Abs(x);
@@ -531,6 +546,14 @@ namespace Altaxo.Calc
       }
     }
 
+    /// <summary>
+    /// Computes the inverse hyperbolic tangent of <paramref name="x"/>.
+    /// </summary>
+    /// <param name="x">The argument.</param>
+    /// <returns>
+    /// The value of <c>atanh(x)</c>. Returns <see cref="double.NaN"/> if <c>|x| &gt; 1</c>, and returns
+    /// positive/negative infinity if <c>x</c> is 1 or -1, respectively.
+    /// </returns>
     public static double Atanh(double x)
     {
       double a = Math.Abs(x);
@@ -593,7 +616,7 @@ namespace Altaxo.Calc
     }
 
     /// <summary>
-    /// Calculates x^2 (square of x).
+    /// Calculates <c>x²</c> (square of x).
     /// </summary>
     /// <param name="x">Argument.</param>
     /// <returns><c>x</c> squared.</returns>
@@ -602,35 +625,65 @@ namespace Altaxo.Calc
       return x * x;
     }
 
+    /// <summary>
+    /// Calculates <c>x³</c> (cube of <paramref name="x"/>).
+    /// </summary>
+    /// <param name="x">Argument.</param>
+    /// <returns><paramref name="x"/> cubed.</returns>
     public static double Pow3(this double x)
     {
       return x * x * x;
     }
 
+    /// <summary>
+    /// Calculates <c>x⁴</c>.
+    /// </summary>
+    /// <param name="x">Argument.</param>
+    /// <returns><paramref name="x"/> to the power of 4.</returns>
     public static double Pow4(this double x)
     {
       double x2 = x * x;
       return x2 * x2;
     }
 
+    /// <summary>
+    /// Calculates <c>x⁵</c>.
+    /// </summary>
+    /// <param name="x">Argument.</param>
+    /// <returns><paramref name="x"/> to the power of 5.</returns>
     public static double Pow5(this double x)
     {
       double x2 = x * x;
       return x2 * x2 * x;
     }
 
+    /// <summary>
+    /// Calculates <c>x⁶</c>.
+    /// </summary>
+    /// <param name="x">Argument.</param>
+    /// <returns><paramref name="x"/> to the power of 6.</returns>
     public static double Pow6(this double x)
     {
       double x2 = x * x;
       return x2 * x2 * x2;
     }
 
+    /// <summary>
+    /// Calculates <c>x⁷</c>.
+    /// </summary>
+    /// <param name="x">Argument.</param>
+    /// <returns><paramref name="x"/> to the power of 7.</returns>
     public static double Pow7(this double x)
     {
       double x3 = x * x * x;
       return x3 * x3 * x;
     }
 
+    /// <summary>
+    /// Calculates <c>x⁸</c>.
+    /// </summary>
+    /// <param name="x">Argument.</param>
+    /// <returns><paramref name="x"/> to the power of 8.</returns>
     public static double Pow8(this double x)
     {
       double x2 = x * x;
@@ -638,6 +691,11 @@ namespace Altaxo.Calc
       return x4 * x4;
     }
 
+    /// <summary>
+    /// Calculates <c>x⁹</c>.
+    /// </summary>
+    /// <param name="x">Argument.</param>
+    /// <returns><paramref name="x"/> to the power of 9.</returns>
     public static double Pow9(this double x)
     {
       double x3 = x * x * x;
@@ -645,12 +703,11 @@ namespace Altaxo.Calc
     }
 
     /// <summary>
-    /// Calculates x^n by repeated multiplications. The algorithm takes ld(n) multiplications.
-    /// This algorithm can also be used with negative n.
+    /// Calculates <c>x^n</c> by repeated squaring.
     /// </summary>
-    /// <param name="x"></param>
-    /// <param name="n"></param>
-    /// <returns></returns>
+    /// <param name="x">The base.</param>
+    /// <param name="n">The exponent.</param>
+    /// <returns>The value <c>x^n</c>. If <paramref name="n"/> is negative, the reciprocal is returned.</returns>
     public static double Pow(this double x, int n)
     {
       double value = 1.0;
@@ -680,12 +737,11 @@ namespace Altaxo.Calc
     }
 
     /// <summary>
-    /// Calculates x^n by repeated multiplications. The algorithm takes ld(n) multiplications.
-    /// This algorithm can also be used with negative n.
+    /// Calculates <c>x^n</c> by repeated squaring.
     /// </summary>
-    /// <param name="x"></param>
-    /// <param name="n"></param>
-    /// <returns></returns>
+    /// <param name="x">The base.</param>
+    /// <param name="n">The exponent.</param>
+    /// <returns>The value <c>x^n</c>. If <paramref name="n"/> is negative, the reciprocal is returned.</returns>
     public static double Pow(this double x, long n)
     {
       double value = 1.0;
@@ -812,18 +868,27 @@ namespace Altaxo.Calc
     }
 
     /// <summary>
-    /// Smallest power of 10 that can be parsed is -323. This means that 1E-323 is parsed to a number greater than zero, whereas 1E-323 is parsed to 0.
+    /// Smallest power of 10 that can be parsed is -323.
     /// </summary>
+    /// <remarks>
+    /// This means that <c>1E-323</c> is parsed to a number greater than zero, whereas <c>1E-324</c> is parsed to 0.
+    /// </remarks>
     public const int DoubleMinimalDecimalPower = -323;
 
     /// <summary>
-    /// Smallest power of 10 that can be parsed without precision loss is -308. This means that 1E-308 is parsed to a number that is equal to 1E-308, whereas 1E-309 is parsed to a number not equal to 1E-309.
+    /// Smallest power of 10 that can be parsed without precision loss is -308.
     /// </summary>
+    /// <remarks>
+    /// This means that <c>1E-308</c> is parsed to a number that is equal to <c>1E-308</c>, whereas <c>1E-309</c> is parsed to a number not equal to <c>1E-309</c>.
+    /// </remarks>
     public const int DoubleMinimalDecimalPowerWithoutPrecisionLoss = -308;
 
     /// <summary>
-    /// Greatest power of 10 that can be parsed is 308. This means that 1E308 is parsed to a number greater than zero, whereas 1E309 is parsed to Infinity.
+    /// Greatest power of 10 that can be parsed is 308.
     /// </summary>
+    /// <remarks>
+    /// This means that <c>1E308</c> is parsed to a number greater than zero, whereas <c>1E309</c> is parsed to infinity.
+    /// </remarks>
     public const int DoubleMaximalDecimalPower = 308;
 
     private static double[] _powersOfTen = new double[]
@@ -910,10 +975,10 @@ namespace Altaxo.Calc
     };
 
     /// <summary>
-    /// Returns 10 to the power of i, i.e. 10^i.
+    /// Returns 10 to the power of <paramref name="i"/>, i.e. <c>10^i</c>.
     /// </summary>
     /// <param name="i">The exponent.</param>
-    /// <returns>10 to the power of i, i.e. 10^i.</returns>
+    /// <returns>10 to the power of <paramref name="i"/>.</returns>
     public static double TenToThePowerOf(int i)
     {
       if (i < DoubleMinimalDecimalPower)

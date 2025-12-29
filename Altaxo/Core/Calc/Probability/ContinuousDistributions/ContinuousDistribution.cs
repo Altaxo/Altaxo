@@ -66,24 +66,34 @@ namespace Altaxo.Calc.Probability
 
     #region Helper functions and constants
 
-    /// <summary>Maximum value of a System.Double.</summary>
+    /// <summary>
+    /// Gets the maximum value of a <see cref="double"/>.
+    /// </summary>
     protected const double DBL_MAX = double.MaxValue;
 
-    /// <summary>Smallest positive value of a System.Double.</summary>
+    /// <summary>
+    /// Gets the smallest positive value of a <see cref="double"/>.
+    /// </summary>
     protected const double DBL_MIN = double.Epsilon; // god saves microsoft!
 
-    /// <summary>Maximum binary exponent of a <see cref="System.Double"/>.</summary>
+    /// <summary>
+    /// Gets the maximum binary exponent of a <see cref="double"/>.
+    /// </summary>
     protected const int DBL_MAX_EXP = 1024;
 
-    /// <summary>Natural logarithm of 2.</summary>
+    /// <summary>
+    /// Gets the natural logarithm of 2.
+    /// </summary>
     protected const double M_LN2 = 0.69314718055994530941723212145818;
 
     /// <summary>
-    /// Return first number with sign of second number
+    /// Returns the first number with the sign of the second number.
     /// </summary>
     /// <param name="x">The first number.</param>
     /// <param name="y">The second number whose sign is used.</param>
-    /// <returns>The first number x with the sign of the second argument y.</returns>
+    /// <returns>
+    /// The first number <paramref name="x"/> with the sign of <paramref name="y"/>.
+    /// </returns>
     protected static double CopySign(double x, double y)
     {
       return (y < 0) ? ((x < 0) ? x : -x) : ((x > 0) ? x : -x);

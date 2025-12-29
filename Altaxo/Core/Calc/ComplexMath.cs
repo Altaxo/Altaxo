@@ -39,11 +39,22 @@ namespace Altaxo.Calc
     private const double GSL_DBL_EPSILON = 2.2204460492503131e-16;
     private const double M_LOG10E = 0.43429448190325182765112891891661;
 
+    /// <summary>
+    /// Returns the square of a real value.
+    /// </summary>
+    /// <param name="x">The value to square.</param>
+    /// <returns><paramref name="x"/> squared.</returns>
     private static double square(double x)
     {
       return x * x;
     }
 
+    /// <summary>
+    /// Computes <c>sqrt(x^2 + y^2)</c> without undue overflow or underflow.
+    /// </summary>
+    /// <param name="x">The first value.</param>
+    /// <param name="y">The second value.</param>
+    /// <returns>The hypotenuse <c>sqrt(x^2 + y^2)</c>.</returns>
     private static double hypot(double x, double y)
     {
       double xabs = Math.Abs(x);
@@ -78,12 +89,11 @@ namespace Altaxo.Calc
 
     /// <summary>
     /// This function returns the product of the complex number a and the
-    /// imaginary number iy, z=a*(iy).
+    /// imaginary number <c>i*y</c>, z=a*(i*y).
     /// </summary>
-    /// <param name="a">First multiplicant.</param>
-    /// <param name="y">Imaginary part of second multiplicant.</param>
-    /// <returns>The product of the complex number a and the
-    /// imaginary number iy, z=a*(iy).</returns>
+    /// <param name="a">First multiplicand.</param>
+    /// <param name="y">Imaginary part of second multiplicand.</param>
+    /// <returns>The product of the complex number <paramref name="a"/> and the imaginary number <c>i*y</c>, i.e. <c>a*(i*y)</c>.</returns>
     public static Complex64 MultiplyImaginaryNumber(Complex64 a, double y)
     {
       return new Complex64(-y * a.Imaginary, y * a.Real);
@@ -91,22 +101,21 @@ namespace Altaxo.Calc
 
     /// <summary>
     /// This function returns the product of the complex number a and the
-    /// real number x, z=ax.
+    /// real number x, z=a*x.
     /// </summary>
-    /// <param name="a">First multiplicant.</param>
-    /// <param name="x">Real part of second multiplicant.</param>
-    /// <returns>The product of the complex number a and the
-    /// real number x, z=ax.</returns>
+    /// <param name="a">First multiplicand.</param>
+    /// <param name="x">Real multiplier.</param>
+    /// <returns>The product of the complex number <paramref name="a"/> and the real number <paramref name="x"/>, i.e. <c>a*x</c>.</returns>
     public static Complex64 MultiplyRealNumber(Complex64 a, double x)
     {
       return new Complex64(x * a.Real, x * a.Imaginary);
     }
 
     /// <summary>
-    /// Swap two complex numbers
+    /// Swaps two complex numbers.
     /// </summary>
-    /// <param name="a"></param>
-    /// <param name="b"></param>
+    /// <param name="a">The first value.</param>
+    /// <param name="b">The second value.</param>
     public static void Swap(ref Complex64 a, ref Complex64 b)
     {
       Complex64 temp = a;
@@ -115,10 +124,10 @@ namespace Altaxo.Calc
     }
 
     /// <summary>
-    /// Swap two complex numbers
+    /// Swaps two complex numbers.
     /// </summary>
-    /// <param name="a"></param>
-    /// <param name="b"></param>
+    /// <param name="a">The first value.</param>
+    /// <param name="b">The second value.</param>
     public static void Swap(ref Complex32 a, ref Complex32 b)
     {
       Complex32 temp = a;
@@ -450,25 +459,33 @@ namespace Altaxo.Calc
       return c.Phase;
     }
 
-    ///<summary>Calculate the complex argument of a complex type.  Also commonly refered to as the phase.</summary>
+    ///<summary>Calculate the complex argument of a complex type. Also commonly referred to as the phase.</summary>
     public static double Argument(Complex64 value)
     {
       return System.Math.Atan(value.Imaginary / value.Real);
     }
 
-    ///<summary>Calculate the complex argument of a complex type.  Also commonly refered to as the phase.</summary>
+    ///<summary>Calculate the complex argument of a complex type. Also commonly referred to as the phase.</summary>
     public static float Argument(Complex32 value)
     {
       return (float)System.Math.Atan(value.Imaginary / value.Real);
     }
 
-    ///<summary>Calculate the 2-argument of a complex type.</summary>
+    /// <summary>
+    /// Calculates the 2-argument (phase) of a complex value.
+    /// </summary>
+    /// <param name="value">The complex value.</param>
+    /// <returns>The phase computed using <see cref="System.Math.Atan2(double, double)"/>.</returns>
     public static double Argument2(Complex64 value)
     {
       return System.Math.Atan2(value.Imaginary, value.Real);
     }
 
-    ///<summary>Calculate the 2-argument of a complex type.</summary>
+    /// <summary>
+    /// Calculates the 2-argument (phase) of a complex value.
+    /// </summary>
+    /// <param name="value">The complex value.</param>
+    /// <returns>The phase computed using <see cref="System.Math.Atan2(double, double)"/>.</returns>
     public static float Argument2(Complex32 value)
     {
       return (float)System.Math.Atan2(value.Imaginary, value.Real);
@@ -917,7 +934,7 @@ namespace Altaxo.Calc
     /// Returns the exponential function of the complex function argument.
     /// </summary>
     /// <param name="z">The complex function argument.</param>
-    /// <returns>The exponential function of the spezified complex function argument.</returns>
+    /// <returns>The exponential function of the specified complex function argument.</returns>
     public static Complex64 Exp(Complex64 z)
     {
       return Complex64.FromPolarCoordinates(Math.Exp(z.Real), z.Imaginary);
@@ -927,7 +944,7 @@ namespace Altaxo.Calc
     /// Returns the exponential function of the complex function argument.
     /// </summary>
     /// <param name="z">The complex function argument.</param>
-    /// <returns>The exponential function of the spezified complex function argument.</returns>
+    /// <returns>The exponential function of the specified complex function argument.</returns>
     public static Complex32 Exp(Complex32 z)
     {
       return Complex32.FromPolarCoordinates((float)Math.Exp(z.Real), z.Imaginary);
@@ -1194,30 +1211,55 @@ namespace Altaxo.Calc
       return c * c * c;
     }
 
+    /// <summary>
+    /// Calculates <c>x^4</c>.
+    /// </summary>
+    /// <param name="x">The complex argument.</param>
+    /// <returns><paramref name="x"/> to the fourth power.</returns>
     public static Complex64 Pow4(this Complex64 x)
     {
       Complex64 x2 = x * x;
       return x2 * x2;
     }
 
+    /// <summary>
+    /// Calculates <c>x^5</c>.
+    /// </summary>
+    /// <param name="x">The complex argument.</param>
+    /// <returns><paramref name="x"/> to the fifth power.</returns>
     public static Complex64 Pow5(this Complex64 x)
     {
       Complex64 x2 = x * x;
       return x2 * x2 * x;
     }
 
+    /// <summary>
+    /// Calculates <c>x^6</c>.
+    /// </summary>
+    /// <param name="x">The complex argument.</param>
+    /// <returns><paramref name="x"/> to the sixth power.</returns>
     public static Complex64 Pow6(this Complex64 x)
     {
       Complex64 x2 = x * x;
       return x2 * x2 * x2;
     }
 
+    /// <summary>
+    /// Calculates <c>x^7</c>.
+    /// </summary>
+    /// <param name="x">The complex argument.</param>
+    /// <returns><paramref name="x"/> to the seventh power.</returns>
     public static Complex64 Pow7(this Complex64 x)
     {
       Complex64 x3 = x * x * x;
       return x3 * x3 * x;
     }
 
+    /// <summary>
+    /// Calculates <c>x^8</c>.
+    /// </summary>
+    /// <param name="x">The complex argument.</param>
+    /// <returns><paramref name="x"/> to the eighth power.</returns>
     public static Complex64 Pow8(this Complex64 x)
     {
       Complex64 x2 = x * x;
@@ -1225,6 +1267,11 @@ namespace Altaxo.Calc
       return x4 * x4;
     }
 
+    /// <summary>
+    /// Calculates <c>x^9</c>.
+    /// </summary>
+    /// <param name="x">The complex argument.</param>
+    /// <returns><paramref name="x"/> to the ninth power.</returns>
     public static Complex64 Pow9(this Complex64 x)
     {
       Complex64 x3 = x * x * x;

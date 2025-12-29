@@ -27,8 +27,8 @@ namespace Altaxo.Calc.Probability
   /// Provides generation of Fisher-Snedecor distributed random numbers.
   /// </summary>
   /// <remarks>
-  /// The implementation of the <see cref="FisherSnedecorDistribution"/> type bases upon information presented on
-  ///   <a href="http://en.wikipedia.org/wiki/F-distribution">Wikipedia - F-distribution</a>.
+  /// The implementation of the <see cref="FisherSnedecorDistribution"/> type is based on information presented on
+  /// <a href="http://en.wikipedia.org/wiki/F-distribution">Wikipedia - F-distribution</a>.
   /// <code>
   /// Return F-distributed (variance ratio distributed) random deviates
   /// with n numerator degrees of freedom and d denominator degrees of freedom
@@ -37,14 +37,15 @@ namespace Altaxo.Calc.Probability
   ///   p   (x) dx =  ... dx
   ///    a,b
   ///
-  /// Both paramters alpha and beta must be positive.
+  /// Both parameters alpha and beta must be positive.
   ///
   /// Method: The random numbers are directly generated from ratios of
   ///         ChiSquare variates according to:
   ///
   ///  F = (ChiSquare(alpha)/alpha) / (ChiSquare(beta)/beta)
   ///
-  /// </code></remarks>
+  /// </code>
+  /// </remarks>
   public class FisherSnedecorDistribution : ContinuousDistribution
   {
     #region instance fields
@@ -91,6 +92,11 @@ namespace Altaxo.Calc.Probability
     /// </summary>
     private double beta;
 
+    /// <summary>
+    /// Initializes the distribution with the specified parameters.
+    /// </summary>
+    /// <param name="alpha">The first (numerator degrees of freedom) parameter.</param>
+    /// <param name="beta">The second (denominator degrees of freedom) parameter.</param>
     public void Initialize(double alpha, double beta)
     {
       if (!IsValidAlpha(alpha))
@@ -150,6 +156,11 @@ namespace Altaxo.Calc.Probability
     {
     }
 
+    /// <summary>
+    /// Initializes a new instance of the <see cref="FisherSnedecorDistribution"/> class with the given parameters.
+    /// </summary>
+    /// <param name="alpha">The first (numerator degrees of freedom) parameter.</param>
+    /// <param name="beta">The second (denominator degrees of freedom) parameter.</param>
     public FisherSnedecorDistribution(double alpha, double beta)
       : this(alpha, beta, DefaultGenerator)
     {
@@ -321,11 +332,7 @@ namespace Altaxo.Calc.Probability
 
     #region CdfPdfQuantile
 
-    /// <summary>
-    /// Returns the cumulated distribution function for value x with the distribution parameters numf and denomf.
-    /// </summary>
-    /// <param name="x">The function argument.</param>
-    /// <returns>The cumulated distribution (probability) of the distribution at value x.</returns>
+    /// <inheritdoc/>
     public override double CDF(double x)
     {
       return CDF(x, alpha, beta);
@@ -344,11 +351,7 @@ namespace Altaxo.Calc.Probability
       return GammaRelated.BetaIR(n1x / (beta + n1x), 0.5 * alpha, 0.5 * beta);
     }
 
-    /// <summary>
-    /// Returns the probability density function for value x with the distribution parameters p and q.
-    /// </summary>
-    /// <param name="x">The function argument.</param>
-    /// <returns>The probability density of the distribution at value x.</returns>
+    /// <inheritdoc/>
     public override double PDF(double x)
     {
       return PDF(x, alpha, beta);
@@ -366,11 +369,7 @@ namespace Altaxo.Calc.Probability
       return (Math.Pow(alpha, alpha / 2) * Math.Pow(beta, beta / 2) * Math.Pow(x, (-2 + alpha) / 2) * Math.Pow(beta + alpha * x, (-alpha - beta) / 2)) / GammaRelated.Beta(alpha / 2, beta / 2);
     }
 
-    /// <summary>
-    /// Quantile of the F-distribution.
-    /// </summary>
-    /// <param name="probability">Probability (0..1).</param>
-    /// <returns>The quantile of the F-Distribution.</returns>
+    /// <inheritdoc/>
     public override double Quantile(double probability)
     {
       return Quantile(probability, alpha, beta);
@@ -393,7 +392,8 @@ namespace Altaxo.Calc.Probability
   }
 
   /// <summary>
-  /// Surrogate name for <see cref="FisherSnedecorDistribution"/> and included here only for convenience. No other instance members defined.
+  /// Surrogate name for <see cref="FisherSnedecorDistribution"/>; included only for convenience.
+  /// No additional instance members are defined.
   /// </summary>
   public class FDistribution : FisherSnedecorDistribution
   {
@@ -421,11 +421,22 @@ namespace Altaxo.Calc.Probability
     {
     }
 
+    /// <summary>
+    /// Initializes a new instance of the <see cref="FDistribution"/> class with the given parameters.
+    /// </summary>
+    /// <param name="alpha">The first (numerator degrees of freedom) parameter.</param>
+    /// <param name="beta">The second (denominator degrees of freedom) parameter.</param>
     public FDistribution(double alpha, double beta)
       : base(alpha, beta)
     {
     }
 
+    /// <summary>
+    /// Initializes a new instance of the <see cref="FDistribution"/> class with the given parameters and generator.
+    /// </summary>
+    /// <param name="alpha">The first (numerator degrees of freedom) parameter.</param>
+    /// <param name="beta">The second (denominator degrees of freedom) parameter.</param>
+    /// <param name="generator">A <see cref="Generator"/> object.</param>
     public FDistribution(double alpha, double beta, Generator generator)
       : base(alpha, beta, generator)
     {

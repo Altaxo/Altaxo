@@ -34,26 +34,27 @@ namespace Altaxo.Calc
   public class SeriesMP
   {
     /// <summary>
-    /// Represents the smallest number where 1+DBL_EPSILON is not equal to 1.
+    /// Represents the smallest number where <c>1 + DBL_EPSILON</c> is not equal to 1.
     /// </summary>
+    /// <remarks>
+    /// In the IEEE 754 representation, this constant is <c>2^-52</c>.
+    /// </remarks>
     private const double DBL_EPSILON = 2.2204460492503131e-016;
 
     #region initds
 
     /// <summary>
-    /// Initialize the orthogonal series, represented by the array os, so
-    /// that initds is the number of terms needed to insure the error is no
-    /// larger than eta.  Ordinarily, eta will be chosen to be one-tenth
-    /// machine precision.
+    /// Initializes an orthogonal series so that the number of terms needed to achieve the requested accuracy is returned.
     /// </summary>
-    /// <param name="os">Double precision array of NOS coefficients in an orthogonal  series.</param>
-    /// <param name="nos">Number of coefficients in OS.</param>
-    /// <param name="eta"> single precision scalar containing requested accuracy of  series. </param>
-    /// <returns>The number of terms neccessary to insure the error is not larger than eta.</returns>
+    /// <param name="os">Double-precision array of <paramref name="nos"/> coefficients in an orthogonal series.</param>
+    /// <param name="nos">Number of coefficients in <paramref name="os"/>.</param>
+    /// <param name="eta">
+    /// The requested accuracy of the series. Typically, this is chosen to be one-tenth of machine precision.
+    /// </param>
+    /// <returns>The number of terms necessary to ensure the error is no larger than <paramref name="eta"/>.</returns>
     /// <remarks>
-    /// This is a translation from the Fortran version of SLATEC, FNLIB,
-    /// CATEGORY C3A2, REVISION 900315, originally written by Fullerton W., (LANL)
-    /// to C++.
+    /// This is a translation from the Fortran version of SLATEC, FNLIB, CATEGORY C3A2, REVISION 900315,
+    /// originally written by Fullerton W. (LANL) to C++.
     /// </remarks>
     public static int initds(double[] os, int nos, double eta)
     {
@@ -81,27 +82,25 @@ namespace Altaxo.Calc
     #region dcsevl
 
     /// <summary>
-    /// Evaluate the n-term Chebyshev series cs at x.  Adapted from
-    /// a method presented in the paper by Broucke referenced below.
+    /// Evaluates the <paramref name="n"/>-term Chebyshev series <paramref name="cs"/> at <paramref name="x"/>.
     /// </summary>
-    /// <param name="x">Value at which the series is to be evaluated. </param>
-    /// <param name="cs">cs   array of n terms of a Chebyshev series. In evaluating
-    /// cs, only half the first coefficient is summed.
+    /// <param name="x">Value at which the series is to be evaluated.</param>
+    /// <param name="cs">
+    /// Array of <paramref name="n"/> terms of a Chebyshev series. In evaluating the series, only half the first coefficient is summed.
     /// </param>
-    /// <param name="n">number of terms in array cs.</param>
-    /// <returns>The n-term Chebyshev series cs at x.</returns>
+    /// <param name="n">Number of terms in array <paramref name="cs"/>.</param>
+    /// <returns>The value of the <paramref name="n"/>-term Chebyshev series <paramref name="cs"/> at <paramref name="x"/>.</returns>
     /// <remarks>
     /// References:
     ///
     /// R. Broucke, Ten subroutines for the manipulation of Chebyshev series,
-    /// Algorithm 446, Communications of the A.C.M. 16, (1973) pp. 254-256.
+    /// Algorithm 446, Communications of the A.C.M. 16 (1973), pp. 254-256.
     ///
-    /// L. Fox and I. B. Parker, Chebyshev Polynomials in
-    ///      Numerical Analysis, Oxford University Press, 1968,  page 56.
+    /// L. Fox and I. B. Parker, Chebyshev Polynomials in Numerical Analysis,
+    /// Oxford University Press, 1968, page 56.
     ///
-    /// This is a translation from the Fortran version of SLATEC, FNLIB,
-    /// CATEGORY C3A2, REVISION  920501, originally written by Fullerton W., (LANL)
-    /// to C++.
+    /// This is a translation from the Fortran version of SLATEC, FNLIB, CATEGORY C3A2, REVISION 920501,
+    /// originally written by Fullerton W. (LANL) to C++.
     /// </remarks>
     public static double dcsevl(double x, double[] cs, int n)
     {

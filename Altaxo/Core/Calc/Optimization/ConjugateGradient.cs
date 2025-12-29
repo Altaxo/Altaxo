@@ -36,10 +36,10 @@ using Altaxo.Calc.LinearAlgebra;
 
 namespace Altaxo.Calc.Optimization
 {
-  ///<summary>Nonlinear Preconditioned Conjugate Gradient Method</summary>
+  /// <summary>Nonlinear preconditioned conjugate gradient method.</summary>
   /// <remarks>
   /// <para>Copyright (c) 2003-2004, dnAnalytics Project. All rights reserved. See <a>http://www.dnAnalytics.net</a> for details.</para>
-  /// <para>Adopted to Altaxo (c) 2005 Dr. Dirk Lellinger.</para>
+  /// <para>Adopted for Altaxo (c) 2005 Dr. Dirk Lellinger.</para>
   /// </remarks>
   public class ConjugateGradient : FunctionMinimizeMethod
   {
@@ -63,27 +63,31 @@ namespace Altaxo.Calc.Optimization
 
 #nullable enable
 
-    ///<summary>Constructor for Conjugate Gradient Method. The constructor specifies the
-    /// costfunction and optionally user specified ending criteria and line search methods.</summary>
-    ///<param name="costfunction">Nonlinear cost function to minimize.</param>
-    ///<remarks>This class began as a port of CG+ by Guanghui Lui, Jorge Nocedal and Richard Waltz
-    /// to C#</remarks>
-    ///<seealso href="http://www.ece.northwestern.edu/~rwaltz/CG+.html">CG+</seealso>
+    /// <summary>
+    /// Initializes a new instance of the <see cref="ConjugateGradient"/> class.
+    /// </summary>
+    /// <param name="costfunction">Nonlinear cost function to minimize.</param>
+    /// <remarks>
+    /// This class began as a port of CG+ by Guanghui Lui, Jorge Nocedal and Richard Waltz to C#.
+    /// </remarks>
+    /// <seealso href="http://www.ece.northwestern.edu/~rwaltz/CG+.html">CG+</seealso>
     public ConjugateGradient(CostFunction costfunction)
       : this(costfunction, new EndCriteria()) { }
 
-    ///<summary>Constructor for Conjugate Gradient Method. The constructor specifies the
-    /// costfunction and optionally user specified ending criteria and line search methods.</summary>
-    ///<param name="costfunction">Nonlinear cost function to minimize.</param>
-    ///<param name="endcriteria">User specified ending criteria.</param>
+    /// <summary>
+    /// Initializes a new instance of the <see cref="ConjugateGradient"/> class.
+    /// </summary>
+    /// <param name="costfunction">Nonlinear cost function to minimize.</param>
+    /// <param name="endcriteria">User-specified ending criteria.</param>
     public ConjugateGradient(CostFunction costfunction, EndCriteria endcriteria)
       : this(costfunction, endcriteria, new SecantLineSearch(costfunction, endcriteria)) { }
 
-    ///<summary>Constructor for Conjugate Gradient Method. The constructor specifies the
-    /// costfunction and optionally user specified ending criteria and line search methods.</summary>
-    ///<param name="costfunction">Nonlinear cost function to minimize.</param>
-    ///<param name="endcriteria">User specified ending criteria.</param>
-    ///<param name="lsm">User specified line search method, defaults to Secant line search method</param>
+    /// <summary>
+    /// Initializes a new instance of the <see cref="ConjugateGradient"/> class.
+    /// </summary>
+    /// <param name="costfunction">Nonlinear cost function to minimize.</param>
+    /// <param name="endcriteria">User-specified ending criteria.</param>
+    /// <param name="lsm">User-specified line search method; defaults to the secant line search method.</param>
     public ConjugateGradient(CostFunction costfunction, EndCriteria endcriteria, LineSearchMethod lsm)
     {
       costFunction_ = costfunction;
@@ -91,8 +95,12 @@ namespace Altaxo.Calc.Optimization
       lineSearchMethod_ = lsm;
     }
 
-    ///<summary>Number of iterations between restarts.  Must be a non-negative number.  If 0 is
-    /// specified then the number of iterations between restart is the number of variables </summary>
+    /// <summary>
+    /// Gets or sets the number of iterations between restarts.
+    /// </summary>
+    /// <remarks>
+    /// Must be a non-negative number. If set to <c>0</c>, the number of iterations between restarts is the number of variables.
+    /// </remarks>
     public int RestartCount
     {
       get { return restartCount; }
@@ -105,17 +113,14 @@ namespace Altaxo.Calc.Optimization
       }
     }
 
-
-
-    ///<summary> Method Name </summary>
+    /// <inheritdoc/>
     public override string MethodName
     {
       get { return "Conjugate Gradient Method"; }
     }
 
-
-    ///<summary> Initialize the optimization method </summary>
-    ///<remarks> The use of this function is intended for testing/debugging purposes only </remarks>
+    /// <inheritdoc/>
+    /// <remarks>The use of this function is intended for testing/debugging purposes only.</remarks>
     public override void InitializeMethod(Vector<double> initialvector)
     {
       g = GradientEvaluation(initialvector);
@@ -152,8 +157,8 @@ namespace Altaxo.Calc.Optimization
       iterationTrialSteps_[0] = 1 / iterationGradientNorms_[0];
     }
 
-    ///<summary> Perform a single iteration of the optimization method </summary>
-    ///<remarks> The use of this function is intended for testing/debugging purposes only </remarks>
+    /// <inheritdoc/>
+    /// <remarks>The use of this function is intended for testing/debugging purposes only.</remarks>
     public override void IterateMethod()
     {
       Vector<double> d = iterationDirections_[endCriteria_.iterationCounter - 1];

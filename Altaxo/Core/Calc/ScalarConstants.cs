@@ -31,6 +31,13 @@ namespace Altaxo.Calc
   /// </summary>
   public class DoubleConstants
   {
+    /// <summary>
+    /// Initializes static members and computes the smallest positive <see cref="double"/> value representable by the runtime.
+    /// </summary>
+    /// <remarks>
+    /// The initialization determines the smallest positive value by repeatedly halving <see cref="double.Epsilon"/> until the
+    /// result underflows to zero.
+    /// </remarks>
     static DoubleConstants()
     {
       double d, e;
@@ -42,28 +49,28 @@ namespace Altaxo.Calc
     }
 
     /// <summary>
-    /// Represents the smallest positive number where 1+DBL_EPSILON is not equal to 1.
-    /// In the IEEE representation, this is 2^-52.
+    /// Represents the smallest positive number where <c>1 + DBL_EPSILON</c> is not equal to 1.
+    /// In the IEEE representation, this is <c>2^-52</c>.
     /// </summary>
     public const double DBL_EPSILON = 2.2204460492503130808e-16;
 
     /// <summary>
-    /// The smallest positive double number.
+    /// The smallest positive double-precision floating-point value.
     /// </summary>
     public static readonly double DBL_MIN;
 
     /// <summary>
-    /// The smallest positive double number.
+    /// The smallest positive double-precision floating-point value.
     /// </summary>
     public static readonly double SmallestPositiveValue;
 
     /// <summary>
-    /// The biggest positive double number.
+    /// The largest positive double-precision floating-point value.
     /// </summary>
     public const double DBL_MAX = double.MaxValue;
 
     /// <summary>
-    /// The value 2/sqrt(Pi).
+    /// The value <c>2 / sqrt(Pi)</c>.
     /// </summary>
     public const double M_2_SQRTPI = 1.1283791670955125738961589031216;
 
@@ -73,12 +80,12 @@ namespace Altaxo.Calc
     public const double sqrtpi = 1.77245385090551602729816748334115;
 
     /// <summary>
-    /// Square root of Epsilon.
+    /// Square root of <see cref="DBL_EPSILON"/>.
     /// </summary>
     private static readonly double sqeps = Math.Sqrt(DBL_EPSILON);
 
     /// <summary>
-    /// Square root of Epsilon. Since epsilon is 2^-52, this is 2^-26
+    /// Square root of <see cref="DBL_EPSILON"/>. Since epsilon is <c>2^-52</c>, this is <c>2^-26</c>.
     /// </summary>
     public const double SQRT_DBL_EPSILON = 1.4901161193847656250e-8;
   }

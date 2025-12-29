@@ -34,27 +34,37 @@ using System.Text;
 namespace Altaxo.Calc.Probability
 {
   /// <summary>
-  /// Vector of three random numbers distributed uniformly on the unit sphere.
+  /// Generates vectors of three random numbers distributed uniformly on the unit sphere.
   /// </summary>
-  /// <remarks><code>
-  /// Uses the algorithm of Marsaglia, Ann. Math. Stat 43, 645 (1972).
-  /// On average requires 2.25 deviates per vector and a square root calculation
+  /// <remarks>
+  /// <code>
+  /// Uses the algorithm of Marsaglia, Ann. Math. Stat. 43, 645 (1972).
+  /// On average, requires 2.25 deviates per vector and one square-root calculation.
+  /// 
   /// Vector of three random numbers (x,y,z) which are distributed uniformly
   /// on the unit sphere.
-  ///
-  /// Uses the algorithm of Marsaglia, Ann. Math. Stat 43, 645 (1972).
-  /// On average requires 2.25 deviates per vector and a square root calculation
-  /// </code></remarks>
-
+  /// </code>
+  /// </remarks>
   public class UnitSphereDistribution : Distribution
   {
+    /// <summary>
+    /// Scaling factor used to transform integer generator output into the interval [-1, 1].
+    /// </summary>
     protected double scale;
 
+    /// <summary>
+    /// Initializes a new instance of the <see cref="UnitSphereDistribution"/> class.
+    /// </summary>
     public UnitSphereDistribution()
       :
       this(new StandardGenerator())
     { }
 
+    /// <summary>
+    /// Initializes a new instance of the <see cref="UnitSphereDistribution"/> class using the specified
+    /// underlying random number generator.
+    /// </summary>
+    /// <param name="generator">The underlying random number generator.</param>
     public UnitSphereDistribution(Generator generator)
       : base(generator)
     {
@@ -62,11 +72,21 @@ namespace Altaxo.Calc.Probability
       ;
     }
 
+    /// <inheritdoc/>
+    /// <exception cref="NotSupportedException">
+    /// Always thrown; use <see cref="NextDoubles"/> instead.
+    /// </exception>
     public override double NextDouble()
     {
       throw new NotSupportedException("Use NextDoubles(out double x, out double y, out double z) instead of this method");
     }
 
+    /// <summary>
+    /// Generates the next point (x, y, z) uniformly distributed on the unit sphere.
+    /// </summary>
+    /// <param name="x">Receives the x-coordinate.</param>
+    /// <param name="y">Receives the y-coordinate.</param>
+    /// <param name="z">Receives the z-coordinate.</param>
     public void NextDoubles(out double x, out double y, out double z)
     {
       for (; ; )
@@ -85,31 +105,37 @@ namespace Altaxo.Calc.Probability
       }
     }
 
+    /// <inheritdoc/>
     public override double Minimum
     {
       get { throw new Exception("The method or operation is not implemented."); }
     }
 
+    /// <inheritdoc/>
     public override double Maximum
     {
       get { throw new Exception("The method or operation is not implemented."); }
     }
 
+    /// <inheritdoc/>
     public override double Mean
     {
       get { throw new Exception("The method or operation is not implemented."); }
     }
 
+    /// <inheritdoc/>
     public override double Median
     {
       get { throw new Exception("The method or operation is not implemented."); }
     }
 
+    /// <inheritdoc/>
     public override double Variance
     {
       get { throw new Exception("The method or operation is not implemented."); }
     }
 
+    /// <inheritdoc/>
     public override double[] Mode
     {
       get { throw new Exception("The method or operation is not implemented."); }

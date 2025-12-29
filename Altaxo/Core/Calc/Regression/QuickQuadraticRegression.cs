@@ -28,9 +28,12 @@ using System.Collections.Generic;
 namespace Altaxo.Calc.Regression
 {
   /// <summary>
-  /// Class for doing a quick and dirty regression of order 2 only returning the parameters A0, A1 and A2 as regression parameters.
-  /// Can not handle too big or too small input values.
+  /// Provides a fast, lightweight quadratic (order 2) regression that returns the parameters A0, A1, and A2.
   /// </summary>
+  /// <remarks>
+  /// This implementation is intended for quick evaluations and uses running sums.
+  /// Numerical precision is limited; it may not handle very large or very small input values well.
+  /// </remarks>
   public class QuickQuadraticRegression
   {
     private double _n;
@@ -62,7 +65,7 @@ namespace Altaxo.Calc.Regression
     }
 
     /// <summary>
-    /// Adds data points to the statistics.
+    /// Adds a sequence of data points to the regression.
     /// </summary>
     /// <param name="values">The data points to add.</param>
     public void AddRange(IEnumerable<(double x, double y)> values)
@@ -74,7 +77,7 @@ namespace Altaxo.Calc.Regression
     }
 
     /// <summary>
-    /// Returns the number of entries added.
+    /// Gets the number of entries added.
     /// </summary>
     public double N
     {
@@ -85,9 +88,10 @@ namespace Altaxo.Calc.Regression
     }
 
     /// <summary>
-    /// Gets the intercept value of the regression. Returns NaN if not enough data points entered.
+    /// Gets the intercept parameter (A0) of the quadratic regression.
     /// </summary>
-    /// <returns>The intercept value or NaN if not enough data points are entered.</returns>
+    /// <returns>The intercept parameter (A0).</returns>
+    /// <exception cref="InvalidOperationException">Thrown if fewer than three data points were added.</exception>
     public double GetA0()
     {
       if (_n < 3)
@@ -98,9 +102,10 @@ namespace Altaxo.Calc.Regression
     }
 
     /// <summary>
-    /// Gets the slope value of the regression. Returns NaN if not enough data points entered.
+    /// Gets the linear parameter (A1) of the quadratic regression.
     /// </summary>
-    /// <returns>The slope value or NaN if not enough data points are entered.</returns>
+    /// <returns>The linear parameter (A1).</returns>
+    /// <exception cref="InvalidOperationException">Thrown if fewer than three data points were added.</exception>
     public double GetA1()
     {
       if (_n < 3)
@@ -111,9 +116,10 @@ namespace Altaxo.Calc.Regression
     }
 
     /// <summary>
-    /// Gets the quadratic parameter of the regression. Returns NaN if not enough data points entered.
+    /// Gets the quadratic parameter (A2) of the quadratic regression.
     /// </summary>
-    /// <returns>The slope value or NaN if not enough data points are entered.</returns>
+    /// <returns>The quadratic parameter (A2).</returns>
+    /// <exception cref="InvalidOperationException">Thrown if fewer than three data points were added.</exception>
     public double GetA2()
     {
       if (_n < 3)
@@ -124,29 +130,37 @@ namespace Altaxo.Calc.Regression
     }
 
     /// <summary>
-    /// Returns the determinant of regression. If zero, not enough data points have been entered.
+    /// Gets the determinant of the normal-equation system.
     /// </summary>
-    /// <returns>The determinant of the regression.</returns>
+    /// <returns>The determinant of the regression system.</returns>
     public double GetDeterminant()
     {
       return _n * _sxx * _sxxxx - _sxx * _sxx * _sxx + 2 * _sx * _sxx * _sxxx - _n * _sxxx * _sxxx - _sx * _sx * _sxxxx;
     }
 
     /// <summary>
-    /// Gets the y value for a given x value. Note that in every call of this function the polynomial coefficients a0, a2, and a1 are calculated again.
-    /// For repeated calls, better use <see cref="GetYOfXFunction"/>, but note that this function represents the state of the regression at the time of this call.
+    /// Evaluates the fitted quadratic at the specified x value.
     /// </summary>
+    /// <remarks>
+    /// The polynomial coefficients A0, A1, and A2 are recomputed on each call.
+    /// For repeated evaluations, consider using <see cref="GetYOfXFunction"/>.
+    /// Note that the returned function represents the state of the regression at the time of the call.
+    /// </remarks>
     /// <param name="x">The x value.</param>
-    /// <returns>The y value at the value x.</returns>
+    /// <returns>The predicted y value at <paramref name="x"/>.</returns>
     public double GetYOfX(double x)
     {
       return (GetA2() * x + GetA1()) * x + GetA0();
     }
 
     /// <summary>
-    /// Returns a function to calculate y in dependence of x. Please note note that the returned function represents the state of the regression at the time of the call, i.e. subsequent additions of data does not change the function.
+    /// Creates a function that evaluates the fitted quadratic y(x).
     /// </summary>
-    /// <returns>A function to calculate y in dependence of x.</returns>
+    /// <remarks>
+    /// The returned function captures the regression parameters at the time this method is called.
+    /// Subsequent additions of data points do not change the returned function.
+    /// </remarks>
+    /// <returns>A function that computes y as a function of x.</returns>
     public Func<double, double> GetYOfXFunction()
     {
       var a0 = GetA0();
@@ -156,9 +170,11 @@ namespace Altaxo.Calc.Regression
     }
 
     /// <summary>
-    /// Get the residual sum of squares.
+    /// Gets the residual sum of squares.
     /// </summary>
-    /// <returns>The residual sum of squares, i.e. the sum of squared differences between original y and predicted y.</returns>
+    /// <returns>
+    /// The residual sum of squares, i.e. the sum of squared differences between the original y values and the predicted y values.
+    /// </returns>
     public double SumChiSquared()
     {
       var a0 = GetA0();
@@ -168,18 +184,18 @@ namespace Altaxo.Calc.Regression
     }
 
     /// <summary>
-    /// Returns the squared standard deviation of the regression.
+    /// Gets the estimated variance (squared standard deviation) of the regression.
     /// </summary>
-    /// <returns>The squared standard deviation (variance) of the regression.</returns>
+    /// <returns>The estimated variance of the regression.</returns>
     public double SigmaSquared()
     {
       return _n <= 3 ? double.NaN : SumChiSquared() / (_n - 3);
     }
 
     /// <summary>
-    /// Returns the standard deviation of the regression.
+    /// Gets the estimated standard deviation of the regression.
     /// </summary>
-    /// <returns>The standard deviation of the regression.</returns>
+    /// <returns>The estimated standard deviation of the regression.</returns>
     public double Sigma()
     {
       var ss = SigmaSquared();
@@ -187,9 +203,9 @@ namespace Altaxo.Calc.Regression
     }
 
     /// <summary>
-    /// Gets the R squared value (square of the correlation coefficient).
+    /// Gets the coefficient of determination (R²).
     /// </summary>
-    /// <returns>the R squared value (square of the correlation coefficient).</returns>
+    /// <returns>The coefficient of determination (R²).</returns>
     public double RSquared()
     {
       var SST = _syy - _sy * _sy / _n;
@@ -197,18 +213,18 @@ namespace Altaxo.Calc.Regression
     }
 
     /// <summary>
-    /// Gets the adjusted R squared value.
+    /// Gets the adjusted coefficient of determination (adjusted R²).
     /// </summary>
-    /// <returns>The adjusted R squared value.</returns>
+    /// <returns>The adjusted coefficient of determination (adjusted R²).</returns>
     public double AdjustedRSquared()
     {
       return _n <= 3 ? double.NaN : 1 - ((1 - RSquared()) * (_n - 1) / (_n - 3));
     }
 
     /// <summary>
-    /// Gets the covariance matrix.
+    /// Gets the covariance matrix of the fit parameters.
     /// </summary>
-    /// <returns>The covariance matrix.</returns>
+    /// <returns>The covariance matrix of the parameters (A0, A1, A2).</returns>
     public LinearAlgebra.Matrix<double> GetCovarianceMatrix()
     {
       var sq = SigmaSquared();
@@ -237,11 +253,13 @@ namespace Altaxo.Calc.Regression
     }
 
     /// <summary>
-    /// Gets the prediction variance in dependence on x.
+    /// Gets the prediction variance of y at the specified x value.
     /// </summary>
     /// <param name="x">The x value.</param>
-    /// <param name="covarianceMatrix">The covariance matrix. For repeated calls, get it in from <see cref="GetCovarianceMatrix"/>, otherwise, you can provide null.</param>
-    /// <returns>The prediction variance at the value x.</returns>
+    /// <param name="covarianceMatrix">
+    /// The covariance matrix. For repeated calls, obtain it once via <see cref="GetCovarianceMatrix"/>; otherwise, pass <see langword="null"/>.
+    /// </param>
+    /// <returns>The prediction variance at the value <paramref name="x"/>.</returns>
     public double GetYVarianceOfX(double x, LinearAlgebra.Matrix<double>? covarianceMatrix = null)
     {
       covarianceMatrix ??= GetCovarianceMatrix();
@@ -255,10 +273,12 @@ namespace Altaxo.Calc.Regression
     }
 
     /// <summary>
-    /// Gets the error of parameter A0.
+    /// Gets the standard error of parameter A0.
     /// </summary>
-    /// <param name="covarianceMatrix">The covariance matrix. For repeated calls, get it in from <see cref="GetCovarianceMatrix"/>, otherwise, you can provide null.</param>
-    /// <returns>The error of parameter A0.</returns>
+    /// <param name="covarianceMatrix">
+    /// The covariance matrix. For repeated calls, obtain it once via <see cref="GetCovarianceMatrix"/>; otherwise, pass <see langword="null"/>.
+    /// </param>
+    /// <returns>The standard error of parameter A0.</returns>
     public double GetA0Error(LinearAlgebra.Matrix<double>? covarianceMatrix = null)
     {
       covarianceMatrix ??= GetCovarianceMatrix();
@@ -267,10 +287,12 @@ namespace Altaxo.Calc.Regression
     }
 
     /// <summary>
-    /// Gets the error of parameter A1.
+    /// Gets the standard error of parameter A1.
     /// </summary>
-    /// <param name="covarianceMatrix">The covariance matrix.For repeated calls, get it in from <see cref="GetCovarianceMatrix"/>, otherwise, you can provide null.</param>
-    /// <returns>The error of parameter A1.</returns>
+    /// <param name="covarianceMatrix">
+    /// The covariance matrix. For repeated calls, obtain it once via <see cref="GetCovarianceMatrix"/>; otherwise, pass <see langword="null"/>.
+    /// </param>
+    /// <returns>The standard error of parameter A1.</returns>
     public double GetA1Error(LinearAlgebra.Matrix<double>? covarianceMatrix = null)
     {
       covarianceMatrix ??= GetCovarianceMatrix();
@@ -279,10 +301,12 @@ namespace Altaxo.Calc.Regression
     }
 
     /// <summary>
-    /// Gets the error of parameter A2.
+    /// Gets the standard error of parameter A2.
     /// </summary>
-    /// <param name="covarianceMatrix">The covariance matrix.For repeated calls, get it in from <see cref="GetCovarianceMatrix"/>, otherwise, you can provide null.</param>
-    /// <returns>The error of parameter A2.</returns>
+    /// <param name="covarianceMatrix">
+    /// The covariance matrix. For repeated calls, obtain it once via <see cref="GetCovarianceMatrix"/>; otherwise, pass <see langword="null"/>.
+    /// </param>
+    /// <returns>The standard error of parameter A2.</returns>
     public double GetA2Error(LinearAlgebra.Matrix<double>? covarianceMatrix = null)
     {
       covarianceMatrix ??= GetCovarianceMatrix();
@@ -291,11 +315,13 @@ namespace Altaxo.Calc.Regression
     }
 
     /// <summary>
-    /// Gets the mean prediction error of y in dependence on x.
+    /// Gets the mean prediction error of y at the specified x value.
     /// </summary>
     /// <param name="x">The x value.</param>
-    /// <param name="covarianceMatrix">The covariance matrix. For repeated calls, get it in from <see cref="GetCovarianceMatrix"/>, otherwise, you can provide null.</param>
-    /// <returns>The mean prediction error of y in dependence on x.</returns>
+    /// <param name="covarianceMatrix">
+    /// The covariance matrix. For repeated calls, obtain it once via <see cref="GetCovarianceMatrix"/>; otherwise, pass <see langword="null"/>.
+    /// </param>
+    /// <returns>The mean prediction error of y at <paramref name="x"/>.</returns>
     public double GetYErrorOfX(double x, LinearAlgebra.Matrix<double>? covarianceMatrix = null)
     {
       var variance = GetYVarianceOfX(x, covarianceMatrix);
@@ -303,12 +329,16 @@ namespace Altaxo.Calc.Regression
     }
 
     /// <summary>
-    /// Gets the confidence band of the prediction.
+    /// Gets the confidence band of the prediction at the specified x value.
     /// </summary>
     /// <param name="x">The x value.</param>
-    /// <param name="covarianceMatrix">The covariance matrix. For repeated calls, get it in from <see cref="GetCovarianceMatrix"/>, otherwise, you can provide null.</param>
-    /// <param name="confidenceLevel">The confidence level.</param>
-    /// <returns>The lower value of the confidence band, the mean value of the prediction, and the upper value of the confidence band.</returns>
+    /// <param name="covarianceMatrix">
+    /// The covariance matrix. For repeated calls, obtain it once via <see cref="GetCovarianceMatrix"/>; otherwise, pass <see langword="null"/>.
+    /// </param>
+    /// <param name="confidenceLevel">The confidence level (e.g. 0.95 for a 95% confidence band).</param>
+    /// <returns>
+    /// The lower value of the confidence band, the mean value of the prediction, and the upper value of the confidence band.
+    /// </returns>
     public (double yLower, double yMean, double yUpper) GetConfidenceBand(double x, double confidenceLevel, LinearAlgebra.Matrix<double>? covarianceMatrix = null)
     {
       covarianceMatrix ??= GetCovarianceMatrix();
@@ -319,11 +349,13 @@ namespace Altaxo.Calc.Regression
     }
 
     /// <summary>
-    /// Gets the confidence band of the prediction for multiple x-values.
+    /// Gets the confidence band of the prediction for multiple x values.
     /// </summary>
     /// <param name="xdata">The x values.</param>
-    /// <param name="confidenceLevel">The confidence level.</param>
-    /// <returns>Enumeration with the x values, the lower value of the confidence band, the mean value of the prediction, and the upper value of the confidence band.</returns>
+    /// <param name="confidenceLevel">The confidence level (e.g. 0.95 for a 95% confidence band).</param>
+    /// <returns>
+    /// An enumeration of tuples containing the x value, the lower confidence bound, the mean prediction, and the upper confidence bound.
+    /// </returns>
     public IEnumerable<(double x, double yLower, double yMean, double yUpper)> GetConfidenceBand(IEnumerable<double> xdata, double confidenceLevel)
     {
       var t = Altaxo.Calc.Probability.StudentsTDistribution.Quantile(1 - (0.5 * (1 - confidenceLevel)), _n - 3);

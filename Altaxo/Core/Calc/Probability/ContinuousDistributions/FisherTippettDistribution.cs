@@ -31,8 +31,8 @@ namespace Altaxo.Calc.Probability
   /// Provides generation of Fisher-Tippett distributed random numbers (also known as ExtremeValueDistribution).
   /// </summary>
   /// <remarks>
-  /// The implementation of the <see cref="FisherTippettDistribution"/> type bases upon information presented on
-  ///   <a href="http://en.wikipedia.org/wiki/Laplace_distribution">Wikipedia - Fisher-Tippett distribution</a>.
+  /// The implementation of the <see cref="FisherTippettDistribution"/> type is based on information presented on
+  /// <a href="http://en.wikipedia.org/wiki/Laplace_distribution">Wikipedia - Fisher-Tippett distribution</a>.
   /// </remarks>
   public class FisherTippettDistribution : ContinuousDistribution
   {
@@ -106,11 +106,22 @@ namespace Altaxo.Calc.Probability
     {
     }
 
+    /// <summary>
+    /// Initializes a new instance of the <see cref="FisherTippettDistribution"/> class with the given parameters.
+    /// </summary>
+    /// <param name="mu">The location parameter.</param>
+    /// <param name="alpha">The scale parameter.</param>
     public FisherTippettDistribution(double mu, double alpha)
       : this(mu, alpha, DefaultGenerator)
     {
     }
 
+    /// <summary>
+    /// Initializes a new instance of the <see cref="FisherTippettDistribution"/> class with the given parameters and generator.
+    /// </summary>
+    /// <param name="mu">The location parameter.</param>
+    /// <param name="alpha">The scale parameter.</param>
+    /// <param name="generator">A <see cref="Generator"/> object.</param>
     public FisherTippettDistribution(double mu, double alpha, Generator generator)
       : base(generator)
     {
@@ -121,6 +132,11 @@ namespace Altaxo.Calc.Probability
 
     #region instance methods
 
+    /// <summary>
+    /// Initializes the distribution with the specified parameters.
+    /// </summary>
+    /// <param name="mu">The location parameter.</param>
+    /// <param name="alpha">The scale parameter (must be positive).</param>
     public void Initialize(double mu, double alpha)
     {
       if (!IsValidMu(mu))
@@ -238,31 +254,55 @@ namespace Altaxo.Calc.Probability
 
     #region CdfPdfQuantile
 
+    /// <inheritdoc/>
     public override double CDF(double x)
     {
       return CDF(x, mu, alpha);
     }
 
+    /// <summary>
+    /// Returns the cumulative distribution function (CDF) for the Fisher-Tippett distribution.
+    /// </summary>
+    /// <param name="x">The function argument.</param>
+    /// <param name="alpha">The location parameter.</param>
+    /// <param name="beta">The scale parameter.</param>
+    /// <returns>The cumulative probability at <paramref name="x"/>.</returns>
     public static double CDF(double x, double alpha, double beta)
     {
       return Math.Exp(-Math.Exp(-(-alpha + x) / beta));
     }
 
+    /// <inheritdoc/>
     public override double PDF(double x)
     {
       return PDF(x, mu, alpha);
     }
 
+    /// <summary>
+    /// Returns the probability density function (PDF) for the Fisher-Tippett distribution.
+    /// </summary>
+    /// <param name="x">The function argument.</param>
+    /// <param name="alpha">The location parameter.</param>
+    /// <param name="beta">The scale parameter.</param>
+    /// <returns>The probability density at <paramref name="x"/>.</returns>
     public static double PDF(double x, double alpha, double beta)
     {
       return Math.Exp(-Math.Exp((alpha - x) / beta) + (alpha - x) / beta) / beta;
     }
 
+    /// <inheritdoc/>
     public override double Quantile(double p)
     {
       return Quantile(p, mu, alpha);
     }
 
+    /// <summary>
+    /// Returns the quantile function (inverse CDF) for the Fisher-Tippett distribution.
+    /// </summary>
+    /// <param name="p">Cumulative probability (0..1).</param>
+    /// <param name="alpha">The location parameter.</param>
+    /// <param name="beta">The scale parameter.</param>
+    /// <returns>The value <c>q</c> such that <c>CDF(q) == p</c>.</returns>
     public static double Quantile(double p, double alpha, double beta)
     {
       if (p < 0 || p > 1)

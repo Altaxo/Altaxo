@@ -32,10 +32,18 @@ using System.Text;
 
 namespace Altaxo.Calc.RootFinding
 {
+  /// <summary>
+  /// Represents a numeric interval used by root-finding algorithms.
+  /// </summary>
   public struct Range
   {
     private double Min, Max;
 
+    /// <summary>
+    /// Initializes a new instance of the <see cref="Range"/> struct.
+    /// </summary>
+    /// <param name="min">The lower bound of the range.</param>
+    /// <param name="max">The upper bound of the range.</param>
     public Range(double min, double max)
     {
       Min = min;
@@ -43,12 +51,22 @@ namespace Altaxo.Calc.RootFinding
     }
   }
 
+  /// <summary>
+  /// Exception thrown by root-finding algorithms when a root cannot be found or the accuracy goal is not reached.
+  /// </summary>
   public class RootFinderException : Exception
   {
     private int m_Iteration;
     private Range m_Range;
     private double m_Accuracy;
 
+    /// <summary>
+    /// Initializes a new instance of the <see cref="RootFinderException"/> class.
+    /// </summary>
+    /// <param name="message">The exception message.</param>
+    /// <param name="iteration">The iteration count at the time the error occurred.</param>
+    /// <param name="range">The range that was searched for a root.</param>
+    /// <param name="accuracy">The accuracy that was requested or achieved (depending on the algorithm).</param>
     public RootFinderException(string message, int iteration, Range range, double accuracy)
       : base(message)
     {
@@ -57,18 +75,27 @@ namespace Altaxo.Calc.RootFinding
       m_Accuracy = accuracy;
     }
 
+    /// <summary>
+    /// Gets or sets the iteration count at the time the error occurred.
+    /// </summary>
     public int Iteration
     {
       get { return m_Iteration; }
       set { m_Iteration = value; }
     }
 
+    /// <summary>
+    /// Gets or sets the range that was searched for a root.
+    /// </summary>
     public Range Range
     {
       get { return m_Range; }
       set { m_Range = value; }
     }
 
+    /// <summary>
+    /// Gets or sets the accuracy that was requested or achieved (depending on the algorithm).
+    /// </summary>
     public double Accuracy
     {
       get { return m_Accuracy; }

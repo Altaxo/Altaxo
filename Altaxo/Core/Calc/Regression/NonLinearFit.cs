@@ -88,6 +88,11 @@ namespace Altaxo.Calc.Regression
   {
     private const double DBL_EPSILON = 2.2204460492503131e-016;
 
+    /// <summary>
+    /// Returns the square of <paramref name="x"/>.
+    /// </summary>
+    /// <param name="x">The value.</param>
+    /// <returns><paramref name="x"/> squared.</returns>
     public static double sqr(double x)
     {
       return x * x;
@@ -95,11 +100,21 @@ namespace Altaxo.Calc.Regression
 
     /// <summary>
     /// User-supplied subroutine which calculates the functions to minimize.
-    /// Calculates <c>numberOfYs</c> functions dependent on <c>numberOfParameter</c> parameters and
-    /// returns the calculated y values in array <c>ys</c>. The value of <c>info</c> should
-    /// not be changed unless  the user wants to terminate execution of LevenbergMarquardtFit.
-    /// In this case set iflag to a negative integer.
     /// </summary>
+    /// <remarks>
+    /// Calculates <paramref name="numberOfYs"/> functions depending on <paramref name="numberOfParameter"/> parameters and
+    /// returns the resulting values in <paramref name="ys"/>.
+    /// The value of <paramref name="info"/> should not be changed unless the user wants to terminate execution of
+    /// <see cref="LevenbergMarquardtFit(LMFunction, double[], double[], double, CancellationToken, ref int)"/>.
+    /// In this case, set <paramref name="info"/> to a negative integer.
+    /// </remarks>
+    /// <param name="numberOfYs">The number of function values to compute.</param>
+    /// <param name="numberOfParameter">The number of parameters.</param>
+    /// <param name="parameter">The parameter vector.</param>
+    /// <param name="ys">The destination array that receives the computed function values.</param>
+    /// <param name="info">
+    /// Status flag that can be set by the callee to terminate execution (set to a negative integer).
+    /// </param>
     public delegate void LMFunction(
         int numberOfYs,
         int numberOfParameter,
@@ -108,26 +123,17 @@ namespace Altaxo.Calc.Regression
         ref int info);
 
     /// <summary>
-    /// The purpose of LevenbergMarquardtFit is to minimize the sum of the
-    /// squares of m nonlinear functions in n variables by a modification of the
-    /// Levenberg-Marquardt algorithm. This is done by using the more
-    /// general least-squares solver below. The user must provide a
-    /// subroutine which calculates the functions. The Jacobian is
-    /// then calculated by a forward-difference approximation.
+    /// Minimizes the sum of squares of <c>m</c> nonlinear functions in <c>n</c> variables using the Levenberg-Marquardt algorithm.
     /// </summary>
-    /// <param name="fcn">The user supplied function which provides the values to minimize.</param>
+    /// <param name="fcn">The user-supplied function that provides values to minimize.</param>
     /// <param name="xvec">
-    /// Array of length n containing the parameter vector. On input x must contain
-    /// an initial estimate of the solution vector. On output x
-    /// contains the final estimate of the solution vector.
+    /// Array of length <c>n</c> containing the parameter vector. On input, it must contain an initial estimate of the solution.
+    /// On output, it contains the final estimate of the solution.
     /// </param>
-    /// <param name="fvec">Output array of length m which contains the functions evaluated at the output x. </param>
+    /// <param name="fvec">Output array of length <c>m</c> which receives the function values evaluated at the output <paramref name="xvec"/>.</param>
     /// <param name="tol">
-    /// Nonnegative input variable. Termination occurs
-    /// when the algorithm estimates either that the relative
-    /// error in the sum of squares is at most tol or that
-    /// the relative error between x and the solution is at
-    /// most tol.
+    /// Nonnegative input variable. Termination occurs when the algorithm estimates either that the relative error in the sum of squares
+    /// is at most <paramref name="tol"/>, or that the relative error between <paramref name="xvec"/> and the solution is at most <paramref name="tol"/>.
     /// </param>
     /// <param name="cancellationToken">Token to cancel the fit.</param>
     /// <param name="info">
@@ -159,10 +165,9 @@ namespace Altaxo.Calc.Regression
     ///                   the approximate solution x is possible.
     /// </param>
     /// <remarks>
-    /// This is the most easy-to-use interface with the smallest number of
-    /// arguments. If you need more control over the minimization process and
-    /// auxilliary storage allocation you should use one of the interfaces
-    /// described below.
+    /// This is the easiest-to-use interface with the smallest number of arguments.
+    /// If you need more control over the minimization process and auxiliary storage allocation,
+    /// use one of the more general interfaces.
     /// </remarks>
     public static void LevenbergMarquardtFit(
         LMFunction fcn,
@@ -196,26 +201,18 @@ namespace Altaxo.Calc.Regression
     }
 
     /// <summary>
-    /// The purpose of LevenbergMarquardtFit is to minimize the sum of the
-    /// squares of m nonlinear functions in n variables by a modification of the
-    /// Levenberg-Marquardt algorithm. This is done by using the more
-    /// general least-squares solver below. The user must provide a
-    /// subroutine which calculates the functions. The Jacobian is
-    /// then calculated by a forward-difference approximation.
+    /// Minimizes the sum of squares of <c>m</c> nonlinear functions in <c>n</c> variables using the Levenberg-Marquardt algorithm,
+    /// using caller-provided work arrays.
     /// </summary>
-    /// <param name="fcn">The user supplied function which provides the values to minimize.</param>
+    /// <param name="fcn">The user-supplied function that provides values to minimize.</param>
     /// <param name="xvec">
-    /// Array of length n containing the parameter vector. On input x must contain
-    /// an initial estimate of the solution vector. On output x
-    /// contains the final estimate of the solution vector.
+    /// Array of length <c>n</c> containing the parameter vector. On input, it must contain an initial estimate of the solution.
+    /// On output, it contains the final estimate of the solution.
     /// </param>
-    /// <param name="fvec">Output array of length m which contains the functions evaluated at the output x. </param>
+    /// <param name="fvec">Output array of length <c>m</c> which receives the function values evaluated at the output <paramref name="xvec"/>.</param>
     /// <param name="tol">
-    /// Nonnegative input variable. Termination occurs
-    /// when the algorithm estimates either that the relative
-    /// error in the sum of squares is at most tol or that
-    /// the relative error between x and the solution is at
-    /// most tol.
+    /// Nonnegative input variable. Termination occurs when the algorithm estimates either that the relative error in the sum of squares
+    /// is at most <paramref name="tol"/>, or that the relative error between <paramref name="xvec"/> and the solution is at most <paramref name="tol"/>.
     /// </param>
     /// <param name="info">
     /// Info is an integer output variable. If the user has
@@ -245,21 +242,19 @@ namespace Altaxo.Calc.Regression
     ///         info = 7  tol is too small. No further improvement in
     ///                   the approximate solution x is possible.
     /// </param>
-    /// <param name="iwa">Integer working array of length n.</param>
-    /// <param name="diag"></param>
-    /// <param name="fjac"></param>
-    /// <param name="ipvt"></param>
-    /// <param name="qtf"></param>
-    /// <param name="wa1"></param>
-    /// <param name="wa2"></param>
-    /// <param name="wa3"></param>
-    /// <param name="wa4"></param>
+    /// <param name="iwa">Integer working array of length <c>n</c>.</param>
+    /// <param name="diag">Working array of length <c>n</c>. If <c>mode = 2</c> in the general interface, contains scaling factors.</param>
+    /// <param name="fjac">Working array for the Jacobian of length <c>m*n</c> (column-major).</param>
+    /// <param name="ipvt">Working array of length <c>n</c> containing pivot indices.</param>
+    /// <param name="qtf">Working array of length <c>n</c> containing the first <c>n</c> elements of <c>(Qᵀ)f</c>.</param>
+    /// <param name="wa1">Working array of length <c>n</c>.</param>
+    /// <param name="wa2">Working array of length <c>n</c>.</param>
+    /// <param name="wa3">Working array of length <c>n</c>.</param>
+    /// <param name="wa4">Working array of length <c>m</c>.</param>
     /// <param name="cancellationToken">Token to cancel the fit.</param>
     /// <remarks>
-    /// This is the most easy-to-use interface with the smallest number of
-    /// arguments. If you need more control over the minimization process and
-    /// auxilliary storage allocation you should use one of the interfaces
-    /// described below.
+    /// This is an easy-to-use interface with explicit auxiliary storage allocation.
+    /// If you need full control over the minimization process and auxiliary storage, use the most general interface.
     /// </remarks>
     public static void LevenbergMarquardtFit(
         LMFunction fcn,
@@ -277,15 +272,6 @@ namespace Altaxo.Calc.Regression
         double[] wa3,
         double[] wa4,
         CancellationToken cancellationToken)
-    //
-    //       iwa is an integer work array of length n.
-    //
-    //       wa is a work array of length lwa.
-    //
-    //       lwa is a positive integer input variable not less than
-    //         m*n+5*n+m.
-    //
-    //
     {
       int mode, nfev, maxfev, nprint;
       double factor, ftol, gtol, xtol, epsfcn;
@@ -323,6 +309,38 @@ namespace Altaxo.Calc.Regression
         info = 4;
     }
 
+    /// <summary>
+    /// Most general interface to the Levenberg-Marquardt algorithm.
+    /// </summary>
+    /// <param name="fcn">The user-supplied function that provides values to minimize.</param>
+    /// <param name="xvec">Parameter vector (input: initial estimate; output: final estimate).</param>
+    /// <param name="fvec">Output array that receives the evaluated function values at the output <paramref name="xvec"/>.</param>
+    /// <param name="ftol">Tolerance on the relative reduction of the sum of squares.</param>
+    /// <param name="xtol">Tolerance on the relative change in the solution.</param>
+    /// <param name="gtol">Tolerance on the orthogonality between the function vector and the Jacobian columns.</param>
+    /// <param name="maxfev">Maximum number of function evaluations.</param>
+    /// <param name="epsfcn">
+    /// Step-length control for the forward-difference Jacobian approximation. If less than machine precision, machine precision is assumed.
+    /// </param>
+    /// <param name="diag">Scaling factors for the variables (depending on <paramref name="mode"/>).</param>
+    /// <param name="mode">Scaling mode for variables (1: internal scaling; 2: use <paramref name="diag"/>).</param>
+    /// <param name="factor">Initial step bound scaling factor.</param>
+    /// <param name="nprint">Controls calling <paramref name="fcn"/> with <c>iflag = 0</c> for printing iterates.</param>
+    /// <param name="info">Output status code.</param>
+    /// <param name="nfev">On output, receives the number of calls to <paramref name="fcn"/>.</param>
+    /// <param name="fjac">Jacobian array (m-by-n, column-major). On output contains the final QR information.</param>
+    /// <param name="ldfjac">Leading dimension of <paramref name="fjac"/> (must be at least <paramref name="m"/>).</param>
+    /// <param name="ipvt">Pivot indices defining permutation matrix.</param>
+    /// <param name="qtf">The first <c>n</c> elements of <c>(Qᵀ)f</c>.</param>
+    /// <param name="wa1">Working array of length <c>n</c>.</param>
+    /// <param name="wa2">Working array of length <c>n</c>.</param>
+    /// <param name="wa3">Working array of length <c>n</c>.</param>
+    /// <param name="wa4">Working array of length <c>m</c>.</param>
+    /// <param name="cancellationToken">Token to cancel the fit.</param>
+    /// <remarks>
+    /// This overload provides full control over the minimization process and auxiliary storage allocation.
+    /// Prefer one of the simpler interfaces above unless you need that level of control.
+    /// </remarks>
     public static void LevenbergMarquardtFit(LMFunction fcn, double[] xvec, double[] fvec,
         double ftol, double xtol, double gtol,
         int maxfev, double epsfcn, double[] diag, int mode,
@@ -817,6 +835,21 @@ L300: // L300: error in the input parameters
         fcn(m, n, x, f, ref iflag);
     }
 
+    /// <summary>
+    /// Computes the Levenberg-Marquardt parameter for a constrained least-squares subproblem.
+    /// </summary>
+    /// <param name="n">The number of variables.</param>
+    /// <param name="r">Upper triangular matrix <c>R</c> from a QR factorization (stored column-major).</param>
+    /// <param name="ldr">Leading dimension of <paramref name="r"/>.</param>
+    /// <param name="ipvt">Permutation vector defining the pivoting.</param>
+    /// <param name="diag">Diagonal scaling matrix <c>D</c> (as a vector).</param>
+    /// <param name="qtb">The first <c>n</c> components of <c>(Qᵀ)b</c>.</param>
+    /// <param name="delta">Upper bound on the Euclidean norm of <c>D*x</c>.</param>
+    /// <param name="par">On input, an initial estimate of the parameter; on output, the final estimate.</param>
+    /// <param name="x">Output array that receives the least-squares solution.</param>
+    /// <param name="sdiag">Output array that receives the diagonal elements of the upper triangular matrix <c>S</c>.</param>
+    /// <param name="wa1">Working array of length <c>n</c>.</param>
+    /// <param name="wa2">Working array of length <c>n</c>.</param>
     public static void lmpar(int n, double[] r, int ldr, int[] ipvt, double[] diag, double[] qtb,
         double delta, ref double par, double[] x, double[] sdiag,
         double[] wa1, double[] wa2)
@@ -1087,8 +1120,18 @@ L220:
         par = 0.0;
     }
 
-    //static void qrslov (int n, double *r, int ldr, int *ipvt,
-    //        double *diag, double *qtb, double *x, double *sdiag, double *wa)
+    /// <summary>
+    /// Solves the constrained least-squares problem using information from a QR factorization with column pivoting.
+    /// </summary>
+    /// <param name="n">The number of variables.</param>
+    /// <param name="r">Upper triangular matrix <c>R</c> from a QR factorization (stored column-major).</param>
+    /// <param name="ldr">Leading dimension of <paramref name="r"/>.</param>
+    /// <param name="ipvt">Permutation vector defining the pivoting.</param>
+    /// <param name="diag">Diagonal elements of the matrix <c>D</c>.</param>
+    /// <param name="qtb">The first <c>n</c> components of <c>(Qᵀ)b</c>.</param>
+    /// <param name="x">Output array that receives the solution vector.</param>
+    /// <param name="sdiag">Output array that receives the diagonal elements of the matrix <c>S</c>.</param>
+    /// <param name="wa">Working array of length <c>n</c>.</param>
     public static void qrsolve(int n, double[] r, int ldr, int[] ipvt,
         double[] diag, double[] qtb, double[] x, double[] sdiag, double[] wa)
     //
@@ -1456,7 +1499,7 @@ L40:
           wa[k] = rdiag[k];
 L80:
           ;
-        }
+    }
 L100:
         rdiag[j] = -ajnorm;
       }
@@ -1663,24 +1706,19 @@ L130:
     /// to the m by n Jacobian matrix associated with a specified
     /// problem of m functions in n variables.
     /// </summary>
-    /// <param name="fcn">User-supplied subroutine which  calculates the functions</param>
-    /// <param name="m">m is a positive integer input variable set to the number of functions.</param>
-    /// <param name="n">n is a positive integer input variable set to the number of variables. n must not exceed m.</param>
-    /// <param name="x">x is an input array of length n containing the parameters.</param>
-    /// <param name="fvec">fvec is an input array of length m which must contain the functions evaluated at x. </param>
-    /// <param name="fjac">fjac is an output m by n array which contains the approximation to the Jacobian matrix evaluated at x.</param>
-    /// <param name="ldfjac">ldfjac is a positive integer input variable not less than m which specifies the leading dimension of the array fjac. </param>
-    /// <param name="iflag">iflag is an integer variable which can be used to terminate the execution of fdjac2. see description of fcn.</param>
+    /// <param name="fcn">User-supplied subroutine which calculates the functions.</param>
+    /// <param name="m">A positive integer input variable set to the number of functions.</param>
+    /// <param name="n">A positive integer input variable set to the number of variables. <paramref name="n"/> must not exceed <paramref name="m"/>.</param>
+    /// <param name="x">An input array of length <paramref name="n"/> containing the parameters.</param>
+    /// <param name="fvec">An input array of length <paramref name="m"/> containing the function values evaluated at <paramref name="x"/>.</param>
+    /// <param name="fjac">An output array (m-by-n, column-major) that receives the Jacobian approximation evaluated at <paramref name="x"/>.</param>
+    /// <param name="ldfjac">A positive integer input variable not less than <paramref name="m"/> specifying the leading dimension of <paramref name="fjac"/>.</param>
+    /// <param name="iflag">An integer variable which can be used to terminate the execution of <see cref="fdjac2"/>; see description of <paramref name="fcn"/>.</param>
     /// <param name="epsfcn">
-    /// epsfcn is an input variable used in determining a suitable
-    /// step length for the forward-difference approximation. this
-    /// approximation assumes that the relative errors in the
-    /// functions are of the order of epsfcn. if epsfcn is less
-    /// than the machine precision, it is assumed that the relative
-    /// errors in the functions are of the order of the machine
-    /// precision.
+    /// Input variable used to determine a suitable step length for the forward-difference approximation.
+    /// If less than machine precision, machine precision is assumed.
     /// </param>
-    /// <param name="wa">wa is a work array of length m.</param>
+    /// <param name="wa">Work array of length <paramref name="m"/>.</param>
     public static void fdjac2(
         LMFunction fcn,
         int m,
@@ -1887,20 +1925,21 @@ L130:
   gsl_vector_free (norm);
 
   return GSL_SUCCESS;
-}
+    }
 
 #endif
 
     /// <summary>
-    /// This will compute the covariances at a given parameter set xvec.
+    /// Computes parameter covariances at a given parameter set.
     /// </summary>
-    /// <param name="fcn">The function that was to minimize.</param>
+    /// <param name="fcn">The function to minimize.</param>
     /// <param name="x">Parameter vector.</param>
-    /// <param name="n">First dimension of the parameter vector.</param>
-    /// <param name="m">Second dimension of the parameter vector.</param>
-    /// <param name="covar">Array to hold the covariance matrix. Must be of dimension m*n.</param>
-    /// <param name="sumchisq">Outputs the sum of chi squared.</param>
-    /// <param name="sigmasq">Sigma squared.</param>
+    /// <param name="n">The number of observations (function values).</param>
+    /// <param name="m">The number of parameters (variables).</param>
+    /// <param name="covar">Array to hold the covariance matrix. Must be of dimension <c>m*m</c> (column-major).</param>
+    /// <param name="sumchisq">On output, receives the sum of chi-squared values (sum of squared residuals).</param>
+    /// <param name="sigmasq">On output, receives sigma squared (estimated variance factor).</param>
+    /// <returns>The rank of the approximate Hessian if successful; otherwise 0.</returns>
     public static int ComputeCovariances(LMFunction fcn, double[] x, int n, int m, double[] covar, out double sumchisq, out double sigmasq)
     {
       int info = 0;

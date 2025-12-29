@@ -31,9 +31,9 @@ namespace Altaxo.Calc.Probability
   /// Provides generation of continuous uniformly distributed random numbers.
   /// </summary>
   /// <remarks>
-  /// The implementation of the <see cref="ContinuousUniformDistribution"/> type bases upon information presented on
-  ///   <a href="http://en.wikipedia.org/wiki/Uniform_distribution_%28continuous%29">
-  ///   Wikipedia - Uniform distribution (continuous)</a>.
+  /// The implementation of the <see cref="ContinuousUniformDistribution"/> type is based on information presented on
+  /// <a href="http://en.wikipedia.org/wiki/Uniform_distribution_%28continuous%29">
+  /// Wikipedia - Uniform distribution (continuous)</a>.
   /// </remarks>
   public class ContinuousUniformDistribution : ContinuousDistribution
   {
@@ -108,11 +108,27 @@ namespace Altaxo.Calc.Probability
     {
     }
 
+    /// <summary>
+    /// Initializes a new instance of the <see cref="ContinuousUniformDistribution"/> class with the specified
+    ///   lower and upper bounds, using a <see cref="StandardGenerator"/> as underlying random number generator.
+    /// </summary>
+    /// <param name="lower">Lower bound of the distribution.</param>
+    /// <param name="upper">Upper bound of the distribution.</param>
     public ContinuousUniformDistribution(double lower, double upper)
       : this(lower, upper, DefaultGenerator)
     {
     }
 
+    /// <summary>
+    /// Initializes a new instance of the <see cref="ContinuousUniformDistribution"/> class with the specified
+    ///   lower and upper bounds, using the given <see cref="Generator"/> as underlying random number generator.
+    /// </summary>
+    /// <param name="lower">Lower bound of the distribution.</param>
+    /// <param name="upper">Upper bound of the distribution.</param>
+    /// <param name="generator">A <see cref="Generator"/> object.</param>
+    /// <exception cref="ArgumentNullException">
+    /// <paramref name="generator"/> is NULL (<see langword="Nothing"/> in Visual Basic).
+    /// </exception>
     public ContinuousUniformDistribution(double lower, double upper, Generator generator)
       : base(generator)
     {
@@ -123,6 +139,11 @@ namespace Altaxo.Calc.Probability
 
     #region instance methods
 
+    /// <summary>
+    /// Initializes the distribution with the specified lower and upper bounds.
+    /// </summary>
+    /// <param name="lower">Lower bound of the distribution.</param>
+    /// <param name="upper">Upper bound of the distribution.</param>
     public void Initialize(double lower, double upper)
     {
       if (!(lower <= upper))
@@ -244,11 +265,19 @@ namespace Altaxo.Calc.Probability
 
     #region CdfPdfQuantile
 
+    /// <inheritdoc/>
     public override double CDF(double z)
     {
       return CDF(z, alpha, beta);
     }
 
+    /// <summary>
+    /// Returns the cumulative distribution function (CDF) for the continuous uniform distribution.
+    /// </summary>
+    /// <param name="z">The function argument.</param>
+    /// <param name="low">Lower bound of the distribution.</param>
+    /// <param name="high">Upper bound of the distribution.</param>
+    /// <returns>The cumulative probability at <paramref name="z"/>.</returns>
     public static double CDF(double z, double low, double high)
     {
       if (z < low)
@@ -259,11 +288,19 @@ namespace Altaxo.Calc.Probability
         return (z - low) / (high - low);
     }
 
+    /// <inheritdoc/>
     public override double PDF(double z)
     {
       return PDF(z, alpha, beta);
     }
 
+    /// <summary>
+    /// Returns the probability density function (PDF) for the continuous uniform distribution.
+    /// </summary>
+    /// <param name="z">The function argument.</param>
+    /// <param name="low">Lower bound of the distribution.</param>
+    /// <param name="high">Upper bound of the distribution.</param>
+    /// <returns>The probability density at <paramref name="z"/>.</returns>
     public static double PDF(double z, double low, double high)
     {
       if (z < low)
@@ -274,11 +311,19 @@ namespace Altaxo.Calc.Probability
         return 1.0 / (high - low);
     }
 
+    /// <inheritdoc/>
     public override double Quantile(double p)
     {
       return Quantile(p, alpha, beta);
     }
 
+    /// <summary>
+    /// Returns the quantile function (inverse CDF) for the continuous uniform distribution.
+    /// </summary>
+    /// <param name="p">Cumulative probability (0..1).</param>
+    /// <param name="low">Lower bound of the distribution.</param>
+    /// <param name="high">Upper bound of the distribution.</param>
+    /// <returns>The value <c>q</c> such that <c>CDF(q) == p</c>.</returns>
     public static double Quantile(double p, double low, double high)
     {
       if (p < 0 || p > 1)

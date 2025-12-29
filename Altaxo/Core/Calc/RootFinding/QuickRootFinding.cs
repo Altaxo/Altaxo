@@ -34,14 +34,17 @@ namespace Altaxo.Calc.RootFinding
   public class QuickRootFinding
   {
     /// <summary>
-    /// Find the bracket of a root, i.e. values for x0 and x1, so that ysearch is inbetween f(x0) and f(x1). This is done be extension of the interval [x0,x1] either
-    /// to the left or the right side or both.
+    /// Finds a bracketing interval for a root by extending the interval <c>[x0, x1]</c>.
+    /// After completion, <paramref name="x0"/> and <paramref name="x1"/> define an interval such that
+    /// <paramref name="ysearch"/> lies between <c>f(x0)</c> and <c>f(x1)</c>.
     /// </summary>
-    /// <param name="func">The function used to evaluate the function values.</param>
-    /// <param name="ysearch">The value to find.</param>
-    /// <param name="x0">Starting parameter of x0, at the end the lower value of the bracket interval.</param>
-    /// <param name="x1">Starting parameter of x1, at the end the upper value of the bracket interval.</param>
-    /// <returns>True if a bracket interval was found. If such an interval could not be found, the return value is false.</returns>
+    /// <param name="func">Function used to evaluate the function values.</param>
+    /// <param name="ysearch">Value to locate within the function values (i.e. find x such that f(x) == ysearch).</param>
+    /// <param name="x0">Initial value of x0; on success, the lower bound of the bracketing interval.</param>
+    /// <param name="x1">Initial value of x1; on success, the upper bound of the bracketing interval.</param>
+    /// <returns>
+    /// <see langword="true"/> if a bracketing interval was found; otherwise <see langword="false"/>.
+    /// </returns>
     public static bool BracketRootByExtensionOnly(Func<double, double> func, double ysearch, ref double x0, ref double x1)
     {
       if (!(x0 != x1))
@@ -167,12 +170,26 @@ namespace Altaxo.Calc.RootFinding
 
     /* brent.c -- brent root finding algorithm */
 
+    /// <summary>
+    /// Internal state for Brent's root finding algorithm.
+    /// </summary>
     private struct brent_state_t
     {
       public double a, b, c, d, e;
       public double fa, fb, fc;
     }
 
+    /// <summary>
+    /// Initializes Brent's algorithm state for a bracketing interval.
+    /// </summary>
+    /// <param name="f">Function for which a root should be found.</param>
+    /// <param name="x_lower">Lower bound of the bracketing interval.</param>
+    /// <param name="x_upper">Upper bound of the bracketing interval.</param>
+    /// <param name="root">Initial root estimate.</param>
+    /// <param name="state">Initialized algorithm state.</param>
+    /// <returns>
+    /// <see langword="null"/> on success; otherwise an error describing why initialization failed.
+    /// </returns>
     private static GSL_ERROR?
     brent_init(Func<double, double> f, double x_lower, double x_upper, out double root, out brent_state_t state)
     {
@@ -203,6 +220,15 @@ namespace Altaxo.Calc.RootFinding
       return null;
     }
 
+    /// <summary>
+    /// Performs a single iteration step of Brent's root finding algorithm.
+    /// </summary>
+    /// <param name="state">Algorithm state.</param>
+    /// <param name="f">Function for which a root should be found.</param>
+    /// <param name="root">Updated root estimate.</param>
+    /// <param name="x_lower">Updated lower bound of the bracketing interval.</param>
+    /// <param name="x_upper">Updated upper bound of the bracketing interval.</param>
+    /// <returns><see langword="null"/> on success; otherwise an error.</returns>
     private static GSL_ERROR?
 brent_iterate(ref brent_state_t state, Func<double, double> f, out double root, ref double x_lower, ref double x_upper)
     {
@@ -357,11 +383,27 @@ brent_iterate(ref brent_state_t state, Func<double, double> f, out double root, 
       return null;
     }
 
+    /// <summary>
+    /// Finds a root of <paramref name="f"/> in the interval <c>[x0, x1]</c> using Brent's algorithm.
+    /// </summary>
+    /// <param name="f">Function for which a root should be found.</param>
+    /// <param name="x0">Lower bound of the bracketing interval.</param>
+    /// <param name="x1">Upper bound of the bracketing interval.</param>
+    /// <returns>The estimated root, or <see cref="double.NaN"/> if the method fails.</returns>
     public static double ByBrentsAlgorithm(Func<double, double> f, double x0, double x1)
     {
       return ByBrentsAlgorithm(f, x0, x1, 0, DoubleConstants.DBL_EPSILON);
     }
 
+    /// <summary>
+    /// Finds a root of <paramref name="f"/> in the interval <c>[x0, x1]</c> using Brent's algorithm.
+    /// </summary>
+    /// <param name="f">Function for which a root should be found.</param>
+    /// <param name="x0">Lower bound of the bracketing interval.</param>
+    /// <param name="x1">Upper bound of the bracketing interval.</param>
+    /// <param name="epsabs">Absolute convergence tolerance.</param>
+    /// <param name="epsrel">Relative convergence tolerance.</param>
+    /// <returns>The estimated root, or <see cref="double.NaN"/> if the method fails.</returns>
     public static double ByBrentsAlgorithm(Func<double, double> f, double x0, double x1, double epsabs, double epsrel)
     {
       if (ByBrentsAlgorithm(f, x0, x1, epsabs, epsrel, out var root) is null)
@@ -370,6 +412,18 @@ brent_iterate(ref brent_state_t state, Func<double, double> f, out double root, 
         return double.NaN;
     }
 
+    /// <summary>
+    /// Finds a root of <paramref name="f"/> in the interval <c>[x0, x1]</c> using Brent's algorithm.
+    /// </summary>
+    /// <param name="f">Function for which a root should be found.</param>
+    /// <param name="x0">Lower bound of the bracketing interval.</param>
+    /// <param name="x1">Upper bound of the bracketing interval.</param>
+    /// <param name="epsabs">Absolute convergence tolerance.</param>
+    /// <param name="epsrel">Relative convergence tolerance.</param>
+    /// <param name="root">On success, receives the estimated root.</param>
+    /// <returns>
+    /// <see langword="null"/> on success; otherwise an error describing why the method failed.
+    /// </returns>
     public static GSL_ERROR? ByBrentsAlgorithm(Func<double, double> f, double x0, double x1, double epsabs, double epsrel, out double root)
     {
       GSL_ERROR? err;
@@ -388,6 +442,17 @@ brent_iterate(ref brent_state_t state, Func<double, double> f, out double root, 
 
     #endregion Brents algorithm
 
+    /// <summary>
+    /// Tests whether the interval <c>[x_lower, x_upper]</c> is sufficiently small to declare convergence.
+    /// </summary>
+    /// <param name="x_lower">Lower bound of the interval.</param>
+    /// <param name="x_upper">Upper bound of the interval.</param>
+    /// <param name="epsabs">Absolute convergence tolerance.</param>
+    /// <param name="epsrel">Relative convergence tolerance.</param>
+    /// <returns>
+    /// <see langword="null"/> if the interval meets the requested tolerance; otherwise <see cref="GSL_ERROR.CONTINUE"/>
+    /// or an error describing invalid arguments.
+    /// </returns>
     private static GSL_ERROR? gsl_root_test_interval(double x_lower, double x_upper, double epsabs, double epsrel)
     {
       double abs_lower = Math.Abs(x_lower);

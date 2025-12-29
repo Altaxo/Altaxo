@@ -29,7 +29,7 @@ using Altaxo.Calc.LinearAlgebra;
 namespace Altaxo.Calc.Regression.Multivariate
 {
   /// <summary>
-  /// PLSRegression contains static methods for doing partial least squares regression analysis and prediction of the data.
+  /// Implements Partial Least Squares regression (PLS2) analysis and prediction.
   /// </summary>
   public class PLS2Regression : MultivariateRegression
   {
@@ -39,15 +39,21 @@ namespace Altaxo.Calc.Regression.Multivariate
     protected IExtensibleVector<double> _PRESS;
 #nullable enable
 
+    /// <summary>
+    /// Gets the predicted error sum of squares (PRESS) values accumulated during analysis.
+    /// </summary>
     public IReadOnlyList<double> PRESS { get { return _PRESS; } }
 
+    /// <inheritdoc/>
     public override IReadOnlyList<double> GetPRESSFromPreprocessed(IROMatrix<double> matrixX)
     {
       return _PRESS;
     }
 
+    /// <inheritdoc/>
     protected override MultivariateCalibrationModel InternalCalibrationModel { get { return _calib; } }
 
+    /// <inheritdoc/>
     public override void Reset()
     {
       _calib = new PLS2CalibrationModel();
@@ -55,11 +61,15 @@ namespace Altaxo.Calc.Regression.Multivariate
       base.Reset();
     }
 
+    /// <summary>
+    /// Gets the calibration model as a PLS2-specific calibration model interface.
+    /// </summary>
     public new IPLS2CalibrationModel CalibrationModel
     {
       get { return _calib; }
     }
 
+    /// <inheritdoc/>
     public override void SetCalibrationModel(IMultivariateCalibrationModel calib)
     {
       if (calib is PLS2CalibrationModel)
@@ -69,12 +79,12 @@ namespace Altaxo.Calc.Regression.Multivariate
     }
 
     /// <summary>
-    /// Creates an analyis from preprocessed spectra and preprocessed concentrations.
+    /// Creates a PLS2 regression from preprocessed spectra and preprocessed target variables.
     /// </summary>
-    /// <param name="matrixX">The spectral matrix (each spectrum is a row in the matrix). They must at least be centered.</param>
-    /// <param name="matrixY">The matrix of concentrations (each experiment is a row in the matrix). They must at least be centered.</param>
+    /// <param name="matrixX">The spectral matrix (each spectrum is a row in the matrix). It must at least be centered.</param>
+    /// <param name="matrixY">The matrix of target variables (each experiment is a row in the matrix). It must at least be centered.</param>
     /// <param name="maxFactors">Maximum number of factors for analysis.</param>
-    /// <returns>A regression object, which holds all the loads and weights neccessary for further calculations.</returns>
+    /// <returns>A regression instance containing the loads and weights necessary for further calculations.</returns>
     public static PLS2Regression CreateFromPreprocessed(IROMatrix<double> matrixX, IROMatrix<double> matrixY, int maxFactors)
     {
       var result = new PLS2Regression();
@@ -82,13 +92,7 @@ namespace Altaxo.Calc.Regression.Multivariate
       return result;
     }
 
-    /// <summary>
-    /// Creates an analyis from preprocessed spectra and preprocessed concentrations.
-    /// </summary>
-    /// <param name="matrixX">The spectral matrix (each spectrum is a row in the matrix). They must at least be centered.</param>
-    /// <param name="matrixY">The matrix of concentrations (each experiment is a row in the matrix). They must at least be centered.</param>
-    /// <param name="maxFactors">Maximum number of factors for analysis.</param>
-    /// <returns>A regression object, which holds all the loads and weights neccessary for further calculations.</returns>
+    /// <inheritdoc/>
     protected override void AnalyzeFromPreprocessedWithoutReset(IROMatrix<double> matrixX, IROMatrix<double> matrixY, int maxFactors)
     {
       int numberOfFactors = _calib.NumberOfFactors = Math.Min(matrixX.ColumnCount, maxFactors);
@@ -136,32 +140,32 @@ namespace Altaxo.Calc.Regression.Multivariate
         );
     }
 
-    /// <summary>
-    /// Calculates the prediction scores (for use withthe preprocessed spectra).
-    /// </summary>
-    /// <param name="numFactors">Number of factors used to calculate the prediction scores.</param>
-    /// <param name="predictionScores">Supplied matrix for holding the prediction scores.</param>
+    /// <inheritdoc/>
     protected override void InternalGetPredictionScores(int numFactors, IMatrix<double> predictionScores)
     {
       GetPredictionScoreMatrix(_calib.XLoads, _calib.YLoads, _calib.XWeights, _calib.CrossProduct, numFactors, predictionScores);
     }
 
+    /// <inheritdoc/>
     protected override void InternalGetXLeverageFromPreprocessed(IROMatrix<double> matrixX, int numFactors, IMatrix<double> xLeverage)
     {
       PLS2Regression.CalculateXLeverageFromPreprocessed(matrixX, _calib.XWeights, numFactors, xLeverage, 0);
     }
 
     /// <summary>
-    /// Partial least squares (PLS) decomposition of the matrizes X and Y.
+    /// Performs the Partial Least Squares (PLS2) decomposition of the matrices <paramref name="_X"/> and <paramref name="_Y"/>.
     /// </summary>
-    /// <param name="_X">The X ("spectrum") matrix, centered and preprocessed.</param>
-    /// <param name="_Y">The Y ("concentration") matrix (centered).</param>
-    /// <param name="numFactors">Number of factors to calculate.</param>
-    /// <param name="xLoads">Returns the matrix of eigenvectors of X. Should be initially empty.</param>
-    /// <param name="yLoads">Returns the matrix of eigenvectors of Y. Should be initially empty. </param>
-    /// <param name="W">Returns the matrix of weighting values. Should be initially empty.</param>
-    /// <param name="V">Returns the vector of cross products. Should be initially empty.</param>
-    /// <param name="PRESS">If not null, the PRESS value of each factor is stored (vertically) here. </param>
+    /// <param name="_X">The x (spectrum) matrix, centered and preprocessed.</param>
+    /// <param name="_Y">The y (target-variable) matrix (centered).</param>
+    /// <param name="numFactors">
+    /// On entry, the requested number of factors. On return, the number of factors actually used
+    /// (limited by the matrix dimensions).
+    /// </param>
+    /// <param name="xLoads">Receives the matrix of loadings of x. Should be initially empty.</param>
+    /// <param name="yLoads">Receives the matrix of loadings of y. Should be initially empty.</param>
+    /// <param name="W">Receives the matrix of x weight vectors. Should be initially empty.</param>
+    /// <param name="V">Receives the vector/matrix of cross products. Should be initially empty.</param>
+    /// <param name="PRESS">If not <see langword="null"/>, receives the PRESS value for each factor.</param>
     public static void ExecuteAnalysis(
       IROMatrix<double> _X, // matrix of spectra (a spectra is a row of this matrix)
       IROMatrix<double> _Y, // matrix of concentrations (a mixture is a row of this matrix)
@@ -290,6 +294,17 @@ namespace Altaxo.Calc.Regression.Multivariate
       } // for all factors
     }
 
+    /// <summary>
+    /// Predicts target variables and/or computes spectral residuals for preprocessed spectra.
+    /// </summary>
+    /// <param name="XU">Unknown spectrum or spectra (preprocessed; horizontally oriented).</param>
+    /// <param name="xLoads">X loadings matrix.</param>
+    /// <param name="yLoads">Y loadings matrix.</param>
+    /// <param name="W">X weighting matrix.</param>
+    /// <param name="V">Cross-product matrix.</param>
+    /// <param name="numFactors">Number of factors to use for prediction.</param>
+    /// <param name="predictedY">If not <see langword="null"/>, receives the predicted (centered) y values.</param>
+    /// <param name="spectralResiduals">If not <see langword="null"/>, receives spectral residual values.</param>
     public static void Predict(
       IROMatrix<double> XU, // unknown spectrum or spectra,  horizontal oriented
       IROMatrix<double> xLoads, // x-loads matrix
@@ -351,16 +366,18 @@ namespace Altaxo.Calc.Regression.Multivariate
     } // end partial-least-squares-predict
 
     /// <summary>
-    /// Get the prediction score matrix. To get the predictions, you have to multiply
-    /// the spectras to predict by this prediction score matrix (in case of a single y-variable), this is
-    /// simply the dot product.
+    /// Gets the prediction-score matrix.
     /// </summary>
-    /// <param name="xLoads">Matrix of spectral loads [factors,spectral bins].</param>
-    /// <param name="yLoads">Matrix of concentration loads[factors, number of concentrations].</param>
-    /// <param name="W">Matrix of spectral weightings [factors,spectral bins].</param>
-    /// <param name="V">Cross product matrix[1,factors].</param>
+    /// <remarks>
+    /// To obtain predictions, multiply the spectra to predict by this prediction-score matrix.
+    /// For a single y-variable this corresponds to a dot product.
+    /// </remarks>
+    /// <param name="xLoads">Matrix of spectral loadings [factors, spectral bins].</param>
+    /// <param name="yLoads">Matrix of target-variable loadings [factors, number of target variables].</param>
+    /// <param name="W">Matrix of spectral weightings [factors, spectral bins].</param>
+    /// <param name="V">Cross-product matrix [1, factors].</param>
     /// <param name="numFactors">Number of factors to use to calculate the score matrix.</param>
-    /// <param name="predictionScores">Output: the resulting score matrix[ spectral bins, numberOfConcentrations]</param>
+    /// <param name="predictionScores">Receives the resulting score matrix [spectral bins, number of target variables].</param>
     public static void GetPredictionScoreMatrix(
       IROMatrix<double> xLoads, // x-loads matrix
       IROMatrix<double> yLoads, // y-loads matrix
@@ -395,6 +412,14 @@ namespace Altaxo.Calc.Regression.Multivariate
       //MultiplySecondTransposed(XU,scores,predictedY);
     } // end partial-least-squares-predict
 
+    /// <summary>
+    /// Calculates the x leverage values (hat matrix diagonal) from preprocessed spectra.
+    /// </summary>
+    /// <param name="matrixX">Preprocessed spectra (a spectrum = a row in the matrix).</param>
+    /// <param name="W">Weighting matrix.</param>
+    /// <param name="numFactors">Number of factors to use.</param>
+    /// <param name="leverage">Matrix to receive leverage values (number of spectra rows by one or more columns).</param>
+    /// <param name="leverageColumn">Column index in <paramref name="leverage"/> to receive the result.</param>
     public static void CalculateXLeverageFromPreprocessed(
       IROMatrix<double> matrixX,
       IROMatrix<double> W, // weighting matrix

@@ -28,16 +28,23 @@ using System.Collections.Generic;
 namespace Altaxo.Calc.Probability
 {
   /// <summary>
-  /// Represents a maximum length sequence (MLS). Those sequences have a repeat length of 2^k-1, with k being an integer value (k=2..64).
-  /// This class allows the generation of sequences with a length of 2^2-1 up to 2^64-1.
+  /// Represents a maximum length sequence (MLS).
   /// </summary>
+  /// <remarks>
+  /// Maximum length sequences have a repeat period of 2^k - 1, with k being an integer value (k = 2..64).
+  /// This class allows generation of sequences with a length of 2^2 - 1 up to 2^64 - 1.
+  /// </remarks>
   public class MaximumLengthSequence
   {
     #region Tap values
 
     /// <summary>
-    /// Tap values for sequence lengths of 2^2-1 ... 2^64-1. The value at index k represents the tap value to generate a sequence of length 2^k-1. The values at index 0 and  1 are unused and set to zero.
+    /// Tap values for sequence lengths of 2^2 - 1 ... 2^64 - 1.
     /// </summary>
+    /// <remarks>
+    /// The value at index k represents the tap value to generate a sequence of length 2^k - 1.
+    /// The values at index 0 and 1 are unused and set to zero.
+    /// </remarks>
     public static readonly ulong[] TapValues = new ulong[]
     {
       0,
@@ -120,9 +127,14 @@ namespace Altaxo.Calc.Probability
     {
     }
 
-    /// <summary>Constructs a new instance of the <see cref="MaximumLengthSequence"/> class froms the number of stages (bits, flip-flops).</summary>
-    /// <param name="numberOfStages">The number of stages (2..64). The length of the resulting sequence is 2^numberOfStages-1.</param>
+    /// <summary>
+    /// Constructs a new instance of the <see cref="MaximumLengthSequence"/> class from the number of stages (bits, flip-flops).
+    /// </summary>
+    /// <param name="numberOfStages">
+    /// The number of stages (2..64). The length of the resulting sequence is 2^<paramref name="numberOfStages"/> - 1.
+    /// </param>
     /// <returns>The constructed instance of the <see cref="MaximumLengthSequence"/> class with the given number of stages.</returns>
+    /// <exception cref="ArgumentOutOfRangeException">Thrown when <paramref name="numberOfStages"/> is outside the range 2..64.</exception>
     public static MaximumLengthSequence FromNumberOfStages(int numberOfStages)
     {
       if (!(numberOfStages >= 2))
@@ -140,8 +152,13 @@ namespace Altaxo.Calc.Probability
       return result;
     }
 
-    /// <summary>Constructs a new instance of the <see cref="MaximumLengthSequence"/> class with a minimum length given by the argument.</summary>
-    /// <param name="sequenceLength">The minimum length of the binary sequency. If the provided value is not a number (2^k-1), the value will be rounded up to the next possible sequence length.</param>
+    /// <summary>
+    /// Constructs a new instance of the <see cref="MaximumLengthSequence"/> class with a minimum length given by the argument.
+    /// </summary>
+    /// <param name="sequenceLength">
+    /// The minimum length of the binary sequence. If the provided value is not of the form 2^k - 1, the value is rounded up to the next
+    /// possible sequence length.
+    /// </param>
     /// <returns>The constructed instance of the <see cref="MaximumLengthSequence"/> class with the given minimum sequence length.</returns>
     public static MaximumLengthSequence FromMinimumSequenceLength(int sequenceLength)
     {
@@ -151,8 +168,13 @@ namespace Altaxo.Calc.Probability
         return FromMinimumSequenceLength((ulong)sequenceLength);
     }
 
-    /// <summary>Constructs a new instance of the <see cref="MaximumLengthSequence"/> class with a minimum length given by the argument.</summary>
-    /// <param name="sequenceLength">The minimum length of the binary sequency. If the provided value is not a number (2^k-1), the value will be rounded up to the next possible sequence length.</param>
+    /// <summary>
+    /// Constructs a new instance of the <see cref="MaximumLengthSequence"/> class with a minimum length given by the argument.
+    /// </summary>
+    /// <param name="sequenceLength">
+    /// The minimum length of the binary sequence. If the provided value is not of the form 2^k - 1, the value is rounded up to the next
+    /// possible sequence length.
+    /// </param>
     /// <returns>The constructed instance of the <see cref="MaximumLengthSequence"/> class with the given minimum sequence length.</returns>
     public static MaximumLengthSequence FromMinimumSequenceLength(ulong sequenceLength)
     {
@@ -162,9 +184,14 @@ namespace Altaxo.Calc.Probability
       return FromNumberOfStages(stages);
     }
 
-    /// <summary>Constructs a new instance of the <see cref="MaximumLengthSequence"/> class from a tap value given by the argument.</summary>
-    /// <param name="tapValue">The tap value. A basic test of the validity of the tap value will be made, although it can not be guaranteed that the given tap value is able to generate a maximum length sequence. The highest set bit
-    /// of the tap value determines the length of the maximum length sequence.</param>
+    /// <summary>
+    /// Constructs a new instance of the <see cref="MaximumLengthSequence"/> class from a tap value.
+    /// </summary>
+    /// <param name="tapValue">
+    /// The tap value. A basic validity check is performed, although it cannot be guaranteed that the given tap value
+    /// is able to generate a maximum length sequence.
+    /// The highest set bit of the tap value determines the length of the maximum length sequence.
+    /// </param>
     /// <returns>The constructed instance of the <see cref="MaximumLengthSequence"/> class with the given tap value.</returns>
     public static MaximumLengthSequence FromTapValue(ulong tapValue)
     {
@@ -175,9 +202,17 @@ namespace Altaxo.Calc.Probability
       return result;
     }
 
-    /// <summary>Gets or sets the tap value. When setting the tap value, only basic tests will be made to ensure its validity.
-    /// Thus, it can not be fully ensured that the provided tap value will generate a maximum length sequence.</summary>
-    /// <value>The tap value. The highest bit that is set in the tap value determines the length of the maximum length sequence.</value>
+    /// <summary>
+    /// Gets or sets the tap value.
+    /// </summary>
+    /// <remarks>
+    /// When setting the tap value, only basic tests are performed to ensure its validity.
+    /// Thus, it cannot be fully ensured that the provided tap value will generate a maximum length sequence.
+    /// </remarks>
+    /// <value>
+    /// The tap value. The highest bit that is set in the tap value determines the length of the maximum length sequence.
+    /// </value>
+    /// <exception cref="ArgumentException">Thrown when the tap value fails the basic validity checks.</exception>
     public ulong TapValue
     {
       get
@@ -203,7 +238,9 @@ namespace Altaxo.Calc.Probability
       }
     }
 
-    /// <summary>Gets the length of the sequence. This is the repeat period of the sequence.</summary>
+    /// <summary>
+    /// Gets the length of the sequence (repeat period).
+    /// </summary>
     /// <value>The length of the sequence.</value>
     public ulong LongLength
     {
@@ -213,8 +250,16 @@ namespace Altaxo.Calc.Probability
       }
     }
 
-    /// <summary>Gets the length of the sequence as an <see cref="System.Int32"/> value. If the sequence length is greater than int.MaxValue, an <see cref="System.InvalidCastException"/> will be thrown.</summary>
+    /// <summary>
+    /// Gets the length of the sequence as an <see cref="int"/>.
+    /// </summary>
+    /// <remarks>
+    /// If the sequence length is greater than <see cref="int.MaxValue"/>, an <see cref="InvalidCastException"/> is thrown.
+    /// </remarks>
     /// <value>The length of the sequence.</value>
+    /// <exception cref="InvalidCastException">
+    /// Thrown when the sequence length cannot be represented as an <see cref="int"/>.
+    /// </exception>
     public int Length
     {
       get
@@ -225,7 +270,13 @@ namespace Altaxo.Calc.Probability
       }
     }
 
-    /// <summary>Gets the number of stages. This is the number of flip-flops that is needed to generate a maximum length sequence with discrete hardware. The sequence length is 2^numberOfStages-1.</summary>
+    /// <summary>
+    /// Gets the number of stages.
+    /// </summary>
+    /// <remarks>
+    /// This is the number of flip-flops that is needed to generate a maximum length sequence with discrete hardware.
+    /// The sequence length is 2^<see cref="NumberOfStages"/> - 1.
+    /// </remarks>
     public int NumberOfStages
     {
       get
@@ -234,9 +285,13 @@ namespace Altaxo.Calc.Probability
       }
     }
 
-    /// <summary>Gets the next possible sequence length that is equal to or greater than the provided <paramref name="sequenceLength"/>.</summary>
-    /// <param name="sequenceLength">The minimum length of the binary sequency. </param>
-    /// <returns>Next possible sequence length that is equal to or greater than the provided <paramref name="sequenceLength"/>.</returns>
+    /// <summary>
+    /// Gets the next possible sequence length that is greater than or equal to the provided <paramref name="sequenceLength"/>.
+    /// </summary>
+    /// <param name="sequenceLength">The minimum length of the binary sequence.</param>
+    /// <returns>
+    /// The next possible sequence length that is greater than or equal to the provided <paramref name="sequenceLength"/>.
+    /// </returns>
     public static int GetSequenceLengthFromMinimumSequenceLength(int sequenceLength)
     {
       var result = sequenceLength;
@@ -248,9 +303,13 @@ namespace Altaxo.Calc.Probability
     }
 
 #pragma warning disable CA3002  // Function is not CLS-compliant
-    /// <summary>Gets the next possible sequence length that is equal to or greater than the provided <paramref name="sequenceLength"/>.</summary>
-    /// <param name="sequenceLength">The minimum length of the binary sequency. </param>
-    /// <returns>Next possible sequence length that is equal to or greater than the provided <paramref name="sequenceLength"/>.</returns>
+    /// <summary>
+    /// Gets the next possible sequence length that is greater than or equal to the provided <paramref name="sequenceLength"/>.
+    /// </summary>
+    /// <param name="sequenceLength">The minimum length of the binary sequence.</param>
+    /// <returns>
+    /// The next possible sequence length that is greater than or equal to the provided <paramref name="sequenceLength"/>.
+    /// </returns>
     public static ulong GetSequenceLengthFromMinimumSequenceLength(ulong sequenceLength)
     {
       var result = sequenceLength;
@@ -271,11 +330,16 @@ namespace Altaxo.Calc.Probability
 
     #region Instance sequence getters
 
-    /// <summary>Gets the sequence. The enumeration stops after yielding n values, with n being the sequence length.</summary>
+    /// <summary>
+    /// Gets the sequence. The enumeration stops after yielding n values, where n is the sequence length.
+    /// </summary>
     /// <typeparam name="T">Designates the type of the members of the sequence.</typeparam>
     /// <param name="logicalZero">The value that is returned if the value of the binary sequence is logical zero.</param>
     /// <param name="logicalOne">The value that is returned if the value of the binary sequence is logical one.</param>
-    /// <returns>Values of the maximum length sequence, where a logical value of zero is mapped to the parameter <paramref name="logicalZero"/> and a logical one is mapped to <paramref name="logicalOne"/>.</returns>
+    /// <returns>
+    /// Values of the maximum length sequence, where a logical value of zero is mapped to the parameter
+    /// <paramref name="logicalZero"/> and a logical one is mapped to <paramref name="logicalOne"/>.
+    /// </returns>
     public IEnumerable<T> GetSequence<T>(T logicalZero, T logicalOne)
     {
       if (_sequenceLength <= uint.MaxValue)
@@ -284,12 +348,20 @@ namespace Altaxo.Calc.Probability
         return GetSequence64<T>(_sequenceLength, _tap, _sequenceLength, logicalZero, logicalOne);
     }
 
-    /// <summary>Gets the sequence. The enumeration stops after yielding n values, with n being the sequence length.</summary>
+    /// <summary>
+    /// Gets the sequence. The enumeration stops after yielding n values, where n is the sequence length.
+    /// </summary>
     /// <typeparam name="T">Designates the type of the members of the sequence.</typeparam>
     /// <param name="logicalZero">The value that is returned if the value of the binary sequence is logical zero.</param>
     /// <param name="logicalOne">The value that is returned if the value of the binary sequence is logical one.</param>
-    /// <param name="startValue">The initial value of the sequence. Normally, this value is initialized with the value of the sequence length. Here you can provide any other value that is non-zero when and-ing it with the sequence length.</param>
-    /// <returns>Values of the maximum length sequence, where a logical value of zero is mapped to the parameter <paramref name="logicalZero"/> and a logical one is mapped to <paramref name="logicalOne"/>.</returns>
+    /// <param name="startValue">
+    /// The initial value of the sequence. Normally, this value is initialized with the value of the sequence length.
+    /// Here you can provide any other value that is non-zero when AND-ing it with the sequence length.
+    /// </param>
+    /// <returns>
+    /// Values of the maximum length sequence, where a logical value of zero is mapped to the parameter
+    /// <paramref name="logicalZero"/> and a logical one is mapped to <paramref name="logicalOne"/>.
+    /// </returns>
     public IEnumerable<T> GetSequence<T>(T logicalZero, T logicalOne, ulong startValue)
     {
       if (_sequenceLength <= uint.MaxValue)
@@ -298,11 +370,20 @@ namespace Altaxo.Calc.Probability
         return GetSequence64<T>(_sequenceLength, _tap, startValue, logicalZero, logicalOne);
     }
 
-    /// <summary>Gets the sequence. The enumeration never stops, thus you are resonsible for stopping it. The values are repeated after n values, where n is the <see cref="Length"/>.</summary>
+    /// <summary>
+    /// Gets the sequence.
+    /// </summary>
+    /// <remarks>
+    /// The enumeration never stops; you are responsible for stopping it.
+    /// The values are repeated after n values, where n is the <see cref="Length"/>.
+    /// </remarks>
     /// <typeparam name="T">Designates the type of the members of the sequence.</typeparam>
     /// <param name="logicalZero">The value that is returned if the value of the binary sequence is logical zero.</param>
     /// <param name="logicalOne">The value that is returned if the value of the binary sequence is logical one.</param>
-    /// <returns>Values of the maximum length sequence, where a logical value of zero is mapped to the parameter <paramref name="logicalZero"/> and a logical one is mapped to <paramref name="logicalOne"/>.</returns>
+    /// <returns>
+    /// Values of the maximum length sequence, where a logical value of zero is mapped to the parameter
+    /// <paramref name="logicalZero"/> and a logical one is mapped to <paramref name="logicalOne"/>.
+    /// </returns>
     public IEnumerable<T> GetInfiniteSequence<T>(T logicalZero, T logicalOne)
     {
       if (_sequenceLength <= uint.MaxValue)
@@ -311,12 +392,24 @@ namespace Altaxo.Calc.Probability
         return GetInfiniteSequence64<T>(_sequenceLength, _tap, _sequenceLength, logicalZero, logicalOne);
     }
 
-    /// <summary>Gets the sequence. The enumeration never stops, thus you are resonsible for stopping it. The values are repeated after n values, where n is the <see cref="Length"/>.</summary>
+    /// <summary>
+    /// Gets the sequence.
+    /// </summary>
+    /// <remarks>
+    /// The enumeration never stops; you are responsible for stopping it.
+    /// The values are repeated after n values, where n is the <see cref="Length"/>.
+    /// </remarks>
     /// <typeparam name="T">Designates the type of the members of the sequence.</typeparam>
     /// <param name="logicalZero">The value that is returned if the value of the binary sequence is logical zero.</param>
     /// <param name="logicalOne">The value that is returned if the value of the binary sequence is logical one.</param>
-    /// <param name="startValue">The initial value of the sequence. Normally, this value is initialized with the value of the sequence length. Here you can provide any other value that is non-zero when and-ing it with the sequence length.</param>
-    /// <returns>Values of the maximum length sequence, where a logical value of zero is mapped to the parameter <paramref name="logicalZero"/> and a logical one is mapped to <paramref name="logicalOne"/>.</returns>
+    /// <param name="startValue">
+    /// The initial value of the sequence. Normally, this value is initialized with the value of the sequence length.
+    /// Here you can provide any other value that is non-zero when AND-ing it with the sequence length.
+    /// </param>
+    /// <returns>
+    /// Values of the maximum length sequence, where a logical value of zero is mapped to the parameter
+    /// <paramref name="logicalZero"/> and a logical one is mapped to <paramref name="logicalOne"/>.
+    /// </returns>
     public IEnumerable<T> GetInfiniteSequence<T>(T logicalZero, T logicalOne, ulong startValue)
     {
       if (_sequenceLength <= uint.MaxValue)
@@ -329,14 +422,23 @@ namespace Altaxo.Calc.Probability
 
     #region static 32 bit methods
 
-    /// <summary>Gets the sequence. The enumeration stops after yielding n values, with n being the sequence length.</summary>
+    /// <summary>
+    /// Gets the sequence. The enumeration stops after yielding n values, where n is the sequence length.
+    /// </summary>
     /// <typeparam name="T">Designates the type of the members of the sequence.</typeparam>
-    /// <param name="sequenceLength">Length of the sequence. Must be a number that is 2^k-1, where k is an integer value (k=2..32).</param>
-    /// <param name="tap">Tap value to generate the sequence. If you don't know what a tap value is, you should probably use the instance function <see cref="GetSequence{T}(T,T)"/>.</param>
-    /// <param name="startValue">The initial value of the sequence. Normally, this value is initialized with the value of the sequence length. Here you can provide any other value that is non-zero when and-ing it with the sequence length.</param>
+    /// <param name="sequenceLength">Length of the sequence. Must be a number that is 2^k - 1, where k is an integer value (k = 2..32).</param>
+    /// <param name="tap">Tap value to generate the sequence. If you do not know what a tap value is, you should probably use the instance method <see cref="GetSequence{T}(T,T)"/>.</param>
+    /// <param name="startValue">
+    /// The initial value of the sequence. Normally, this value is initialized with the value of the sequence length.
+    /// Here you can provide any other value that is non-zero when AND-ing it with the sequence length.
+    /// </param>
     /// <param name="logicalZero">The value that is returned if the value of the binary sequence is logical zero.</param>
     /// <param name="logicalOne">The value that is returned if the value of the binary sequence is logical one.</param>
-    /// <returns>Values of the maximum length sequence, where a logical value of zero is mapped to the parameter <paramref name="logicalZero"/> and a logical one is mapped to <paramref name="logicalOne"/>.</returns>
+    /// <returns>
+    /// Values of the maximum length sequence, where a logical value of zero is mapped to the parameter
+    /// <paramref name="logicalZero"/> and a logical one is mapped to <paramref name="logicalOne"/>.
+    /// </returns>
+    /// <exception cref="ArgumentOutOfRangeException">Thrown when <paramref name="startValue"/> AND <paramref name="sequenceLength"/> equals 0.</exception>
     public static IEnumerable<T> GetSequence32<T>(uint sequenceLength, uint tap, uint startValue, T logicalZero, T logicalOne)
     {
       uint upperbit = sequenceLength ^ (sequenceLength >> 1);
@@ -359,14 +461,27 @@ namespace Altaxo.Calc.Probability
       }
     }
 
-    /// <summary>Gets the sequence. The enumeration never stops, thus you are resonsible for stopping it. The values are repeated after n values, where n is the <see cref="Length"/>.</summary>
+    /// <summary>
+    /// Gets the sequence.
+    /// </summary>
+    /// <remarks>
+    /// The enumeration never stops; you are responsible for stopping it.
+    /// The values are repeated after n values, where n is the <see cref="Length"/>.
+    /// </remarks>
     /// <typeparam name="T">Designates the type of the members of the sequence.</typeparam>
-    /// <param name="sequenceLength">Length of the sequence. Must be a number that is 2^k-1, where k is an integer value (k=2..32).</param>
-    /// <param name="tap">Tap value to generate the sequence. If you don't know what a tap value is, you should probably use the instance function <see cref="GetSequence{T}(T,T)"/>.</param>
-    /// <param name="startValue">The initial value of the sequence. Normally, this value is initialized with the value of the sequence length. Here you can provide any other value that is non-zero when and-ing it with the sequence length.</param>
+    /// <param name="sequenceLength">Length of the sequence. Must be a number that is 2^k - 1, where k is an integer value (k = 2..32).</param>
+    /// <param name="tap">Tap value to generate the sequence. If you do not know what a tap value is, you should probably use the instance method <see cref="GetSequence{T}(T,T)"/>.</param>
+    /// <param name="startValue">
+    /// The initial value of the sequence. Normally, this value is initialized with the value of the sequence length.
+    /// Here you can provide any other value that is non-zero when AND-ing it with the sequence length.
+    /// </param>
     /// <param name="logicalZero">The value that is returned if the value of the binary sequence is logical zero.</param>
     /// <param name="logicalOne">The value that is returned if the value of the binary sequence is logical one.</param>
-    /// <returns>Values of the maximum length sequence, where a logical value of zero is mapped to the parameter <paramref name="logicalZero"/> and a logical one is mapped to <paramref name="logicalOne"/>.</returns>
+    /// <returns>
+    /// Values of the maximum length sequence, where a logical value of zero is mapped to the parameter
+    /// <paramref name="logicalZero"/> and a logical one is mapped to <paramref name="logicalOne"/>.
+    /// </returns>
+    /// <exception cref="ArgumentOutOfRangeException">Thrown when <paramref name="startValue"/> AND <paramref name="sequenceLength"/> equals 0.</exception>
     public static IEnumerable<T> GetInfiniteSequence32<T>(uint sequenceLength, uint tap, uint startValue, T logicalZero, T logicalOne)
     {
       uint upperbit = sequenceLength ^ (sequenceLength >> 1);
@@ -393,14 +508,23 @@ namespace Altaxo.Calc.Probability
 
     #region static 64 bit methods
 
-    /// <summary>Gets the sequence. The enumeration stops after yielding n values, with n being the sequence length.</summary>
+    /// <summary>
+    /// Gets the sequence. The enumeration stops after yielding n values, where n is the sequence length.
+    /// </summary>
     /// <typeparam name="T">Designates the type of the members of the sequence.</typeparam>
-    /// <param name="sequenceLength">Length of the sequence. Must be a number that is 2^k-1, where k is an integer value (k=2..64).</param>
-    /// <param name="tap">Tap value to generate the sequence. If you don't know what a tap value is, you should probably use the instance function <see cref="GetSequence{T}(T,T)"/>.</param>
-    /// <param name="startValue">The initial value of the sequence. Normally, this value is initialized with the value of the sequence length. Here you can provide any other value that is non-zero when and-ing it with the sequence length.</param>
+    /// <param name="sequenceLength">Length of the sequence. Must be a number that is 2^k - 1, where k is an integer value (k = 2..64).</param>
+    /// <param name="tap">Tap value to generate the sequence. If you do not know what a tap value is, you should probably use the instance method <see cref="GetSequence{T}(T,T)"/>.</param>
+    /// <param name="startValue">
+    /// The initial value of the sequence. Normally, this value is initialized with the value of the sequence length.
+    /// Here you can provide any other value that is non-zero when AND-ing it with the sequence length.
+    /// </param>
     /// <param name="logicalZero">The value that is returned if the value of the binary sequence is logical zero.</param>
     /// <param name="logicalOne">The value that is returned if the value of the binary sequence is logical one.</param>
-    /// <returns>Values of the maximum length sequence, where a logical value of zero is mapped to the parameter <paramref name="logicalZero"/> and a logical one is mapped to <paramref name="logicalOne"/>.</returns>
+    /// <returns>
+    /// Values of the maximum length sequence, where a logical value of zero is mapped to the parameter
+    /// <paramref name="logicalZero"/> and a logical one is mapped to <paramref name="logicalOne"/>.
+    /// </returns>
+    /// <exception cref="ArgumentOutOfRangeException">Thrown when <paramref name="startValue"/> AND <paramref name="sequenceLength"/> equals 0.</exception>
     public static IEnumerable<T> GetSequence64<T>(ulong sequenceLength, ulong tap, ulong startValue, T logicalZero, T logicalOne)
     {
       ulong upperbit = sequenceLength ^ (sequenceLength >> 1);
@@ -424,14 +548,27 @@ namespace Altaxo.Calc.Probability
       }
     }
 
-    /// <summary>Gets the sequence. The enumeration never stops, thus you are resonsible for stopping it. The values are repeated after n values, where n is the <see cref="Length"/>.</summary>
+    /// <summary>
+    /// Gets the sequence.
+    /// </summary>
+    /// <remarks>
+    /// The enumeration never stops; you are responsible for stopping it.
+    /// The values are repeated after n values, where n is the <see cref="Length"/>.
+    /// </remarks>
     /// <typeparam name="T">Designates the type of the members of the sequence.</typeparam>
-    /// <param name="sequenceLength">Length of the sequence. Must be a number that is 2^k-1, where k is an integer value (k=2..64).</param>
-    /// <param name="tap">Tap value to generate the sequence. If you don't know what a tap value is, you should probably use the instance function <see cref="GetSequence{T}(T,T)"/>.</param>
-    /// <param name="startValue">The initial value of the sequence. Normally, this value is initialized with the value of the sequence length. Here you can provide any other value that is non-zero when and-ing it with the sequence length.</param>
+    /// <param name="sequenceLength">Length of the sequence. Must be a number that is 2^k - 1, where k is an integer value (k = 2..64).</param>
+    /// <param name="tap">Tap value to generate the sequence. If you do not know what a tap value is, you should probably use the instance method <see cref="GetSequence{T}(T,T)"/>.</param>
+    /// <param name="startValue">
+    /// The initial value of the sequence. Normally, this value is initialized with the value of the sequence length.
+    /// Here you can provide any other value that is non-zero when AND-ing it with the sequence length.
+    /// </param>
     /// <param name="logicalZero">The value that is returned if the value of the binary sequence is logical zero.</param>
     /// <param name="logicalOne">The value that is returned if the value of the binary sequence is logical one.</param>
-    /// <returns>Values of the maximum length sequence, where a logical value of zero is mapped to the parameter <paramref name="logicalZero"/> and a logical one is mapped to <paramref name="logicalOne"/>.</returns>
+    /// <returns>
+    /// Values of the maximum length sequence, where a logical value of zero is mapped to the parameter
+    /// <paramref name="logicalZero"/> and a logical one is mapped to <paramref name="logicalOne"/>.
+    /// </returns>
+    /// <exception cref="ArgumentOutOfRangeException">Thrown when <paramref name="startValue"/> AND <paramref name="sequenceLength"/> equals 0.</exception>
     public static IEnumerable<T> GetInfiniteSequence64<T>(ulong sequenceLength, ulong tap, ulong startValue, T logicalZero, T logicalOne)
     {
       ulong upperbit = sequenceLength ^ (sequenceLength >> 1);

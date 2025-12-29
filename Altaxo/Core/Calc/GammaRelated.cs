@@ -58,17 +58,17 @@ namespace Altaxo.Calc
     #region Common Constants
 
     /// <summary>
-    /// Represents the smallest number where 1+DBL_EPSILON is not equal to 1.
+    /// Represents the smallest number where 1 + <see cref="DBL_EPSILON"/> is not equal to 1.
     /// </summary>
     private const double DBL_EPSILON = 2.2204460492503131e-016;
 
     /// <summary>
-    /// The smallest positive number that can be represented by <see cref="System.Double"/>.
+    /// The smallest positive number that can be represented by <see cref="double"/>.
     /// </summary>
     private const double DBL_MIN = double.Epsilon;
 
     /// <summary>
-    /// The biggest positive number that can be represented by <see cref="System.Double"/>.
+    /// The largest positive number that can be represented by <see cref="double"/>.
     /// </summary>
     private const double DBL_MAX = double.MaxValue;
 
@@ -76,19 +76,32 @@ namespace Altaxo.Calc
 
     #region Helper functions
 
-    // Square
+    /// <summary>
+    /// Returns the square of <paramref name="x"/>.
+    /// </summary>
+    /// <param name="x">The input value.</param>
+    /// <returns><paramref name="x"/> squared.</returns>
     private static double sqr(double x)
     {
       return x * x;
     }
 
-    // round towards zero (Fortran convention)
+    /// <summary>
+    /// Rounds toward zero (Fortran convention).
+    /// </summary>
+    /// <param name="d">The input value.</param>
+    /// <returns>The value of <paramref name="d"/> truncated toward zero.</returns>
     private static double Dint(double d)
     {
       return (d < 0) ? Math.Ceiling(d) : Math.Floor(d);
     }
 
-    // modulus (Fortran convention)
+    /// <summary>
+    /// Computes the modulus using the Fortran convention.
+    /// </summary>
+    /// <param name="x">The dividend.</param>
+    /// <param name="y">The divisor.</param>
+    /// <returns>The remainder of <paramref name="x"/> divided by <paramref name="y"/> using the Fortran convention.</returns>
     private static double Dmod(double x, double y)
     {
       double quotient;
@@ -100,11 +113,11 @@ namespace Altaxo.Calc
     }
 
     /// <summary>
-    /// Return first number with sign of second number
+    /// Returns a value with the magnitude of <paramref name="x"/> and the sign of <paramref name="y"/>.
     /// </summary>
-    /// <param name="x">The first number.</param>
-    /// <param name="y">The second number whose sign is used.</param>
-    /// <returns>The first number x with the sign of the second argument y.</returns>
+    /// <param name="x">The value whose magnitude is used.</param>
+    /// <param name="y">The value whose sign is used.</param>
+    /// <returns>The value <paramref name="x"/> with the sign of <paramref name="y"/>.</returns>
     private static double CopySign(double x, double y)
     {
       return (y < 0) ? ((x < 0) ? x : -x) : ((x > 0) ? x : -x);
@@ -115,16 +128,16 @@ namespace Altaxo.Calc
     #region d9gmit
 
     /// <summary>
-    /// Compute Tricomi's incomplete Gamma function for small arguments.
+    /// Computes Tricomi's incomplete gamma function for small arguments.
     /// </summary>
-    /// <param name="a"></param>
-    /// <param name="x"></param>
-    /// <param name="algap1"></param>
-    /// <param name="sgngam"></param>
-    /// <returns></returns>
+    /// <param name="a">The parameter <c>a</c>.</param>
+    /// <param name="x">The argument <c>x</c> (must be &gt; 0).</param>
+    /// <param name="algap1">The value <c>ln(Gamma(a+1))</c> (or a related cached value used by the original algorithm).</param>
+    /// <param name="sgngam">The sign of <c>Gamma(a+1)</c>.</param>
+    /// <returns>Tricomi's incomplete gamma function value for the given arguments.</returns>
     /// <remarks>
     /// This is a translation from the Fortran version of D9LGIT, SLATEC, FNLIB,
-    /// CATEGORY C7E, REVISION 900720, originally written by Fullerton W.,(LANL)
+    /// CATEGORY C7E, REVISION 900720, originally written by Fullerton W. (LANL)
     /// to C++.
     /// </remarks>
     private static double d9gmit(double a, double x, double algap1, double sgngam)
@@ -202,6 +215,9 @@ L50:
 
     #region d9lgmc
 
+    /// <summary>
+    /// Helper implementation for <c>d9lgmc</c>: the log-gamma correction factor.
+    /// </summary>
     private class d9lgmc
     {
       private static readonly double[] algmcs =
@@ -227,14 +243,14 @@ L50:
       private static bool d9lgmc_first = true;
 
       /// <summary>
-      /// Compute the log gamma correction factor for x >= 10.0 so that
-      /// log (dgamma(x)) = log(sqrt(2*pi)) + (x-0.5)*log(x) - x + d9lgmc(x)
+      /// Computes the log-gamma correction factor for <paramref name="x"/> &gt;= 10.0 so that
+      /// <c>log(Gamma(x)) = log(sqrt(2*pi)) + (x-0.5)*log(x) - x + d9lgmc(x)</c>.
       /// </summary>
-      /// <param name="x">The function argument x.</param>
-      /// <returns>The log gamma correction factor for x>=10.0.</returns>
+      /// <param name="x">The function argument <c>x</c> (must be &gt;= 10).</param>
+      /// <returns>The log-gamma correction factor for <paramref name="x"/> &gt;= 10.0.</returns>
       /// <remarks>
       /// This is a translation from the Fortran version of SLATEC, FNLIB,
-      /// CATEGORY C7E, REVISION 900720, originally written by Fullerton W.,(LANL)
+      /// CATEGORY C7E, REVISION 900720, originally written by Fullerton W. (LANL)
       /// to C++.
       ///
       /// Series for ALGM       on the interval  0.          to  1.00000E-02
@@ -279,16 +295,16 @@ L20:
     #region d9lgic
 
     /// <summary>
-    /// Compute the log complementary incomplete Gamma function
-    /// for large x and for a&lt;=x.
+    /// Computes the logarithm of the complementary incomplete gamma function
+    /// for large <paramref name="x"/> and for <paramref name="a"/> &lt;= <paramref name="x"/>.
     /// </summary>
-    /// <param name="a"></param>
-    /// <param name="x"></param>
-    /// <param name="alx"></param>
-    /// <returns></returns>
+    /// <param name="a">The parameter <c>a</c>.</param>
+    /// <param name="x">The argument <c>x</c>.</param>
+    /// <param name="alx">The value <c>log(x)</c>.</param>
+    /// <returns>The logarithm of the complementary incomplete gamma function.</returns>
     /// <remarks>
     /// This is a translation from the Fortran version of D9LGIC, SLATEC, FNLIB,
-    /// CATEGORY C7E, REVISION 900720, originally written by Fullerton W.,(LANL)
+    /// CATEGORY C7E, REVISION 900720, originally written by Fullerton W. (LANL)
     /// to C++.
     /// </remarks>
     private static double d9lgic(double a, double x, double alx)
@@ -323,22 +339,25 @@ result:
 
     #region d9lgit
 
+    /// <summary>
+    /// Helper implementation for <c>d9lgit</c>: Perron's continued fraction for Tricomi's incomplete gamma function.
+    /// </summary>
     private class d9lgit
     {
       private static readonly double sqeps_d9lgit = Math.Sqrt(DBL_EPSILON);
       private const double eps_d9lgit = 0.25 * DBL_EPSILON;
 
       /// <summary>
-      /// Compute the logarithm of Tricomi's incomplete Gamma function
-      /// with Perron's continued fraction for large x and a >= x.
+      /// Computes the logarithm of Tricomi's incomplete gamma function using Perron's continued fraction
+      /// for large <paramref name="x"/> and <paramref name="a"/> &gt;= <paramref name="x"/>.
       /// </summary>
-      /// <param name="a"></param>
-      /// <param name="x"></param>
-      /// <param name="algap1"></param>
-      /// <returns></returns>
+      /// <param name="a">The parameter <c>a</c> (must satisfy <paramref name="a"/> &gt;= <paramref name="x"/>).</param>
+      /// <param name="x">The argument <c>x</c> (must be &gt; 0).</param>
+      /// <param name="algap1">The value <c>ln(Gamma(a+1))</c>.</param>
+      /// <returns>The logarithm of Tricomi's incomplete gamma function.</returns>
       /// <remarks>
       /// This is a translation from the Fortran version of D9LGIT, SLATEC, FNLIB,
-      /// CATEGORY C7E, REVISION 900720, originally written by Fullerton W.,(LANL)
+      /// CATEGORY C7E, REVISION 900720, originally written by Fullerton W. (LANL)
       /// to C++.
       /// </remarks>
       public static double f(double a, double x, double algap1)
@@ -433,15 +452,15 @@ result:
     private static double xmin_LogRel = 0.0;
 
     /// <summary>
-    /// LogRel(z) = log(1+z) with relative error accuracy near z = 0.
+    /// Computes <c>log(1 + x)</c> with relative error accuracy near <c>x = 0</c>.
     /// </summary>
-    /// <param name="x"></param>
-    /// <returns></returns>
+    /// <param name="x">The input value.</param>
+    /// <returns><c>log(1 + x)</c>, computed with improved accuracy near zero.</returns>
     /// <remarks>
-    /// June 1977 edition.   W. Fullerton, c3, Los Alamos Scientific Lab.
+    /// June 1977 edition. W. Fullerton, c3, Los Alamos Scientific Lab.
     ///
-    /// series for alnr       on the interval -3.75000e-01 to  3.75000e-01
-    ///                                        with weighted error   6.35e-32
+    /// Series for ALNR       on the interval -3.75000E-01 to  3.75000E-01
+    ///                                        with weighted error   6.35E-32
     ///                                         log weighted error  31.20
     ///                               significant figures required  30.93
     ///                                    decimal places required  32.01
@@ -472,6 +491,9 @@ result:
 
     #region d9gmic
 
+    /// <summary>
+    /// Helper implementation for <c>d9gmic</c>: complementary incomplete gamma for <c>a</c> near a negative integer and small <c>x</c>.
+    /// </summary>
     private class d9gmic
     {
       private const double euler_d9gmic = 0.5772156649015328606065120900824;
@@ -479,16 +501,16 @@ result:
       private const double eps_d9gmic = 0.25 * DBL_EPSILON;
 
       /// <summary>
-      /// Compute the complementary incomplete gamma function for a near
-      /// a negative integer and for small x.
+      /// Computes the complementary incomplete gamma function for <paramref name="a"/> near
+      /// a negative integer and for small <paramref name="x"/>.
       /// </summary>
-      /// <param name="a"></param>
-      /// <param name="x"></param>
-      /// <param name="alx"></param>
-      /// <returns></returns>
+      /// <param name="a">The parameter <c>a</c> (must be near a negative integer).</param>
+      /// <param name="x">The argument <c>x</c> (must be &gt; 0).</param>
+      /// <param name="alx">The value <c>log(x)</c>.</param>
+      /// <returns>The complementary incomplete gamma function value.</returns>
       /// <remarks>
       /// This is a translation from the Fortran version of D9GMIC, SLATEC, FNLIB,
-      /// CATEGORY C7E, REVISION 900720, originally written by Fullerton W.,(LANL)
+      /// CATEGORY C7E, REVISION 900720, originally written by Fullerton W. (LANL)
       /// to C++.
       ///
       /// Routines called: LnGamma(x)
@@ -571,27 +593,27 @@ L50:
 
     #region dgamlm
 
+    /// <summary>
+    /// Helper implementation for <c>dgamlm</c>: bounds for valid arguments of the gamma function.
+    /// </summary>
     private class dgamlm
     {
       private static readonly double alnsml = Math.Log(DBL_MIN);
       private static readonly double alnbig = Math.Log(DBL_MAX);
 
       /// <summary>
-      /// Calculate the minimum and maximum legal bounds for x in Gamma(x).
-      /// xmin and xmax are not the only bounds, but they are the only non-
-      /// trivial ones to calculate.
+      /// Calculates the minimum and maximum legal bounds for <c>x</c> in <c>Gamma(x)</c>.
+      /// <paramref name="xmin"/> and <paramref name="xmax"/> are not the only bounds, but they are the only non-trivial ones to calculate.
       /// </summary>
       /// <param name="xmin">
-      /// double precision minimum legal value of x in gamma(x).  Any
-      /// smaller value of x might result in underflow.
+      /// On return, the minimum legal value of <c>x</c> in <c>Gamma(x)</c>. Any smaller value might underflow.
       /// </param>
       /// <param name="xmax">
-      ///   xmax  double precision maximum legal value of x in gamma(x).  Any
-      ///       larger value of x might cause overflow.
+      /// On return, the maximum legal value of <c>x</c> in <c>Gamma(x)</c>. Any larger value might overflow.
       /// </param>
       /// <remarks>
       /// This is a translation from the Fortran version of SLATEC, FNLIB,
-      /// CATEGORY C7A, R2 REVISION 900315, originally written by Fullerton W.,(LANL)
+      /// CATEGORY C7A, R2 REVISION 900315, originally written by Fullerton W. (LANL)
       /// to C++.
       /// </remarks>
       public static void f(out double xmin, out double xmax)
@@ -775,15 +797,13 @@ L20:
     #region Gamma
 
     /// <summary>
-    /// Gamma(x) calculates the double precision complete Gamma function
-    /// for double precision argument x.
+    /// Computes the complete gamma function for a given argument.
     /// </summary>
-    /// <param name="x">The function argument x.</param>
-    /// <returns>The Gamma function of the argument x.</returns>
+    /// <param name="x">The function argument.</param>
+    /// <returns>The gamma function of the argument <c>x</c>.</returns>
     /// <remarks>
-    /// <code>
     /// This is a translation from the Fortran version of SLATEC, FNLIB,
-    /// CATEGORY C7A, REVISION 920618, originally written by Fullerton W.,(LANL)
+    /// CATEGORY C7A, REVISION 920618, originally written by Fullerton W. (LANL)
     /// to C++.
     ///
     /// Series for GAM        on the interval  0.          to  1.00000E+00
@@ -791,23 +811,21 @@ L20:
     ///                                         log weighted error  31.24
     ///                               significant figures required  30.00
     ///                                    decimal places required  32.05
-    /// </code></remarks>
+    /// </remarks>
     public static double Gamma(double x)
     {
       return _Gamma.Gamma(x, false);
     }
 
     /// <summary>
-    /// Gamma(x) calculates the double precision complete Gamma function
-    /// for double precision argument x.
+    /// Computes the complete gamma function for a given argument.
     /// </summary>
-    /// <param name="x">The function argument x.</param>
+    /// <param name="x">The function argument.</param>
     /// <param name="bDebug">If true, an exception is thrown if serious errors occur. If false, NaN is returned on errors.</param>
-    /// <returns>The Gamma function of the argument x.</returns>
+    /// <returns>The gamma function of the argument <c>x</c>.</returns>
     /// <remarks>
-    /// <code>
     /// This is a translation from the Fortran version of SLATEC, FNLIB,
-    /// CATEGORY C7A, REVISION 920618, originally written by Fullerton W.,(LANL)
+    /// CATEGORY C7A, REVISION 920618, originally written by Fullerton W. (LANL)
     /// to C++.
     ///
     /// Series for GAM        on the interval  0.          to  1.00000E+00
@@ -815,7 +833,7 @@ L20:
     ///                                         log weighted error  31.24
     ///                               significant figures required  30.00
     ///                                    decimal places required  32.05
-    /// </code></remarks>
+    /// </remarks>
     public static double Gamma(double x, bool bDebug)
     {
       return _Gamma.Gamma(x, bDebug);
@@ -874,15 +892,14 @@ L20:
       private static double xmin_Gamma, xmax_Gamma;
 
       /// <summary>
-      /// Gamma(x) calculates the double precision complete Gamma function
-      /// for double precision argument x.
+      /// Computes the complete gamma function for a given argument.
       /// </summary>
-      /// <param name="x">The function argument x.</param>
+      /// <param name="x">The function argument.</param>
       /// <param name="bDebug">If true, an exception is thrown if serious errors occur. If false, NaN is returned on errors.</param>
-      /// <returns>The Gamma function of the argument x.</returns>
+      /// <returns>The gamma function of the argument <c>x</c>.</returns>
       /// <remarks>
       /// This is a translation from the Fortran version of SLATEC, FNLIB,
-      /// CATEGORY C7A, REVISION 920618, originally written by Fullerton W.,(LANL)
+      /// CATEGORY C7A, REVISION 920618, originally written by Fullerton W. (LANL)
       /// to C++.
       ///
       /// Series for GAM        on the interval  0.          to  1.00000E+00
@@ -1009,13 +1026,13 @@ L50:
     #region Fac
 
     /// <summary>
-    /// Fac(n) calculates the double precision factorial for the integer argument n.
+    /// Computes the factorial for the integer argument <paramref name="n"/>.
     /// </summary>
-    /// <param name="n">The argument n.</param>
-    /// <returns>The factorial of n.</returns>
+    /// <param name="n">The argument <c>n</c>.</param>
+    /// <returns>The factorial of <c>n</c>.</returns>
     /// <remarks>
     /// This is a translation from the Fortran version of SLATEC, FNLIB,
-    /// CATEGORY C1, REVISION 900315, originally written by Fullerton W.,(LANL)
+    /// CATEGORY C1, REVISION 900315, originally written by Fullerton W. (LANL)
     /// to C++.
     /// </remarks>
     public static double Fac(int n)
@@ -1024,14 +1041,14 @@ L50:
     }
 
     /// <summary>
-    /// Fac(n) calculates the double precision factorial for the integer argument n.
+    /// Computes the factorial for the integer argument <paramref name="n"/>.
     /// </summary>
-    /// <param name="n">The argument n.</param>
+    /// <param name="n">The argument <c>n</c>.</param>
     /// <param name="bDebug">If true, an exception is thrown if serious errors occur. If false, NaN is returned on errors.</param>
-    /// <returns>The factorial of n.</returns>
+    /// <returns>The factorial of <c>n</c>.</returns>
     /// <remarks>
     /// This is a translation from the Fortran version of SLATEC, FNLIB,
-    /// CATEGORY C1, REVISION 900315, originally written by Fullerton W.,(LANL)
+    /// CATEGORY C1, REVISION 900315, originally written by Fullerton W. (LANL)
     /// to C++.
     /// </remarks>
     public static double Fac(int n, bool bDebug)
@@ -1081,14 +1098,14 @@ L50:
       private static double xmin_Fac, xmax_Fac;
 
       /// <summary>
-      /// Fac(n) calculates the double precision factorial for the integer argument n.
+      /// Computes the factorial for the integer argument <paramref name="n"/>.
       /// </summary>
-      /// <param name="n">The argument n.</param>
+      /// <param name="n">The argument <c>n</c>.</param>
       /// <param name="bDebug">If true, an exception is thrown if serious errors occur. If false, NaN is returned on errors.</param>
-      /// <returns>The factorial of n.</returns>
+      /// <returns>The factorial of <c>n</c>.</returns>
       /// <remarks>
       /// This is a translation from the Fortran version of SLATEC, FNLIB,
-      /// CATEGORY C1, REVISION 900315, originally written by Fullerton W.,(LANL)
+      /// CATEGORY C1, REVISION 900315, originally written by Fullerton W. (LANL)
       /// to C++.
       /// </remarks>
       public static double Fac(int n, bool bDebug)
@@ -1127,22 +1144,22 @@ L50:
     #region Binomial
 
     /// <summary>
-    /// Gives the binomial coefficient ( n over m).
+    /// Returns the binomial coefficient "n choose m".
     /// </summary>
-    /// <param name="n">First argument.</param>
-    /// <param name="m">Second argument.</param>
-    /// <returns>The binomial coefficient ( n over m).</returns>
+    /// <param name="n">The first argument.</param>
+    /// <param name="m">The second argument.</param>
+    /// <returns>The binomial coefficient "n choose m".</returns>
     public static double Binomial(double n, double m)
     {
       return Math.Exp(LogBinomial(n, m));
     }
 
     /// <summary>
-    /// Gives the natural logarithm of the binomial coefficient ( n over m).
+    /// Returns the natural logarithm of the binomial coefficient "n choose m".
     /// </summary>
-    /// <param name="n">First argument.</param>
-    /// <param name="m">Second argument.</param>
-    /// <returns>The natural logarithm of the binomial coefficient ( n over m).</returns>
+    /// <param name="n">The first argument.</param>
+    /// <param name="m">The second argument.</param>
+    /// <returns>The natural logarithm of the binomial coefficient "n choose m".</returns>
     public static double LogBinomial(double n, double m)
     {
       return GammaRelated.LnGamma(n + 1) - GammaRelated.LnGamma(m + 1) - GammaRelated.LnGamma(n - m + 1);
@@ -1153,14 +1170,13 @@ L50:
     #region RcpGamma
 
     /// <summary>
-    /// RcpGamma(x) calculates the double precision reciprocal of the
-    /// complete Gamma function for double precision argument x.
+    /// Calculates the reciprocal of the complete gamma function for argument <paramref name="x"/>.
     /// </summary>
-    /// <param name="x"></param>
-    /// <returns></returns>
+    /// <param name="x">The function argument <c>x</c>.</param>
+    /// <returns>The reciprocal of <c>Gamma(x)</c>.</returns>
     /// <remarks><code>
     /// This is a translation from the Fortran version of DGAMR, SLATEC, FNLIB,
-    /// CATEGORY C7A, REVISION 900727, originally written by Fullerton W.,(LANL)
+    /// CATEGORY C7A, REVISION 900727, originally written by Fullerton W. (LANL)
     /// to C++.
     ///
     /// Routines called:
@@ -1173,15 +1189,14 @@ L50:
     }
 
     /// <summary>
-    /// RcpGamma(x) calculates the double precision reciprocal of the
-    /// complete Gamma function for double precision argument x.
+    /// Calculates the reciprocal of the complete gamma function for argument <paramref name="x"/>.
     /// </summary>
-    /// <param name="x"></param>
+    /// <param name="x">The function argument <c>x</c>.</param>
     /// <param name="bDebug">If true, an exception is thrown if serious errors occur. If false, NaN is returned on errors.</param>
-    /// <returns></returns>
+    /// <returns>The reciprocal of <c>Gamma(x)</c>.</returns>
     /// <remarks><code>
     /// This is a translation from the Fortran version of DGAMR, SLATEC, FNLIB,
-    /// CATEGORY C7A, REVISION 900727, originally written by Fullerton W.,(LANL)
+    /// CATEGORY C7A, REVISION 900727, originally written by Fullerton W. (LANL)
     /// to C++.
     ///
     /// Routines called:
@@ -1243,13 +1258,13 @@ L50:
     /// when GammaI is very large or very small, because logarithmic variables
     /// are used.  The function and both arguments are double precision.
     /// </summary>
-    /// <param name="x">The function value x.</param>
-    /// <param name="a">The exponent.</param>
+    /// <param name="x">The function value <c>x</c>.</param>
+    /// <param name="a">The exponent parameter <c>a</c>.</param>
     /// <param name="bDebug">If true, an exception is thrown if serious errors occur. If false, NaN is returned on errors.</param>
-    /// <returns>The incomplete gamma function of x and a.</returns>
+    /// <returns>The incomplete gamma function of <paramref name="x"/> and <paramref name="a"/>.</returns>
     /// <remarks><code>
     /// This is a translation from the Fortran version of DGAMI, SLATEC, FNLIB,
-    /// CATEGORY C7E, REVISION 900315, originally written by Fullerton W.,(LANL)
+    /// CATEGORY C7E, REVISION 900315, originally written by Fullerton W. (LANL)
     /// to C++.
     ///
     /// Routines called:
@@ -1513,9 +1528,9 @@ L50:
     #region GammaIC
 
     /// <summary>
-    /// Evaluate the complementary incomplete Gamma function
+    /// Evaluate the complementary incomplete Gamma function.
     ///
-    ///   GammaIC(x,a) = integral from x to infinity of exp(-t) * t**(a-1)
+    /// <c>GammaIC(x,a) = integral from x to infinity of exp(-t) * t**(a-1)</c>
     ///
     /// GammaIC(x,a) is evaluated for arbitrary real values of A and for
     /// non-negative values of x (even though GammaIC is defined for x &lt; 0.0),
@@ -1564,30 +1579,20 @@ L50:
     /// <param name="x">The function argument.</param>
     /// <param name="a"></param>
     /// <param name="bDebug">If true, an exception is thrown if serious errors occur. If false, NaN is returned on errors.</param>
-    /// <returns>Complementary incomplete Gamma function of arguments x and a.</returns>
-    /// <remarks><code>
-    /// A slight deterioration of 2 or 3 digits accuracy will occur when
-    /// GammaIC is very large or very small in absolute value, because log-
-    /// arithmic variables are used.  Also, if the parameter A is very close
-    /// to a negative integer (but not a negative integer), there is a loss
-    /// of accuracy, which is reported if the result is less than half
-    /// machine precision.
-    ///
+    /// <returns>Complementary incomplete Gamma function value.</returns>
+    /// <remarks>
     /// This is a translation from the Fortran version of DGAMIC, SLATEC, FNLIB,
-    /// CATEGORY C7E, REVISION 920528, originally written by Fullerton W.,(LANL)
+    /// CATEGORY C7E, REVISION 920528, originally written by Fullerton W. (LANL)
     /// to C++.
     ///
     /// References:
-    ///
-    /// (1) W. Gautschi, A computational procedure for incomplete
-    ///     gamma functions, ACM Transactions on Mathematical
-    ///     Software 5, 4 (December 1979), pp. 466-481.
-    /// (2) W. Gautschi, Incomplete gamma functions, Algorithm 542,
-    ///     ACM Transactions on Mathematical Software 5, 4
-    ///     (December 1979), pp. 482-489.
-    ///
-    /// Routines called: d9gmit, d9gmic, d9lgic, d9lgit, LnGamma(x), LnGamma(x,a)
-    /// </code></remarks>
+    ///   (1) W. Gautschi, A computational procedure for incomplete
+    ///       gamma functions, ACM Transactions on Mathematical
+    ///       Software 5, 4 (December 1979), pp. 466-481.
+    ///   (2) W. Gautschi, Incomplete gamma functions, Algorithm 542,
+    ///       ACM Transactions on Mathematical Software 5, 4
+    ///       (December 1979), pp. 482-489.
+    /// </remarks>
     public static double GammaIC(double x, double a, bool bDebug)
     {
       return _GammaIC.GammaIC(x, a, bDebug);
@@ -1631,7 +1636,7 @@ L50:
     /// Routines called: d9gmit, d9gmic, d9lgic, d9lgit, LnGamma(x), LnGamma(x,a)
     /// </code></remarks>
     public static double Gamma(double a, double z0, bool bDebug)
-    {
+      {
       return _GammaIC.GammaIC(z0, a, bDebug);
     }
 
@@ -1710,7 +1715,7 @@ L50:
       {
         return GammaI(z1, a, false) / gamma_a;
       }
-      else
+        else
       {
         double g0 = _GammaIC.GammaIC(z0, a, false);
         double g1 = _GammaIC.GammaIC(z1, a, false);
@@ -1765,13 +1770,13 @@ L50:
         double aeps, sgng, e, h, t, ainta, alngs = 0, gstar, sgngs = 0, algap1, sgngam, sga, alx;
         bool izero;
 
-        if (x < 0.0)
-        {
-          if (bDebug)
-            throw new ArgumentException("x must be greater or equal than zero");
-          else
-            return double.NaN;
-        }
+      if (x < 0.0)
+      {
+        if (bDebug)
+          throw new ArgumentException("x must be greater or equal than zero");
+        else
+          return double.NaN;
+      }
 
         if (x > 0.0)
           goto L20;
@@ -1872,8 +1877,8 @@ L50:
     /// LnBeta(a,b) calculates the double precision natural logarithm of
     /// the complete beta function for double precision arguments a and b.
     /// </summary>
-    /// <param name="a"></param>
-    /// <param name="b"></param>
+    /// <param name="a">The first parameter.</param>
+    /// <param name="b">The second parameter.</param>
     /// <returns>The logarithm of the complete beta function.</returns>
     /// <remarks><code>
     /// This is a translation from the Fortran version of DLBETA(A,B), SLATEC, FNLIB,
@@ -1891,8 +1896,8 @@ L50:
     /// LnBeta(a,b) calculates the double precision natural logarithm of
     /// the complete beta function for double precision arguments a and b.
     /// </summary>
-    /// <param name="a"></param>
-    /// <param name="b"></param>
+    /// <param name="a">The first parameter.</param>
+    /// <param name="b">The second parameter.</param>
     /// <param name="bDebug">If true, an exception is thrown if serious errors occur. If false, NaN is returned on errors.</param>
     /// <returns>The logarithm of the complete beta function.</returns>
     /// <remarks><code>
@@ -1950,8 +1955,8 @@ L50:
     /// <summary>
     /// Beta(a,b) calculates the complete beta function for double precision arguments a and b using Exp(LnBeta(a,b)).
     /// </summary>
-    /// <param name="a"></param>
-    /// <param name="b"></param>
+    /// <param name="a">The first parameter.</param>
+    /// <param name="b">The second parameter.</param>
     /// <returns>The complete beta function of arguments a and b.</returns>
     public static double Beta(double a, double b)
     {
@@ -1961,8 +1966,8 @@ L50:
     /// <summary>
     /// Beta(a,b) calculates the complete beta function for double precision arguments a and b using Exp(LnBeta(a,b)).
     /// </summary>
-    /// <param name="a"></param>
-    /// <param name="b"></param>
+    /// <param name="a">The first parameter.</param>
+    /// <param name="b">The second parameter.</param>
     /// <param name="bDebug">If true, an exception is thrown if serious errors occur. If false, NaN is returned on errors.</param>
     /// <returns>The complete beta function of arguments a and b.</returns>
     public static double Beta(double a, double b, bool bDebug)
@@ -2017,7 +2022,7 @@ L50:
     /// random variable from a beta distribution having parameters a and b
     /// will be less than or equal to x.
     /// This is a translation from the Fortran version of DBETAI(X,PIN,QIN), SLATEC,
-    /// FNLIB, CATEGORY C7F, REVISION 920528, originally written by Fullerton W.,(LANL)
+    /// FNLIB, CATEGORY C7F, REVISION 920528, originally written by Fullerton W. (LANL)
     /// to C++.
     ///
     /// References: Nancy E. Bosten and E. L. Battiste, Remark on Algorithm 179,
@@ -2046,7 +2051,7 @@ L50:
     /// random variable from a beta distribution having parameters a and b
     /// will be less than or equal to x.
     /// This is a translation from the Fortran version of DBETAI(X,PIN,QIN), SLATEC,
-    /// FNLIB, CATEGORY C7F, REVISION 920528, originally written by Fullerton W.,(LANL)
+    /// FNLIB, CATEGORY C7F, REVISION 920528, originally written by Fullerton W. (LANL)
     /// to C++.
     ///
     /// References: Nancy E. Bosten and E. L. Battiste, Remark on Algorithm 179,
@@ -2076,7 +2081,7 @@ L50:
     /// random variable from a beta distribution having parameters a and b
     /// will be less than or equal to x.
     /// This is a translation from the Fortran version of DBETAI(X,PIN,QIN), SLATEC,
-    /// FNLIB, CATEGORY C7F, REVISION 920528, originally written by Fullerton W.,(LANL)
+    /// FNLIB, CATEGORY C7F, REVISION 920528, originally written by Fullerton W. (LANL)
     /// to C++.
     ///
     /// References: Nancy E. Bosten and E. L. Battiste, Remark on Algorithm 179,
@@ -2113,7 +2118,7 @@ L50:
       /// random variable from a beta distribution having parameters a and b
       /// will be less than or equal to x.
       /// This is a translation from the Fortran version of DBETAI(X,PIN,QIN), SLATEC,
-      /// FNLIB, CATEGORY C7F, REVISION 920528, originally written by Fullerton W.,(LANL)
+      /// FNLIB, CATEGORY C7F, REVISION 920528, originally written by Fullerton W. (LANL)
       /// to C++.
       ///
       /// References: Nancy E. Bosten and E. L. Battiste, Remark on Algorithm 179,
@@ -2934,6 +2939,12 @@ L5:
 
     #region igami
 
+    /// <summary>
+    /// Returns the inverse of the regularized incomplete gamma function.
+    /// </summary>
+    /// <param name="a">The shape parameter.</param>
+    /// <param name="z">The regularized probability value.</param>
+    /// <returns>The value <c>x</c> such that <c>igam(a,x) = z</c> (as implemented by the embedded Cephes routine).</returns>
     public static double InverseGammaRegularized(double a, double z)
     {
       return _Cephes.igami(a, z);
@@ -3021,9 +3032,8 @@ L5:
             */
 
       /*
-            Cephes Math Library Release 2.0:  April, 1987
-            Copyright 1985, 1987 by Stephen L. Moshier
-            Direct inquiries to 30 Frost Street, Cambridge, MA 02140
+            Cephes Math Library Release 2.3:  March, 1995
+            Copyright 1984, 1987, 1995 by Stephen L. Moshier
             */
 
       //#include <math.h>
@@ -3110,8 +3120,8 @@ L5:
              *
              *          inf.      k
              *   a  -x   -       x
-             *  x  e     >   ----------
-             *           -     -
+             *  x  e     >   ---------- 
+             *           -     - 
              *          k=0   | (a+k+1)
              *
              */
@@ -3252,7 +3262,7 @@ L5:
           x = x - d;
         }
 
-/* Resort to interval halving if Newton iteration did not converge. */
+        /* Resort to interval halving if Newton iteration did not converge. */
 ihalve:
 
         d = 0.0625;

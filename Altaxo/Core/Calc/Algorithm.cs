@@ -28,58 +28,76 @@ using System;
 
 namespace Altaxo.Calc
 {
-  /// <summary>Define an algorithm that can be computed and notifies about begin/end of computation.</summary>
-  ///<remarks>
+  /// <summary>
+  /// Defines an algorithm that can be computed and notifies about the begin/end of the computation.
+  /// </summary>
+  /// <remarks>
   /// <para>Copyright (c) 2003-2004, dnAnalytics Project. All rights reserved.</para>
   /// <para>Adapted to Altaxo (C) 2005 D.Lellinger.</para>
-  ///</remarks>
+  /// </remarks>
   public interface IAlgorithm
   {
-    /// <summary>Computes the algorithm.</summary>
+    /// <summary>
+    /// Computes the algorithm.
+    /// </summary>
     void Compute();
 
-    /// <summary>Informs user that that computation has began.</summary>
+    /// <summary>
+    /// Informs the user that the computation has begun.
+    /// </summary>
     event EventHandler BeginComputation;
 
-    /// <summary>Informs user that that computation has finished.</summary>
+    /// <summary>
+    /// Informs the user that the computation has finished.
+    /// </summary>
     event EventHandler EndComputation;
   }
 
   /// <summary>
-  /// Abstract Algorithm class. Subclasses need to only implement <code>InternalCompute</code>.
+  /// Abstract algorithm class.
+  /// Subclasses need to implement only <c>InternalCompute</c>.
   /// </summary>
-  ///<remarks>
+  /// <remarks>
   /// <para>Copyright (c) 2003-2004, dnAnalytics Project. All rights reserved.</para>
   /// <para>Adapted to Altaxo (C) 2005 D.Lellinger.</para>
-  ///</remarks>
+  /// </remarks>
   public abstract class Algorithm : IAlgorithm
   {
     private volatile bool computed = false;
 
-    ///<summary>Informs user that that computation has began.</summary>
+    /// <inheritdoc/>
     public event EventHandler? BeginComputation;
 
-    ///<summary>Informs user that that computation has finished.</summary>
+    /// <inheritdoc/>
     public event EventHandler? EndComputation;
 
-    /// <summary>Handles <c>BeginComputation</c> events.</summary>
-    /// <param name="e">event arguments</param>
+    /// <summary>
+    /// Raises the <see cref="BeginComputation"/> event.
+    /// </summary>
+    /// <param name="e">The event arguments.</param>
     protected virtual void OnBeginComputation(EventArgs e)
     {
       BeginComputation?.Invoke(this, e);
     }
 
-    /// <summary>Handles <c>EndComputation</c> events.</summary>
-    /// <param name="e">event arguments</param>
+    /// <summary>
+    /// Raises the <see cref="EndComputation"/> event.
+    /// </summary>
+    /// <param name="e">The event arguments.</param>
     protected virtual void OnEndComputation(EventArgs e)
     {
       EndComputation?.Invoke(this, e);
     }
 
-    ///<summary>Specific to each algorithm </summary>
+    /// <summary>
+    /// Performs the algorithm-specific computation.
+    /// </summary>
+    /// <remarks>
+    /// Subclasses implement this method to provide their computation logic. This method is called by <see cref="Compute"/>.
+    /// </remarks>
     protected abstract void InternalCompute();
 
-    /// <summary>Computes the algorithm.</summary>
+    /// <inheritdoc/>
     public void Compute()
     {
       if (!computed)

@@ -57,43 +57,49 @@ namespace Altaxo.Calc.Probability
     }
 
     /// <summary>Gets the minimum possible value of distributed random numbers.</summary>
+    /// <inheritdoc/>
     public override double Minimum
     {
       get { throw new Exception("The method or operation is not implemented."); }
     }
 
     /// <summary>Gets the maximum possible value of distributed random numbers.</summary>
+    /// <inheritdoc/>
     public override double Maximum
     {
       get { throw new Exception("The method or operation is not implemented."); }
     }
 
     /// <summary>Gets the mean of distributed random numbers.</summary>
+    /// <inheritdoc/>
     public override double Mean
     {
       get { throw new Exception("The method or operation is not implemented."); }
     }
 
     /// <summary>Gets the median of distributed random numbers.</summary>
+    /// <inheritdoc/>
     public override double Median
     {
       get { throw new Exception("The method or operation is not implemented."); }
     }
 
     /// <summary>Gets the variance of distributed random numbers.</summary>
+    /// <inheritdoc/>
     public override double Variance
     {
       get { throw new Exception("The method or operation is not implemented."); }
     }
 
     /// <summary>Gets the mode of distributed random numbers.</summary>
+    /// <inheritdoc/>
     public override double[] Mode
     {
       get { throw new Exception("The method or operation is not implemented."); }
     }
 
     /// <summary>Returns a distributed floating point random number.</summary>
-    /// <returns>A distributed double-precision floating point number.</returns>
+    /// <inheritdoc/>
     public override double NextDouble()
     {
       throw new Exception("The method or operation is not implemented.");
@@ -816,6 +822,11 @@ namespace Altaxo.Calc.Probability
 
     #region Generation
 
+    /// <summary>
+    /// Generates a symmetric stable variate for the provided characteristic exponent.
+    /// </summary>
+    /// <param name="alpha">Characteristic exponent of the stable distribution.</param>
+    /// <returns>A generated random value for the symmetric case.</returns>
     protected double GenerateSymmetricCase(double alpha)
     {
       double u, v, t, s;
@@ -849,12 +860,12 @@ namespace Altaxo.Calc.Probability
     }
 
     /// <summary>
-    /// Generates random variates in S1 Parametrization
+    /// Generates random variates in S1 parametrization for asymmetric cases.
     /// </summary>
-    /// <param name="alpha"></param>
-    /// <param name="beta"></param>
-    /// <param name="c"></param>
-    /// <returns></returns>
+    /// <param name="alpha">Characteristic exponent of the stable distribution.</param>
+    /// <param name="beta">Skewness parameter.</param>
+    /// <param name="c">Scale parameter.</param>
+    /// <returns>A generated random value in S1 parametrization.</returns>
     protected double GenerateAsymmetricCaseS1(double alpha, double beta, double c)
     {
       double V, W, X;
@@ -888,6 +899,12 @@ namespace Altaxo.Calc.Probability
       }
     }
 
+    /// <summary>
+    /// Generates random variates for the asymmetric S1 case when alpha equals 1.
+    /// </summary>
+    /// <param name="alpha">Characteristic exponent of the stable distribution.</param>
+    /// <param name="beta">Skewness parameter.</param>
+    /// <returns>A generated random value for the alpha equals one case.</returns>
     protected double GenerateAsymmetricCaseS1_AEq1(double alpha, double beta)
     {
       double V, W, X;
@@ -907,6 +924,15 @@ namespace Altaxo.Calc.Probability
       return X;
     }
 
+    /// <summary>
+    /// Generates random variates for the asymmetric S1 case when alpha is not equal to 1.
+    /// </summary>
+    /// <param name="alpha">Characteristic exponent of the stable distribution.</param>
+    /// <param name="t">Precomputed tangent helper value.</param>
+    /// <param name="B">Precomputed shift helper value.</param>
+    /// <param name="S">Precomputed scale helper value.</param>
+    /// <param name="c">Scale parameter.</param>
+    /// <returns>A generated random value for the general asymmetric S1 case.</returns>
     protected double GenerateAsymmetricCaseS1_ANe1(double alpha, double t, double B, double S, double c)
     {
       double V, W, X;
@@ -1326,21 +1352,6 @@ namespace Altaxo.Calc.Probability
           else
           {
             // part linearly spaced between x0 and x1
-            /*
-                        * double xinc = diffOneDecade / s01;
-                        double xs = x0;
-                        for (count = 0; count < intgrenzen.Length; count++)
-                        {
-                            if (xs >= x1)
-                            {
-                                intgrenzen[count] = x1;
-                                count++;
-                                break;
-                            }
-                            intgrenzen[count] = xs;
-                            xs += xinc;
-                        }
-                        */
 
             error1 = Calc.Integration.QagpIntegration.Integration(
               pdfFunc,
@@ -3691,10 +3702,10 @@ namespace Altaxo.Calc.Probability
                         0, precision, 200, out var result, out var abserr, ref tempStorage);
 
             if (error is null)
-              return result;
+          return result;
             else
               return double.NaN;
-          }
+        }
         }
         catch (Exception)
         {
@@ -3737,7 +3748,6 @@ namespace Altaxo.Calc.Probability
         double resultRight, abserrRight;
 
         double xm;
-
         xm = FindDecreasingYEqualToOne(PDFCore, 0, UpperIntegrationLimit);
 
         if ((xm * 10) < UpperIntegrationLimit)

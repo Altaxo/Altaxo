@@ -36,23 +36,37 @@ using Altaxo.Calc.LinearAlgebra;
 
 namespace Altaxo.Calc.Optimization
 {
-  ///<summary>Secant Line Search Method</summary>
+  /// <summary>Secant line search method.</summary>
   /// <remarks>
   /// <para>Copyright (c) 2003-2004, dnAnalytics Project. All rights reserved. See <a>http://www.dnAnalytics.net</a> for details.</para>
-  /// <para>Adopted to Altaxo (c) 2005 Dr. Dirk Lellinger.</para>
+  /// <para>Adopted for Altaxo (c) 2005 Dr. Dirk Lellinger.</para>
   /// </remarks>
   public class SecantLineSearch : LineSearchMethod
   {
-    ///<summary>Constructor for Secant Line Search</summary>
+    /// <summary>Initializes a new instance of the <see cref="SecantLineSearch"/> class.</summary>
+    /// <param name="costfunction">Nonlinear cost function to minimize.</param>
     public SecantLineSearch(CostFunction costfunction)
       : this(costfunction, new EndCriteria()) { }
 
+    /// <summary>Initializes a new instance of the <see cref="SecantLineSearch"/> class.</summary>
+    /// <param name="costfunction">Nonlinear cost function to minimize.</param>
+    /// <param name="endcriteria">User-specified ending criteria.</param>
     public SecantLineSearch(CostFunction costfunction, EndCriteria endcriteria)
       : this(costfunction, endcriteria, 1) { }
 
+    /// <summary>Initializes a new instance of the <see cref="SecantLineSearch"/> class.</summary>
+    /// <param name="costfunction">Nonlinear cost function to minimize.</param>
+    /// <param name="endcriteria">User-specified ending criteria.</param>
+    /// <param name="sigma_0">Initial step size used for the first evaluation of each secant minimization.</param>
     public SecantLineSearch(CostFunction costfunction, EndCriteria endcriteria, double sigma_0)
       : this(costfunction, endcriteria, sigma_0, 50, 1e-8) { }
 
+    /// <summary>Initializes a new instance of the <see cref="SecantLineSearch"/> class.</summary>
+    /// <param name="costfunction">Nonlinear cost function to minimize.</param>
+    /// <param name="endcriteria">User-specified ending criteria.</param>
+    /// <param name="sigma_0">Initial step size used for the first evaluation of each secant minimization.</param>
+    /// <param name="maxiteration">Maximum number of iterations.</param>
+    /// <param name="tolerance">Termination tolerance (based on the step size along the search direction).</param>
     public SecantLineSearch(CostFunction costfunction, EndCriteria endcriteria, double sigma_0,
       int maxiteration, double tolerance)
     {
@@ -63,19 +77,22 @@ namespace Altaxo.Calc.Optimization
       this.tolerance = tolerance;
     }
 
-    ///<summary>Value of sigma for first step of each Secant method minimization</summary>
+    /// <summary>Initial step size used for the first evaluation of each secant minimization.</summary>
     public double sigma_0;
 
+    /// <summary>Maximum number of iterations.</summary>
     private int maxIteration;
+
+    /// <summary>Termination tolerance.</summary>
     private double tolerance;
 
-    ///<summary> Method Name </summary>
+    /// <inheritdoc/>
     public override string MethodName
     {
       get { return "Secant Line Search Method"; }
     }
 
-    ///<summary> Minimize the given cost function </summary>
+    /// <inheritdoc/>
     public override Vector<double> Search(Vector<double> x, Vector<double> d, double step)
     {
       var ret = x.Clone();

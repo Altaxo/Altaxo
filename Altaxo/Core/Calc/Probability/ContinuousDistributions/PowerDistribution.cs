@@ -29,7 +29,7 @@ using System;
 namespace Altaxo.Calc.Probability
 {
   /// <summary>
-  /// Provides generation of power distributed random numbers.
+  /// Provides generation of power-distributed random numbers.
   /// </summary>
   /// <remarks>
   /// The implementation of the <see cref="PowerDistribution"/> and the order of parameters is based on
@@ -170,12 +170,19 @@ namespace Altaxo.Calc.Probability
     }
 
     /// <summary>
-    /// Updates the helper variables that store intermediate results for generation of power distributed random
-    ///   numbers.
+    /// Updates the helper variables that store intermediate results for generation of power-distributed random
+    /// numbers.
     /// </summary>
-    
+    /// <param name="k">The domain parameter <c>k</c>.</param>
+    /// <param name="a">The shape parameter <c>a</c>.</param>
+    /// <exception cref="ArgumentOutOfRangeException">
+    /// <paramref name="a"/> is not valid.
+    /// </exception>
+    /// <exception cref="ArgumentOutOfRangeException">
+    /// <paramref name="k"/> is not valid.
+    /// </exception>
     public void Initialize(double k, double a)
-        {
+    {
       if (!IsValidAlpha(a))
         throw new ArgumentOutOfRangeException($"Parameter {nameof(a)} out of range (must be positive)");
       if (!IsValidBeta(k))
@@ -190,9 +197,7 @@ namespace Altaxo.Calc.Probability
 
     #region overridden Distribution members
 
-    /// <summary>
-    /// Gets the minimum possible value of power distributed random numbers.
-    /// </summary>
+    /// <inheritdoc/>
     public override double Minimum
     {
       get
@@ -201,9 +206,7 @@ namespace Altaxo.Calc.Probability
       }
     }
 
-    /// <summary>
-    /// Gets the maximum possible value of power distributed random numbers.
-    /// </summary>
+    /// <inheritdoc/>
     public override double Maximum
     {
       get
@@ -212,9 +215,7 @@ namespace Altaxo.Calc.Probability
       }
     }
 
-    /// <summary>
-    /// Gets the mean value of power distributed random numbers.
-    /// </summary>
+    /// <inheritdoc/>
     public override double Mean
     {
       get
@@ -223,9 +224,7 @@ namespace Altaxo.Calc.Probability
       }
     }
 
-    /// <summary>
-    /// Gets the median of power distributed random numbers.
-    /// </summary>
+    /// <inheritdoc/>
     public override double Median
     {
       get
@@ -234,9 +233,7 @@ namespace Altaxo.Calc.Probability
       }
     }
 
-    /// <summary>
-    /// Gets the variance of power distributed random numbers.
-    /// </summary>
+    /// <inheritdoc/>
     public override double Variance
     {
       get
@@ -245,9 +242,7 @@ namespace Altaxo.Calc.Probability
       }
     }
 
-    /// <summary>
-    /// Gets the mode of power distributed random numbers.
-    /// </summary>
+    /// <inheritdoc/>
     public override double[] Mode
     {
       get
@@ -267,10 +262,7 @@ namespace Altaxo.Calc.Probability
       }
     }
 
-    /// <summary>
-    /// Returns a power distributed floating point random number.
-    /// </summary>
-    /// <returns>A power distributed double-precision floating point number.</returns>
+    /// <inheritdoc/>
     public override double NextDouble()
     {
       return Math.Pow(Generator.NextDouble(), helper1) / _k;
@@ -293,12 +285,14 @@ namespace Altaxo.Calc.Probability
     }
 
     /// <summary>
-    /// Calculates the cumulative distribution function at the specified x.
+    /// Calculates the cumulative distribution function at the specified <paramref name="x"/>.
     /// </summary>
-    /// <param name="x">The x.</param>
-    /// <param name="k">The domain parameter k.</param>
-    /// <param name="a">The shape parameter a.</param>
-    /// <returns></returns>
+    /// <param name="x">The value at which to evaluate the CDF.</param>
+    /// <param name="k">The domain parameter <c>k</c>.</param>
+    /// <param name="a">The shape parameter <c>a</c>.</param>
+    /// <returns>
+    /// The probability that the random variable is less than or equal to <paramref name="x"/>.
+    /// </returns>
     public static double CDF(double x, double k, double a)
     {
       if (0 < x && x <= 1 / k)
@@ -328,12 +322,12 @@ namespace Altaxo.Calc.Probability
     }
 
     /// <summary>
-    /// Calculates the probability dennsity at the specified <paramref name="x"/>.
+    /// Calculates the probability density function at the specified <paramref name="x"/>.
     /// </summary>
-    /// <param name="x">The x.</param>
-    /// <param name="k">The domain parameter k.</param>
-    /// <param name="a">The shape parameter a.</param>
-    /// <returns></returns>
+    /// <param name="x">The value at which to evaluate the PDF.</param>
+    /// <param name="k">The domain parameter <c>k</c>.</param>
+    /// <param name="a">The shape parameter <c>a</c>.</param>
+    /// <returns>The relative likelihood for the random variable to occur at <paramref name="x"/>.</returns>
     public static double PDF(double x, double k, double a)
     {
       if (0 < x && x <= 1 / k)
@@ -359,14 +353,14 @@ namespace Altaxo.Calc.Probability
     }
 
     /// <summary>
-    /// Calculates the quantile at the specified probability p.
+    /// Calculates the quantile at the specified probability <paramref name="p"/>.
     /// </summary>
     /// <param name="p">The probability.</param>
-    /// <param name="k">The domain parameter k.</param>
-    /// <param name="a">The shape parameter a.</param>
-    /// <returns>The quantile at the specified probability p.</returns>
+    /// <param name="k">The domain parameter <c>k</c>.</param>
+    /// <param name="a">The shape parameter <c>a</c>.</param>
+    /// <returns>The quantile at the specified probability <paramref name="p"/>.</returns>
     public static double Quantile(double p, double k, double a)
-        {
+    {
       if (0 < p && p <= 1)
       {
         return Math.Pow(p, 1 / a) / k;

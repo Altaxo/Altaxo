@@ -34,10 +34,16 @@ namespace Altaxo.Calc
     #region Ld
 
     /// <summary>
-    /// Returns k so that 2^k &lt;= x &lt; 2^(k+1). If x==0 then 0 is returned.
+    /// Returns <c>k</c> such that <c>2^k &lt;= x &lt; 2^(k+1)</c>.
     /// </summary>
     /// <param name="x">The argument.</param>
-    /// <returns>A number k so that 2^k &lt;= x &lt; 2^(k+1). If x&lt;0 then <see cref="int.MinValue"/> is returned.</returns>
+    /// <returns>
+    /// A number <c>k</c> such that <c>2^k &lt;= x &lt; 2^(k+1)</c>. If <paramref name="x"/> is less than 0,
+    /// <see cref="int.MinValue"/> is returned.
+    /// </returns>
+    /// <remarks>
+    /// If <paramref name="x"/> is 0, <see cref="int.MinValue"/> is returned.
+    /// </remarks>
     public static int Ld(int x)
     {
       if (x < 0)
@@ -46,10 +52,15 @@ namespace Altaxo.Calc
     }
 
     /// <summary>
-    /// Returns k so that 2^k &lt;= x &lt; 2^(k+1). If x==0 then 0 is returned.
+    /// Returns <c>k</c> such that <c>2^k &lt;= x &lt; 2^(k+1)</c>.
     /// </summary>
     /// <param name="x">The argument.</param>
-    /// <returns>A number k so that 2^k &lt;= x &lt; 2^(k+1). If x==0 then <see cref="int.MinValue"/> is returned.</returns>
+    /// <returns>
+    /// A number <c>k</c> such that <c>2^k &lt;= x &lt; 2^(k+1)</c>.
+    /// </returns>
+    /// <remarks>
+    /// If <paramref name="x"/> is 0, <see cref="int.MinValue"/> is returned.
+    /// </remarks>
     public static int Ld(uint x)
     {
       if (0 == x)
@@ -70,11 +81,16 @@ namespace Altaxo.Calc
     }
 
     /// <summary>
-    /// Returns k so that 2^k &lt;= x &lt; 2^(k+1).
-    /// If x==0 then 0 is returned.
+    /// Returns <c>k</c> such that <c>2^k &lt;= x &lt; 2^(k+1)</c>.
     /// </summary>
     /// <param name="x">The argument.</param>
-    /// <returns>A number k so that 2^k &lt;= x &lt; 2^(k+1). If x&lt;0 then <see cref="int.MinValue"/> is returned.</returns>
+    /// <returns>
+    /// A number <c>k</c> such that <c>2^k &lt;= x &lt; 2^(k+1)</c>. If <paramref name="x"/> is less than 0,
+    /// <see cref="int.MinValue"/> is returned.
+    /// </returns>
+    /// <remarks>
+    /// If <paramref name="x"/> is 0, <see cref="int.MinValue"/> is returned.
+    /// </remarks>
     public static int Ld(long x)
     {
       if (x < 0)
@@ -83,11 +99,15 @@ namespace Altaxo.Calc
     }
 
     /// <summary>
-    /// Returns k so that 2^k &lt;= x &lt; 2^(k+1).
-    /// If x==0 then 0 is returned.
+    /// Returns <c>k</c> such that <c>2^k &lt;= x &lt; 2^(k+1)</c>.
     /// </summary>
     /// <param name="x">The argument.</param>
-    /// <returns>A number k so that 2^k &lt;= x &lt; 2^(k+1). If x==0 then <see cref="int.MinValue"/> is returned.</returns>
+    /// <returns>
+    /// A number <c>k</c> such that <c>2^k &lt;= x &lt; 2^(k+1)</c>.
+    /// </returns>
+    /// <remarks>
+    /// If <paramref name="x"/> is 0, <see cref="int.MinValue"/> is returned.
+    /// </remarks>
     public static int Ld(ulong x)
     {
       if (0 == x)
@@ -114,40 +134,51 @@ namespace Altaxo.Calc
     #region PowerOfTwoOrZero
 
     /// <summary>
-    /// Returns true if number is a power of two or is zero.
+    /// Returns <see langword="true"/> if the number is a power of two or is zero.
     /// </summary>
-    /// <param name="x">Argument to test.</param>
-    /// <returns>Returns <c>true</c> if the number is a power of two or is equal to zero.</returns>
+    /// <param name="x">The argument to test.</param>
+    /// <returns>
+    /// <see langword="true"/> if <paramref name="x"/> is a power of two or is equal to zero; otherwise, <see langword="false"/>.
+    /// </returns>
     public static bool IsPowerOfTwoOrZero(int x)
     {
       return ((x & -x) == x);
     }
 
     /// <summary>
-    /// Returns true if number is a power of two or is zero.
+    /// Returns <see langword="true"/> if the number is a power of two or is zero.
     /// </summary>
-    /// <param name="x">Argument to test.</param>
-    /// <returns>Returns <c>true</c> if the number is a power of two or is equal to zero.</returns>
+    /// <param name="x">The argument to test.</param>
+    /// <returns>
+    /// <see langword="true"/> if <paramref name="x"/> is a power of two or is equal to zero; otherwise, <see langword="false"/>.
+    /// </returns>
     public static bool IsPowerOfTwoOrZero(uint x)
     {
       return IsPowerOfTwoOrZero((int)x);
     }
 
     /// <summary>
-    /// Return true if number is 0 (!) or a power of two
+    /// Returns <see langword="true"/> if the number is a power of two or is zero.
     /// </summary>
-    /// <param name="x">Argument to test.</param>
-    /// <returns>Return true if number is 0 (!) or a power of two.</returns>
+    /// <param name="x">The argument to test.</param>
+    /// <returns>
+    /// <see langword="true"/> if <paramref name="x"/> is a power of two or is equal to zero; otherwise, <see langword="false"/>.
+    /// </returns>
+    /// <remarks>
+    /// Note that 0 is considered a valid input and returns <see langword="true"/>.
+    /// </remarks>
     public static bool IsPowerOfTwoOrZero(long x)
     {
       return ((x & -x) == x);
     }
 
     /// <summary>
-    /// Returns true if number is a power of two or is zero.
+    /// Returns <see langword="true"/> if the number is a power of two or is zero.
     /// </summary>
-    /// <param name="x">Argument to test.</param>
-    /// <returns>Returns <c>true</c> if the number is a power of two or is equal to zero.</returns>
+    /// <param name="x">The argument to test.</param>
+    /// <returns>
+    /// <see langword="true"/> if <paramref name="x"/> is a power of two or is equal to zero; otherwise, <see langword="false"/>.
+    /// </returns>
     public static bool IsPowerOfTwoOrZero(ulong x)
     {
       return IsPowerOfTwoOrZero((long)x);
@@ -158,40 +189,48 @@ namespace Altaxo.Calc
     #region NonzeroPowerOfTwo
 
     /// <summary>
-    /// Return true if x &gt; 0 and x is a power of two.
+    /// Returns <see langword="true"/> if <paramref name="x"/> is greater than 0 and is a power of two.
     /// </summary>
     /// <param name="x">The argument to test.</param>
-    /// <returns>True if x &gt; 0 and x is a power of two.</returns>
+    /// <returns>
+    /// <see langword="true"/> if <paramref name="x"/> is greater than 0 and is a power of two; otherwise, <see langword="false"/>.
+    /// </returns>
     public static bool IsNonzeroPowerOfTwo(int x)
     {
       return (0 != x) && ((x & -x) == x);
     }
 
     /// <summary>
-    /// Return true if x &gt; 0 and x is a power of two.
+    /// Returns <see langword="true"/> if <paramref name="x"/> is greater than 0 and is a power of two.
     /// </summary>
     /// <param name="x">The argument to test.</param>
-    /// <returns>True if x &gt; 0 and x is a power of two.</returns>
+    /// <returns>
+    /// <see langword="true"/> if <paramref name="x"/> is greater than 0 and is a power of two; otherwise, <see langword="false"/>.
+    /// </returns>
     public static bool IsNonzeroPowerOfTwo(uint x)
     {
       return IsNonzeroPowerOfTwo((int)x);
     }
 
     /// <summary>
-    /// Return true if x &gt; 0 and x is a power of two.
+    /// Returns <see langword="true"/> if <paramref name="x"/> is greater than 0 and is a power of two.
     /// </summary>
     /// <param name="x">The argument to test.</param>
-    /// <returns>True if x &gt; 0 and x is a power of two.</returns>
+    /// <returns>
+    /// <see langword="true"/> if <paramref name="x"/> is greater than 0 and is a power of two; otherwise, <see langword="false"/>.
+    /// </returns>
     public static bool IsNonzeroPowerOfTwo(long x)
     {
       return (0 != x) && ((x & -x) == x);
     }
 
     /// <summary>
-    /// Return true if x &gt; 0 and x is a power of two.
+    /// Returns <see langword="true"/> if <paramref name="x"/> is greater than 0 and is a power of two.
     /// </summary>
     /// <param name="x">The argument to test.</param>
-    /// <returns>True if x &gt; 0 and x is a power of two.</returns>
+    /// <returns>
+    /// <see langword="true"/> if <paramref name="x"/> is greater than 0 and is a power of two; otherwise, <see langword="false"/>.
+    /// </returns>
     public static bool IsNonzeroPowerOfTwo(ulong x)
     {
       return IsNonzeroPowerOfTwo((long)x);
@@ -202,10 +241,15 @@ namespace Altaxo.Calc
     #region NextPowerOfTwoGreaterOrEqualThan
 
     /// <summary>
-    /// Return x if x is is a power of two, else return the smallest number &gt;x, which is a power of two.
+    /// Returns <paramref name="x"/> if it is a power of two; otherwise, returns the smallest power of two that is greater than <paramref name="x"/>.
     /// </summary>
     /// <param name="x">The argument to test.</param>
-    /// <returns>The argument, if it is a power of two. Else the next greater number which is a power of two.</returns>
+    /// <returns>
+    /// <paramref name="x"/> if it is a power of two; otherwise, the smallest power of two that is greater than <paramref name="x"/>.
+    /// </returns>
+    /// <exception cref="ArgumentOutOfRangeException">
+    /// Thrown when the result cannot be represented by an <see cref="int"/>.
+    /// </exception>
     public static int NextPowerOfTwoGreaterOrEqualThan(int x)
     {
       if (x > 0x40000000)
@@ -218,10 +262,15 @@ namespace Altaxo.Calc
 
 #pragma warning disable CA3002  // Function is not CLS-compliant
     /// <summary>
-    /// Return x if x is is a power of two, else return the smallest number &gt;x, which is a power of two.
+    /// Returns <paramref name="x"/> if it is a power of two; otherwise, returns the smallest power of two that is greater than <paramref name="x"/>.
     /// </summary>
     /// <param name="x">The argument to test.</param>
-    /// <returns>The argument, if it is a power of two. Else the next greater number which is a power of two.</returns>
+    /// <returns>
+    /// <paramref name="x"/> if it is a power of two; otherwise, the smallest power of two that is greater than <paramref name="x"/>.
+    /// </returns>
+    /// <exception cref="ArgumentOutOfRangeException">
+    /// Thrown when the result cannot be represented by a <see cref="uint"/>.
+    /// </exception>
     public static uint NextPowerOfTwoGreaterOrEqualThan(uint x)
     {
       ArgumentOutOfRangeException.ThrowIfGreaterThan(x, 0x80000000u, "Provided value is too large. Result can not be represented by an UInt32 value.");
@@ -232,10 +281,15 @@ namespace Altaxo.Calc
     }
 #pragma warning restore CA3002
     /// <summary>
-    /// Return x if x is is a power of two, else return the smallest number &gt;x, which is a power of two.
+    /// Returns <paramref name="x"/> if it is a power of two; otherwise, returns the smallest power of two that is greater than <paramref name="x"/>.
     /// </summary>
     /// <param name="x">The argument to test.</param>
-    /// <returns>The argument, if it is a power of two. Else the next greater number which is a power of two.</returns>
+    /// <returns>
+    /// <paramref name="x"/> if it is a power of two; otherwise, the smallest power of two that is greater than <paramref name="x"/>.
+    /// </returns>
+    /// <exception cref="ArgumentOutOfRangeException">
+    /// Thrown when the result cannot be represented by an <see cref="long"/>.
+    /// </exception>
     public static long NextPowerOfTwoGreaterOrEqualThan(long x)
     {
       if (x > 0x4000000000000000L)
@@ -248,10 +302,15 @@ namespace Altaxo.Calc
 
 #pragma warning disable CA3002  // Function is not CLS-compliant
     /// <summary>
-    /// Return x if x is is a power of two, else return the smallest number &gt;x, which is a power of two.
+    /// Returns <paramref name="x"/> if it is a power of two; otherwise, returns the smallest power of two that is greater than <paramref name="x"/>.
     /// </summary>
     /// <param name="x">The argument to test.</param>
-    /// <returns>The argument, if it is a power of two. Else the next greater number which is a power of two.</returns>
+    /// <returns>
+    /// <paramref name="x"/> if it is a power of two; otherwise, the smallest power of two that is greater than <paramref name="x"/>.
+    /// </returns>
+    /// <exception cref="ArgumentOutOfRangeException">
+    /// Thrown when the result cannot be represented by a <see cref="ulong"/>.
+    /// </exception>
     public static ulong NextPowerOfTwoGreaterOrEqualThan(ulong x)
     {
       ArgumentOutOfRangeException.ThrowIfGreaterThan(x, 0x8000000000000000UL, "Provided value is too large. Result can not be represented by an UInt64 value.");
@@ -267,10 +326,12 @@ namespace Altaxo.Calc
     #region Parity calculations
 
     /// <summary>
-    /// Determines, if x contains an odd number of '1' bits.
+    /// Determines whether <paramref name="x"/> contains an odd number of set bits (<c>1</c> bits).
     /// </summary>
     /// <param name="x">The argument.</param>
-    /// <returns>True, if an odd number of bits is set to 1, or false, if an even number of bits is set to 1.</returns>
+    /// <returns>
+    /// <see langword="true"/> if an odd number of bits is set to 1; otherwise, <see langword="false"/>.
+    /// </returns>
     public static bool IsParityOdd(byte x)
     {
       uint xx = x;
@@ -281,20 +342,24 @@ namespace Altaxo.Calc
     }
 
     /// <summary>
-    /// Determines, if x contains an odd number of '1' bits.
+    /// Determines whether <paramref name="x"/> contains an odd number of set bits (<c>1</c> bits).
     /// </summary>
     /// <param name="x">The argument.</param>
-    /// <returns>True, if an odd number of bits is set to 1, or false, if an even number of bits is set to 1.</returns>
+    /// <returns>
+    /// <see langword="true"/> if an odd number of bits is set to 1; otherwise, <see langword="false"/>.
+    /// </returns>
     public static bool IsParityOdd(sbyte x)
     {
       return IsParityOdd((byte)x);
     }
 
     /// <summary>
-    /// Determines, if x contains an odd number of '1' bits.
+    /// Determines whether <paramref name="x"/> contains an odd number of set bits (<c>1</c> bits).
     /// </summary>
     /// <param name="x">The argument.</param>
-    /// <returns>True, if an odd number of bits is set to 1, or false, if an even number of bits is set to 1.</returns>
+    /// <returns>
+    /// <see langword="true"/> if an odd number of bits is set to 1; otherwise, <see langword="false"/>.
+    /// </returns>
     public static bool IsParityOdd(ushort x)
     {
       uint xx = x;
@@ -306,20 +371,24 @@ namespace Altaxo.Calc
     }
 
     /// <summary>
-    /// Determines, if x contains an odd number of '1' bits.
+    /// Determines whether <paramref name="x"/> contains an odd number of set bits (<c>1</c> bits).
     /// </summary>
     /// <param name="x">The argument.</param>
-    /// <returns>True, if an odd number of bits is set to 1, or false, if an even number of bits is set to 1.</returns>
+    /// <returns>
+    /// <see langword="true"/> if an odd number of bits is set to 1; otherwise, <see langword="false"/>.
+    /// </returns>
     public static bool IsParityOdd(short x)
     {
       return IsParityOdd((ushort)x);
     }
 
     /// <summary>
-    /// Determines, if x contains an odd number of '1' bits.
+    /// Determines whether <paramref name="x"/> contains an odd number of set bits (<c>1</c> bits).
     /// </summary>
     /// <param name="x">The argument.</param>
-    /// <returns>True, if an odd number of bits is set to 1, or false, if an even number of bits is set to 1.</returns>
+    /// <returns>
+    /// <see langword="true"/> if an odd number of bits is set to 1; otherwise, <see langword="false"/>.
+    /// </returns>
     public static bool IsParityOdd(uint x)
     {
       x ^= x >> 16;
@@ -331,20 +400,24 @@ namespace Altaxo.Calc
     }
 
     /// <summary>
-    /// Determines, if x contains an odd number of '1' bits.
+    /// Determines whether <paramref name="x"/> contains an odd number of set bits (<c>1</c> bits).
     /// </summary>
     /// <param name="x">The argument.</param>
-    /// <returns>True, if an odd number of bits is set to 1, or false, if an even number of bits is set to 1.</returns>
+    /// <returns>
+    /// <see langword="true"/> if an odd number of bits is set to 1; otherwise, <see langword="false"/>.
+    /// </returns>
     public static bool IsParityOdd(int x)
     {
       return IsParityOdd((uint)x);
     }
 
     /// <summary>
-    /// Determines, if x contains an odd number of '1' bits.
+    /// Determines whether <paramref name="x"/> contains an odd number of set bits (<c>1</c> bits).
     /// </summary>
     /// <param name="x">The argument.</param>
-    /// <returns>True, if an odd number of bits is set to 1, or false, if an even number of bits is set to 1.</returns>
+    /// <returns>
+    /// <see langword="true"/> if an odd number of bits is set to 1; otherwise, <see langword="false"/>.
+    /// </returns>
     public static bool IsParityOdd(ulong x)
     {
       uint xx = (uint)(x) ^ (uint)(x >> 32);
@@ -357,10 +430,12 @@ namespace Altaxo.Calc
     }
 
     /// <summary>
-    /// Determines, if x contains an odd number of '1' bits.
+    /// Determines whether <paramref name="x"/> contains an odd number of set bits (<c>1</c> bits).
     /// </summary>
     /// <param name="x">The argument.</param>
-    /// <returns>True, if an odd number of bits is set to 1, or false, if an even number of bits is set to 1.</returns>
+    /// <returns>
+    /// <see langword="true"/> if an odd number of bits is set to 1; otherwise, <see langword="false"/>.
+    /// </returns>
     public static bool IsParityOdd(long x)
     {
       return IsParityOdd((ulong)x);

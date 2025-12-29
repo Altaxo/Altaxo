@@ -28,9 +28,9 @@ using System.Collections.Generic;
 namespace Altaxo.Calc.Regression
 {
   /// <summary>
-  /// Uses the method of running sums to calculate mean, sample standard deviation, and standard deviation of a data set.
+  /// Uses the method of running sums to calculate mean, sample standard deviation, and population standard deviation of a data set.
   /// </summary>
-  /// <remarks>See wikipedia article "Standard deviation".</remarks>
+  /// <remarks>See the Wikipedia article "Standard deviation".</remarks>
   public class QuickStatistics
   {
     private long _n;
@@ -40,7 +40,7 @@ namespace Altaxo.Calc.Regression
     private double _max = double.NegativeInfinity;
 
     /// <summary>
-    /// Initializes the statistics.
+    /// Resets the statistics to their initial state.
     /// </summary>
     public void Clear()
     {
@@ -69,7 +69,7 @@ namespace Altaxo.Calc.Regression
     }
 
     /// <summary>
-    /// Adds data points to the statistics.
+    /// Adds a sequence of data points to the statistics.
     /// </summary>
     /// <param name="values">The data points to add.</param>
     /// <returns>This instance.</returns>
@@ -83,7 +83,7 @@ namespace Altaxo.Calc.Regression
     }
 
     /// <summary>
-    /// Adds data points to the statistics.
+    /// Adds a span of data points to the statistics.
     /// </summary>
     /// <param name="values">The data points to add.</param>
     /// <returns>This instance.</returns>
@@ -97,8 +97,11 @@ namespace Altaxo.Calc.Regression
     }
 
     /// <summary>
-    /// Returns the mean (average) of the data values.
+    /// Gets the arithmetic mean (average) of the data values.
     /// </summary>
+    /// <value>
+    /// The mean of the added values, or <see cref="double.NaN"/> if no values were added.
+    /// </value>
     public double Mean
     {
       get
@@ -108,8 +111,11 @@ namespace Altaxo.Calc.Regression
     }
 
     /// <summary>
-    /// Returns the minimum of the data values.
+    /// Gets the minimum of the data values.
     /// </summary>
+    /// <value>
+    /// The minimum of the added values, or <see cref="double.NaN"/> if no values were added.
+    /// </value>
     public double Min
     {
       get
@@ -119,8 +125,11 @@ namespace Altaxo.Calc.Regression
     }
 
     /// <summary>
-    /// Returns the maximum of the data values.
+    /// Gets the maximum of the data values.
     /// </summary>
+    /// <value>
+    /// The maximum of the added values, or <see cref="double.NaN"/> if no values were added.
+    /// </value>
     public double Max
     {
       get
@@ -130,7 +139,7 @@ namespace Altaxo.Calc.Regression
     }
 
     /// <summary>
-    /// Returns the number of data values that were added.
+    /// Gets the number of data values that were added.
     /// </summary>
     public double N
     {
@@ -141,13 +150,16 @@ namespace Altaxo.Calc.Regression
     }
 
     /// <summary>
-    /// Returns the sample standard deviation: square root of the error sum of squares divided by (N-1).
+    /// Gets the sample standard deviation: square root of the error sum of squares divided by (N-1).
     /// </summary>
     public double StandardDeviation => SampleStandardDeviation;
 
     /// <summary>
-    /// Returns the sample standard deviation: square root of the error sum of squares divided by (N-1).
+    /// Gets the sample standard deviation: square root of the error sum of squares divided by (N-1).
     /// </summary>
+    /// <value>
+    /// The sample standard deviation, or <see cref="double.NaN"/> if fewer than two values were added.
+    /// </value>
     public double SampleStandardDeviation
     {
       get
@@ -157,8 +169,11 @@ namespace Altaxo.Calc.Regression
     }
 
     /// <summary>
-    /// Returns the standard deviation: square root of the error sum of squares divided by N.
+    /// Gets the population standard deviation: square root of the error sum of squares divided by N.
     /// </summary>
+    /// <value>
+    /// The population standard deviation, or <see cref="double.NaN"/> if no values were added.
+    /// </value>
     public double PopulationStandardDeviation
     {
       get
@@ -168,13 +183,16 @@ namespace Altaxo.Calc.Regression
     }
 
     /// <summary>
-    /// Returns the sample variance: error sum of squares divided by N-1.
+    /// Gets the sample variance: error sum of squares divided by N-1.
     /// </summary>
     public double Variance => SampleVariance;
 
     /// <summary>
-    /// Returns the sample variance: error sum of squares divided by N-1.
+    /// Gets the sample variance: error sum of squares divided by N-1.
     /// </summary>
+    /// <value>
+    /// The sample variance, or <see cref="double.NaN"/> if fewer than two values were added.
+    /// </value>
     public double SampleVariance
     {
       get
@@ -184,8 +202,11 @@ namespace Altaxo.Calc.Regression
     }
 
     /// <summary>
-    /// Returns the population variance: error sum of squares divided by N.
+    /// Gets the population variance: error sum of squares divided by N.
     /// </summary>
+    /// <value>
+    /// The population variance, or <see cref="double.NaN"/> if no values were added.
+    /// </value>
     public double PopulationVariance
     {
       get

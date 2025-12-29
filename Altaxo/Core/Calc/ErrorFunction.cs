@@ -100,31 +100,31 @@ namespace Altaxo.Calc
     #region Helper functions
 
     /// <summary>
-    /// Returns -1 if argument negative, 0 if argument zero, or 1 if argument is positive.
+    /// Returns -1 if the argument is negative, 0 if the argument is zero, or 1 if the argument is positive.
     /// </summary>
     /// <param name="x">The number whose sign is returned.</param>
-    /// <returns>-1 if the argument is negative, 0 if the argument is zero, or 1 if argument is positive.</returns>
+    /// <returns>-1 if the argument is negative, 0 if the argument is zero, or 1 if the argument is positive.</returns>
     private static int sign(double x)
     {
       return (x > 0) ? 1 : (x < 0) ? -1 : 0;
     }
 
     /// <summary>
-    /// Return first number with sign of second number
+    /// Returns the first number with the sign of the second number.
     /// </summary>
     /// <param name="x">The first number.</param>
     /// <param name="y">The second number whose sign is used.</param>
-    /// <returns>The first number x with the sign of the second argument y.</returns>
+    /// <returns>The first number <paramref name="x"/> with the sign of <paramref name="y"/>.</returns>
     private static double CopySign(double x, double y)
     {
       return (y < 0) ? ((x < 0) ? x : -x) : ((x > 0) ? x : -x);
     }
 
     /// <summary>
-    /// Round to nearest integer.
+    /// Rounds to the nearest integer.
     /// </summary>
     /// <param name="d">The argument.</param>
-    /// <returns>The nearest integer of the argument d.</returns>
+    /// <returns>The nearest integer value of <paramref name="d"/>.</returns>
     private static int Nint(double d)
     {
       return (d > 0) ? (int)(d + 0.5) : -(int)(-d + 0.5);
@@ -135,18 +135,16 @@ namespace Altaxo.Calc
     #region initds
 
     /// <summary>
-    /// Initialize the orthogonal series, represented by the array os, so
-    /// that initds is the number of terms needed to insure the error is no
-    /// larger than eta.  Ordinarily, eta will be chosen to be one-tenth
-    /// machine precision.
+    /// Initializes an orthogonal series, represented by <paramref name="os"/>, and returns the number of terms required
+    /// to achieve an error no larger than <paramref name="eta"/>.
     /// </summary>
-    /// <param name="os">Double precision array of NOS coefficients in an orthogonal  series.</param>
-    /// <param name="nos">Number of coefficients in OS.</param>
-    /// <param name="eta"> single precision scalar containing requested accuracy of  series. </param>
-    /// <returns>The number of terms neccessary to insure the error is not larger than eta.</returns>
+    /// <param name="os">Double-precision array of <paramref name="nos"/> coefficients in an orthogonal series.</param>
+    /// <param name="nos">Number of coefficients in <paramref name="os"/>.</param>
+    /// <param name="eta">Requested accuracy of the series (typically one-tenth of machine precision).</param>
+    /// <returns>The number of terms necessary to ensure the error is not larger than <paramref name="eta"/>.</returns>
     /// <remarks>
     /// This is a translation from the Fortran version of SLATEC, FNLIB,
-    /// CATEGORY C3A2, REVISION 900315, originally written by Fullerton W., (LANL)
+    /// CATEGORY C3A2, REVISION 900315, originally written by Fullerton W. (LANL)
     /// to C++.
     /// </remarks>
     private static int initds(double[] os, int nos, double eta)
@@ -175,15 +173,15 @@ namespace Altaxo.Calc
     #region dcsevl
 
     /// <summary>
-    /// Evaluate the n-term Chebyshev series cs at x.  Adapted from
-    /// a method presented in the paper by Broucke referenced below.
+    /// Evaluates the n-term Chebyshev series <paramref name="cs"/> at <paramref name="x"/>.
     /// </summary>
-    /// <param name="x">Value at which the series is to be evaluated. </param>
-    /// <param name="cs">cs   array of n terms of a Chebyshev series. In evaluating
-    /// cs, only half the first coefficient is summed.
+    /// <param name="x">Value at which the series is to be evaluated.</param>
+    /// <param name="cs">
+    /// Array of <paramref name="n"/> terms of a Chebyshev series.
+    /// In evaluating <paramref name="cs"/>, only half the first coefficient is summed.
     /// </param>
-    /// <param name="n">number of terms in array cs.</param>
-    /// <returns>The n-term Chebyshev series cs at x.</returns>
+    /// <param name="n">Number of terms in array <paramref name="cs"/>.</param>
+    /// <returns>The value of the n-term Chebyshev series at <paramref name="x"/>.</returns>
     /// <remarks>
     /// References:
     ///
@@ -191,10 +189,10 @@ namespace Altaxo.Calc
     /// Algorithm 446, Communications of the A.C.M. 16, (1973) pp. 254-256.
     ///
     /// L. Fox and I. B. Parker, Chebyshev Polynomials in
-    ///      Numerical Analysis, Oxford University Press, 1968,  page 56.
+    ///      Numerical Analysis, Oxford University Press, 1968, page 56.
     ///
     /// This is a translation from the Fortran version of SLATEC, FNLIB,
-    /// CATEGORY C3A2, REVISION  920501, originally written by Fullerton W., (LANL)
+    /// CATEGORY C3A2, REVISION 920501, originally written by Fullerton W. (LANL)
     /// to C++.
     /// </remarks>
     private static double dcsevl(double x, double[] cs, int n)
@@ -224,14 +222,13 @@ namespace Altaxo.Calc
     #region Erf function
 
     /// <summary>
-    /// Erf(x) calculates the double precision error function for double
-    /// precision argument x.
+    /// Calculates the error function of the argument.
     /// </summary>
-    /// <param name="x">The argument x.</param>
-    /// <returns>The error function value of the argument x.</returns>
+    /// <param name="x">The argument.</param>
+    /// <returns>The error function value of the argument.</returns>
     /// <remarks><code>
     /// This is a translation from the Fortran version of SLATEC, FNLIB,
-    /// CATEGORY C8A, L5A1E, REVISION 920618, originally written by Fullerton W.,(LANL)
+    /// CATEGORY C8A, L5A1E, REVISION 920618, originally written by Fullerton W. (LANL)
     /// to C++.
     ///
     /// Series for erf        on the interval  0.          to  1.00000E+00
@@ -246,15 +243,17 @@ namespace Altaxo.Calc
     }
 
     /// <summary>
-    /// Erf(x) calculates the double precision error function for double
-    /// precision argument x.
+    /// Calculates the error function of the argument.
     /// </summary>
-    /// <param name="x">The argument x.</param>
-    /// <param name="bDebug">If true, an exception is thrown if serious errors occur. If false, NaN is returned on errors.</param>
-    /// <returns>The error function value of the argument x.</returns>
+    /// <param name="x">The argument.</param>
+    /// <param name="bDebug">
+    /// If true, an exception is thrown if serious errors occur.
+    /// If false, NaN is returned on errors.
+    /// </param>
+    /// <returns>The error function value of the argument.</returns>
     /// <remarks><code>
     /// This is a translation from the Fortran version of SLATEC, FNLIB,
-    /// CATEGORY C8A, L5A1E, REVISION 920618, originally written by Fullerton W.,(LANL)
+    /// CATEGORY C8A, L5A1E, REVISION 920618, originally written by Fullerton W. (LANL)
     /// to C++.
     ///
     /// Series for erf        on the interval  0.          to  1.00000E+00
@@ -271,7 +270,7 @@ namespace Altaxo.Calc
     private class _Erf
     {
       /// <summary>
-      /// Coefficient array for Erf function
+      /// Coefficient array for the error function (erf) series.
       /// </summary>
       private static readonly double[] erfcs =
   {
@@ -302,20 +301,22 @@ namespace Altaxo.Calc
       private static readonly double xbig = Math.Sqrt(-Math.Log(sqrtpi * 0.5 * DBL_EPSILON));
 
       /// <summary>
-      /// Number of terms for the Erf function
+      /// Number of terms used for the error function (erf) series.
       /// </summary>
       private static readonly int nterf = initds(erfcs, 21, 0.5 * DBL_EPSILON * 0.1);
 
       /// <summary>
-      /// Erf(x) calculates the double precision error function for double
-      /// precision argument x.
+      /// Calculates the error function of the argument.
       /// </summary>
-      /// <param name="x">The argument x.</param>
-      /// <param name="bDebug">If true, an exception is thrown if serious errors occur. If false, NaN is returned on errors.</param>
-      /// <returns>The error function value of the argument x.</returns>
+      /// <param name="x">The argument.</param>
+      /// <param name="bDebug">
+      /// If true, an exception is thrown if serious errors occur.
+      /// If false, NaN is returned on errors.
+      /// </param>
+      /// <returns>The error function value of the argument.</returns>
       /// <remarks>
       /// This is a translation from the Fortran version of SLATEC, FNLIB,
-      /// CATEGORY C8A, L5A1E, REVISION 920618, originally written by Fullerton W.,(LANL)
+      /// CATEGORY C8A, L5A1E, REVISION 920618, originally written by Fullerton W. (LANL)
       /// to C++.
       ///
       /// Series for erf        on the interval  0.          to  1.00000E+00
@@ -352,23 +353,24 @@ L20:
     #region Erfc function
 
     /// <summary>
-    /// Erfc(x) calculates the double precision complementary error function
-    /// for double precision argument x.
+    /// Calculates the complementary error function of the argument.
     /// </summary>
-    /// <param name="x">The argument x.</param>
-    /// <returns>The complementary error function of the argument x.</returns>
+    /// <param name="x">The argument.</param>
+    /// <returns>The complementary error function of the argument.</returns>
     public static double Erfc(double x)
     {
       return _Erfc.Erfc(x, false);
     }
 
     /// <summary>
-    /// Erfc(x) calculates the double precision complementary error function
-    /// for double precision argument x.
+    /// Calculates the complementary error function of the argument.
     /// </summary>
-    /// <param name="x">The argument x.</param>
-    /// <param name="bDebug">If true, an exception is thrown if serious errors occur. If false, NaN is returned on errors.</param>
-    /// <returns>The complementary error function of the argument x.</returns>
+    /// <param name="x">The argument.</param>
+    /// <param name="bDebug">
+    /// If true, an exception is thrown if serious errors occur.
+    /// If false, NaN is returned on errors.
+    /// </param>
+    /// <returns>The complementary error function of the argument.</returns>
     public static double Erfc(double x, bool bDebug)
     {
       return _Erfc.Erfc(x, bDebug);
@@ -377,7 +379,7 @@ L20:
     private class _Erfc
     {
       /// <summary>
-      /// Coefficient array for Erf function
+      /// Coefficient array for the error function (erf) series.
       /// </summary>
       private static readonly double[] erfcs =
   {
@@ -532,15 +534,17 @@ L20:
       private static readonly int nterc2 = initds(erc2cs, 49, eta);
 
       /// <summary>
-      /// Erfc(x) calculates the double precision complementary error function
-      /// for double precision argument x.
+      /// Calculates the complementary error function of the argument.
       /// </summary>
-      /// <param name="x">The argument x.</param>
-      /// <param name="bDebug">If true, an exception is thrown if serious errors occur. If false, NaN is returned on errors.</param>
-      /// <returns>The complementary error function of the argument x.</returns>
+      /// <param name="x">The argument.</param>
+      /// <param name="bDebug">
+      /// If true, an exception is thrown if serious errors occur.
+      /// If false, NaN is returned on errors.
+      /// </param>
+      /// <returns>The complementary error function of the argument.</returns>
       /// <remarks><code>
       /// This is a translation from the Fortran version of SLATEC, FNLIB,
-      /// CATEGORY C8A, L5A1E, REVISION 920618, originally written by Fullerton W.,(LANL)
+      /// CATEGORY C8A, L5A1E, REVISION 920618, originally written by Fullerton W. (LANL)
       /// to C++.
       ///
       /// Series for erf        on the interval  0.0          to  1.00000E+00
@@ -617,12 +621,14 @@ L40:
     #region Inverse Erf
 
     /// <summary>
-    /// Quantile of the normal distribution function NormalDistribution[0,1].
+    /// Quantile of the standard normal distribution N(0, 1).
     /// </summary>
-    /// <param name="y"></param>
-    /// <returns></returns>
+    /// <param name="y">A probability in the open interval (0, 1).</param>
+    /// <returns>
+    /// The value x such that <c>P(X &lt;= x) = y</c> for <c>X ~ N(0, 1)</c>.
+    /// </returns>
     /// <remarks>
-    /// <para>Adopted from Cephes library; Cephes name: ndtri</para>
+    /// <para>Adopted from the Cephes library; Cephes name: ndtri.</para>
     /// </remarks>
     public static double QuantileOfNormalDistribution01(double y)
     {
@@ -1065,7 +1071,7 @@ L40:
   };
 
       /// <summary>
-      /// Dawson(x) evaluates Dawson's integral for a double precision real argument x.
+      /// Dawson(x) evaluates Dawson's integral for a double-precision real argument x.
       /// <code>
       ///                       2  / x   2
       ///                     -x   |    t
@@ -1076,7 +1082,7 @@ L40:
       /// </summary>
       /// <param name="x">The function argument.</param>
       /// <param name="bDebug">If true, an exception is thrown if serious errors occur. If false, NaN is returned on errors.</param>
-      /// <returns></returns>
+      /// <returns>Dawson's integral for argument x.</returns>
       /// <remarks><code>
       /// The main computation uses rational Chebyshev approximations
       /// published in Math. Comp. 24, 171-178 (1970) by Cody, Paciorek
@@ -1091,7 +1097,7 @@ L40:
       /// Underflow: The program returns 0.0 for |X| > XMAX.
       ///
       /// This is a translation from the Fortran version of a SPECFUN (NETLIB)
-      /// REVISION June 15, 1988 , originally written by W. J. Cody, (Mathematics
+      /// REVISION June 15, 1988, originally written by W. J. Cody (Mathematics
       /// and Computer Science Division, Argonne National Laboratory, Argonne,
       /// IL 60439) to C++.
       ///
@@ -1102,14 +1108,14 @@ L40:
       ///   XMIN   = the smallest positive machine number.
       ///            (ANSI C: DBL_MIN)
       ///   EPS    = smallest positive number such that 1+eps > 1.
-      ///            Approximately  beta**(-p), where beta is the machine
+      ///            Approximately beta**(-p), where beta is the machine
       ///            radix and p is the number of significant base-beta
       ///            digits in a floating-point number.
       ///            (ANSI C: 0.5*DBL_EPSILON)
       ///   XMAX   = absolute argument beyond which DAW(X) underflows.
       ///            XMAX = min(0.5/xmin, xinf).
-      ///   XSMALL = absolute argument below DAW(X)  may be represented
-      ///            by X.  We recommend XSMALL = sqrt(eps).
+      ///   XSMALL = absolute argument below which DAW(X) may be represented
+      ///            by x.  We recommend XSMALL = sqrt(eps).
       ///   XLARGE = argument beyond which DAW(X) may be represented by
       ///            1/(2x).  We recommend XLARGE = 1/sqrt(eps).
       ///
@@ -1141,8 +1147,7 @@ L40:
       ///                (D.P.)  3.73E-09   2.68E+08  1.70E+38
       ///   (G Format)   (D.P.)  1.05E-08   9.49E+07  8.98E+307
       ///
-      ///
-      /// These values are not neccessary in ANSI C++ because they are calculated
+      /// These values are not necessary in ANSI C++ because they are calculated
       /// at compile time from values given in the standard libraries!
       /// </code></remarks>
       public static double Dawson(double x, bool bDebug)

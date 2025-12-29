@@ -23,20 +23,20 @@
 #endregion Copyright
 
 using System;
-using System.Text;
 using Altaxo.Calc.LinearAlgebra;
 
 namespace Altaxo.Calc.Regression
 {
   /// <summary>
-  /// Levenberg - Marquard methods adapted to C# from C++ sources from Manolis Lourakis (see below).
+  /// Levenberg-Marquardt methods adapted to C# from C++ sources by Manolis Lourakis (see below).
   /// </summary>
   /// <remarks>
-  ///  Adapted from the following C++ sources:
-  ///  "Levenberg - Marquardt non-linear minimization algorithm",
-  ///  Copyright (C) 2004  Manolis Lourakis (lourakis@ics.forth.gr),
-  ///  Institute of Computer Science, Foundation for Research and Technology - Hellas,
-  ///  Heraklion, Crete, Greece.</remarks>
+  /// Adapted from the following C++ sources:
+  /// "Levenberg-Marquardt non-linear minimization algorithm",
+  /// Copyright (C) 2004 Manolis Lourakis (lourakis@ics.forth.gr),
+  /// Institute of Computer Science, Foundation for Research and Technology - Hellas,
+  /// Heraklion, Crete, Greece.
+  /// </remarks>
   public class NonLinearFit2
   {
     #region constants
@@ -67,8 +67,20 @@ namespace Altaxo.Calc.Regression
  * the aid of finite differences (forward or central, see the comment for the opts argument)
  */
 
+    /// <summary>
+    /// Delegate describing the model function that maps a parameter vector to the predicted measurements.
+    /// </summary>
+    /// <param name="parameter">Parameter vector <c>p</c> (length <c>m</c>).</param>
+    /// <param name="output">Output vector (length <c>n</c>) receiving <c>f(p)</c>.</param>
+    /// <param name="additionalData">Optional additional user data passed through to the function.</param>
     public delegate void FitFunction(double[] parameter, double[] output, object? additionalData);
 
+    /// <summary>
+    /// Delegate describing a function that evaluates the Jacobian matrix of the model function.
+    /// </summary>
+    /// <param name="parameter">Parameter vector <c>p</c> (length <c>m</c>).</param>
+    /// <param name="output">Array (length <c>n*m</c>) receiving the Jacobian in row-major layout.</param>
+    /// <param name="additionalData">Optional additional user data passed through to the function.</param>
     public delegate void JacobianFunction(double[] parameter, double[] output, object? additionalData);
 
     private class WorkArrays
@@ -84,10 +96,10 @@ namespace Altaxo.Calc.Regression
       public double[] wrk;
 
       /// <summary>
-      /// Set up the working arrays.
+      /// Initializes the working arrays used by the algorithm.
       /// </summary>
       /// <param name="n">Number of data points.</param>
-      /// <param name="m">Number of parameter.</param>
+      /// <param name="m">Number of parameters.</param>
       public WorkArrays(int n, int m)
       {
         /* set up work arrays */
@@ -505,6 +517,24 @@ if(!(k%100)){
       return (stop != 4) ? k : -1;
     }
 
+    /// <summary>
+    /// Levenberg-Marquardt minimization using a finite-difference approximation of the Jacobian.
+    /// </summary>
+    /// <param name="func">Functional relation describing measurements. A <c>p</c> in R^m yields an estimated <c>\hat{x}</c> in R^n.</param>
+    /// <param name="p">On input: initial parameter estimates. On output: the estimated solution.</param>
+    /// <param name="x">Measurement vector.</param>
+    /// <param name="itmax">Maximum number of iterations.</param>
+    /// <param name="opts">
+    /// Options <c>[μ, ε1, ε2, ε3, δ]</c>. Respectively the scale factor for the initial <c>μ</c>, stopping thresholds for
+    /// <c>||J^T e||_∞</c>, <c>||Dp||_2</c>, and <c>||e||_2</c>, and the step <c>δ</c> used for the Jacobian approximation.
+    /// If <c>δ &lt; 0</c>, central differences are used (more accurate but slower).
+    /// </param>
+    /// <param name="info">Information regarding the minimization; see <see cref="LEVMAR_DER"/> for layout.</param>
+    /// <param name="workingmemory">Working memory object (reuse between calls); allocated if <see langword="null"/>.</param>
+    /// <param name="covar">Covariance matrix (m×m) corresponding to the LS solution; can be <see langword="null"/> if not needed.</param>
+    /// <param name="adata">Optional additional data passed through to <paramref name="func"/>.</param>
+    /// <returns>The number of iterations (≥ 0) if successful; -1 if failed.</returns>
+    /// <exception cref="ArithmeticException">Thrown when the number of measurements is smaller than the number of unknowns.</exception>
     public static int LEVMAR_DIF(
       FitFunction func, /* functional relation describing measurements. A p \in R^m yields a \hat{x} \in  R^n */
       double[] p,         /* I/O: initial parameter estimates. On output has the estimated solution */
@@ -916,6 +946,18 @@ if(!(k%100)){
 
     /* forward finite difference approximation to the jacobian of func */
 
+    /// <summary>
+    /// Computes a forward finite-difference approximation to the Jacobian of <paramref name="func"/>.
+    /// </summary>
+    /// <param name="func">Function to differentiate.</param>
+    /// <param name="p">Current parameter estimate (length <c>m</c>).</param>
+    /// <param name="hx">Value <c>f(p)</c> (length <c>n</c>).</param>
+    /// <param name="hxx">Work array receiving <c>f(p+δ)</c> (length <c>n</c>).</param>
+    /// <param name="delta">Base increment used for computing the Jacobian.</param>
+    /// <param name="jac">Array receiving the approximated Jacobian (length <c>n*m</c>) in row-major layout.</param>
+    /// <param name="m">Number of parameters.</param>
+    /// <param name="n">Number of measurements.</param>
+    /// <param name="adata">Optional additional data passed through to <paramref name="func"/>.</param>
     private static void FDIF_FORW_JAC_APPROX(
       FitFunction func,
       double[] p,              /* I: current parameter estimate, mx1 */
@@ -956,6 +998,18 @@ if(!(k%100)){
 
     /* central finite difference approximation to the jacobian of func */
 
+    /// <summary>
+    /// Computes a central finite-difference approximation to the Jacobian of <paramref name="func"/>.
+    /// </summary>
+    /// <param name="func">Function to differentiate.</param>
+    /// <param name="p">Current parameter estimate (length <c>m</c>).</param>
+    /// <param name="hxm">Work array receiving <c>f(p-δ)</c> (length <c>n</c>).</param>
+    /// <param name="hxp">Work array receiving <c>f(p+δ)</c> (length <c>n</c>).</param>
+    /// <param name="delta">Base increment used for computing the Jacobian.</param>
+    /// <param name="jac">Array receiving the approximated Jacobian (length <c>n*m</c>) in row-major layout.</param>
+    /// <param name="m">Number of parameters.</param>
+    /// <param name="n">Number of measurements.</param>
+    /// <param name="adata">Optional additional data passed through to <paramref name="func"/>.</param>
     private static void FDIF_CENT_JAC_APPROX(
       FitFunction func,
       /* function to differentiate */
@@ -1005,6 +1059,15 @@ if(!(k%100)){
  * http://www-2.cs.cmu.edu/afs/cs/academic/class/15213-f02/www/R07/section_a/Recitation07-SectionA.pdf
  */
 
+    /// <summary>
+    /// Computes <c>a^T a</c> for an <c>n×m</c> matrix <paramref name="a"/> using cache-friendly blocking.
+    /// </summary>
+    /// <param name="a">Input matrix in row-major layout (length <c>n*m</c>).</param>
+    /// <param name="b">Output matrix in row-major layout (length <c>m*m</c>), receiving <c>a^T a</c>.</param>
+    /// <param name="n">Number of rows in <paramref name="a"/> (measurements).</param>
+    /// <param name="m">Number of columns in <paramref name="a"/> (parameters).</param>
+    /// <param name="bsize">Block size for the multiplication.</param>
+    /// <param name="weights">Optional weights applied per row; can be <see langword="null"/>.</param>
     private static void TRANS_MAT_MAT_MULT(double[] a, double[] b, int n, int m, int bsize, double[]? weights)
     {
       int i, j, k, jj, kk;
@@ -1058,26 +1121,36 @@ if(!(k%100)){
           b[i * m + j] = b[j * m + i];
     }
 
-    /*
- * This function computes in C the covariance matrix corresponding to a least
- * squares fit. JtJ is the approximate Hessian at the solution (i.e. J^T*J, where
- * J is the jacobian at the solution), sumsq is the sum of squared residuals
- * (i.e. goodnes of fit) at the solution, m is the number of parameters (variables)
- * and n the number of observations. JtJ can coincide with C.
- *
- * if JtJ is of full rank, C is computed as sumsq/(n-m)*(JtJ)^-1
- * otherwise and if LAPACK is available, C=sumsq/(n-r)*(JtJ)^+
- * where r is JtJ's rank and ^+ denotes the pseudoinverse
- * The diagonal of C is made up from the estimates of the variances
- * of the estimated regression coefficients.
- * See the documentation of routine E04YCF from the NAG fortran lib
- *
- * The function returns the rank of JtJ if successful, 0 on error
- *
- * A and C are mxm
- *
- */
 
+    /*
+     * This function computes in C the covariance matrix corresponding to a least
+     * squares fit. JtJ is the approximate Hessian at the solution (i.e. J^T*J, where
+     * J is the jacobian at the solution), sumsq is the sum of squared residuals
+     * (i.e. goodnes of fit) at the solution, m is the number of parameters (variables)
+     * and n the number of observations. JtJ can coincide with C.
+     *
+     * if JtJ is of full rank, C is computed as sumsq/(n-m)*(JtJ)^-1
+     * otherwise and if LAPACK is available, C=sumsq/(n-r)*(JtJ)^+
+     * where r is JtJ's rank and ^+ denotes the pseudoinverse
+     * The diagonal of C is made up from the estimates of the variances
+     * of the estimated regression coefficients.
+     * See the documentation of routine E04YCF from the NAG fortran lib
+     *
+     * The function returns the rank of JtJ if successful, 0 on error
+     *
+     * A and C are mxm
+     *
+     */
+
+    /// <summary>
+    /// Computes the covariance matrix corresponding to a least-squares fit.
+    /// </summary>
+    /// <param name="JtJ">Approximate Hessian at the solution (<c>J^T J</c>), where <c>J</c> is the Jacobian at the solution.</param>
+    /// <param name="C">Array receiving the covariance matrix (m×m).</param>
+    /// <param name="sumsq">Sum of squared residuals at the solution.</param>
+    /// <param name="m">Number of parameters.</param>
+    /// <param name="n">Number of observations.</param>
+    /// <returns>The rank of <paramref name="JtJ"/> if successful; 0 on error.</returns>
     private static int LEVMAR_COVAR(double[] JtJ, double[] C, double sumsq, int m, int n)
     {
       int i;
@@ -1103,19 +1176,32 @@ if(!(k%100)){
       return rnk;
     }
 
-    /*
-        * This function computes the inverse of A in B. A and B can coincide
-        *
-        * The function employs LAPACK-free LU decomposition of A to solve m linear
-        * systems A*B_i=I_i, where B_i and I_i are the i-th columns of B and I.
-        *
-        * A and B are mxm
-        *
-        * The function returns 0 in case of error,
-        * 1 if successfull
-        *
-        */
 
+
+
+    /*
+         * This function computes the inverse of A in B. A and B can coincide
+         *
+         * The function employs LAPACK-free LU decomposition of A to solve m linear
+         * systems A*B_i=I_i, where B_i and I_i are the i-th columns of B and I.
+         *
+         * A and B are mxm
+         *
+         * The function returns 0 in case of error,
+         * 1 if successfull
+         *
+
+ */
+
+
+
+    /// <summary>
+    /// Computes the inverse of matrix <paramref name="A"/> into <paramref name="B"/> using LU decomposition.
+    /// </summary>
+    /// <param name="A">Input matrix (m×m) in row-major layout.</param>
+    /// <param name="B">Output matrix (m×m) in row-major layout; may coincide with <paramref name="A"/>.</param>
+    /// <param name="m">Matrix dimension.</param>
+    /// <returns>1 if successful; 0 on error (e.g. singular matrix).</returns>
     private static int LEVMAR_LUINVERSE(double[] A, double[] B, int m)
     {
       int i, j, k, l;
@@ -1388,7 +1474,7 @@ if(!(k%100)){
 
     private static int LEVMAR_PSEUDOINVERSE(double[] A, double[] B, int m)
     {
-      var Amat = CreateMatrix.DenseOfColumnMajor<double>(m, A.Length/m, A); //  MatrixMath.ToROMatrixFromColumnMajorLinearArray(A, m);
+      var Amat = CreateMatrix.DenseOfColumnMajor<double>(m, A.Length / m, A); //  MatrixMath.ToROMatrixFromColumnMajorLinearArray(A, m);
       var decomp = Amat.Svd();
 
       var s = decomp.S;

@@ -30,6 +30,14 @@ using Altaxo.Calc.LinearAlgebra;
 
 namespace Altaxo.Calc.Optimization.ObjectiveFunctions
 {
+  /// <summary>
+  /// Base implementation for a nonlinear objective model that supports allocation-free evaluation
+  /// for Levenberg-Marquardt-style algorithms.
+  /// </summary>
+  /// <remarks>
+  /// This class provides cached values for the function value, Jacobian-derived quantities, and auxiliary vectors/matrices
+  /// to minimize allocations during repeated evaluations.
+  /// </remarks>
   public abstract class NonlinearObjectiveFunctionNonAllocatingBase : IObjectiveModel, IObjectiveModelNonAllocating
   {
     #region Private Variables
@@ -51,42 +59,34 @@ namespace Altaxo.Calc.Optimization.ObjectiveFunctions
     #region Public Variables
 
     /// <summary>
-    /// Set or get the values of the weights for the observations.
+    /// Gets or sets the values of the weights for the observations.
     /// </summary>
     public Matrix<double>? Weights { get; protected set; }
 
     protected Vector<double>? L; // Weights = LL'
 
     /// <summary>
-    /// Get whether parameters are fixed or free (by the user).
+    /// Gets whether parameters are fixed or free (by the user).
     /// </summary>
     public IReadOnlyList<bool> IsFixedByUser { get; protected set; }
 
-    /// <summary>
-    /// Array of the length <see cref="NumberOfParameters"/>. If an element is true, that parameter is either fixed by the user (see <see cref="IsFixedByUser"/>), or
-    /// is fixed because it has reached a boundary.
-    /// This array will be updated only at the end of the minimization process.
-    /// </summary>
+    /// <inheritdoc/>
     public IReadOnlyList<bool> IsFixedByUserOrBoundary { get; set; }
 
     /// <summary>
-    /// Get the number of observations.
+    /// Gets the number of observations.
     /// </summary>
     public int NumberOfObservations => ObservedY?.Count ?? 0;
 
     /// <summary>
-    /// Get the number of unknown parameters.
+    /// Gets the number of unknown parameters.
     /// </summary>
     public int NumberOfParameters => Point?.Count ?? 0;
 
-    /// <summary>
-    /// Set or get the values of the observations.
-    /// </summary>
+    /// <inheritdoc/>
     public Vector<double> ObservedY { get; protected set; }
 
-    /// <summary>
-    /// Get the degree of freedom
-    /// </summary>
+    /// <inheritdoc/>
     public int DegreeOfFreedom
     {
       get
@@ -100,40 +100,39 @@ namespace Altaxo.Calc.Optimization.ObjectiveFunctions
       }
     }
 
-    /// <summary>
-    /// Get the number of calls to function.
-    /// </summary>
+    /// <inheritdoc/>
     public int FunctionEvaluations { get; set; }
 
-    /// <summary>
-    /// Get the number of calls to jacobian.
-    /// </summary>
+    /// <inheritdoc/>
     public int JacobianEvaluations { get; set; }
 
     #endregion Public Variables
 
+    /// <summary>
+    /// Initializes a new instance of the <see cref="NonlinearObjectiveFunctionNonAllocatingBase"/> class.
+    /// </summary>
+    /// <param name="accuracyOrder">
+    /// Desired accuracy order used when numerically approximating the Jacobian.
+    /// The value is clamped to the range [1, 6].
+    /// </param>
     public NonlinearObjectiveFunctionNonAllocatingBase(int accuracyOrder = 2)
     {
       _accuracyOrder = Math.Min(6, Math.Max(1, accuracyOrder));
     }
 
+    /// <inheritdoc/>
     public abstract IObjectiveModel Fork();
 
+    /// <inheritdoc/>
     public abstract IObjectiveModel CreateNew();
 
-    /// <summary>
-    /// Set or get the values of the parameters.
-    /// </summary>
+    /// <inheritdoc/>
     public Vector<double> Point => _coefficients;
 
-    /// <summary>
-    /// Get the y-values of the fitted model that correspond to the independent values.
-    /// </summary>
+    /// <inheritdoc/>
     public Vector<double> ModelValues { get; protected set; }
 
-    /// <summary>
-    /// Get the residual sum of squares.
-    /// </summary>
+    /// <inheritdoc/>
     public double Value
     {
       get
@@ -148,7 +147,7 @@ namespace Altaxo.Calc.Optimization.ObjectiveFunctions
     }
 
     /// <summary>
-    /// Gets Chi²/(N-F+1)
+    /// Gets Chi²/(N-F+1).
     /// </summary>
     public double SigmaSquare
     {
@@ -163,9 +162,7 @@ namespace Altaxo.Calc.Optimization.ObjectiveFunctions
       }
     }
 
-    /// <summary>
-    /// Get the Gradient vector of x and p.
-    /// </summary>
+    /// <inheritdoc/>
     public Vector<double> Gradient
     {
       get
@@ -179,9 +176,7 @@ namespace Altaxo.Calc.Optimization.ObjectiveFunctions
       }
     }
 
-    /// <summary>
-    /// Get the negative gradient vector of x and p.
-    /// </summary>
+    /// <inheritdoc/>
     public Vector<double> NegativeGradient
     {
       get
@@ -195,9 +190,7 @@ namespace Altaxo.Calc.Optimization.ObjectiveFunctions
       }
     }
 
-    /// <summary>
-    /// Get the Hessian matrix of x and p, J'WJ
-    /// </summary>
+    /// <inheritdoc/>
     public Matrix<double> Hessian
     {
       get
@@ -211,25 +204,27 @@ namespace Altaxo.Calc.Optimization.ObjectiveFunctions
       }
     }
 
+    /// <inheritdoc/>
     public bool IsGradientSupported => true;
+
+    /// <inheritdoc/>
     public bool IsHessianSupported => true;
 
 
-    /// <summary>
-    /// Set parameters and bounds.
-    /// </summary>
-    /// <param name="initialGuess">The initial values of parameters.</param>
-    /// <param name="isFixed">The list to the parameters fix or free.</param>
+    /// <inheritdoc/>
     public void SetParameters(Vector<double> initialGuess, List<bool>? isFixed = null)
     {
       SetParameters((IReadOnlyList<double>)initialGuess, isFixed);
     }
 
     /// <summary>
-    /// Set parameters and bounds.
+    /// Sets model parameters and optional fixed flags for individual parameters.
     /// </summary>
-    /// <param name="initialGuess">The initial values of parameters.</param>
-    /// <param name="isFixed">The list to the parameters fix or free.</param>
+    /// <param name="initialGuess">The initial values of the parameters.</param>
+    /// <param name="isFixed">
+    /// Optional list with the same length as <paramref name="initialGuess"/>.
+    /// For every fixed parameter, the corresponding element is <see langword="true"/>.
+    /// </param>
     public virtual void SetParameters(IReadOnlyList<double> initialGuess, IReadOnlyList<bool>? isFixed = null)
     {
       _coefficients ??= Vector<double>.Build.Dense(initialGuess.Count);
@@ -256,11 +251,18 @@ namespace Altaxo.Calc.Optimization.ObjectiveFunctions
       _jacobianValueTransposed ??= Matrix<double>.Build.Dense(NumberOfParameters, NumberOfObservations);
     }
 
+    /// <inheritdoc/>
     public void EvaluateAt(Vector<double> parameters)
     {
       EvaluateAt((IReadOnlyList<double>)parameters);
     }
 
+    /// <summary>
+    /// Evaluates the model at the given parameter vector and invalidates cached dependent values.
+    /// </summary>
+    /// <param name="parameters">The parameter vector.</param>
+    /// <exception cref="ArgumentNullException">Thrown when <paramref name="parameters"/> is <see langword="null"/>.</exception>
+    /// <exception cref="ArgumentException">Thrown when any element of <paramref name="parameters"/> is not finite.</exception>
     public void EvaluateAt(IReadOnlyList<double> parameters)
     {
       if (parameters is null)
@@ -279,6 +281,7 @@ namespace Altaxo.Calc.Optimization.ObjectiveFunctions
       _hasJacobianValue = false;
     }
 
+    /// <inheritdoc/>
     public IObjectiveFunction ToObjectiveFunction()
     {
       (double, Vector<double>, Matrix<double>) Function(Vector<double> point)
@@ -293,10 +296,23 @@ namespace Altaxo.Calc.Optimization.ObjectiveFunctions
 
     #region Private Methods
 
+    /// <summary>
+    /// Evaluates the objective function value and updates cached values.
+    /// </summary>
     protected abstract void EvaluateFunction();
 
+    /// <summary>
+    /// Evaluates the Jacobian and updates cached Jacobian-derived values (gradient and Hessian).
+    /// </summary>
     protected abstract void EvaluateJacobian();
 
+    /// <summary>
+    /// Numerically approximates the Jacobian at the specified parameter vector.
+    /// </summary>
+    /// <param name="parameters">The parameter vector at which to evaluate the Jacobian.</param>
+    /// <param name="currentValues">The model values corresponding to <paramref name="parameters"/>.</param>
+    /// <param name="accuracyOrder">The desired accuracy order for the numerical approximation.</param>
+    /// <returns>The numerically approximated Jacobian matrix.</returns>
     protected abstract Matrix<double> NumericalJacobian(Vector<double> parameters, Vector<double> currentValues, int accuracyOrder = 2);
 
     #endregion Private Methods

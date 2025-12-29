@@ -37,42 +37,54 @@ using Altaxo.Calc.LinearAlgebra;
 
 namespace Altaxo.Calc.Optimization
 {
-  ///<summary>Base Class for Optimization Methods</summary>
+  /// <summary>Base class for optimization methods.</summary>
   /// <remarks>
   /// <para>Copyright (c) 2003-2004, dnAnalytics Project. All rights reserved. See <a>http://www.dnAnalytics.net</a> for details.</para>
-  /// <para>Adopted to Altaxo (c) 2005 Dr. Dirk Lellinger.</para>
+  /// <para>Adopted for Altaxo (c) 2005 Dr. Dirk Lellinger.</para>
   /// </remarks>
   public abstract class OptimizationMethod : IFormattable
   {
 #nullable disable
-    ///<summary> Optimization ending critera </summary>
+    /// <summary>Optimization ending criteria.</summary>
     public EndCriteria endCriteria_;
 
-    ///<summary> Optimization Cost Function </summary>
+    /// <summary>Optimization cost function.</summary>
     public ICostFunction costFunction_;
 #nullable enable
 
-    ///<summary> Method Name </summary>
+    /// <summary>Gets the method name.</summary>
     public virtual string MethodName
     {
       get { return "Unspecified Optimization Method"; }
     }
 
-    ///<summary> Perform an evaluation of Cost Function value </summary>
+    /// <summary>
+    /// Performs an evaluation of the cost function value.
+    /// </summary>
+    /// <param name="x">The point at which to evaluate the cost function.</param>
+    /// <returns>The cost function value at <paramref name="x"/>.</returns>
     protected double FunctionEvaluation(Vector<double> x)
     {
       endCriteria_.functionEvaluationCounter++;
       return costFunction_.Value(x);
     }
 
-    ///<summary> Perform an evaluation of Cost Function gradient </summary>
+    /// <summary>
+    /// Performs an evaluation of the cost function gradient.
+    /// </summary>
+    /// <param name="x">The point at which to evaluate the gradient.</param>
+    /// <returns>The gradient of the cost function at <paramref name="x"/>.</returns>
     protected Vector<double> GradientEvaluation(Vector<double> x)
     {
       endCriteria_.gradientEvaluationCounter++;
       return costFunction_.Gradient(x);
     }
 
-    ///<summary> Perform an evaluation of Cost Function hessian </summary>
+    /// <summary>
+    /// Performs an evaluation of the cost function Hessian.
+    /// </summary>
+    /// <param name="x">The point at which to evaluate the Hessian.</param>
+    /// <returns>The Hessian matrix of the cost function at <paramref name="x"/>.</returns>
     protected Matrix<double> HessianEvaluation(Vector<double> x)
     {
       endCriteria_.hessianEvaluationCounter++;
@@ -81,29 +93,29 @@ namespace Altaxo.Calc.Optimization
 
     // --- IFormattable Interface ---
 
-    ///<summary>A string representation of this <c>OptimizationMethod</c>.</summary>
+    /// <inheritdoc/>
     public override string ToString()
     {
       return ToString(null, null);
     }
 
-    ///<summary>A string representation of this <c>OptimizationMethod</c>.</summary>
-    ///<param name="format">A format specification.</param>
+    /// <summary>A string representation of this <c>OptimizationMethod</c>.</summary>
+    /// <param name="format">A format specification.</param>
     public string ToString(string format)
     {
       return ToString(format, null);
     }
 
-    ///<summary>A string representation of this <c>OptimizationMethod</c>.</summary>
-    ///<param name="formatProvider">An IFormatProvider that supplies culture-specific formatting information.</param>
+    /// <summary>A string representation of this <c>OptimizationMethod</c>.</summary>
+    /// <param name="formatProvider">An <see cref="IFormatProvider"/> that supplies culture-specific formatting information.</param>
     public string ToString(IFormatProvider formatProvider)
     {
       return ToString(null, formatProvider);
     }
 
-    ///<summary>A string representation of this <c>OptimizationMethod</c>.</summary>
-    ///<param name="format">A format specification.</param>
-    ///<param name="formatProvider">An IFormatProvider that supplies culture-specific formatting information.</param>
+    /// <summary>A string representation of this <c>OptimizationMethod</c>.</summary>
+    /// <param name="format">A format specification.</param>
+    /// <param name="formatProvider">An <see cref="IFormatProvider"/> that supplies culture-specific formatting information.</param>
     public string ToString(string? format, IFormatProvider? formatProvider)
     {
       return MethodName;

@@ -25,7 +25,7 @@
 namespace Altaxo.Calc
 {
   /// <summary>
-  /// The direction of the fourier transform.
+  /// Specifies the direction of a Fourier transformation.
   /// </summary>
   public enum OperationDirection
   {
@@ -35,12 +35,12 @@ namespace Altaxo.Calc
     Forward = 1,
 
     /// <summary>
-    /// Backward direction.
+    /// Inverse direction.
     /// </summary>
     Inverse = -1,
 
     /// <summary>
-    /// Backward direction. (equivalent to <see cref="Inverse"/>).
+    /// Backward direction (equivalent to <see cref="Inverse"/>).
     /// </summary>
     Backward = -1
   }

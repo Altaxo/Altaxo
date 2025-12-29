@@ -50,24 +50,24 @@ using System;
 namespace Altaxo.Calc
 {
   /// <summary>
-  /// Bessel functions for integer order.
+  /// Provides Bessel and related special functions for integer orders.
   /// </summary>
   public class BesselRelated
   {
     #region Common Constants
 
     /// <summary>
-    /// Represents the smallest number where 1+DBL_EPSILON is not equal to 1.
+    /// Represents the smallest number where <c>1 + DBL_EPSILON</c> is not equal to <c>1</c>.
     /// </summary>
     private const double DBL_EPSILON = 2.2204460492503131e-016;
 
     /// <summary>
-    /// The smallest positive double number.
+    /// The smallest positive <see cref="double"/> value.
     /// </summary>
     private const double DBL_MIN = double.Epsilon;
 
     /// <summary>
-    /// The biggest positive double number.
+    /// The largest positive <see cref="double"/> value.
     /// </summary>
     private const double DBL_MAX = double.MaxValue;
 
@@ -76,31 +76,31 @@ namespace Altaxo.Calc
     #region Helper functions
 
     /// <summary>
-    /// Returns -1 if argument negative, 0 if argument zero, or 1 if argument is positive.
+    /// Returns -1 if the argument is negative, 0 if the argument is zero, or 1 if the argument is positive.
     /// </summary>
     /// <param name="x">The number whose sign is returned.</param>
-    /// <returns>-1 if the argument is negative, 0 if the argument is zero, or 1 if argument is positive.</returns>
+    /// <returns>-1 if the argument is negative, 0 if the argument is zero, or 1 if the argument is positive.</returns>
     private static int sign(double x)
     {
       return (x > 0) ? 1 : (x < 0) ? -1 : 0;
     }
 
     /// <summary>
-    /// Return first number with sign of second number
+    /// Returns the first number with the sign of the second number.
     /// </summary>
     /// <param name="x">The first number.</param>
     /// <param name="y">The second number whose sign is used.</param>
-    /// <returns>The first number x with the sign of the second argument y.</returns>
+    /// <returns>The first number <paramref name="x"/> with the sign of the second argument <paramref name="y"/>.</returns>
     private static double CopySign(double x, double y)
     {
       return (y < 0) ? ((x < 0) ? x : -x) : ((x > 0) ? x : -x);
     }
 
     /// <summary>
-    /// Round to nearest integer.
+    /// Rounds to the nearest integer.
     /// </summary>
     /// <param name="d">The argument.</param>
-    /// <returns>The nearest integer of the argument d.</returns>
+    /// <returns>The nearest integer to <paramref name="d"/>.</returns>
     private static int Nint(double d)
     {
       return (d > 0) ? (int)(d + 0.5) : -(int)(-d + 0.5);
@@ -111,18 +111,17 @@ namespace Altaxo.Calc
     #region initds
 
     /// <summary>
-    /// Initialize the orthogonal series, represented by the array os, so
-    /// that initds is the number of terms needed to insure the error is no
-    /// larger than eta.  Ordinarily, eta will be chosen to be one-tenth
-    /// machine precision.
+    /// Initializes the orthogonal series represented by the array <paramref name="os"/> such that
+    /// the returned value is the number of terms needed to ensure the error is no larger than <paramref name="eta"/>.
+    /// Ordinarily, <paramref name="eta"/> is chosen to be one tenth of machine precision.
     /// </summary>
-    /// <param name="os">Double precision array of NOS coefficients in an orthogonal  series.</param>
-    /// <param name="nos">Number of coefficients in OS.</param>
-    /// <param name="eta"> single precision scalar containing requested accuracy of  series. </param>
-    /// <returns>The number of terms neccessary to insure the error is not larger than eta.</returns>
+    /// <param name="os">Double-precision array of <paramref name="nos"/> coefficients in an orthogonal series.</param>
+    /// <param name="nos">Number of coefficients in <paramref name="os"/>.</param>
+    /// <param name="eta">Scalar containing the requested accuracy of the series.</param>
+    /// <returns>The number of terms necessary to ensure the error is not larger than <paramref name="eta"/>.</returns>
     /// <remarks>
     /// This is a translation from the Fortran version of SLATEC, FNLIB,
-    /// CATEGORY C3A2, REVISION 900315, originally written by Fullerton W., (LANL)
+    /// CATEGORY C3A2, REVISION 900315, originally written by Fullerton W. (LANL)
     /// to C++.
     /// </remarks>
     private static int initds(double[] os, int nos, double eta)
@@ -151,26 +150,26 @@ namespace Altaxo.Calc
     #region dcsevl
 
     /// <summary>
-    /// Evaluate the n-term Chebyshev series cs at x.  Adapted from
-    /// a method presented in the paper by Broucke referenced below.
+    /// Evaluates the <paramref name="n"/>-term Chebyshev series <paramref name="cs"/> at <paramref name="x"/>.
+    /// Adapted from a method presented in the paper by Broucke referenced below.
     /// </summary>
-    /// <param name="x">Value at which the series is to be evaluated. </param>
-    /// <param name="cs">cs   array of n terms of a Chebyshev series. In evaluating
-    /// cs, only half the first coefficient is summed.
+    /// <param name="x">Value at which the series is evaluated.</param>
+    /// <param name="cs">
+    /// Array of <paramref name="n"/> terms of a Chebyshev series. In evaluating <paramref name="cs"/>, only half the first coefficient is summed.
     /// </param>
-    /// <param name="n">number of terms in array cs.</param>
-    /// <returns>The n-term Chebyshev series cs at x.</returns>
+    /// <param name="n">Number of terms in array <paramref name="cs"/>.</param>
+    /// <returns>The value of the <paramref name="n"/>-term Chebyshev series <paramref name="cs"/> at <paramref name="x"/>.</returns>
     /// <remarks>
     /// References:
     ///
     /// R. Broucke, Ten subroutines for the manipulation of Chebyshev series,
-    /// Algorithm 446, Communications of the A.C.M. 16, (1973) pp. 254-256.
+    /// Algorithm 446, Communications of the A.C.M. 16 (1973), pp. 254-256.
     ///
     /// L. Fox and I. B. Parker, Chebyshev Polynomials in
-    ///      Numerical Analysis, Oxford University Press, 1968,  page 56.
+    /// Numerical Analysis, Oxford University Press, 1968, page 56.
     ///
     /// This is a translation from the Fortran version of SLATEC, FNLIB,
-    /// CATEGORY C3A2, REVISION  920501, originally written by Fullerton W., (LANL)
+    /// CATEGORY C3A2, REVISION 920501, originally written by Fullerton W. (LANL)
     /// to C++.
     /// </remarks>
     private static double dcsevl(double x, double[] cs, int n)
@@ -199,6 +198,12 @@ namespace Altaxo.Calc
 
     #region d9b0mp
 
+    /// <summary>
+    /// Computes the modulus and phase for the Bessel <c>J0</c> and <c>Y0</c> functions.
+    /// </summary>
+    /// <param name="x">The argument.</param>
+    /// <param name="ampl">When this method returns, contains the modulus (amplitude).</param>
+    /// <param name="theta">When this method returns, contains the phase.</param>
     private static void d9b0mp(double x, out double ampl, out double theta)
     {
       _d9b0mp.d9b0mp(x, out ampl, out theta);
@@ -394,7 +399,7 @@ namespace Altaxo.Calc
       //
       // void d9b0mp (double x, double& ampl, double& theta)
       //
-      // Evaluate the modulus and phase for the Bessel J0 and Y0 functions.
+      // Computes the modulus and phase for the Bessel J0 and Y0 functions.
       //
       // This is a translation from the Fortran version of SLATEC, FNLIB,
       // CATEGORY C10A1, REVISION 920618 originally written by Fullerton W.,(LANL)
@@ -458,6 +463,12 @@ namespace Altaxo.Calc
 
     #region d9b1mp
 
+    /// <summary>
+    /// Computes the modulus and phase for the Bessel <c>J1</c> and <c>Y1</c> functions.
+    /// </summary>
+    /// <param name="x">The argument.</param>
+    /// <param name="ampl">When this method returns, contains the modulus (amplitude).</param>
+    /// <param name="theta">When this method returns, contains the phase.</param>
     private static void d9b1mp(double x, out double ampl, out double theta)
     {
       _d9b1mp.d9b1mp(x, out ampl, out theta);
@@ -653,7 +664,7 @@ namespace Altaxo.Calc
       //
       // void d9b1mp (double x, double& ampl, double& theta)
       //
-      // Evaluate the modulus and phase for the Bessel J1 and Y1 functions.
+      // Computes the modulus and phase for the Bessel J1 and Y1 functions.
       //
       // This is a translation from the Fortran version of SLATEC, FNLIB,
       // CATEGORY C10A1, REVISION 920618 originally written by Fullerton W.,(LANL)
@@ -717,6 +728,12 @@ namespace Altaxo.Calc
 
     #region d9aimp
 
+    /// <summary>
+    /// Computes the Airy modulus and phase for <paramref name="x"/> less than or equal to -1.
+    /// </summary>
+    /// <param name="x">The argument.</param>
+    /// <param name="ampl">When this method returns, contains the modulus (amplitude).</param>
+    /// <param name="theta">When this method returns, contains the phase.</param>
     private static void d9aimp(double x, out double ampl, out double theta)
     {
       _d9aimp.d9aimp(x, out ampl, out theta);
@@ -1136,12 +1153,11 @@ namespace Altaxo.Calc
       //
       // void d9aimp (double x, double& ampl, double& theta)
       //
-      // Evaluate the Airy modulus and phase for x <= -1.0
+      // Computes the Airy modulus and phase for the given x.
       //
       // This is a translation from the Fortran version of SLATEC, FNLIB,
-      // CATEGORY C10D,  REVISION 900720, originally written by Fullerton W.,(LANL)
+      // CATEGORY C10D, REVISION 900720, originally written by Fullerton W.,(LANL)
       // to C++.
-      //
       //
       // Series for AM20       on the interval -1.56250E-02 to  0.
       //                                        with weighted error   3.12E-32
@@ -1271,7 +1287,9 @@ L40:
     4.391090549669888e-32
   };
 
-      private static readonly double xsml = Math.Sqrt(0.5 * DBL_EPSILON * 8.0);
+      private static readonly double xsml = Math.Sqrt(0.5 * DBL_EPSILON * 4.0);
+      private static readonly double xmin = DBL_MIN * 2.0;
+      private static readonly double xmax = Math.Log(DBL_MAX);
       private static readonly int _BesselJ0_ntj0 = initds(_BesselJ0_bj0cs, 19, 0.5 * DBL_EPSILON * 0.1);
 
       /// <summary>
@@ -1369,13 +1387,12 @@ L20:
       private static readonly int _BesselJ1_ntj1 = initds(_BesselJ1_bj1cs, 19, 0.5 * DBL_EPSILON * 0.1);
 
       /// <summary>
-      /// BesselJ1(x) calculates the double precision Bessel function of the
-      /// first kind of order one for double precision argument x.
+      /// BesselJ1(x) calculates the double precision Bessel function of
+      /// the first kind of order one for double precision argument x.
       /// </summary>
       /// <param name="x">The function argument.</param>
       /// <param name="bDebug">If true, an exception is thrown if serious errors occur. If false, NaN is returned on errors.</param>
-      /// <returns>Bessel function of the
-      /// first kind of order one for argument x.</returns>
+      /// <returns>Bessel function of the first kind of order one for argument x.</returns>
       /// <remarks><code>
       /// This is a translation from the Fortran version of SLATEC, FNLIB,
       /// CATEGORY C10A1, REVISION 910401 originally written by Fullerton W.,(LANL)
@@ -1529,8 +1546,7 @@ L20:
     /// second kind of order zero for double precision argument X.
     /// </summary>
     /// <param name="x">The function argument.</param>
-    /// <returns>Bessel function of the
-    /// second kind of order zero for argument x.</returns>
+    /// <returns>Bessel function of the second kind of order zero for argument x.</returns>
     public static double BesselY0(double x)
     {
       return _BesselY0.BesselY0(x, false);
@@ -1541,9 +1557,8 @@ L20:
     /// second kind of order zero for double precision argument X.
     /// </summary>
     /// <param name="x">The function argument.</param>
-    /// <param name="bDebug">If true, an exception is thrown if serious errors occur. If false, NaN is returned on errors.</param>
-    /// <returns>Bessel function of the
-    /// second kind of order zero for argument x.</returns>
+    /// <param name="bDebug"> If true, an exception is thrown if serious errors occur. If false, NaN is returned on errors.</param>
+    /// <returns>Bessel function of the second kind of order zero for argument x.</returns>
     public static double BesselY0(double x, bool bDebug)
     {
       return _BesselY0.BesselY0(x, bDebug);
@@ -1584,8 +1599,7 @@ L20:
       /// </summary>
       /// <param name="x">The function argument.</param>
       /// <param name="bDebug">If true, an exception is thrown if serious errors occur. If false, NaN is returned on errors.</param>
-      /// <returns>Bessel function of the
-      /// second kind of order zero for argument x.</returns>
+      /// <returns>Bessel function of the second kind of order zero for argument x.</returns>
       /// <remarks><code>
       /// This is a translation from the Fortran version of SLATEC, FNLIB,
       /// CATEGORY C10A1, REVISION 900315, originally written by Fullerton W.,(LANL)
@@ -1596,6 +1610,48 @@ L20:
       ///                                         log weighted error  31.09
       ///                               significant figures required  30.31
       ///                                    decimal places required  31.73
+      ///
+      /// Series for BY02       on the interval  0.          to  1.60000E+01
+      ///                                        with weighted error   4.72E-32
+      ///                                         log weighted error  31.33
+      ///                               significant figures required  30.00
+      ///                                    decimal places required  32.13
+      ///
+      /// Series for BT02       on the interval  1.56250E-02 to  6.25000E-02
+      ///                                        with weighted error   2.99E-32
+      ///                                         log weighted error  31.52
+      ///                               significant figures required  30.61
+      ///                                    decimal places required  32.32
+      ///
+      /// Series for BTH0       on the interval  0.          to  1.56250E-02
+      ///                                        with weighted error   2.66E-32
+      ///                                         log weighted error  31.57
+      ///                               significant figures required  30.67
+      ///                                    decimal places required  32.40
+      ///
+      /// Series for BT01       on the interval  1.56250E-02 to  6.25000E-02
+      ///                                        with weighted error   3.33E-32
+      ///                                         log weighted error  31.48
+      ///                               significant figures required  31.05
+      ///                                    decimal places required  32.27
+      ///
+      /// Series for BM01       on the interval  0.          to  1.56250E-02
+      ///                                        with weighted error   5.01E-32
+      ///                                         log weighted error  31.30
+      ///                               significant figures required  29.99
+      ///                                    decimal places required  32.10
+      ///
+      /// Series for BM02       on the interval  0.          to  1.56250E-02
+      ///                                        with weighted error   4.72E-32
+      ///                                         log weighted error  31.33
+      ///                               significant figures required  30.00
+      ///                                    decimal places required  32.13
+      ///
+      /// Series for BTH2       on the interval  0.          to  1.56250E-02
+      ///                                        with weighted error   2.81E-32
+      ///                                         log weighted error  31.60
+      ///                               significant figures required  31.12
+      ///                                    decimal places required  32.37
       /// </code></remarks>
       public static double BesselY0(double x, bool bDebug)
       {
@@ -1629,11 +1685,11 @@ L20:
 
     /// <summary>
     /// BesselY1(x) calculates the double precision Bessel function of the
-    /// second kind of order for double precision argument x.
+    /// second kind of order one for double precision argument x.
     /// </summary>
     /// <param name="x">The function argument.</param>
     /// <returns>Bessel function of the
-    /// second kind of order for argument x.</returns>
+    /// second kind of order one for argument x.</returns>
     public static double BesselY1(double x)
     {
       return _BesselY1.BesselY1(x, false);
@@ -1641,12 +1697,12 @@ L20:
 
     /// <summary>
     /// BesselY1(x) calculates the double precision Bessel function of the
-    /// second kind of order for double precision argument x.
+    /// second kind of order one for double precision argument x.
     /// </summary>
     /// <param name="x">The function argument.</param>
     /// <param name="bDebug">If true, an exception is thrown if serious errors occur. If false, NaN is returned on errors.</param>
     /// <returns>Bessel function of the
-    /// second kind of order for argument x.</returns>
+    /// second kind of order one for argument x.</returns>
     public static double BesselY1(double x, bool bDebug)
     {
       return _BesselY1.BesselY1(x, bDebug);
@@ -1680,20 +1736,20 @@ L20:
 
       private static readonly double twodpi = 0.636619772367581343075535053490057;
       private static readonly double xsml = Math.Sqrt(0.5 * DBL_EPSILON * 4.0);
-      private static readonly double xmin = Math.Exp(Math.Max(Math.Log(DBL_MIN), -Math.Log(DBL_MAX)) + 0.01) * 1.571;
+      private static readonly double xmin = DBL_MIN * 2.0;
+      private static readonly double xmax = Math.Log(DBL_MAX);
       private static readonly int _BesselY1_nty1 = initds(_BesselY1_by1cs, 20, 0.5 * DBL_EPSILON * 0.1);
 
       /// <summary>
       /// BesselY1(x) calculates the double precision Bessel function of the
-      /// second kind of order for double precision argument x.
+      /// second kind of order one for double precision argument x.
       /// </summary>
       /// <param name="x">The function argument.</param>
       /// <param name="bDebug">If true, an exception is thrown if serious errors occur. If false, NaN is returned on errors.</param>
-      /// <returns>Bessel function of the
-      /// second kind of order for argument x.</returns>
+      /// <returns>Bessel function of the second kind of order one for argument x.</returns>
       /// <remarks><code>
       /// This is a translation from the Fortran version of SLATEC, FNLIB,
-      /// CATEGORY C10A1, REVISION 900315, originally written by Fullerton W.,(LANL)
+      /// CATEGORY C10A1, REVISION 900315 originally written by Fullerton W.,(LANL)
       /// to C++.
       ///
       /// Series for BY1        on the interval  0.          to  1.60000E+01
@@ -1855,7 +1911,7 @@ L20:
     9.508172606122666666666666666666666e-34
   };
 
-      private static readonly double _BesselI0_xsml = Math.Sqrt(0.5 * DBL_EPSILON * 4.5);
+      private static readonly double _BesselI0_xsml = Math.Sqrt(0.5 * DBL_EPSILON * 4.0);
       private static readonly double _BesselI0_xmax = Math.Log(DBL_MAX);
       private static readonly int _BesselI0_nti0 = initds(_BesselI0_bi0cs, 18, 0.5 * DBL_EPSILON * 0.1);
 

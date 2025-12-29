@@ -35,24 +35,24 @@ using Complex64T = System.Numerics.Complex;
 namespace Altaxo.Calc
 {
   /// <summary>
-  /// Basic functions.
+  /// Provides basic mathematical helper functions.
   /// </summary>
   public class BasicFunctions
   {
     #region Common Constants
 
     /// <summary>
-    /// Represents the smallest number where 1+DBL_EPSILON is not equal to 1.
+    /// Represents the smallest number where <c>1 + DBL_EPSILON</c> is not equal to <c>1</c>.
     /// </summary>
     public const double DBL_EPSILON = 2.2204460492503131e-016;
 
     /// <summary>
-    /// The smallest positive double number.
+    /// The smallest positive <see cref="double"/> value.
     /// </summary>
     public const double DBL_MIN = double.Epsilon;
 
     /// <summary>
-    /// The biggest positive double number.
+    /// The largest positive <see cref="double"/> value.
     /// </summary>
     public const double DBL_MAX = double.MaxValue;
 
@@ -61,31 +61,31 @@ namespace Altaxo.Calc
     #region Helper functions
 
     /// <summary>
-    /// Returns -1 if argument negative, 0 if argument zero, or 1 if argument is positive.
+    /// Returns -1 if the argument is negative, 0 if the argument is zero, or 1 if the argument is positive.
     /// </summary>
     /// <param name="x">The number whose sign is returned.</param>
-    /// <returns>-1 if the argument is negative, 0 if the argument is zero, or 1 if argument is positive.</returns>
+    /// <returns>-1 if the argument is negative, 0 if the argument is zero, or 1 if the argument is positive.</returns>
     public static int sign(double x)
     {
       return (x > 0) ? 1 : (x < 0) ? -1 : 0;
     }
 
     /// <summary>
-    /// Return first number with the sign of second number
+    /// Returns the first number with the sign of the second number.
     /// </summary>
     /// <param name="x">The first number.</param>
     /// <param name="y">The second number whose sign is used.</param>
-    /// <returns>The first number x with the sign of the second argument y.</returns>
+    /// <returns>The first number <paramref name="x"/> with the sign of the second argument <paramref name="y"/>.</returns>
     public static double CopySign(double x, double y)
     {
       return (y < 0) ? ((x < 0) ? x : -x) : ((x > 0) ? x : -x);
     }
 
     /// <summary>
-    /// Round to nearest integer.
+    /// Rounds to the nearest integer.
     /// </summary>
     /// <param name="d">The argument.</param>
-    /// <returns>The nearest integer of the argument d.</returns>
+    /// <returns>The nearest integer to <paramref name="d"/>.</returns>
     public static int Nint(double d)
     {
       return (d > 0) ? (int)(d + 0.5) : -(int)(-d + 0.5);
@@ -98,12 +98,12 @@ namespace Altaxo.Calc
     //-----------------------------------------------------------------------------//
 
     /// <summary>
-    /// The standard hypot() function for three arguments taking care of overflows and zerodivides.
+    /// The standard hypot() function for three arguments, taking care of overflows and divisions by zero.
     /// </summary>
     /// <param name="x">First argument.</param>
     /// <param name="y">Second argument.</param>
     /// <param name="z">Third argument.</param>
-    /// <returns>Square root of the sum of x-square, y-square and z-square.</returns>
+    /// <returns>The square root of the sum of the squares of <paramref name="x"/>, <paramref name="y"/>, and <paramref name="z"/>.</returns>
     public static float hypot(float x, float y, float z)
     //
     // The standard hypot() function for three arguments taking care
@@ -150,12 +150,12 @@ namespace Altaxo.Calc
     #region hypot3d
 
     /// <summary>
-    /// The standard hypot() function for three arguments taking care of overflows and zerodivides.
+    /// The standard hypot() function for three arguments, taking care of overflows and divisions by zero.
     /// </summary>
     /// <param name="x">First argument.</param>
     /// <param name="y">Second argument.</param>
     /// <param name="z">Third argument.</param>
-    /// <returns>Square root of the sum of x-square, y-square and z-square.</returns>
+    /// <returns>The square root of the sum of the squares of <paramref name="x"/>, <paramref name="y"/>, and <paramref name="z"/>.</returns>
     public static double hypot(double x, double y, double z)
     //
     // The standard hypot() function for three arguments taking care
@@ -208,10 +208,10 @@ namespace Altaxo.Calc
     #region LogRel
 
     /// <summary>
-    /// LogRel(z) = log(1+z) with relative error accuracy near z = 0.
+    /// Computes <c>log(1 + x)</c> with relative error accuracy near <c>x = 0</c>.
     /// </summary>
     /// <param name="x">The function argument.</param>
-    /// <returns></returns>
+    /// <returns><c>log(1 + x)</c> computed with improved relative accuracy for values of <paramref name="x"/> near 0.</returns>
     /// <remarks>
     /// <code>
     /// June 1977 edition.   W. Fullerton, c3, Los Alamos Scientific Lab.
@@ -221,18 +221,19 @@ namespace Altaxo.Calc
     ///                                         log weighted error  31.20
     ///                               significant figures required  30.93
     ///                                    decimal places required  32.01
-    /// </code></remarks>
+    /// </code>
+    /// </remarks>
     public static double LogRel(double x)
     {
       return _LogRel.LogRel(x, false);
     }
 
     /// <summary>
-    /// LogRel(z) = log(1+z) with relative error accuracy near z = 0.
+    /// Computes <c>log(1 + x)</c> with relative error accuracy near <c>x = 0</c>.
     /// </summary>
     /// <param name="x">The function argument.</param>
-    /// <param name="bDebug">If true, an exception will be thrown if errors occur, if false, double.NaN is returned in this case.</param>
-    /// <returns></returns>
+    /// <param name="bDebug">If true, an exception will be thrown if errors occur; if false, <see cref="double.NaN"/> is returned in this case.</param>
+    /// <returns><c>log(1 + x)</c> computed with improved relative accuracy for values of <paramref name="x"/> near 0.</returns>
     /// <remarks>
     /// <code>
     /// June 1977 edition.   W. Fullerton, c3, Los Alamos Scientific Lab.
@@ -242,7 +243,8 @@ namespace Altaxo.Calc
     ///                                         log weighted error  31.20
     ///                               significant figures required  30.93
     ///                                    decimal places required  32.01
-    /// </code></remarks>
+    /// </code>
+    /// </remarks>
     public static double LogRel(double x, bool bDebug)
     {
       return _LogRel.LogRel(x, bDebug);
@@ -301,11 +303,11 @@ namespace Altaxo.Calc
       private static readonly double xmin_LogRel = -1.0 + Math.Sqrt(DBL_EPSILON);
 
       /// <summary>
-      /// LogRel(z) = log(1+z) with relative error accuracy near z = 0.
+      /// Computes <c>log(1 + x)</c> with relative error accuracy near <c>x = 0</c>.
       /// </summary>
       /// <param name="x">The function argument.</param>
-      /// <param name="bDebug">If true, an exception will be thrown if errors occur, if false, double.NaN is returned in this case.</param>
-      /// <returns>log(1+z)</returns>
+      /// <param name="bDebug">If true, an exception will be thrown if errors occur; if false, <see cref="double.NaN"/> is returned in this case.</param>
+      /// <returns><c>log(1 + x)</c>.</returns>
       /// <remarks>
       /// June 1977 edition.   W. Fullerton, c3, Los Alamos Scientific Lab.
       ///
@@ -342,11 +344,12 @@ namespace Altaxo.Calc
     #region LogRel (complex)
 
     /// <summary>
-    /// LogRel(z) = log(1+z) with relative error accuracy near z = 0.
+    /// Computes <c>log(1 + z)</c> with relative error accuracy near <c>z = 0</c>.
     /// </summary>
-    /// <param name="z">The complex argument z.</param>
-    /// <returns>Log(1+z) with relative error accuracy near z=0.</returns>
-    /// <remarks><code>
+    /// <param name="z">The complex argument <c>z</c>.</param>
+    /// <returns><c>log(1 + z)</c> computed with improved relative accuracy for values of <paramref name="z"/> near 0.</returns>
+    /// <remarks>
+    /// <code>
     /// April 1977 version.  W. Fullerton, c3, Los Alamos Scientific Lab.
     ///
     /// let   rho = abs(z)  and
@@ -355,19 +358,21 @@ namespace Altaxo.Calc
     ///       log(1+z) = complex (log(r), arg(1+z))
     ///                = complex (0.5*log(r**2), arg(1+z))
     ///                = complex (0.5*LogRel(2*x+rho**2), arg(1+z))
-    /// </code></remarks>
+    /// </code>
+    /// </remarks>
     public static Complex64T LogRel(Complex64T z)
     {
       return LogRel(z, false);
     }
 
     /// <summary>
-    /// LogRel(z) = log(1+z) with relative error accuracy near z = 0.
+    /// Computes <c>log(1 + z)</c> with relative error accuracy near <c>z = 0</c>.
     /// </summary>
-    /// <param name="z">The complex argument z.</param>
-    /// <param name="bDebug">If true, an exception will be thrown if errors occur, if false, double.NaN is returned in this case.</param>
-    /// <returns>Log(1+z) with relative error accuracy near z=0.</returns>
-    /// <remarks><code>
+    /// <param name="z">The complex argument <c>z</c>.</param>
+    /// <param name="bDebug">If true, an exception will be thrown if errors occur; if false, <see cref="double.NaN"/> is returned in this case.</param>
+    /// <returns><c>log(1 + z)</c> computed with improved relative accuracy for values of <paramref name="z"/> near 0.</returns>
+    /// <remarks>
+    /// <code>
     /// April 1977 version.  W. Fullerton, c3, Los Alamos Scientific Lab.
     ///
     /// let   rho = abs(z)  and
@@ -376,7 +381,8 @@ namespace Altaxo.Calc
     ///       log(1+z) = complex (log(r), arg(1+z))
     ///                = complex (0.5*log(r**2), arg(1+z))
     ///                = complex (0.5*LogRel(2*x+rho**2), arg(1+z))
-    /// </code></remarks>
+    /// </code>
+    /// </remarks>
     public static Complex64T LogRel(Complex64T z, bool bDebug)
     {
       if (bDebug && ComplexMath.Abs(1.0 + z) < Math.Sqrt(DBL_EPSILON))
@@ -394,11 +400,11 @@ namespace Altaxo.Calc
     #region PMod
 
     /// <summary>
-    /// Modulus x%y, but with result guaranted to be greater or equal to zero.
+    /// Computes the modulus <c>x % y</c>, but with a result guaranteed to be greater than or equal to zero.
     /// </summary>
-    /// <param name="x">Nominator.</param>
+    /// <param name="x">Numerator.</param>
     /// <param name="y">Denominator.</param>
-    /// <returns>The remainder of the division x by y, but guaranted to be in the positive range.</returns>
+    /// <returns>The remainder of the division of <paramref name="x"/> by <paramref name="y"/>, guaranteed to be in the non-negative range.</returns>
     public static int PMod(int x, int y)
     {
       int result = x % y;
@@ -410,14 +416,16 @@ namespace Altaxo.Calc
     }
 
     /// <summary>
-    /// Calculates the number of wraps w. This is the number of range wraps that must be taken to
-    /// go from start to start+offset.
+    /// Calculates the number of wraps <c>w</c>. This is the number of range wraps that must be taken to
+    /// go from <paramref name="start"/> to <paramref name="start"/> + <paramref name="offset"/>.
     /// </summary>
     /// <param name="len">Length of the range.</param>
     /// <param name="start">Start point.</param>
     /// <param name="offset">Offset.</param>
-    /// <returns>Number of range wraps when going from start to start+offset. In case offset is negative,
-    /// the function returns a negative value.</returns>
+    /// <returns>
+    /// The number of range wraps when going from <paramref name="start"/> to <paramref name="start"/> + <paramref name="offset"/>.
+    /// If <paramref name="offset"/> is negative, the function returns a negative value.
+    /// </returns>
     public static int NumberOfWraps(int len, int start, int offset)
     {
       len = Math.Abs(len);

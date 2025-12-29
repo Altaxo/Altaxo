@@ -28,6 +28,9 @@ using Altaxo.Calc.LinearAlgebra;
 
 namespace Altaxo.Calc.Regression.Multivariate
 {
+  /// <summary>
+  /// Calibration model for principal component regression (PCR).
+  /// </summary>
   public class PCRCalibrationModel : MultivariateCalibrationModel
   {
 #nullable disable
@@ -37,24 +40,36 @@ namespace Altaxo.Calc.Regression.Multivariate
     private IReadOnlyList<double> _crossProduct;
 #nullable enable
 
+    /// <summary>
+    /// Gets or sets the x score matrix.
+    /// </summary>
     public IROMatrix<double> XScores
     {
       get { return _xScores; }
       set { _xScores = value; }
     }
 
+    /// <summary>
+    /// Gets or sets the x loading matrix.
+    /// </summary>
     public IROMatrix<double> XLoads
     {
       get { return _xLoads; }
       set { _xLoads = value; }
     }
 
+    /// <summary>
+    /// Gets or sets the y load matrix.
+    /// </summary>
     public IROMatrix<double> YLoads
     {
       get { return _yLoads; }
       set { _yLoads = value; }
     }
 
+    /// <summary>
+    /// Gets or sets the cross-product vector (singular values) used by the PCR model.
+    /// </summary>
     public IReadOnlyList<double> CrossProduct
     {
       get { return _crossProduct; }

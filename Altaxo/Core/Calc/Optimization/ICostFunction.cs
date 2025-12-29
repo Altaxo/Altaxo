@@ -35,25 +35,29 @@ using Altaxo.Calc.LinearAlgebra;
 
 namespace Altaxo.Calc.Optimization
 {
-  ///<summary>Base class for cost function declaration</summary>
+  /// <summary>Interface for cost function declarations.</summary>
   /// <remarks>
   /// <para>Copyright (c) 2003-2004, dnAnalytics Project. All rights reserved. See <a>http://www.dnAnalytics.net</a> for details.</para>
-  /// <para>Adopted to Altaxo (c) 2005 Dr. Dirk Lellinger.</para>
+  /// <para>Adopted for Altaxo (c) 2005 Dr. Dirk Lellinger.</para>
   /// </remarks>
   public interface ICostFunction
   {
-    ///<summary>Method to override to compute the cost function value of x</summary>
+    /// <summary>Computes the cost function value at <paramref name="x"/>.</summary>
+    /// <param name="x">Point at which to evaluate the cost function.</param>
+    /// <returns>The cost function value at <paramref name="x"/>.</returns>
     double Value(Vector<double> x);
 
-    ///<summary>Method to override to calculate the grad_f, the first derivative of
-    /// the cost function with respect to x</summary>
+    /// <summary>Computes the gradient (first derivative) of the cost function at <paramref name="x"/>.</summary>
+    /// <param name="x">Point at which to evaluate the gradient.</param>
+    /// <returns>The gradient vector at <paramref name="x"/>.</returns>
     Vector<double> Gradient(Vector<double> x);
 
-    ///<summary>Method to override to calculate the hessian, the second derivative of
-    /// the cost function with respect to x</summary>
+    /// <summary>Computes the Hessian (second derivative) of the cost function at <paramref name="x"/>.</summary>
+    /// <param name="x">Point at which to evaluate the Hessian.</param>
+    /// <returns>The Hessian matrix at <paramref name="x"/>.</returns>
     Matrix<double> Hessian(Vector<double> x);
 
-    ///<summary>Access the constraints for the given cost function </summary>
+    /// <summary>Gets or sets the constraints for the given cost function.</summary>
     ConstraintDefinition Constraint
     {
       get;

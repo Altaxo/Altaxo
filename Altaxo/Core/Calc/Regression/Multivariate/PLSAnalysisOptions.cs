@@ -27,23 +27,26 @@ using System;
 namespace Altaxo.Calc.Regression.Multivariate
 {
   /// <summary>
-  /// Determines how to do a Partial Least Squares Analysis.
+  /// Specifies options for running a multivariate analysis (e.g. Partial Least Squares).
   /// </summary>
   public struct MultivariateAnalysisOptions
   {
     /// <summary>
-    /// Get/sets the maximum number of factors to calculate
+    /// The maximum number of factors to calculate.
     /// </summary>
     public int MaxNumberOfFactors;
 
     /// <summary>
-    /// How to do the calculation of Cross PRESS values.
+    /// Strategy that determines how cross-validation groups are formed (used for calculating cross-PRESS values).
     /// </summary>
     public ICrossValidationGroupingStrategy CrossValidationGroupingStrategy;
 
     /// <summary>
-    /// Get/sets the class that will handles the analysis.
+    /// Gets or sets the analysis method type that performs the analysis.
     /// </summary>
+    /// <remarks>
+    /// The specified type is expected to identify the analysis implementation used by the caller.
+    /// </remarks>
     public System.Type AnalysisMethod;
   }
 }

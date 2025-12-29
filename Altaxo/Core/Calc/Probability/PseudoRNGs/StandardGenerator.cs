@@ -32,25 +32,25 @@ namespace Altaxo.Calc.Probability
   /// Represents a simple pseudo-random number generator.
   /// </summary>
   /// <remarks>
-  /// The <see cref="StandardGenerator"/> type internally uses an instance of the <see cref="System.Random"/> type
-  ///   to generat pseudo-random numbers.
+  /// The <see cref="StandardGenerator"/> type internally uses an instance of <see cref="System.Random"/>
+  /// to generate pseudo-random numbers.
   /// </remarks>
   public class StandardGenerator : Generator
   {
     #region instance fields
 
     /// <summary>
-    /// Stores an instance of <see cref="System.Random"/> type that is used to generate random numbers.
+    /// Stores an instance of <see cref="System.Random"/> that is used to generate random numbers.
     /// </summary>
     private System.Random generator;
 
     /// <summary>
-    /// Stores the used seed value.
+    /// Stores the seed value used.
     /// </summary>
     private int seed;
 
     /// <summary>
-    /// Stores an <see cref="int"/> used to generate up to 31 random <see cref="bool"/> values.
+    /// Stores a value used to generate up to 31 random <see cref="bool"/> values.
     /// </summary>
     private int bitBuffer;
 
@@ -64,8 +64,7 @@ namespace Altaxo.Calc.Probability
     #region construction
 
     /// <summary>
-    /// Initializes a new instance of the <see cref="StandardGenerator"/> class, using a time-dependent default
-    ///   seed value.
+    /// Initializes a new instance of the <see cref="StandardGenerator"/> class using a time-dependent default seed value.
     /// </summary>
     public StandardGenerator()
       : this(Environment.TickCount)
@@ -73,7 +72,7 @@ namespace Altaxo.Calc.Probability
     }
 
     /// <summary>
-    /// Initializes a new instance of the <see cref="StandardGenerator"/> class, using the specified seed value.
+    /// Initializes a new instance of the <see cref="StandardGenerator"/> class using the specified seed value.
     /// </summary>
     /// <param name="seed">
     /// A number used to calculate a starting value for the pseudo-random number sequence.
@@ -92,7 +91,7 @@ namespace Altaxo.Calc.Probability
     #region instance methods
 
     /// <summary>
-    /// Resets the <see cref="StandardGenerator"/>, so that it produces the same pseudo-random number sequence again.
+    /// Resets the <see cref="StandardGenerator"/> so that it produces the same pseudo-random number sequence again.
     /// </summary>
     private void ResetGenerator()
     {
@@ -108,10 +107,7 @@ namespace Altaxo.Calc.Probability
 
     #region overridden Generator members
 
-    /// <summary>
-    /// Gets a value indicating whether the <see cref="StandardGenerator"/> can be reset, so that it produces the
-    ///   same pseudo-random number sequence again.
-    /// </summary>
+    /// <inheritdoc/>
     public override bool CanReset
     {
       get
@@ -120,38 +116,20 @@ namespace Altaxo.Calc.Probability
       }
     }
 
-    /// <summary>
-    /// Resets the <see cref="StandardGenerator"/>, so that it produces the same pseudo-random number sequence again.
-    /// </summary>
-    /// <returns><see langword="true"/>.</returns>
+    /// <inheritdoc/>
     public override bool Reset()
     {
       ResetGenerator();
       return true;
     }
 
-    /// <summary>
-    /// Returns a nonnegative random number.
-    /// </summary>
-    /// <returns>
-    /// A 32-bit signed integer greater than or equal to zero and less than <see cref="int.MaxValue"/>.
-    /// </returns>
+    /// <inheritdoc/>
     public override int Next()
     {
       return generator.Next();
     }
 
-    /// <summary>
-    /// Returns a nonnegative random number less than the specified maximum.
-    /// </summary>
-    /// <param name="maxValue">
-    /// The exclusive upper bound of the random number to be generated.
-    /// <paramref name="maxValue"/> must be greater than or equal to 0.
-    /// </param>
-    /// <returns>
-    /// A 32-bit signed integer greater than or equal to 0, and less than <paramref name="maxValue"/>; that is,
-    ///   the range of return values includes 0 but not <paramref name="maxValue"/>.
-    /// </returns>
+    /// <inheritdoc/>
     /// <exception cref="ArgumentOutOfRangeException">
     /// <paramref name="maxValue"/> is less than 0.
     /// </exception>
@@ -160,22 +138,7 @@ namespace Altaxo.Calc.Probability
       return generator.Next(maxValue);
     }
 
-    /// <summary>
-    /// Returns a random number within a specified range.
-    /// </summary>
-    /// <param name="minValue">
-    /// The inclusive lower bound of the random number to be generated.
-    /// </param>
-    /// <param name="maxValue">
-    /// The exclusive upper bound of the random number to be generated.
-    /// <paramref name="maxValue"/> must be greater than or equal to <paramref name="minValue"/>.
-    /// </param>
-    /// <returns>
-    /// A 32-bit signed integer greater than or equal to <paramref name="minValue"/>, and less than
-    ///   <paramref name="maxValue"/>; that is, the range of return values includes <paramref name="minValue"/> but
-    ///   not <paramref name="maxValue"/>.
-    /// If <paramref name="minValue"/> equals <paramref name="maxValue"/>, <paramref name="minValue"/> is returned.
-    /// </returns>
+    /// <inheritdoc/>
     /// <exception cref="ArgumentOutOfRangeException">
     /// <paramref name="minValue"/> is greater than <paramref name="maxValue"/>.
     /// </exception>
@@ -184,29 +147,13 @@ namespace Altaxo.Calc.Probability
       return generator.Next(minValue, maxValue);
     }
 
-    /// <summary>
-    /// Returns a nonnegative floating point random number less than 1.0.
-    /// </summary>
-    /// <returns>
-    /// A double-precision floating point number greater than or equal to 0.0, and less than 1.0; that is,
-    ///   the range of return values includes 0.0 but not 1.0.
-    /// </returns>
+    /// <inheritdoc/>
     public override double NextDouble()
     {
       return generator.NextDouble();
     }
 
-    /// <summary>
-    /// Returns a nonnegative floating point random number less than the specified maximum.
-    /// </summary>
-    /// <param name="maxValue">
-    /// The exclusive upper bound of the random number to be generated.
-    /// <paramref name="maxValue"/> must be greater than or equal to zero.
-    /// </param>
-    /// <returns>
-    /// A double-precision floating point number greater than or equal to zero, and less than <paramref name="maxValue"/>;
-    ///   that is, the range of return values includes zero but not <paramref name="maxValue"/>.
-    /// </returns>
+    /// <inheritdoc/>
     /// <exception cref="ArgumentOutOfRangeException">
     /// <paramref name="maxValue"/> is less than 0.
     /// </exception>
@@ -222,32 +169,13 @@ namespace Altaxo.Calc.Probability
       return generator.NextDouble() * maxValue;
     }
 
-    /// <summary>
-    /// Returns a floating point random number within the specified range.
-    /// </summary>
-    /// <param name="minValue">
-    /// The inclusive lower bound of the random number to be generated.
-    /// The range between <paramref name="minValue"/> and <paramref name="maxValue"/> must be less than or equal to
-    ///   <see cref="double.MaxValue"/>
-    /// </param>
-    /// <param name="maxValue">
-    /// The exclusive upper bound of the random number to be generated.
-    /// <paramref name="maxValue"/> must be greater than or equal to <paramref name="minValue"/>.
-    /// The range between <paramref name="minValue"/> and <paramref name="maxValue"/> must be less than or equal to
-    ///   <see cref="double.MaxValue"/>.
-    /// </param>
-    /// <returns>
-    /// A double-precision floating point number greater than or equal to <paramref name="minValue"/>, and less than
-    ///   <paramref name="maxValue"/>; that is, the range of return values includes <paramref name="minValue"/> but
-    ///   not <paramref name="maxValue"/>.
-    /// If <paramref name="minValue"/> equals <paramref name="maxValue"/>, <paramref name="minValue"/> is returned.
-    /// </returns>
+    /// <inheritdoc/>
     /// <exception cref="ArgumentOutOfRangeException">
     /// <paramref name="minValue"/> is greater than <paramref name="maxValue"/>.
     /// </exception>
     /// <exception cref="ArgumentException">
     /// The range between <paramref name="minValue"/> and <paramref name="maxValue"/> is greater than
-    ///   <see cref="double.MaxValue"/>.
+    /// <see cref="double.MaxValue"/>.
     /// </exception>
     public override double NextDouble(double minValue, double maxValue)
     {
@@ -270,13 +198,11 @@ namespace Altaxo.Calc.Probability
       return minValue + generator.NextDouble() * range;
     }
 
-    /// <summary>
-    /// Returns a random Boolean value.
-    /// </summary>
+    /// <inheritdoc/>
     /// <remarks>
-    /// Buffers 31 random bits (1 int) for future calls, so a new random number is only generated every 31 calls.
+    /// Buffers 31 random bits (1 <see cref="int"/>) for future calls, so a new random number is generated only once
+    /// per 31 calls.
     /// </remarks>
-    /// <returns>A <see cref="bool"/> value.</returns>
     public override bool NextBoolean()
     {
       if (bitCount == 0)
@@ -294,14 +220,7 @@ namespace Altaxo.Calc.Probability
       return ((bitBuffer >>= 1) & 0x1) == 1;
     }
 
-    /// <summary>
-    /// Fills the elements of a specified array of bytes with random numbers.
-    /// </summary>
-    /// <remarks>
-    /// Each element of the array of bytes is set to a random number greater than or equal to zero, and less than or
-    ///   equal to <see cref="byte.MaxValue"/>.
-    /// </remarks>
-    /// <param name="buffer">An array of bytes to contain random numbers.</param>
+    /// <inheritdoc/>
     /// <exception cref="ArgumentNullException">
     /// <paramref name="buffer"/> is a null reference (<see langword="Nothing"/> in Visual Basic).
     /// </exception>

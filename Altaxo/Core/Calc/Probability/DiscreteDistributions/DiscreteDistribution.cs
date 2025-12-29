@@ -28,23 +28,41 @@ using System.Text;
 
 namespace Altaxo.Calc.Probability
 {
+  /// <summary>
+  /// Base class for discrete probability distributions.
+  /// </summary>
   public abstract class DiscreteDistribution : Distribution
   {
-    public DiscreteDistribution(Generator generator)
+    /// <summary>
+    /// Initializes a new instance of the <see cref="DiscreteDistribution"/> class.
+    /// </summary>
+    /// <param name="generator">The underlying random number generator.</param>
+    protected DiscreteDistribution(Generator generator)
       : base(generator)
     {
     }
 
+    /// <summary>
+    /// Returns the cumulative distribution function (CDF) evaluated at <paramref name="x"/>.
+    /// </summary>
+    /// <param name="x">The value at which to evaluate the CDF.</param>
+    /// <returns>The probability that a random variable is less than or equal to <paramref name="x"/>.</returns>
     public virtual double CDF(double x)
     {
       throw new NotImplementedException();
     }
 
+    /// <summary>
+    /// Returns the probability mass function (PMF) evaluated at <paramref name="x"/>.
+    /// </summary>
+    /// <param name="x">The value at which to evaluate the PMF.</param>
+    /// <returns>The probability for <paramref name="x"/>.</returns>
     public virtual double PDF(double x)
     {
       throw new NotImplementedException();
     }
 
+    /// <inheritdoc />
     public virtual double Quantile(double x)
     {
       throw new NotSupportedException("Sorry, Quantile is not supported here since it is a discrete distribution");

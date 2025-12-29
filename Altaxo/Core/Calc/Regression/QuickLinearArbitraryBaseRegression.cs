@@ -31,8 +31,8 @@ namespace Altaxo.Calc.Regression
 {
   /// <summary>
   /// Class for doing a quick and dirty linear regression with arbitrary base functions provided by the user.
-  /// Numerical precision is limited, as it keeps only the XtX matrix, but therefore it is very fast and needs only little memory.
-  /// Can not handle too big differences between the base functions.
+  /// Numerical precision is limited, as it keeps only the XtX matrix; however, it is very fast and needs only little memory.
+  /// Cannot handle very large differences between the base functions.
   /// </summary>
   public class QuickLinearArbitraryBaseRegression
   {
@@ -219,7 +219,7 @@ namespace Altaxo.Calc.Regression
     }
 
     /// <summary>
-    /// Adds data points to the statistics.
+    /// Adds a sequence of data points to the regression.
     /// </summary>
     /// <param name="values">The data points to add.</param>
     public void AddRange(IEnumerable<(double x, double y)> values)
@@ -231,7 +231,7 @@ namespace Altaxo.Calc.Regression
     }
 
     /// <summary>
-    /// Returns the number of entries added.
+    /// Gets the number of entries added.
     /// </summary>
     public double N
     {
@@ -242,9 +242,13 @@ namespace Altaxo.Calc.Regression
     }
 
     /// <summary>
-    /// Gets the parameters of the regression. Returns an array with NaNs if not enough data points entered.
+    /// Gets the parameters of the regression.
     /// </summary>
-    /// <returns>The intercept value or NaN if not enough data points are entered.</returns>
+    /// <remarks>
+    /// If fixed parameters were provided, the returned list contains both fixed and fitted parameters in the original base-function order.
+    /// </remarks>
+    /// <returns>The regression parameters.</returns>
+    /// <exception cref="InvalidOperationException">Thrown if too few data points were added to estimate the free parameters.</exception>
     public IReadOnlyList<double> GetParameters()
     {
       if (_results?._parameters is not null)
@@ -285,23 +289,25 @@ namespace Altaxo.Calc.Regression
     }
 
     /// <summary>
-    /// Gets the parameter with index idxParameter of the regression.
+    /// Gets the parameter with the specified index.
     /// </summary>
     /// <param name="idxParameter">The index of the parameter.</param>
-    /// <returns>The value of the parameter with index idxParameter of the regression.</returns>
+    /// <returns>The value of the parameter with index <paramref name="idxParameter"/>.</returns>
     public double GetParameter(int idxParameter)
     {
       var parameters = GetParameters();
       return parameters[idxParameter];
     }
 
-
     /// <summary>
-    /// Gets the y value for a given x value. Note that in every call of this function the polynomial coefficients a0, a2, and a1 are calculated again.
-    /// For repeated calls, better use <see cref="GetYOfXFunction"/>, but note that this function represents the state of the regression at the time of this call.
+    /// Evaluates the fitted model at the specified x value.
     /// </summary>
+    /// <remarks>
+    /// For repeated evaluations, consider using <see cref="GetYOfXFunction"/>.
+    /// Note that the returned function represents the state of the regression at the time of the call.
+    /// </remarks>
     /// <param name="x">The x value.</param>
-    /// <returns>The y value at the value x.</returns>
+    /// <returns>The predicted y value at <paramref name="x"/>.</returns>
     public double GetYOfX(double x)
     {
       var parameters = GetParameters();
@@ -316,9 +322,13 @@ namespace Altaxo.Calc.Regression
     }
 
     /// <summary>
-    /// Returns a function to calculate y in dependence of x. Please note note that the returned function represents the state of the regression at the time of the call, i.e. subsequent additions of data does not change the function.
+    /// Creates a function that evaluates the fitted model y(x).
     /// </summary>
-    /// <returns>A function to calculate y in dependence of x.</returns>
+    /// <remarks>
+    /// The returned function captures the regression parameters at the time this method is called.
+    /// Subsequent additions of data points do not change the returned function.
+    /// </remarks>
+    /// <returns>A function that computes y as a function of x.</returns>
     public Func<double, double> GetYOfXFunction()
     {
       var parameters = GetParameters().ToArray();
@@ -339,9 +349,9 @@ namespace Altaxo.Calc.Regression
     }
 
     /// <summary>
-    /// Gets the înverse of the Xt.X matrix.
+    /// Gets the inverse of the XtX matrix.
     /// </summary>
-    /// <returns>Inverse of the Xt.X matrix.</returns>
+    /// <returns>The inverse of the XtX matrix.</returns>
     public Matrix<double> GetÎnverseXtXMatrix()
     {
       if (_results?._inverseXtX is null)
@@ -353,9 +363,11 @@ namespace Altaxo.Calc.Regression
     }
 
     /// <summary>
-    /// Get the residual sum of squares.
+    /// Gets the residual sum of squares.
     /// </summary>
-    /// <returns>The residual sum of squares, i.e. the sum of squared differences between original y and predicted y.</returns>
+    /// <returns>
+    /// The residual sum of squares, i.e. the sum of squared differences between the original y values and the predicted y values.
+    /// </returns>
     public double SumChiSquared()
     {
       var inv = GetÎnverseXtXMatrix();
@@ -382,9 +394,9 @@ namespace Altaxo.Calc.Regression
     }
 
     /// <summary>
-    /// Gets the R squared value (square of the correlation coefficient).
+    /// Gets the coefficient of determination (R²).
     /// </summary>
-    /// <returns>the R squared value (square of the correlation coefficient).</returns>
+    /// <returns>The coefficient of determination (R²).</returns>
     public double RSquared()
     {
       var SST = _syy - _sy * _sy / _n;
@@ -446,10 +458,13 @@ namespace Altaxo.Calc.Regression
     }
 
     /// <summary>
-    /// Gets the error of parameter A0.
+    /// Gets the standard error of the specified parameter.
     /// </summary>
-    /// <param name="covarianceMatrix">The covariance matrix. For repeated calls, get it in from <see cref="GetCovarianceMatrix"/>, otherwise, you can provide null.</param>
-    /// <returns>The error of parameter A0.</returns>
+    /// <param name="idxParameter">The index of the parameter.</param>
+    /// <param name="covarianceMatrix">
+    /// The covariance matrix. For repeated calls, obtain it once via <see cref="GetCovarianceMatrix"/>; otherwise, pass <see langword="null"/>.
+    /// </param>
+    /// <returns>The standard error of the specified parameter.</returns>
     public double GetParameterError(int idxParameter, LinearAlgebra.Matrix<double>? covarianceMatrix = null)
     {
       covarianceMatrix ??= GetCovarianceMatrix();
@@ -457,12 +472,11 @@ namespace Altaxo.Calc.Regression
       return variance < 0 ? 0 : Math.Sqrt(variance);
     }
 
-
     /// <summary>
-    /// Gets the mean prediction error of y in dependence on x.
+    /// Gets the mean prediction error of y at the specified x value.
     /// </summary>
     /// <param name="x">The x value.</param>
-    /// <returns>The mean prediction error of y in dependence on x.</returns>
+    /// <returns>The mean prediction error of y at <paramref name="x"/>.</returns>
     public double GetYErrorOfX(double x)
     {
       var variance = GetYVarianceOfX(x);
@@ -470,11 +484,13 @@ namespace Altaxo.Calc.Regression
     }
 
     /// <summary>
-    /// Gets the confidence band of the prediction.
+    /// Gets the confidence band of the prediction at the specified x value.
     /// </summary>
     /// <param name="x">The x value.</param>
-    /// <param name="confidenceLevel">The confidence level.</param>
-    /// <returns>The lower value of the confidence band, the mean value of the prediction, and the upper value of the confidence band.</returns>
+    /// <param name="confidenceLevel">The confidence level (e.g. 0.95 for a 95% confidence band).</param>
+    /// <returns>
+    /// The lower value of the confidence band, the mean value of the prediction, and the upper value of the confidence band.
+    /// </returns>
     public (double yLower, double yMean, double yUpper) GetConfidenceBand(double x, double confidenceLevel)
     {
       var covarianceMatrix = GetCovarianceMatrix();
@@ -485,11 +501,13 @@ namespace Altaxo.Calc.Regression
     }
 
     /// <summary>
-    /// Gets the confidence band of the prediction for multiple x-values.
+    /// Gets the confidence band of the prediction for multiple x values.
     /// </summary>
     /// <param name="xdata">The x values.</param>
-    /// <param name="confidenceLevel">The confidence level.</param>
-    /// <returns>Enumeration with the x values, the lower value of the confidence band, the mean value of the prediction, and the upper value of the confidence band.</returns>
+    /// <param name="confidenceLevel">The confidence level (e.g. 0.95 for a 95% confidence band).</param>
+    /// <returns>
+    /// An enumeration of tuples containing the x value, the lower confidence bound, the mean prediction, and the upper confidence bound.
+    /// </returns>
     public IEnumerable<(double x, double yLower, double yMean, double yUpper)> GetConfidenceBand(IEnumerable<double> xdata, double confidenceLevel)
     {
       var t = Altaxo.Calc.Probability.StudentsTDistribution.Quantile(1 - (0.5 * (1 - confidenceLevel)), _n - _numberOfFreeBaseFunctions);

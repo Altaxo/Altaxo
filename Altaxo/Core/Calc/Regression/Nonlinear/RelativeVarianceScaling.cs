@@ -29,9 +29,11 @@ namespace Altaxo.Calc.Regression.Nonlinear
 {
 
   /// <summary>
-  /// This is a variance which scales linearly with the measured value. Useful for
-  /// functions with a broad range of y-values. Make sure that no y-value is zero.
+  /// Variance scaling where the variance scales linearly with the measured value.
   /// </summary>
+  /// <remarks>
+  /// Useful for functions with a broad range of y-values. Make sure that no y-value is zero.
+  /// </remarks>
   public class RelativeVarianceScaling : IVarianceScaling
   {
     private double _scaling = 1;
@@ -42,6 +44,7 @@ namespace Altaxo.Calc.Regression.Nonlinear
     [Altaxo.Serialization.Xml.XmlSerializationSurrogateFor(typeof(RelativeVarianceScaling), 1)]
     private class XmlSerializationSurrogate0 : Altaxo.Serialization.Xml.IXmlSerializationSurrogate
     {
+      /// <inheritdoc/>
       public virtual void Serialize(object obj, Altaxo.Serialization.Xml.IXmlSerializationInfo info)
       {
         var s = (RelativeVarianceScaling)obj;
@@ -49,6 +52,7 @@ namespace Altaxo.Calc.Regression.Nonlinear
         info.AddValue("ScalingFactor", s._scaling);
       }
 
+      /// <inheritdoc/>
       public virtual object Deserialize(object? o, Altaxo.Serialization.Xml.IXmlDeserializationInfo info, object? parent)
       {
         RelativeVarianceScaling s = (RelativeVarianceScaling?)o ?? new RelativeVarianceScaling();
@@ -61,6 +65,7 @@ namespace Altaxo.Calc.Regression.Nonlinear
 
     #endregion Serialization
 
+    /// <inheritdoc/>
     public double GetWeight(double yr, int i)
     {
       if (yr == 0)
@@ -69,11 +74,13 @@ namespace Altaxo.Calc.Regression.Nonlinear
         return _scaling / Math.Abs(yr);
     }
 
+    /// <inheritdoc/>
     public string ShortName
     {
       get { return "N1"; }
     }
 
+    /// <inheritdoc/>
     public object Clone()
     {
       var result = new RelativeVarianceScaling

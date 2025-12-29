@@ -10,7 +10,7 @@ using Complex64T = System.Numerics.Complex;
 namespace Altaxo.Calc.RootFinding
 {
   /// <summary>
-  /// Implements the Jenkins-Traub algorithm for polynoms with real coefficients.
+  /// Implements the Jenkins–Traub algorithm for polynomials with complex coefficients.
   /// </summary>
   public class ComplexPolynomialRootFinder_JenkinsTraub
   {
@@ -55,10 +55,15 @@ namespace Altaxo.Calc.RootFinding
     private double[] shi = _emptyDoubleArray;
 
     /// <summary>
-    /// The Jenkins–Traub algorithm for finding the roots of a polynomial.
+    /// Finds all (real and complex) roots of a polynomial using the Jenkins–Traub algorithm.
     /// </summary>
-    /// <param name="Input">The coefficients for the polynomial starting with the constant (zero degree) and ends with the highest degree. Missing coefficients must be provided as zeros.</param>
-    /// <returns>All the real and complex roots that are found are returned in a list of complex numbers. The list is not neccessarily sorted.</returns>
+    /// <param name="Input">
+    /// The coefficients of the polynomial, starting with the constant term (degree 0) and ending with the highest degree.
+    /// Missing coefficients must be provided as zeros.
+    /// </param>
+    /// <returns>
+    /// A list containing the roots found (real and complex). The list is not necessarily sorted.
+    /// </returns>
     public static List<Complex64T> FindRoots(params Complex64T[] Input)
     {
       var r = new ComplexPolynomialRootFinder_JenkinsTraub();
@@ -66,10 +71,18 @@ namespace Altaxo.Calc.RootFinding
     }
 
     /// <summary>
-    /// The Jenkins–Traub algorithm for finding the roots of a polynomial.
+    /// Finds all (real and complex) roots of a polynomial using the Jenkins–Traub algorithm.
     /// </summary>
-    /// <param name="Input">The coefficients for the polynomial starting with the constant (zero degree) and ends with the highest degree. Missing coefficients must be provided as zeros.</param>
-    /// <returns>All the real and complex roots that are found are returned in a list of complex numbers. The list is not neccessarily sorted.</returns>
+    /// <param name="Input">
+    /// The coefficients of the polynomial, starting with the constant term (degree 0) and ending with the highest degree.
+    /// Missing coefficients must be provided as zeros.
+    /// </param>
+    /// <returns>
+    /// A list containing the roots found (real and complex). The list is not necessarily sorted.
+    /// </returns>
+    /// <exception cref="ArgumentNullException">Thrown if <paramref name="Input"/> is <see langword="null"/>.</exception>
+    /// <exception cref="ArgumentException">Thrown if the provided polynomial has degree 0.</exception>
+    /// <exception cref="ArgumentOutOfRangeException">Thrown if an input coefficient is not a finite number.</exception>
     public List<Complex64T> Execute(params Complex64T[] Input)
     {
       if (Input is null)
@@ -236,9 +249,10 @@ search:
       throw new Exception("The program could not converge to find all the zeroes, but a prelimenary result with the ones that are found is returned.");
     }
 
-    // COMPUTES  THE DERIVATIVE  POLYNOMIAL AS THE INITIAL H
-    // POLYNOMIAL AND COMPUTES L1 NO-SHIFT H POLYNOMIALS.
-    //
+    /// <summary>
+    /// Computes the derivative polynomial as the initial H polynomial and computes L1 no-shift H polynomials.
+    /// </summary>
+    /// <param name="l1">Number of no-shift steps to perform.</param>
     private void noshft(int l1)
     {
       int j = 0;
@@ -287,13 +301,14 @@ search:
       }
     }
 
-    // COMPUTES L2 FIXED-SHIFT H POLYNOMIALS AND TESTS FOR CONVERGENCE.
-    // INITIATES A VARIABLE-SHIFT ITERATION AND RETURNS WITH THE
-    // APPROXIMATE ZERO IF SUCCESSFUL.
-    // L2 - LIMIT OF FIXED SHIFT STEPS
-    // ZR,ZI - APPROXIMATE ZERO IF CONV IS .TRUE.
-    // CONV  - LOGICAL INDICATING CONVERGENCE OF STAGE 3 ITERATION
-    //
+    /// <summary>
+    /// Computes L2 fixed-shift H polynomials and tests for convergence.
+    /// Initiates a variable-shift iteration and returns an approximate root if successful.
+    /// </summary>
+    /// <param name="l2">Limit of fixed shift steps.</param>
+    /// <param name="zr">Approximate real part of a root (on success).</param>
+    /// <param name="zi">Approximate imaginary part of a root (on success).</param>
+    /// <param name="conv">Set to 1 if the stage-3 iteration converged; otherwise 0.</param>
     private void fxshft(int l2, ref double zr, ref double zi, ref int conv)
     {
       int n = 0;
@@ -372,12 +387,17 @@ search:
       vrshft(10, ref zr, ref zi, ref conv);
     }
 
-    // CARRIES OUT THE THIRD STAGE ITERATION.
-    // L3 - LIMIT OF STEPS IN STAGE 3.
-    // ZR,ZI   - ON ENTRY CONTAINS THE INITIAL ITERATE, IF THE
-    //           ITERATION CONVERGES IT CONTAINS THE FINAL ITERATE ON EXIT.
-    // CONV    -  .TRUE. IF ITERATION CONVERGES
-    //
+    /// <summary>
+    /// Performs the third-stage, variable-shift iteration.
+    /// </summary>
+    /// <param name="l3">Limit of steps in stage 3.</param>
+    /// <param name="zr">
+    /// On entry, contains the initial iterate; if the iteration converges, contains the final iterate on exit.
+    /// </param>
+    /// <param name="zi">
+    /// On entry, contains the initial iterate; if the iteration converges, contains the final iterate on exit.
+    /// </param>
+    /// <param name="conv">Set to 1 if the iteration converged; otherwise 0.</param>
     private void vrshft(int l3, ref double zr, ref double zi, ref int conv)
     {
       int b = 0;
@@ -460,8 +480,10 @@ _20:
       }
     }
 
-    // COMPUTES  T = -P(S)/H(S).
-    // BOOL   - LOGICAL, SET TRUE IF H(S) IS ESSENTIALLY ZERO.
+    /// <summary>
+    /// Computes T = -P(S) / H(S).
+    /// </summary>
+    /// <param name="bol">Set to 1 if H(S) is essentially zero; otherwise 0.</param>
     private void calct(ref int bol)
     {
       // Int(n)
@@ -493,10 +515,10 @@ _20:
       ti = 0;
     }
 
-    // CALCULATES THE NEXT SHIFTED H POLYNOMIAL.
-    // BOOL   -  LOGICAL, IF .TRUE. H(S) IS ESSENTIALLY ZERO
-    //
-
+    /// <summary>
+    /// Calculates the next shifted H polynomial.
+    /// </summary>
+    /// <param name="bol">If 1, H(S) is essentially zero.</param>
     private void nexth(int bol)
     {
       int n = 0;
@@ -529,9 +551,11 @@ _20:
       hi[0] = 0;
     }
 
-    // EVALUATES A POLYNOMIAL  P  AT  S  BY THE HORNER RECURRENCE
-    // PLACING THE PARTIAL SUMS IN Q AND THE COMPUTED VALUE IN PV.
-    //
+    /// <summary>
+    /// Evaluates a polynomial at a complex point using the Horner recurrence.
+    /// Partial sums are stored in <paramref name="qr"/> and <paramref name="qi"/>, and the computed value is returned
+    /// via <paramref name="pvr"/> and <paramref name="pvi"/>.
+    /// </summary>
     private static void polyev(int nn, double sr, double si, double[] pr, double[] pi, double[] qr, double[] qi, ref double pvr, ref double pvi)
     {
       //{
@@ -553,12 +577,16 @@ _20:
       }
     }
 
-    // BOUNDS THE ERROR IN EVALUATING THE POLYNOMIAL BY THE HORNER RECURRENCE.
-    // QR,QI - THE PARTIAL SUMS
-    // MS    -MODULUS OF THE POINT
-    // MP    -MODULUS OF POLYNOMIAL VALUE
-    // ARE, MRE -ERROR BOUNDS ON COMPLEX ADDITION AND MULTIPLICATION
-    //
+    /// <summary>
+    /// Bounds the error in evaluating the polynomial by the Horner recurrence.
+    /// </summary>
+    /// <param name="nn">Degree of the polynomial.</param>
+    /// <param name="qr">Partial sums (real parts).</param>
+    /// <param name="qi">Partial sums (imaginary parts).</param>
+    /// <param name="ms">Modulus of the evaluation point.</param>
+    /// <param name="mp">Modulus of the polynomial value.</param>
+    /// <param name="are">Error bound on complex addition.</param>
+    /// <param name="mre">Error bound on complex multiplication.</param>
     private static double errev(int nn, double[] qr, double[] qi, double ms, double mp, double are, double mre)
     {
       //{
@@ -574,9 +602,9 @@ _20:
       return e * (are + mre) - mp * mre;
     }
 
-    // CAUCHY COMPUTES A LOWER BOUND ON THE MODULI OF THE ZEROS OF A
-    // POLYNOMIAL - PT IS THE MODULUS OF THE COEFFICIENTS.
-    //
+    /// <summary>
+    /// Computes a lower bound on the moduli of the zeros of a polynomial.
+    /// </summary>
     private static void cauchy(int nn, double[] pt, double[] q, ref double fn_val)
     {
       int n = 0;
@@ -636,13 +664,11 @@ _20:
       fn_val = x;
     }
 
-    // RETURNS A SCALE FACTOR TO MULTIPLY THE COEFFICIENTS OF THE POLYNOMIAL.
-    // THE SCALING IS DONE TO AVOID OVERFLOW AND TO AVOID UNDETECTED UNDERFLOW
-    // INTERFERING WITH THE CONVERGENCE CRITERION.  THE FACTOR IS A POWER OF THE
-    // BASE.
-    // PT - MODULUS OF COEFFICIENTS OF P
-    // ETA, INFIN, SMALNO, BASE - CONSTANTS DESCRIBING THE FLOATING POINT ARITHMETIC.
-    //
+    /// <summary>
+    /// Returns a scale factor used to multiply the coefficients of the polynomial.
+    /// The scaling is applied to avoid overflow and to avoid undetected underflow interfering with the convergence
+    /// criterion. The factor is a power of the floating-point base.
+    /// </summary>
     private static double scale(int nn, double[] pt, double eta, double infin, double smalno, double @base)
     {
       //{
@@ -691,8 +717,9 @@ _20:
       return fn_val;
     }
 
-    // COMPLEX DIVISION C = A/B, AVOIDING OVERFLOW.
-    //
+    /// <summary>
+    /// Performs complex division <c>C = A / B</c> while attempting to avoid overflow.
+    /// </summary>
     private static void cdivid(double ar, double ai, double br, double bi, ref double cr, ref double ci)
     {
       double r = 0;
@@ -724,8 +751,9 @@ _20:
       ci = (ai - ar * r) / d;
     }
 
-    // MODULUS OF A COMPLEX NUMBER AVOIDING OVERFLOW.
-    //
+    /// <summary>
+    /// Computes the modulus of a complex number while attempting to avoid overflow.
+    /// </summary>
     private static double cmod(double r, double i)
     {
       double ar = 0;
@@ -747,17 +775,16 @@ _20:
       }
     }
 
-    // MCON PROVIDES MACHINE CONSTANTS USED IN VARIOUS PARTS OF THE PROGRAM.
-    // THE USER MAY EITHER SET THEM DIRECTLY OR USE THE STATEMENTS BELOW TO
-    // COMPUTE THEM. THE MEANING OF THE FOUR CONSTANTS ARE -
-    // ETA       THE MAXIMUM RELATIVE REPRESENTATION ERROR WHICH CAN BE DESCRIBED
-    //           AS THE SMALLEST POSITIVE FLOATING-POINT NUMBER SUCH THAT
-    //           1.0_dp + ETA > 1.0.
-    // INFINY    THE LARGEST FLOATING-POINT NUMBER
-    // SMALNO    THE SMALLEST POSITIVE FLOATING-POINT NUMBER
-    // BASE      THE BASE OF THE FLOATING-POINT NUMBER SYSTEM USED
-    //
-
+    /// <summary>
+    /// Provides machine constants used in various parts of the program.
+    /// </summary>
+    /// <param name="eta">
+    /// Maximum relative representation error, described as the smallest positive floating-point number such that
+    /// <c>1.0 + eta &gt; 1.0</c>.
+    /// </param>
+    /// <param name="infiny">Largest representable floating-point number.</param>
+    /// <param name="smalno">Smallest positive representable floating-point number.</param>
+    /// <param name="base">Base (radix) of the floating-point number system used.</param>
     private static void mcon(ref double eta, ref double infiny, ref double smalno, ref double @base)
     {
       @base = DBL_RADIX;

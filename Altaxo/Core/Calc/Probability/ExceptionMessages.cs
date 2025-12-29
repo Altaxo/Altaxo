@@ -29,6 +29,9 @@ using System.Text;
 
 namespace Altaxo.Calc.Probability
 {
+  /// <summary>
+  /// Provides access to localized exception and validation message templates used by the probability components.
+  /// </summary>
   public static class ExceptionMessages
   {
     private static readonly StringResourceKey SRKArgumentNull = new StringResourceKey("ArgumentNull", "{0} is a null reference (Nothing in Visual Basic).", "Describes that a particular argument named in the first argument is null");
@@ -37,10 +40,19 @@ namespace Altaxo.Calc.Probability
 
     private static readonly StringResourceKey SRKArgumentRangeLessEqual = new StringResourceKey("ArgumentRangeLessEqual", "The range between {0} and {1} must be less than or equal to {2}.", "Designates that the difference between first and second argument must be less than or equal to the value given in the third argument.");
 
+    /// <summary>
+    /// Gets the message template used when an argument is <see langword="null"/>.
+    /// </summary>
     public static string ArgumentNull { get { return StringResources.AltaxoCore.GetString(SRKArgumentNull); } }
 
+    /// <summary>
+    /// Gets the message template used when a value must be greater than or equal to another value.
+    /// </summary>
     public static string ArgumentOutOfRangeGreaterEqual { get { return StringResources.AltaxoCore.GetString(SRKArgumentOutOfRangeGreaterEqual); } }
 
+    /// <summary>
+    /// Gets the message template used when the range between two values must be less than or equal to a specified limit.
+    /// </summary>
     public static string ArgumentRangeLessEqual { get { return StringResources.AltaxoCore.GetString(SRKArgumentRangeLessEqual); } }
   }
 }

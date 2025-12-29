@@ -30,18 +30,32 @@ using System;
 
 namespace Altaxo.Calc.RootFinding
 {
+  /// <summary>
+  /// Root finder using the bisection method.
+  /// </summary>
   public class BisectionRootFinder : AbstractRootFinder
   {
+    /// <summary>
+    /// Initializes a new instance of the <see cref="BisectionRootFinder"/> class.
+    /// </summary>
+    /// <param name="function">A continuous function.</param>
     public BisectionRootFinder(Func<double, double> function)
       : base(function)
     {
     }
 
+    /// <summary>
+    /// Initializes a new instance of the <see cref="BisectionRootFinder"/> class.
+    /// </summary>
+    /// <param name="function">A continuous function.</param>
+    /// <param name="maxNumberOfIterations">Maximum number of iterations allowed.</param>
+    /// <param name="accuracy">Desired accuracy for the computed root.</param>
     public BisectionRootFinder(Func<double, double> function, int maxNumberOfIterations, double accuracy)
       : base(function, maxNumberOfIterations, accuracy)
     {
     }
 
+    /// <inheritdoc/>
     protected override double Find()
     {
       double dx, xmid, x;

@@ -33,14 +33,17 @@ using Complex64T = System.Numerics.Complex;
 
 namespace Altaxo.Calc.Regression
 {
+  /// <summary>
+  /// Provides a least-squares solver for the linear system used by <see cref="DynamicParameterEstimation"/>.
+  /// </summary>
   public interface IDynamicParameterEstimationSolver
   {
     /// <summary>
-    /// Solve the equation a*result=b in the least square sense, i.e. minimize the norm of (b-a*result).
+    /// Solves the equation <c>a * result = b</c> in the least-square sense, i.e. minimizes the norm of <c>(b - a * result)</c>.
     /// </summary>
-    /// <param name="a">Matrix a.</param>
-    /// <param name="b">Vector b.</param>
-    /// <param name="result">Vector result, so that Norm(a*result-b) is minimized.</param>
+    /// <param name="a">Matrix <c>a</c>.</param>
+    /// <param name="b">Vector <c>b</c>.</param>
+    /// <param name="result">Vector <c>result</c>, such that <c>||a * result - b||</c> is minimized.</param>
     void Solve(Matrix<double> a, Vector<double> b, Vector<double> result);
   }
 
@@ -58,14 +61,18 @@ namespace Altaxo.Calc.Regression
     /// <summary>Number of background parameters to estimate.</summary>
     protected int _backgroundOrderPlus1;
 
-    /// <summary>"Moves" the sequence x in relation to sequence y. Normally, the y[i] is considered in dependence on x[i], x[i-1].. and so on. By setting the offset,
-    /// the y[i] is considered in dependence on x[i-offset], x[x-offset-1]...</summary>
+    /// <summary>
+    /// "Moves" the sequence <c>x</c> in relation to sequence <c>y</c>.
+    /// Normally, <c>y[i]</c> is considered in dependence on <c>x[i]</c>, <c>x[i-1]</c>, and so on.
+    /// By setting the offset, <c>y[i]</c> is considered in dependence on <c>x[i-offset]</c>, <c>x[i-offset-1]</c>, etc.
+    /// </summary>
     protected int _offsetX;
 #nullable disable
     /// <summary>
-    /// Array to store the estimated parameters. First in the array, the x parameters are stored (indices 0.._numX-1).
-    /// Then the y parameters, having indices of (_numX.._numX+_numY-1). Lastly, the background parameters are stored in the array
-    /// (indices _numX+_numY ... end_of_array)
+    /// Array to store the estimated parameters.
+    /// First in the array, the x parameters are stored (indices <c>0.._numX-1</c>).
+    /// Then the y parameters (indices <c>_numX.._numX+_numY-1</c>).
+    /// Lastly, the background parameters are stored in the array (indices <c>_numX+_numY..end</c>).
     /// </summary>
     protected Vector<double> _parameter;
 
@@ -73,27 +80,34 @@ namespace Altaxo.Calc.Regression
     protected Matrix<double> _inputMatrix;
 #nullable enable
 
-    /// <summary>Total number of parameter, i.e. _numX+_numY + _backgroundOrderPlus1</summary>
+    /// <summary>Total number of parameters, i.e. <c>_numX + _numY + _backgroundOrderPlus1</c>.</summary>
     protected int _numberOfParameter;
 
     /// <summary>Index of the point where the calculation can start.</summary>
     protected int _startingPoint;
 
-    /// <summary>Array of y-values neccessary for backsubstitution. Is a copy of the input y vector, but
-    /// only for the elements _startingPoint...end_of_y_vector.</summary>
+    /// <summary>
+    /// Array of y-values necessary for back-substitution. This is a copy of the input <c>y</c> vector
+    /// only for the elements <c>_startingPoint..end</c>.
+    /// </summary>
     protected Vector<double>? _scaledY;
 
-    /// <summary>Stores an instance of a solver used to solve the linear equation. The solver
-    /// should keep and recycle the memory neccessary for solving the equation.</summary>
+    /// <summary>
+    /// Stores an instance of a solver used to solve the linear equation.
+    /// The solver should keep and recycle the memory necessary for solving the equation.
+    /// </summary>
     protected IDynamicParameterEstimationSolver _solver;
 
     /// <summary>
-    /// Constructur for the dynamic parameter estimation.
+    /// Constructor for the dynamic parameter estimation.
     /// </summary>
-    /// <param name="numX">Number of history x samples to be taken into account for the parameter estimation (samples x[i], x[i-1]..x[i+1-numX]).</param>
-    /// <param name="numY">Number of history y samples to be taken into account for the parameter estimation (samples y[i-1], y[i-2]..x[i-numY].</param>
-    /// <param name="backgroundOrder">Order of the background fit, i.e. components 1, i, i² are fitted additionally to x and y. A order of 0 fits a constant
-    /// background, 1 a linear depencence, and so on. Set this parameter to -1 if you don't need a background fit.</param>
+    /// <param name="numX">Number of history x samples to be taken into account for the parameter estimation (samples <c>x[i]</c>, <c>x[i-1]</c>.. <c>x[i+1-numX]</c>).</param>
+    /// <param name="numY">Number of history y samples to be taken into account for the parameter estimation (samples <c>y[i-1]</c>, <c>y[i-2]</c>.. <c>y[i-numY]</c>).</param>
+    /// <param name="backgroundOrder">
+    /// Order of the background fit, i.e. components <c>1</c>, <c>i</c>, <c>i²</c> are fitted additionally to x and y.
+    /// An order of 0 fits a constant background, 1 a linear dependence, and so on.
+    /// Set this parameter to -1 if you don't need a background fit.
+    /// </param>
     public DynamicParameterEstimation(int numX, int numY, int backgroundOrder)
       : this(numX, numY, backgroundOrder, SVDSolver)
     {
@@ -101,13 +115,20 @@ namespace Altaxo.Calc.Regression
     }
 
     /// <summary>
-    /// Constructur for the dynamic parameter estimation.
+    /// Constructor for the dynamic parameter estimation.
     /// </summary>
-    /// <param name="numX">Number of history x samples to be taken into account for the parameter estimation (samples x[i], x[i-1]..x[i+1-numX]).</param>
-    /// <param name="numY">Number of history y samples to be taken into account for the parameter estimation (samples y[i-1], y[i-2]..x[i-numY].</param>
-    /// <param name="backgroundOrder">Order of the background fit, i.e. components 1, i, i² are fitted additionally to x and y. A order of 0 fits a constant
-    /// background, 1 a linear depencence, and so on. Set this parameter to -1 if you don't need a background fit.</param>
-    /// <param name="solver">The solver to use with dynamic parameter estimation. Use the static getter methods <see cref="SVDSolver" /> or <see cref="LUSolver" /> to get a solver.</param>
+    /// <param name="numX">Number of history x samples to be taken into account for the parameter estimation (samples <c>x[i]</c>, <c>x[i-1]</c>.. <c>x[i+1-numX]</c>).</param>
+    /// <param name="numY">Number of history y samples to be taken into account for the parameter estimation (samples <c>y[i-1]</c>, <c>y[i-2]</c>.. <c>y[i-numY]</c>).</param>
+    /// <param name="backgroundOrder">
+    /// Order of the background fit, i.e. components <c>1</c>, <c>i</c>, <c>i²</c> are fitted additionally to x and y.
+    /// An order of 0 fits a constant background, 1 a linear dependence, and so on.
+    /// Set this parameter to -1 if you don't need a background fit.
+    /// </param>
+    /// <param name="solver">
+    /// The solver to use with dynamic parameter estimation.
+    /// Use the static getter methods <see cref="SVDSolver"/> or <see cref="LUSolver"/> to get a solver.
+    /// </param>
+    /// <exception cref="ArgumentNullException">Thrown if <paramref name="solver"/> is <see langword="null"/>.</exception>
     public DynamicParameterEstimation(int numX, int numY, int backgroundOrder, IDynamicParameterEstimationSolver solver)
     {
       if (solver is null)
@@ -120,12 +141,16 @@ namespace Altaxo.Calc.Regression
     /// <summary>
     /// Calculates the dynamic parameter estimation in the constructor.
     /// </summary>
-    /// <param name="x">Vector of x values ("input values"). This parameter can be null (in this case only y values are taken into account).</param>
+    /// <param name="x">Vector of x values ("input values"). This parameter can be <see langword="null"/> (in this case only y values are taken into account).</param>
     /// <param name="y">Vector of y values ("response values").</param>
-    /// <param name="numX">Number of history x samples to be taken into account for the parameter estimation (samples x[i], x[i-1]..x[i+1-numX]).</param>
-    /// <param name="numY">Number of history y samples to be taken into account for the parameter estimation (samples y[i-1], y[i-2]..x[i-numY].</param>
-    /// <param name="backgroundOrder">Order of the background fit, i.e. components 1, i, i² are fitted additionally to x and y. A order of 0 fits a constant
-    /// background, 1 a linear depencence, and so on. Set this parameter to -1 if you don't need a background fit.</param>
+    /// <param name="numX">Number of history x samples to be taken into account for the parameter estimation (samples <c>x[i]</c>, <c>x[i-1]</c>.. <c>x[i+1-numX]</c>).</param>
+    /// <param name="numY">Number of history y samples to be taken into account for the parameter estimation (samples <c>y[i-1]</c>, <c>y[i-2]</c>.. <c>y[i-numY]</c>).</param>
+    /// <param name="backgroundOrder">
+    /// Order of the background fit, i.e. components <c>1</c>, <c>i</c>, <c>i²</c> are fitted additionally to x and y.
+    /// An order of 0 fits a constant background, 1 a linear dependence, and so on.
+    /// Set this parameter to -1 if you don't need a background fit.
+    /// </param>
+    /// <exception cref="ArgumentNullException">Thrown if <paramref name="x"/> is <see langword="null"/> while <paramref name="numX"/> is greater than 0.</exception>
     public DynamicParameterEstimation(IReadOnlyList<double>? x, IReadOnlyList<double> y, int numX, int numY, int backgroundOrder)
     {
       if (x is null && numX > 0)
@@ -137,8 +162,7 @@ namespace Altaxo.Calc.Regression
     }
 
     /// <summary>
-    /// Returns a fresh instance of a singular value decomposition solver that can be used for
-    /// parameter estimation.
+    /// Gets a fresh instance of a singular value decomposition solver that can be used for parameter estimation.
     /// </summary>
     public static IDynamicParameterEstimationSolver SVDSolver
     {
@@ -149,8 +173,7 @@ namespace Altaxo.Calc.Regression
     }
 
     /// <summary>
-    /// Returns a fresh instance of a LU decomposition solver that can be used for
-    /// parameter estimation.
+    /// Gets a fresh instance of an LU decomposition solver that can be used for parameter estimation.
     /// </summary>
     public static IDynamicParameterEstimationSolver LUSolver
     {
@@ -161,8 +184,7 @@ namespace Altaxo.Calc.Regression
     }
 
     /// <summary>
-    /// Returns a fresh instance of a QR decomposition solver that can be used for
-    /// parameter estimation.
+    /// Gets a fresh instance of a QR decomposition solver that can be used for parameter estimation.
     /// </summary>
     public static IDynamicParameterEstimationSolver QRSolver
     {
@@ -172,8 +194,11 @@ namespace Altaxo.Calc.Regression
       }
     }
 
-    /// <summary>"Moves" the sequence x in relation to sequence y. Normally, the y[i] is considered in dependence on x[i], x[i-1].. and so on. By setting the offset,
-    /// the y[i] is considered in dependence on x[i-offset], x[x-offset-1]...</summary>
+    /// <summary>
+    /// Gets or sets the offset that "moves" the sequence <c>x</c> in relation to sequence <c>y</c>.
+    /// Normally, <c>y[i]</c> is considered in dependence on <c>x[i]</c>, <c>x[i-1]</c>, and so on.
+    /// By setting the offset, <c>y[i]</c> is considered in dependence on <c>x[i-offset]</c>, <c>x[i-offset-1]</c>, etc.
+    /// </summary>
     public int OffsetX
     {
       get
@@ -189,7 +214,7 @@ namespace Altaxo.Calc.Regression
     /// <summary>
     /// Calculates the dynamic parameter estimation.
     /// </summary>
-    /// <param name="x">Vector of x values ("input values"). This parameter can be null when numX was set to 0 (in this case only y values are taken into account).</param>
+    /// <param name="x">Vector of x values ("input values"). This parameter can be <see langword="null"/> when <c>numX</c> was set to 0 (in this case only y values are taken into account).</param>
     /// <param name="y">Vector of y values ("response values").</param>
     public void MakeEstimation(IReadOnlyList<double>? x, IReadOnlyList<double> y)
     {
@@ -202,11 +227,11 @@ namespace Altaxo.Calc.Regression
     }
 
     /// <summary>
-    /// Sets all helper values such as _numX, _numY, _backgroundOrderPlus1, _numberOfParameter, _startingPoint.
+    /// Sets all helper values such as <see cref="_numX"/>, <see cref="_numY"/>, <see cref="_backgroundOrderPlus1"/>, <see cref="_numberOfParameter"/>, and <see cref="_startingPoint"/>.
     /// </summary>
-    /// <param name="numX"></param>
-    /// <param name="numY"></param>
-    /// <param name="backgroundOrder"></param>
+    /// <param name="numX">Number of x history samples.</param>
+    /// <param name="numY">Number of y history samples.</param>
+    /// <param name="backgroundOrder">Order of the background polynomial.</param>
     protected virtual void SetHelperMembers(int numX, int numY, int backgroundOrder)
     {
       _numX = numX;
@@ -220,8 +245,8 @@ namespace Altaxo.Calc.Regression
 
     /// <summary>
     /// Calculates the starting point, i.e. the first index in the y array that can be used for
-    /// the right side of the linear equation. The starting point increase when more x or y parameters
-    /// are to evaluate, since more "history" samples are needed in this case.
+    /// the right side of the linear equation.
+    /// The starting point increases when more x or y parameters are evaluated, since more "history" samples are needed in this case.
     /// </summary>
     protected virtual void CalculateStartingPoint()
     {
@@ -232,9 +257,9 @@ namespace Altaxo.Calc.Regression
     }
 
     /// <summary>
-    /// Calculates and returns the starting point, i.e. the first index in the y array that can be used for
-    /// the right side of the linear equation. The starting point increase when more x or y parameters
-    /// are to evaluate, since more "history" samples are needed in this case.
+    /// Gets the starting point, i.e. the first index in the y array that can be used for
+    /// the right side of the linear equation.
+    /// The starting point increases when more x or y parameters are evaluated, since more "history" samples are needed in this case.
     /// </summary>
     public int StartingPoint
     {
@@ -246,13 +271,13 @@ namespace Altaxo.Calc.Regression
     }
 
     /// <summary>
-    /// Calculate the number of points that can be used at the right side of the linear equation (i.e. the number of rows of the equation).
-    /// With the same length of x and y, the number of data reduces when more x or y parameters are to evaluate,
-    /// since more samples are needed for the history and that samples can not be used on the right side of the equation.
+    /// Calculates the number of points that can be used on the right side of the linear equation (i.e. the number of rows of the equation).
+    /// With the same length of <paramref name="x"/> and <paramref name="y"/>, the number of usable data points decreases when more x or y parameters are evaluated,
+    /// since more samples are needed for the history and those samples cannot be used on the right side of the equation.
     /// </summary>
     /// <param name="x">Vector of x data.</param>
     /// <param name="y">Vector of y data.</param>
-    /// <returns></returns>
+    /// <returns>The number of data points (rows) that can be used.</returns>
     protected virtual int CalculateNumberOfData(IReadOnlyList<double>? x, IReadOnlyList<double> y)
     {
       // Find the number of data to use.
@@ -267,8 +292,8 @@ namespace Altaxo.Calc.Regression
     /// </summary>
     /// <param name="x">Vector of x data.</param>
     /// <param name="y">Vector of y data.</param>
-    /// <param name="M">Matrix to fill. If the dimensions are not appropriate, a new matrix is allocated and stored in the member _inputMatrix.</param>
-    /// <returns></returns>
+    /// <param name="M">Matrix to fill. If the dimensions are not appropriate, a new matrix is allocated and returned.</param>
+    /// <returns>The filled input matrix.</returns>
     protected virtual Matrix<double> FillInputMatrix(IReadOnlyList<double>? x, IReadOnlyList<double> y, Matrix<double>? M)
     {
       int numberOfData = CalculateNumberOfData(x, y);
@@ -304,12 +329,12 @@ namespace Altaxo.Calc.Regression
     }
 
     /// <summary>
-    /// Fills the back substitution array with data from the data of the provided y vector.
+    /// Fills the back-substitution array with data from the provided y vector.
     /// </summary>
-    /// <param name="y"></param>
+    /// <param name="y">Vector of y values.</param>
     protected virtual void FillBacksubstitutionY(IReadOnlyList<double> y)
     {
-      // Fill the y - neccessary later for backsubstitution
+      // Fill the y - necessary later for backsubstitution
       int numberOfData = _inputMatrix.RowCount;
       if (_scaledY is null || _scaledY.Count != numberOfData)
         _scaledY = CreateVector.Dense<double>(numberOfData);
@@ -331,19 +356,19 @@ namespace Altaxo.Calc.Regression
     }
 
     /// <summary>
-    /// Calculates the mean prediction error, i.e. Sqrt(Sum((y-yprediced)²)/N).
+    /// Calculates the mean prediction error, i.e. <c>Sqrt(Sum((y-yPredicted)²)/N)</c>.
     /// </summary>
-    /// <returns>The mean prediction error.i.e. Sqrt(Sum((y-yprediced)²)/N).</returns>
+    /// <returns>The mean prediction error, i.e. <c>Sqrt(Sum((y-yPredicted)²)/N)</c>.</returns>
     public virtual double CalculatePredictionError()
     {
       return CalculatePredictionError(null);
     }
 
     /// <summary>
-    /// Calculates the mean prediction error, i.e. Sqrt(Sum((y-yprediced)²)).
+    /// Calculates the mean prediction error, i.e. <c>Sqrt(Sum((y-yPredicted)²)/N)</c>.
     /// </summary>
-    /// <param name="predictedOutput">The resultant predicted output. If null, a temporary vector is allocated for calculation.</param>
-    /// <returns>The mean prediction error.i.e. Sqrt(Sum((y-yprediced)²)/N).</returns>
+    /// <param name="predictedOutput">The resulting predicted output. If <see langword="null"/>, a temporary vector is allocated for calculation.</param>
+    /// <returns>The mean prediction error, i.e. <c>Sqrt(Sum((y-yPredicted)²)/N)</c>.</returns>
     public virtual double CalculatePredictionError(Vector<double>? predictedOutput)
     {
       if (predictedOutput is null)
@@ -355,19 +380,31 @@ namespace Altaxo.Calc.Regression
     }
 
     /// <summary>
-    /// Calculates the mean prediction error, i.e. Sqrt(Sum((y-yprediced)²)).
+    /// Calculates the mean prediction error using recursive prediction of y (self-prediction).
     /// </summary>
-    /// <returns>The mean prediction error.i.e. Sqrt(Sum((y-yprediced)²)/N).</returns>
+    /// <returns>The mean prediction error, i.e. <c>Sqrt(Sum((y-yPredicted)²)/N)</c>.</returns>
     public virtual double CalculateSelfPredictionError()
     {
       return CalculateSelfPredictionError(null);
     }
 
+    /// <summary>
+    /// Calculates the mean prediction error using recursive prediction of y (self-prediction).
+    /// </summary>
+    /// <param name="predictedOutput">Optional vector to store the predicted y values.</param>
+    /// <returns>The mean prediction error, i.e. <c>Sqrt(Sum((y-yPredicted)²)/N)</c>.</returns>
     public virtual double CalculateSelfPredictionError(IVector<double>? predictedOutput)
     {
       return CalculateSelfPredictionError(_inputMatrix, _scaledY, predictedOutput);
     }
 
+    /// <summary>
+    /// Calculates the mean prediction error using recursive prediction of y (self-prediction) for the given matrix and comparison y values.
+    /// </summary>
+    /// <param name="inputMatrix">Input matrix (left side of the equation).</param>
+    /// <param name="yCompare">Vector of y values to compare against.</param>
+    /// <param name="predictedOutput">Optional vector to store the predicted y values.</param>
+    /// <returns>The mean prediction error, i.e. <c>Sqrt(Sum((y-yPredicted)²)/N)</c>.</returns>
     protected virtual double CalculateSelfPredictionError(Matrix<double> inputMatrix, IReadOnlyList<double> yCompare, IVector<double>? predictedOutput)
     {
       double[] inputVector = new double[_numY];
@@ -393,7 +430,7 @@ namespace Altaxo.Calc.Regression
         sumsquareddifferences += RMath.Pow2(ypred - yCompare[yIdx]);
 
         for (int i = _numY - 1; i > 0; --i)
-          inputVector[i] = inputVector[i - 1]; // shift the y sequence aback, and
+          inputVector[i] = inputVector[i - 1]; // shift the y sequence back, and
         inputVector[0] = ypred; //  replace the most recent y history sample by ypred
       }
 
@@ -401,25 +438,25 @@ namespace Altaxo.Calc.Regression
     }
 
     /// <summary>
-    /// With the already evalulated parameters (!), calculates the mean error for another piece of data. Please not
-    /// that both vectors must have a length of at least _startingPoint+1, since the first _startingPoint samples are used for the history.
+    /// With the already evaluated parameters, calculates the mean error for another piece of data.
+    /// Note that both vectors must have a length of at least <c>_startingPoint + 1</c>, since the first <c>_startingPoint</c> samples are used for the history.
     /// </summary>
     /// <param name="x">Vector of x data.</param>
     /// <param name="y">Vector of y data.</param>
-    /// <returns>The mean error between y prediction values and actual y values.</returns>
+    /// <returns>The mean error between predicted y values and actual y values.</returns>
     public virtual double CalculateCrossPredictionError(IReadOnlyList<double> x, IReadOnlyList<double> y)
     {
       return CalculateCrossPredictionError(x, y, null);
     }
 
     /// <summary>
-    /// With the already evalulated parameters (!), calculates the mean error for another piece of data. Please not
-    /// that both vectors must have a length of at least _startingPoint+1, since the first _startingPoint samples are used for the history.
+    /// With the already evaluated parameters, calculates the mean error for another piece of data.
+    /// Note that both vectors must have a length of at least <c>_startingPoint + 1</c>, since the first <c>_startingPoint</c> samples are used for the history.
     /// </summary>
     /// <param name="x">Vector of x data.</param>
     /// <param name="y">Vector of y data.</param>
-    /// <param name="predictedOutput">Vector to store the predicted y values. Can be null.</param>
-    /// <returns>The mean error between y prediction values and actual y values.</returns>
+    /// <param name="predictedOutput">Vector to store the predicted y values. Can be <see langword="null"/>.</param>
+    /// <returns>The mean error between predicted y values and actual y values.</returns>
     public virtual double CalculateCrossPredictionError(IReadOnlyList<double> x, IReadOnlyList<double> y, IVector<double>? predictedOutput)
     {
       var m = FillInputMatrix(x, y, null);
@@ -429,7 +466,7 @@ namespace Altaxo.Calc.Regression
     /// <summary>
     /// Calculates the frequency response for a given frequency.
     /// </summary>
-    /// <param name="fdt">Frequency. Must be given as f*dt, meaning the product of frequency and sample interval.</param>
+    /// <param name="fdt">Frequency specified as <c>f * dt</c>, i.e. the product of frequency and sample interval.</param>
     /// <returns>The complex frequency response at the given frequency.</returns>
     public virtual Complex64T GetFrequencyResponse(double fdt)
     {
@@ -450,8 +487,10 @@ namespace Altaxo.Calc.Regression
     }
 
     /// <summary>
-    /// Resulting parameters of the estimation. Index 0..numX-1 are the parameters for x history. Following from numX
-    /// to numX+numY-1 are the parameters for y, and at least there are the parameters for the background fit.
+    /// Gets the resulting parameters of the estimation.
+    /// Index <c>0..numX-1</c> are the parameters for x history.
+    /// Following from <c>numX</c> to <c>numX+numY-1</c> are the parameters for y.
+    /// Finally, the remaining parameters are the parameters for the background fit.
     /// </summary>
     public IReadOnlyList<double> Parameter
     {
@@ -462,9 +501,13 @@ namespace Altaxo.Calc.Regression
     }
 
     /// <summary>
-    /// Gets the impulse response to a pulse at t=0, i.e. to x[0]==1, x[1]...x[n]==0. The background component is not taken into account.
+    /// Gets the impulse response to a pulse at <c>t=0</c>, i.e. to <c>x[0]==1</c>, <c>x[1]..x[n]==0</c>.
+    /// The background component is not taken into account.
     /// </summary>
-    /// <param name="yValueBeforePulse">This is the y-value (not x!) before the pulse. If the <c>NumberOfY</c> is set to zero, this parameter is ignored, since no information about y for t&lt;0 is neccessary.</param>
+    /// <param name="yValueBeforePulse">
+    /// This is the y-value (not x) before the pulse.
+    /// If the number of y parameters is set to zero, this parameter is ignored, since no information about y for <c>t&lt;0</c> is necessary.
+    /// </param>
     /// <param name="output">Used to store the output result. Can be of arbitrary size.</param>
     public virtual void GetTransferFunction(double yValueBeforePulse, IVector<double> output)
     {
@@ -496,6 +539,13 @@ namespace Altaxo.Calc.Regression
       }
     }
 
+    /// <summary>
+    /// Estimates the parameters using Burg's algorithm.
+    /// </summary>
+    /// <param name="data">Signal data.</param>
+    /// <param name="m">Number of coefficients to estimate.</param>
+    /// <param name="xms">On return, gets the mean square of the signal.</param>
+    /// <exception cref="ArithmeticException">Thrown if an internal consistency check fails (should not happen).</exception>
     public void EstimateParameterByBurgsAlgorithm(IReadOnlyList<double> data, int m, out double xms)
     {
       int n = data.Count;
@@ -550,20 +600,22 @@ namespace Altaxo.Calc.Regression
     /// <summary>
     /// Extrapolates y-values until the end of the vector by using linear prediction.
     /// </summary>
-    /// <param name="yTraining">Input vector of y values used to calculated the prediction coefficients.
-    /// <param name="yPredValues">Input/output vector of y values to extrapolate.
-    /// The fields beginning from 0 to <c>len-1</c> must contain valid values used for initialization of the extrapolation.
-    /// At the end of the procedure, the upper end (<c>len</c> .. <c>yPredValues.Count-1</c> contain the
-    /// extrapolated data.</param>
+    /// <param name="yTraining">Input vector of y values used to calculate the prediction coefficients.</param>
+    /// <param name="yPredValues">
+    /// Input/output vector of y values to extrapolate.
+    /// The fields beginning from <c>0</c> to <c>len-1</c> must contain valid values used for initialization of the extrapolation.
+    /// At the end of the procedure, the upper end (<c>len..yPredValues.Count-1</c>) contains the extrapolated data.
     /// </param>
-    /// <param name="len">Number of valid input data points for extrapolation (not for the training data!).</param>
-    /// <param name="yOrder">Number of history samples used for prediction. Must be greater or equal to 1.</param>
+    /// <param name="len">Number of valid input data points for extrapolation (not for the training data).</param>
+    /// <param name="yOrder">Number of history samples used for prediction. Must be greater than or equal to 1.</param>
+    /// <returns>An instance containing the estimated parameters used for extrapolation.</returns>
+    /// <exception cref="ArgumentException">Thrown if <paramref name="yOrder"/> is less than 1 or if there are not enough training data points.</exception>
     public static DynamicParameterEstimation Extrapolate(IReadOnlyList<double> yTraining, IVector<double> yPredValues, int len, int yOrder)
     {
       if (yOrder < 1)
         throw new ArgumentException("yOrder must be at least 1");
       if (yOrder >= (yTraining.Count - yOrder))
-        throw new ArgumentException("Not enough data points for this degree (yOrder must be less than yTraining.Length/2).");
+        throw new ArgumentException("Not enough data points for this degree (yOrder must be less than yTraining.Length/2)." );
 
       var est = new DynamicParameterEstimation(null, yTraining, 0, yOrder, 0);
       // now calculate the extrapolation data
@@ -585,12 +637,13 @@ namespace Altaxo.Calc.Regression
     private class DpeSVDSolver : IDynamicParameterEstimationSolver
     {
       /// <summary>
-      /// The singular value composition of our data.
+      /// The singular value decomposition of our data.
       /// </summary>
       private MatrixMath.SingularValueDecomposition? _decomposition;
 
       #region IDynamicParameterEstimationSolver Members
 
+      /// <inheritdoc/>
       [MemberNotNull(nameof(_decomposition))]
       public void Solve(Matrix<double> a, Vector<double> b, Vector<double> result)
       {
@@ -604,6 +657,7 @@ namespace Altaxo.Calc.Regression
     {
       #region IDynamicParameterEstimationSolver Members
 
+      /// <inheritdoc/>
       public void Solve(Matrix<double> a, Vector<double> b, Vector<double> result)
       {
         var outputMatrix = a.TransposeThisAndMultiply(a);
@@ -617,6 +671,7 @@ namespace Altaxo.Calc.Regression
 
     private class DpeQRSolver : IDynamicParameterEstimationSolver
     {
+      /// <inheritdoc/>
       public void Solve(Matrix<double> a, Vector<double> b, Vector<double> result)
       {
         a.QR().Solve(b, result);
@@ -627,7 +682,7 @@ namespace Altaxo.Calc.Regression
   }
 
   /// <summary>
-  /// Dynamic parameter estimation with variable spaced x input.
+  /// Dynamic parameter estimation with variable-spaced x input.
   /// </summary>
   public class DynamicParameterEstimationVariableX : DynamicParameterEstimation
   {
@@ -635,47 +690,65 @@ namespace Altaxo.Calc.Regression
     private int[] _ycount;
 
     /// <summary>
-    /// Constructor.
+    /// Initializes a new instance of the <see cref="DynamicParameterEstimationVariableX"/> class.
     /// </summary>
-    /// <param name="xcount">Designate which x points are processed together as one unit. The array must have the length of _numX. For every x parameter, the element in the array
-    /// designates how many points of the x history are added up and threated as one input element. If you set all elements to 1, the behaviour should
-    /// be the same than GetTransferFunction.</param>
+    /// <param name="xcount">
+    /// Designates which x points are processed together as one unit.
+    /// The array must have the length of <c>_numX</c>.
+    /// For every x parameter, the element in the array designates how many points of the x history are added up and treated as one input element.
+    /// If you set all elements to 1, the behavior should be the same as <see cref="DynamicParameterEstimation.GetTransferFunction"/>.
+    /// </param>
     /// <param name="numY">Number of y points used for the history.</param>
     /// <param name="backgroundOrder">Order of the background fitting.</param>
     public DynamicParameterEstimationVariableX(int[] xcount, int numY, int backgroundOrder)
       : base(xcount.Length, numY, backgroundOrder)
     {
       _xcount = xcount;
-      _ycount = GetUniformCountArray(numY, 1);
+      _ycount = DynamicParameterEstimationVariableX.GetUniformCountArray(numY, 1);
     }
 
     /// <summary>
-    /// Constructor.
+    /// Initializes a new instance of the <see cref="DynamicParameterEstimationVariableX"/> class.
     /// </summary>
-    /// <param name="xcount">Designate which x points are processed together as one unit. The array must have the length of _numX. For every x parameter, the element in the array
-    /// designates how many points of the x history are added up and threated as one input element. If you set all elements to 1, the behaviour should
-    /// be the same than GetTransferFunction.</param>
+    /// <param name="xcount">
+    /// Designates which x points are processed together as one unit.
+    /// The array must have the length of <c>_numX</c>.
+    /// For every x parameter, the element in the array designates how many points of the x history are added up and treated as one input element.
+    /// If you set all elements to 1, the behavior should be the same as <see cref="DynamicParameterEstimation.GetTransferFunction"/>.
+    /// </param>
     /// <param name="numY">Number of y points used for the history.</param>
     /// <param name="backgroundOrder">Order of the background fitting.</param>
-    /// <param name="solver">The solver to use with dynamic parameter estimation. Use the static getter methods <see cref="P:SVDSolver" /> or <see cref="P:LUSolver" /> to get a solver.</param>
+    /// <param name="solver">
+    /// The solver to use with dynamic parameter estimation.
+    /// Use the static getter methods <see cref="DynamicParameterEstimation.SVDSolver"/> or <see cref="DynamicParameterEstimation.LUSolver"/> to get a solver.
+    /// </param>
     public DynamicParameterEstimationVariableX(int[] xcount, int numY, int backgroundOrder, IDynamicParameterEstimationSolver solver)
       : base(xcount.Length, numY, backgroundOrder, solver)
     {
       _xcount = xcount;
-      _ycount = GetUniformCountArray(numY, 1);
+      _ycount = DynamicParameterEstimationVariableX.GetUniformCountArray(numY, 1);
     }
 
     /// <summary>
-    /// Constructor.
+    /// Initializes a new instance of the <see cref="DynamicParameterEstimationVariableX"/> class.
     /// </summary>
-    /// <param name="xcount">Designate which x points are processed together as one unit. The array must have the length of _numX. For every x parameter, the element in the array
-    /// designates how many points of the x history are added up and threated as one input element. If you set all elements to 1, the behaviour should
-    /// be the same than GetTransferFunction.</param>
-    /// <param name="ycount">Designate which y points are processed together as one unit. The array must have the length of _numX. For every x parameter, the element in the array
-    /// designates how many points of the x history are added up and threated as one input element. If you set all elements to 1, the behaviour should
-    /// be the same than GetTransferFunction.</param>
+    /// <param name="xcount">
+    /// Designates which x points are processed together as one unit.
+    /// The array must have the length of <c>_numX</c>.
+    /// For every x parameter, the element in the array designates how many points of the x history are added up and treated as one input element.
+    /// If you set all elements to 1, the behavior should be the same as <see cref="DynamicParameterEstimation.GetTransferFunction"/>.
+    /// </param>
+    /// <param name="ycount">
+    /// Designates which y points are processed together as one unit.
+    /// The array must have the length of <c>_numY</c>.
+    /// For every y parameter, the element in the array designates how many points of the y history are added up and treated as one input element.
+    /// If you set all elements to 1, the behavior should be the same as <see cref="DynamicParameterEstimation.GetTransferFunction"/>.
+    /// </param>
     /// <param name="backgroundOrder">Order of the background fitting.</param>
-    /// <param name="solver">The solver to use with dynamic parameter estimation. Use the static getter methods <see cref="P:SVDSolver" /> or <see cref="P:LUSolver" /> to get a solver.</param>
+    /// <param name="solver">
+    /// The solver to use with dynamic parameter estimation.
+    /// Use the static getter methods <see cref="DynamicParameterEstimation.SVDSolver"/> or <see cref="DynamicParameterEstimation.LUSolver"/> to get a solver.
+    /// </param>
     public DynamicParameterEstimationVariableX(int[] xcount, int[] ycount, int backgroundOrder, IDynamicParameterEstimationSolver solver)
       : base(xcount.Length, ycount.Length, backgroundOrder, solver)
     {
@@ -683,6 +756,7 @@ namespace Altaxo.Calc.Regression
       _ycount = ycount;
     }
 
+    /// <inheritdoc/>
     protected override void CalculateStartingPoint()
     {
       base.CalculateStartingPoint();
@@ -713,6 +787,7 @@ namespace Altaxo.Calc.Regression
       }
     }
 
+    /// <inheritdoc/>
     protected override Matrix<double> FillInputMatrix(IReadOnlyList<double>? x, IReadOnlyList<double> y, Matrix<double>? M)
     {
       int numberOfData = CalculateNumberOfData(x, y);
@@ -769,11 +844,7 @@ namespace Altaxo.Calc.Regression
       return M;
     }
 
-    /// <summary>
-    /// Gets the impulse response to a pulse at t=0, i.e. to x[0]==1, x[1]...x[n]==0. The background component is not taken into account.
-    /// </summary>
-    /// <param name="output">Used to store the output result. Can be of arbitrary size.</param>
-    /// <param name="yValueBeforePulse">This is the y-value (not x!) before the pulse. If the <c>NumberOfY</c> is set to zero, this parameter is ignored, since no information about y for t&lt;0 is neccessary.</param>
+    /// <inheritdoc/>
     public override void GetTransferFunction(double yValueBeforePulse, IVector<double> output)
     {
       int maxXidx = 0;
@@ -822,6 +893,7 @@ namespace Altaxo.Calc.Regression
       }
     }
 
+    /// <inheritdoc/>
     public override Complex64T GetFrequencyResponse(double fdt)
     {
       double w = fdt * 2 * Math.PI;
@@ -842,6 +914,12 @@ namespace Altaxo.Calc.Regression
       return nom / (1 - denom);
     }
 
+    /// <summary>
+    /// Creates an array of length <paramref name="numPara"/> where each element is initialized to <paramref name="count"/>.
+    /// </summary>
+    /// <param name="numPara">The number of parameters (array length).</param>
+    /// <param name="count">The value assigned to each element.</param>
+    /// <returns>An array with uniform element values.</returns>
     public static int[] GetUniformCountArray(int numPara, int count)
     {
       int[] result = new int[numPara];
@@ -850,6 +928,13 @@ namespace Altaxo.Calc.Regression
       return result;
     }
 
+    /// <summary>
+    /// Calculates an <c>xcount</c> array from a total history length.
+    /// </summary>
+    /// <param name="totallength">Total length of the x history.</param>
+    /// <param name="start">Index at which grouping is allowed to start.</param>
+    /// <param name="factor">Growth factor controlling how quickly bin sizes increase.</param>
+    /// <returns>An <c>xcount</c> array whose sum equals <paramref name="totallength"/>.</returns>
     public static int[] GetXCountFromTotalLength(int totallength, int start, double factor)
     {
       if (start < 0)
@@ -876,7 +961,7 @@ namespace Altaxo.Calc.Regression
         {
           list.Add(curridx);
           curridx = 0;
-        }
+  }
         else
         {
           int current_down = curridx - (int)Math.Ceiling(delements);
@@ -903,6 +988,13 @@ namespace Altaxo.Calc.Regression
       return list.ToArray();
     }
 
+    /// <summary>
+    /// Calculates an <c>xcount</c> array for the given number of parameters.
+    /// </summary>
+    /// <param name="numX">The number of x parameters (array length).</param>
+    /// <param name="start">Index at which grouping is allowed to start.</param>
+    /// <param name="factor">Growth factor controlling how quickly bin sizes increase.</param>
+    /// <returns>The calculated <c>xcount</c> array.</returns>
     public static int[] GetXCountFromNumberOfParameters(int numX, int start, double factor)
     {
       int[] result = new int[numX];
@@ -910,6 +1002,14 @@ namespace Altaxo.Calc.Regression
       return result;
     }
 
+    /// <summary>
+    /// Calculates the <c>xcount</c> array values in-place and returns the total covered history length.
+    /// </summary>
+    /// <param name="numX">The number of x parameters (array length).</param>
+    /// <param name="start">Index at which grouping is allowed to start.</param>
+    /// <param name="factor">Growth factor controlling how quickly bin sizes increase.</param>
+    /// <param name="result">Target array receiving the calculated counts.</param>
+    /// <returns>The total covered history length, i.e. the sum over all elements in <paramref name="result"/> that were filled.</returns>
     public static int GetXCountFromNumberOfParameters(int numX, int start, double factor, int[] result)
     {
       if (start < 0)
@@ -939,12 +1039,30 @@ namespace Altaxo.Calc.Regression
       return current;
     }
 
+    /// <summary>
+    /// Calculates an <c>xcount</c> array given both the number of parameters and the desired total length.
+    /// </summary>
+    /// <param name="numX">The number of x parameters (array length).</param>
+    /// <param name="start">Index at which grouping is allowed to start.</param>
+    /// <param name="totallength">Desired total history length.</param>
+    /// <returns>The calculated <c>xcount</c> array.</returns>
     public static int[] GetXCountFromNumberOfParametersAndLength(int numX, int start, int totallength)
     {
       int len = totallength;
       return GetXCountFromNumberOfParametersAndLength(numX, start, ref len, out var factor);
     }
 
+    /// <summary>
+    /// Calculates an <c>xcount</c> array given both the number of parameters and the desired total length.
+    /// </summary>
+    /// <param name="numX">The number of x parameters (array length).</param>
+    /// <param name="start">Index at which grouping is allowed to start.</param>
+    /// <param name="totallength">
+    /// Desired total history length.
+    /// This parameter is passed by reference but is not modified by this method.
+    /// </param>
+    /// <param name="factor">On return, gets the factor used to construct an array matching <paramref name="totallength"/>.</param>
+    /// <returns>The calculated <c>xcount</c> array.</returns>
     public static int[] GetXCountFromNumberOfParametersAndLength(int numX, int start, ref int totallength, out double factor)
     {
       if (start < 0)
@@ -1023,7 +1141,7 @@ namespace Altaxo.Calc.Regression
           {
             result[i]--;
             decreaseby--;
-          }
+  }
         }
       } while (decreaseby > 0);
 
@@ -1031,7 +1149,7 @@ namespace Altaxo.Calc.Regression
       return result;
     }
 
-    /// <summary>
+  /// <summary>
     /// Gets an array where the first history point (y[0]) is excluded from the history (this is because y[0] is already on the right side of the equation.
     /// If the first element of xcount is greater than one, the result is a cloned xcount array with the first element reduced by one.
     /// If the first element of xcount is one, than an copyied version of xcount, without the first element, is returned.
@@ -1147,7 +1265,7 @@ namespace Altaxo.Calc.Regression
 
     /// <summary>
     /// Gets the impulse response to a pulse at t=0, i.e. to x[0]==1, x[1]...x[n]==0. The background component is not taken into account.
-    /// </summary>
+  /// </summary>
     /// <param name="output">Used to store the output result. Can be of arbitrary size.</param>
     /// <param name="yValueBeforePulse">This is the y-value (not x!) before the pulse. If the <c>NumberOfY</c> is set to zero, this parameter is ignored, since no information about y for t&lt;0 is neccessary.</param>
     public override void GetTransferFunction(double yValueBeforePulse, IVector<double> output)
@@ -1207,14 +1325,15 @@ namespace Altaxo.Calc.Regression
     private int _maxYBin;
 
     /// <summary>
-    /// Initializes a new instance of the <see cref="DynamicParameterEstimationWithChooseableBins"/> class. This will regress an linear equation
-    /// <c>y_i = a_0*x_i-xb0 + a_1*x_i-xb1 + ... +  a_n*x_i-xbn + b_0*y_i-yb0 + b_1*y_i-yb1 + ... + b_m*y_i-ybm</c>.
-    /// The xb0 .. xbn are called the xBins. They are the lags for the x-Values and range from 0 .. Infinity.
-    /// the yb0 .. ybn are called the yBins. They are the lags of the y-Values and range from 1 .. Infinity.
+    /// Initializes a new instance of the <see cref="DynamicParameterEstimationWithChooseableBins"/> class.
+    /// This will regress a linear equation
+    /// <c>y_i = a_0*x_i-xb0 + a_1*x_i-xb1 + ... + a_n*x_i-xbn + b_0*y_i-yb0 + b_1*y_i-yb1 + ... + b_m*y_i-ybm</c>.
+    /// The <c>xb0..xbn</c> are called the x bins. They are the lags for the x values and range from 0 to ∞.
+    /// The <c>yb0..ybm</c> are called the y bins. They are the lags for the y values and range from 1 to ∞.
     /// </summary>
     /// <param name="xBins">The x bins.</param>
     /// <param name="yBins">The y bins.</param>
-    /// <param name="backgroundOrder">The background order. Use -1 if you want to fit without background. A value of 0 already designates a constant background, a value of 1 a linear background.</param>
+    /// <param name="backgroundOrder">The background order. Use -1 if you want to fit without background. A value of 0 designates a constant background; a value of 1 a linear background.</param>
     public DynamicParameterEstimationWithChooseableBins(int[] xBins, int[] yBins, int backgroundOrder)
       : base(xBins.Length, yBins.Length, backgroundOrder)
     {
@@ -1251,6 +1370,7 @@ namespace Altaxo.Calc.Regression
       _maxYBin = _yBins.Length > 0 ? _yBins[_yBins.Length - 1] : 0;
     }
 
+    /// <inheritdoc/>
     protected override void CalculateStartingPoint()
     {
       base.CalculateStartingPoint();
@@ -1261,6 +1381,7 @@ namespace Altaxo.Calc.Regression
         _startingPoint = Math.Max(_startingPoint, _maxYBin);
     }
 
+    /// <inheritdoc/>
     protected override Matrix<double> FillInputMatrix(IReadOnlyList<double>? x, IReadOnlyList<double> y, Matrix<double>? M)
     {
       int numberOfData = CalculateNumberOfData(x, y);
@@ -1295,16 +1416,13 @@ namespace Altaxo.Calc.Regression
       return M;
     }
 
-    /// <summary>
-    /// Gets the impulse response to a pulse at t=0, i.e. to x[0]==1, x[1]...x[n]==0. The background component is not taken into account.
-    /// </summary>
-    /// <param name="output">Used to store the output result. Can be of arbitrary size.</param>
-    /// <param name="yValueBeforePulse">This is the y-value (not x!) before the pulse. If the <c>NumberOfY</c> is set to zero, this parameter is ignored, since no information about y for t&lt;0 is neccessary.</param>
+    /// <inheritdoc/>
     public override void GetTransferFunction(double yValueBeforePulse, IVector<double> output)
     {
       throw new NotImplementedException("Getting the transfer function doesn't make much sense here, since the bins can be non-continuous. The purpose of this class is mainly to get the frequency response.");
     }
 
+    /// <inheritdoc/>
     public override Complex64T GetFrequencyResponse(double fdt)
     {
       double w = fdt * 2 * Math.PI;

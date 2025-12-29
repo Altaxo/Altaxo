@@ -54,12 +54,17 @@ namespace Altaxo.Calc.Probability
   ///
   /// References: The method follows the outlines of:
   /// W. H. Press, B. P. Flannery, S. A. Teukolsky, W. T. Vetterling,
-  /// Numerical Recipies in C, Cambridge Univ. Press, 1988.
+  /// Numerical Recipes in C, Cambridge Univ. Press, 1988.
   /// </code></remarks>
   public class PoissonDistribution : DiscreteDistribution
   {
     protected double scale, scalepi, m, sq, alm, g;
 
+    /// <summary>
+    /// Initializes this instance with the specified mean value.
+    /// </summary>
+    /// <param name="mean">The mean (λ) of the Poisson distribution.</param>
+    /// <exception cref="ArgumentOutOfRangeException">Thrown when <paramref name="mean"/> is not a valid number.</exception>
     public void Initialize(double mean)
     {
       if (!IsValidMu(mean))
@@ -81,27 +86,48 @@ namespace Altaxo.Calc.Probability
       }
     }
 
+    /// <summary>
+    /// Initializes a new instance of the <see cref="PoissonDistribution"/> class with mean 1,
+    /// using a <see cref="StandardGenerator"/> as the underlying random number generator.
+    /// </summary>
     public PoissonDistribution()
       : this(DefaultGenerator)
     {
     }
 
+    /// <summary>
+    /// Initializes a new instance of the <see cref="PoissonDistribution"/> class with mean 1,
+    /// using the specified <see cref="Generator"/> as the underlying random number generator.
+    /// </summary>
+    /// <param name="ran">A <see cref="Generator"/> object.</param>
     public PoissonDistribution(Generator ran)
       : this(1, ran)
     {
     }
 
+    /// <summary>
+    /// Initializes a new instance of the <see cref="PoissonDistribution"/> class with the specified mean,
+    /// using a <see cref="StandardGenerator"/> as the underlying random number generator.
+    /// </summary>
+    /// <param name="mean">The mean (λ) of the Poisson distribution.</param>
     public PoissonDistribution(double mean)
       : this(mean, DefaultGenerator)
     {
     }
 
+    /// <summary>
+    /// Initializes a new instance of the <see cref="PoissonDistribution"/> class with the specified mean,
+    /// using the specified <see cref="Generator"/> as the underlying random number generator.
+    /// </summary>
+    /// <param name="mean">The mean (λ) of the Poisson distribution.</param>
+    /// <param name="ran">A <see cref="Generator"/> object.</param>
     public PoissonDistribution(double mean, Generator ran)
       : base(ran)
     {
       Initialize(mean);
     }
 
+    /// <inheritdoc />
     public override double NextDouble()
     {
       double em, t, y;
@@ -135,14 +161,17 @@ namespace Altaxo.Calc.Probability
 
     #region overridden Distribution members
 
+    /// <summary>
+    /// Determines whether the specified mean value is valid.
+    /// </summary>
+    /// <param name="mu">The mean value to validate.</param>
+    /// <returns><see langword="true"/> if <paramref name="mu"/> is within the valid range; otherwise, <see langword="false"/>.</returns>
     public bool IsValidMu(double mu)
     {
       return mu >= double.MinValue && mu <= double.MaxValue;
     }
 
-    /// <summary>
-    /// Gets the minimum possible value of poisson distributed random numbers.
-    /// </summary>
+    /// <inheritdoc />
     public override double Minimum
     {
       get
@@ -151,9 +180,7 @@ namespace Altaxo.Calc.Probability
       }
     }
 
-    /// <summary>
-    /// Gets the maximum possible value of poisson distributed random numbers.
-    /// </summary>
+    /// <inheritdoc />
     public override double Maximum
     {
       get
@@ -162,9 +189,7 @@ namespace Altaxo.Calc.Probability
       }
     }
 
-    /// <summary>
-    /// Gets the mean value of poisson distributed random numbers.
-    /// </summary>
+    /// <inheritdoc />
     public override double Mean
     {
       get
@@ -173,9 +198,7 @@ namespace Altaxo.Calc.Probability
       }
     }
 
-    /// <summary>
-    /// Gets the median of poisson distributed random numbers.
-    /// </summary>
+    /// <inheritdoc />
     public override double Median
     {
       get
@@ -184,9 +207,7 @@ namespace Altaxo.Calc.Probability
       }
     }
 
-    /// <summary>
-    /// Gets the variance of poisson distributed random numbers.
-    /// </summary>
+    /// <inheritdoc />
     public override double Variance
     {
       get
@@ -195,9 +216,7 @@ namespace Altaxo.Calc.Probability
       }
     }
 
-    /// <summary>
-    /// Gets the mode of poisson distributed random numbers.
-    /// </summary>
+    /// <inheritdoc />
     public override double[] Mode
     {
       get
@@ -218,21 +237,35 @@ namespace Altaxo.Calc.Probability
 
     #region CdfPdf
 
+    /// <inheritdoc />
     public override double CDF(double x)
     {
       return CDF(x, m);
     }
 
+    /// <summary>
+    /// Returns the cumulative distribution function (CDF) of a Poisson distribution.
+    /// </summary>
+    /// <param name="x">The value at which to evaluate the CDF.</param>
+    /// <param name="m">The mean (λ) of the Poisson distribution.</param>
+    /// <returns>The probability that a Poisson-distributed random variable is less than or equal to <paramref name="x"/>.</returns>
     public static double CDF(double x, double m)
     {
       return Calc.GammaRelated.GammaRegularized(1 + Math.Floor(x), m);
     }
 
+    /// <inheritdoc />
     public override double PDF(double x)
     {
       return PDF(x, m);
     }
 
+    /// <summary>
+    /// Returns the probability mass function (PMF) of a Poisson distribution.
+    /// </summary>
+    /// <param name="x">The value at which to evaluate the PMF.</param>
+    /// <param name="m">The mean (λ) of the Poisson distribution.</param>
+    /// <returns>The probability for <paramref name="x"/>.</returns>
     public static double PDF(double x, double m)
     {
       return Math.Exp(-m + x * Math.Log(m) - Calc.GammaRelated.LnGamma(x + 1));
@@ -240,6 +273,7 @@ namespace Altaxo.Calc.Probability
 
     #endregion CdfPdf
 
+    /// <inheritdoc />
     public override double Quantile(double x)
     {
       throw new NotSupportedException("Sorry, Quantile is not supported here since it is a discrete distribution");

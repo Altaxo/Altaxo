@@ -36,6 +36,13 @@ using Altaxo.Calc.Optimization;
 
 namespace Altaxo.Calc.Regression.Nonlinear
 {
+  /// <summary>
+  /// Provides a quick nonlinear regression for one dependent variable as a function of one independent variable.
+  /// </summary>
+  /// <remarks>
+  /// This class allocates temporary arrays and vectors during evaluation. Use <see cref="QuickNonlinearRegression"/>
+  /// for a non-allocating variant.
+  /// </remarks>
   [Obsolete("Please use QuickNonlinearRegression instead.")]
   public class QuickNonlinearRegressionAllocating
   {
@@ -43,17 +50,40 @@ namespace Altaxo.Calc.Regression.Nonlinear
     private IFitFunction _fitFunction;
 
 
+    /// <summary>
+    /// Initializes a new instance of the <see cref="QuickNonlinearRegressionAllocating"/> class.
+    /// </summary>
+    /// <param name="fitFunction">The fit function to use for regression.</param>
     public QuickNonlinearRegressionAllocating(IFitFunction fitFunction)
     {
       _fitFunction = fitFunction;
       _wrapperToFitFunction = new WrapperToFitFunction(fitFunction);
     }
 
+    /// <summary>
+    /// Performs nonlinear least-squares fitting using the Levenberg-Marquardt algorithm.
+    /// </summary>
+    /// <param name="xValues">The x-values of the model to fit.</param>
+    /// <param name="yValues">The y-values of the model to fit.</param>
+    /// <param name="initialGuess">The initially guessed parameter values.</param>
+    /// <param name="cancellationToken">Token to cancel the evaluation.</param>
+    /// <returns>The result of the Levenberg-Marquardt minimization.</returns>
     public NonlinearMinimizationResult Fit(double[] xValues, double[] yValues, double[] initialGuess, CancellationToken cancellationToken)
     {
       return Fit(xValues, yValues, initialGuess, new bool[initialGuess.Length], cancellationToken);
     }
 
+    /// <summary>
+    /// Performs nonlinear least-squares fitting using the Levenberg-Marquardt algorithm.
+    /// </summary>
+    /// <param name="xValues">The x-values of the model to fit.</param>
+    /// <param name="yValues">The y-values of the model to fit.</param>
+    /// <param name="initialGuess">The initially guessed parameter values.</param>
+    /// <param name="isFixed">
+    /// Array of booleans indicating which parameters are fixed. Must have the same length as <paramref name="initialGuess"/>.
+    /// </param>
+    /// <param name="cancellationToken">Token to cancel the evaluation.</param>
+    /// <returns>The result of the Levenberg-Marquardt minimization.</returns>
     public NonlinearMinimizationResult Fit(double[] xValues, double[] yValues, double[] initialGuess, bool[] isFixed, CancellationToken cancellationToken)
     {
       if (xValues.Length != yValues.Length)
@@ -75,18 +105,34 @@ namespace Altaxo.Calc.Regression.Nonlinear
       return levmar.FindMinimum(obj, initialGuess, null, null, null, isFixed);
     }
 
+    /// <summary>
+    /// Wraps an <see cref="IFitFunction"/> to the delegate-based interface expected by the objective function.
+    /// </summary>
     internal class WrapperToFitFunction
     {
+      /// <summary>
+      /// Gets the wrapped fit function.
+      /// </summary>
       public IFitFunction FitFunction { get; private set; }
 
       private double[] _x = new double[1];
       private double[] _y = new double[1];
 
+      /// <summary>
+      /// Initializes a new instance of the <see cref="WrapperToFitFunction"/> class.
+      /// </summary>
+      /// <param name="f">The fit function to wrap.</param>
       public WrapperToFitFunction(IFitFunction f)
       {
         FitFunction = f;
       }
 
+      /// <summary>
+      /// Evaluates the fit function for the provided parameters and x-values.
+      /// </summary>
+      /// <param name="parameter">The parameter vector.</param>
+      /// <param name="x">The vector of x-values.</param>
+      /// <returns>The vector of calculated y-values.</returns>
       public Vector<double> Evaluate(Vector<double> parameter, Vector<double> x)
       {
         var yR = Vector<double>.Build.Dense(x.Count);
@@ -94,6 +140,12 @@ namespace Altaxo.Calc.Regression.Nonlinear
         return yR;
       }
 
+      /// <summary>
+      /// Evaluates the derivatives of the fit function with respect to the parameters.
+      /// </summary>
+      /// <param name="parameter">The parameter vector.</param>
+      /// <param name="x">The vector of x-values.</param>
+      /// <returns>A Jacobian matrix with one row per x-value and one column per parameter.</returns>
       public Matrix<double> EvaluateDerivative(Vector<double> parameter, Vector<double> x)
       {
         var yR = Matrix<double>.Build.Dense(x.Count, parameter.Count);

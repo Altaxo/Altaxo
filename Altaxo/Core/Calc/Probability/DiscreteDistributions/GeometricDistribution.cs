@@ -120,7 +120,7 @@ namespace Altaxo.Calc.Probability
   ///   and the implementation in the <a href="http://www.lkn.ei.tum.de/lehre/scn/cncl/doc/html/cncl_toc.html">
   ///   Communication Networks Class Library</a>.<br />
   /// Please note that the geometric distribution provided by Mathematica 5.1
-  /// is variant_B: the probability that n failed trials occur before first success (so the lowest value is 0 there).
+  /// is variant B: the probability that n failed trials occur before first success (so the lowest value is 0 there).
   /// </remarks>
   public class GeometricDistribution : DiscreteDistribution
   {
@@ -173,11 +173,26 @@ namespace Altaxo.Calc.Probability
     {
     }
 
+    /// <summary>
+    /// Initializes a new instance of the <see cref="GeometricDistribution"/> class with the specified success probability.
+    /// </summary>
+    /// <param name="probability">The success probability p in the range (0, 1].</param>
+    /// <exception cref="ArgumentOutOfRangeException">Thrown when <paramref name="probability"/> is outside (0, 1].</exception>
     public GeometricDistribution(double probability)
       : this(probability, DefaultGenerator)
     {
     }
 
+    /// <summary>
+    /// Initializes a new instance of the <see cref="GeometricDistribution"/> class with the specified success probability
+    /// and underlying random number generator.
+    /// </summary>
+    /// <param name="probability">The success probability p in the range (0, 1].</param>
+    /// <param name="generator">A <see cref="Generator"/> object.</param>
+    /// <exception cref="ArgumentNullException">
+    /// <paramref name="generator"/> is NULL (<see langword="Nothing"/> in Visual Basic).
+    /// </exception>
+    /// <exception cref="ArgumentOutOfRangeException">Thrown when <paramref name="probability"/> is outside (0, 1].</exception>
     public GeometricDistribution(double probability, Generator generator)
       : base(generator)
     {
@@ -200,6 +215,11 @@ namespace Altaxo.Calc.Probability
       return (value > 0.0 && value <= 1.0);
     }
 
+    /// <summary>
+    /// Initializes this instance with the specified probability.
+    /// </summary>
+    /// <param name="probability">The success probability p in the range (0, 1].</param>
+    /// <exception cref="ArgumentOutOfRangeException">Thrown when <paramref name="probability"/> is outside (0, 1].</exception>
     public void Initialize(double probability)
     {
       if (probability <= 0 || probability > 1)
@@ -212,9 +232,7 @@ namespace Altaxo.Calc.Probability
 
     #region overridden Distribution members
 
-    /// <summary>
-    /// Gets the minimum possible value of geometric distributed random numbers.
-    /// </summary>
+    /// <inheritdoc />
     public override double Minimum
     {
       get
@@ -223,9 +241,7 @@ namespace Altaxo.Calc.Probability
       }
     }
 
-    /// <summary>
-    /// Gets the maximum possible value of geometric distributed random numbers.
-    /// </summary>
+    /// <inheritdoc />
     public override double Maximum
     {
       get
@@ -234,9 +250,7 @@ namespace Altaxo.Calc.Probability
       }
     }
 
-    /// <summary>
-    /// Gets the mean value of geometric distributed random numbers.
-    /// </summary>
+    /// <inheritdoc />
     public override double Mean
     {
       get
@@ -245,9 +259,7 @@ namespace Altaxo.Calc.Probability
       }
     }
 
-    /// <summary>
-    /// Gets the median of geometric distributed random numbers.
-    /// </summary>
+    /// <inheritdoc />
     public override double Median
     {
       get
@@ -256,9 +268,7 @@ namespace Altaxo.Calc.Probability
       }
     }
 
-    /// <summary>
-    /// Gets the variance of geometric distributed random numbers.
-    /// </summary>
+    /// <inheritdoc />
     public override double Variance
     {
       get
@@ -267,9 +277,7 @@ namespace Altaxo.Calc.Probability
       }
     }
 
-    /// <summary>
-    /// Gets the mode of geometric distributed random numbers.
-    /// </summary>
+    /// <inheritdoc />
     public override double[] Mode
     {
       get
@@ -278,10 +286,7 @@ namespace Altaxo.Calc.Probability
       }
     }
 
-    /// <summary>
-    /// Returns a geometric distributed floating point random number.
-    /// </summary>
-    /// <returns>A geometric distributed double-precision floating point number.</returns>
+    /// <inheritdoc />
     public override double NextDouble()
     {
       double u = Generator.NextPositiveDouble();
@@ -314,11 +319,18 @@ namespace Altaxo.Calc.Probability
 
     #region CdfPdf
 
+    /// <inheritdoc />
     public override double CDF(double x)
     {
       return CDF(x, Probability);
     }
 
+    /// <summary>
+    /// Returns the cumulative distribution function (CDF) of a geometric distribution (variant A).
+    /// </summary>
+    /// <param name="x">The value at which to evaluate the CDF.</param>
+    /// <param name="p">The success probability p in the range (0, 1].</param>
+    /// <returns>The probability that a geometrically distributed random variable is less than or equal to <paramref name="x"/>.</returns>
     public static double CDF(double x, double p)
     {
       double x1 = Math.Floor(x);
@@ -328,22 +340,18 @@ namespace Altaxo.Calc.Probability
         return 1 - Math.Pow(1 - p, x1);
     }
 
-    /* This is for variant B
-        public static double CDF(double x, double p)
-        {
-            double x1 = Math.Floor(1+x);
-            if (x < 0)
-                return 0;
-            else
-                return 1 - Math.Pow(1 - p, x1);
-        }
-        */
-
+    /// <inheritdoc />
     public override double PDF(double x)
     {
       return PDF(x, Probability);
     }
 
+    /// <summary>
+    /// Returns the probability mass function (PMF) of a geometric distribution (variant A).
+    /// </summary>
+    /// <param name="x">The value at which to evaluate the PMF.</param>
+    /// <param name="p">The success probability p in the range (0, 1].</param>
+    /// <returns>The probability for <paramref name="x"/>.</returns>
     public static double PDF(double x, double p)
     {
       double xi = Math.Floor(x);
@@ -352,17 +360,6 @@ namespace Altaxo.Calc.Probability
       else
         return 0;
     }
-
-    /* this is for variant B
-        public static double PDF(double x, double p)
-        {
-            double xi = Math.Floor(x);
-            if (xi == x && xi >= 0)
-                return p * Math.Pow(1 - p, xi);
-            else
-                return 0;
-        }
-        */
 
     #endregion CdfPdf
   }

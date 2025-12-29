@@ -30,12 +30,20 @@ using Altaxo.Calc.LinearAlgebra;
 
 namespace Altaxo.Calc.Optimization
 {
+  /// <summary>
+  /// Brute-force line search that evaluates the objective function on a uniform grid and optionally
+  /// refines the minimum by recursive subdivision.
+  /// </summary>
   public class BruteForceLineSearch : LineSearchMethod
   {
     private int _numberOfInitialDivisions;
     private int _numberOfSubsequentDivisions;
     private int _divisionDepth;
 
+    /// <summary>
+    /// Initializes a new instance of the <see cref="BruteForceLineSearch"/> class.
+    /// </summary>
+    /// <param name="cost">The cost function to be minimized.</param>
     public BruteForceLineSearch(ICostFunction cost)
     {
       costFunction_ = cost;
@@ -46,6 +54,10 @@ namespace Altaxo.Calc.Optimization
       _divisionDepth = 32;
     }
 
+    /// <summary>
+    /// Gets or sets the number of grid divisions used in the initial coarse search.
+    /// </summary>
+    /// <exception cref="ArgumentOutOfRangeException">The value is less than 2.</exception>
     public int NumberOfInitialDivisions
     {
       get
@@ -60,6 +72,10 @@ namespace Altaxo.Calc.Optimization
       }
     }
 
+    /// <summary>
+    /// Gets or sets the number of divisions used for each refinement step after the initial search.
+    /// </summary>
+    /// <exception cref="ArgumentOutOfRangeException">The value is less than 2.</exception>
     public int NumberOfSubsequentDivisions
     {
       get
@@ -74,6 +90,10 @@ namespace Altaxo.Calc.Optimization
       }
     }
 
+    /// <summary>
+    /// Gets or sets the maximum recursion depth for refining the minimum.
+    /// </summary>
+    /// <exception cref="ArgumentOutOfRangeException">The value is less than 0.</exception>
     public int DivisionDepth
     {
       get
@@ -88,11 +108,25 @@ namespace Altaxo.Calc.Optimization
       }
     }
 
+    /// <inheritdoc/>
     public override Vector<double> Search(Vector<double> x, Vector<double> direction, double step)
     {
       return Search(x, x + direction * step, _numberOfInitialDivisions, _numberOfSubsequentDivisions, _divisionDepth);
     }
 
+    /// <summary>
+    /// Searches for the minimum of the cost function on the line segment between two bounds.
+    /// </summary>
+    /// <param name="bound0">Left bound of the search interval.</param>
+    /// <param name="bound1">Right bound of the search interval.</param>
+    /// <param name="numberOfInitialDivisions">Number of uniform divisions in the initial grid search.</param>
+    /// <param name="numberOfSubsequentDivisions">Number of divisions used in each subsequent refinement step.</param>
+    /// <param name="divisionDepth">Maximum recursion depth used for refinement.</param>
+    /// <returns>The point where the cost function is minimal within the search interval.</returns>
+    /// <exception cref="ArgumentOutOfRangeException">
+    /// <paramref name="numberOfInitialDivisions"/> is less than 2, <paramref name="numberOfSubsequentDivisions"/> is less than 2,
+    /// or a valid minimum cannot be determined because all function evaluations are invalid or infinite.
+    /// </exception>
     public Vector<double> Search(Vector<double> bound0, Vector<double> bound1, int numberOfInitialDivisions, int numberOfSubsequentDivisions, int divisionDepth)
     {
       if (numberOfInitialDivisions < 2)

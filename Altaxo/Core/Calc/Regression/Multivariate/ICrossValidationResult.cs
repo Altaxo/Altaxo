@@ -22,7 +22,6 @@
 
 #endregion Copyright
 
-using System;
 using System.Collections.Generic;
 using Altaxo.Calc.LinearAlgebra;
 
@@ -34,26 +33,26 @@ namespace Altaxo.Calc.Regression.Multivariate
   public interface ICrossValidationResult
   {
     /// <summary>
-    /// Gets the predicted y values for cross validation.
+    /// Gets the predicted <c>Y</c> values for cross validation.
     /// </summary>
     /// <param name="numberOfFactor">Number of factors to use for prediction.</param>
-    /// <returns>The matrix of predicted y.(Columns=number of concentrations, rows=Number of points).</returns>
+    /// <returns>The matrix of predicted <c>Y</c> values. (Columns = number of concentrations, rows = number of points).</returns>
     IROMatrix<double> GetPredictedY(int numberOfFactor);
 
     /// <summary>
     /// Gets the spectral residuals for cross validation.
     /// </summary>
     /// <param name="numberOfFactor">Number of factors to use for calculation.</param>
-    /// <returns>The matrix of spectral residuals. (rows=Number of points).</returns>
+    /// <returns>The matrix of spectral residuals. (Rows = number of points).</returns>
     IROMatrix<double> GetSpectralResidual(int numberOfFactor);
 
     /// <summary>
-    /// Get the cross PRESS vector.
+    /// Gets the cross PRESS vector.
     /// </summary>
     IReadOnlyList<double> CrossPRESS { get; }
 
     /// <summary>
-    /// Returns the mean number of excluded spectra during cross validation.
+    /// Gets the mean number of excluded spectra during cross validation.
     /// </summary>
     double MeanNumberOfExcludedSpectra { get; }
   }
@@ -63,11 +62,35 @@ namespace Altaxo.Calc.Regression.Multivariate
   /// </summary>
   public class CrossValidationResult : ICrossValidationResult
   {
+    /// <summary>
+    /// Predicted <c>Y</c> values per number of factors.
+    /// </summary>
     public IMatrix<double>[] _predictedY;
+
+    /// <summary>
+    /// Spectral residuals per number of factors.
+    /// </summary>
     public IMatrix<double>[] _spectralResidual;
+
+    /// <summary>
+    /// Cross PRESS values per number of factors.
+    /// </summary>
     public IVector<double> _crossPRESS;
+
+    /// <summary>
+    /// Mean number of excluded spectra during cross validation.
+    /// </summary>
     public double _MeanNumberExcludedSpectra;
 
+    /// <summary>
+    /// Initializes a new instance of the <see cref="CrossValidationResult"/> class.
+    /// </summary>
+    /// <param name="numberOfPoints">Number of points (rows) per result matrix.</param>
+    /// <param name="numberOfY">Number of <c>Y</c> variables (columns) per result matrix.</param>
+    /// <param name="numberOfFactors">Maximum number of factors. Results are allocated for 0..numberOfFactors.</param>
+    /// <param name="multipleSpectralResiduals">
+    /// If <see langword="true"/>, spectral residuals are stored for each <c>Y</c> variable; otherwise, a single residual column is stored.
+    /// </param>
     public CrossValidationResult(int numberOfPoints, int numberOfY, int numberOfFactors, bool multipleSpectralResiduals)
     {
       _predictedY = new IMatrix<double>[numberOfFactors + 1];
@@ -81,31 +104,23 @@ namespace Altaxo.Calc.Regression.Multivariate
       }
     }
 
-    /// <summary>
-    /// Gets the predicted y values for cross validation.
-    /// </summary>
-    /// <param name="numberOfFactor">Number of factors to use for prediction.</param>
-    /// <returns>The matrix of predicted y.(Columns=number of concentrations, rows=Number of points).</returns>
+    /// <inheritdoc/>
     public IROMatrix<double> GetPredictedY(int numberOfFactor)
     {
       return _predictedY[numberOfFactor];
     }
 
     /// <summary>
-    /// Gets the predicted y values for cross validation.
+    /// Gets the predicted <c>Y</c> values for cross validation (writable).
     /// </summary>
     /// <param name="numberOfFactor">Number of factors to use for prediction.</param>
-    /// <returns>The matrix of predicted y.(Columns=number of concentrations, rows=Number of points).</returns>
+    /// <returns>The matrix of predicted <c>Y</c> values (writable). (Columns=number of concentrations, rows=Number of points).</returns>
     public IMatrix<double> GetPredictedYW(int numberOfFactor)
     {
       return _predictedY[numberOfFactor];
     }
 
-    /// <summary>
-    /// Gets the spectral residuals for cross validation.
-    /// </summary>
-    /// <param name="numberOfFactor">Number of factors to use for calculation.</param>
-    /// <returns>The matrix of spectral residuals. (rows=Number of points).</returns>
+    /// <inheritdoc/>
     public IROMatrix<double> GetSpectralResidual(int numberOfFactor)
     {
       return _spectralResidual[numberOfFactor];
@@ -115,25 +130,21 @@ namespace Altaxo.Calc.Regression.Multivariate
     /// Gets the spectral residuals for cross validation.
     /// </summary>
     /// <param name="numberOfFactor">Number of factors to use for calculation.</param>
-    /// <returns>The matrix of spectral residuals. (rows=Number of points).</returns>
+    /// <returns>The matrix of spectral residuals .(rows=Number of points).</returns>
     public IMatrix<double> GetSpectralResidualW(int numberOfFactor)
     {
       return _spectralResidual[numberOfFactor];
     }
 
-    /// <summary>
-    /// Get the cross PRESS vector.
-    /// </summary>
+    /// <inheritdoc/>
     public IReadOnlyList<double> CrossPRESS { get { return _crossPRESS; } }
 
     /// <summary>
-    /// Get the cross PRESS vector.
+    /// Gets the cross PRESS vector.
     /// </summary>
     public IReadOnlyList<double> CrossPRESSW { get { return _crossPRESS; } }
 
-    /// <summary>
-    /// Returns the mean number of excluded spectra during cross validation.
-    /// </summary>
+    /// <inheritdoc/>
     public double MeanNumberOfExcludedSpectra { get { return _MeanNumberExcludedSpectra; } }
   }
 }

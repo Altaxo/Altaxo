@@ -30,11 +30,11 @@ using System.Numerics;
 
 namespace Altaxo.Calc
 {
-  /// <summary> 
-  /// An Interval numeric data type, that is based on a floating point type T.
+  /// <summary>
+  /// An interval numeric data type that is based on a floating-point type <typeparamref name="T"/>.
   /// This type supports basic arithmetic operations (+, -, *, /) with correctly maintained interval bounds.
-  /// Instead of representing a value as a single number, an interval represents each value as a range of possibilities 
-  /// that you can performs arithmetic on.
+  /// Instead of representing a value as a single number, an interval represents each value as a range of possibilities
+  /// that you can perform arithmetic on.
   /// </summary>
   public struct Interval<T>
     : IAdditionOperators<Interval<T>, Interval<T>, Interval<T>>,
@@ -63,13 +63,25 @@ namespace Altaxo.Calc
     public static Interval<T> One { get; }
 
     /// <summary>
-    /// Gets a value that represents the number one as a single-point interval, [2,2].
+    /// Gets a value that represents the number two as a single-point interval, [2,2].
     /// </summary>
     public static Interval<T> Two { get; }
 
+    /// <summary>
+    /// Gets a function that inflates a value towards negative infinity (used to ensure a conservative lower bound).
+    /// </summary>
     public static Func<T, T> InflateDown { get; private set; } = (x) => x;
+
+    /// <summary>
+    /// Gets a function that inflates a value towards positive infinity (used to ensure a conservative upper bound).
+    /// </summary>
     public static Func<T, T> InflateUp { get; private set; } = (x) => x;
 
+    /// <summary>
+    /// Gets the inflated lower and upper bounds for a computed value.
+    /// </summary>
+    /// <param name="x">The value to inflate.</param>
+    /// <returns>A tuple containing the inflated <c>min</c> and <c>max</c> bounds.</returns>
     public static (T min, T max) GetInflatedBounds(T x)
     {
       return (InflateDown(x), InflateUp(x));
@@ -89,8 +101,7 @@ namespace Altaxo.Calc
     public T Max { get; private set; }
 
     /// <summary>
-    /// Gets the size of this interval.
-    /// Calculated as the minimum subtracted from the maximum.
+    /// Gets the size of this interval, calculated as <see cref="Max"/> minus <see cref="Min"/>.
     /// </summary>
     /// <value>The size.</value>
     public T Size { get { return Max - Min; } }
@@ -104,7 +115,7 @@ namespace Altaxo.Calc
     #region Constructors
 
     /// <summary>
-    /// Initializes a new instance of the <see cref="Interval{T}"/> class.
+    /// Initializes a new instance of the <see cref="Interval{T}"/> struct.
     /// </summary>
     public Interval()
     {
@@ -113,13 +124,13 @@ namespace Altaxo.Calc
     }
 
     /// <summary>
-    /// Initializes a new instance of the <see cref="Interval{T}"/> class as a single-point interval.
+    /// Initializes a new instance of the <see cref="Interval{T}"/> struct as a single-point interval.
     /// </summary>
     /// <param name="value">The value.</param>
     private Interval(T value) : this(value, value) { }
 
     /// <summary>
-    /// Initializes a new instance of the <see cref="Interval{T}"/> class, with the minimum and the maximum specified.
+    /// Initializes a new instance of the <see cref="Interval{T}"/> struct with the minimum and maximum specified.
     /// </summary>
     /// <param name="min">The minimum.</param>
     /// <param name="max">The maximum.</param>
@@ -129,16 +140,33 @@ namespace Altaxo.Calc
       Max = max;
     }
 
+    /// <summary>
+    /// Creates a single-point interval without inflating bounds.
+    /// </summary>
+    /// <param name="value">The exact value.</param>
+    /// <returns>An interval equal to <c>[value, value]</c>.</returns>
     public static Interval<T> FromExact(T value)
     {
       return new Interval<T>(value, value);
     }
 
+    /// <summary>
+    /// Creates a single-point interval and inflates bounds conservatively.
+    /// </summary>
+    /// <param name="value">The value.</param>
+    /// <returns>An interval containing <paramref name="value"/>, with conservatively inflated bounds.</returns>
     public static Interval<T> From(T value)
     {
       return new Interval<T>(InflateDown(value), InflateUp(value));
     }
 
+    /// <summary>
+    /// Creates an interval with exact bounds (no inflation).
+    /// </summary>
+    /// <param name="min">The minimum.</param>
+    /// <param name="max">The maximum.</param>
+    /// <returns>An interval equal to <c>[min, max]</c>.</returns>
+    /// <exception cref="ArgumentOutOfRangeException"><paramref name="min"/> is greater than <paramref name="max"/>.</exception>
     public static Interval<T> FromExact(T min, T max)
     {
       if (!(min <= max))
@@ -148,6 +176,13 @@ namespace Altaxo.Calc
       return new Interval<T>(min, max);
     }
 
+    /// <summary>
+    /// Creates an interval with conservatively inflated bounds.
+    /// </summary>
+    /// <param name="min">The minimum.</param>
+    /// <param name="max">The maximum.</param>
+    /// <returns>An interval containing <c>[min, max]</c>, with conservatively inflated bounds.</returns>
+    /// <exception cref="ArgumentOutOfRangeException"><paramref name="min"/> is greater than <paramref name="max"/>.</exception>
     public static Interval<T> From(T min, T max)
     {
       if (!(min <= max))
@@ -160,7 +195,7 @@ namespace Altaxo.Calc
 
 
     /// <summary>
-    /// Static constructor. Initializes the static members of the <see cref="Interval{T}"/> class.
+    /// Static constructor. Initializes the static members of the <see cref="Interval{T}"/> type.
     /// </summary>
     static Interval()
     {
@@ -191,12 +226,12 @@ namespace Altaxo.Calc
     }
 
     /// <summary>
-    /// Combines two intervals that meet. Same as a union, but the intervals must meet.
+    /// Combines two intervals that meet. This is similar to a union, but the intervals must meet.
     /// </summary>
-    /// <param name="left">The left.</param>
-    /// <param name="right">The right.</param>
-    /// <returns>Interval&lt;T&gt;.</returns>
-    /// <exception cref="System.ArgumentOutOfRangeException">Parameters {nameof(left)} and {nameof(right)} must meet.</exception>
+    /// <param name="left">The left interval.</param>
+    /// <param name="right">The right interval.</param>
+    /// <returns>The combined interval.</returns>
+    /// <exception cref="ArgumentOutOfRangeException">Thrown when <paramref name="left"/> and <paramref name="right"/> are disjoint.</exception>
     public static Interval<T> Combine(Interval<T> left, Interval<T> right)
     {
       if (Interval<T>.IsDisjoint(left, right)) { throw new ArgumentOutOfRangeException($"Parameters {nameof(left)} and {nameof(right)} must meet."); }
@@ -216,7 +251,7 @@ namespace Altaxo.Calc
     #region Operations
 
     /// <summary>
-    /// Adds two Intervals and returns the sum.
+    /// Adds two intervals and returns the sum.
     /// </summary>
     /// <param name="augend">The augend.</param>
     /// <param name="addend">The addend.</param>
@@ -227,7 +262,7 @@ namespace Altaxo.Calc
     }
 
     /// <summary>
-    /// Subtracts two Intervals and returns the difference.
+    /// Subtracts two intervals and returns the difference.
     /// </summary>
     /// <param name="minuend">The minuend.</param>
     /// <param name="subtrahend">The subtrahend.</param>
@@ -238,11 +273,12 @@ namespace Altaxo.Calc
     }
 
     /// <summary>
-    /// Divides two Intervals and returns the quotient.
+    /// Divides two intervals and returns the quotient.
     /// </summary>
     /// <param name="dividend">The dividend.</param>
     /// <param name="divisor">The divisor.</param>
     /// <returns>The quotient.</returns>
+    /// <exception cref="DivideByZeroException">Thrown when <paramref name="divisor"/> contains zero.</exception>
     public static Interval<T> Divide(Interval<T> dividend, Interval<T> divisor)
     {
       if (divisor.Contains(T.Zero))
@@ -257,7 +293,7 @@ namespace Altaxo.Calc
     }
 
     /// <summary>
-    /// Multiplies two Intervals and returns the product.
+    /// Multiplies two intervals and returns the product.
     /// </summary>
     /// <param name="multiplicand">The multiplicand.</param>
     /// <param name="multiplier">The multiplier.</param>
@@ -273,6 +309,10 @@ namespace Altaxo.Calc
     }
 
 
+    /// <summary>
+    /// Returns an interval that represents the square root of this interval.
+    /// </summary>
+    /// <returns>The square-root interval.</returns>
     public readonly Interval<T> Sqrt()
     {
       return new Interval<T>(InflateDown(Min), InflateUp(Max));
@@ -282,15 +322,32 @@ namespace Altaxo.Calc
 
 
     /// <summary>
-    /// Clones the specified value.
+    /// Creates a copy of the specified interval.
     /// </summary>
-    /// <param name="value">The value.</param>
-    /// <returns>A copy of the Interval.</returns>
+    /// <param name="value">The interval to clone.</param>
+    /// <returns>A copy of <paramref name="value"/>.</returns>
     public static Interval<T> Clone(Interval<T> value) => new Interval<T>(value.Min, value.Max);
 
+    /// <summary>
+    /// Returns the minimum value from the provided sequence.
+    /// </summary>
+    /// <param name="elements">The elements to inspect.</param>
+    /// <returns>The minimum value.</returns>
     private static T CollectionMin(params T[] elements) { return elements.Min(); }
+
+    /// <summary>
+    /// Returns the maximum value from the provided sequence.
+    /// </summary>
+    /// <param name="elements">The elements to inspect.</param>
+    /// <returns>The maximum value.</returns>
     private static T CollectionMax(params T[] elements) { return elements.Max(); }
 
+    /// <summary>
+    /// Returns the minimum and maximum values from the provided span.
+    /// </summary>
+    /// <param name="elements">The elements to inspect.</param>
+    /// <returns>An interval spanning the minimum and maximum values.</returns>
+    /// <exception cref="ArgumentOutOfRangeException">Thrown when <paramref name="elements"/> is empty.</exception>
     private static Interval<T> CollectionMinMax(Span<T> elements)
     {
       if (elements.Length > 1)
@@ -328,7 +385,7 @@ namespace Altaxo.Calc
     #region Arithmetic Operators
 
     /// <summary>
-    /// Adds two Intervals together and returns their sum.
+    /// Adds two intervals together and returns their sum.
     /// </summary>
     /// <param name="augend">The augend.</param>
     /// <param name="addend">The addend.</param>
@@ -336,7 +393,7 @@ namespace Altaxo.Calc
     public static Interval<T> operator +(Interval<T> augend, Interval<T> addend) => Interval<T>.Add(augend, addend);
 
     /// <summary>
-    /// Subtracts two Intervals and returns their difference.
+    /// Subtracts two intervals and returns their difference.
     /// </summary>
     /// <param name="minuend">The minuend.</param>
     /// <param name="subtrahend">The subtrahend.</param>
@@ -347,7 +404,7 @@ namespace Altaxo.Calc
     }
 
     /// <summary>
-    /// Multiplies two Intervals and returns the product.
+    /// Multiplies two intervals and returns the product.
     /// </summary>
     /// <param name="multiplicand">The multiplicand.</param>
     /// <param name="multiplier">The multiplier.</param>
@@ -355,18 +412,27 @@ namespace Altaxo.Calc
     public static Interval<T> operator *(Interval<T> multiplicand, Interval<T> multiplier) => Interval<T>.Multiply(multiplicand, multiplier);
 
     /// <summary>
-    /// Divides two Intervals and returns the quotient.
+    /// Divides two intervals and returns the quotient.
     /// </summary>
     /// <param name="dividend">The dividend.</param>
     /// <param name="divisor">The divisor.</param>
     /// <returns>The quotient.</returns>
     public static Interval<T> operator /(Interval<T> dividend, Interval<T> divisor) => Interval<T>.Divide(dividend, divisor);
 
+    /// <summary>
+    /// Returns the negated interval.
+    /// </summary>
+    /// <param name="x">The interval to negate.</param>
+    /// <returns>The negated interval.</returns>
     public static Interval<T> operator -(Interval<T> x)
     {
       return new Interval<T>(-x.Max, -x.Min);
     }
 
+    /// <summary>
+    /// Returns the absolute value interval.
+    /// </summary>
+    /// <returns>The absolute value interval.</returns>
     public Interval<T> Abs()
     {
       var minlt0 = this.Min < T.Zero;
@@ -385,6 +451,12 @@ namespace Altaxo.Calc
       }
     }
 
+    /// <summary>
+    /// Returns the interval that is considered the maximum when comparing bounds.
+    /// </summary>
+    /// <param name="x">The first interval.</param>
+    /// <param name="y">The second interval.</param>
+    /// <returns>The selected maximum interval.</returns>
     public static Interval<T> Maxx(Interval<T> x, Interval<T> y)
     {
       if (x.Max > y.Max)
@@ -401,52 +473,22 @@ namespace Altaxo.Calc
 
     #region Comparison Operators
 
-    /// <summary>
-    /// Compares two values to determine equality.
-    /// </summary>
-    /// <param name="left">The value to compare with <paramref name="right" />.</param>
-    /// <param name="right">The value to compare with <paramref name="left" />.</param>
-    /// <returns><see langword="true" /> if <paramref name="left" /> is equal to <paramref name="right" />; otherwise, <see langword="false" />.</returns>
+    /// <inheritdoc/>
     public static bool operator ==(Interval<T> left, Interval<T> right) => Interval<T>.Equals(left, right);
 
-    /// <summary>
-    /// Compares two values to determine inequality.
-    /// </summary>
-    /// <param name="left">The value to compare with <paramref name="right" />.</param>
-    /// <param name="right">The value to compare with <paramref name="left" />.</param>
-    /// <returns><see langword="true" /> if <paramref name="left" /> is not equal to <paramref name="right" />; otherwise, <see langword="false" />.</returns>
+    /// <inheritdoc/>
     public static bool operator !=(Interval<T> left, Interval<T> right) => !Interval<T>.Equals(left, right);
 
-    /// <summary>
-    /// Implements the &lt; operator.
-    /// </summary>
-    /// <param name="left">The left.</param>
-    /// <param name="right">The right.</param>
-    /// <returns>The result of the operator.</returns>
+    /// <inheritdoc/>
     public static bool operator <(Interval<T> left, Interval<T> right) => (left.Min <= right.Min) && (left.Max < right.Max);
 
-    /// <summary>
-    /// Compares two values to determine which is greater.
-    /// </summary>
-    /// <param name="left">The value to compare with <paramref name="right" />.</param>
-    /// <param name="right">The value to compare with <paramref name="left" />.</param>
-    /// <returns><see langword="true" /> if <paramref name="left" /> is greater than <paramref name="right" />; otherwise, <see langword="false" />.</returns>
+    /// <inheritdoc/>
     public static bool operator >(Interval<T> left, Interval<T> right) => (right.Max >= left.Max) && (right.Min > left.Min);
 
-    /// <summary>
-    /// Implements the &lt;= operator.
-    /// </summary>
-    /// <param name="left">The left.</param>
-    /// <param name="right">The right.</param>
-    /// <returns>The result of the operator.</returns>
+    /// <inheritdoc/>
     public static bool operator <=(Interval<T> left, Interval<T> right) => (left < right) || (left.Max == right.Max);
 
-    /// <summary>
-    /// Compares two values to determine which is greater or equal.
-    /// </summary>
-    /// <param name="left">The value to compare with <paramref name="right" />.</param>
-    /// <param name="right">The value to compare with <paramref name="left" />.</param>
-    /// <returns><see langword="true" /> if <paramref name="left" /> is greater than or equal to <paramref name="right" />; otherwise, <see langword="false" />.</returns>
+    /// <inheritdoc/>
     public static bool operator >=(Interval<T> left, Interval<T> right) => (right > left) || (right.Min == left.Min);
 
     #endregion
@@ -454,7 +496,7 @@ namespace Altaxo.Calc
     #region Conversion Operators
 
     /// <summary>
-    /// Performs an implicit conversion from <see langword="T"/> to <see cref="Interval{T}"/>.
+    /// Performs an implicit conversion from <typeparamref name="T"/> to <see cref="Interval{T}"/>.
     /// </summary>
     /// <param name="value">The value.</param>
     /// <returns>The result of the conversion.</returns>
@@ -470,30 +512,21 @@ namespace Altaxo.Calc
     /// <summary>
     /// Compares two values for equality.
     /// </summary>
-    /// <param name="left">The value to compare with <paramref name="right" />.</param>
-    /// <param name="right">The value to compare with <paramref name="left" />.</param>
-    /// <returns><see langword="true" /> if <paramref name="left" /> is equal to <paramref name="right" />; otherwise, <see langword="false" />.</returns>
+    /// <param name="left">The value to compare with <paramref name="right"/>.</param>
+    /// <param name="right">The value to compare with <paramref name="left"/>.</param>
+    /// <returns><see langword="true"/> if <paramref name="left"/> is equal to <paramref name="right"/>; otherwise, <see langword="false"/>.</returns>
     public static bool Equals(Interval<T> left, Interval<T> right)
     {
       return (left.Min == right.Min && left.Max == right.Max);
     }
 
-    /// <summary>
-    /// Compares this instance with another for equality.
-    /// </summary>
-    /// <param name="other">The other value to compare with.</param>
-    /// <returns><see langword="true" /> if this instance is equal to <paramref name="other" />; otherwise, <see langword="false" />.</returns>
+    /// <inheritdoc/>
     public readonly bool Equals(Interval<T> other)
     {
       return Equals(this, other);
     }
 
-    /// <summary>
-    /// Compares the current instance with another object of the same type and returns an integer that indicates whether the current instance precedes, follows, or occurs in the same position in the sort order as the other object.
-    /// </summary>
-    /// <param name="obj">An object to compare with this instance.</param>
-    /// <returns>A value that indicates the relative order of the objects being compared. The return value has these meanings:
-    /// <list type="table"><listheader><term> Value</term><description> Meaning</description></listheader><item><term> Less than zero</term><description> This instance precedes <paramref name="obj" /> in the sort order.</description></item><item><term> Zero</term><description> This instance occurs in the same position in the sort order as <paramref name="obj" />.</description></item><item><term> Greater than zero</term><description> This instance follows <paramref name="obj" /> in the sort order.</description></item></list></returns>
+    /// <inheritdoc/>
     public readonly int CompareTo(object? obj)
     {
       if (obj is Interval<T> other)
@@ -510,13 +543,7 @@ namespace Altaxo.Calc
       }
     }
 
-    /// <summary>
-    /// Compares the current instance with another object of the same type and returns an integer that indicates whether the current instance precedes, follows, or occurs in the same position in the sort order as the other object.
-    /// </summary>
-    /// <param name="other">An object to compare with this instance.</param>
-    /// <returns>A value that indicates the relative order of the objects being compared. The return value has these meanings:
-    /// <list type="table"><listheader><term> Value</term><description> Meaning</description></listheader><item><term> Less than zero</term><description> This instance precedes <paramref name="other" /> in the sort order.</description></item><item><term> Zero</term><description> This instance occurs in the same position in the sort order as <paramref name="other" />.</description></item><item><term> Greater than zero</term><description> This instance follows <paramref name="other" /> in the sort order.</description></item></list></returns>
-    /// <exception cref="System.Exception"></exception>
+    /// <inheritdoc/>
     public readonly int CompareTo(Interval<T> other)
     {
       if (Interval<T>.Equals(this, other))
@@ -547,22 +574,22 @@ namespace Altaxo.Calc
     #region Membership
 
     /// <summary>
-    /// Determines whether this interval instance contains within it another interval.
+    /// Determines whether this interval contains the specified value.
     /// </summary>
-    /// <param name="value">The other interval to check if it is contained within this instance interval.</param>
-    /// <returns><c>true</c> if this interval instance contains the specified interval; otherwise, <c>false</c>.</returns>
+    /// <param name="value">The value to test for membership.</param>
+    /// <returns><see langword="true"/> if <paramref name="value"/> is within the interval; otherwise, <see langword="false"/>.</returns>
     public bool Contains(T value)
     {
       return (value >= this.Min && value <= this.Max);
     }
 
     /// <summary>
-    /// Determines whether two Intervals are disjoint.
-    /// Two Intervals are disjoint if no part of one interval is contained in the other.
+    /// Determines whether two intervals are disjoint.
+    /// Two intervals are disjoint if no part of one interval is contained in the other.
     /// </summary>
     /// <param name="left">The left interval.</param>
     /// <param name="right">The right interval.</param>
-    /// <returns><c>true</c> if the no part of the left interval contains in the other; otherwise, <c>false</c>.</returns>
+    /// <returns><see langword="true"/> if no part of the left interval is contained in the right interval; otherwise, <see langword="false"/>.</returns>
     public static bool IsDisjoint(Interval<T> left, Interval<T> right)
     {
       return !(left.Contains(right.Min) || left.Contains(right.Max));
@@ -572,41 +599,35 @@ namespace Altaxo.Calc
 
     #region Overrides
 
-    /// <summary>
-    /// Determines whether the specified <see cref="System.Object" /> is equal to this instance.
-    /// </summary>
-    /// <param name="obj">The object to compare with the current object.</param>
-    /// <returns><c>true</c> if the specified <see cref="System.Object" /> is equal to this instance; otherwise, <c>false</c>.</returns>
+    /// <inheritdoc/>
     public override bool Equals(object? obj) => obj is Interval<T> o ? this.Equals(o) : false;
 
-    /// <summary>
-    /// Returns a hash code for this instance.
-    /// </summary>
-    /// <returns>A hash code for this instance, suitable for use in hashing algorithms and data structures like a hash table.</returns>
+    /// <inheritdoc/>
     public override int GetHashCode()
     {
       return new Tuple<T, T>(this.Min, this.Max).GetHashCode();
     }
 
-    /// <summary>
-    /// Returns a <see cref="System.String" /> that represents this instance.
-    /// </summary>
-    /// <returns>A <see cref="System.String" /> that represents this instance.</returns>
+    /// <inheritdoc/>
     public override string ToString()
     {
       return ToString(null, NumberFormatInfo.CurrentInfo);
     }
 
     /// <summary>
-    /// Returns a <see cref="System.String" /> that represents this instance.
+    /// Returns a string that represents this instance.
     /// </summary>
-    /// <param name="format">The format to use.
+    /// <param name="format">
+    /// The format to use.
     /// -or-
-    /// A null reference (<see langword="Nothing" /> in Visual Basic) to use the default format defined for the type of the <see cref="T:System.IFormattable" /> implementation.</param>
-    /// <param name="formatProvider">The provider to use to format the value.
+    /// <see langword="null"/> to use the default format defined for the type of the <see cref="IFormattable"/> implementation.
+    /// </param>
+    /// <param name="formatProvider">
+    /// The provider to use to format the value.
     /// -or-
-    /// A null reference (<see langword="Nothing" /> in Visual Basic) to obtain the numeric format information from the current locale setting of the operating system.</param>
-    /// <returns>A <see cref="System.String" /> that represents this instance.</returns>
+    /// <see langword="null"/> to obtain the numeric format information from the current locale setting of the operating system.
+    /// </param>
+    /// <returns>A string that represents this instance.</returns>
     public string ToString(string? format, IFormatProvider formatProvider)
     {
       if (Min == Max)
@@ -619,6 +640,14 @@ namespace Altaxo.Calc
       }
     }
 
+    /// <summary>
+    /// Attempts to parse a string into an <see cref="Interval{T}"/>.
+    /// </summary>
+    /// <param name="s">The string representation of a value.</param>
+    /// <param name="style">A bitwise combination of number styles permitted in <paramref name="s"/>.</param>
+    /// <param name="provider">An object that supplies culture-specific formatting information about <paramref name="s"/>.</param>
+    /// <param name="result">When this method returns, contains the parsed interval.</param>
+    /// <returns><see langword="true"/> if <paramref name="s"/> was parsed successfully; otherwise, <see langword="false"/>.</returns>
     public static bool TryParse(string s, NumberStyles style, IFormatProvider provider, out Interval<T> result)
     {
       var r = T.TryParse(s, style, provider, out T value);

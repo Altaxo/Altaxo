@@ -37,10 +37,10 @@ using Altaxo.Calc.LinearAlgebra;
 
 namespace Altaxo.Calc.Optimization
 {
-  ///<summary>Nelder and Mead Simplex Minimization Method</summary>
+  /// <summary>Nelder-Mead simplex minimization method.</summary>
   /// <remarks>
   /// <para>Copyright (c) 2003-2004, dnAnalytics Project. All rights reserved. See <a>http://www.dnAnalytics.net</a> for details.</para>
-  /// <para>Adopted to Altaxo (c) 2005 Dr. Dirk Lellinger.</para>
+  /// <para>Adopted for Altaxo (c) 2005 Dr. Dirk Lellinger.</para>
   /// </remarks>
   public class NelderMead : FunctionMinimizeMethod
   {
@@ -49,30 +49,35 @@ namespace Altaxo.Calc.Optimization
     private double[] fx; //Array of simplex function values
 #nullable disable
 
-    ///<summary>Default constructor for simplex method</summary>
-    /// <param name="costFunction">The cost function to minimize. Argument is a vector of parameters. The return value
-    /// is the penalty value that is about to be minimized.</param>
+    /// <summary>Initializes a new instance of the simplex method using the specified cost function.</summary>
+    /// <param name="costFunction">
+    /// The cost function to minimize. The argument is a vector of parameters; the return value is the penalty value to be minimized.
+    /// </param>
     public NelderMead(Func<Vector<double>, double> costFunction)
       : this(new CostFunctionMockup(costFunction), new EndCriteria())
     {
     }
 
-    ///<summary>Default constructor for simplex method</summary>
+    /// <summary>Initializes a new instance of the simplex method.</summary>
+    /// <param name="costfunction">The cost function to minimize.</param>
     public NelderMead(ICostFunction costfunction)
       : this(costfunction, new EndCriteria()) { }
 
+    /// <summary>Initializes a new instance of the simplex method.</summary>
+    /// <param name="costfunction">The cost function to minimize.</param>
+    /// <param name="endcriteria">User-specified ending criteria.</param>
     public NelderMead(ICostFunction costfunction, EndCriteria endcriteria)
     {
       costFunction_ = costfunction;
       endCriteria_ = endcriteria;
     }
 
-    ///<summary> Types of steps the Nelder-Mead Simplex Algorithm can take</summary>
+    /// <summary>Types of steps the Nelder-Mead simplex algorithm can take.</summary>
     public enum Step { Initialization, Reflection, Expansion, OutsideContraction, InsideContraction, Shrink };
 
     private Step laststep_ = Step.Initialization;
 
-    ///<summary> Return the type of step for the last iteration </summary>
+    /// <summary>Gets the type of step taken in the last iteration.</summary>
     public Step LastStep
     {
       get { return laststep_; }
@@ -81,7 +86,7 @@ namespace Altaxo.Calc.Optimization
     private double zdelta = 0.00025;
     private double delta = 0.05;
 
-    ///<summary> Delta used to generate initial simplex for non-zero value elements </summary>
+    /// <summary>Gets or sets the delta used to generate the initial simplex for non-zero value elements.</summary>
     public double SimplexDelta
     {
       set { delta = value; }
@@ -93,48 +98,50 @@ namespace Altaxo.Calc.Optimization
     private double psi_ = 0.5;
     private double sigma_ = 0.5;
 
-    ///<summary> Coefficient of reflection (Rho) </summary>
+    /// <summary>Gets or sets the coefficient of reflection (rho).</summary>
     public double Rho
     {
       set { rho_ = value; }
       get { return rho_; }
     }
 
-    ///<summary> Coefficient of expansion (Chi) </summary>
+    /// <summary>Gets or sets the coefficient of expansion (chi).</summary>
     public double Chi
     {
       set { chi_ = value; }
       get { return chi_; }
     }
 
-    ///<summary> Coefficient of contraction (Psi) </summary>
+    /// <summary>Gets or sets the coefficient of contraction (psi).</summary>
     public double Psi
     {
       set { psi_ = value; }
       get { return psi_; }
     }
 
-    ///<summary> Coefficient of shrinkage (Sigma) </summary>
+    /// <summary>Gets or sets the coefficient of shrinkage (sigma).</summary>
     public double Sigma
     {
       set { sigma_ = value; }
       get { return sigma_; }
     }
 
-    ///<summary> Delta used to generate initial simplex for zero value elements </summary>
+    /// <summary>Gets or sets the delta used to generate the initial simplex for zero value elements.</summary>
     public double SimplexZeroDelta
     {
       set { zdelta = value; }
       get { return zdelta; }
     }
 
-    ///<summary> Return the current iteration Simplex</summary>
+    /// <summary>Gets the current iteration simplex.</summary>
     public Vector<double>[] Simplex
     {
       get { return x; }
     }
 
-    ///<summary> Create an initial simplex </summary>
+    /// <summary>Creates an initial simplex around the given starting point.</summary>
+    /// <param name="x">The start point.</param>
+    /// <returns>An array of simplex vertices.</returns>
     private Vector<double>[] CreateSimplex(Vector<double> x)
     {
       int n = x.Count;
@@ -156,6 +163,7 @@ namespace Altaxo.Calc.Optimization
       return simplex;
     }
 
+    /// <summary>Ranks the simplex vertices by their objective function value.</summary>
     private void RankVertices()
     {
       // determine the values of each vertice in the initial simplex
@@ -168,24 +176,35 @@ namespace Altaxo.Calc.Optimization
 
     /*  Below are overriden Methods */
 
-    ///<summary> Method Name </summary>
+    /// <inheritdoc/>
     public override string MethodName
     {
       get { return "Nelder-Mead Downhill Simplex Method"; }
     }
 
-    ///<summary> Minimize the given cost function </summary>
+    /// <inheritdoc/>
     public override void Minimize(Vector<double> initialvector)
     {
       Minimize(CreateSimplex(initialvector));
     }
 
+    /// <summary>Minimizes the given cost function with cancellation support and progress reporting.</summary>
+    /// <param name="initialvector">The starting vector for the minimization.</param>
+    /// <param name="cancellationToken">A token used to request cancellation.</param>
+    /// <param name="newMinimalValueFound">
+    /// A callback that is invoked whenever a new minimum function value is found. The value passed is the new minimum.
+    /// </param>
     public void Minimize(Vector<double> initialvector, CancellationToken cancellationToken, Action<double> newMinimalValueFound)
     {
       Minimize(CreateSimplex(initialvector), cancellationToken, newMinimalValueFound);
     }
 
-    ///<summary> Minimize the given cost function </summary>
+    /// <summary>Minimizes the given cost function using explicit simplex coefficients.</summary>
+    /// <param name="initialsimplex">The initial simplex to start from.</param>
+    /// <param name="rho">Coefficient of reflection (rho).</param>
+    /// <param name="chi">Coefficient of expansion (chi).</param>
+    /// <param name="psi">Coefficient of contraction (psi).</param>
+    /// <param name="sigma">Coefficient of shrinkage (sigma).</param>
     public void Minimize(Vector<double>[] initialsimplex, double rho, double chi, double psi, double sigma)
     {
       rho_ = rho;
@@ -195,13 +214,19 @@ namespace Altaxo.Calc.Optimization
       Minimize(initialsimplex);
     }
 
-    ///<summary> Minimize the given cost function </summary>
+    /// <summary>Minimizes the given cost function starting from an initial simplex.</summary>
+    /// <param name="initialsimplex">The initial simplex to start from.</param>
     public void Minimize(Vector<double>[] initialsimplex)
     {
       Minimize(initialsimplex, CancellationToken.None, null);
     }
 
-    ///<summary> Minimize the given cost function </summary>
+    /// <summary>Minimizes the given cost function starting from an initial simplex.</summary>
+    /// <param name="initialsimplex">The initial simplex to start from.</param>
+    /// <param name="cancellationToken">A token used to request cancellation.</param>
+    /// <param name="newMinimalValueFound">
+    /// A callback that is invoked whenever a new minimum function value is found. The value passed is the new minimum.
+    /// </param>
     public void Minimize(Vector<double>[] initialsimplex, CancellationToken cancellationToken, Action<double> newMinimalValueFound)
     {
       endCriteria_.Reset();
@@ -223,15 +248,16 @@ namespace Altaxo.Calc.Optimization
       } while (!cancellationToken.IsCancellationRequested && !double.IsNaN(fx[0]) && endCriteria_.CheckCriteria(iterationValues_[endCriteria_.iterationCounter - 1], iterationValues_[endCriteria_.iterationCounter]));
     }
 
-    ///<summary> Initialize the optimization method </summary>
-    ///<remarks> The use of this function is intended for testing/debugging purposes only </remarks>
+    /// <inheritdoc/>
+    /// <remarks>The use of this function is intended for testing/debugging purposes only.</remarks>
     public override void InitializeMethod(Vector<double> initialvector)
     {
       InitializeMethod(CreateSimplex(initialvector));
     }
 
-    ///<summary> Initialize the optimization method </summary>
-    ///<remarks> The use of this function is intended for testing/debugging purposes only </remarks>
+    /// <summary>Initializes the optimization method.</summary>
+    /// <param name="initialsimplex">The initial simplex.</param>
+    /// <remarks>The use of this function is intended for testing/debugging purposes only.</remarks>
     public void InitializeMethod(Vector<double>[] initialsimplex)
     {
       x = new Vector<double>[initialsimplex.Length];
@@ -248,8 +274,8 @@ namespace Altaxo.Calc.Optimization
         (System.Math.Abs(fx[x.Length - 1]) + System.Math.Abs(fx[0]) + double.Epsilon);
     }
 
-    ///<summary> Perform a single iteration of the optimization method </summary>
-    ///<remarks> The use of this function is intended for testing/debugging purposes only </remarks>
+    /// <inheritdoc/>
+    /// <remarks>The use of this function is intended for testing/debugging purposes only.</remarks>
     public override void IterateMethod()
     {
       Vector<double> xr, xe, xbar, xc, xcc;
@@ -355,34 +381,35 @@ namespace Altaxo.Calc.Optimization
 
     private class CostFunctionMockup : ICostFunction
     {
+      /// <summary>The wrapped cost function delegate.</summary>
       public Func<Vector<double>, double> CostFunction;
 
+      /// <summary>Initializes a new instance of the <see cref="CostFunctionMockup"/> class.</summary>
+      /// <param name="costFunction">The cost function delegate to wrap.</param>
       public CostFunctionMockup(Func<Vector<double>, double> costFunction)
       {
         CostFunction = costFunction;
       }
 
+      /// <inheritdoc/>
       public double Value(Altaxo.Calc.LinearAlgebra.Vector<double> v)
       {
         return CostFunction(v);
       }
 
-
-      ///<summary>Method to override to calculate the grad_f, the first derivative of
-      /// the cost function with respect to x</summary>
+      /// <inheritdoc/>
       public Altaxo.Calc.LinearAlgebra.Vector<double> Gradient(Altaxo.Calc.LinearAlgebra.Vector<double> x)
       {
         throw new NotImplementedException();
       }
 
-      ///<summary>Method to override to calculate the hessian, the second derivative of
-      /// the cost function with respect to x</summary>
+      /// <inheritdoc/>
       public Matrix<double> Hessian(Altaxo.Calc.LinearAlgebra.Vector<double> x)
       {
         throw new NotImplementedException();
       }
 
-      ///<summary>Access the constraints for the given cost function </summary>
+      /// <inheritdoc/>
       public Altaxo.Calc.Optimization.ConstraintDefinition Constraint
       {
         get;

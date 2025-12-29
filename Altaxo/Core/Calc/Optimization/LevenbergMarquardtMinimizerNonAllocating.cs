@@ -41,7 +41,7 @@ using Altaxo.Collections;
 namespace Altaxo.Calc.Optimization
 {
   /// <summary>
-  /// LevenbergMarquardtMinimizer, that doesn't allocate memory during the iterations.
+  /// Levenberg-Marquardt minimizer that does not allocate memory during iterations.
   /// </summary>
   /// <seealso cref="Altaxo.Calc.Optimization.NonlinearMinimizerBaseNonAllocating" />
   /// <remarks>
@@ -51,44 +51,44 @@ namespace Altaxo.Calc.Optimization
   /// <para>
   /// [1]. Madsen, K., H. B. Nielsen, and O. Tingleff,
   ///      "Methods for Non-Linear Least Squares Problems. Technical University of Denmark, 2004. Lecture notes." (2004),
-  ///      Available Online from: <see href="http://orbit.dtu.dk/files/2721358/imm3215.pdf"/> 
+  ///      Available online from: <see href="http://orbit.dtu.dk/files/2721358/imm3215.pdf"/>
   /// </para>
   /// <para>
   /// [2]. Gavin, Henri,
   ///      "The Levenberg-Marquardt method for nonlinear least squares curve-fitting problems."
   ///      Department of Civil and Environmental Engineering, Duke University (2017): 1-19,
-  ///      Availble Online from: <see href="http://people.duke.edu/~hpgavin/ce281/lm.pdf"/> 
+  ///      Available online from: <see href="http://people.duke.edu/~hpgavin/ce281/lm.pdf"/>
   /// </para>
   ///</remarks>
   public class LevenbergMarquardtMinimizerNonAllocating : NonlinearMinimizerBaseNonAllocating
   {
     /// <summary>
-    /// The default scale factor for initial mu.
+    /// The default scale factor for the initial <c>mu</c>.
     /// </summary>
     public const double DefaultInitialMu = 1E-3;
 
     /// <summary>
-    /// The scale factor for initial mu
+    /// Gets or sets the scale factor for the initial <c>mu</c>.
     /// </summary>
     public double InitialMu { get; set; } = DefaultInitialMu;
 
     /// <summary>
-    /// Gets or sets the number of iterations after which the parameter scale is updated (if no user provided scale was set).
-    /// The default value is 1, that means the parameter scale is updated in each iteration.
-    /// Set the value to int.MaximumValue if no scale update is neccessary.
+    /// Gets or sets the number of iterations after which the parameter scale is updated (if no user-provided scale was set).
+    /// The default value is <c>1</c>, which means the parameter scale is updated in each iteration.
+    /// Set the value to <see cref="int.MaxValue"/> if no scale update is necessary.
     /// </summary>
     public int ParameterScaleUpdatePeriod { get; set; } = 1;
 
 
 
     /// <summary>
-    /// Non-linear least square fitting by the Levenberg-Marquardt algorithm.
+    /// Non-linear least squares fitting by the Levenberg-Marquardt algorithm.
     /// </summary>
     /// <param name="objective">The objective function, including model, observations, and parameter bounds.</param>
     /// <param name="initialGuess">The initial guess values.</param>
-    /// <param name="cancellationToken">Token to cancel the evaluation</param>
-    /// <param name="reportChi2Progress">Event handler that can be used to report the NumberOfIterations and Chi² value achived so far. Can be null</param>
-    /// <returns>The result of the Levenberg-Marquardt minimization</returns>
+    /// <param name="cancellationToken">Token to cancel the evaluation.</param>
+    /// <param name="reportChi2Progress">Callback used to report the number of iterations, Chi² value, and current parameter set achieved so far. Can be <see langword="null"/>.</param>
+    /// <returns>The result of the Levenberg-Marquardt minimization.</returns>
     public NonlinearMinimizationResult FindMinimum(
      IObjectiveModelNonAllocating objective,
      IReadOnlyList<double> initialGuess,
@@ -100,17 +100,17 @@ namespace Altaxo.Calc.Optimization
     }
 
     /// <summary>
-    /// Non-linear least square fitting by the Levenberg-Marquardt algorithm.
+    /// Non-linear least squares fitting by the Levenberg-Marquardt algorithm.
     /// </summary>
     /// <param name="objective">The objective function, including model, observations, and parameter bounds.</param>
     /// <param name="initialGuess">The initial guess values.</param>
-    /// <param name="lowerBound">The lower bounds of the parameters. The array must have the same length as the parameter array. Provide null if not needed.</param>
-    /// <param name="upperBound">The upper bounds of the parameters. The array must have the same length as the parameter array. Provide null if not needed.</param>
-    /// <param name="scales">The scales of the parameters. The array must have the same length as the parameter array. Provide null if not needed.</param>
-    /// <param name="isFixed">Array of booleans, which provide which parameters are fixed. Must have the same length as the parameter array. Provide null if not needed.</param>
-    /// <param name="cancellationToken">Token to cancel the evaluation</param>
-    /// <param name="reportChi2Progress">Event handler that can be used to report the NumberOfIterations, Chi² value and current parameter set achived so far. Can be null</param>
-    /// <returns>The result of the Levenberg-Marquardt minimization</returns>
+    /// <param name="lowerBound">The lower bounds of the parameters. Must have the same length as <paramref name="initialGuess"/>. Provide <see langword="null"/> if not needed.</param>
+    /// <param name="upperBound">The upper bounds of the parameters. Must have the same length as <paramref name="initialGuess"/>. Provide <see langword="null"/> if not needed.</param>
+    /// <param name="scales">The scales of the parameters. Must have the same length as <paramref name="initialGuess"/>. Provide <see langword="null"/> if not needed.</param>
+    /// <param name="isFixed">Array indicating which parameters are fixed. Must have the same length as <paramref name="initialGuess"/>. Provide <see langword="null"/> if not needed.</param>
+    /// <param name="cancellationToken">Token to cancel the evaluation.</param>
+    /// <param name="reportChi2Progress">Callback used to report the number of iterations, Chi² value and current parameter set achieved so far. Can be <see langword="null"/>.</param>
+    /// <returns>The result of the Levenberg-Marquardt minimization.</returns>
     public NonlinearMinimizationResult FindMinimum(
       IObjectiveModelNonAllocating objective,
       IReadOnlyList<double> initialGuess,
@@ -139,17 +139,18 @@ namespace Altaxo.Calc.Optimization
     }
 
     /// <summary>
-    /// Non-linear least square fitting by the Levenberg-Marquardt algorithm.
+    /// Non-linear least squares fitting by the Levenberg-Marquardt algorithm.
     /// </summary>
     /// <param name="objective">The objective function, including model, observations, and parameter bounds.</param>
     /// <param name="initialGuess">The initial guess values.</param>
-    /// <param name="lowerBound">The lower bounds of the parameters. The array must have the same length as the parameter array. Provide null if not needed.</param>
-    /// <param name="upperBound">The upper bounds of the parameters. The array must have the same length as the parameter array. Provide null if not needed.</param>
-    /// <param name="scales">The scales of the parameters. The array must have the same length as the parameter array. Provide null if not needed.</param>
-    /// <param name="isFixed">Array of booleans, which provide which parameters are fixed. Must have the same length as the parameter array. Provide null if not needed.</param>
-    /// <param name="cancellationToken">Token to cancel the evaluation</param>
-    /// <param name="reportChi2Progress">Event handler that can be used to report the NumberOfIterations and Chi² value achived so far. Can be null</param>
-    /// <returns>The result of the Levenberg-Marquardt minimization</returns>
+    /// <param name="lowerBound">The lower bounds of the parameters. Must have the same length as <paramref name="initialGuess"/>. Provide <see langword="null"/> if not needed.</param>
+    /// <param name="upperBound">The upper bounds of the parameters. Must have the same length as <paramref name="initialGuess"/>. Provide <see langword="null"/> if not needed.</param>
+    /// <param name="scales">The scales of the parameters. Must have the same length as <paramref name="initialGuess"/>. Provide <see langword="null"/> if not needed.</param>
+    /// <param name="isFixed">Array indicating which parameters are fixed. Must have the same length as <paramref name="initialGuess"/>. Provide <see langword="null"/> if not needed.</param>
+    /// <param name="cancellationToken">Token to cancel the evaluation.</param>
+    /// <param name="reportChi2Progress">Callback used to report the number of iterations, Chi² value and current parameter set achieved so far. Can be <see langword="null"/>.</param>
+    /// <returns>The result of the Levenberg-Marquardt minimization.</returns>
+    /// <exception cref="ArgumentNullException">Thrown if <paramref name="objective"/> or <paramref name="initialGuess"/> is <see langword="null"/>.</exception>
     public NonlinearMinimizationResult FindMinimum(
       IObjectiveModelNonAllocating objective,
       double[] initialGuess,
@@ -183,23 +184,23 @@ namespace Altaxo.Calc.Optimization
     }
 
     /// <summary>
-    /// Non-linear least square fitting by the Levenberg-Marquardt algorithm.
+    /// Non-linear least squares fitting by the Levenberg-Marquardt algorithm.
     /// </summary>
     /// <param name="objective">The objective function, including model, observations, and parameter bounds.</param>
     /// <param name="initialGuess">The initial guess values.</param>
-    /// <param name="lowerBound">The lower bounds of the parameters. The array must have the same length as the parameter array. Provide null if not needed.</param>
-    /// <param name="upperBound">The upper bounds of the parameters. The array must have the same length as the parameter array. Provide null if not needed.</param>
-    /// <param name="scales">The scales of the parameters. The array must have the same length as the parameter array. Provide null if not needed.</param>
-    /// <param name="isFixedByUser">Array of booleans, which provide which parameters are fixed. Must have the same length as the parameter array. Provide null if not needed.</param>
-    /// <param name="cancellationToken">Token to cancel the evaluation</param>
-    /// <param name="reportChi2Progress">Event handler that can be used to report the NumberOfIterations and Chi² value achived so far. Can be null</param>
-    /// <param name="initialMu">The initial damping parameter of mu.</param>
-    /// <param name="gradientTolerance">The stopping threshold for infinity norm of the gradient vector.</param>
-    /// <param name="stepTolerance">The stopping threshold for L2 norm of the change of parameters.</param>
-    /// <param name="functionTolerance">The stopping threshold for L2 norm of the residuals.</param>
+    /// <param name="lowerBound">The lower bounds of the parameters. Must have the same length as <paramref name="initialGuess"/>. Provide <see langword="null"/> if not needed.</param>
+    /// <param name="upperBound">The upper bounds of the parameters. Must have the same length as <paramref name="initialGuess"/>. Provide <see langword="null"/> if not needed.</param>
+    /// <param name="scales">The scales of the parameters. Must have the same length as <paramref name="initialGuess"/>. Provide <see langword="null"/> if not needed.</param>
+    /// <param name="isFixedByUser">Array indicating which parameters are fixed. Must have the same length as <paramref name="initialGuess"/>. Provide <see langword="null"/> if not needed.</param>
+    /// <param name="cancellationToken">Token to cancel the evaluation.</param>
+    /// <param name="reportChi2Progress">Callback used to report the number of iterations, Chi² value and current parameter set achieved so far. Can be <see langword="null"/>.</param>
+    /// <param name="initialMu">The initial damping parameter <c>mu</c>.</param>
+    /// <param name="gradientTolerance">The stopping threshold for the infinity norm of the gradient vector.</param>
+    /// <param name="stepTolerance">The stopping threshold for the L2 norm of the change of parameters.</param>
+    /// <param name="functionTolerance">The stopping threshold for the function value / RSS.</param>
     /// <param name="minimalRSSImprovement">The minimal improvement of the Chi² value in 8 iterations. Must be in the range [0,1).</param>
-    /// <param name="maximumIterations">The maximal number of iterations. Provide -1 if the number of iterations should be set automatically. Provide 0 if only a function evaluation should be done.</param>
-    /// <returns>The result of the Levenberg-Marquardt minimization</returns>
+    /// <param name="maximumIterations">The maximum number of iterations. Provide <see langword="null"/> if the number of iterations should be determined automatically. Provide <c>0</c> if only a function evaluation should be done.</param>
+    /// <returns>The result of the Levenberg-Marquardt minimization.</returns>
     public NonlinearMinimizationResult Minimum(
       IObjectiveModelNonAllocating objective,
       IReadOnlyList<double> initialGuess,
@@ -445,13 +446,13 @@ namespace Altaxo.Calc.Optimization
           else if (clampScaleFactor < 1E-4 && RSSnew <= RSS)
           {
             // The clampScale is very low. This means that at least one of the parameters is very close to its boundary.
-            // We accept this (very tiny) step in order to set this parameter to its boundary and then procceed with this parameter being fixed
+            // We accept this (very tiny) step in order to set this parameter to its boundary and then proceed with this parameter being fixed
             rho = 1; // force accepting
           }
           else
           {
 
-            // calculate the ratio of the actual to the predicted reduction, see [2], eq. 15, page 3 
+            // calculate the ratio of the actual to the predicted reduction, see [2], eq. 15, page 3
             // ρ = (RSS - RSSnew) / (Δp'(μΔp - g))
             scaledParameterStep.Multiply(mu, MuTimesPStepMinusGradient); // calculate μΔp
             MuTimesPStepMinusGradient.Add(NegativeGradient, MuTimesPStepMinusGradient); // calculate (μΔp - g)
@@ -531,7 +532,7 @@ namespace Altaxo.Calc.Optimization
             if (!(mu < double.MaxValue && nu < double.MaxValue))
             {
               // if mu becomes too large, this is maybe because our function always delivers
-              // an RSS value which is NaN 
+              // an RSS value which is NaN
               exitCondition = double.IsNaN(RSSnew) ? ExitCondition.InvalidValues : ExitCondition.RelativeGradient;
               break;
             }
@@ -554,18 +555,20 @@ namespace Altaxo.Calc.Optimization
     /// Returns x³.
     /// </summary>
     /// <param name="x">The argument x.</param>
-    /// <returns>x³</returns>
+    /// <returns>x³.</returns>
     private static double Pow3(double x) => x * x * x;
 
     /// <summary>
-    /// Makes a proposed step smaller if neccessary, so that the resulting parameters don't violate the parameter boundaries.
+    /// Makes a proposed step smaller if necessary, so that the resulting parameters don't violate the parameter boundaries.
     /// </summary>
     /// <param name="parameterValues">The given parameters.</param>
     /// <param name="parameterStep">The proposed step.</param>
     /// <param name="clampedParameterStep">On return, contains the clamped step.</param>
-    /// <param name="clampedScaledParameterStep">On return, contains the clamped and scaled (with Scales matrix) parameter step.</param>
-    /// <param name="nextParameterValues">On return, contains the new parameters, i.e. <paramref name="parameterValues"/>+<paramref name="clampedParameterStep"/>.</param>
-    /// <returns>The scale factor. The scale factor is either 1 (if the step was not scaled down), or less than 1 (if the step was scaled down).</returns>
+    /// <param name="clampedScaledParameterStep">On return, contains the clamped and scaled (with <see cref="NonlinearMinimizerBaseNonAllocating.Scales"/>) parameter step.</param>
+    /// <param name="nextParameterValues">On return, contains the new parameters, i.e. <paramref name="parameterValues"/> + <paramref name="clampedParameterStep"/>.</param>
+    /// <returns>
+    /// The scale factor. The scale factor is either <c>1</c> (if the step was not scaled down), or less than <c>1</c> (if the step was scaled down).
+    /// </returns>
     private double ClampStepToBoundaryConditions(IReadOnlyList<double> parameterValues, IReadOnlyList<double> parameterStep, IVector<double> clampedParameterStep, IVector<double> clampedScaledParameterStep, IVector<double> nextParameterValues)
     {
       double scaleFactor = 1; // Scale factor for step
@@ -643,7 +646,7 @@ namespace Altaxo.Calc.Optimization
 
 
     /// <summary>
-    /// Evaluates the jacobian, and the hessian of the objective function.
+    /// Evaluates the Jacobian-derived gradient and Hessian of the objective function.
     /// </summary>
     /// <param name="objective">The objective.</param>
     /// <param name="parameterValues">The parameters.</param>
@@ -675,15 +678,18 @@ namespace Altaxo.Calc.Optimization
     /// </summary>
     /// <param name="Pint">The parameters.</param>
     /// <param name="pstep">The parameter step planned.</param>
-    /// <param name="mu">The value of mu.</param>
-    /// <param name="hessian">The Hessian matrix. If the return value is true, this matrix was modified during the call.</param>
-    /// <param name="gradient">The negative gradient.  If the return value is true, this vector was modified during the call.</param>
-    /// <param name="diagonalOfHessianPlusMu">The diagonal of the Hessian matrix plus mu.  If the return value is true, this vector was modified during the call.</param>
-    /// <param name="isTemporaryFixed">The array of fixed parameters (parameters fixed from the beginning plus parameters that have reached the boundary). If the return value is true, this vector was modified during the call.</param>
-    /// <param name="savedGradient">If parameter <paramref name="wasHessianAndGradientSaved"/> is true, this parameter contains the unmodified gradient.</param>
-    /// <param name="savedHessian">If parameter <paramref name="wasHessianAndGradientSaved"/> is true, this parameter contains the unmodified Hessian.</param>
-    /// <param name="wasHessianAndGradientSaved">True if the original gradient and Hessian was saved before modification (see <paramref name="savedGradient"/> and <paramref name="savedHessian"/>) </param>
-    /// <returns>True if the Hessian and gradient were modified; otherwise, false. Additionally, the number of free parameters is returned.</returns>
+    /// <param name="mu">The value of <c>mu</c>.</param>
+    /// <param name="hessian">The Hessian matrix. If <c>wasModified</c> is <see langword="true"/>, this matrix was modified during the call.</param>
+    /// <param name="gradient">The negative gradient. If <c>wasModified</c> is <see langword="true"/>, this vector was modified during the call.</param>
+    /// <param name="diagonalOfHessianPlusMu">The diagonal of the Hessian matrix plus <c>mu</c>. If <c>wasModified</c> is <see langword="true"/>, this vector was modified during the call.</param>
+    /// <param name="isTemporaryFixed">The array of fixed parameters (parameters fixed from the beginning plus parameters that have reached the boundary). If <c>wasModified</c> is <see langword="true"/>, this array was modified during the call.</param>
+    /// <param name="savedGradient">If <paramref name="wasHessianAndGradientSaved"/> is <see langword="true"/>, this parameter contains the unmodified gradient.</param>
+    /// <param name="savedHessian">If <paramref name="wasHessianAndGradientSaved"/> is <see langword="true"/>, this parameter contains the unmodified Hessian.</param>
+    /// <param name="wasHessianAndGradientSaved">Indicates whether the original gradient and Hessian were saved before modification (see <paramref name="savedGradient"/> and <paramref name="savedHessian"/>).</param>
+    /// <returns>
+    /// A tuple where <c>wasModified</c> indicates if the Hessian and gradient were modified; additionally, <c>numberOfFreeParameters</c>
+    /// reports how many parameters remain free (not fixed).
+    /// </returns>
     private (bool wasModified, int numberOfFreeParameters) ModifyHessianAndGradient(IReadOnlyList<double> Pint, IReadOnlyList<double> pstep, double mu, Matrix<double> hessian, Vector<double> gradient, Vector<double> diagonalOfHessianPlusMu, bool[] isTemporaryFixed, ref Matrix<double>? savedHessian, ref Vector<double>? savedGradient, ref bool wasHessianAndGradientSaved)
     {
       bool wasModified = false;

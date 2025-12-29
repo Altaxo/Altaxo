@@ -3,60 +3,64 @@ using Altaxo.Calc.LinearAlgebra;
 
 namespace Altaxo.Calc.Optimization
 {
+  /// <summary>
+  /// Provides read-only access to the evaluation results of an objective model.
+  /// </summary>
   public interface IObjectiveModelEvaluation
   {
     /// <summary>
     /// Creates a new instance of the objective model with identical configuration but independent state.
     /// </summary>
+    /// <returns>A new objective model instance.</returns>
     public IObjectiveModel CreateNew();
 
     /// <summary>
-    /// Get the y-values of the observations.
+    /// Gets the y-values of the observations.
     /// </summary>
     public Vector<double> ObservedY { get; }
 
     /// <summary>
-    /// Get the values of the weights for the observations.
+    /// Gets the values of the weights for the observations.
     /// </summary>
     public Matrix<double> Weights { get; }
 
     /// <summary>
-    /// Get the y-values of the fitted model that correspond to the independent values.
+    /// Gets the y-values of the fitted model that correspond to the independent values.
     /// </summary>
     public Vector<double> ModelValues { get; }
 
     /// <summary>
-    /// Get the values of the parameters.
+    /// Gets the values of the parameters.
     /// </summary>
     public Vector<double> Point { get; }
 
     /// <summary>
-    /// Get the residual sum of squares.
+    /// Gets the residual sum of squares.
     /// </summary>
     public double Value { get; }
 
     /// <summary>
-    /// Get the Gradient vector. G = J'(y - f(x; p))
+    /// Gets the gradient vector. <c>G = J'(y - f(x; p))</c>.
     /// </summary>
     public Vector<double> Gradient { get; }
 
     /// <summary>
-    /// Get the approximated Hessian matrix. H = J'J
+    /// Gets the approximated Hessian matrix. <c>H = J'J</c>.
     /// </summary>
     public Matrix<double> Hessian { get; }
 
     /// <summary>
-    /// Get the number of calls to function.
+    /// Gets or sets the number of calls to the objective function.
     /// </summary>
     public int FunctionEvaluations { get; set; }
 
     /// <summary>
-    /// Get the number of calls to jacobian.
+    /// Gets or sets the number of calls to the Jacobian.
     /// </summary>
     public int JacobianEvaluations { get; set; }
 
     /// <summary>
-    /// Get the degree of freedom.
+    /// Gets the degrees of freedom.
     /// </summary>
     public int DegreeOfFreedom { get; }
 
@@ -64,16 +68,20 @@ namespace Altaxo.Calc.Optimization
     /// Gets a value indicating whether the gradient can be provided by the model.
     /// </summary>
     public bool IsGradientSupported { get; }
+
     /// <summary>
     /// Gets a value indicating whether the Hessian can be provided by the model.
     /// </summary>
     public bool IsHessianSupported { get; }
   }
 
+  /// <summary>
+  /// Defines an objective model that can be evaluated at parameter values and exposed as an objective function.
+  /// </summary>
   public interface IObjectiveModel : IObjectiveModelEvaluation
   {
     /// <summary>
-    /// Sets the model parameters and optional fix flags for individual parameters.
+    /// Sets the model parameters and optional fixed flags for individual parameters.
     /// </summary>
     /// <param name="initialGuess">Initial parameter values.</param>
     /// <param name="isFixed">Optional list of flags indicating fixed parameters.</param>

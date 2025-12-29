@@ -69,6 +69,12 @@ namespace Altaxo.Calc
   {
     //---------------------------------------------------------------------------------------------
 
+    /// <summary>
+    /// Initializes a new instance of the <see cref="ComplexStats"/> class.
+    /// </summary>
+    /// <remarks>
+    /// This type only provides static methods and is not intended to be instantiated.
+    /// </remarks>
     private ComplexStats()
     {
     }
@@ -77,10 +83,11 @@ namespace Altaxo.Calc
     //--------------------------------------------------------------------------------------------
 
     /// <summary>
-    /// Calculate the sum
+    /// Calculates the sum of the elements in <paramref name="data"/>.
     /// </summary>
-    /// <param name="data"></param>
-    /// <returns></returns>
+    /// <param name="data">The input data.</param>
+    /// <returns>The sum of all elements in <paramref name="data"/>.</returns>
+    /// <exception cref="ArgumentNullException">Thrown when <paramref name="data"/> is <see langword="null"/>.</exception>
     public static Complex32 Sum(Complex32[] data)
     {
       if (data is null)
@@ -88,6 +95,16 @@ namespace Altaxo.Calc
       return SumRecursion(data, 0, data.Length);
     }
 
+    /// <summary>
+    /// Recursively computes the sum of <paramref name="data"/> over the interval <c>[start, end)</c>.
+    /// </summary>
+    /// <param name="data">The input data.</param>
+    /// <param name="start">The inclusive start index.</param>
+    /// <param name="end">The exclusive end index.</param>
+    /// <returns>The sum over the specified interval.</returns>
+    /// <exception cref="ArgumentOutOfRangeException">
+    /// Thrown when <paramref name="start"/> or <paramref name="end"/> is outside the valid range, or when <paramref name="start"/> is not less than <paramref name="end"/>.
+    /// </exception>
     private static Complex32 SumRecursion(Complex32[] data, int start, int end)
     {
       if (!(start >= 0))
@@ -113,10 +130,11 @@ namespace Altaxo.Calc
     }
 
     /// <summary>
-    /// Calculate the sum
+    /// Calculates the sum of the elements in <paramref name="data"/>.
     /// </summary>
-    /// <param name="data"></param>
-    /// <returns></returns>
+    /// <param name="data">The input data.</param>
+    /// <returns>The sum of all elements in <paramref name="data"/>.</returns>
+    /// <exception cref="ArgumentNullException">Thrown when <paramref name="data"/> is <see langword="null"/>.</exception>
     public static Complex64 Sum(Complex64[] data)
     {
       if (data is null)
@@ -124,6 +142,16 @@ namespace Altaxo.Calc
       return SumRecursion(data, 0, data.Length);
     }
 
+    /// <summary>
+    /// Recursively computes the sum of <paramref name="data"/> over the interval <c>[start, end)</c>.
+    /// </summary>
+    /// <param name="data">The input data.</param>
+    /// <param name="start">The inclusive start index.</param>
+    /// <param name="end">The exclusive end index.</param>
+    /// <returns>The sum over the specified interval.</returns>
+    /// <exception cref="ArgumentOutOfRangeException">
+    /// Thrown when <paramref name="start"/> or <paramref name="end"/> is outside the valid range, or when <paramref name="start"/> is not less than <paramref name="end"/>.
+    /// </exception>
     private static Complex64 SumRecursion(Complex64[] data, int start, int end)
     {
       if (!(start >= 0))
@@ -153,10 +181,11 @@ namespace Altaxo.Calc
     //--------------------------------------------------------------------------------------------
 
     /// <summary>
-    /// Calculate the sum of squares
+    /// Calculates the sum of squares of the elements in <paramref name="data"/>.
     /// </summary>
-    /// <param name="data"></param>
-    /// <returns></returns>
+    /// <param name="data">The input data.</param>
+    /// <returns>The sum of <c>data[i] * data[i]</c> over all elements.</returns>
+    /// <exception cref="ArgumentNullException">Thrown when <paramref name="data"/> is <see langword="null"/>.</exception>
     public static Complex32 SumOfSquares(Complex32[] data)
     {
       if (data is null)
@@ -164,6 +193,16 @@ namespace Altaxo.Calc
       return SumOfSquaresRecursion(data, 0, data.Length);
     }
 
+    /// <summary>
+    /// Recursively computes the sum of squares of <paramref name="data"/> over the interval <c>[start, end)</c>.
+    /// </summary>
+    /// <param name="data">The input data.</param>
+    /// <param name="start">The inclusive start index.</param>
+    /// <param name="end">The exclusive end index.</param>
+    /// <returns>The sum of squares over the specified interval.</returns>
+    /// <exception cref="ArgumentOutOfRangeException">
+    /// Thrown when <paramref name="start"/> or <paramref name="end"/> is outside the valid range, or when <paramref name="start"/> is not less than <paramref name="end"/>.
+    /// </exception>
     private static Complex32 SumOfSquaresRecursion(Complex32[] data, int start, int end)
     {
       if (!(start >= 0))
@@ -190,10 +229,11 @@ namespace Altaxo.Calc
     }
 
     /// <summary>
-    /// Calculate the sum of squares
+    /// Calculates the sum of squares of the elements in <paramref name="data"/>.
     /// </summary>
-    /// <param name="data"></param>
-    /// <returns></returns>
+    /// <param name="data">The input data.</param>
+    /// <returns>The sum of <c>data[i] * data[i]</c> over all elements.</returns>
+    /// <exception cref="ArgumentNullException">Thrown when <paramref name="data"/> is <see langword="null"/>.</exception>
     public static Complex64 SumOfSquares(Complex64[] data)
     {
       if (data is null)
@@ -201,6 +241,16 @@ namespace Altaxo.Calc
       return SumOfSquaresRecursion(data, 0, data.Length);
     }
 
+    /// <summary>
+    /// Recursively computes the sum of squares of <paramref name="data"/> over the interval <c>[start, end)</c>.
+    /// </summary>
+    /// <param name="data">The input data.</param>
+    /// <param name="start">The inclusive start index.</param>
+    /// <param name="end">The exclusive end index.</param>
+    /// <returns>The sum of squares over the specified interval.</returns>
+    /// <exception cref="ArgumentOutOfRangeException">
+    /// Thrown when <paramref name="start"/> or <paramref name="end"/> is outside the valid range, or when <paramref name="start"/> is not less than <paramref name="end"/>.
+    /// </exception>
     private static Complex64 SumOfSquaresRecursion(Complex64[] data, int start, int end)
     {
       if (!(start >= 0))
@@ -230,30 +280,32 @@ namespace Altaxo.Calc
     //--------------------------------------------------------------------------------------------
 
     /// <summary>
-    /// Calculate the mean (average)
+    /// Calculates the mean (average) of the elements in <paramref name="data"/>.
     /// </summary>
-    /// <param name="data"></param>
-    /// <returns></returns>
+    /// <param name="data">The input data.</param>
+    /// <returns>The arithmetic mean of the elements in <paramref name="data"/>.</returns>
     public static Complex32 Mean(Complex32[] data)
     {
       return ComplexStats.Sum(data) / data.Length;
     }
 
     /// <summary>
-    /// Calculate the mean (average)
+    /// Calculates the mean (average) of the elements in <paramref name="data"/>.
     /// </summary>
-    /// <param name="data"></param>
-    /// <returns></returns>
+    /// <param name="data">The input data.</param>
+    /// <returns>The arithmetic mean of the elements in <paramref name="data"/>.</returns>
     public static Complex64 Mean(Complex64[] data)
     {
       return ComplexStats.Sum(data) / data.Length;
     }
 
     /// <summary>
-    /// Calculate the variance
+    /// Calculates the variance of the elements in <paramref name="data"/>.
     /// </summary>
-    /// <param name="data"></param>
-    /// <returns></returns>
+    /// <param name="data">The input data.</param>
+    /// <returns>The variance.</returns>
+    /// <exception cref="ArgumentNullException">Thrown when <paramref name="data"/> is <see langword="null"/>.</exception>
+    /// <exception cref="DivideByZeroException">Thrown when <paramref name="data"/> is empty.</exception>
     public static Complex32 Variance(Complex32[] data)
     {
       if (data is null)
@@ -266,10 +318,12 @@ namespace Altaxo.Calc
     }
 
     /// <summary>
-    /// Calculate the variance
+    /// Calculates the variance of the elements in <paramref name="data"/>.
     /// </summary>
-    /// <param name="data"></param>
-    /// <returns></returns>
+    /// <param name="data">The input data.</param>
+    /// <returns>The variance.</returns>
+    /// <exception cref="ArgumentNullException">Thrown when <paramref name="data"/> is <see langword="null"/>.</exception>
+    /// <exception cref="DivideByZeroException">Thrown when <paramref name="data"/> is empty.</exception>
     public static Complex64 Variance(Complex64[] data)
     {
       if (data is null)
@@ -282,10 +336,12 @@ namespace Altaxo.Calc
     }
 
     /// <summary>
-    /// Calculate the standard deviation
+    /// Calculates the standard deviation of the elements in <paramref name="data"/>.
     /// </summary>
-    /// <param name="data"></param>
-    /// <returns></returns>
+    /// <param name="data">The input data.</param>
+    /// <returns>The standard deviation.</returns>
+    /// <exception cref="ArgumentNullException">Thrown when <paramref name="data"/> is <see langword="null"/>.</exception>
+    /// <exception cref="DivideByZeroException">Thrown when <paramref name="data"/> is empty.</exception>
     public static Complex32 StdDev(Complex32[] data)
     {
       if (data is null)
@@ -298,10 +354,12 @@ namespace Altaxo.Calc
     }
 
     /// <summary>
-    /// Calculate the standard deviation
+    /// Calculates the standard deviation of the elements in <paramref name="data"/>.
     /// </summary>
-    /// <param name="data"></param>
-    /// <returns></returns>
+    /// <param name="data">The input data.</param>
+    /// <returns>The standard deviation.</returns>
+    /// <exception cref="ArgumentNullException">Thrown when <paramref name="data"/> is <see langword="null"/>.</exception>
+    /// <exception cref="DivideByZeroException">Thrown when <paramref name="data"/> is empty.</exception>
     public static Complex64 StdDev(Complex64[] data)
     {
       if (data is null)
@@ -317,11 +375,13 @@ namespace Altaxo.Calc
     //--------------------------------------------------------------------------------------------
 
     /// <summary>
-    /// Calculate the root mean squared (RMS) error between two sets of data.
+    /// Calculates the root mean squared (RMS) error between two sets of data.
     /// </summary>
-    /// <param name="alpha"></param>
-    /// <param name="beta"></param>
-    /// <returns></returns>
+    /// <param name="alpha">The first data set.</param>
+    /// <param name="beta">The second data set.</param>
+    /// <returns>The root mean squared error between <paramref name="alpha"/> and <paramref name="beta"/>.</returns>
+    /// <exception cref="ArgumentNullException">Thrown when <paramref name="alpha"/> or <paramref name="beta"/> is <see langword="null"/>.</exception>
+    /// <exception cref="ArgumentException">Thrown when the lengths of <paramref name="alpha"/> and <paramref name="beta"/> are not equal.</exception>
     public static float RMSError(Complex32[] alpha, Complex32[] beta)
     {
       if (alpha is null)
@@ -334,6 +394,18 @@ namespace Altaxo.Calc
       return (float)Math.Sqrt(SumOfSquaredErrorRecursion(alpha, beta, 0, alpha.Length));
     }
 
+    /// <summary>
+    /// Recursively computes the sum of squared errors between <paramref name="alpha"/> and <paramref name="beta"/> over the interval <c>[start, end)</c>.
+    /// </summary>
+    /// <param name="alpha">The first data set.</param>
+    /// <param name="beta">The second data set.</param>
+    /// <param name="start">The inclusive start index.</param>
+    /// <param name="end">The exclusive end index.</param>
+    /// <returns>The sum of squared errors over the specified interval.</returns>
+    /// <exception cref="ArgumentOutOfRangeException">
+    /// Thrown when <paramref name="start"/> or <paramref name="end"/> is outside the valid range, or when <paramref name="start"/> is not less than <paramref name="end"/>.
+    /// </exception>
+    /// <exception cref="ArgumentException">Thrown when the lengths of <paramref name="alpha"/> and <paramref name="beta"/> are not equal.</exception>
     private static float SumOfSquaredErrorRecursion(Complex32[] alpha, Complex32[] beta, int start, int end)
     {
       if (!(start >= 0))
@@ -363,11 +435,13 @@ namespace Altaxo.Calc
     }
 
     /// <summary>
-    /// Calculate the root mean squared (RMS) error between two sets of data.
+    /// Calculates the root mean squared (RMS) error between two sets of data.
     /// </summary>
-    /// <param name="alpha"></param>
-    /// <param name="beta"></param>
-    /// <returns></returns>
+    /// <param name="alpha">The first data set.</param>
+    /// <param name="beta">The second data set.</param>
+    /// <returns>The root mean squared error between <paramref name="alpha"/> and <paramref name="beta"/>.</returns>
+    /// <exception cref="ArgumentNullException">Thrown when <paramref name="alpha"/> or <paramref name="beta"/> is <see langword="null"/>.</exception>
+    /// <exception cref="ArgumentException">Thrown when the lengths of <paramref name="alpha"/> and <paramref name="beta"/> are not equal.</exception>
     public static double RMSError(Complex64[] alpha, Complex64[] beta)
     {
       if (alpha is null)
@@ -380,6 +454,18 @@ namespace Altaxo.Calc
       return Math.Sqrt(SumOfSquaredErrorRecursion(alpha, beta, 0, alpha.Length));
     }
 
+    /// <summary>
+    /// Recursively computes the sum of squared errors between <paramref name="alpha"/> and <paramref name="beta"/> over the interval <c>[start, end)</c>.
+    /// </summary>
+    /// <param name="alpha">The first data set.</param>
+    /// <param name="beta">The second data set.</param>
+    /// <param name="start">The inclusive start index.</param>
+    /// <param name="end">The exclusive end index.</param>
+    /// <returns>The sum of squared errors over the specified interval.</returns>
+    /// <exception cref="ArgumentOutOfRangeException">
+    /// Thrown when <paramref name="start"/> or <paramref name="end"/> is outside the valid range, or when <paramref name="start"/> is not less than <paramref name="end"/>.
+    /// </exception>
+    /// <exception cref="ArgumentException">Thrown when the lengths of <paramref name="alpha"/> and <paramref name="beta"/> are not equal.</exception>
     private static double SumOfSquaredErrorRecursion(Complex64[] alpha, Complex64[] beta, int start, int end)
     {
       if (!(start >= 0))

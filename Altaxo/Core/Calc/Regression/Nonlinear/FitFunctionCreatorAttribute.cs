@@ -27,7 +27,7 @@ using System;
 namespace Altaxo.Calc.Regression.Nonlinear
 {
   /// <summary>
-  /// Marks a static function to return a new instance of a <see href="IFitFunction" /> class.
+  /// Marks a static function that returns a new instance of an <see cref="IFitFunction" /> class.
   /// </summary>
   [AttributeUsage(AttributeTargets.Method, AllowMultiple = true)]
   public class FitFunctionCreatorAttribute : System.Attribute, IComparable
@@ -39,6 +39,14 @@ namespace Altaxo.Calc.Regression.Nonlinear
     private int _numberOfDependentVariables;
     private int _numberOfParameters;
 
+    /// <summary>
+    /// Initializes a new instance of the <see cref="FitFunctionCreatorAttribute"/> class.
+    /// </summary>
+    /// <param name="name">The display name of the fit function.</param>
+    /// <param name="category">The category used to group the fit function.</param>
+    /// <param name="numIndependentVariables">The number of independent variables.</param>
+    /// <param name="numDependentVariables">The number of dependent variables.</param>
+    /// <param name="numParameters">The number of parameters.</param>
     public FitFunctionCreatorAttribute(
     string name,
     string category,
@@ -49,6 +57,17 @@ namespace Altaxo.Calc.Regression.Nonlinear
     {
     }
 
+    /// <summary>
+    /// Initializes a new instance of the <see cref="FitFunctionCreatorAttribute"/> class.
+    /// </summary>
+    /// <param name="name">The display name of the fit function.</param>
+    /// <param name="category">The category used to group the fit function.</param>
+    /// <param name="numIndependentVariables">The number of independent variables.</param>
+    /// <param name="numDependentVariables">The number of dependent variables.</param>
+    /// <param name="numParameters">The number of parameters.</param>
+    /// <param name="descriptionResource">
+    /// An optional resource key that provides a localized description of the fit function.
+    /// </param>
     public FitFunctionCreatorAttribute(
       string name,
       string category,
@@ -65,6 +84,9 @@ namespace Altaxo.Calc.Regression.Nonlinear
       _descriptionResource = descriptionResource;
     }
 
+    /// <summary>
+    /// Gets the display name of the fit function.
+    /// </summary>
     public string Name
     {
       get
@@ -73,6 +95,9 @@ namespace Altaxo.Calc.Regression.Nonlinear
       }
     }
 
+    /// <summary>
+    /// Gets the category used to group the fit function.
+    /// </summary>
     public string Category
     {
       get
@@ -81,6 +106,9 @@ namespace Altaxo.Calc.Regression.Nonlinear
       }
     }
 
+    /// <summary>
+    /// Gets the resource key for a localized description of the fit function, if available.
+    /// </summary>
     public string? DescriptionResource
     {
       get
@@ -89,6 +117,9 @@ namespace Altaxo.Calc.Regression.Nonlinear
       }
     }
 
+    /// <summary>
+    /// Gets the number of independent variables.
+    /// </summary>
     public int NumberOfIndependentVariables
     {
       get
@@ -97,6 +128,9 @@ namespace Altaxo.Calc.Regression.Nonlinear
       }
     }
 
+    /// <summary>
+    /// Gets the number of dependent variables.
+    /// </summary>
     public int NumberOfDependentVariables
     {
       get
@@ -105,6 +139,9 @@ namespace Altaxo.Calc.Regression.Nonlinear
       }
     }
 
+    /// <summary>
+    /// Gets the number of parameters.
+    /// </summary>
     public int NumberOfParameters
     {
       get
@@ -113,6 +150,7 @@ namespace Altaxo.Calc.Regression.Nonlinear
       }
     }
 
+    /// <inheritdoc/>
     int IComparable.CompareTo(object? obj)
     {
       if (!(obj is FitFunctionCreatorAttribute other))

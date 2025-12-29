@@ -51,28 +51,28 @@ using System;
 namespace Altaxo.Calc.Probability
 {
   /// <summary>
-  /// Represents a Additive Lagged Fibonacci pseudo-random number generator.
+  /// Represents an additive lagged Fibonacci pseudo-random number generator.
   /// </summary>
   /// <remarks>
-  /// The <see cref="ALFGenerator"/> type bases upon the implementation in the
-  ///   <a href="http://www.boost.org/libs/random/index.html">Boost Random Number Library</a>.
-  /// It uses the modulus 2<sup>32</sup> and by default the "lags" 418 and 1279, which can be adjusted through the
-  ///   associated <see cref="ShortLag"/> and <see cref="LongLag"/> properties. Some popular pairs are presented on
-  ///   <a href="http://en.wikipedia.org/wiki/Lagged_Fibonacci_generator">Wikipedia - Lagged Fibonacci generator</a>.
+  /// The <see cref="ALFGenerator"/> type is based on the implementation in the
+  /// <a href="http://www.boost.org/libs/random/index.html">Boost Random Number Library</a>.
+  /// It uses the modulus 2<sup>32</sup> and, by default, the lags 418 and 1279, which can be adjusted through the
+  /// associated <see cref="ShortLag"/> and <see cref="LongLag"/> properties. Some popular pairs are presented on
+  /// <a href="http://en.wikipedia.org/wiki/Lagged_Fibonacci_generator">Wikipedia - Lagged Fibonacci generator</a>.
   /// </remarks>
   public class ALFGenerator : Generator
   {
     #region class fields
 
     /// <summary>
-    /// Represents the multiplier that computes a double-precision floating point number greater than or equal to 0.0
-    ///   and less than 1.0 when it gets applied to a nonnegative 32-bit signed integer.
+    /// Represents the multiplier that computes a double-precision floating-point number greater than or equal to 0.0
+    /// and less than 1.0 when it is applied to a nonnegative 32-bit signed integer.
     /// </summary>
     private const double IntToDoubleMultiplier = 1.0 / (int.MaxValue + 1.0);
 
     /// <summary>
-    /// Represents the multiplier that computes a double-precision floating point number greater than or equal to 0.0
-    ///   and less than 1.0  when it gets applied to a 32-bit unsigned integer.
+    /// Represents the multiplier that computes a double-precision floating-point number greater than or equal to 0.0
+    /// and less than 1.0 when it is applied to a 32-bit unsigned integer.
     /// </summary>
     private const double UIntToDoubleMultiplier = 1.0 / (uint.MaxValue + 1.0);
 
@@ -81,9 +81,9 @@ namespace Altaxo.Calc.Probability
     #region instance fields
 
     /// <summary>
-    /// Gets or sets the short lag of the Lagged Fibonacci pseudo-random number generator.
+    /// Gets or sets the short lag of the lagged Fibonacci pseudo-random number generator.
     /// </summary>
-    /// <remarks>Call <see cref="IsValidShortLag"/> to determine whether a value is valid and therefor assignable.</remarks>
+    /// <remarks>Call <see cref="IsValidShortLag"/> to determine whether a value is valid and therefore assignable.</remarks>
     public int ShortLag
     {
       get
@@ -100,14 +100,14 @@ namespace Altaxo.Calc.Probability
     }
 
     /// <summary>
-    /// Stores the short lag of the Lagged Fibonacci pseudo-random number generator.
+    /// Stores the short lag of the lagged Fibonacci pseudo-random number generator.
     /// </summary>
     private int shortLag;
 
     /// <summary>
-    /// Gets or sets the long lag of the Lagged Fibonacci pseudo-random number generator.
+    /// Gets or sets the long lag of the lagged Fibonacci pseudo-random number generator.
     /// </summary>
-    /// <remarks>Call <see cref="IsValidLongLag"/> to determine whether a value is valid and therefor assignable.</remarks>
+    /// <remarks>Call <see cref="IsValidLongLag"/> to determine whether a value is valid and therefore assignable.</remarks>
     public int LongLag
     {
       get
@@ -125,12 +125,12 @@ namespace Altaxo.Calc.Probability
     }
 
     /// <summary>
-    /// Stores the long lag of the Lagged Fibonacci pseudo-random number generator.
+    /// Stores the long lag of the lagged Fibonacci pseudo-random number generator.
     /// </summary>
     private int longLag;
 
     /// <summary>
-    /// Stores an array of <see cref="longLag"/> random numbers
+    /// Stores an array of <see cref="longLag"/> random numbers.
     /// </summary>
     private uint[] x;
 
@@ -140,12 +140,12 @@ namespace Altaxo.Calc.Probability
     private int i;
 
     /// <summary>
-    /// Stores the used seed value.
+    /// Stores the seed value used.
     /// </summary>
     private uint seed;
 
     /// <summary>
-    /// Stores an <see cref="uint"/> used to generate up to 32 random <see cref="bool"/> values.
+    /// Stores a value used to generate up to 32 random <see cref="bool"/> values.
     /// </summary>
     private uint bitBuffer;
 
@@ -159,8 +159,7 @@ namespace Altaxo.Calc.Probability
     #region construction
 
     /// <summary>
-    /// Initializes a new instance of the <see cref="ALFGenerator"/> class, using a time-dependent default
-    ///   seed value.
+    /// Initializes a new instance of the <see cref="ALFGenerator"/> class using a time-dependent default seed value.
     /// </summary>
     public ALFGenerator()
       : this((uint)Math.Abs(Environment.TickCount))
@@ -168,7 +167,7 @@ namespace Altaxo.Calc.Probability
     }
 
     /// <summary>
-    /// Initializes a new instance of the <see cref="ALFGenerator"/> class, using the specified seed value.
+    /// Initializes a new instance of the <see cref="ALFGenerator"/> class using the specified seed value.
     /// </summary>
     /// <param name="seed">
     /// A number used to calculate a starting value for the pseudo-random number sequence.
@@ -180,11 +179,9 @@ namespace Altaxo.Calc.Probability
     }
 
     /// <summary>
-    /// Initializes a new instance of the <see cref="StandardGenerator"/> class, using the specified seed value.
+    /// Initializes a new instance of the <see cref="ALFGenerator"/> class using the specified seed value.
     /// </summary>
-    /// <param name="seed">
-    /// An unsigned number used to calculate a starting value for the pseudo-random number sequence.
-    /// </param>
+    /// <param name="seed">An unsigned number used to calculate a starting value for the pseudo-random number sequence.</param>
 #pragma warning disable CS8618 // Non-nullable field is uninitialized. Consider declaring as nullable.
     public ALFGenerator(uint seed)
 #pragma warning restore CS8618 // Non-nullable field is uninitialized. Consider declaring as nullable.
@@ -200,11 +197,11 @@ namespace Altaxo.Calc.Probability
     #region instance methods
 
     /// <summary>
-    /// Determines whether the specified value is valid for parameter <see cref="ShortLag"/>.
+    /// Determines whether the specified value is valid for <see cref="ShortLag"/>.
     /// </summary>
     /// <param name="value">The value to check.</param>
     /// <returns>
-    /// <see langword="true"/> if value is greater than 0; otherwise, <see langword="false"/>.
+    /// <see langword="true"/> if <paramref name="value"/> is greater than 0; otherwise, <see langword="false"/>.
     /// </returns>
     public bool IsValidShortLag(int value)
     {
@@ -212,11 +209,12 @@ namespace Altaxo.Calc.Probability
     }
 
     /// <summary>
-    /// Determines whether the specified value is valid for parameter <see cref="LongLag"/>.
+    /// Determines whether the specified value is valid for <see cref="LongLag"/>.
     /// </summary>
     /// <param name="value">The value to check.</param>
     /// <returns>
-    /// <see langword="true"/> if value is greater than <see cref="ShortLag"/>; otherwise, <see langword="false"/>.
+    /// <see langword="true"/> if <paramref name="value"/> is greater than <see cref="ShortLag"/>; otherwise,
+    /// <see langword="false"/>.
     /// </returns>
     public bool IsValidLongLag(int value)
     {
@@ -224,7 +222,7 @@ namespace Altaxo.Calc.Probability
     }
 
     /// <summary>
-    /// Resets the <see cref="ALFGenerator"/>, so that it produces the same pseudo-random number sequence again.
+    /// Resets the <see cref="ALFGenerator"/> so that it produces the same pseudo-random number sequence again.
     /// </summary>
     private void ResetGenerator()
     {
@@ -246,7 +244,7 @@ namespace Altaxo.Calc.Probability
     /// </summary>
     /// <remarks>
     /// Generated random numbers are 32-bit unsigned integers greater than or equal to <see cref="uint.MinValue"/>
-    ///   and less than or equal to <see cref="uint.MaxValue"/>.
+    /// and less than or equal to <see cref="uint.MaxValue"/>.
     /// </remarks>
     private void Fill()
     {
@@ -266,8 +264,8 @@ namespace Altaxo.Calc.Probability
     /// Returns an unsigned random number.
     /// </summary>
     /// <returns>
-    /// A 32-bit unsigned integer greater than or equal to <see cref="uint.MinValue"/> and
-    ///   less than or equal to <see cref="uint.MaxValue"/>.
+    /// A 32-bit unsigned integer greater than or equal to <see cref="uint.MinValue"/> and less than or equal to
+    /// <see cref="uint.MaxValue"/>.
     /// </returns>
     public uint NextUInt()
     {
@@ -282,8 +280,8 @@ namespace Altaxo.Calc.Probability
     /// Returns a nonnegative random number less than or equal to <see cref="int.MaxValue"/>.
     /// </summary>
     /// <returns>
-    /// A 32-bit signed integer greater than or equal to 0, and less than or equal to <see cref="int.MaxValue"/>;
-    ///   that is, the range of return values includes 0 and <see cref="int.MaxValue"/>.
+    /// A 32-bit signed integer greater than or equal to 0 and less than or equal to <see cref="int.MaxValue"/>;
+    /// that is, the range of return values includes 0 and <see cref="int.MaxValue"/>.
     /// </returns>
     public int NextInclusiveMaxValue()
     {
@@ -301,10 +299,7 @@ namespace Altaxo.Calc.Probability
 
     #region overridden Generator members
 
-    /// <summary>
-    /// Gets a value indicating whether the <see cref="ALFGenerator"/> can be reset, so that it produces the
-    ///   same pseudo-random number sequence again.
-    /// </summary>
+    /// <inheritdoc/>
     public override bool CanReset
     {
       get
@@ -313,23 +308,14 @@ namespace Altaxo.Calc.Probability
       }
     }
 
-    /// <summary>
-    /// Resets the <see cref="ALFGenerator"/>, so that it produces the same pseudo-random number sequence again.
-    /// </summary>
-    /// <returns><see langword="true"/>.</returns>
+    /// <inheritdoc/>
     public override bool Reset()
     {
       ResetGenerator();
       return true;
     }
 
-    /// <summary>
-    /// Returns a nonnegative random number less than <see cref="int.MaxValue"/>.
-    /// </summary>
-    /// <returns>
-    /// A 32-bit signed integer greater than or equal to 0, and less than <see cref="int.MaxValue"/>; that is,
-    ///   the range of return values includes 0 but not <see cref="int.MaxValue"/>.
-    /// </returns>
+    /// <inheritdoc/>
     public override int Next()
     {
       // Its faster to explicitly calculate the unsigned random number than simply call NextUInt().
@@ -351,17 +337,7 @@ namespace Altaxo.Calc.Probability
       }
     }
 
-    /// <summary>
-    /// Returns a nonnegative random number less than the specified maximum.
-    /// </summary>
-    /// <param name="maxValue">
-    /// The exclusive upper bound of the random number to be generated.
-    /// <paramref name="maxValue"/> must be greater than or equal to 0.
-    /// </param>
-    /// <returns>
-    /// A 32-bit signed integer greater than or equal to 0, and less than <paramref name="maxValue"/>; that is,
-    ///   the range of return values includes 0 but not <paramref name="maxValue"/>.
-    /// </returns>
+    /// <inheritdoc/>
     /// <exception cref="ArgumentOutOfRangeException">
     /// <paramref name="maxValue"/> is less than 0.
     /// </exception>
@@ -386,22 +362,7 @@ namespace Altaxo.Calc.Probability
       return (int)((int)(x >> 1) * ALFGenerator.IntToDoubleMultiplier * maxValue);
     }
 
-    /// <summary>
-    /// Returns a random number within the specified range.
-    /// </summary>
-    /// <param name="minValue">
-    /// The inclusive lower bound of the random number to be generated.
-    /// </param>
-    /// <param name="maxValue">
-    /// The exclusive upper bound of the random number to be generated.
-    /// <paramref name="maxValue"/> must be greater than or equal to <paramref name="minValue"/>.
-    /// </param>
-    /// <returns>
-    /// A 32-bit signed integer greater than or equal to <paramref name="minValue"/>, and less than
-    ///   <paramref name="maxValue"/>; that is, the range of return values includes <paramref name="minValue"/> but
-    ///   not <paramref name="maxValue"/>.
-    /// If <paramref name="minValue"/> equals <paramref name="maxValue"/>, <paramref name="minValue"/> is returned.
-    /// </returns>
+    /// <inheritdoc/>
     /// <exception cref="ArgumentOutOfRangeException">
     /// <paramref name="minValue"/> is greater than <paramref name="maxValue"/>.
     /// </exception>
@@ -438,13 +399,7 @@ namespace Altaxo.Calc.Probability
       }
     }
 
-    /// <summary>
-    /// Returns a nonnegative floating point random number less than 1.0.
-    /// </summary>
-    /// <returns>
-    /// A double-precision floating point number greater than or equal to 0.0, and less than 1.0; that is,
-    ///   the range of return values includes 0.0 but not 1.0.
-    /// </returns>
+    /// <inheritdoc/>
     public override double NextDouble()
     {
       // Its faster to explicitly calculate the unsigned random number than simply call NextUInt().
@@ -462,17 +417,7 @@ namespace Altaxo.Calc.Probability
       return (int)(x >> 1) * ALFGenerator.IntToDoubleMultiplier;
     }
 
-    /// <summary>
-    /// Returns a nonnegative floating point random number less than the specified maximum.
-    /// </summary>
-    /// <param name="maxValue">
-    /// The exclusive upper bound of the random number to be generated.
-    /// <paramref name="maxValue"/> must be greater than or equal to 0.0.
-    /// </param>
-    /// <returns>
-    /// A double-precision floating point number greater than or equal to 0.0, and less than <paramref name="maxValue"/>;
-    ///   that is, the range of return values includes 0 but not <paramref name="maxValue"/>.
-    /// </returns>
+    /// <inheritdoc/>
     /// <exception cref="ArgumentOutOfRangeException">
     /// <paramref name="maxValue"/> is less than 0.
     /// </exception>
@@ -497,32 +442,13 @@ namespace Altaxo.Calc.Probability
       return (int)(x >> 1) * ALFGenerator.IntToDoubleMultiplier * maxValue;
     }
 
-    /// <summary>
-    /// Returns a floating point random number within the specified range.
-    /// </summary>
-    /// <param name="minValue">
-    /// The inclusive lower bound of the random number to be generated.
-    /// The range between <paramref name="minValue"/> and <paramref name="maxValue"/> must be less than or equal to
-    ///   <see cref="double.MaxValue"/>
-    /// </param>
-    /// <param name="maxValue">
-    /// The exclusive upper bound of the random number to be generated.
-    /// <paramref name="maxValue"/> must be greater than or equal to <paramref name="minValue"/>.
-    /// The range between <paramref name="minValue"/> and <paramref name="maxValue"/> must be less than or equal to
-    ///   <see cref="double.MaxValue"/>.
-    /// </param>
-    /// <returns>
-    /// A double-precision floating point number greater than or equal to <paramref name="minValue"/>, and less than
-    ///   <paramref name="maxValue"/>; that is, the range of return values includes <paramref name="minValue"/> but
-    ///   not <paramref name="maxValue"/>.
-    /// If <paramref name="minValue"/> equals <paramref name="maxValue"/>, <paramref name="minValue"/> is returned.
-    /// </returns>
+    /// <inheritdoc/>
     /// <exception cref="ArgumentOutOfRangeException">
     /// <paramref name="minValue"/> is greater than <paramref name="maxValue"/>.
     /// </exception>
     /// <exception cref="ArgumentException">
-    /// The range between <paramref name="minValue"/> and <paramref name="maxValue"/> must be less than
-    ///   or equal to <see cref="double.MaxValue"/>.
+    /// The range between <paramref name="minValue"/> and <paramref name="maxValue"/> must be less than or equal to
+    /// <see cref="double.MaxValue"/>.
     /// </exception>
     public override double NextDouble(double minValue, double maxValue)
     {
@@ -554,15 +480,11 @@ namespace Altaxo.Calc.Probability
       return minValue + (int)(x >> 1) * ALFGenerator.IntToDoubleMultiplier * range;
     }
 
-    /// <summary>
-    /// Returns a random Boolean value.
-    /// </summary>
+    /// <inheritdoc/>
     /// <remarks>
-    /// <remarks>
-    /// Buffers 32 random bits (1 uint) for future calls, so a new random number is only generated every 32 calls.
+    /// Buffers 32 random bits (1 <see cref="uint"/>) for future calls, so a new random number is generated only once
+    /// per 32 calls.
     /// </remarks>
-    /// </remarks>
-    /// <returns>A <see cref="bool"/> value.</returns>
     public override bool NextBoolean()
     {
       if (bitCount == 0)
@@ -585,14 +507,7 @@ namespace Altaxo.Calc.Probability
       return ((bitBuffer >>= 1) & 0x1) == 1;
     }
 
-    /// <summary>
-    /// Fills the elements of a specified array of bytes with random numbers.
-    /// </summary>
-    /// <remarks>
-    /// Each element of the array of bytes is set to a random number greater than or equal to 0, and less than or
-    ///   equal to <see cref="byte.MaxValue"/>.
-    /// </remarks>
-    /// <param name="buffer">An array of bytes to contain random numbers.</param>
+    /// <inheritdoc/>
     /// <exception cref="ArgumentNullException">
     /// <paramref name="buffer"/> is a null reference (<see langword="Nothing"/> in Visual Basic).
     /// </exception>
