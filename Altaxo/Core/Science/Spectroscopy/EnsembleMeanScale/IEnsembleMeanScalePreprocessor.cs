@@ -8,7 +8,7 @@ using Altaxo.Calc.LinearAlgebra;
 namespace Altaxo.Science.Spectroscopy.EnsembleMeanScale
 {
   /// <summary>
-  /// Interface to spectral preprocessing that processes multiple spectra together.
+  /// Interface for spectral preprocessing steps that process multiple spectra together.
   /// </summary>
   public interface IEnsembleMeanScalePreprocessor
   {
@@ -24,13 +24,13 @@ namespace Altaxo.Science.Spectroscopy.EnsembleMeanScale
 
     /// <summary>
     /// Processes the spectra for prediction.
-    /// For prediction it is neccessary to use the previously (by <see cref="Process(IMatrix{double}, int[], IVector{double}, IVector{double})"/>)
-    /// evaluated spectral mean and scale values, in order to have the same treatment to the spectra as before.
+    /// For prediction it is necessary to use the spectral mean and scale values previously evaluated by
+    /// <see cref="Process(IMatrix{double}, int[], IVector{double}, IVector{double})"/>, in order to apply the same treatment to the spectra.
     /// </summary>
     /// <param name="spectraMatrix">The matrix of spectra. Each spectrum is a row of the matrix.</param>
-    /// <param name="regions">Vector of spectal regions. Each element is the index of the start of a new region.</param>
+    /// <param name="regions">Vector of spectral regions. Each element is the index of the start of a new region.</param>
     /// <param name="spectraMean">The previously evaluated ensemble mean of the spectra.</param>
-    /// <param name="spectraScale">The previously evaluated ensenbly scale of the spectra.</param>
+    /// <param name="spectraScale">The previously evaluated ensemble scale of the spectra.</param>
     void ProcessForPrediction(IMatrix<double> spectraMatrix, int[] regions, IReadOnlyList<double> spectraMean, IReadOnlyList<double> spectraScale);
   }
 

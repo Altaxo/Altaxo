@@ -31,9 +31,13 @@ namespace Altaxo.Science.Spectroscopy.BaselineEvaluation
   {
     #region Serialization
 
+    /// <summary>
+    /// XML serialization surrogate for <see cref="SNIP_LogLog"/>.
+    /// </summary>
     [Altaxo.Serialization.Xml.XmlSerializationSurrogateFor(typeof(SNIP_LogLog), 0)]
     public class SerializationSurrogate0 : Altaxo.Serialization.Xml.IXmlSerializationSurrogate
     {
+      /// <inheritdoc/>
       public void Serialize(object obj, Altaxo.Serialization.Xml.IXmlSerializationInfo info)
       {
         var s = (SNIP_LogLog)obj;
@@ -42,6 +46,7 @@ namespace Altaxo.Science.Spectroscopy.BaselineEvaluation
         info.AddValue("NumberOfIterations", s.NumberOfRegularIterations);
       }
 
+      /// <inheritdoc/>
       public object Deserialize(object? o, Altaxo.Serialization.Xml.IXmlDeserializationInfo info, object? parent)
       {
         var halfWidth = info.GetDouble("HalfWidth");

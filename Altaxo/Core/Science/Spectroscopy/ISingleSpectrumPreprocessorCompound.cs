@@ -31,9 +31,8 @@ using System.Threading.Tasks;
 namespace Altaxo.Science.Spectroscopy
 {
   /// <summary>
-  /// Interface to a set of <see cref="ISingleSpectrumPreprocessor"/>s.
+  /// Interface to a compound spectral preprocessor that consists of multiple <see cref="ISingleSpectrumPreprocessor"/> elements.
   /// </summary>
-  /// <seealso cref="Altaxo.Science.Spectroscopy.ISingleSpectrumPreprocessor" />
   public interface ISingleSpectrumPreprocessorCompound : ISingleSpectrumPreprocessor
   {
     /// <summary>

@@ -34,7 +34,7 @@ namespace Altaxo.Science.Signals
   /// <summary>
   /// Performs a fit with a Prony series to a retardation signal (general susceptibility),
   /// either in the time domain or in the frequency domain.
-  /// If the signal is a time domain signal, it is assumed to be a retardation signal, i.e. is increasing with time (for instance strain at constant stress).
+  /// If the signal is a time-domain signal, it is assumed to be a retardation signal, i.e. it is increasing with time (for instance, strain at constant stress).
   /// If the signal is in the frequency domain, it is assumed to be a susceptibility, i.e. the real part is decreasing with frequency.
   /// </summary>
   public record PronySeriesRetardation : Main.IImmutable
@@ -95,7 +95,7 @@ namespace Altaxo.Science.Signals
     private double _regularizationParameter;
 
     /// <summary>
-    /// Gets/sets the regularization parameter. Usually zero. The higher the value, the more are the prony coefficients smoothed out.
+    /// Gets/sets the regularization parameter. Usually zero. The higher the value, the more the Prony coefficients are smoothed out.
     /// </summary>
     public double RegularizationParameter
     {
@@ -110,29 +110,34 @@ namespace Altaxo.Science.Signals
     }
 
     /// <summary>
-    /// If true, an intercept (high frequency retardation value) is also fitted. In the result this is included as the Prony coefficient for retardation time zero.
+    /// If true, an intercept (high-frequency retardation value) is also fitted. In the result, this is included as the Prony coefficient for retardation time zero.
     /// </summary>
     public bool UseIntercept { get; init; } = true;
 
     /// <summary>
-    /// If true, a flow term (fluidity, conductivity) is also fitted. Then in the result, the values for <see cref="PronySeriesRetardationResult.Fluidity"/> and <see cref="PronySeriesRetardationResult.Viscosity"/> are set.
+    /// If true, a flow term (fluidity, conductivity) is also fitted. Then, in the result, the values for <see cref="PronySeriesRetardationResult.Fluidity"/>
+    /// and <see cref="PronySeriesRetardationResult.Viscosity"/> are set.
     /// </summary>
     public bool UseFlowTerm { get; init; } = false;
 
     /// <summary>
-    /// If true, the flow term is multiplied with the dielectric vacuum permittivity in order to the the electrical conductivity.
+    /// If true, the flow term is multiplied by the dielectric vacuum permittivity in order to obtain the electrical conductivity.
     /// </summary>
     public bool IsDielectricSpectrum { get; init; } = false;
 
     #region Serialization
 
     /// <summary>
-    /// 2023-05-24 initial version
+    /// Serialization surrogate (version 0).
     /// </summary>
+    /// <remarks>
+    /// 2023-05-24: Initial version.
+    /// </remarks>
     /// <seealso cref="Altaxo.Serialization.Xml.IXmlSerializationSurrogate" />
     [Altaxo.Serialization.Xml.XmlSerializationSurrogateFor(typeof(PronySeriesRetardation), 0)]
     public class SerializationSurrogate0 : Altaxo.Serialization.Xml.IXmlSerializationSurrogate
     {
+      /// <inheritdoc/>
       public void Serialize(object obj, Altaxo.Serialization.Xml.IXmlSerializationInfo info)
       {
         var s = (PronySeriesRetardation)obj;
@@ -145,6 +150,7 @@ namespace Altaxo.Science.Signals
         info.AddValue("RegularizationParameter", s.RegularizationParameter);
       }
 
+      /// <inheritdoc/>
       public object Deserialize(object? o, Altaxo.Serialization.Xml.IXmlDeserializationInfo info, object? parent)
       {
         var minimalValue = info.GetDouble("MinimalRelaxationTime");
@@ -177,11 +183,12 @@ namespace Altaxo.Science.Signals
           };
       }
     }
+
     #endregion
 
-
     /// <summary>
-    /// Evaluates a prony series fit in the time domain, using the properties <see cref="MinimalRetardationTime"/>, <see cref="MaximalRetardationTime"/>, <see cref="NumberOfRetardationTimes"/> and <see cref="RegularizationParameter"/>.
+    /// Evaluates a Prony series fit in the time domain, using the properties <see cref="MinimalRetardationTime"/>, <see cref="MaximalRetardationTime"/>,
+    /// <see cref="NumberOfRetardationTimes"/>, <see cref="UseIntercept"/>, <see cref="UseFlowTerm"/>, and <see cref="RegularizationParameter"/>.
     /// </summary>
     /// <param name="xarr">The x-values of the signal (all elements must be positive).</param>
     /// <param name="yarr">The y-values of the signal.</param>
@@ -192,13 +199,17 @@ namespace Altaxo.Science.Signals
     }
 
     /// <summary>
-    /// Evaluates a prony series fit in the time domain, using the properties <see cref="MinimalRetardationTime"/>, <see cref="MaximalRetardationTime"/>, <see cref="NumberOfRetardationTimes"/> and <see cref="RegularizationParameter"/>.
+    /// Evaluates a Prony series fit in the time domain, using the properties <see cref="MinimalRetardationTime"/>, <see cref="MaximalRetardationTime"/>,
+    /// <see cref="NumberOfRetardationTimes"/>, <see cref="UseIntercept"/>, <see cref="UseFlowTerm"/>, and <see cref="RegularizationParameter"/>.
     /// </summary>
     /// <param name="xarr">The x-values of the signal (all elements must be positive).</param>
-    /// <param name="isCircularFrequency">True if xarr contains circular frequencies; false if xarr contains normal frequencies.</param>
-    /// <param name="yarrRe">The real part of the susceptibility.</param>
-    /// <param name="yarrIm">The imaginary part of the susceptibility. Note that although for a general susceptiblity the imaginary part is negative,
-    /// in science it is usual to change the sign, e.g. J*(w) = J'(w) - i J''(w). Thus, here it is expected that the imaginary part is positive.</param>
+    /// <param name="isCircularFrequency">True if <paramref name="xarr"/> contains circular frequencies; false if it contains normal frequencies.</param>
+    /// <param name="yarrRe">The real part of the susceptibility, or <see langword="null"/> if not available.</param>
+    /// <param name="yarrIm">
+    /// The imaginary part of the susceptibility, or <see langword="null"/> if not available.
+    /// Note that although for a general susceptibility the imaginary part is negative,
+    /// in science it is usual to change the sign, e.g. <c>J*(w) = J'(w) - i J''(w)</c>. Thus, here it is expected that the imaginary part is positive.
+    /// </param>
     /// <returns>The result of the evaluation, see <see cref="PronySeriesRetardationResult"/>.</returns>
     public PronySeriesRetardationResult EvaluateFrequencyDomain(IReadOnlyList<double> xarr, bool isCircularFrequency, IReadOnlyList<double>? yarrRe, IReadOnlyList<double>? yarrIm)
     {
@@ -206,12 +217,17 @@ namespace Altaxo.Science.Signals
     }
 
     /// <summary>
-    /// Evaluates a prony series fit in the time domain, using the properties <see cref="MinimalRetardationTime"/>, <see cref="MaximalRetardationTime"/>, <see cref="NumberOfRetardationTimes"/> and <see cref="RegularizationParameter"/>.
+    /// Evaluates a Prony series fit in the frequency domain from a complex susceptibility, using the properties <see cref="MinimalRetardationTime"/>,
+    /// <see cref="MaximalRetardationTime"/>, <see cref="NumberOfRetardationTimes"/>, <see cref="UseIntercept"/>, <see cref="UseFlowTerm"/>,
+    /// <see cref="IsDielectricSpectrum"/>, and <see cref="RegularizationParameter"/>.
     /// </summary>
     /// <param name="xarr">The x-values of the signal (all elements must be positive).</param>
-    /// <param name="isCircularFrequency">True if xarr contains circular frequencies; false if xarr contains normal frequencies.</param>
-    /// <param name="yarr">The complex susceptibility.  Note that although for a general susceptiblity the imaginary part is negative,
-    /// in science it is usual to change the sign, e.g. J*(w) = J'(w) - i J''(w). Thus, here it is expected that the imaginary part is positive.</param>
+    /// <param name="isCircularFrequency">True if <paramref name="xarr"/> contains circular frequencies; false if it contains normal frequencies.</param>
+    /// <param name="yarr">
+    /// The complex susceptibility.
+    /// Note that although for a general susceptibility the imaginary part is negative,
+    /// in science it is usual to change the sign, e.g. <c>J*(w) = J'(w) - i J''(w)</c>. Thus, here it is expected that the imaginary part is positive.
+    /// </param>
     /// <returns>The result of the evaluation, see <see cref="PronySeriesRetardationResult"/>.</returns>
     public PronySeriesRetardationResult EvaluateFrequencyDomain(IReadOnlyList<double> xarr, bool isCircularFrequency, IReadOnlyList<Complex64> yarr)
     {
@@ -219,13 +235,13 @@ namespace Altaxo.Science.Signals
     }
 
     /// <summary>
-    /// Evaluates a prony series fit in the time domain.
+    /// Evaluates a Prony series fit in the time domain.
     /// </summary>
     /// <param name="xarr">The x-values of the signal (all elements must be positive).</param>
     /// <param name="yarr">The y-values of the signal.</param>
-    /// <param name="tmin">The smallest Retardation time (tau of the first Prony term).</param>
-    /// <param name="tmax">The largest Retardation time (tau of the last Prony term).</param>
-    /// <param name="numberOfRetardationTimes">The number of Retardation times (number of Prony terms).</param>
+    /// <param name="tmin">The smallest retardation time (tau of the first Prony term).</param>
+    /// <param name="tmax">The largest retardation time (tau of the last Prony term).</param>
+    /// <param name="numberOfRetardationTimes">The number of retardation times (number of Prony terms).</param>
     /// <param name="withIntercept">If set to <c>true</c>, an offset term is added. This term can be considered to have a retardation time of zero.</param>
     /// <param name="withFlowTerm">If set to <c>true</c>, a flow term (fluidity, conductivity) is also fitted.</param>
     /// <param name="regularizationLambda">A regularization parameter to smooth the resulting array of Prony terms.</param>
@@ -313,16 +329,16 @@ namespace Altaxo.Science.Signals
     }
 
     /// <summary>
-    /// Evaluates a prony series fit in the frequency domain from the real and imaginary part of a general complex dynamic susceptibility.
+    /// Evaluates a Prony series fit in the frequency domain from the real and imaginary part of a general complex dynamic susceptibility.
     /// </summary>
     /// <param name="xarr">The x-values of the signal (all elements must be positive).</param>
     /// <param name="isCircularFrequency">True if xarr contains circular frequencies; false if xarr contains normal frequencies.</param>
     /// <param name="yarrRe">The real part of the susceptibility.</param>
     /// <param name="yarrIm">The imaginary part of the susceptibility. Note that although for a general susceptiblity the imaginary part is negative,
     /// in science it is usual to change the sign, e.g. J*(w) = J'(w) - i J''(w). Thus, here it is expected that the imaginary part is positive.</param>
-    /// <param name="tmin">The smallest Retardation time (tau of the first Prony term).</param>
-    /// <param name="tmax">The largest Retardation time (tau of the last Prony term).</param>
-    /// <param name="numberOfRetardationTimes">The number of Retardation times (number of Prony terms).</param>
+    /// <param name="tmin">The smallest retardation time (tau of the first Prony term).</param>
+    /// <param name="tmax">The largest retardation time (tau of the last Prony term).</param>
+    /// <param name="numberOfRetardationTimes">The number of retardation times (number of Prony terms).</param>
     /// <param name="withIntercept">If set to <c>true</c>, an offset term is added. This term can be considered to have a infinite Retardation time.</param>
     /// <param name="withFlowTerm">If set to true, the flow term is calculated, too.</param>
     /// <param name="isRelativePermittivitySpectrum">If set to true, it is indicated that the spectrum to be fitted is a dielectric spectrum of relative permittivities.</param>
@@ -447,14 +463,14 @@ namespace Altaxo.Science.Signals
     }
 
     /// <summary>
-    /// Evaluates a prony series fit in the frequency domain from the absolute value (magnitude) of a general complex dynamic susceptibility.
+    /// Evaluates a Prony series fit in the frequency domain from the absolute value (magnitude) of a general complex dynamic susceptibility.
     /// </summary>
     /// <param name="xarr">The x-values of the signal (all elements must be positive).</param>
     /// <param name="isCircularFrequency">True if xarr contains circular frequencies; false if xarr contains normal frequencies.</param>
     /// <param name="yMagnitude">The absolute value (magnitude) of the general complex dynamic susceptibility.</param>
-    /// <param name="tmin">The smallest Retardation time (tau of the first Prony term).</param>
-    /// <param name="tmax">The largest Retardation time (tau of the last Prony term).</param>
-    /// <param name="numberOfRetardationTimes">The number of Retardation times (number of Prony terms).</param>
+    /// <param name="tmin">The smallest retardation time (tau of the first Prony term).</param>
+    /// <param name="tmax">The largest retardation time (tau of the last Prony term).</param>
+    /// <param name="numberOfRetardationTimes">The number of retardation times (number of Prony terms).</param>
     /// <param name="withIntercept">If set to <c>true</c>, an offset term is added. This term can be considered to have a infinite Retardation time.</param>
     /// <param name="withFlowTerm">If set to true, the flow term is calculated, too.</param>
     /// <param name="isRelativePermittivitySpectrum">If set to true, it is indicated that the spectrum to be fitted is a dielectric spectrum of relative permittivities.</param>
@@ -546,6 +562,21 @@ namespace Altaxo.Science.Signals
     }
 
 
+    /// <summary>
+    /// Evaluates the Prony series coefficients using the matrix formulation of a (regularized) least-squares problem.
+    /// </summary>
+    /// <param name="tmin">The smallest retardation time (tau of the first Prony term).</param>
+    /// <param name="tmax">The largest retardation time (tau of the last Prony term).</param>
+    /// <param name="numberOfRetardationTimes">The number of retardation times (number of Prony terms).</param>
+    /// <param name="withIntercept">If set to <c>true</c>, includes an offset term (interpreted as retardation time 0).</param>
+    /// <param name="withFlowTerm">If set to <c>true</c>, includes a flow term (fluidity, conductivity).</param>
+    /// <param name="isRelativePermittivitySpectrum">If set to <c>true</c>, indicates that the fitted spectrum is a dielectric spectrum of relative permittivities.</param>
+    /// <param name="flowTermScale">Scale factor used for the flow term basis function.</param>
+    /// <param name="allowNegativeCoefficients">If <c>true</c>, allows negative Prony coefficients.</param>
+    /// <param name="taus">The retardation times (tau values) used for the Prony terms.</param>
+    /// <param name="X">The design matrix (including optional regularization rows).</param>
+    /// <param name="y">The target vector (including optional regularization entries).</param>
+    /// <returns>The result of the evaluation, see <see cref="PronySeriesRetardationResult"/>.</returns>
     protected static PronySeriesRetardationResult Evaluate(double tmin, double tmax, int numberOfRetardationTimes, bool withIntercept, bool withFlowTerm, bool isRelativePermittivitySpectrum, double flowTermScale, bool allowNegativeCoefficients, double[] taus, Matrix<double> X, Matrix<double> y)
     {
       // calculate XtX and XtY

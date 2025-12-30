@@ -28,7 +28,7 @@ using Altaxo.Calc.Regression;
 namespace Altaxo.Science.Spectroscopy.Smoothing
 {
   /// <summary>
-  /// Smoothing algorithm using a modified sinc function. See <see cref="ModifiedSincSmoother"/> for details. />
+  /// Smoothing algorithm using a modified sinc function. See <see cref="ModifiedSincSmoother"/> for details.
   /// </summary>
   /// <seealso cref="Altaxo.Science.Spectroscopy.Smoothing.ISmoothing" />
   /// <seealso cref="Altaxo.Science.Spectroscopy.ISingleSpectrumPreprocessor" />
@@ -37,7 +37,7 @@ namespace Altaxo.Science.Spectroscopy.Smoothing
     private int _numberOfPoints = 7;
 
     /// <summary>
-    /// Get/set the number of points. Must be odd and at least 3.
+    /// Gets or sets the number of points used by the smoother. Must be odd and at least 3.
     /// </summary>
     public int NumberOfPoints
     {
@@ -54,7 +54,8 @@ namespace Altaxo.Science.Spectroscopy.Smoothing
     }
 
     /// <summary>
-    /// Gets a value indicating whether this instance is using the MS1 type smoothing. See <see cref="ModifiedSincSmoother"/> for details.
+    /// Gets a value indicating whether this instance is using the MS1 type smoothing.
+    /// See <see cref="ModifiedSincSmoother"/> for details.
     /// </summary>
     public bool IsMS1Smoothing { get; init; } = false;
 
@@ -80,9 +81,13 @@ namespace Altaxo.Science.Spectroscopy.Smoothing
 
     #region Serialization
 
+    /// <summary>
+    /// XML serialization surrogate for <see cref="SmoothingModifiedSinc"/> version 0.
+    /// </summary>
     [Altaxo.Serialization.Xml.XmlSerializationSurrogateFor(typeof(SmoothingModifiedSinc), 0)]
     public class SerializationSurrogate0 : Altaxo.Serialization.Xml.IXmlSerializationSurrogate
     {
+      /// <inheritdoc/>
       public void Serialize(object obj, Altaxo.Serialization.Xml.IXmlSerializationInfo info)
       {
         var s = (SmoothingModifiedSinc)obj;
@@ -91,6 +96,7 @@ namespace Altaxo.Science.Spectroscopy.Smoothing
         info.AddValue("IsMS1", s.IsMS1Smoothing);
       }
 
+      /// <inheritdoc/>
       public object Deserialize(object? o, Altaxo.Serialization.Xml.IXmlDeserializationInfo info, object? parent)
       {
         var numberOfPoints = info.GetInt32("NumberOfPoints");
@@ -134,6 +140,7 @@ namespace Altaxo.Science.Spectroscopy.Smoothing
       return (x, yy, regions);
     }
 
+    /// <inheritdoc/>
     public override string ToString()
     {
       return $"{this.GetType().Name} Pts={NumberOfPoints} PO={Degree} IsMS1={IsMS1Smoothing}";

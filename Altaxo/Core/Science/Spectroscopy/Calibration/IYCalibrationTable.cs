@@ -27,14 +27,16 @@ using System.Collections.Immutable;
 namespace Altaxo.Science.Spectroscopy.Calibration
 {
   /// <summary>
-  /// Interface to a spectral preprocessor that contains an x-axis calibration table.
+  /// Interface to a spectral preprocessor that contains an y-axis calibration table.
   /// </summary>
   public interface IYCalibrationTable
   {
     /// <summary>
-    /// Gets the calibration table, consisting of an array of x-values and a corresponding scaling factor.
-    /// For processing an uncalibrated spectrum, the spectral y-values are multiplied with the scaling factor.
+    /// Gets the calibration table, consisting of an array of x values and a corresponding scaling factor.
     /// </summary>
+    /// <remarks>
+    /// When processing an uncalibrated spectrum, the spectral y values are multiplied by the scaling factor.
+    /// </remarks>
     public ImmutableArray<(double x, double yScalingFactor)> CalibrationTable { get; }
 
     /// <summary>

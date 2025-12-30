@@ -27,26 +27,31 @@ using System;
 namespace Altaxo.Science.Spectroscopy.BaselineEstimation
 {
   /// <summary>
-  /// SNIP algorithm for background estimation (SNIP = Statistical sensitive Non-Linear Iterative Procedure).
-  /// Before execution of the algorithm, the data are twice logarithmized, as described in Ref.[1], and backtransformed afterwards.
+  /// SNIP algorithm for background estimation (SNIP = Statistics-sensitive Non-linear Iterative Procedure).
+  /// Before execution of the algorithm, the data are transformed by applying a double logarithm,
+  /// as described in Ref. [1], and are back-transformed afterwards.
   /// </summary>
   /// <remarks>
-  /// In difference to the procedure described in Ref. [1], no previous smoothing is applied to the data.
-  /// As described in the paper, after execution the number of regular stages of the algorithm, the window width is sucessivly decreased, until it reaches 1.
-  /// This results in a smoothing of the background signal.
+  /// In contrast to the procedure described in Ref. [1], no previous smoothing is applied to the data.
+  /// As described in the paper, after executing the regular stages of the algorithm, the window width is successively decreased until it reaches 1.
+  /// This results in smoothing of the background signal.
   /// 
   /// <para>References:</para>
-  /// <para>[1] C.G. Ryan et al., SNIP, A STATISTICS-SENSITIVE BACKGROUND TREATMENT FOR THE QUANTITATIVE 
-  /// ANALYSIS OF PIXE SPECTRA IN GEOSCIENCE APPLICATIONS, Nuclear Instruments and Methods in Physics Research 934 (1988) 396-402 
+  /// <para>[1] C.G. Ryan et al., SNIP, A STATISTICS-SENSITIVE BACKGROUND TREATMENT FOR THE QUANTITATIVE
+  /// ANALYSIS OF PIXE SPECTRA IN GEOSCIENCE APPLICATIONS, Nuclear Instruments and Methods in Physics Research 934 (1988) 396-402
   /// North-Holland, Amsterdam</para>
   /// </remarks>
   public record SNIP_LogLog : SNIP_Base, IBaselineEstimation
   {
     #region Serialization
 
+    /// <summary>
+    /// XML serialization surrogate for <see cref="SNIP_LogLog"/>.
+    /// </summary>
     [Altaxo.Serialization.Xml.XmlSerializationSurrogateFor(typeof(SNIP_LogLog), 0)]
     public class SerializationSurrogate0 : Altaxo.Serialization.Xml.IXmlSerializationSurrogate
     {
+      /// <inheritdoc/>
       public void Serialize(object obj, Altaxo.Serialization.Xml.IXmlSerializationInfo info)
       {
         var s = (SNIP_Linear)obj;
@@ -55,6 +60,7 @@ namespace Altaxo.Science.Spectroscopy.BaselineEstimation
         info.AddValue("NumberOfIterations", s.NumberOfRegularIterations);
       }
 
+      /// <inheritdoc/>
       public object Deserialize(object? o, Altaxo.Serialization.Xml.IXmlDeserializationInfo info, object? parent)
       {
         var halfWidth = info.GetDouble("HalfWidth");
@@ -77,13 +83,7 @@ namespace Altaxo.Science.Spectroscopy.BaselineEstimation
     }
     #endregion
 
-    /// <summary>
-    /// Executes the algorithm with the provided spectrum.
-    /// </summary>
-    /// <param name="xArray">The x values of the spectral values.</param>
-    /// <param name="yArray">The array of spectral values.</param>
-    /// <param name="result">The location where the baseline corrected spectrum should be stored.</param>
-    /// <returns>The evaluated background of the provided spectrum.</returns>
+    /// <inheritdoc/>
     public override void Execute(ReadOnlySpan<double> xArray, ReadOnlySpan<double> yArray, Span<double> result)
     {
       var srcY = new double[yArray.Length];
@@ -101,7 +101,7 @@ namespace Altaxo.Science.Spectroscopy.BaselineEstimation
       var stat = GetStatisticsOfInterPointDistance(xArray);
       if (_isHalfWidthInXUnits && 0.5 * (stat.Max - stat.Min) / stat.Max > 1.0 / xArray.Length)
       {
-        // if the interpoint distant is not uniform, we need to use the algorithm with locally calculated half width
+        // if the interpoint distance is not uniform, we need to use the algorithm with locally calculated half width
         EvaluateBaselineWithLocalHalfWidth(xArray, srcY, tmpY, result);
         return;
       }
@@ -120,6 +120,7 @@ namespace Altaxo.Science.Spectroscopy.BaselineEstimation
       srcY.CopyTo(result);
     }
 
+    /// <inheritdoc/>
     public override string ToString()
     {
       return $"{this.GetType().Name} HW={HalfWidth}{(IsHalfWidthInXUnits ? 'X' : 'P')} Iterations={NumberOfRegularIterations}";

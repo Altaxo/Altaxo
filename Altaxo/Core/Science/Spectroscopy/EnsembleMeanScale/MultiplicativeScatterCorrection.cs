@@ -10,12 +10,12 @@ using Altaxo.Calc.Regression;
 namespace Altaxo.Science.Spectroscopy.EnsembleMeanScale
 {
   /// <summary>
-  /// This class processes the spectra for influence of multiplicative scattering.
+  /// This class processes the spectra for the influence of multiplicative scattering.
   /// </summary>
   public record MultiplicativeScatterCorrection : IEnsembleMeanScalePreprocessor, Main.IImmutable
   {
     /// <summary>
-    /// Gets a value indicating whether the ensembly scale (for each spectral slot) should be calculated.
+    /// Gets a value indicating whether the ensemble scale (for each spectral slot) should be calculated.
     /// </summary>
     public bool EnsembleScale { get; init; }
 
@@ -24,12 +24,14 @@ namespace Altaxo.Science.Spectroscopy.EnsembleMeanScale
     [Altaxo.Serialization.Xml.XmlSerializationSurrogateFor(typeof(MultiplicativeScatterCorrection), 0)]
     public class SerializationSurrogate0 : Altaxo.Serialization.Xml.IXmlSerializationSurrogate
     {
+      /// <inheritdoc/>
       public void Serialize(object obj, Altaxo.Serialization.Xml.IXmlSerializationInfo info)
       {
         var s = (MultiplicativeScatterCorrection)obj;
         info.AddValue("EnsembleScale", s.EnsembleScale);
       }
 
+      /// <inheritdoc/>
       public object Deserialize(object? o, Altaxo.Serialization.Xml.IXmlDeserializationInfo info, object? parent)
       {
         bool ensembleScale = info.GetBoolean("EnsembleScale");
@@ -38,22 +40,16 @@ namespace Altaxo.Science.Spectroscopy.EnsembleMeanScale
     }
     #endregion
 
-    /// <summary>
-    /// Processes the spectra in matrix xMatrix.
-    /// </summary>
-    /// <param name="xMatrix">The matrix of spectra. Each spectrum is a row of the matrix.</param>
-    /// <param name="regions">Vector of spectal regions. Each element is the index of the start of a new region.</param>
-    /// <param name="xMean">Output: On return, contains the ensemble mean of the spectra.</param>
-    /// <param name="xScale">Not used.</param>
+    /// <inheritdoc/>
     public void Process(IMatrix<double> xMatrix, int[] regions, IVector<double> xMean, IVector<double> xScale)
     {
-      // note: we have a light deviation here to the literature:
-      // we repeat the multiple scattering correction until the xMean vector is self consistent,
-      // in detail: after each MSC correction, we calculate the new xMean and compare with the xMean
-      // of the step before. We repeat until the deviation of the xMean to the xMean_before is
-      // reasonable small.
+      // Note: We have a slight deviation from the literature:
+      // we repeat the multiple scattering correction until the xMean vector is self-consistent.
+      // In detail: after each MSC correction, we calculate the new xMean and compare it with the xMean
+      // of the step before. We repeat until the deviation of xMean relative to xMeanBefore is
+      // reasonably small.
       // The reason for this deviation is that we don't want to store two separate xMean vectors: one used
-      // for MSC (the x in linear regression) and another to center the MSC corrected spectra
+      // for MSC (the x in linear regression) and another to center the MSC-corrected spectra.
 
       var xMatrixOrg = MatrixMath.DenseOfMatrix(xMatrix);
 
@@ -79,13 +75,13 @@ namespace Altaxo.Science.Spectroscopy.EnsembleMeanScale
           xMean[n] += sum / rows; // xMean is in the first cycle 0 before, thus becomes mean. In later cycles it is incrementally updated.
         }
 
-        // 2.) Process the spectras
+        // 2.) Process the spectra
         foreach (var (start, end) in RegionHelper.GetRegionRanges(regions, xMatrix.ColumnCount))
         {
           ProcessForPrediction(xMatrixOrg, xMean, start, end, xMatrix);
         }
 
-        // 3. Compare the xMean with the xMean_before
+        // 3. Compare the xMean with the xMeanBefore
         if (xMeanBefore is null)
         {
           xMeanBefore = VectorMath.CreateExtensibleVector<double>(xMean.Count);
@@ -103,22 +99,16 @@ namespace Altaxo.Science.Spectroscopy.EnsembleMeanScale
 
       if (EnsembleScale)
       {
-        // because by the previous MSC-Correction, the mean is already zero, we only need the scale here
+        // because by the previous MSC correction, the mean is already zero, we only need the scale here
         MatrixMath.ColumnsToZeroMeanAndUnitVariance(xMatrix, null, xScale);
       }
     }
 
-    /// <summary>
-    /// Processes the spectra in matrix xMatrix.
-    /// </summary>
-    /// <param name="xMatrix">The matrix of spectra. Each spectrum is a row of the matrix.</param>
-    /// <param name="xMean">Output: On return, contains the ensemble mean of the spectra.</param>
-    /// <param name="xScale">Not used.</param>
-    /// <param name="regions">Vector of spectal regions. Each element is the index of the start of a new region.</param>
+    /// <inheritdoc/>
     public void ProcessForPrediction(IMatrix<double> xMatrix, int[] regions, IReadOnlyList<double> xMean, IReadOnlyList<double> xScale)
     {
-      foreach(var (start, end) in RegionHelper.GetRegionRanges(regions, xMatrix.ColumnCount))
-      { 
+      foreach (var (start, end) in RegionHelper.GetRegionRanges(regions, xMatrix.ColumnCount))
+      {
         ProcessForPrediction(xMatrix, xMean, start, end, xMatrix);
       }
 
@@ -129,10 +119,10 @@ namespace Altaxo.Science.Spectroscopy.EnsembleMeanScale
     }
 
     /// <summary>
-    /// Processes the spectra in matrix xMatrix.
+    /// Processes the spectra in <paramref name="xMatrix"/>.
     /// </summary>
     /// <param name="xMatrix">The matrix of spectra. Each spectrum is a row of the matrix.</param>
-    /// <param name="xMean">Output: On return, contains the ensemble mean of the spectra.</param>
+    /// <param name="xMean">The ensemble mean of the spectra.</param>
     /// <param name="regionstart">Starting index of the region to process.</param>
     /// <param name="regionend">End index of the region to process (exclusive).</param>
     /// <param name="resultMatrix">The resulting matrix.</param>
@@ -159,9 +149,9 @@ namespace Altaxo.Science.Spectroscopy.EnsembleMeanScale
     }
 
     /// <summary>
-    /// Exports the processing to an xml node.
+    /// Exports the processing to an XML node.
     /// </summary>
-    /// <param name="writer">The writer to export to</param>
+    /// <param name="writer">The writer to export to.</param>
     public void Export(XmlWriter writer)
     {
       writer.WriteElementString("MultiplicativeScatterCorrection", string.Empty);

@@ -29,8 +29,8 @@ using System.Linq;
 namespace Altaxo.Science.Spectroscopy
 {
   /// <summary>
-  /// Correlation matching of feature points in one dimension. Can be used for instance to
-  /// correlate peak positions in two spectra.
+  /// Correlation matching of feature points in one dimension.
+  /// Can be used, for instance, to correlate peak positions in two spectra.
   /// </summary>
   public class CorrelationMatching1D
   {
@@ -41,25 +41,25 @@ namespace Altaxo.Science.Spectroscopy
     private NormalizationMethod _normalization = NormalizationMethod.Variance;
 
     /// <summary>
-    /// Designates the normalization method for the points in the windows, just before the correlation value was evaluated.
+    /// Designates the normalization method for the points in the correlation windows, just before the correlation value is evaluated.
     /// </summary>
     [Flags]
     public enum NormalizationMethod
     {
       /// <summary>
-      /// From the window values, the mean value of the window values is subtracted.
+      /// Subtract the mean value of the window values.
       /// </summary>
       Mean = 0x01,
 
       /// <summary>
-      /// The window values are divided by the variance of the window values.
+      /// Divide the window values by the standard deviation of the window values.
       /// </summary>
       Variance = 0x02,
     }
 
     /// <summary>
-    ///   Gets or sets the maximum distance to consider points as correlated.
-    ///   Default is 0 (consider all points).
+    /// Gets or sets the maximum distance to consider points as correlated.
+    /// The default is 0 (consider all points).
     /// </summary>
     public double DistanceMax
     {
@@ -68,7 +68,7 @@ namespace Altaxo.Science.Spectroscopy
     }
 
     /// <summary>
-    ///   Gets or sets the size of the correlation window.
+    /// Gets or sets the size of the correlation window.
     /// </summary>
     public int WindowSize
     {
@@ -77,8 +77,8 @@ namespace Altaxo.Science.Spectroscopy
     }
 
     /// <summary>
-    /// Gets or sets the normalization treatment of the values in the windows, before the correlation value is calculated.
-    /// Default is <see cref="NormalizationMethod.Variance"/>
+    /// Gets or sets the normalization applied to the values in the windows before the correlation value is calculated.
+    /// The default is <see cref="NormalizationMethod.Variance"/>.
     /// </summary>
     public NormalizationMethod Normalization
     {
@@ -89,10 +89,10 @@ namespace Altaxo.Science.Spectroscopy
     /// <summary>
     /// Initializes a new instance of the <see cref="CorrelationMatching1D"/> class.
     /// </summary>
-    /// <param name="windowSize">Size of the correlation window.</param>
-    /// <param name="array1">The first array (for instance: a spectrum).</param>
-    /// <param name="array2">The second array (for instance: a spectrum). </param>
-    /// <exception cref="System.ArgumentException">Window size should be odd - windowSize</exception>
+    /// <param name="windowSize">The size of the correlation window.</param>
+    /// <param name="array1">The first array (for instance, a spectrum).</param>
+    /// <param name="array2">The second array (for instance, a spectrum).</param>
+    /// <exception cref="ArgumentException">Window size should be positive and odd.</exception>
     public CorrelationMatching1D(int windowSize, double[] array1, double[] array2)
         : this(windowSize, 0, array1, array2)
     {
@@ -101,11 +101,11 @@ namespace Altaxo.Science.Spectroscopy
     /// <summary>
     /// Initializes a new instance of the <see cref="CorrelationMatching1D"/> class.
     /// </summary>
-    /// <param name="windowSize">Size of the correlation window.</param>
+    /// <param name="windowSize">The size of the correlation window.</param>
     /// <param name="maxDistance">The maximum distance to consider points as correlated.</param>
     /// <param name="array1">The first array (for instance, a spectrum).</param>
-    /// <param name="array2">The second array (for instance, a spectrum). </param>
-    /// <exception cref="System.ArgumentException">Window size should be odd - windowSize</exception>
+    /// <param name="array2">The second array (for instance, a spectrum).</param>
+    /// <exception cref="ArgumentException">Window size should be positive and odd.</exception>
     public CorrelationMatching1D(int windowSize, double maxDistance, double[] array1, double[] array2)
     {
       if (windowSize < 1 || windowSize % 2 == 0)
@@ -119,21 +119,22 @@ namespace Altaxo.Science.Spectroscopy
     }
 
     /// <summary>
-    ///  Matches two sets of feature points computed from the given arrays (for instance, peak positions).
+    /// Matches two sets of feature points computed from the given arrays (for instance, peak positions).
     /// </summary>
     /// <param name="points1">Set of feature points for the first array.</param>
     /// <param name="points2">Set of feature points for the second array.</param>
+    /// <returns>A 2xN matrix of corresponding feature points.</returns>
     public int[][] Match(IEnumerable<int> points1, IEnumerable<int> points2)
     {
       return Match(points1.ToArray(), points2.ToArray());
     }
 
     /// <summary>
-    ///   Matches two sets of feature points computed from the given arrays.
+    /// Matches two sets of feature points computed from the given arrays.
     /// </summary>
     /// <param name="points1">Feature points of the first array (that was given in the constructor).</param>
     /// <param name="points2">Feature points of the second array (that was given in the constructor).</param>
-    /// <returns>A Nx2 matrix of correlating feature points.</returns>
+    /// <returns>A 2xN matrix of corresponding feature points.</returns>
     public int[][] Match(int[] points1, int[] points2)
     {
       // Generate correlation matrix
@@ -181,14 +182,11 @@ namespace Altaxo.Science.Spectroscopy
 
 
     /// <summary>
-    ///   Constructs the correlation matrix between selected points from two linear arrays.
+    /// Constructs the correlation matrix between selected points from two linear arrays.
     /// </summary>
-    /// 
     /// <remarks>
-    ///   Rows correspond to points from the first array, columns correspond to points
-    ///   in the second array
+    /// Rows correspond to points from the first array; columns correspond to points from the second array.
     /// </remarks>
-    /// 
     private static double[,] EvaluateCorrelationMatrix(
         double[] image1, int[] points1,
         double[] image2, int[] points2,
@@ -287,6 +285,14 @@ namespace Altaxo.Science.Spectroscopy
 
     #region Helpers
 
+    /// <summary>
+    /// Normalizes the provided window values according to the specified normalization flags.
+    /// </summary>
+    /// <param name="y">The window values to normalize (in-place).</param>
+    /// <param name="count">The number of values in the window.</param>
+    /// <param name="sy">The sum of the window values.</param>
+    /// <param name="syy">The sum of squares of the window values.</param>
+    /// <param name="normalization">The normalization flags to apply.</param>
     public static void Normalize(double[] y, int count, double sy, double syy, NormalizationMethod normalization)
     {
       double offset = 0;
@@ -309,9 +315,19 @@ namespace Altaxo.Science.Spectroscopy
       }
     }
 
+    /// <summary>
+    /// Utility methods for simple matrix and vector operations.
+    /// </summary>
     private class Matrix
     {
 
+      /// <summary>
+      /// Returns the indices of all elements in <paramref name="data"/> for which <paramref name="func"/> returns <see langword="true"/>.
+      /// </summary>
+      /// <typeparam name="T">The type of the data elements.</typeparam>
+      /// <param name="data">The data to search.</param>
+      /// <param name="func">The predicate used to test each element.</param>
+      /// <returns>An array containing the indices of all matching elements.</returns>
       public static int[] Find<T>(T[] data, Func<T, bool> func)
       {
         List<int> idx = new List<int>();
@@ -325,7 +341,7 @@ namespace Altaxo.Science.Spectroscopy
 
 
       /// <summary>
-      ///   Returns a subvector extracted from the current vector.
+      /// Returns a subvector extracted from the current vector.
       /// </summary>
       /// 
       /// <param name="source">The vector to return the subvector from.</param>
@@ -364,7 +380,7 @@ namespace Altaxo.Science.Spectroscopy
       }
 
       /// <summary>
-      ///   Gets the index of the maximum element in a matrix across a given dimension.
+      /// Gets the index of the maximum element in a matrix across a given dimension.
       /// </summary>
       /// 
       public static int[] ArgMax<T>(T[,] matrix, int dimension)
@@ -383,7 +399,7 @@ namespace Altaxo.Science.Spectroscopy
       }
 
       /// <summary>
-      ///   Gets the maximum values across one dimension of a matrix.
+      /// Gets the maximum values across one dimension of a matrix.
       /// </summary>
       /// 
       public static T[] Max<T>(T[,] matrix, int dimension, int[] indices, T[] result)
@@ -424,7 +440,7 @@ namespace Altaxo.Science.Spectroscopy
       }
 
       /// <summary>
-      ///   Gets a column vector from a matrix.
+      /// Gets a column vector from a matrix.
       /// </summary>
       /// 
       public static T[] GetColumn<T>(T[,] m, int index, T[]? result = null)
@@ -440,7 +456,7 @@ namespace Altaxo.Science.Spectroscopy
       }
 
       /// <summary>
-      ///   Gets a row vector from a matrix.
+      /// Gets a row vector from a matrix.
       /// </summary>
       ///
       public static T[] GetRow<T>(T[,] m, int index, T[]? result = null)
@@ -456,7 +472,7 @@ namespace Altaxo.Science.Spectroscopy
       }
 
       /// <summary>
-      ///   Gets the number of rows in a multidimensional matrix.
+      /// Gets the number of rows in a multidimensional matrix.
       /// </summary>
       /// 
       /// <typeparam name="T">The type of the elements in the matrix.</typeparam>
@@ -470,7 +486,7 @@ namespace Altaxo.Science.Spectroscopy
       }
 
       /// <summary>
-      ///   Gets the number of columns in a multidimensional matrix.
+      /// Gets the number of columns in a multidimensional matrix.
       /// </summary>
       /// 
       /// <typeparam name="T">The type of the elements in the matrix.</typeparam>
@@ -483,6 +499,12 @@ namespace Altaxo.Science.Spectroscopy
         return matrix.GetLength(1);
       }
 
+      /// <summary>
+      /// Normalizes an index so that negative indices address elements from the end (Python-style).
+      /// </summary>
+      /// <param name="end">The index to normalize.</param>
+      /// <param name="length">The length of the dimension.</param>
+      /// <returns>A non-negative index within the target dimension.</returns>
       private static int Index(int end, int length)
       {
         if (end < 0)

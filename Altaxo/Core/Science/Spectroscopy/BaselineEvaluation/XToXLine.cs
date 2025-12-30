@@ -27,7 +27,12 @@ using Altaxo.Science.Spectroscopy.BaselineEstimation;
 
 namespace Altaxo.Science.Spectroscopy.BaselineEvaluation
 {
-  /// <inheritdoc/>
+  /// <summary>
+  /// Baseline evaluation using a straight line between two x-axis anchor points.
+  /// </summary>
+  /// <remarks>
+  /// This implementation is based on <see cref="XToXLineBase"/>, but returns the evaluated baseline as the y-values instead of subtracting it.
+  /// </remarks>
   public record XToXLine : XToXLineBase, IBaselineEvaluation
   {
     /// <inheritdoc/>

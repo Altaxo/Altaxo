@@ -24,17 +24,25 @@
 
 namespace Altaxo.Science.Spectroscopy.Cropping
 {
+  /// <summary>
+  /// Cropping preprocessor that performs no cropping (null operation).
+  /// </summary>
   public class CroppingNone : ICropping
   {
     #region Serialization
 
+    /// <summary>
+    /// XML serialization surrogate for <see cref="CroppingNone"/>.
+    /// </summary>
     [Altaxo.Serialization.Xml.XmlSerializationSurrogateFor(typeof(CroppingNone), 0)]
     public class SerializationSurrogate0 : Altaxo.Serialization.Xml.IXmlSerializationSurrogate
     {
+      /// <inheritdoc/>
       public void Serialize(object obj, Altaxo.Serialization.Xml.IXmlSerializationInfo info)
       {
       }
 
+      /// <inheritdoc/>
       public object Deserialize(object? o, Altaxo.Serialization.Xml.IXmlDeserializationInfo info, object? parent)
       {
         return new CroppingNone();
@@ -42,6 +50,7 @@ namespace Altaxo.Science.Spectroscopy.Cropping
     }
     #endregion
 
+    /// <inheritdoc/>
     public (double[] x, double[] y, int[]? regions) Execute(double[] x, double[] y, int[]? regions)
     {
       return (x, y, regions);

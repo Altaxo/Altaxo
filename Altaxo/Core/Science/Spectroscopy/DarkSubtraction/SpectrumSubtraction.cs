@@ -27,6 +27,9 @@ using System.Collections.Immutable;
 
 namespace Altaxo.Science.Spectroscopy.DarkSubtraction
 {
+  /// <summary>
+  /// Performs dark subtraction by subtracting a referenced spectrum (x/y curve) from the input spectrum.
+  /// </summary>
   public record SpectrumSubtraction : IDarkSubtraction, IReferencingXYColumns
   {
     /// <inheritdoc/>
@@ -39,11 +42,12 @@ namespace Altaxo.Science.Spectroscopy.DarkSubtraction
     #region Serialization
 
     /// <summary>
-    /// 2023-03-29 Initial version
+    /// 2023-03-29 Initial version.
     /// </summary>
     [Serialization.Xml.XmlSerializationSurrogateFor(typeof(SpectrumSubtraction), 0)]
     public class SerializationSurrogate0 : Serialization.Xml.IXmlSerializationSurrogate
     {
+      /// <inheritdoc/>
       public void Serialize(object obj, Serialization.Xml.IXmlSerializationInfo info)
       {
         var s = (SpectrumSubtraction)obj;
@@ -68,6 +72,7 @@ namespace Altaxo.Science.Spectroscopy.DarkSubtraction
         info.CommitArray();
       }
 
+      /// <inheritdoc/>
       public object Deserialize(object? o, Serialization.Xml.IXmlDeserializationInfo info, object? parent)
       {
         var tableName = info.GetString("TableName");
@@ -117,6 +122,12 @@ namespace Altaxo.Science.Spectroscopy.DarkSubtraction
       return (x, yy, regions);
     }
 
+    /// <summary>
+    /// Subtracts the referenced spectrum curve from the input spectrum.
+    /// </summary>
+    /// <param name="x">The x values of the spectrum.</param>
+    /// <param name="y">The y values of the spectrum.</param>
+    /// <param name="yResult">Receives the resulting y values after subtraction.</param>
     public void Execute(double[] x, double[] y, double[] yResult)
     {
       var spl = new Calc.Interpolation.AkimaCubicSpline();
@@ -136,16 +147,19 @@ namespace Altaxo.Science.Spectroscopy.DarkSubtraction
       }
     }
 
+    /// <inheritdoc/>
     IReferencingXYColumns IReferencingXYColumns.WithXYDataOrigin((string TableName, int GroupNumber, string XColumnName, string YColumnName) xyDataOrigin)
     {
       return this with { XYDataOrigin = xyDataOrigin };
     }
 
+    /// <inheritdoc/>
     IReferencingXYColumns IReferencingXYColumns.WithXYCurve(ImmutableArray<(double x, double y)> xyCurve)
     {
       return this with { XYCurve = xyCurve };
     }
 
+    /// <inheritdoc/>
     public override string ToString()
     {
       return $"{this.GetType().Name} Table={XYDataOrigin}";

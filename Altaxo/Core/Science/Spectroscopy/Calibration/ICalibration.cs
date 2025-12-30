@@ -25,10 +25,16 @@
 
 namespace Altaxo.Science.Spectroscopy.Calibration
 {
+  /// <summary>
+  /// Marker interface for spectrum preprocessors that apply an x-axis calibration.
+  /// </summary>
   public interface IXCalibration : ISingleSpectrumPreprocessor
   {
   }
 
+  /// <summary>
+  /// Marker interface for spectrum preprocessors that apply a y-axis (intensity) calibration.
+  /// </summary>
   public interface IYCalibration : ISingleSpectrumPreprocessor
   {
   }

@@ -33,41 +33,43 @@ namespace Altaxo.Science.Spectroscopy.PeakFitting
   /// </summary>
   public record PeakDescription
   {
-    /// <summary>The description of the peak searching algorithm, see <see cref="PeakSearching.IPeakSearching"/>.</summary>
+    /// <summary>
+    /// Gets the description produced by peak searching (see <see cref="PeakSearching.IPeakSearching"/>).
+    /// </summary>
     public PeakSearching.PeakDescription? SearchDescription { get; init; }
 
     /// <summary>
-    /// Gets notes, for instance, why a fit was not possible.
+    /// Gets notes, for instance why a fit was not possible.
     /// </summary>
     public string Notes { get; init; } = string.Empty;
 
     /// <summary>
-    /// Index of the first fit point that was used.
+    /// Gets the index of the first fit point that was used.
     /// </summary>
     public int FirstFitPoint { get; init; }
 
     /// <summary>
-    /// Index of the last fit point (inclusive) that was used.
+    /// Gets the index of the last fit point (inclusive) that was used.
     /// </summary>
     public int LastFitPoint { get; init; }
 
     /// <summary>
-    /// Left boundary in x-units of the x-range that was used to fit the peak.
+    /// Gets the left boundary, in x-units, of the x-range that was used to fit the peak.
     /// </summary>
     public double FirstFitPosition { get; init; }
 
     /// <summary>
-    /// Right boundary in x-units of the x-range that was used to fit the peak.
+    /// Gets the right boundary, in x-units, of the x-range that was used to fit the peak.
     /// </summary>
     public double LastFitPosition { get; init; }
 
     /// <summary>
-    /// Gets the fit parameter values of the peak.
+    /// Gets the fitted parameter values of the peak.
     /// </summary>
     public double[]? PeakParameter { get; init; }
 
     /// <summary>
-    /// Gets the fit covariance matrix of the parameters of the peak.
+    /// Gets the covariance matrix of the fitted peak parameters.
     /// </summary>
     public IROMatrix<double>? PeakParameterCovariances { get; init; }
 
@@ -82,30 +84,29 @@ namespace Altaxo.Science.Spectroscopy.PeakFitting
     public double[]? FitFunctionParameter { get; init; }
 
     /// <summary>
-    /// Gets the chi square value of the fit.
+    /// Gets the chi-square value of the fit.
     /// </summary>
     public double SumChiSquare { get; init; }
 
     /// <summary>
-    /// Gets the sum of chi square, divided by (number of data points - number of degrees of freedom + 1)
+    /// Gets the chi-square sum divided by (number of data points - number of degrees of freedom + 1).
     /// </summary>
-    /// <value>
-    /// The delta.
-    /// </value>
     public double SigmaSquare { get; init; }
 
     /// <summary>
     /// Gets the peak group number (when fitting in groups).
     /// </summary>
     /// <value>
-    /// The peak group number. The value is zero if groups are not used in the fit.
+    /// The peak group number. The value is zero if groups are not used for the fit.
     /// </value>
     public int PeakGroupNumber { get; init; }
 
     /// <summary>
-    /// Gets the position, the area, the height and the Full Width Half Maximum of the fitted peak.
+    /// Gets the position, area, height, and full width at half maximum (FWHM) of the fitted peak.
     /// </summary>
-    /// <exception cref="System.InvalidOperationException">FitFunction or PeakParameter is null (in instance of {this.GetType()}).</exception>
+    /// <exception cref="System.InvalidOperationException">
+    /// <see cref="FitFunction"/> or <see cref="PeakParameter"/> is <see langword="null"/>.
+    /// </exception>
     public (double Position, double Area, double Height, double FWHM) PositionAreaHeightFWHM
     {
       get

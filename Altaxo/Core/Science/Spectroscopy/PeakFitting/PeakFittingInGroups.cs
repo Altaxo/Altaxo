@@ -35,13 +35,16 @@ using Altaxo.Science.Signals;
 namespace Altaxo.Science.Spectroscopy.PeakFitting
 {
   /// <summary>
-  /// Groups the peaks that were found by using a minimal separation factor (based on the FWHM of the peaks).
-  /// Then fits the peak groups.
+  /// Groups peaks using a minimal separation factor (based on the peaks' full width at half maximum (FWHM))
+  /// and then fits the peak groups.
   /// </summary>
   public record PeakFittingInGroups : PeakFittingBase, IPeakFitting
   {
     private double _minimalGroupSeparationFWHMFactor = 3;
 
+    /// <summary>
+    /// Gets/sets the minimal separation factor (in units of FWHM) used for grouping neighboring peaks.
+    /// </summary>
     public double MinimalGroupSeparationFWHMFactor
     {
       get
@@ -60,8 +63,10 @@ namespace Altaxo.Science.Spectroscopy.PeakFitting
     public double _maximalRelativeAmplitudeInfluence = double.PositiveInfinity;
 
     /// <summary>
-    /// Gets the maximal relative amplitude influence. If we have two neighbouring peaks, the one peak should not influence the amplitude
-    /// at the most close point of the other peak (that is included in the fit) by more that this value times the expected height of the other peak at this point.
+    /// Gets/sets the maximal relative amplitude influence.
+    /// If two neighboring peaks are fitted together, one peak should not influence the amplitude at the closest point of
+    /// the other peak (that is included in the fit) by more than this factor times the expected height of the other peak
+    /// at that point.
     /// </summary>
     public double MaximalRelativeAmplitudeInfluence
     {
@@ -79,15 +84,13 @@ namespace Altaxo.Science.Spectroscopy.PeakFitting
     }
 
     private int _minimalOrderOfBaselinePolynomial = -1;
+
     /// <summary>
-    /// Gets or sets the minimal order of the polynomial that is used for the baseline of each group.
-    /// The minimal order is applied if the group only contains one peak. As it contains more peaks,
-    /// the order is increased, until the <see cref="MaximalOrderOfBaselinePolynomial"/> is reached if the
-    /// group contains <see cref="NumberOfPeaksAtMaximalOrderOfBaselinePolynomial"/> peaks.
+    /// Gets or sets the minimal order of the polynomial used as the baseline for each group.
+    /// The minimal order is applied if the group contains only one peak. As the number of peaks increases,
+    /// the order is increased until <see cref="MaximalOrderOfBaselinePolynomial"/> is reached when the group contains
+    /// <see cref="NumberOfPeaksAtMaximalOrderOfBaselinePolynomial"/> peaks.
     /// </summary>
-    /// <value>
-    /// The minimal order of the baseline polynomial.
-    /// </value>
     public int MinimalOrderOfBaselinePolynomial
     {
       get { return _minimalOrderOfBaselinePolynomial; }
@@ -100,14 +103,11 @@ namespace Altaxo.Science.Spectroscopy.PeakFitting
     private int _maximalOrderOfBaselinePolynomial = -1;
 
     /// <summary>
-    /// Gets or sets the maximal order of the polynomial that is used for the baseline of each group.
-    /// If the group only contains one peak, then the <see cref="MinimalOrderOfBaselinePolynomial"/> is applied. As it contains more peaks,
-    /// the order is increased, until the <see cref="MaximalOrderOfBaselinePolynomial"/> is reached if the
-    /// group contains <see cref="NumberOfPeaksAtMaximalOrderOfBaselinePolynomial"/> peaks.
+    /// Gets or sets the maximal order of the polynomial used as the baseline for each group.
+    /// If the group contains only one peak, then <see cref="MinimalOrderOfBaselinePolynomial"/> is applied. As the number of peaks increases,
+    /// the order is increased until <see cref="MaximalOrderOfBaselinePolynomial"/> is reached when the group contains
+    /// <see cref="NumberOfPeaksAtMaximalOrderOfBaselinePolynomial"/> peaks.
     /// </summary>
-    /// <value>
-    /// The maximal order of the baseline polynomial.
-    /// </value>
     public int MaximalOrderOfBaselinePolynomial
     {
       get { return _maximalOrderOfBaselinePolynomial; }
@@ -120,14 +120,8 @@ namespace Altaxo.Science.Spectroscopy.PeakFitting
     private int _numberOfPeaksAtMaximalOrderOfBaselinePolynomial = 3;
 
     /// <summary>
-    /// Gets or sets the maximal order of the polynomial that is used for the baseline of each group.
-    /// If the group only contains one peak, then the <see cref="MinimalOrderOfBaselinePolynomial"/> is applied. As it contains more peaks,
-    /// the order is increased, until the <see cref="MaximalOrderOfBaselinePolynomial"/> is reached if the
-    /// group contains <see cref="NumberOfPeaksAtMaximalOrderOfBaselinePolynomial"/> peaks.
+    /// Gets or sets the number of peaks in a group at which the maximal order of the baseline polynomial is reached.
     /// </summary>
-    /// <value>
-    /// The number of peaks in the group at which the maximal order of the baseline polynomial is reached.
-    /// </value>
     public int NumberOfPeaksAtMaximalOrderOfBaselinePolynomial
     {
       get { return _numberOfPeaksAtMaximalOrderOfBaselinePolynomial; }
@@ -137,6 +131,9 @@ namespace Altaxo.Science.Spectroscopy.PeakFitting
       }
     }
 
+    /// <summary>
+    /// Gets or sets a value indicating whether separate variances are evaluated for each peak.
+    /// </summary>
     public bool IsEvaluatingSeparateVariances { get; set; }
 
     #region Serialization
@@ -144,11 +141,12 @@ namespace Altaxo.Science.Spectroscopy.PeakFitting
     #region Version 0
 
     /// <summary>
-    /// 2024-03-25 V1: initial version
+    /// 2024-03-25 V0: Initial version.
     /// </summary>
     [Altaxo.Serialization.Xml.XmlSerializationSurrogateFor(typeof(PeakFittingInGroups), 0)]
     public class SerializationSurrogate0 : Altaxo.Serialization.Xml.IXmlSerializationSurrogate
     {
+      /// <inheritdoc/>
       public void Serialize(object obj, Altaxo.Serialization.Xml.IXmlSerializationInfo info)
       {
         var s = (PeakFittingInGroups)obj;
@@ -164,6 +162,7 @@ namespace Altaxo.Science.Spectroscopy.PeakFitting
         info.AddValue("NumberOfPeaksAtMaxOrderOfBaselinePolynomial", s.NumberOfPeaksAtMaximalOrderOfBaselinePolynomial);
       }
 
+      /// <inheritdoc/>
       public object Deserialize(object? o, Altaxo.Serialization.Xml.IXmlDeserializationInfo info, object? parent)
       {
         var fitFunction = info.GetValue<IFitFunctionPeak>("FitFunction", null);
@@ -197,6 +196,7 @@ namespace Altaxo.Science.Spectroscopy.PeakFitting
 
     #endregion
 
+    /// <inheritdoc/>
     public (
       double[] x,
       double[] y,
@@ -223,6 +223,11 @@ namespace Altaxo.Science.Spectroscopy.PeakFitting
       return y.Upper > x.Lower && x.Upper > y.Lower;
     }
 
+    /// <summary>
+    /// Groups peaks based on their FWHM-derived influence ranges.
+    /// </summary>
+    /// <param name="peaks">The input peaks.</param>
+    /// <returns>A list of peak groups, where each group is a list of peaks.</returns>
     public List<List<PeakSearching.PeakDescription>> GroupPeaks(IEnumerable<PeakSearching.PeakDescription> peaks)
     {
       var result = new List<(List<PeakSearching.PeakDescription> Descriptions, double Lower, double Upper)>();
@@ -283,12 +288,14 @@ namespace Altaxo.Science.Spectroscopy.PeakFitting
       return result;
     }
 
-    /// <summary>Executes peak fitting for peaks in one group</summary>
+    /// <summary>
+    /// Executes peak fitting for the peaks in one group.
+    /// </summary>
     /// <param name="xArray">Array of x values.</param>
     /// <param name="yArray">Array of y values.</param>
     /// <param name="peakDescriptions">Peak descriptions from the previous peak searching step.</param>
     /// <param name="peakGroupNumber">Current group number.</param>
-    /// <param name="cancellationToken">Token to cancel the peak fitting</param>
+    /// <param name="cancellationToken">Token to cancel the peak fitting.</param>
     /// <returns>A list of peak descriptions for the fitted peaks.</returns>
     public List<PeakDescription> ExecuteForOneGroup(double[] xArray, double[] yArray, IEnumerable<PeakSearching.PeakDescription> peakDescriptions, int peakGroupNumber, CancellationToken cancellationToken)
     {
@@ -334,7 +341,7 @@ namespace Altaxo.Science.Spectroscopy.PeakFitting
         ++numberOfPeaks;
       }
 
-      if (numberOfPeaks == 0) // no peaks could be fitted 
+      if (numberOfPeaks == 0) // no peaks could be fitted
       {
         return dictionaryOfNotFittedPeaks.Values.ToList();
       }
@@ -454,7 +461,7 @@ namespace Altaxo.Science.Spectroscopy.PeakFitting
 
         isFixed = Enumerable.Repeat(true, param.Length).ToArray();
         var parameterTemp = new double[param.Length];
-        var parametersSeparate = new double[param.Length]; // Array to accomodate the parameter variances evaluated for each peak separately
+        var parametersSeparate = new double[param.Length]; // Array to accommodate the parameter variances evaluated for each peak separately
 
         for (int i = 0, j = 0; i < numberOfPeaks; ++i, j += numberOfParametersPerPeak)
         {
@@ -535,6 +542,23 @@ namespace Altaxo.Science.Spectroscopy.PeakFitting
       }
     }
 
+    /// <summary>
+    /// Creates per-peak fit results for one peak group from the global fit result.
+    /// </summary>
+    /// <param name="xArray">The x-values for the region that was fitted.</param>
+    /// <param name="yArray">The y-values for the region that was fitted.</param>
+    /// <param name="peakDescriptions">The peaks that were requested to be fitted.</param>
+    /// <param name="fitFunc">The composite fit function used for fitting.</param>
+    /// <param name="numberOfParametersPerPeak">The number of parameters per single-peak term.</param>
+    /// <param name="dictionaryOfNotFittedPeaks">Peaks that could not be fitted and should be included in the result.</param>
+    /// <param name="peakParam">Per-peak metadata (fit ranges and local x-spacing) used during fitting.</param>
+    /// <param name="lowerBounds">Optional per-parameter lower bounds used for fitting.</param>
+    /// <param name="upperBounds">Optional per-parameter upper bounds used for fitting.</param>
+    /// <param name="fit">The regression engine that performed the fit.</param>
+    /// <param name="globalFitResult">The global fit result.</param>
+    /// <param name="peakGroupNumber">The peak group number assigned to the returned peak descriptions.</param>
+    /// <param name="cancellationToken">Token used to cancel this task.</param>
+    /// <returns>The list of per-peak fit results for the group.</returns>
     protected virtual List<PeakDescription> GetPeakDescriptionList(
       double[] xArray,
       double[] yArray,
@@ -585,6 +609,7 @@ namespace Altaxo.Science.Spectroscopy.PeakFitting
       return list;
     }
 
+    /// <inheritdoc/>
     public override string ToString()
     {
       return $"{this.GetType().Name} Func={FitFunction} FitWidth={FitWidthScalingFactor} MinFWHM={MinimalFWHMValue}{(IsMinimalFWHMValueInXUnits ? 'X' : 'P')}";

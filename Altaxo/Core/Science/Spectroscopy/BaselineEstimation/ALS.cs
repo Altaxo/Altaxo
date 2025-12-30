@@ -28,7 +28,7 @@ using Altaxo.Calc.LinearAlgebra;
 namespace Altaxo.Science.Spectroscopy.BaselineEstimation
 {
   /// <summary>
-  /// Implements the Asymmetric Least Squares method for baseline estimation, proposed by Eilers and Boelens 2005 [1].
+  /// Implements the Asymmetric Least Squares method for baseline estimation, proposed by Eilers and Boelens (2005) [1].
   /// </summary>
   /// <remarks>
   /// <para>References:</para>
@@ -40,11 +40,11 @@ namespace Altaxo.Science.Spectroscopy.BaselineEstimation
     private double _lambda = 1E5;
 
     /// <summary>
-    /// Gets or sets the smoothing parameter lambda.
+    /// Gets or sets the smoothing parameter <c>lambda</c>.
     /// The default value is 1E6.
-    /// The higher lambda is, the smoother the resulting curve will be.
+    /// The higher <c>lambda</c> is, the smoother the resulting curve will be.
     /// </summary>
-    /// <exception cref="System.ArgumentException">Value must be &gt; 0</exception>
+    /// <exception cref="System.ArgumentException">Value must be &gt; 0.</exception>
     public double Lambda
     {
       get => _lambda;
@@ -59,10 +59,11 @@ namespace Altaxo.Science.Spectroscopy.BaselineEstimation
     private bool _scaleLambdaWithXUnits;
 
     /// <summary>
-    /// If true, lambda is scaled with the x units, so that the effect of baseline estimation is independent on the resolution of the spectrum.
+    /// Gets a value indicating whether <see cref="Lambda"/> is scaled with the x-units,
+    /// so that the effect of baseline estimation is independent of the resolution of the spectrum.
     /// </summary>
     /// <value>
-    ///   <c>true</c> lambda is scaled with the x units, so that the effect of baseline estimation is independent on the resolution of the spectrum; otherwise, <c>false</c>.
+    /// <see langword="true"/> if <see cref="Lambda"/> is scaled with the x-units; otherwise, <see langword="false"/>.
     /// </value>
     public bool ScaleLambdaWithXUnits
     {
@@ -75,9 +76,9 @@ namespace Altaxo.Science.Spectroscopy.BaselineEstimation
     /// Gets or sets the weighting parameter.
     /// The default value is 0.1.
     /// A value of 0.5 leads to symmetric weighting of positive and negative deviations.
-    /// Values less than 0.5 leads to stronger suppression of (positive) peaks.
+    /// Values less than 0.5 lead to stronger suppression of (positive) peaks.
     /// </summary>
-    /// <exception cref="ArgumentException">Value must be &gt; 0 and &lt; 1</exception>
+    /// <exception cref="ArgumentException">Value must be &gt; 0 and &lt; 1.</exception>
     public double P
     {
       get => _p;
@@ -95,7 +96,7 @@ namespace Altaxo.Science.Spectroscopy.BaselineEstimation
     /// <summary>
     /// Gets or sets the maximum number of iterations. The default value is 10.
     /// </summary>
-    /// <exception cref="ArgumentOutOfRangeException">Value must be &gt;=1</exception>
+    /// <exception cref="ArgumentOutOfRangeException">Value must be &gt;= 1.</exception>
     public int MaximumNumberOfIterations
     {
       get => _maximumNumberOfIterations;
@@ -109,6 +110,13 @@ namespace Altaxo.Science.Spectroscopy.BaselineEstimation
 
     private int _order = 2;
 
+    /// <summary>
+    /// Gets the order of the difference penalty.
+    /// </summary>
+    /// <remarks>
+    /// Supported values are 1 and 2.
+    /// </remarks>
+    /// <exception cref="ArgumentOutOfRangeException">Order must be 1 or 2.</exception>
     public int Order
     {
       get => _order;
@@ -202,6 +210,7 @@ namespace Altaxo.Science.Spectroscopy.BaselineEstimation
       z.CopyTo(resultingBaseline);
     }
 
+    /// <inheritdoc/>
     public override string ToString()
     {
       return $"{this.GetType().Name} Order={Order} P={P} Lambda={Lambda}{(ScaleLambdaWithXUnits ? 'X' : 'P')} Iterations={MaximumNumberOfIterations}";
@@ -209,7 +218,7 @@ namespace Altaxo.Science.Spectroscopy.BaselineEstimation
   }
 
   /// <summary>
-  /// Implements the Asymmetric Least Squares method for baseline estimation, proposed by Eilers and Boelens 2005 [1].
+  /// Implements the Asymmetric Least Squares method for baseline estimation, proposed by Eilers and Boelens (2005) [1].
   /// </summary>
   /// <remarks>
   /// <para>References:</para>
@@ -220,9 +229,13 @@ namespace Altaxo.Science.Spectroscopy.BaselineEstimation
   {
     #region Serialization
 
+    /// <summary>
+    /// XML serialization surrogate for <see cref="ALS"/>.
+    /// </summary>
     [Altaxo.Serialization.Xml.XmlSerializationSurrogateFor(typeof(ALS), 0)]
     public class SerializationSurrogate0 : Altaxo.Serialization.Xml.IXmlSerializationSurrogate
     {
+      /// <inheritdoc/>
       public void Serialize(object obj, Altaxo.Serialization.Xml.IXmlSerializationInfo info)
       {
         var s = (ALS)obj;
@@ -233,6 +246,7 @@ namespace Altaxo.Science.Spectroscopy.BaselineEstimation
         info.AddValue("MaxNumberOfIterations", s.MaximumNumberOfIterations);
       }
 
+      /// <inheritdoc/>
       public object Deserialize(object? o, Altaxo.Serialization.Xml.IXmlDeserializationInfo info, object? parent)
       {
         var lambda = info.GetDouble("Lambda");

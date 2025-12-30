@@ -33,8 +33,8 @@ namespace Altaxo.Science.Signals
   /// <summary>
   /// Executes a four point step evaluation and stores the result.
   /// Two points on the curve define a left straight line, and two other points on the curve define a right straight line.
-  /// The step should be located inbetween the two inner points. The step position is then evaluated by building a regression
-  /// line of the curve between the inner points, but only from a certain level to another given leven (e.g., from 25% to 75% of the distance between left and right line).
+  /// The step should be located in between the two inner points. The step position is then evaluated by building a regression
+  /// line of the curve between the inner points, but only from a certain level to another given level (e.g., from 25% to 75% of the distance between the left and right line).
   /// </summary>
   public class FourPointStepEvaluation : Main.IImmutable
   {
@@ -149,19 +149,26 @@ namespace Altaxo.Science.Signals
 
 
     /// <summary>
-    /// Creates 
+    /// Creates a step evaluation from indices.
     /// </summary>
     /// <param name="x">The x array.</param>
     /// <param name="y">The y array.</param>
     /// <param name="indexLeftOuter">The index of the left outer point.</param>
-    /// <param name="indexLeftInner">The index of the left inner point .</param>
+    /// <param name="indexLeftInner">The index of the left inner point.</param>
     /// <param name="indexRightInner">The index of the right inner point.</param>
     /// <param name="indexRightOuter">The index of the right outer point.</param>
-    /// <param name="useRegressionForLeftAndRightLine">If set to <c>true</c>, a full regression is used for the left and right line. If set to <c>false</c>, only the inner and outer points are used to form the line.</param>
-    /// <param name="middleRegressionLevels">the regression levels for the middle line. For instance, if the value is set to (0.25, 0.75), then all points between 25% and 75% distance from the left and right line are used
-    /// for the regression of the middle line.</param>
-    /// <param name="throwOnError">If true, any error in the evaluation will throw an <see cref="InvalidOperationException"/>. If false,
-    /// no exception is thrown; instead, the error is stored and can be read-out using the property <see cref="Errors"/>.</param>
+    /// <param name="useRegressionForLeftAndRightLine">
+    /// If set to <c>true</c>, a full regression is used for the left and right line.
+    /// If set to <c>false</c>, only the inner and outer points are used to form the line.
+    /// </param>
+    /// <param name="middleRegressionLevels">
+    /// The regression levels for the middle line. For instance, if the value is set to (0.25, 0.75), then all points between 25% and 75% distance from the left and right line are used
+    /// for the regression of the middle line.
+    /// </param>
+    /// <param name="throwOnError">
+    /// If true, any error in the evaluation will throw an <see cref="InvalidOperationException"/>. If false,
+    /// no exception is thrown; instead, the error is stored and can be read out using the property <see cref="Errors"/>.
+    /// </param>
     /// <returns>The result of the step evaluation.</returns>
     public static FourPointStepEvaluation CreateFromIndices(IReadOnlyList<double> x, IReadOnlyList<double> y, double indexLeftOuter, double indexLeftInner, double indexRightInner, double indexRightOuter, bool useRegressionForLeftAndRightLine, (double LowerLevel, double UpperLevel) middleRegressionLevels, bool throwOnError = true)
     {
@@ -177,11 +184,18 @@ namespace Altaxo.Science.Signals
     /// <param name="xLeftInner">The x-value of the left inner point.</param>
     /// <param name="xRightInner">The x-value of the right inner point.</param>
     /// <param name="xRightOuter">The x-value of the right outer point.</param>
-    /// <param name="useRegressionForLeftAndRightLine">If set to <c>true</c>, a full regression is used for the left and right line. If set to <c>false</c>, only the inner and outer points are used to form the line.</param>
-    /// <param name="middleRegressionLevels">the regression levels for the middle line. For instance, if the value is set to (0.25, 0.75), then all points between 25% and 75% distance from the left and right line are used
-    /// for the regression of the middle line.</param>
-    /// <param name="throwOnError">If true, any error in the evaluation will throw an <see cref="InvalidOperationException"/>. If false,
-    /// no exception is thrown; instead, the error is stored and can be read-out using the property <see cref="Errors"/>.</param>
+    /// <param name="useRegressionForLeftAndRightLine">
+    /// If set to <c>true</c>, a full regression is used for the left and right line.
+    /// If set to <c>false</c>, only the inner and outer points are used to form the line.
+    /// </param>
+    /// <param name="middleRegressionLevels">
+    /// The regression levels for the middle line. For instance, if the value is set to (0.25, 0.75), then all points between 25% and 75% distance from the left and right line are used
+    /// for the regression of the middle line.
+    /// </param>
+    /// <param name="throwOnError">
+    /// If true, any error in the evaluation will throw an <see cref="InvalidOperationException"/>. If false,
+    /// no exception is thrown; instead, the error is stored and can be read out using the property <see cref="Errors"/>.
+    /// </param>
     /// <returns>The result of the step evaluation.</returns>
     public static FourPointStepEvaluation CreateFromValues(IReadOnlyList<double> x, IReadOnlyList<double> y, double xLeftOuter, double xLeftInner, double xRightInner, double xRightOuter, bool useRegressionForLeftAndRightLine, (double LowerLevel, double UpperLevel) middleRegressionLevels, bool throwOnError = true)
     {
@@ -192,6 +206,21 @@ namespace Altaxo.Science.Signals
       return new FourPointStepEvaluation(x, y, indexLeftOuter, indexLeftInner, indexRightInner, indexRightOuter, useRegressionForLeftAndRightLine, middleRegressionLevels, throwOnError);
     }
 
+    /// <summary>
+    /// Initializes a new instance of the <see cref="FourPointStepEvaluation"/> class.
+    /// </summary>
+    /// <param name="x">The x array.</param>
+    /// <param name="y">The y array.</param>
+    /// <param name="indexLeftOuter">The index of the left outer point.</param>
+    /// <param name="indexLeftInner">The index of the left inner point.</param>
+    /// <param name="indexRightInner">The index of the right inner point.</param>
+    /// <param name="indexRightOuter">The index of the right outer point.</param>
+    /// <param name="useRegressionForLeftAndRightLine">
+    /// If set to <c>true</c>, a full regression is used for the left and right line.
+    /// If set to <c>false</c>, only the inner and outer points are used to form the line.
+    /// </param>
+    /// <param name="middleRegressionLevels">The regression levels used to select points for the middle regression line.</param>
+    /// <param name="throwOnError">If true, throws an exception on error; otherwise errors are accumulated in <see cref="Errors"/>.</param>
     private FourPointStepEvaluation(IReadOnlyList<double> x, IReadOnlyList<double> y, double indexLeftOuter, double indexLeftInner, double indexRightInner, double indexRightOuter, bool useRegressionForLeftAndRightLine, (double LowerLevel, double UpperLevel) middleRegressionLevels, bool throwOnError)
     {
       _throwOnError = throwOnError;
@@ -357,7 +386,7 @@ namespace Altaxo.Science.Signals
     /// <param name="rightRegression">The right regression line.</param>
     /// <param name="lowerRegressionLevel">The lower regression level (0..1). Usually, it is 0.25.</param>
     /// <param name="upperRegressionLevel">The upper regression level (0..1). Usually, it is 0.75.</param>
-    /// <returns></returns>
+    /// <returns>The regression that forms the middle line of the step.</returns>
     public static QuickLinearRegression GetMiddleRegression(IReadOnlyList<double> x, IReadOnlyList<double> y, double index1, double index2, QuickLinearRegression leftRegression, QuickLinearRegression rightRegression, double lowerRegressionLevel, double upperRegressionLevel)
     {
       var min = Math.Min(index1, index2);
@@ -386,6 +415,10 @@ namespace Altaxo.Science.Signals
       return result;
     }
 
+    /// <summary>
+    /// Reports an error either by throwing an exception or by collecting the message.
+    /// </summary>
+    /// <param name="message">The error message.</param>
     private void ReportError(string message)
     {
       if (_throwOnError)

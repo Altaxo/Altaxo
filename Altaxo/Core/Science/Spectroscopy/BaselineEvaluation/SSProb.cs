@@ -39,6 +39,7 @@ namespace Altaxo.Science.Spectroscopy.BaselineEvaluation
     [Altaxo.Serialization.Xml.XmlSerializationSurrogateFor(typeof(SSProb), 0)]
     public class SerializationSurrogate0 : Altaxo.Serialization.Xml.IXmlSerializationSurrogate
     {
+      /// <inheritdoc/>
       public void Serialize(object obj, Altaxo.Serialization.Xml.IXmlSerializationInfo info)
       {
         var s = (SSProb)obj;
@@ -48,6 +49,7 @@ namespace Altaxo.Science.Spectroscopy.BaselineEvaluation
         info.AddValue("Probability", s.RelativeProbabilityThreshold);
       }
 
+      /// <inheritdoc/>
       public object Deserialize(object? o, Altaxo.Serialization.Xml.IXmlDeserializationInfo info, object? parent)
       {
         var interpolation = info.GetValue<IInterpolationFunctionOptions>("Interpolation", parent);

@@ -26,17 +26,30 @@ using System.Collections.Generic;
 
 namespace Altaxo.Science.Spectroscopy.Cropping
 {
+  /// <summary>
+  /// Crops a spectrum by retaining only points whose x values are within a specified range.
+  /// </summary>
   public record CroppingByXValues : ICropping
   {
+    /// <summary>
+    /// Gets the minimal x value (inclusive) of the cropping range.
+    /// </summary>
     public double MinimalValue { get; init; } = double.NegativeInfinity;
 
+    /// <summary>
+    /// Gets the maximal x value (inclusive) of the cropping range.
+    /// </summary>
     public double MaximalValue { get; init; } = double.PositiveInfinity;
 
     #region Serialization
 
+    /// <summary>
+    /// XML serialization surrogate for <see cref="CroppingByXValues"/>.
+    /// </summary>
     [Altaxo.Serialization.Xml.XmlSerializationSurrogateFor(typeof(CroppingByXValues), 0)]
     public class SerializationSurrogate0 : Altaxo.Serialization.Xml.IXmlSerializationSurrogate
     {
+      /// <inheritdoc/>
       public void Serialize(object obj, Altaxo.Serialization.Xml.IXmlSerializationInfo info)
       {
         var s = (CroppingByXValues)obj;
@@ -44,6 +57,7 @@ namespace Altaxo.Science.Spectroscopy.Cropping
         info.AddValue("MaximalValue", s.MaximalValue);
       }
 
+      /// <inheritdoc/>
       public object Deserialize(object? o, Altaxo.Serialization.Xml.IXmlDeserializationInfo info, object? parent)
       {
         var minimalValue = info.GetDouble("MinimalValue");
@@ -64,6 +78,7 @@ namespace Altaxo.Science.Spectroscopy.Cropping
     #endregion
 
 
+    /// <inheritdoc/>
     public (double[] x, double[] y, int[]? regions) Execute(double[] x, double[] y, int[]? regions)
     {
       var min = MinimalValue;
@@ -107,6 +122,7 @@ namespace Altaxo.Science.Spectroscopy.Cropping
       return (lx.ToArray(), ly.ToArray(), lr.Count > 0 ? lr.ToArray() : null);
     }
 
+    /// <inheritdoc/>
     public override string ToString()
     {
       return $"{this.GetType().Name} Min={MinimalValue} Max={MaximalValue}";

@@ -25,20 +25,25 @@
 namespace Altaxo.Science.Spectroscopy.Normalization
 {
   /// <summary>
-  /// Executes SNV (standard  normal variate) normalization : y' = (y-mean)/(std), in which mean and std are the mean value and the standard deviation of the array values.
+  /// Executes SNV (standard normal variate) normalization: y' = (y - mean) / std, in which mean and std are the mean value and the standard deviation of the array values.
   /// </summary>
   /// <seealso cref="Altaxo.Science.Spectroscopy.Normalization.INormalization" />
   public record NormalizationStandardNormalVariate : INormalization
   {
     #region Serialization
 
+    /// <summary>
+    /// XML serialization surrogate for <see cref="NormalizationStandardNormalVariate"/>.
+    /// </summary>
     [Altaxo.Serialization.Xml.XmlSerializationSurrogateFor(typeof(NormalizationStandardNormalVariate), 0)]
     public class SerializationSurrogate0 : Altaxo.Serialization.Xml.IXmlSerializationSurrogate
     {
+      /// <inheritdoc/>
       public void Serialize(object obj, Altaxo.Serialization.Xml.IXmlSerializationInfo info)
       {
       }
 
+      /// <inheritdoc/>
       public object Deserialize(object? o, Altaxo.Serialization.Xml.IXmlDeserializationInfo info, object? parent)
       {
         return new NormalizationStandardNormalVariate();

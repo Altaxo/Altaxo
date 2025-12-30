@@ -38,13 +38,24 @@ namespace Altaxo.Science.Spectroscopy.PeakEnhancement
     /// </summary>
     public const double DefaultHalfWidthInPoints = 1;
 
+    /// <summary>
+    /// Backing field for <see cref="HalfWidth"/>.
+    /// </summary>
     private double? _halfWidth;
+
+    /// <summary>
+    /// Backing field for <see cref="IsHalfWidthInXUnits"/>.
+    /// </summary>
     private bool _isHalfWidthInXUnits;
+
+    /// <summary>
+    /// Backing field for <see cref="NumberOfApplications"/>.
+    /// </summary>
     private int _numberOfApplications = 1;
 
     /// <summary>
     /// Half of the width of the averaging window. This value should be set to
-    /// a very small value here, less than a half of the half width of the peaks.
+    /// a very small value here, less than half of the half width of the peaks.
     /// A value of 1 point (which is the default) will do in most cases.
     /// </summary>
     public double? HalfWidth
@@ -104,6 +115,7 @@ namespace Altaxo.Science.Spectroscopy.PeakEnhancement
     [Altaxo.Serialization.Xml.XmlSerializationSurrogateFor(typeof(PeakEnhancementSNIP), 0)]
     public class SerializationSurrogate0 : Altaxo.Serialization.Xml.IXmlSerializationSurrogate
     {
+      /// <inheritdoc/>
       public void Serialize(object obj, Altaxo.Serialization.Xml.IXmlSerializationInfo info)
       {
         var s = (PeakEnhancementSNIP)obj;
@@ -112,6 +124,7 @@ namespace Altaxo.Science.Spectroscopy.PeakEnhancement
         info.AddValue("NumberOfApplications", s.NumberOfApplications);
       }
 
+      /// <inheritdoc/>
       public object Deserialize(object? o, Altaxo.Serialization.Xml.IXmlDeserializationInfo info, object? parent)
       {
         var halfWidth = info.GetNullableDouble("HalfWidth");

@@ -32,15 +32,20 @@ namespace Altaxo.Science.Spectroscopy.BaselineEvaluation
   {
     #region Serialization
 
+    /// <summary>
+    /// XML serialization surrogate for <see cref="PolynomialDetrending"/>.
+    /// </summary>
     [Altaxo.Serialization.Xml.XmlSerializationSurrogateFor(typeof(PolynomialDetrending), 0)]
     public class SerializationSurrogate0 : Altaxo.Serialization.Xml.IXmlSerializationSurrogate
     {
+      /// <inheritdoc/>
       public void Serialize(object obj, Altaxo.Serialization.Xml.IXmlSerializationInfo info)
       {
         var s = (PolynomialDetrending)obj;
         info.AddValue("Order", s.DetrendingOrder);
       }
 
+      /// <inheritdoc/>
       public object Deserialize(object? o, Altaxo.Serialization.Xml.IXmlDeserializationInfo info, object? parent)
       {
         var order = info.GetInt32("Order");

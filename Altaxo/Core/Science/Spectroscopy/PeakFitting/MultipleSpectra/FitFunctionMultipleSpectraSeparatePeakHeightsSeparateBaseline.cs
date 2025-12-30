@@ -31,9 +31,9 @@ using Altaxo.Calc.Regression.Nonlinear;
 namespace Altaxo.Science.Spectroscopy.PeakFitting.MultipleSpectra
 {
   /// <summary>
-  /// A fit function that wrapps a peak fitting function intended for one spectrum so that is can be used to fit the peaks of multiple spectra simultaneously,
-  /// sharing the peak parameters position, width, and other shape parameters among the spectra, but not sharing the peak amplitude parameters
-  /// and the baseline parameters.
+  /// A fit function that wraps a peak fit function intended for one spectrum so that it can be used to fit peaks of multiple spectra
+  /// simultaneously, sharing peak parameters (position, width, and other shape parameters) among spectra, while not sharing
+  /// peak amplitude parameters and baseline parameters.
   /// </summary>
   /// <seealso cref="Altaxo.Calc.Regression.Nonlinear.IFitFunction" />
   /// <seealso cref="Altaxo.Calc.Regression.Nonlinear.IFitFunctionWithDerivative" />
@@ -47,18 +47,18 @@ namespace Altaxo.Science.Spectroscopy.PeakFitting.MultipleSpectra
     private int NumberOfParametersPerPeakGlobal => (_numberOfParametersPerPeakLocal - 1 + _numberOfSpectra);
 
     /// <summary>
-    /// Indices of the start of the spectra in the global spectra array
-    /// The first element is always 0
+    /// Indices of the start of the spectra in the global spectra array.
+    /// The first element is always 0.
     /// </summary>
     private IReadOnlyList<int> _startIndicesOfSpectra;
 
     /// <summary>
-    /// The parameters for the underlying fit function
+    /// The parameters for the underlying fit function.
     /// </summary>
     private double[] _parametersLocal;
 
     /// <summary>
-    /// The array that designates if the parameters are fixed or not.
+    /// The array that designates whether parameters are fixed.
     /// </summary>
     private bool[] _isFixedLocal;
 
@@ -71,11 +71,14 @@ namespace Altaxo.Science.Spectroscopy.PeakFitting.MultipleSpectra
     /// <summary>
     /// Initializes a new instance of the <see cref="FitFunctionMultipleSpectraSeparatePeakHeightsSeparateBaseline"/> class.
     /// </summary>
-    /// <param name="underlyingFitFunction">The underlying peak fitting function.</param>
-    /// <param name="startIndicesOfSpectra">The start indices of spectra. The first entry must always be zero, since this
-    /// is the start of the spectral values of the first spectrum in the global array. The next entries are incremented by the number of spectral values.
-    /// For example, if three spectra should be fitted with length of 100, 90 and 80 respectively, the list should contain [0, 100, 190]. The length of the last
-    /// spectrum (80 in this example) is deduced from the last entry and the length of the global array.
+    /// <param name="underlyingFitFunction">The underlying peak fit function.</param>
+    /// <param name="startIndicesOfSpectra">
+    /// The start indices of spectra.
+    /// The first entry must always be zero, since this is the start of the spectral values of the first spectrum in the global array.
+    /// The next entries are incremented by the number of spectral values.
+    /// For example, if three spectra should be fitted with lengths of 100, 90, and 80 respectively, the list should contain
+    /// <c>[0, 100, 190]</c>.
+    /// The length of the last spectrum (80 in this example) is deduced from the last entry and the length of the global array.
     /// </param>
     public FitFunctionMultipleSpectraSeparatePeakHeightsSeparateBaseline(IFitFunctionPeak underlyingFitFunction, IReadOnlyList<int> startIndicesOfSpectra)
     {
@@ -124,10 +127,13 @@ namespace Altaxo.Science.Spectroscopy.PeakFitting.MultipleSpectra
     }
 
     /// <summary>
-    /// Sets all peak parameters except that for the first peak to fixed.
+    /// Sets all peak parameters except those for the first peak to fixed.
     /// </summary>
-    /// <param name="value">If set to true, all parameters except for the first peak are set to fixed. If set to false, all parameters can vary.</param>
-    /// <param name="numberOfFixedPositionPeaks">Number of peaks (at the end), for which the position is fixed. </param>
+    /// <param name="value">
+    /// If set to <see langword="true"/>, all parameters except for the first peak are fixed.
+    /// If set to <see langword="false"/>, all parameters can vary (except fixed-position peaks).
+    /// </param>
+    /// <param name="numberOfFixedPositionPeaks">Number of peaks (at the end) for which the position is fixed.</param>
     public void SetAllPeakParametersExceptFirstPeakToFixed(bool value, int numberOfFixedPositionPeaks)
     {
       if (value == false)
@@ -147,7 +153,7 @@ namespace Altaxo.Science.Spectroscopy.PeakFitting.MultipleSpectra
       }
     }
 
-    /// <summary>Not implemented.</summary>
+    /// <inheritdoc/>
     public void Evaluate(double[] independent, double[] parameters, double[] FV)
     {
       var x = MatrixMath.ToROMatrixWithOneRow(independent);
@@ -200,13 +206,12 @@ namespace Altaxo.Science.Spectroscopy.PeakFitting.MultipleSpectra
     /// <summary>
     /// Transfers the global parameter set to local parameters that can be used by the underlying peak fit function.
     /// </summary>
-    /// <param name="indexOfSpectrum">The index of spectrum.</param>
-    /// <param name="parameters">The parameters.</param>
+    /// <param name="indexOfSpectrum">The index of the spectrum.</param>
+    /// <param name="parameters">The global parameter vector.</param>
     /// <remarks>
-    /// The layout of the global parameter array is as follows:
-    ///
-    /// <para>For each peak: 1. all the amplitudes of the spectra, followed by the other parameters of the peak</para>
-    /// <para>3. block: numberOfSpectra x (baseline parameters)</para>
+    /// The layout of the global parameter vector is as follows:
+    /// <para>For each peak: all amplitudes of the spectra, followed by the other parameters of the peak.</para>
+    /// <para>For each spectrum: a block of baseline parameters.</para>
     /// </remarks>
     private void TransferGlobalToLocalParameters(int indexOfSpectrum, IReadOnlyList<double> parameters)
     {
@@ -229,13 +234,13 @@ namespace Altaxo.Science.Spectroscopy.PeakFitting.MultipleSpectra
       }
     }
 
-    /// <summary>Not implemented.</summary>
+    /// <inheritdoc/>
     public (IReadOnlyList<double?>? LowerBounds, IReadOnlyList<double?>? UpperBounds) GetParameterBoundariesHardLimit()
     {
       return (null, null);
     }
 
-    /// <summary>Not implemented.</summary>
+    /// <inheritdoc/>
     public (IReadOnlyList<double?>? LowerBounds, IReadOnlyList<double?>? UpperBounds) GetParameterBoundariesSoftLimit()
     {
       return (null, null);

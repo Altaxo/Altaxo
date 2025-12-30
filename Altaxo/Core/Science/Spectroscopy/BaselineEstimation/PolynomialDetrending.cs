@@ -29,14 +29,22 @@ using Altaxo.Calc.Regression;
 namespace Altaxo.Science.Spectroscopy.BaselineEstimation
 {
   /// <summary>
-  /// This class detrends all spectra. This is done by fitting a polynomial to the spectrum (x value is simply the index of data point), and then
-  /// subtracting the fit curve from the spectrum.
-  /// The degree of the polynomial can be choosen between 0 (the mean is subtracted), 1 (a fitted straight line is subtracted).
+  /// Detrends spectra by fitting a polynomial to the spectrum and subtracting the fitted curve.
   /// </summary>
+  /// <remarks>
+  /// The x-value used during fitting is the index of the data point.
+  /// The degree of the polynomial can be chosen between 0 (subtract the mean), 1 (subtract a fitted straight line), and 2 (subtract a fitted quadratic curve).
+  /// </remarks>
   public abstract record PolynomialDetrendingBase : Main.IImmutable
   {
     private int _order = 0;
 
+    /// <summary>
+    /// Gets the polynomial order used for detrending.
+    /// </summary>
+    /// <remarks>
+    /// Supported values are 0, 1, and 2.
+    /// </remarks>
     public int DetrendingOrder
     {
       get => _order;
@@ -74,11 +82,11 @@ namespace Altaxo.Science.Spectroscopy.BaselineEstimation
 
 
     /// <summary>
-    /// Executes the baseline estimation algorithm with the provided spectrum.
+    /// Executes the baseline estimation algorithm for the provided spectrum and writes the estimated baseline into <paramref name="resultingBaseline"/>.
     /// </summary>
-    /// <param name="xArray">The x values of the spectral values.</param>
-    /// <param name="yArray">The array of spectral values.</param>
-    /// <param name="resultingBaseline">The location to which the estimated baseline should be copied.</param>
+    /// <param name="xArray">The x-values of the spectrum.</param>
+    /// <param name="yArray">The y-values of the spectrum.</param>
+    /// <param name="resultingBaseline">The destination to which the estimated baseline is written.</param>
     public void Execute(ReadOnlySpan<double> xArray, ReadOnlySpan<double> yArray, Span<double> resultingBaseline)
     {
       var regionlength = yArray.Length;
@@ -131,6 +139,10 @@ namespace Altaxo.Science.Spectroscopy.BaselineEstimation
     }
 
 
+    /// <summary>
+    /// Writes this instance to XML.
+    /// </summary>
+    /// <param name="writer">The XML writer to write to.</param>
     public void Export(XmlWriter writer)
     {
       writer.WriteStartElement("DetrendingCorrection");
@@ -138,6 +150,7 @@ namespace Altaxo.Science.Spectroscopy.BaselineEstimation
       writer.WriteEndElement();
     }
 
+    /// <inheritdoc/>
     public override string ToString()
     {
       return $"{this.GetType().Name} Order={DetrendingOrder}";
@@ -145,23 +158,29 @@ namespace Altaxo.Science.Spectroscopy.BaselineEstimation
   }
 
   /// <summary>
-  /// This class detrends all spectra. This is done by fitting a polynomial to the spectrum (x value is simply the index of data point), and then
-  /// subtracting the fit curve from the spectrum.
-  /// The degree of the polynomial can be choosen between 0 (the mean is subtracted), 1 (a fitted straight line is subtracted).
+  /// Detrends spectra by fitting a polynomial to the spectrum and subtracting the fitted curve.
   /// </summary>
+  /// <remarks>
+  /// The x-value used during fitting is the index of the data point.
+  /// </remarks>
   public record PolynomialDetrending : PolynomialDetrendingBase, IBaselineEstimation
   {
     #region Serialization
 
+    /// <summary>
+    /// XML serialization surrogate for <see cref="PolynomialDetrending"/>.
+    /// </summary>
     [Altaxo.Serialization.Xml.XmlSerializationSurrogateFor(typeof(PolynomialDetrending), 0)]
     public class SerializationSurrogate0 : Altaxo.Serialization.Xml.IXmlSerializationSurrogate
     {
+      /// <inheritdoc/>
       public void Serialize(object obj, Altaxo.Serialization.Xml.IXmlSerializationInfo info)
       {
         var s = (PolynomialDetrending)obj;
         info.AddValue("Order", s.DetrendingOrder);
       }
 
+      /// <inheritdoc/>
       public object Deserialize(object? o, Altaxo.Serialization.Xml.IXmlDeserializationInfo info, object? parent)
       {
         var order = info.GetInt32("Order");

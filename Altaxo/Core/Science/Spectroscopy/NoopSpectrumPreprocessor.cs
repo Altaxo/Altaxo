@@ -26,20 +26,25 @@
 namespace Altaxo.Science.Spectroscopy
 {
   /// <summary>
-  /// This class does nothing, i.e. it leaves the spectrum as it is.
+  /// A spectral preprocessor that does nothing, i.e., it leaves the spectrum unchanged.
   /// </summary>
   /// <seealso cref="Altaxo.Science.Spectroscopy.ISingleSpectrumPreprocessor" />
   public record NoopSpectrumPreprocessor : ISingleSpectrumPreprocessor, Main.IImmutable
   {
     #region Serialization
 
+    /// <summary>
+    /// XML serialization surrogate for <see cref="NoopSpectrumPreprocessor"/>.
+    /// </summary>
     [Altaxo.Serialization.Xml.XmlSerializationSurrogateFor(typeof(NoopSpectrumPreprocessor), 0)]
     public class SerializationSurrogate0 : Altaxo.Serialization.Xml.IXmlSerializationSurrogate
     {
+      /// <inheritdoc/>
       public void Serialize(object obj, Altaxo.Serialization.Xml.IXmlSerializationInfo info)
       {
       }
 
+      /// <inheritdoc/>
       public object Deserialize(object? o, Altaxo.Serialization.Xml.IXmlDeserializationInfo info, object? parent)
       {
         return new NoopSpectrumPreprocessor();

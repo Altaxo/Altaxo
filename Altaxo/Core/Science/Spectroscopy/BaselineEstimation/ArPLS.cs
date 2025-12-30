@@ -29,7 +29,7 @@ using Altaxo.Calc.LinearAlgebra;
 namespace Altaxo.Science.Spectroscopy.BaselineEstimation
 {
   /// <summary>
-  /// Implements the asymmetrically reweighted penalized least squares algorithm proposed by Baek et al [1].
+  /// Implements the asymmetrically reweighted penalized least squares algorithm proposed by Baek et al. [1].
   /// </summary>
   /// <remarks>
   /// <para>References:</para>
@@ -41,9 +41,10 @@ namespace Altaxo.Science.Spectroscopy.BaselineEstimation
     private double _lambda = 1E5;
 
     /// <summary>
-    /// Gets or sets the smoothing parameter lambda. The higher lambda is, the smoother the resulting curve will be.
+    /// Gets the smoothing parameter <c>lambda</c>.
+    /// The higher <c>lambda</c> is, the smoother the resulting curve will be.
     /// </summary>
-    /// <exception cref="System.ArgumentException">Value must be &gt; 0</exception>
+    /// <exception cref="System.ArgumentException">Value must be &gt; 0.</exception>
     public double Lambda
     {
       get => _lambda;
@@ -58,10 +59,11 @@ namespace Altaxo.Science.Spectroscopy.BaselineEstimation
     private bool _scaleLambdaWithXUnits;
 
     /// <summary>
-    /// If true, lambda is scaled with the x units, so that the effect of baseline estimation is independent on the resolution of the spectrum.
+    /// Gets a value indicating whether <see cref="Lambda"/> is scaled with the x-units,
+    /// so that the effect of baseline estimation is independent of the resolution of the spectrum.
     /// </summary>
     /// <value>
-    ///   <c>true</c> lambda is scaled with the x units, so that the effect of baseline estimation is independent on the resolution of the spectrum; otherwise, <c>false</c>.
+    /// <see langword="true"/> if <see cref="Lambda"/> is scaled with the x-units; otherwise, <see langword="false"/>.
     /// </value>
     public bool ScaleLambdaWithXUnits
     {
@@ -71,11 +73,12 @@ namespace Altaxo.Science.Spectroscopy.BaselineEstimation
 
     private double _terminationRatio = 0.05;
     /// <summary>
-    /// Gets or sets the criterion for terminating the iteration (0..1). Default is 0.05.
-    /// The iterations stops, if the L2 norm of the differences between actual and previous weights falls below (TerminationRatio x L2 norm of the previous weights).
+    /// Gets the criterion for terminating the iteration (0..1). The default is 0.05.
+    /// The iteration stops if the L2 norm of the differences between the actual and the previous weights falls below
+    /// (<see cref="TerminationRatio"/> × L2 norm of the previous weights).
     /// The lower the value is, the more iterations will be executed.
     /// </summary>
-    /// <exception cref="ArgumentException">Value must be &gt; 0 and &lt; 1</exception>
+    /// <exception cref="ArgumentException">Value must be &gt; 0 and &lt; 1.</exception>
     public double TerminationRatio
     {
       get => _terminationRatio;
@@ -91,11 +94,11 @@ namespace Altaxo.Science.Spectroscopy.BaselineEstimation
     private int _maximumNumberOfIterations = 100;
 
     /// <summary>
-    /// Gets or sets the maximum number of iterations. The default value is 100.
-    /// Usually, the number of iterations is determined by the <see cref="TerminationRatio"/>, but
-    /// with this value, the maximum number of iterations can be limited to a smaller value.
+    /// Gets the maximum number of iterations. The default value is 100.
+    /// Usually, the number of iterations is determined by <see cref="TerminationRatio"/>, but
+    /// with this value the maximum number of iterations can be limited.
     /// </summary>
-    /// <exception cref="ArgumentOutOfRangeException">Value must be &gt;=1</exception>
+    /// <exception cref="ArgumentOutOfRangeException">Value must be &gt;= 1.</exception>
     public int MaximumNumberOfIterations
     {
       get => _maximumNumberOfIterations;
@@ -109,6 +112,13 @@ namespace Altaxo.Science.Spectroscopy.BaselineEstimation
 
     private int _order = 2;
 
+    /// <summary>
+    /// Gets the order of the difference penalty.
+    /// </summary>
+    /// <remarks>
+    /// Supported values are 1 and 2.
+    /// </remarks>
+    /// <exception cref="ArgumentOutOfRangeException">Order must be 1 or 2.</exception>
     public int Order
     {
       get => _order;
@@ -222,7 +232,7 @@ namespace Altaxo.Science.Spectroscopy.BaselineEstimation
           nextWeights[i] = 1 / (1 + Math.Exp(2 * (diff - (2 * standardDeviationOfNegativeDifferences - meanOfNegativeDifferences)) / standardDeviationOfNegativeDifferences));
         }
 
-        // Stop criterion Norm(weights-nextWeights)/Norm(weigths) < ratio (pseudo code in Ref.[1])
+        // Stop criterion Norm(weights-nextWeights)/Norm(weights) < ratio (pseudocode in Ref.[1])
         double sum2Wdiff = 0; double sum2W = 0;
         for (int i = 0; i <= countM1; ++i)
         {
@@ -240,6 +250,7 @@ namespace Altaxo.Science.Spectroscopy.BaselineEstimation
       z.CopyTo(resultingBaseline);
     }
 
+    /// <inheritdoc/>
     public override string ToString()
     {
       return $"{this.GetType().Name} Order={Order} TR={TerminationRatio} Lambda={Lambda}{(ScaleLambdaWithXUnits ? 'X' : 'P')} Iterations={MaximumNumberOfIterations}";
@@ -247,7 +258,7 @@ namespace Altaxo.Science.Spectroscopy.BaselineEstimation
   }
 
   /// <summary>
-  /// Implements the asymmetrically reweighted penalized least squares algorithm proposed by Baek et al [1].
+  /// Implements the asymmetrically reweighted penalized least squares algorithm proposed by Baek et al. [1].
   /// </summary>
   /// <remarks>
   /// <para>References:</para>
@@ -259,9 +270,13 @@ namespace Altaxo.Science.Spectroscopy.BaselineEstimation
 
     #region Serialization
 
+    /// <summary>
+    /// XML serialization surrogate for <see cref="ArPLS"/>.
+    /// </summary>
     [Altaxo.Serialization.Xml.XmlSerializationSurrogateFor(typeof(ArPLS), 0)]
     public class SerializationSurrogate0 : Altaxo.Serialization.Xml.IXmlSerializationSurrogate
     {
+      /// <inheritdoc/>
       public void Serialize(object obj, Altaxo.Serialization.Xml.IXmlSerializationInfo info)
       {
         var s = (ArPLS)obj;
@@ -272,6 +287,7 @@ namespace Altaxo.Science.Spectroscopy.BaselineEstimation
         info.AddValue("MaxNumberOfIterations", s.MaximumNumberOfIterations);
       }
 
+      /// <inheritdoc/>
       public object Deserialize(object? o, Altaxo.Serialization.Xml.IXmlDeserializationInfo info, object? parent)
       {
         var lambda = info.GetDouble("Lambda");

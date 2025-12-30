@@ -25,17 +25,25 @@
 
 namespace Altaxo.Science.Spectroscopy.Smoothing
 {
+  /// <summary>
+  /// No-op smoothing implementation. Returns the input arrays unchanged.
+  /// </summary>
   public class SmoothingNone : ISmoothing
   {
     #region Serialization
 
+    /// <summary>
+    /// XML serialization surrogate for <see cref="SmoothingNone"/> version 0.
+    /// </summary>
     [Altaxo.Serialization.Xml.XmlSerializationSurrogateFor(typeof(SmoothingNone), 0)]
     public class SerializationSurrogate0 : Altaxo.Serialization.Xml.IXmlSerializationSurrogate
     {
+      /// <inheritdoc/>
       public void Serialize(object obj, Altaxo.Serialization.Xml.IXmlSerializationInfo info)
       {
       }
 
+      /// <inheritdoc/>
       public object Deserialize(object? o, Altaxo.Serialization.Xml.IXmlDeserializationInfo info, object? parent)
       {
         return new SmoothingNone();

@@ -35,16 +35,16 @@ using Altaxo.Science.Spectroscopy.PeakSearching;
 
 namespace Altaxo.Science.Spectroscopy.PeakFitting.MultipleSpectra
 {
+  /// <summary>
+  /// Fits peaks jointly across multiple spectra by incrementally adding peaks to a composite multi-spectrum model.
+  /// </summary>
   public record PeakFittingOfMultipleSpectraByIncrementalPeakAddition
   {
     private IFitFunctionPeak _fitFunction = new VoigtAreaParametrizationNu();
 
     /// <summary>
-    /// Gets /sets the fit function to use.
+    /// Gets/sets the fit function to use.
     /// </summary>
-    /// <value>
-    /// The fit function.
-    /// </value>
     public IFitFunctionPeak FitFunction
     {
       get { return _fitFunction; }
@@ -52,12 +52,10 @@ namespace Altaxo.Science.Spectroscopy.PeakFitting.MultipleSpectra
     }
 
     private int _orderOfBaselinePolynomial = 1;
+
     /// <summary>
-    /// Gets or sets the order of the polynomial that is used for the baseline.
+    /// Gets or sets the order of the polynomial used for the baseline.
     /// </summary>
-    /// <value>
-    /// The baseline order.
-    /// </value>
     public int OrderOfBaselinePolynomial
     {
       get { return _orderOfBaselinePolynomial; }
@@ -69,6 +67,9 @@ namespace Altaxo.Science.Spectroscopy.PeakFitting.MultipleSpectra
 
     private int _maximumNumberOfPeaks = 50;
 
+    /// <summary>
+    /// Gets or sets the maximum number of peaks to add.
+    /// </summary>
     public int MaximumNumberOfPeaks
     {
       get { return _maximumNumberOfPeaks; }
@@ -81,13 +82,11 @@ namespace Altaxo.Science.Spectroscopy.PeakFitting.MultipleSpectra
     private double _minimalRelativeHeight = 2.5E-3;
 
     /// <summary>
-    /// Gets/sets the minimal relative height (relative to the maximum of the y-span of all spectra).
+    /// Gets/sets the minimal relative height (relative to the maximum y-span across all spectra).
     /// The addition of new peaks is stopped if the fitting residual falls below this value.
     /// </summary>
-    /// <value>
-    /// Minimal relative height of peaks to be added.
-    /// </value>
-    /// <exception cref="ArgumentOutOfRangeException">Must be &gt;=0, nameof(MinimalRelativeHeight)</exception>
+    /// <value>Minimal relative height of peaks to be added.</value>
+    /// <exception cref="ArgumentOutOfRangeException">Must be &gt;= 0.</exception>
     public double MinimalRelativeHeight
     {
       get => _minimalRelativeHeight;
@@ -106,13 +105,12 @@ namespace Altaxo.Science.Spectroscopy.PeakFitting.MultipleSpectra
     private double _minimalSignalToNoiseRatio = 8;
 
     /// <summary>
-    /// Gets/sets the minimal signal-to-noise ratio. The addition of new peaks is stopped
-    /// if the ratio of the highest remaining peak with respect to the noise level falls below this value.
+    /// Gets/sets the minimal signal-to-noise ratio.
+    /// The addition of new peaks is stopped if the ratio of the highest remaining peak with respect to the noise level
+    /// falls below this value.
     /// </summary>
-    /// <value>
-    /// Minimal signal-to-noise ratio of peaks to be added.
-    /// </value>
-    /// <exception cref="ArgumentOutOfRangeException">Must be &gt;=0, nameof(MinimalRelativeHeight)</exception>
+    /// <value>Minimal signal-to-noise ratio of peaks to be added.</value>
+    /// <exception cref="ArgumentOutOfRangeException">Must be &gt;= 0.</exception>
     public double MinimalSignalToNoiseRatio
     {
       get => _minimalSignalToNoiseRatio;
@@ -129,14 +127,16 @@ namespace Altaxo.Science.Spectroscopy.PeakFitting.MultipleSpectra
     }
 
     /// <summary>
-    /// Gets / sets the scaling factor of the fit width. This value, when set, determines the width around a peak,
-    /// that is used to calculate the parameter errors of that peak (the width around the peak is calculated using this number times the FWHM value of the peak).
+    /// Gets/sets the scaling factor of the fit width.
+    /// When set, this value determines the width around a peak (as a multiple of the peak FWHM) that is used to calculate
+    /// the parameter errors of that peak.
     /// </summary>
     private double? _fitWidthScalingFactor;
 
     /// <summary>
-    /// Gets / sets the scaling factor of the fit width. This value, when set, determines the width around a peak,
-    /// that is used to calculate the parameter errors of that peak (the width around the peak is calculated using this number times the FWHM value of the peak).
+    /// Gets/sets the scaling factor of the fit width.
+    /// When set, this value determines the width around a peak (as a multiple of the peak FWHM) that is used to calculate
+    /// the parameter errors of that peak.
     /// </summary>
     public double? FitWidthScalingFactor
     {
@@ -154,19 +154,19 @@ namespace Altaxo.Science.Spectroscopy.PeakFitting.MultipleSpectra
     }
 
     private double _prunePeaksSumChiSquareFactor = 0.1;
+
     /// <summary>
-    /// Gets/inits a factor that will prune peaks based on their contribution
-    /// to the sum of chi square.
+    /// Gets/inits a factor used to prune peaks based on their contribution to the chi-square sum.
     /// </summary>
     /// <value>
-    /// Factor that will prune peaks based on their contribution
-    /// to the sum of chi square
+    /// Factor used to prune peaks based on their contribution to the chi-square sum.
     /// </value>
-    /// <exception cref="ArgumentOutOfRangeException">Factor has to be >= 0 - FitWidthScalingFactor</exception>
-    /// <remarks>After the fitting of multiple peaks has been done, every one of the peaks will be left out
-    /// of the fit, and it will be calculated, how much this will increase the sum of Chi². If
-    /// the new SumChi² is less than final SumChi² x (1+<see cref="PrunePeaksSumChiSquareFactor"/>), that
-    /// peak will not be included in the final result.</remarks>
+    /// <exception cref="ArgumentOutOfRangeException">Factor has to be &gt;= 0.</exception>
+    /// <remarks>
+    /// After fitting multiple peaks, each peak is temporarily removed from the fit and the increase in chi-square is evaluated.
+    /// If the new chi-square is less than final chi-square × (1 + <see cref="PrunePeaksSumChiSquareFactor"/>), that peak is not included
+    /// in the final result.
+    /// </remarks>
     public double PrunePeaksSumChiSquareFactor
     {
       get
@@ -183,6 +183,10 @@ namespace Altaxo.Science.Spectroscopy.PeakFitting.MultipleSpectra
     }
 
     private double _minimalFWHMValue;
+
+    /// <summary>
+    /// Gets/sets the minimal allowed FWHM value.
+    /// </summary>
     public double MinimalFWHMValue
     {
       get
@@ -198,15 +202,21 @@ namespace Altaxo.Science.Spectroscopy.PeakFitting.MultipleSpectra
       }
     }
 
+    /// <summary>
+    /// Gets a value indicating whether <see cref="MinimalFWHMValue"/> is specified in x-units.
+    /// </summary>
     public bool IsMinimalFWHMValueInXUnits { get; init; } = true;
 
     /// <summary>
-    /// Gets a list of fixed peak positions. While the designated positions are fixed and will not participate in the fitting process,
-    /// the designated FWHM values are intended for calculation of the initial peak parameter values and to calculate the parameter boundaries.
+    /// Gets a list of fixed peak positions.
+    /// While the designated positions are fixed and do not participate in the fitting process, the designated FWHM values are
+    /// used to calculate initial peak parameter values and parameter boundaries.
     /// </summary>
     public IReadOnlyList<(double Position, double InitialFWHMValue, double? MinimalFWHMValue, double? MaximalFWHMValue)> FixedPeakPositions { get; init; } = [];
 
-
+    /// <summary>
+    /// Gets the order in which peaks are added during incremental peak addition.
+    /// </summary>
     public PeakAdditionOrder PeakAdditionOrder { get; init; } = PeakAdditionOrder.Height;
 
     #region Serialization
@@ -214,12 +224,13 @@ namespace Altaxo.Science.Spectroscopy.PeakFitting.MultipleSpectra
     #region Version 0
 
     /// <summary>
-    /// 
+    /// XML serialization surrogate (version 0).
     /// </summary>
     /// <seealso cref="Altaxo.Serialization.Xml.IXmlSerializationSurrogate" />
     [Altaxo.Serialization.Xml.XmlSerializationSurrogateFor(typeof(PeakFittingOfMultipleSpectraByIncrementalPeakAddition), 0)]
     public class SerializationSurrogate0 : Altaxo.Serialization.Xml.IXmlSerializationSurrogate
     {
+      /// <inheritdoc/>
       public void Serialize(object obj, Altaxo.Serialization.Xml.IXmlSerializationInfo info)
       {
         var s = (PeakFittingOfMultipleSpectraByIncrementalPeakAddition)obj;
@@ -248,6 +259,7 @@ namespace Altaxo.Science.Spectroscopy.PeakFitting.MultipleSpectra
         info.CommitArray(); // FixedPeakPositions
       }
 
+      /// <inheritdoc/>
       public object Deserialize(object? o, Altaxo.Serialization.Xml.IXmlDeserializationInfo info, object? parent)
       {
         var fitFunction = info.GetValue<IFitFunctionPeak>("FitFunction", null);
@@ -289,6 +301,7 @@ namespace Altaxo.Science.Spectroscopy.PeakFitting.MultipleSpectra
           PrunePeaksSumChiSquareFactor = prunePeaksSumChiSquareFactor,
           FitWidthScalingFactor = fitWidthScalingFactor,
           FixedPeakPositions = fixedPeaks,
+          PeakAdditionOrder = (PeakAdditionOrder)peakAdditionOrder,
         };
       }
     }
@@ -301,10 +314,12 @@ namespace Altaxo.Science.Spectroscopy.PeakFitting.MultipleSpectra
     /// <summary>
     /// Executes the peak fitting algorithm.
     /// </summary>
-    /// <param name="spectra">The list of spectra. Each spectrum consists of an x-array and an y-array.</param>
-    /// <param name="cancellationToken">The token to cancel the algorithm.</param>
-    /// <param name="cancellationTokenHard">The token to hard cancel the algorithm</param>
-    /// <returns>A list of peak descriptions, sorted by position ascending.</returns>
+    /// <param name="spectra">The list of spectra. Each spectrum consists of an x-array and a y-array.</param>
+    /// <param name="cancellationToken">Token used to request cancellation.</param>
+    /// <param name="cancellationTokenHard">Token used to abort the algorithm immediately.</param>
+    /// <param name="numericalProgress">Optional progress reporter for numeric progress.</param>
+    /// <param name="textualProgress">Optional progress reporter for textual progress.</param>
+    /// <returns>A multi-spectrum peak fitting result.</returns>
     public MultipleSpectraPeakFittingResult Execute(IReadOnlyList<(double[] xArray, double[] yArray)> spectra, CancellationToken cancellationToken, CancellationToken cancellationTokenHard, IProgress<double>? numericalProgress = null, IProgress<string>? textualProgress = null)
     {
       var fitFunctionWithOneTerm = FitFunction.WithNumberOfTerms(1).WithOrderOfBaselinePolynomial(-1);
@@ -694,7 +709,6 @@ namespace Altaxo.Science.Spectroscopy.PeakFitting.MultipleSpectra
       // sort the result list by position
       // note that when we sort the peaks, all the rest must also be sorted, thus
       listOfPeaks.Sort((x, y) => Comparer<double>.Default.Compare(x.Position, y.Position));
-
 
 
 

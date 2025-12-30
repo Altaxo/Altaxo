@@ -37,15 +37,19 @@ namespace Altaxo.Science.Spectroscopy.Calibration
   public record YCalibrationOptions
   {
     /// <summary>
-    /// Gets the intensity curve of calibration source. This is usually a peak function, for instance a Gaussian shape with one or more terms (and baseline polynomial).
+    /// Gets the intensity curve of the calibration source.
+    /// This is usually a peak function, for instance a Gaussian shape with one or more terms (and a baseline polynomial).
     /// </summary>
     public IScalarFunctionDD CurveShape { get; init; } = new FitFunctionDDWrapper(new Altaxo.Calc.FitFunctions.Peaks.GaussAmplitude(1, -1), new double[] { 1, 0, 1 });
 
+    /// <summary>
+    /// Gets the preprocessing options that are applied before performing the calibration.
+    /// </summary>
     public SpectralPreprocessingOptionsBase Preprocessing { get; init; } = new SpectralPreprocessingOptions();
 
     /// <summary>
     /// Gets or sets the smoothing interpolation that is used to smooth the resulting curve.
-    /// The value can be null: in this case, no smoothing is performed.
+    /// The value can be <see langword="null"/>; in this case, no smoothing is performed.
     /// </summary>
     public IInterpolationFunctionOptions? InterpolationMethod { get; init; }
 
@@ -63,7 +67,7 @@ namespace Altaxo.Science.Spectroscopy.Calibration
     /// <summary>
     /// Gets the maximal allowed ratio of the gain that is caused by the intensity correction.
     /// Example: if the value is 10, and in the center of the spectrum the gain is 1, then
-    /// the spectrum is cropped at the ends, where the gain reaches 10.
+    /// the spectrum is cropped at the ends where the gain reaches 10.
     /// </summary>
     public double MaximalGainRatio
     {
@@ -85,6 +89,7 @@ namespace Altaxo.Science.Spectroscopy.Calibration
     [Altaxo.Serialization.Xml.XmlSerializationSurrogateFor("AltaxoCore", "Altaxo.Science.Spectroscopy.Calibration.YCalibrationOptions", 0)]
     public class SerializationSurrogate0 : Altaxo.Serialization.Xml.IXmlSerializationSurrogate
     {
+      /// <inheritdoc/>
       public void Serialize(object obj, Altaxo.Serialization.Xml.IXmlSerializationInfo info)
       {
         throw new InvalidOperationException("Serialization of old version");
@@ -109,6 +114,7 @@ namespace Altaxo.Science.Spectroscopy.Calibration
         */
       }
 
+      /// <inheritdoc/>
       public object Deserialize(object? o, Altaxo.Serialization.Xml.IXmlDeserializationInfo info, object? parent)
       {
         var spectralPreprocessing = info.GetValue<SpectralPreprocessingOptionsBase>("SpectralPreprocessing", parent);
@@ -145,6 +151,7 @@ namespace Altaxo.Science.Spectroscopy.Calibration
     [Altaxo.Serialization.Xml.XmlSerializationSurrogateFor("AltaxoCore", "Altaxo.Science.Spectroscopy.Calibration.YCalibrationOptions", 1)]
     public class SerializationSurrogate1 : Altaxo.Serialization.Xml.IXmlSerializationSurrogate
     {
+      /// <inheritdoc/>
       public void Serialize(object obj, Altaxo.Serialization.Xml.IXmlSerializationInfo info)
       {
         throw new InvalidOperationException("Serialization of old version");
@@ -171,6 +178,7 @@ namespace Altaxo.Science.Spectroscopy.Calibration
         */
       }
 
+      /// <inheritdoc/>
       public object Deserialize(object? o, Altaxo.Serialization.Xml.IXmlDeserializationInfo info, object? parent)
       {
         var spectralPreprocessing = info.GetValue<SpectralPreprocessingOptionsBase>("SpectralPreprocessing", parent);
@@ -208,6 +216,7 @@ namespace Altaxo.Science.Spectroscopy.Calibration
     [Altaxo.Serialization.Xml.XmlSerializationSurrogateFor("AltaxoCore", "Altaxo.Science.Spectroscopy.Calibration.YCalibrationOptions", 2)]
     public class SerializationSurrogate2 : Altaxo.Serialization.Xml.IXmlSerializationSurrogate
     {
+      /// <inheritdoc/>
       public void Serialize(object obj, Altaxo.Serialization.Xml.IXmlSerializationInfo info)
       {
         throw new InvalidOperationException("Serialization of old version");
@@ -239,6 +248,7 @@ namespace Altaxo.Science.Spectroscopy.Calibration
         */
       }
 
+      /// <inheritdoc/>
       public object Deserialize(object? o, Altaxo.Serialization.Xml.IXmlDeserializationInfo info, object? parent)
       {
         var spectralPreprocessing = info.GetValue<SpectralPreprocessingOptionsBase>("SpectralPreprocessing", parent);
@@ -284,6 +294,7 @@ namespace Altaxo.Science.Spectroscopy.Calibration
     [Altaxo.Serialization.Xml.XmlSerializationSurrogateFor(typeof(YCalibrationOptions), 3)]
     public class SerializationSurrogate3 : Altaxo.Serialization.Xml.IXmlSerializationSurrogate
     {
+      /// <inheritdoc/>
       public void Serialize(object obj, Altaxo.Serialization.Xml.IXmlSerializationInfo info)
       {
         var s = (YCalibrationOptions)obj;
@@ -295,6 +306,7 @@ namespace Altaxo.Science.Spectroscopy.Calibration
         info.AddValue("MaximalGainRatio", s.MaximalGainRatio);
       }
 
+      /// <inheritdoc/>
       public object Deserialize(object? o, Altaxo.Serialization.Xml.IXmlDeserializationInfo info, object? parent)
       {
         var spectralPreprocessing = info.GetValue<SpectralPreprocessingOptionsBase>("SpectralPreprocessing", parent);

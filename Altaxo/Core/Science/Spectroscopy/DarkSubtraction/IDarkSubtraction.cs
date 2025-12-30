@@ -24,6 +24,9 @@
 
 namespace Altaxo.Science.Spectroscopy.DarkSubtraction
 {
+  /// <summary>
+  /// Marker interface for spectrum preprocessors that perform dark subtraction.
+  /// </summary>
   public interface IDarkSubtraction : ISingleSpectrumPreprocessor
   {
   }

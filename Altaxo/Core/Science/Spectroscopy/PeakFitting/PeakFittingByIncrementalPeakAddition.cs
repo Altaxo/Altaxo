@@ -36,16 +36,16 @@ using Altaxo.Science.Spectroscopy.PeakSearching;
 
 namespace Altaxo.Science.Spectroscopy.PeakFitting
 {
+  /// <summary>
+  /// Fits peaks by incrementally adding peaks to a composite model until a stopping criterion is met.
+  /// </summary>
   public record PeakFittingByIncrementalPeakAddition : IPeakFitting
   {
     private IFitFunctionPeak _fitFunction = new VoigtAreaParametrizationNu();
 
     /// <summary>
-    /// Gets /sets the fit function to use.
+    /// Gets/sets the fit function to use.
     /// </summary>
-    /// <value>
-    /// The fit function.
-    /// </value>
     public IFitFunctionPeak FitFunction
     {
       get { return _fitFunction; }
@@ -53,12 +53,10 @@ namespace Altaxo.Science.Spectroscopy.PeakFitting
     }
 
     private int _orderOfBaselinePolynomial = 1;
+
     /// <summary>
-    /// Gets or sets the order of the polynomial that is used for the baseline.
+    /// Gets or sets the order of the polynomial used for the baseline.
     /// </summary>
-    /// <value>
-    /// The baseline order.
-    /// </value>
     public int OrderOfBaselinePolynomial
     {
       get { return _orderOfBaselinePolynomial; }
@@ -70,6 +68,9 @@ namespace Altaxo.Science.Spectroscopy.PeakFitting
 
     private int _maximumNumberOfPeaks = 50;
 
+    /// <summary>
+    /// Gets or sets the maximum number of peaks to add.
+    /// </summary>
     public int MaximumNumberOfPeaks
     {
       get { return _maximumNumberOfPeaks; }
@@ -82,13 +83,10 @@ namespace Altaxo.Science.Spectroscopy.PeakFitting
     private double _minimalRelativeHeight = 2.5E-3;
 
     /// <summary>
-    /// Gets/sets the minimal relative height. The addition of new peaks is stopped
-    /// if the fitting residual falls below this value.
+    /// Gets/sets the minimal relative height. The addition of new peaks is stopped if the fitting residual falls below this value.
     /// </summary>
-    /// <value>
-    /// Minimal relative height of peaks to be added.
-    /// </value>
-    /// <exception cref="ArgumentOutOfRangeException">Must be &gt;=0, nameof(MinimalRelativeHeight)</exception>
+    /// <value>Minimal relative height of peaks to be added.</value>
+    /// <exception cref="ArgumentOutOfRangeException">Must be &gt;= 0.</exception>
     public double MinimalRelativeHeight
     {
       get => _minimalRelativeHeight;
@@ -107,13 +105,11 @@ namespace Altaxo.Science.Spectroscopy.PeakFitting
     private double _minimalSignalToNoiseRatio = 8;
 
     /// <summary>
-    /// Gets/sets the minimal signal-to-noise ratio. The addition of new peaks is stopped
-    /// if the ratio of the highest remaining peak with respect to the noise level falls below this value.
+    /// Gets/sets the minimal signal-to-noise ratio. The addition of new peaks is stopped if the ratio of the highest remaining peak
+    /// with respect to the noise level falls below this value.
     /// </summary>
-    /// <value>
-    /// Minimal signal-to-noise ratio of peaks to be added.
-    /// </value>
-    /// <exception cref="ArgumentOutOfRangeException">Must be &gt;=0, nameof(MinimalRelativeHeight)</exception>
+    /// <value>Minimal signal-to-noise ratio of peaks to be added.</value>
+    /// <exception cref="ArgumentOutOfRangeException">Must be &gt;= 0.</exception>
     public double MinimalSignalToNoiseRatio
     {
       get => _minimalSignalToNoiseRatio;
@@ -130,14 +126,16 @@ namespace Altaxo.Science.Spectroscopy.PeakFitting
     }
 
     /// <summary>
-    /// Gets / sets the scaling factor of the fit width. This value, when set, determines the width around a peak,
-    /// that is used to calculate the parameter errors of that peak (the width around the peak is calculated using this number times the FWHM value of the peak).
+    /// Gets/sets the scaling factor of the fit width.
+    /// When set, this value determines the width around a peak (as a multiple of the peak FWHM) that is used to calculate
+    /// the parameter errors of that peak.
     /// </summary>
     private double? _fitWidthScalingFactor;
 
     /// <summary>
-    /// Gets / sets the scaling factor of the fit width. This value, when set, determines the width around a peak,
-    /// that is used to calculate the parameter errors of that peak (the width around the peak is calculated using this number times the FWHM value of the peak).
+    /// Gets/sets the scaling factor of the fit width.
+    /// When set, this value determines the width around a peak (as a multiple of the peak FWHM) that is used to calculate
+    /// the parameter errors of that peak.
     /// </summary>
     public double? FitWidthScalingFactor
     {
@@ -155,19 +153,19 @@ namespace Altaxo.Science.Spectroscopy.PeakFitting
     }
 
     private double _prunePeaksSumChiSquareFactor = 0.1;
+
     /// <summary>
-    /// Gets/inits a factor that will prune peaks based on their contribution
-    /// to the sum of chi square.
+    /// Gets/inits a factor used to prune peaks based on their contribution to the chi-square sum.
     /// </summary>
     /// <value>
-    /// Factor that will prune peaks based on their contribution
-    /// to the sum of chi square
+    /// Factor used to prune peaks based on their contribution to the chi-square sum.
     /// </value>
-    /// <exception cref="System.ArgumentOutOfRangeException">Factor has to be >= 0 - FitWidthScalingFactor</exception>
-    /// <remarks>After the fitting of multiple peaks has been done, every one of the peaks will be left out
-    /// of the fit, and it will be calculated, how much this will increase the sum of Chi². If
-    /// the new SumChi² is less than final SumChi² x (1+<see cref="PrunePeaksSumChiSquareFactor"/>), that
-    /// peak will not be included in the final result.</remarks>
+    /// <exception cref="System.ArgumentOutOfRangeException">Factor has to be &gt;= 0.</exception>
+    /// <remarks>
+    /// After fitting multiple peaks, each peak is temporarily removed from the fit and the increase in chi-square is evaluated.
+    /// If the new chi-square is less than final chi-square × (1 + <see cref="PrunePeaksSumChiSquareFactor"/>), that peak is not included
+    /// in the final result.
+    /// </remarks>
     public double PrunePeaksSumChiSquareFactor
     {
       get
@@ -184,6 +182,10 @@ namespace Altaxo.Science.Spectroscopy.PeakFitting
     }
 
     private double _minimalFWHMValue;
+
+    /// <summary>
+    /// Gets/sets the minimal allowed FWHM value.
+    /// </summary>
     public double MinimalFWHMValue
     {
       get
@@ -199,6 +201,9 @@ namespace Altaxo.Science.Spectroscopy.PeakFitting
       }
     }
 
+    /// <summary>
+    /// Gets a value indicating whether <see cref="MinimalFWHMValue"/> is specified in x-units.
+    /// </summary>
     public bool IsMinimalFWHMValueInXUnits { get; init; } = true;
 
 
@@ -208,12 +213,13 @@ namespace Altaxo.Science.Spectroscopy.PeakFitting
     #region Version 0
 
     /// <summary>
-    /// 
+    /// XML serialization surrogate (version 0).
     /// </summary>
     /// <seealso cref="Altaxo.Serialization.Xml.IXmlSerializationSurrogate" />
     [Altaxo.Serialization.Xml.XmlSerializationSurrogateFor(typeof(PeakFittingByIncrementalPeakAddition), 0)]
     public class SerializationSurrogate0 : Altaxo.Serialization.Xml.IXmlSerializationSurrogate
     {
+      /// <inheritdoc/>
       public void Serialize(object obj, Altaxo.Serialization.Xml.IXmlSerializationInfo info)
       {
         var s = (PeakFittingByIncrementalPeakAddition)obj;
@@ -228,6 +234,7 @@ namespace Altaxo.Science.Spectroscopy.PeakFitting
         info.AddValue("FitWidthScalingFactor", s.FitWidthScalingFactor);
       }
 
+      /// <inheritdoc/>
       public object Deserialize(object? o, Altaxo.Serialization.Xml.IXmlDeserializationInfo info, object? parent)
       {
         var fitFunction = info.GetValue<IFitFunctionPeak>("FitFunction", null);
@@ -280,12 +287,20 @@ namespace Altaxo.Science.Spectroscopy.PeakFitting
         Array.Copy(xArray, start, subX, 0, end - start);
         Array.Copy(yArray, start, subY, 0, end - start);
         var result = Execute(subX, subY, peakDesc, cancellationToken);
-        Array.Copy(subY, 0, yResult, start, end - start); // copy yArray back, the baseline now subtracted
+        Array.Copy(subY, 0, yResult, start, end - start); // copy yArray back, baseline now subtracted
         peakFitDescriptions.Add((result, start, end));
       }
       return (xArray, yResult, regions, peakFitDescriptions);
     }
 
+    /// <summary>
+    /// Fits peaks to the provided region by incrementally adding peaks.
+    /// </summary>
+    /// <param name="xArray">The x-values of the region.</param>
+    /// <param name="yArray">The y-values of the region (may be modified by baseline subtraction).</param>
+    /// <param name="peakDescriptions">Peak descriptions from the previous peak searching step.</param>
+    /// <param name="cancellationToken">Token used to cancel this task.</param>
+    /// <returns>A list of peak descriptions for the fitted peaks.</returns>
     public List<PeakDescription> Execute(double[] xArray, double[] yArray, IEnumerable<PeakSearching.PeakDescription> peakDescriptions, CancellationToken cancellationToken)
     {
       // First, deduce some characteristics from the x-values
@@ -676,17 +691,21 @@ namespace Altaxo.Science.Spectroscopy.PeakFitting
     }
 
     /// <summary>
-    /// Prunes the peaks based on the Sum of Chi².
+    /// Prunes peaks based on the chi-square sum.
     /// </summary>
-    /// <param name="prunePeaksSumChiSquareFactor">The factor that determines how many peaks are pruned.
-    /// Peaks are pruned as long as newChi²&lt;oldChi² x (1+<paramref name="prunePeaksSumChiSquareFactor"/>).</param>
+    /// <param name="prunePeaksSumChiSquareFactor">
+    /// The factor that determines how many peaks are pruned.
+    /// Peaks are pruned as long as newChi² &lt; oldChi² × (1 + <paramref name="prunePeaksSumChiSquareFactor"/>).
+    /// </param>
     /// <param name="xArray">The x array.</param>
     /// <param name="yArray">The y array.</param>
     /// <param name="fitFunction">The fit function.</param>
-    /// <param name="previousGuess">The fit function's parameter.</param>
+    /// <param name="previousGuess">The fit function's parameters.</param>
     /// <param name="isFixedByUserOrBoundaries">Outcome of the fit that designates which parameters are fixed by the user or by boundary conditions.</param>
     /// <param name="numberOfParametersPerTerm">The number of parameters per peak.</param>
-    /// <returns>A value that is true if peaks were pruned, the new fit function, the new parameter set, and the new array of fixed parameters.</returns>
+    /// <returns>
+    /// A value indicating whether peaks were pruned, the new fit function, the new parameter set, and the new array of fixed parameters.
+    /// </returns>
     public static (bool wasPruned, IFitFunctionPeak fitFunction, double[] previousGuess, bool[] isFixedByUserOrBoundaries) PrunePeaksBasedOnSumChiSquare(double prunePeaksSumChiSquareFactor, double[] xArray, double[] yArray, IFitFunctionPeak fitFunction, double[] previousGuess, bool[] isFixedByUserOrBoundaries, int numberOfParametersPerTerm)
     {
       bool wasPruned = false;

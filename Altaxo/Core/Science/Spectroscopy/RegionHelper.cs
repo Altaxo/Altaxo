@@ -28,18 +28,20 @@ using System.Collections.Generic;
 namespace Altaxo.Science.Spectroscopy
 {
   /// <summary>
-  /// Class that helps with region arrays.
+  /// Helper methods for working with region arrays.
   /// </summary>
   public static class RegionHelper
   {
     /// <summary>
     /// Gets the region ranges.
     /// </summary>
-    /// <param name="regions">The regions. Each element designates the start index of a new region.
-    /// It is not neccessary to set the first point of the array to zero. If null or an empty array is provided,
-    /// the full region is returned.</param>
+    /// <param name="regions">
+    /// The regions. Each element designates the start index of a new region.
+    /// It is not necessary to set the first point of the array to zero. If <see langword="null"/> or an empty array is provided,
+    /// the full range is returned.
+    /// </param>
     /// <param name="arrayLength">Length of the array.</param>
-    /// <returns>Enumeration of regions as tuple of start index and end index (exclusive).</returns>
+    /// <returns>An enumeration of regions as tuples of start index and end index (exclusive).</returns>
     public static IEnumerable<(int Start, int End)> GetRegionRanges(int[]? regions, int arrayLength)
     {
       if (regions is null || regions.Length == 0)
@@ -65,14 +67,16 @@ namespace Altaxo.Science.Spectroscopy
 
 
     /// <summary>
-    /// Trys to identify spectral regions by supplying the spectral x values.
-    /// A end_of_region is recognized when the gap between two x-values is ten times higher
-    /// than the previous gap, or if the sign of the gap value changes.
+    /// Tries to identify spectral regions based on the provided spectral x-values.
+    /// An end of a region is recognized when the gap between two consecutive x-values is ten times larger
+    /// than the previous gap, or if the sign of the gap changes.
     /// This method fails if a spectral region contains only a single point (since no gap value can be obtained then).
-    /// (But in this case almost all spectral correction methods also fails).
+    /// (In this case, almost all spectral correction methods also fail.)
     /// </summary>
-    /// <param name="xvalues">The vector of x values for the spectra (wavelength, frequencies...).</param>
-    /// <returns>The array of regions. Each element in the array is the starting index of a new region into the vector xvalues.</returns>
+    /// <param name="xvalues">The vector of x-values for the spectra (wavelengths, frequencies, etc.).</param>
+    /// <returns>
+    /// The array of regions. Each element in the array is the start index of a new region in <paramref name="xvalues"/>.
+    /// </returns>
     public static int[] IdentifyRegions(IReadOnlyList<double> xvalues)
     {
       var list = new List<int>();
@@ -93,6 +97,16 @@ namespace Altaxo.Science.Spectroscopy
       return list.ToArray();
     }
 
+    /// <summary>
+    /// Normalizes a list of region start indices.
+    /// </summary>
+    /// <param name="regions">
+    /// The regions list. Each element designates the start index of a new region.
+    /// </param>
+    /// <param name="length">The length of the underlying data array.</param>
+    /// <returns>
+    /// A normalized regions array, or <see langword="null"/> if no regions are present or normalization results in a single full-length region.
+    /// </returns>
     public static int[]? NormalizeRegions(List<int> regions, int length)
     {
       if (regions is null)

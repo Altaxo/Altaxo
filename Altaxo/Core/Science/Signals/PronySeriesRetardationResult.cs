@@ -30,20 +30,30 @@ using Complex64 = System.Numerics.Complex;
 namespace Altaxo.Science.Signals
 {
   /// <summary>
-  /// Represents the result of a prony series fit to a retardation process (general susceptibility),
-  /// for instance a mechanical compliance, either in time or in frequency domain.
+  /// Represents the result of a Prony series fit to a retardation process (general susceptibility),
+  /// for instance a mechanical compliance, either in the time domain or in the frequency domain.
   /// </summary>
   public record PronySeriesRetardationResult
   {
     /// <summary>
-    /// Initializes a new instance of the <see cref="PronySeriesRetardationResult"/> class.
+    /// Initializes a new instance of the <see cref="PronySeriesRetardationResult"/> record.
     /// </summary>
-    /// <param name="retardationTimes">The retardation times.</param>
-    /// <param name="pronyCoefficients">The prony coefficients.</param>
-    /// <param name="relaxationDensities">The relaxation densities.</param>
-    /// <param name="flowTerm">The flow term.</param>
-    /// <param name="isFlowTermFromDielectricSpectrum">if set to <c>true</c>, the Prony series is the result of a fit to
-    /// a dielectric spectrum. Then, the electric conductivity is calculated by using the vacuum permittivity as a factor.</param>
+    /// <param name="retardationTimes">
+    /// The retardation times.
+    /// The list may include <c>0</c> if an intercept/high-frequency term is present.
+    /// </param>
+    /// <param name="pronyCoefficients">The Prony coefficients corresponding to <paramref name="retardationTimes"/>.</param>
+    /// <param name="relaxationDensities">The retardation density values corresponding to <paramref name="retardationTimes"/>.</param>
+    /// <param name="flowTerm">
+    /// The flow term (fluidity/conductivity). If <see langword="null"/>, no flow term was fitted.
+    /// </param>
+    /// <param name="isFlowTermFromDielectricSpectrum">
+    /// If set to <c>true</c>, the Prony series is the result of a fit to a dielectric spectrum.
+    /// In this case, the electrical conductivity is calculated using the vacuum permittivity as a factor.
+    /// </param>
+    /// <exception cref="ArgumentNullException">
+    /// Thrown if <paramref name="retardationTimes"/>, <paramref name="pronyCoefficients"/>, or <paramref name="relaxationDensities"/> is <see langword="null"/>.
+    /// </exception>
     public PronySeriesRetardationResult(IReadOnlyList<double> retardationTimes, IReadOnlyList<double> pronyCoefficients, IReadOnlyList<double> relaxationDensities, double? flowTerm, bool isFlowTermFromDielectricSpectrum)
     {
       RetardationTimes = retardationTimes ?? throw new ArgumentNullException(nameof(retardationTimes));
@@ -74,22 +84,22 @@ namespace Altaxo.Science.Signals
     public IReadOnlyList<double> RetardationTimes { get; init; }
 
     /// <summary>
-    /// Gets the prony coefficients, corresponding to the <see cref="RetardationTimes"/>.
+    /// Gets the Prony coefficients, corresponding to the <see cref="RetardationTimes"/>.
     /// </summary>
     public IReadOnlyList<double> PronyCoefficients { get; init; }
 
     /// <summary>
-    /// Gets the relaxation densities, corresponding to the <see cref="RetardationTimes"/>.
+    /// Gets the retardation densities, corresponding to the <see cref="RetardationTimes"/>.
     /// </summary>
     public IReadOnlyList<double> RetardationDensities { get; init; }
 
     /// <summary>
-    /// Gets the high frequency susceptibility.(the first element of the Prony coefficient array).
+    /// Gets the high-frequency susceptibility (the first element of the Prony coefficient array).
     /// </summary>
     public double SusceptibilityHighFrequency { get => PronyCoefficients[0]; }
 
     /// <summary>
-    /// Gets the low frequency susceptibility.  This is the sum of all prony coefficients.
+    /// Gets the low-frequency susceptibility. This is the sum of all Prony coefficients.
     /// </summary>
     public double SusceptibilityLowFrequency { get; }
 
@@ -104,23 +114,22 @@ namespace Altaxo.Science.Signals
     /// </summary>
     public double SpecificElectricalConductivity { get; }
 
-
     /// <summary>
-    /// Gets the inverse of the flow term value, i.e. 1 / <see cref="Fluidity"/>.
+    /// Gets the inverse of the flow term value, i.e. <c>1 /</c> <see cref="Fluidity"/>.
     /// </summary>
     public double Viscosity { get; }
 
     /// <summary>
     /// Gets the specific electrical resistivity (if the fitted spectrum was a dielectric spectrum of relative permittivity).
-    /// The unit is Ohm m.
+    /// The unit is Ohm·m.
     /// </summary>
     public double SpecificElectricalResistivity { get; }
 
     /// <summary>
-    /// Gets (in the time domain) the y-value in dependence on time.
+    /// Gets (in the time domain) the y-value as a function of time.
     /// </summary>
-    /// <param name="t">The x-value (time).</param>
-    /// <returns>The y-value in the time domain at time x.</returns>
+    /// <param name="t">The time value.</param>
+    /// <returns>The y-value in the time domain at time <paramref name="t"/>.</returns>
     public double GetTimeDomainYOfTime(double t)
     {
       double sum = 0;
@@ -134,11 +143,13 @@ namespace Altaxo.Science.Signals
     }
 
     /// <summary>
-    /// Gets (in the frequency domain) the y-value in dependence on the circular frequency.
+    /// Gets (in the frequency domain) the susceptibility as a function of the circular frequency.
     /// </summary>
     /// <param name="w">The circular frequency.</param>
-    /// <returns>The y-value in the frequency domain.
-    /// Note that because it is a susceptibility, the imaginary part is negative.</returns>
+    /// <returns>
+    /// The susceptibility in the frequency domain.
+    /// Note that because it is a susceptibility, the imaginary part is negative.
+    /// </returns>
     public Complex64 GetFrequencyDomainYOfOmega(double w)
     {
       Complex64 sum = 0;
@@ -155,10 +166,13 @@ namespace Altaxo.Science.Signals
     }
 
     /// <summary>
-    /// Gets (in the frequency domain) the y-value in dependence on the frequency.
+    /// Gets (in the frequency domain) the susceptibility as a function of the frequency.
     /// </summary>
     /// <param name="f">The frequency.</param>
-    /// <returns>The y-value in the frequency domain. Note that because it is a general susceptibility, the imaginary part is negative.</returns>
+    /// <returns>
+    /// The susceptibility in the frequency domain.
+    /// Note that because it is a general susceptibility, the imaginary part is negative.
+    /// </returns>
     public Complex64 GetFrequencyDomainYOfFrequency(double f)
     {
       return GetFrequencyDomainYOfOmega(f * 2 * Math.PI);

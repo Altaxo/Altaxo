@@ -32,9 +32,13 @@ namespace Altaxo.Science.Spectroscopy.BaselineEvaluation
   {
     #region Serialization
 
+    /// <summary>
+    /// XML serialization surrogate for <see cref="ArPLS"/>.
+    /// </summary>
     [Altaxo.Serialization.Xml.XmlSerializationSurrogateFor(typeof(ArPLS), 0)]
     public class SerializationSurrogate0 : Altaxo.Serialization.Xml.IXmlSerializationSurrogate
     {
+      /// <inheritdoc/>
       public void Serialize(object obj, Altaxo.Serialization.Xml.IXmlSerializationInfo info)
       {
         var s = (ArPLS)obj;
@@ -45,6 +49,7 @@ namespace Altaxo.Science.Spectroscopy.BaselineEvaluation
         info.AddValue("MaxNumberOfIterations", s.MaximumNumberOfIterations);
       }
 
+      /// <inheritdoc/>
       public object Deserialize(object? o, Altaxo.Serialization.Xml.IXmlDeserializationInfo info, object? parent)
       {
         var lambda = info.GetDouble("Lambda");

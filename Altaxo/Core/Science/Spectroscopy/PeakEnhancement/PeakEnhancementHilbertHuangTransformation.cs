@@ -4,9 +4,19 @@ using Altaxo.Science.Signals;
 
 namespace Altaxo.Science.Spectroscopy.PeakEnhancement
 {
+  /// <summary>
+  /// Experimental peak-enhancement approach based on empirical mode decomposition (EMD)
+  /// and a Hilbert transformation.
+  /// </summary>
   public class PeakEnhancementHilbertHuang // : IPeakEnhancement
   {
-    /// <inheritdoc/>
+    /// <summary>
+    /// Executes the transformation for the provided spectrum, processing each region independently.
+    /// </summary>
+    /// <param name="x">The x-values of the spectrum.</param>
+    /// <param name="y">The y-values of the spectrum.</param>
+    /// <param name="regions">Optional region boundaries. If provided, each region is processed separately.</param>
+    /// <returns>The transformed spectrum, and the (unchanged) region information.</returns>
     public (double[] x, double[] y, int[]? regions) Execute(double[] x, double[] y, int[]? regions)
     {
       var yResult = new double[y.Length];
@@ -21,6 +31,12 @@ namespace Altaxo.Science.Spectroscopy.PeakEnhancement
       return (x, yResult, regions);
     }
 
+    /// <summary>
+    /// Executes the transformation on a single contiguous region of the spectrum.
+    /// </summary>
+    /// <param name="xSpan">The x-values of the region.</param>
+    /// <param name="ySpan">The y-values of the region.</param>
+    /// <returns>The transformed y-values for the region.</returns>
     private double[] Execute(ReadOnlySpan<double> xSpan, ReadOnlySpan<double> ySpan)
     {
       var ySum = new double[xSpan.Length];

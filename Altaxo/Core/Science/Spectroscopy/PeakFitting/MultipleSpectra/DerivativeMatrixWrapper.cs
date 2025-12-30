@@ -28,14 +28,14 @@ using Altaxo.Calc.LinearAlgebra;
 namespace Altaxo.Science.Spectroscopy.PeakFitting.MultipleSpectra
 {
   /// <summary>
-  /// Provides a wrapper for the global derivative matrix (global = Matrix of the derivative of the parameters for multiple spectra).
-  /// This wrapper is written to from the local fit function (local = Fit function for only one spectrum).
+  /// Provides a wrapper for the global derivative matrix (global = matrix of the derivative of the parameters for multiple spectra).
+  /// This wrapper is written to from the local fit function (local = fit function for only one spectrum).
   /// </summary>
   /// <remarks>
-  /// It is assumed that all spectra share the same peak parameters like position, width and other shape parameters,
-  /// and that they don't share (i) the amplitude parameter (so each spectrum has its own peak amplitudes),
-  /// and that they don't share (ii) the baseline parameter(s) (so each spectrum has its own baseline).
-  /// The layout of the parameters of the global matrix is assumed as follows:
+  /// It is assumed that all spectra share the same peak parameters such as position, width, and other shape parameters,
+  /// and that they do not share (i) the amplitude parameter (so each spectrum has its own peak amplitudes),
+  /// and that they do not share (ii) the baseline parameter(s) (so each spectrum has its own baseline).
+  /// The layout of the global parameter vector is assumed as follows:
   /// <para>For each peak: amplitudeSpectrum0, amplitudeSpectrum1, ..., amplitudeSpectrumN, peak_position, peak_width, other peak shape parameters.</para>
   /// <para>For each spectrum: baselineParameterOrder0, baselineParameterOrder1, ..., baselineParameterOrderM</para>
   /// </remarks>
@@ -45,15 +45,19 @@ namespace Altaxo.Science.Spectroscopy.PeakFitting.MultipleSpectra
     private int _indexOfSpectrum;
     private int _numberOfSpectra;
 
-    /// <summary>The total number of peak parameters (local) = numberOfParametersPerPeakLocal * numberOfPeaks</summary>
+    /// <summary>
+    /// The total number of peak parameters (local) = numberOfParametersPerPeakLocal × numberOfPeaks.
+    /// </summary>
     private int _totalNumberOfPeakParametersLocal;
 
     /// <summary>
-    /// The number of parameters per peak (global).
+    /// The number of parameters per peak (local).
     /// </summary>
     private int _numberOfParametersPerPeakLocal;
 
-    /// <summary>The total number of peak parameters (global) = numberOfParametersPerPeakGlobal * numberOfPeaks</summary>
+    /// <summary>
+    /// The total number of peak parameters (global) = numberOfParametersPerPeakGlobal × numberOfPeaks.
+    /// </summary>
     private int _totalNumberOfPeakParametersGlobal;
 
     /// <summary>
@@ -68,15 +72,15 @@ namespace Altaxo.Science.Spectroscopy.PeakFitting.MultipleSpectra
 
 
     /// <summary>
-    /// Wraps the global derivative matrix so that it can be used by the (local) fit function.
+    /// Wraps the global derivative matrix so that it can be addressed by a local (single-spectrum) fit function.
     /// </summary>
-    /// <param name="rowOffset">The row offset.</param>
+    /// <param name="rowOffset">Row offset in the global derivative matrix for the current spectrum.</param>
     /// <param name="indexOfSpectrum">The index of the spectrum.</param>
-    /// <param name="numberOfSpectra">The number of spectra of the fit function.</param>
-    /// <param name="numberOfPeaks">The number of peaks of the fit function.</param>
-    /// <param name="totalNumberOfPeakParametersLocal">The total number of peak parameters local = (number of peaks) x (number of parameters per peak).</param>
-    /// <param name="totalNumberOfPeakParametersGlobal">The total number of peak parameters global = (number of peaks) x (number of parameters per peak including all amplitudes).</param>
-    /// <param name="numberOfBaselineParameters">The number of baseline parameters of the fit function.</param>
+    /// <param name="numberOfSpectra">The number of spectra in the global fit.</param>
+    /// <param name="numberOfPeaks">The number of peaks in the global fit.</param>
+    /// <param name="totalNumberOfPeakParametersLocal">Total number of local peak parameters = (number of peaks) × (number of parameters per peak).</param>
+    /// <param name="totalNumberOfPeakParametersGlobal">Total number of global peak parameters = (number of peaks) × (number of parameters per peak including all amplitudes).</param>
+    /// <param name="numberOfBaselineParameters">The number of baseline parameters for one spectrum.</param>
     /// <param name="matrix">The global derivative matrix.</param>
     public DerivativeMatrixWrapper(int rowOffset, int indexOfSpectrum, int numberOfSpectra, int numberOfPeaks, int totalNumberOfPeakParametersLocal, int totalNumberOfPeakParametersGlobal, int numberOfBaselineParameters, IMatrix<double> matrix)
     {
@@ -114,7 +118,7 @@ namespace Altaxo.Science.Spectroscopy.PeakFitting.MultipleSpectra
         }
         else // it is a baseline parameter
         {
-          // this are the baseline parameters
+          // these are the baseline parameters
           wrappedCol = _totalNumberOfPeakParametersGlobal + _indexOfSpectrum * _numberOfBaselineParametersLocal + (col - _totalNumberOfPeakParametersLocal);
         }
 

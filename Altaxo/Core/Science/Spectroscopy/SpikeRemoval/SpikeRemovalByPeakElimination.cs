@@ -27,23 +27,39 @@ using System.Linq;
 
 namespace Altaxo.Science.Spectroscopy.SpikeRemoval
 {
+  /// <summary>
+  /// Spike removal implementation that eliminates spikes by peak detection and local
+  /// interpolation. The algorithm uses peak searching and wavelet-based checks to
+  /// remove isolated spike artifacts from single-spectrum data.
+  /// </summary>
   public record SpikeRemovalByPeakElimination : ISpikeRemoval
   {
+    /// <summary>
+    /// Gets the maximal width of spikes (in data points) that will be considered for elimination.
+    /// </summary>
     public int MaximalWidth { get; init; } = 1;
 
+    /// <summary>
+    /// Gets a value indicating whether negative spikes should be eliminated as well as positive spikes.
+    /// </summary>
     public bool EliminateNegativeSpikes { get; init; } = true;
 
     #region Serialization
 
+    /// <summary>
+    /// XML serialization surrogate for older serialized representations (type id in AltaxoCore).
+    /// </summary>
     [Altaxo.Serialization.Xml.XmlSerializationSurrogateFor("AltaxoCore", "Altaxo.Science.Spectroscopy.SpikeRemoval.SpikeRemovalByPeakElimination", 0)]
     public class SerializationSurrogate0 : Altaxo.Serialization.Xml.IXmlSerializationSurrogate
     {
+      /// <inheritdoc/>
       public void Serialize(object obj, Altaxo.Serialization.Xml.IXmlSerializationInfo info)
       {
         var s = (SpikeRemovalByPeakElimination)obj;
         info.AddValue("MaximalWidth", s.MaximalWidth);
       }
 
+      /// <inheritdoc/>
       public object Deserialize(object? o, Altaxo.Serialization.Xml.IXmlDeserializationInfo info, object? parent)
       {
         var maximalWidth = info.GetInt32("MaximalWidth");
@@ -62,12 +78,13 @@ namespace Altaxo.Science.Spectroscopy.SpikeRemoval
     }
 
     /// <summary>
-    /// 2022-11-14 New property EliminateNegativeSpikes
+    /// Added property <c>EliminateNegativeSpikes</c> (2022-11-14).
     /// </summary>
     /// <seealso cref="Altaxo.Serialization.Xml.IXmlSerializationSurrogate" />
     [Altaxo.Serialization.Xml.XmlSerializationSurrogateFor(typeof(SpikeRemovalByPeakElimination), 1)]
     public class SerializationSurrogate1 : Altaxo.Serialization.Xml.IXmlSerializationSurrogate
     {
+      /// <inheritdoc/>
       public void Serialize(object obj, Altaxo.Serialization.Xml.IXmlSerializationInfo info)
       {
         var s = (SpikeRemovalByPeakElimination)obj;
@@ -75,6 +92,7 @@ namespace Altaxo.Science.Spectroscopy.SpikeRemoval
         info.AddValue("EliminateNegativeSpikes", s.EliminateNegativeSpikes);
       }
 
+      /// <inheritdoc/>
       public object Deserialize(object? o, Altaxo.Serialization.Xml.IXmlDeserializationInfo info, object? parent)
       {
         var maximalWidth = info.GetInt32("MaximalWidth");
@@ -362,6 +380,7 @@ namespace Altaxo.Science.Spectroscopy.SpikeRemoval
       return (x, yResult ?? y, regions);
     }
 
+    /// <inheritdoc/>
     public override string ToString()
     {
       return $"{this.GetType().Name} MaxW={MaximalWidth} NegToo={EliminateNegativeSpikes}";

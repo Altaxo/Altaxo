@@ -39,6 +39,13 @@ using Altaxo.Science.Spectroscopy.SpikeRemoval;
 namespace Altaxo.Science.Spectroscopy
 {
 
+  /// <summary>
+  /// Standard set of spectral preprocessing options.
+  /// </summary>
+  /// <remarks>
+  /// This type provides strongly-typed accessors for the default preprocessing chain (sanitizing, dark subtraction,
+  /// spike removal, calibration, resampling, smoothing, baseline estimation, cropping, and normalization).
+  /// </remarks>
   public record SpectralPreprocessingOptions : SpectralPreprocessingOptionsBase
   {
     private const int IndexSanitzer = 0;
@@ -57,12 +64,13 @@ namespace Altaxo.Science.Spectroscopy
     #region Version 0
 
     /// <summary>
-    /// 2022-06-09 Initial version
+    /// 2022-06-09 Initial version.
     /// </summary>
     /// <seealso cref="Altaxo.Serialization.Xml.IXmlSerializationSurrogate" />
     [Altaxo.Serialization.Xml.XmlSerializationSurrogateFor("AltaxoCore", "Altaxo.Science.Spectroscopy.SpectralPreprocessingOptions", 0)]
     public class SerializationSurrogate0 : Altaxo.Serialization.Xml.IXmlSerializationSurrogate
     {
+      /// <inheritdoc/>
       public void Serialize(object obj, Altaxo.Serialization.Xml.IXmlSerializationInfo info)
       {
         var s = (SpectralPreprocessingOptions)obj;
@@ -75,6 +83,7 @@ namespace Altaxo.Science.Spectroscopy
         info.AddValue("Normalization", s.Normalization);
       }
 
+      /// <inheritdoc/>
       public object Deserialize(object? o, Altaxo.Serialization.Xml.IXmlDeserializationInfo info, object? parent)
       {
         var sanitizer = info.GetValue<ISanitizer>("Sanitizer", parent);
@@ -105,13 +114,14 @@ namespace Altaxo.Science.Spectroscopy
     #region Version 1
 
     /// <summary>
-    /// 2022-06-09 V0: Initial version
-    /// 2022-08-04 V1: Added Calibration element
+    /// 2022-06-09 V0: Initial version.
+    /// 2022-08-04 V1: Added calibration element.
     /// </summary>
     /// <seealso cref="Altaxo.Serialization.Xml.IXmlSerializationSurrogate" />
     [Altaxo.Serialization.Xml.XmlSerializationSurrogateFor("AltaxoCore", "Altaxo.Science.Spectroscopy.SpectralPreprocessingOptions", 1)]
     public class SerializationSurrogate1 : Altaxo.Serialization.Xml.IXmlSerializationSurrogate
     {
+      /// <inheritdoc/>
       public void Serialize(object obj, Altaxo.Serialization.Xml.IXmlSerializationInfo info)
       {
         var s = (SpectralPreprocessingOptions)obj;
@@ -125,6 +135,7 @@ namespace Altaxo.Science.Spectroscopy
         info.AddValue("Normalization", s.Normalization);
       }
 
+      /// <inheritdoc/>
       public object Deserialize(object? o, Altaxo.Serialization.Xml.IXmlDeserializationInfo info, object? parent)
       {
         var sanitizer = info.GetValue<ISanitizer>("Sanitizer", parent);
@@ -157,14 +168,15 @@ namespace Altaxo.Science.Spectroscopy
     #region Version 2
 
     /// <summary>
-    /// 2022-06-09 V0: Initial version
-    /// 2022-08-04 V1: Added Calibration element
-    /// 2023-03-30 V2: Added DarkSubtraction and YCalibration, rename Calibration to XCalibration
+    /// 2022-06-09 V0: Initial version.
+    /// 2022-08-04 V1: Added calibration element.
+    /// 2023-03-30 V2: Added <c>DarkSubtraction</c> and <c>YCalibration</c>; renamed <c>Calibration</c> to <c>XCalibration</c>.
     /// </summary>
     /// <seealso cref="Altaxo.Serialization.Xml.IXmlSerializationSurrogate" />
     [Altaxo.Serialization.Xml.XmlSerializationSurrogateFor("AltaxoCore", "Altaxo.Science.Spectroscopy.SpectralPreprocessingOptions", 2)]
     public class SerializationSurrogate2 : Altaxo.Serialization.Xml.IXmlSerializationSurrogate
     {
+      /// <inheritdoc/>
       public void Serialize(object obj, Altaxo.Serialization.Xml.IXmlSerializationInfo info)
       {
         var s = (SpectralPreprocessingOptions)obj;
@@ -180,6 +192,7 @@ namespace Altaxo.Science.Spectroscopy
         info.AddValue("Normalization", s.Normalization);
       }
 
+      /// <inheritdoc/>
       public object Deserialize(object? o, Altaxo.Serialization.Xml.IXmlDeserializationInfo info, object? parent)
       {
         var sanitizer = info.GetValue<ISanitizer>("Sanitizer", parent);
@@ -214,15 +227,16 @@ namespace Altaxo.Science.Spectroscopy
     #region Version 3
 
     /// <summary>
-    /// 2022-06-09 V0: Initial version
-    /// 2022-08-04 V1: Added Calibration element
-    /// 2023-03-30 V2: Added DarkSubtraction and YCalibration, rename Calibration to XCalibration
-    /// 2024-03-16 V3: Change positions of x-calibration and y-calibration
+    /// 2022-06-09 V0: Initial version.
+    /// 2022-08-04 V1: Added calibration element.
+    /// 2023-03-30 V2: Added <c>DarkSubtraction</c> and <c>YCalibration</c>; renamed <c>Calibration</c> to <c>XCalibration</c>.
+    /// 2024-03-16 V3: Changed positions of x-calibration and y-calibration.
     /// </summary>
     /// <seealso cref="Altaxo.Serialization.Xml.IXmlSerializationSurrogate" />
     [Altaxo.Serialization.Xml.XmlSerializationSurrogateFor(typeof(SpectralPreprocessingOptions), 3)]
     public class SerializationSurrogate3 : Altaxo.Serialization.Xml.IXmlSerializationSurrogate
     {
+      /// <inheritdoc/>
       public void Serialize(object obj, Altaxo.Serialization.Xml.IXmlSerializationInfo info)
       {
         var s = (SpectralPreprocessingOptions)obj;
@@ -238,6 +252,7 @@ namespace Altaxo.Science.Spectroscopy
         info.AddValue("Normalization", s.Normalization);
       }
 
+      /// <inheritdoc/>
       public object Deserialize(object? o, Altaxo.Serialization.Xml.IXmlDeserializationInfo info, object? parent)
       {
         var sanitizer = info.GetValue<ISanitizer>("Sanitizer", parent);
@@ -271,6 +286,9 @@ namespace Altaxo.Science.Spectroscopy
 
     #endregion
 
+    /// <summary>
+    /// Gets the expected order of preprocessing elements.
+    /// </summary>
     protected IEnumerable<Type> ExpectedOrderOfElements
     {
       get
@@ -288,6 +306,9 @@ namespace Altaxo.Science.Spectroscopy
       }
     }
 
+    /// <summary>
+    /// Initializes a new instance with the default preprocessing chain.
+    /// </summary>
     public SpectralPreprocessingOptions()
     {
       InnerList = ImmutableList.Create<ISingleSpectrumPreprocessor>(
@@ -304,6 +325,14 @@ namespace Altaxo.Science.Spectroscopy
         ); ;
     }
 
+    /// <summary>
+    /// Initializes a new instance with the provided preprocessing elements.
+    /// </summary>
+    /// <param name="list">The preprocessing elements in the expected order.</param>
+    /// <exception cref="ArgumentException">
+    /// The list has too few elements, contains <see langword="null"/> elements, contains elements in the wrong order,
+    /// or contains too many elements.
+    /// </exception>
     public SpectralPreprocessingOptions(IEnumerable<ISingleSpectrumPreprocessor> list)
     {
       var ilist = list.ToImmutableList();
@@ -324,6 +353,9 @@ namespace Altaxo.Science.Spectroscopy
       InnerList = ilist;
     }
 
+    /// <summary>
+    /// Gets the sanitizer element.
+    /// </summary>
     public ISanitizer Sanitizer
     {
       get
@@ -337,6 +369,9 @@ namespace Altaxo.Science.Spectroscopy
       }
     }
 
+    /// <summary>
+    /// Gets the dark subtraction element.
+    /// </summary>
     public IDarkSubtraction DarkSubtraction
     {
       get
@@ -351,6 +386,9 @@ namespace Altaxo.Science.Spectroscopy
     }
 
 
+    /// <summary>
+    /// Gets the spike removal element.
+    /// </summary>
     public ISpikeRemoval SpikeRemoval
     {
       get
@@ -363,6 +401,9 @@ namespace Altaxo.Science.Spectroscopy
       }
     }
 
+    /// <summary>
+    /// Gets the y-calibration element.
+    /// </summary>
     public IYCalibration YCalibration
     {
       get
@@ -376,6 +417,9 @@ namespace Altaxo.Science.Spectroscopy
     }
 
 
+    /// <summary>
+    /// Gets the x-calibration element.
+    /// </summary>
     public IXCalibration XCalibration
     {
       get
@@ -388,6 +432,9 @@ namespace Altaxo.Science.Spectroscopy
       }
     }
 
+    /// <summary>
+    /// Gets the resampling element.
+    /// </summary>
     public IResampling Resampling
     {
       get
@@ -400,6 +447,9 @@ namespace Altaxo.Science.Spectroscopy
       }
     }
 
+    /// <summary>
+    /// Gets the smoothing element.
+    /// </summary>
     public ISmoothing Smoothing
     {
       get
@@ -412,6 +462,9 @@ namespace Altaxo.Science.Spectroscopy
       }
     }
 
+    /// <summary>
+    /// Gets the baseline estimation element.
+    /// </summary>
     public IBaselineEstimation BaselineEstimation
     {
       get
@@ -424,6 +477,9 @@ namespace Altaxo.Science.Spectroscopy
       }
     }
 
+    /// <summary>
+    /// Gets the cropping element.
+    /// </summary>
     public ICropping Cropping
     {
       get
@@ -436,6 +492,9 @@ namespace Altaxo.Science.Spectroscopy
       }
     }
 
+    /// <summary>
+    /// Gets the normalization element.
+    /// </summary>
     public INormalization Normalization
     {
       get
@@ -448,6 +507,14 @@ namespace Altaxo.Science.Spectroscopy
       }
     }
 
+    /// <summary>
+    /// Tries to convert the provided options into a <see cref="SpectralPreprocessingOptions"/> instance.
+    /// </summary>
+    /// <param name="options">The options to convert.</param>
+    /// <returns>
+    /// A <see cref="SpectralPreprocessingOptions"/> instance if conversion succeeded; otherwise, <see langword="null"/>.
+    /// </returns>
+    /// <exception cref="ArgumentNullException"><paramref name="options"/> is <see langword="null"/>.</exception>
     public static SpectralPreprocessingOptions? TryCreateFrom(SpectralPreprocessingOptionsBase options)
     {
       if (options is null)
@@ -490,6 +557,7 @@ namespace Altaxo.Science.Spectroscopy
       }
     }
 
+    /// <inheritdoc/>
     public override string ToString()
     {
       return base.ToString();

@@ -24,17 +24,25 @@
 
 namespace Altaxo.Science.Spectroscopy.Normalization
 {
+  /// <summary>
+  /// Represents a no-op normalization that returns the original spectrum data unchanged.
+  /// </summary>
   public record NormalizationNone : INormalization
   {
     #region Serialization
 
+    /// <summary>
+    /// XML serialization surrogate for <see cref="NormalizationNone"/>.
+    /// </summary>
     [Altaxo.Serialization.Xml.XmlSerializationSurrogateFor(typeof(NormalizationNone), 0)]
     public class SerializationSurrogate0 : Altaxo.Serialization.Xml.IXmlSerializationSurrogate
     {
+      /// <inheritdoc/>
       public void Serialize(object obj, Altaxo.Serialization.Xml.IXmlSerializationInfo info)
       {
       }
 
+      /// <inheritdoc/>
       public object Deserialize(object? o, Altaxo.Serialization.Xml.IXmlDeserializationInfo info, object? parent)
       {
         return new NormalizationNone();

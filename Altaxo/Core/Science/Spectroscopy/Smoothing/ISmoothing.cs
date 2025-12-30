@@ -26,8 +26,14 @@
 namespace Altaxo.Science.Spectroscopy.Smoothing
 {
   /// <summary>
-  /// Interface to algorithms which can smooth a spectrum.
+  /// Interface for algorithms that smooth a single spectrum.
   /// </summary>
+  /// <remarks>
+  /// Implementations provide various smoothing methods (for example moving
+  /// average, Savitzky–Golay, or other filters) that operate on x/y arrays
+  /// and may respect provided processing regions. Implementations should
+  /// perform only smoothing and not change the x-axis values unless explicitly intended.
+  /// </remarks>
   /// <seealso cref="Altaxo.Science.Spectroscopy.ISingleSpectrumPreprocessor" />
   public interface ISmoothing : ISingleSpectrumPreprocessor
   {

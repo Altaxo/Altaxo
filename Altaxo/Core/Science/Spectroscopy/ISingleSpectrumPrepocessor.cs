@@ -29,7 +29,7 @@ namespace Altaxo.Science.Spectroscopy
 {
   /// <summary>
   /// Interface to a class that is able to pre-process a single spectrum.
-  /// The convention is: if data need to be changed in an array, a new instance must be allocated for this.
+  /// The convention is: if data needs to be changed in an array, a new instance must be allocated for this.
   /// </summary>
   public interface ISingleSpectrumPreprocessor
   {
@@ -38,9 +38,11 @@ namespace Altaxo.Science.Spectroscopy
     /// </summary>
     /// <param name="x">The x-values of the spectrum.</param>
     /// <param name="y">The y-values of the spectrum.</param>
-    /// <param name="regions">The spectral regions. Can be null (if the array is one region). Each element in this array
-    /// is the start index of a new spectral region.</param>
-    /// <returns>X-values, y-values and regions of the processed spectrum.</returns>
+    /// <param name="regions">
+    /// The spectral regions. Can be <see langword="null"/> (if the array is one region). Each element in this array
+    /// is the start index of a new spectral region.
+    /// </param>
+    /// <returns>X-values, y-values, and regions of the processed spectrum.</returns>
     (double[] x, double[] y, int[]? regions) Execute(double[] x, double[] y, int[]? regions);
   }
 
@@ -51,15 +53,15 @@ namespace Altaxo.Science.Spectroscopy
   public interface IReferencingTable
   {
     /// <summary>
-    /// Gets the name of the table.
+    /// Gets the name of the referenced table.
     /// </summary>
     string? TableName { get; init; }
 
     /// <summary>
-    /// Returns a new instance, in which the table name is set to the provided name.
+    /// Returns a new instance in which <see cref="TableName"/> is set to the provided value.
     /// </summary>
-    /// <param name="tableName">Name of the table.</param>
-    /// <returns>New instance, in which the table name is set to the provided name.</returns>
+    /// <param name="tableName">The name of the table.</param>
+    /// <returns>A new instance in which <see cref="TableName"/> is set to the provided value.</returns>
     IReferencingTable WithTableName(string tableName);
   }
 
@@ -70,27 +72,30 @@ namespace Altaxo.Science.Spectroscopy
   public interface IReferencingXYColumns
   {
     /// <summary>
-    /// Gets the name of the table, the group number, and the names of the x and y columns.
+    /// Gets the origin of the referenced x-y data.
     /// </summary>
+    /// <value>
+    /// The name of the table, the group number, and the names of the x and y columns, or <see langword="null"/>.
+    /// </value>
     (string TableName, int GroupNumber, string XColumnName, string YColumnName)? XYDataOrigin { get; init; }
 
     /// <summary>
-    /// Returns a new instance, in which the column information is set to the provided name of the table, the group number, and the names of the x and y columns.
+    /// Returns a new instance in which <see cref="XYDataOrigin"/> is set to the provided value.
     /// </summary>
-    /// <param name="xyDataOrigin">The name of the table, the group number, and the names of the x and y columns..</param>
-    /// <returns>A new instance, in which the column information is set to the provided name of the table, the group number, and the names of the x and y columns.</returns>
+    /// <param name="xyDataOrigin">The name of the table, the group number, and the names of the x and y columns.</param>
+    /// <returns>A new instance in which <see cref="XYDataOrigin"/> is set to the provided value.</returns>
     IReferencingXYColumns WithXYDataOrigin((string TableName, int GroupNumber, string XColumnName, string YColumnName) xyDataOrigin);
 
     /// <summary>
-    /// Stores the data of the curve (consisting of x-y pairs).
+    /// Stores the data of the curve, consisting of x-y pairs.
     /// </summary>
     ImmutableArray<(double x, double y)> XYCurve { get; init; }
 
     /// <summary>
-    /// Returns a new instance, in which the XYCurve is set to a new instance.
+    /// Returns a new instance in which <see cref="XYCurve"/> is set to the provided value.
     /// </summary>
     /// <param name="xyCurve">The x-y curve.</param>
-    /// <returns>New instance with the provided value set.</returns>
+    /// <returns>A new instance with the provided value set.</returns>
     IReferencingXYColumns WithXYCurve(ImmutableArray<(double x, double y)> xyCurve);
   }
 }

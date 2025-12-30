@@ -26,26 +26,48 @@
 namespace Altaxo.Science.Spectroscopy.Raman
 {
   /// <summary>
-  /// Options for x-axis calibration of a Raman spectrum by a spectrum measured from a Neon lamp.
+  /// Options for x-axis calibration of a Raman spectrum using a silicon reference spectrum.
   /// </summary>
   public record SiliconCalibrationOptions
   {
+    /// <summary>
+    /// Reference temperature (Kelvin) for the official silicon shift value.
+    /// </summary>
     public const double ReferenceTemperature_OfficialShiftValue_Silicon_K = 20 + 273.15;
+
+    /// <summary>
+    /// Official silicon Raman shift value in inverse centimeters.
+    /// Reference: National Metrology Institute of Japan.
+    /// </summary>
     public const double OfficialShiftValue_Silicone_invcm = 520.45; // Ref. Nat. Metro. Inst. Japan, 
+
+    /// <summary>
+    /// Temperature coefficient of the official silicon shift value in inverse centimeters per Kelvin.
+    /// Si (1,1,1), Ref: Saltonstall et al., Rev.Sci.Instr. 84, 064903 (2013)
+    /// </summary>
     public const double OfficialShiftValueTemperatureCoefficient_Silicon_invcm = -0.022; // Si (1,1,1), Ref: Saltonstall et al., Rev.Sci.Instr. 84, 064903 (2013)
 
     /// <summary>
-    /// Wavelength tolerance in nm (this is the value how much the spectrometer can be differ from calibration)
+    /// Wavenumber tolerance in inverse centimeters (how much the measured shift may differ from the calibration).
     /// </summary>
     public double RelativeShift_Tolerance_invcm { get; init; } = 15;
 
+    /// <summary>
+    /// Returns the official silicon Raman shift value adjusted for the configured temperature.
+    /// </summary>
     public double GetOfficialShiftValue_Silicon_invcm()
     {
       return OfficialShiftValue_Silicone_invcm + OfficialShiftValueTemperatureCoefficient_Silicon_invcm * (Temperature.AsValueInSIUnits - ReferenceTemperature_OfficialShiftValue_Silicon_K);
     }
 
+    /// <summary>
+    /// Temperature associated with the measurement.
+    /// </summary>
     public Altaxo.Units.DimensionfulQuantity Temperature { get; init; } = new Units.DimensionfulQuantity(20, Units.Temperature.DegreesCelsius.Instance);
 
+    /// <summary>
+    /// Options for peak searching and fitting used when locating the silicon reference feature.
+    /// </summary>
     public PeakSearchingAndFittingOptions PeakFindingOptions { get; init; } = new PeakSearchingAndFittingOptions()
     {
       Preprocessing = new SpectralPreprocessingOptions
@@ -65,9 +87,13 @@ namespace Altaxo.Science.Spectroscopy.Raman
 
     #region Serialization
 
+    /// <summary>
+    /// XML serialization surrogate for <see cref="SiliconCalibrationOptions"/> version 0.
+    /// </summary>
     [Altaxo.Serialization.Xml.XmlSerializationSurrogateFor(typeof(SiliconCalibrationOptions), 0)]
     public class SerializationSurrogate0 : Altaxo.Serialization.Xml.IXmlSerializationSurrogate
     {
+      /// <inheritdoc/>
       public void Serialize(object obj, Altaxo.Serialization.Xml.IXmlSerializationInfo info)
       {
         var s = (SiliconCalibrationOptions)obj;
@@ -76,6 +102,7 @@ namespace Altaxo.Science.Spectroscopy.Raman
         info.AddValue("PeakFindingOptions", s.PeakFindingOptions);
       }
 
+      /// <inheritdoc/>
       public object Deserialize(object? o, Altaxo.Serialization.Xml.IXmlDeserializationInfo info, object? parent)
       {
         var temperature = info.GetValue<Units.DimensionfulQuantity>("Temperature", null);
@@ -94,6 +121,7 @@ namespace Altaxo.Science.Spectroscopy.Raman
     #endregion
 
 
+    /// <inheritdoc/>
     public override string ToString()
     {
       return $"Temperature={Temperature}, Tol={RelativeShift_Tolerance_invcm}  PeakFind={PeakFindingOptions}";

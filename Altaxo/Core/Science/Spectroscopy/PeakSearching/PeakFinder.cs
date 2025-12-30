@@ -348,10 +348,10 @@ namespace Altaxo.Science.Spectroscopy.PeakSearching
 
     /// <summary>
     /// Sets the relative height value that is used to determine the width of the peaks.
-    /// The width of a peak is determined at the y-value, which is (prominence x relative height) below the peak's y-value.
+    /// The width of a peak is determined at the y-value that is (prominence × relative height) below the peak's y-value.
     /// </summary>
     /// <param name="value">The relative height value.</param>
-    /// <returns></returns>
+    /// <returns>This instance.</returns>
     public PeakFinder SetRelativeHeight(double value)
     {
       _rel_height = value;
@@ -582,16 +582,16 @@ namespace Altaxo.Science.Spectroscopy.PeakSearching
 
     /// <summary>
     /// Find peaks inside a signal based on peak properties.
-    /// This function takes a 1-D array and finds all local maxima by
-    /// simple comparison of neighboring values. Optionally, a subset of these
-    /// peaks can be selected by specifying conditions for a peak's properties. For this call,
-    /// the properties of this <see cref="PeakFinder"/> instance will be used (that were before set with the Set.. methods).
+    /// This function takes a 1-D array and finds all local maxima by simple comparison of neighboring values.
+    /// Optionally, a subset of these peaks can be selected by specifying conditions for peak properties.
+    /// For this call, the properties of this <see cref="PeakFinder"/> instance will be used (that were previously set with the <c>Set*</c> methods).
     /// </summary>
-    /// 
-    /// <returns>Indices of peaks in `x` that satisfy all given conditions. See also the other properties of this class
-    /// for access to more results. Note that most of the properties are only set, if the corresponding parameter is specified in this call.
+    /// <returns>
+    /// Indices of peaks in <paramref name="x"/> that satisfy all conditions.
+    /// See also the other properties of this class for access to additional results.
+    /// Note that most of the properties are only set if the corresponding parameter was specified.
     /// </returns>
-    /// <exception cref="System.ArgumentOutOfRangeException">distance` must be greater than or equal to 1 - distance</exception>
+    /// <exception cref="System.ArgumentOutOfRangeException">distance must be greater than or equal to 1 - distance</exception>
     public int[] Execute(IReadOnlyList<double> x)
     {
       return Execute(x, _height, _threshold, _distance, _prominence, _width, _wlen, _rel_height, _plateauSize);
@@ -599,46 +599,38 @@ namespace Altaxo.Science.Spectroscopy.PeakSearching
 
     /// <summary>
     /// Find peaks inside a signal based on peak properties.
-    /// This function takes a 1-D array and finds all local maxima by
-    /// simple comparison of neighboring values.Optionally, a subset of these
-    /// peaks can be selected by specifying conditions for a peak's properties.
+    /// This function takes a 1-D array and finds all local maxima by simple comparison of neighboring values.
+    /// Optionally, a subset of these peaks can be selected by specifying conditions for peak properties.
     /// </summary>
-    /// 
     /// <param name="x">A signal with peaks.</param>
-    /// 
-    /// <param name="height">Required height of peaks. Either a number or null. The value is
-    ///  always interpreted as the minimal required height.</param>
-    ///  
-    /// <param name="threshold">Required threshold of peaks, the vertical distance to its neighboring
-    /// samples. Either a number or null. The value element is always
-    /// interpreted as the minimal 
-    /// required threshold.</param>
-    /// 
-    /// <param name="distance">Required minimal horizontal distance (&gt;= 1) in samples between
-    /// neighbouring peaks. Smaller peaks are removed first until the condition
-    /// is fulfilled for all remaining peaks.</param>
-    /// 
-    /// <param name="prominence">Required prominence of peaks. Either a number or null. The 
-    /// value is always interpreted as the minimal required prominence.</param>
-    /// 
-    /// <param name="width">Required width of peaks in samples. Either a number or null. The value
-    /// is always interpreted as the minimal required width.</param>
-    /// 
-    /// <param name="wlen">Used for calculation of the peaks prominences, thus it is only used if
-    /// one of the arguments <paramref name="prominence"/> or <paramref name="width"/> is given. See argument
-    /// <paramref name="wlen"/> in `peak_prominences` for a full description of its effects.</param>
-    /// 
-    /// <param name="rel_height">Used for calculation of the peaks width, thus it is only used if <paramref name="width"/>
-    /// is given. Default value is 0.5. See argument  `rel_height` in _peak_widths(double[], int[], double, double[], int[], int[]) for a full
-    /// description of its effects.</param>
-    /// 
-    /// <param name="plateau_size">Required size of the flat top of peaks in samples. Either a number or null.
-    /// The value is always interpreted as the minimal required plateau size.</param>
-    /// 
-    /// <returns>Indices of peaks in `x` that satisfy all given conditions. See also the other properties of this class
-    /// for access to more results. Note that most of the properties are only set, if the corresponding parameter is specified in this call.
+    /// <param name="height">Required minimal height of peaks, or <see langword="null"/>.</param>
+    /// <param name="threshold">
+    /// Required minimal threshold of peaks (the vertical difference between the peak height and its immediate neighboring samples), or <see langword="null"/>.
+    /// </param>
+    /// <param name="distance">
+    /// Required minimal horizontal distance (&gt;= 1) in samples between neighboring peaks.
+    /// Smaller peaks are removed first until the condition is fulfilled for all remaining peaks.
+    /// </param>
+    /// <param name="prominence">
+    /// Required minimal prominence of peaks, or <see langword="null"/>.
+    /// Prominence is defined as the smaller of the two differences between the peak height and the heights of the neighboring valleys.
+    /// </param>
+    /// <param name="width">Required minimal width of peaks (in samples), or <see langword="null"/>.</param>
+    /// <param name="wlen">
+    /// Window length (in samples) used while calculating peak prominences.
+    /// It is only used if <paramref name="prominence"/> or <paramref name="width"/> is specified.
+    /// </param>
+    /// <param name="rel_height">
+    /// Relative height (as a fraction of prominence) used to calculate peak widths.
+    /// It is only used if <paramref name="width"/> is specified.
+    /// Default value is 0.5.
+    /// </param>
+    /// <param name="plateau_size">Required minimal plateau size (in samples), or <see langword="null"/>.</param>
+    /// <returns>
+    /// Indices of peaks in <paramref name="x"/> that satisfy all given conditions.
+    /// See also the other properties of this class for access to additional results.
     /// </returns>
-    /// <exception cref="System.ArgumentOutOfRangeException">distance` must be greater than or equal to 1 - distance</exception>
+    /// <exception cref="System.ArgumentOutOfRangeException">distance must be greater than or equal to 1 - distance</exception>
     public int[] Execute(
       IReadOnlyList<double> x,
       double? height = null,
@@ -656,55 +648,54 @@ namespace Altaxo.Science.Spectroscopy.PeakSearching
 
     /// <summary>
     /// Find peaks inside a signal based on peak properties.
-    /// This function takes a 1-D array and finds all local maxima by
-    /// simple comparison of neighboring values.Optionally, a subset of these
-    /// peaks can be selected by specifying conditions for a peak's properties.
+    /// This function takes a 1-D array and finds all local maxima by simple comparison of neighboring values.
+    /// Optionally, a subset of these peaks can be selected by specifying conditions for peak properties.
     /// </summary>
-    /// 
     /// <param name="x">A signal with peaks.</param>
-    /// 
-    /// <param name="height">Required height of peaks. Either a number, null, an array matching
-    ///  or a 2-element sequence of the former.The first element is
-    ///  always interpreted as the minimal and the second, if supplied, as the
-    ///  maximal required height.</param>
-    ///  
-    /// <param name="threshold">Required threshold of peaks, the vertical distance to its neighboring
-    /// samples.Either a number, null, an array matching <paramref name="x"/> or a
-    /// 2-element sequence of the former.The first element is always
-    /// interpreted as the minimal and the second, if supplied, as the maximal
-    /// required threshold.</param>
-    /// 
-    /// <param name="distance">Required minimal horizontal distance (&gt;= 1) in samples between
-    /// neighbouring peaks. Smaller peaks are removed first until the condition
-    /// is fulfilled for all remaining peaks.</param>
-    /// 
-    /// <param name="prominence">Required prominence of peaks. Either a number, null, an array
-    /// matching <paramref name="x"/> or a 2-element sequence of the former.The first
-    /// element is always interpreted as the minimal and the second, if
-    /// supplied, as the maximal required prominence.</param>
-    /// 
-    /// <param name="width">Required width of peaks in samples. Either a number, null, an array
-    /// matching <paramref name="x"/> or a 2-element sequence of the former.The first
-    /// element is always interpreted as the minimal and the second, if
-    /// supplied, as the maximal required width.</param>
-    /// 
-    /// <param name="wlen">Used for calculation of the peaks prominences, thus it is only used if
-    /// one of the arguments `prominence` or <paramref name="width"/> is given.See argument
-    /// <paramref name="wlen"/> in `peak_prominences` for a full description of its effects.</param>
-    /// 
-    /// <param name="rel_height">Used for calculation of the peaks width, thus it is only used if `width`
-    /// is given. Default value is 0.5. See argument  `rel_height` in _peak_widths(double[], int[], double, double[], int[], int[]) for a full
-    /// description of its effects.</param>
-    /// 
-    /// <param name="plateau_size">Required size of the flat top of peaks in samples. Either a number,
-    /// null, an array matching <paramref name="x"/> or a 2-element sequence of the former.
-    ///  The first element is always interpreted as the minimal and the second,
-    /// if supplied as the maximal required plateau size.</param>
-    /// 
-    /// <returns>Indices of peaks in `x` that satisfy all given conditions. See also the other properties of this class
-    /// for access to more results. Note that most of the properties are only set, if the corresponding parameter is specified in this call.
+    /// <param name="height">
+    /// Required height of peaks.
+    /// Either a number, <see langword="null"/>, an array matching <paramref name="x"/>, or a 2-element tuple of the former.
+    /// The first element is interpreted as the minimal and the second (if supplied) as the maximal required height.
+    /// </param>
+    /// <param name="threshold">
+    /// Required threshold of peaks (the vertical distance to neighboring samples).
+    /// Either a number, <see langword="null"/>, an array matching <paramref name="x"/>, or a 2-element tuple of the former.
+    /// The first element is interpreted as the minimal and the second (if supplied) as the maximal required threshold.
+    /// </param>
+    /// <param name="distance">
+    /// Required minimal horizontal distance (&gt;= 1) in samples between neighboring peaks.
+    /// Smaller peaks are removed first until the condition is fulfilled for all remaining peaks.
+    /// </param>
+    /// <param name="prominence">
+    /// Required prominence of peaks.
+    /// Either a number, <see langword="null"/>, an array matching <paramref name="x"/>, or a 2-element tuple of the former.
+    /// The first element is interpreted as the minimal and the second (if supplied) as the maximal required prominence.
+    /// </param>
+    /// <param name="width">
+    /// Required width of peaks (in samples).
+    /// Either a number, <see langword="null"/>, an array matching <paramref name="x"/>, or a 2-element tuple of the former.
+    /// The first element is interpreted as the minimal and the second (if supplied) as the maximal required width.
+    /// </param>
+    /// <param name="wlen">
+    /// Window length (in samples) used while calculating peak prominences.
+    /// It is only used if <paramref name="prominence"/> or <paramref name="width"/> is specified.
+    /// </param>
+    /// <param name="rel_height">
+    /// Relative height (as a fraction of prominence) used to calculate peak widths.
+    /// It is only used if <paramref name="width"/> is specified.
+    /// Default value is 0.5.
+    /// </param>
+    /// <param name="plateau_size">
+    /// Required size of the flat top of peaks (in samples).
+    /// Either a number, <see langword="null"/>, an array matching <paramref name="x"/>, or a 2-element tuple of the former.
+    /// The first element is interpreted as the minimal and the second (if supplied) as the maximal required plateau size.
+    /// </param>
+    /// <returns>
+    /// Indices of peaks in <paramref name="x"/> that satisfy all conditions.
+    /// See also the other properties of this class for access to additional results.
+    /// Note that most of the properties are only set if the corresponding parameter was specified.
     /// </returns>
-    /// <exception cref="System.ArgumentOutOfRangeException">distance` must be greater than or equal to 1 - distance</exception>
+    /// <exception cref="System.ArgumentOutOfRangeException">distance must be greater than or equal to 1 - distance</exception>
     public int[] Execute(
       IReadOnlyList<double> x,
       object? height = null,
@@ -909,10 +900,12 @@ namespace Altaxo.Science.Spectroscopy.PeakSearching
     /// Evaluate which peaks fulfill the distance condition.
     /// </summary>
     /// <param name="peaks">Indices of peaks in the spectrum.</param>
-    /// <param name="priority"> An array matching <paramref name="peaks"/> used to determine priority of each peak.
-    /// A peak with a higher priority value is kept over one with a lower one.</param>
+    /// <param name="priority">
+    /// An array matching <paramref name="peaks"/> used to determine peak priority.
+    /// A peak with a higher priority value is kept over one with a lower one.
+    /// </param>
     /// <param name="distanced">Minimal distance that peaks must be spaced.</param>
-    /// <returns>A boolean mask evaluating to true where `peaks` fulfill the distance condition.</returns>
+    /// <returns>A boolean mask evaluating to <see langword="true"/> where <paramref name="peaks"/> fulfill the distance condition.</returns>
     protected bool[] _select_by_peak_distance(int[] peaks, double[] priority, double distanced)
     {
       var keep = Enumerable.Repeat(true, peaks.Length).ToArray();
@@ -1038,10 +1031,11 @@ namespace Altaxo.Science.Spectroscopy.PeakSearching
     }
 
     /// <summary>
-    /// Ensure argument `wlen` is of type `np.intp` and larger than 1. Used in `peak_prominences` and `peak_widths`
+    /// Ensure argument <paramref name="value"/> is an integer and larger than 1.
+    /// Used in <c>peak_prominences</c> and <c>peak_widths</c>.
     /// </summary>
-    /// <param name="value">The value.</param>
-    /// <returns>The original `value` rounded up to an integer or -1 if `value` was null.</returns>
+    /// <param name="value">The window length value.</param>
+    /// <returns>The value rounded up to an integer, or -1 if <paramref name="value"/> is <see langword="null"/>.</returns>
     protected int _arg_wlen_as_expected(double? value)
     {
       int result;
@@ -1065,14 +1059,18 @@ namespace Altaxo.Science.Spectroscopy.PeakSearching
 
     /// <summary>
     /// Find local maxima in a 1D array.
-    /// This function finds all local maxima in a 1D array and returns the indices
-    /// for their edges and midpoints(rounded down for even plateau sizes).
+    /// This function finds all local maxima in a 1D array and returns indices for their edges and midpoints
+    /// (rounded down for even plateau sizes).
     /// </summary>
     /// <param name="x">The array (e.g., a spectrum).</param>
-    /// <returns>Tuple of midpoints (indices of midpoints of local maxima), LeftEdges: Indices of edges to the left of local maxima, and RightEdges: Indices of edges to the right of local maxima.</returns>
+    /// <returns>
+    /// A tuple containing:
+    /// midpoints (indices of midpoints of local maxima),
+    /// left edges (indices of edges to the left of local maxima), and
+    /// right edges (indices of edges to the right of local maxima).
+    /// </returns>
     /// <remarks>
-    ///  A maxima is defined as one or more samples of equal value that are
-    /// surrounded on both sides by at least one smaller sample.
+    /// A maximum is defined as one or more samples of equal value that are surrounded on both sides by at least one smaller sample.
     /// </remarks>
     public (int[] MidPoints, int[] LeftEdges, int[] RightEdges) _local_maxima_1d(IReadOnlyList<double> x)
     {

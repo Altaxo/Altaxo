@@ -29,7 +29,7 @@ using Altaxo.Calc.LinearAlgebra;
 namespace Altaxo.Science.Spectroscopy.BaselineEstimation
 {
   /// <summary>
-  /// Implements the adaptive iteratively reweighted penalized least squares algorithm proposed by Zhang et al [1].
+  /// Implements the adaptive iteratively reweighted penalized least squares algorithm proposed by Zhang et al. [1].
   /// </summary>
   /// <remarks>
   /// <para>References:</para>
@@ -41,11 +41,11 @@ namespace Altaxo.Science.Spectroscopy.BaselineEstimation
     private double _lambda = 100;
 
     /// <summary>
-    /// Gets or sets the smoothing parameter lambda.
+    /// Gets the smoothing parameter <c>lambda</c>.
     /// The default value is 100.
-    /// The higher lambda is, the smoother the resulting curve will be.
+    /// The higher <c>lambda</c> is, the smoother the resulting curve will be.
     /// </summary>
-    /// <exception cref="System.ArgumentException">Value must be &gt; 0</exception>
+    /// <exception cref="System.ArgumentException">Value must be &gt; 0.</exception>
     public double Lambda
     {
       get => _lambda;
@@ -60,10 +60,11 @@ namespace Altaxo.Science.Spectroscopy.BaselineEstimation
     private bool _scaleLambdaWithXUnits;
 
     /// <summary>
-    /// If true, lambda is scaled with the x units, so that the effect of baseline estimation is independent on the resolution of the spectrum.
+    /// Gets a value indicating whether <see cref="Lambda"/> is scaled with the x-units,
+    /// so that the effect of baseline estimation is independent of the resolution of the spectrum.
     /// </summary>
     /// <value>
-    ///   <c>true</c> lambda is scaled with the x units, so that the effect of baseline estimation is independent on the resolution of the spectrum; otherwise, <c>false</c>.
+    /// <see langword="true"/> if <see cref="Lambda"/> is scaled with the x-units; otherwise, <see langword="false"/>.
     /// </value>
     public bool ScaleLambdaWithXUnits
     {
@@ -73,11 +74,12 @@ namespace Altaxo.Science.Spectroscopy.BaselineEstimation
 
     private double _terminationRatio = 1e-3;
     /// <summary>
-    /// Gets or sets the criterion for terminating the iteration (0..1). Default is 1E-3.
-    /// The iterations stops, if the L1 norm of points lying below the baseline is smaller than (TerminationRatio x L1 norm of the original spectrum).
-    /// The lower the value of the StopCriterion, the less points will remain below the baseline (and the more iteration it takes).
+    /// Gets the criterion for terminating the iteration (0..1). The default is 1E-3.
+    /// The iteration stops if the L1 norm of points lying below the baseline is smaller than
+    /// (<see cref="TerminationRatio"/> × L1 norm of the original spectrum).
+    /// The lower the stop criterion value is, the fewer points will remain below the baseline (at the cost of more iterations).
     /// </summary>
-    /// <exception cref="ArgumentException">Value must be &gt; 0 and &lt; 1</exception>
+    /// <exception cref="ArgumentException">Value must be &gt; 0 and &lt; 1.</exception>
     public double TerminationRatio
     {
       get => _terminationRatio;
@@ -92,11 +94,11 @@ namespace Altaxo.Science.Spectroscopy.BaselineEstimation
     private int _maximumNumberOfIterations = 100;
 
     /// <summary>
-    /// Gets or sets the maximum number of iterations. The default value is 100.
-    /// Usually, the number of iterations is determined by the <see cref="TerminationRatio"/>, but
-    /// with this value, the maximum number of iterations can be limited to a smaller value.
+    /// Gets the maximum number of iterations. The default value is 100.
+    /// Usually, the number of iterations is determined by <see cref="TerminationRatio"/>, but
+    /// with this value the maximum number of iterations can be limited.
     /// </summary>
-    /// <exception cref="ArgumentOutOfRangeException">Value must be &gt;=1</exception>
+    /// <exception cref="ArgumentOutOfRangeException">Value must be &gt;= 1.</exception>
     public int MaximumNumberOfIterations
     {
       get => _maximumNumberOfIterations;
@@ -110,6 +112,13 @@ namespace Altaxo.Science.Spectroscopy.BaselineEstimation
 
     private int _order = 2;
 
+    /// <summary>
+    /// Gets the order of the difference penalty.
+    /// </summary>
+    /// <remarks>
+    /// Supported values are 1 and 2.
+    /// </remarks>
+    /// <exception cref="ArgumentOutOfRangeException">Order must be 1 or 2.</exception>
     public int Order
     {
       get => _order;
@@ -225,6 +234,7 @@ namespace Altaxo.Science.Spectroscopy.BaselineEstimation
       z.CopyTo(resultingBaseline);
     }
 
+    /// <inheritdoc/>
     public override string ToString()
     {
       return $"{this.GetType().Name} Order={Order} TR={TerminationRatio} Lambda={Lambda}{(ScaleLambdaWithXUnits ? 'X' : 'P')} Iterations={MaximumNumberOfIterations}";
@@ -232,7 +242,7 @@ namespace Altaxo.Science.Spectroscopy.BaselineEstimation
   }
 
   /// <summary>
-  /// Implements the adaptive iteratively reweighted penalized least squares algorithm proposed by Zhang et al [1].
+  /// Implements the adaptive iteratively reweighted penalized least squares algorithm proposed by Zhang et al. [1].
   /// </summary>
   /// <remarks>
   /// <para>References:</para>
@@ -243,9 +253,13 @@ namespace Altaxo.Science.Spectroscopy.BaselineEstimation
   {
     #region Serialization
 
+    /// <summary>
+    /// XML serialization surrogate for <see cref="AirPLS"/>.
+    /// </summary>
     [Altaxo.Serialization.Xml.XmlSerializationSurrogateFor(typeof(AirPLS), 0)]
     public class SerializationSurrogate0 : Altaxo.Serialization.Xml.IXmlSerializationSurrogate
     {
+      /// <inheritdoc/>
       public void Serialize(object obj, Altaxo.Serialization.Xml.IXmlSerializationInfo info)
       {
         var s = (AirPLS)obj;
@@ -256,6 +270,7 @@ namespace Altaxo.Science.Spectroscopy.BaselineEstimation
         info.AddValue("MaxNumberOfIterations", s.MaximumNumberOfIterations);
       }
 
+      /// <inheritdoc/>
       public object Deserialize(object? o, Altaxo.Serialization.Xml.IXmlDeserializationInfo info, object? parent)
       {
         var lambda = info.GetDouble("Lambda");

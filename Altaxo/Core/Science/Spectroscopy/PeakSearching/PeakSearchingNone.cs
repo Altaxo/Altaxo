@@ -29,17 +29,25 @@ using Altaxo.Science.Signals;
 
 namespace Altaxo.Science.Spectroscopy.PeakSearching
 {
+  /// <summary>
+  /// Peak searching implementation that performs no peak searching and always returns an empty result.
+  /// </summary>
   public class PeakSearchingNone : IPeakSearching
   {
     #region Serialization
 
+    /// <summary>
+    /// XML serialization surrogate (version 0).
+    /// </summary>
     [Altaxo.Serialization.Xml.XmlSerializationSurrogateFor(typeof(PeakSearchingNone), 0)]
     public class SerializationSurrogate0 : Altaxo.Serialization.Xml.IXmlSerializationSurrogate
     {
+      /// <inheritdoc/>
       public void Serialize(object obj, Altaxo.Serialization.Xml.IXmlSerializationInfo info)
       {
       }
 
+      /// <inheritdoc/>
       public object Deserialize(object? o, Altaxo.Serialization.Xml.IXmlDeserializationInfo info, object? parent)
       {
         return new PeakSearchingNone();
@@ -47,6 +55,7 @@ namespace Altaxo.Science.Spectroscopy.PeakSearching
     }
     #endregion
 
+    /// <inheritdoc/>
     (
       double[] x,
       double[] y,
@@ -64,7 +73,10 @@ namespace Altaxo.Science.Spectroscopy.PeakSearching
     /// <param name="leftIdx">Index of the left side.</param>
     /// <param name="middleIdx">Index of the peak position.</param>
     /// <param name="rightIdx">Index of the right side.</param>
-    /// <returns>The width value. Attention: can be negative if the x array is sorted descending.</returns>
+    /// <returns>
+    /// The width value.
+    /// Note: can be negative if the x-array is sorted descending.
+    /// </returns>
     public static double GetWidthValue(double[] x, double leftIdx, double middleIdx, double rightIdx)
     {
       if (IsInRange(x, leftIdx) && IsInRange(x, rightIdx))
@@ -87,27 +99,25 @@ namespace Altaxo.Science.Spectroscopy.PeakSearching
     }
 
     /// <summary>
-    /// Determines whether the fractional index is in the range of the x-array, so that it can be converted to an x-value.
+    /// Determines whether a fractional index is in the range of the x-array so that it can be converted to an x-value.
     /// </summary>
     /// <param name="x">The x array.</param>
     /// <param name="idx">The fractional index into the x-array.</param>
-    /// <returns>
-    ///   <c>true</c> if the fractional index is in range; otherwise, <c>false</c>.
-    /// </returns>
+    /// <returns><see langword="true"/> if the index is in range; otherwise, <see langword="false"/>.</returns>
     public static bool IsInRange(double[] x, double idx)
     {
       return idx >= 0 && idx <= x.Length - 1;
     }
 
     /// <summary>
-    /// Combines the results of two list of PeakDescriptions into one list. Note that both lists must be already sorted by position!
+    /// Combines the results of two lists of <see cref="PeakDescription"/> instances into one list.
+    /// Note that both input lists must already be sorted by position.
     /// </summary>
     /// <param name="peaksRegular">The result of the regular peak search.</param>
-    /// <param name="peaksEnhanced">The result of the peak search in the enhanced spectrum.</param>
+    /// <param name="peaksEnhanced">The result of the peak search performed on an enhanced spectrum.</param>
     /// <param name="xRegular">The x-array of the spectrum that was used to find the regular peaks.</param>
     /// <param name="yRegular">The y-array of the spectrum that was used to find the regular peaks.</param>
-    /// <returns>A list with the combined results.</returns>
-    /// <exception cref="System.NotImplementedException"></exception>
+    /// <returns>A list containing the combined results.</returns>
     public static List<PeakDescription> CombineResults(List<PeakDescription> peaksRegular, List<PeakDescription> peaksEnhanced, double[] xRegular, double[] yRegular)
     {
       // the rules for combination are as follows:
@@ -148,15 +158,12 @@ namespace Altaxo.Science.Spectroscopy.PeakSearching
       return results;
     }
 
-
-
-
     /// <summary>
-    /// Give a peak from the regular spectrum, this function finds the coinciding peaks of the peak search in the enhanced spectrum.
+    /// For a peak from the regular spectrum, finds coinciding peaks from the peak search performed on an enhanced spectrum.
     /// </summary>
     /// <param name="peakRegular">The peak description of the regular peak.</param>
     /// <param name="peaksEnhanced">The peak descriptions of all peaks found in the enhanced spectrum.</param>
-    /// <returns>A list of peaks from the enhanced spectrum, which may coincide with the peak from the regular spectrum.</returns>
+    /// <returns>A list of peaks from the enhanced spectrum that coincide with the regular peak.</returns>
     public static List<(PeakDescription Desc, int Index)> GetCoincidingPeaksEnhanced(PeakDescription peakRegular, IReadOnlyList<PeakDescription> peaksEnhanced)
     {
       var results = new List<(PeakDescription Desc, int Index)>();
@@ -174,23 +181,25 @@ namespace Altaxo.Science.Spectroscopy.PeakSearching
 
 
     /// <summary>
-    /// Determine if two peaks do coincide.
+    /// Determines whether two peaks coincide.
     /// </summary>
-    /// <param name="peakRegular">The peak (from regular peak search).</param>
-    /// <param name="peakEnhanced">Another peak (from enhanced peak search).</param>
-    /// <returns>True if the two peaks do coincide; otherwise, false.</returns>
+    /// <param name="peakRegular">The peak found in the regular spectrum.</param>
+    /// <param name="peakEnhanced">The peak found in the enhanced spectrum.</param>
+    /// <returns><see langword="true"/> if the peaks coincide; otherwise, <see langword="false"/>.</returns>
     public static bool DoPeaksCoincide(PeakDescription peakRegular, PeakDescription peakEnhanced)
     {
       return Altaxo.Calc.RMath.IsInIntervalCC(peakEnhanced.PositionValue, peakRegular.PositionValue - peakRegular.WidthValue / 2, peakRegular.PositionValue + peakRegular.WidthValue / 2);
     }
 
     /// <summary>
-    /// Converts a peak description that was retrieved from an enhanced spectrum to a regular peak description.
+    /// Converts a peak description that was retrieved from an enhanced spectrum to a peak description in the regular spectrum domain.
     /// </summary>
     /// <param name="peakEnhanced">The peak description that was retrieved from the enhanced spectrum.</param>
     /// <param name="xRegular">The x-values of the regular spectrum.</param>
     /// <param name="yRegular">The y-values of the regular spectrum.</param>
-    /// <returns>The peak description, converted to the regular spectrum domain (concerns position index, with in pixels, height, and prominence).</returns>
+    /// <returns>
+    /// The peak description converted to the regular spectrum domain (affects position index, width in pixels, height, and prominence).
+    /// </returns>
     public static PeakDescription ConvertToRegularPeakDescription(PeakDescription peakEnhanced, double[] xRegular, double[] yRegular)
     {
       var positionIndex = SignalMath.GetIndexOfXInAscendingArray(xRegular, peakEnhanced.PositionValue, null);

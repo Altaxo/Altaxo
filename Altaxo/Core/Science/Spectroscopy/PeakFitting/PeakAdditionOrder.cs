@@ -26,22 +26,22 @@ namespace Altaxo.Science.Spectroscopy.PeakFitting
 {
   /// <summary>
   /// For peak fitting by incremental peak addition, this enumeration
-  /// determines the order in which the peaks are added.
+  /// determines the order in which peaks are added.
   /// </summary>
   public enum PeakAdditionOrder
   {
     /// <summary>
-    /// By the height of the peak.
+    /// Order by peak height.
     /// </summary>
     Height,
 
     /// <summary>
-    /// By the area of the peak (estimated from height  x FWHM).
+    /// Order by peak area (estimated from height × FWHM).
     /// </summary>
     Area,
 
     /// <summary>
-    /// By height² x FWHM.
+    /// Order by height² × FWHM.
     /// </summary>
     SquaredHeightTimesWidth,
   }

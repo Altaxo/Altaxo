@@ -26,26 +26,31 @@
 namespace Altaxo.Science.Spectroscopy.BaselineEstimation
 {
   /// <summary>
-  /// SNIP algorithm for background estimation on linear (unmodified) data. SNIP = Statistical sensitive Non-Linear Iterative Procedure.
+  /// SNIP algorithm for background estimation on linear (unmodified) data.
+  /// SNIP = Statistics-sensitive Non-linear Iterative Procedure.
   /// </summary>
   /// <remarks>
-  /// In difference to the procedure described in Ref. 1, no previous smoothing is applied to the data. Furthermore,
-  /// the paper suggests to twice logarithmize the data beforehand, which is also not done here.
-  /// As described in the paper, after execution the number of regular stages of the algorithm, the window width is sucessivly decreased, until it reaches 1.
-  /// This results in a smoothing of the background signal.
+  /// In contrast to the procedure described in Ref. [1], no previous smoothing is applied to the data. Furthermore,
+  /// the paper suggests applying a double logarithm transform beforehand, which is also not done here.
+  /// As described in the paper, after executing the regular stages of the algorithm, the window width is successively decreased until it reaches 1.
+  /// This results in smoothing of the background signal.
   /// 
   /// <para>References:</para>
-  /// <para>[1] C.G. Ryan et al., SNIP, A STATISTICS-SENSITIVE BACKGROUND TREATMENT FOR THE QUANTITATIVE 
-  /// ANALYSIS OF PIXE SPECTRA IN GEOSCIENCE APPLICATIONS, Nuclear Instruments and Methods in Physics Research 934 (1988) 396-402 
+  /// <para>[1] C.G. Ryan et al., SNIP, A STATISTICS-SENSITIVE BACKGROUND TREATMENT FOR THE QUANTITATIVE
+  /// ANALYSIS OF PIXE SPECTRA IN GEOSCIENCE APPLICATIONS, Nuclear Instruments and Methods in Physics Research 934 (1988) 396-402
   /// North-Holland, Amsterdam</para>
   /// </remarks>
   public record SNIP_Linear : SNIP_Base, IBaselineEstimation
   {
     #region Serialization
 
+    /// <summary>
+    /// XML serialization surrogate for <see cref="SNIP_Linear"/>.
+    /// </summary>
     [Altaxo.Serialization.Xml.XmlSerializationSurrogateFor(typeof(SNIP_Linear), 0)]
     public class SerializationSurrogate0 : Altaxo.Serialization.Xml.IXmlSerializationSurrogate
     {
+      /// <inheritdoc/>
       public void Serialize(object obj, Altaxo.Serialization.Xml.IXmlSerializationInfo info)
       {
         var s = (SNIP_Linear)obj;
@@ -54,6 +59,7 @@ namespace Altaxo.Science.Spectroscopy.BaselineEstimation
         info.AddValue("NumberOfIterations", s.NumberOfRegularIterations);
       }
 
+      /// <inheritdoc/>
       public object Deserialize(object? o, Altaxo.Serialization.Xml.IXmlDeserializationInfo info, object? parent)
       {
         var halfWidth = info.GetDouble("HalfWidth");
@@ -76,6 +82,7 @@ namespace Altaxo.Science.Spectroscopy.BaselineEstimation
     }
     #endregion
 
+    /// <inheritdoc/>
     public override string ToString()
     {
       return $"{this.GetType().Name} HW={HalfWidth}{(IsHalfWidthInXUnits ? 'X' : 'P')} Iterations={NumberOfRegularIterations}";

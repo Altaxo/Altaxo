@@ -26,14 +26,16 @@ using System;
 
 namespace Altaxo.Science.Spectroscopy.BaselineEstimation
 {
+  /// <summary>
+  /// Base type for baseline estimation methods that use a straight line between two x-axis anchor points.
+  /// </summary>
   public abstract record XToXLineBase : Main.IImmutable
   {
     protected double _x0;
     protected double _x1;
 
     /// <summary>
-    /// Half of the width of the averaging window. This value should be set to
-    /// roughly the FWHM (full width half maximum) of the broadest peak in the spectrum.
+    /// Gets the first x-axis anchor point.
     /// </summary>
     public double X0
     {
@@ -45,8 +47,7 @@ namespace Altaxo.Science.Spectroscopy.BaselineEstimation
     }
 
     /// <summary>
-    /// Half of the width of the averaging window. This value should be set to
-    /// roughly the FWHM (full width half maximum) of the broadest peak in the spectrum.
+    /// Gets the second x-axis anchor point.
     /// </summary>
     public double X1
     {
@@ -80,12 +81,12 @@ namespace Altaxo.Science.Spectroscopy.BaselineEstimation
     }
 
     /// <summary>
-    /// Executes the algorithm with the provided spectrum.
+    /// Executes the baseline estimation algorithm for the provided spectrum and writes the estimated baseline into <paramref name="result"/>.
     /// </summary>
-    /// <param name="xArray">The x values of the spectral values.</param>
-    /// <param name="yArray">The array of spectral values.</param>
-    /// <param name="result">The location where the baseline corrected spectrum should be stored.</param>
-    /// <returns>The evaluated background of the provided spectrum.</returns>
+    /// <param name="xArray">The x-values of the spectrum.</param>
+    /// <param name="yArray">The y-values of the spectrum.</param>
+    /// <param name="result">The destination span to which the estimated baseline is written.</param>
+    /// <exception cref="InvalidOperationException">The two anchor points evaluate to the same index.</exception>
     public virtual void Execute(ReadOnlySpan<double> xArray, ReadOnlySpan<double> yArray, Span<double> result)
     {
       int minIdx0 = 0, minIdx1 = xArray.Length - 1;
@@ -113,13 +114,20 @@ namespace Altaxo.Science.Spectroscopy.BaselineEstimation
     }
   }
 
+  /// <summary>
+  /// Baseline estimation method that uses a straight line between the two anchor positions <see cref="XToXLineBase.X0"/> and <see cref="XToXLineBase.X1"/>.
+  /// </summary>
   public record XToXLine : XToXLineBase, IBaselineEstimation
   {
     #region Serialization
 
+    /// <summary>
+    /// XML serialization surrogate for <see cref="XToXLine"/>.
+    /// </summary>
     [Altaxo.Serialization.Xml.XmlSerializationSurrogateFor(typeof(XToXLine), 0)]
     public class SerializationSurrogate0 : Altaxo.Serialization.Xml.IXmlSerializationSurrogate
     {
+      /// <inheritdoc/>
       public void Serialize(object obj, Altaxo.Serialization.Xml.IXmlSerializationInfo info)
       {
         var s = (XToXLine)obj;
@@ -127,6 +135,7 @@ namespace Altaxo.Science.Spectroscopy.BaselineEstimation
         info.AddValue("X1", s._x1);
       }
 
+      /// <inheritdoc/>
       public object Deserialize(object? o, Altaxo.Serialization.Xml.IXmlDeserializationInfo info, object? parent)
       {
         var x0 = info.GetDouble("X0");

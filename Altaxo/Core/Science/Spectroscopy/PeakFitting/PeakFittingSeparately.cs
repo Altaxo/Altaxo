@@ -32,9 +32,8 @@ using Altaxo.Science.Signals;
 namespace Altaxo.Science.Spectroscopy.PeakFitting
 {
   /// <summary>
-  /// Executes area normalization : y' = (y-min)/(mean), in which min and mean are the minimal and the mean values of the array.
+  /// Fits peaks separately for each detected peak description and each spectral region.
   /// </summary>
-  /// <seealso cref="Altaxo.Science.Spectroscopy.Normalization.INormalization" />
   public record PeakFittingSeparately : PeakFittingBase, IPeakFitting
   {
     #region Serialization
@@ -42,18 +41,20 @@ namespace Altaxo.Science.Spectroscopy.PeakFitting
     #region Version 0
 
     /// <summary>
-    /// 
+    /// XML serialization surrogate (version 0).
     /// </summary>
     /// <seealso cref="Altaxo.Serialization.Xml.IXmlSerializationSurrogate" />
     [Altaxo.Serialization.Xml.XmlSerializationSurrogateFor("AltaxoCore", "Altaxo.Science.Spectroscopy.PeakFitting.PeakFittingSeparately", 0)]
     public class SerializationSurrogate0 : Altaxo.Serialization.Xml.IXmlSerializationSurrogate
     {
+      /// <inheritdoc/>
       public void Serialize(object obj, Altaxo.Serialization.Xml.IXmlSerializationInfo info)
       {
         var s = (PeakFittingSeparately)obj;
         info.AddValue("FitFunction", s.FitFunction);
       }
 
+      /// <inheritdoc/>
       public object Deserialize(object? o, Altaxo.Serialization.Xml.IXmlDeserializationInfo info, object? parent)
       {
         var fitFunction = info.GetValue<IFitFunctionPeak>("FitFunction", null);
@@ -69,12 +70,13 @@ namespace Altaxo.Science.Spectroscopy.PeakFitting
     #region Version 1
 
     /// <summary>
-    /// 2022-08-06 V1: Added FitWidthScalingFactor
+    /// 2022-08-06 V1: Added <see cref="PeakFittingBase.FitWidthScalingFactor"/>.
     /// </summary>
     /// <seealso cref="Altaxo.Serialization.Xml.IXmlSerializationSurrogate" />
     [Altaxo.Serialization.Xml.XmlSerializationSurrogateFor("AltaxoCore", "Altaxo.Science.Spectroscopy.PeakFitting.PeakFittingSeparately", 1)]
     public class SerializationSurrogate1 : Altaxo.Serialization.Xml.IXmlSerializationSurrogate
     {
+      /// <inheritdoc/>
       public void Serialize(object obj, Altaxo.Serialization.Xml.IXmlSerializationInfo info)
       {
         var s = (PeakFittingSeparately)obj;
@@ -82,6 +84,7 @@ namespace Altaxo.Science.Spectroscopy.PeakFitting
         info.AddValue("FitWidthScalingFactor", s.FitWidthScalingFactor);
       }
 
+      /// <inheritdoc/>
       public object Deserialize(object? o, Altaxo.Serialization.Xml.IXmlDeserializationInfo info, object? parent)
       {
         var fitFunction = info.GetValue<IFitFunctionPeak>("FitFunction", null);
@@ -99,13 +102,14 @@ namespace Altaxo.Science.Spectroscopy.PeakFitting
     #region Version 2
 
     /// <summary>
-    /// 2022-08-06 V1: Added FitWidthScalingFactor
-    /// 2023-04-11 V2: Added IsMinimalFWHMValueInXUnits and MinimalFWHMValue
+    /// 2022-08-06 V1: Added <see cref="PeakFittingBase.FitWidthScalingFactor"/>.
+    /// 2023-04-11 V2: Added <see cref="PeakFittingBase.IsMinimalFWHMValueInXUnits"/> and <see cref="PeakFittingBase.MinimalFWHMValue"/>.
     /// </summary>
     /// <seealso cref="Altaxo.Serialization.Xml.IXmlSerializationSurrogate" />
     [Altaxo.Serialization.Xml.XmlSerializationSurrogateFor(typeof(PeakFittingSeparately), 2)]
     public class SerializationSurrogate2 : Altaxo.Serialization.Xml.IXmlSerializationSurrogate
     {
+      /// <inheritdoc/>
       public void Serialize(object obj, Altaxo.Serialization.Xml.IXmlSerializationInfo info)
       {
         var s = (PeakFittingSeparately)obj;
@@ -115,6 +119,7 @@ namespace Altaxo.Science.Spectroscopy.PeakFitting
         info.AddValue("MinimalFWHMValue", s.MinimalFWHMValue);
       }
 
+      /// <inheritdoc/>
       public object Deserialize(object? o, Altaxo.Serialization.Xml.IXmlDeserializationInfo info, object? parent)
       {
         var fitFunction = info.GetValue<IFitFunctionPeak>("FitFunction", null);
@@ -136,6 +141,7 @@ namespace Altaxo.Science.Spectroscopy.PeakFitting
 
     #endregion
 
+    /// <inheritdoc/>
     public
       (
       double[] x,
@@ -159,7 +165,14 @@ namespace Altaxo.Science.Spectroscopy.PeakFitting
       return (xArray, yArray, regions, peakFitDescriptions);
     }
 
-    /// <inheritdoc/>
+    /// <summary>
+    /// Fits each peak described by <paramref name="peakDescriptions"/> individually.
+    /// </summary>
+    /// <param name="xArray">The x-values for the region to be fitted.</param>
+    /// <param name="yArray">The y-values for the region to be fitted.</param>
+    /// <param name="peakDescriptions">The peaks to be fitted.</param>
+    /// <param name="cancellationToken">Token used to cancel this task.</param>
+    /// <returns>A list of peak fitting results, in the same order as <paramref name="peakDescriptions"/>.</returns>
     public List<PeakDescription> Execute(double[] xArray, double[] yArray, IEnumerable<PeakSearching.PeakDescription> peakDescriptions, CancellationToken cancellationToken)
     {
       var fitFunc = FitFunction.WithNumberOfTerms(1);
@@ -263,6 +276,7 @@ namespace Altaxo.Science.Spectroscopy.PeakFitting
       return list;
     }
 
+    /// <inheritdoc/>
     public override string ToString()
     {
       return $"{this.GetType().Name} Func={FitFunction?.GetType()?.Name} FitWidth={FitWidthScalingFactor} MinFWHM={MinimalFWHMValue}{(IsMinimalFWHMValueInXUnits ? 'X' : 'P')}";

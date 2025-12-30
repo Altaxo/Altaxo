@@ -29,19 +29,24 @@ using Altaxo.Science.Spectroscopy.PeakSearching;
 namespace Altaxo.Science.Spectroscopy.PeakEnhancement
 {
   /// <summary>
-  /// Interface to peak enhancement methods. These methods will enhance peaks: if two peaks are close together, or one peak is hidden in the shoulder of another peak, it tries
-  /// to separate those peaks. Most properties of the peaks are not kept: the height, width, shape of the peak may differ from the original peak, but at least the position should be that
-  /// of the original peak.
+  /// Interface to peak-enhancement methods.
+  /// These methods enhance peaks; for example, if two peaks are close together, or one peak is hidden in the shoulder of another peak,
+  /// the method tries to separate those peaks.
+  /// Most properties of the peaks are not preserved: the height, width, and shape of the peak may differ from the original peak,
+  /// but at least the position should correspond to the original peak.
   /// </summary>
   public interface IPeakEnhancement : ISingleSpectrumPreprocessor
   {
     /// <summary>
-    /// Adjusts the parameters of this peak enhancement method by using the spectrum, and the result of a regular peak search over the spectrum.
+    /// Adjusts the parameters of this peak-enhancement method using the spectrum and the result of a regular peak search over the spectrum.
     /// </summary>
     /// <param name="subX">The x-values of the spectrum.</param>
     /// <param name="subY">The y-values of the spectrum.</param>
     /// <param name="resultRegular">The result of a peak search over the spectrum.</param>
-    /// <returns>An instance of the peak search with adjusted parameters. If nothing is changed, the same instance can be returned.</returns>
+    /// <returns>
+    /// An instance of the peak enhancement with adjusted parameters.
+    /// If nothing is changed, the same instance can be returned.
+    /// </returns>
     IPeakEnhancement WithAdjustedParameters(double[] subX, double[] subY, List<PeakDescription> resultRegular);
   }
 }

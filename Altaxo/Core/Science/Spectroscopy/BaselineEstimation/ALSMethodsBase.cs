@@ -28,10 +28,18 @@ using Altaxo.Calc.LinearAlgebra;
 namespace Altaxo.Science.Spectroscopy.BaselineEstimation
 {
   /// <summary>
-  /// Base class of ALS based methods, like <see cref="AirPLSBase"/>, <see cref="ALSBase"/> and <see cref="ArPLSBase"/>.
+  /// Base type for asymmetric least squares (ALS)-based baseline estimation methods,
+  /// such as <see cref="AirPLSBase"/>, <see cref="ALSBase"/>, and <see cref="ArPLSBase"/>.
   /// </summary>
   public abstract record ALSMethodsBase
   {
+    /// <summary>
+    /// Fills a tridiagonal band matrix for a first-order difference penalty.
+    /// </summary>
+    /// <param name="m">The band matrix to fill.</param>
+    /// <param name="weights">The weighting coefficients.</param>
+    /// <param name="lambda">The smoothing parameter.</param>
+    /// <param name="countM1">The last valid index (<c>count - 1</c>).</param>
     public void FillBandMatrixOrder1(IMatrix<double> m, double[] weights, double lambda, int countM1)
     {
       // Fill the (1,1) band matrix with (W + lambda D'D) (Eq.(6) in Ref.[1])
@@ -48,6 +56,13 @@ namespace Altaxo.Science.Spectroscopy.BaselineEstimation
       m[countM1, countM1] = weights[countM1] + lambda;
     }
 
+    /// <summary>
+    /// Updates only the diagonal of a tridiagonal band matrix for a first-order difference penalty.
+    /// </summary>
+    /// <param name="m">The band matrix whose diagonal is updated.</param>
+    /// <param name="weights">The weighting coefficients.</param>
+    /// <param name="lambda">The smoothing parameter.</param>
+    /// <param name="countM1">The last valid index (<c>count - 1</c>).</param>
     public void UpdateBandMatrixDiagonalOrder1(IMatrix<double> m, double[] weights, double lambda, int countM1)
     {
       m[0, 0] = weights[0] + lambda;
@@ -58,6 +73,13 @@ namespace Altaxo.Science.Spectroscopy.BaselineEstimation
       m[countM1, countM1] = weights[countM1] + lambda;
     }
 
+    /// <summary>
+    /// Fills a pentadiagonal band matrix for a second-order difference penalty.
+    /// </summary>
+    /// <param name="m">The band matrix to fill.</param>
+    /// <param name="weights">The weighting coefficients.</param>
+    /// <param name="lambda">The smoothing parameter.</param>
+    /// <param name="countM1">The last valid index (<c>count - 1</c>).</param>
     public void FillBandMatrixOrder2(IMatrix<double> m, double[] weights, double lambda, int countM1)
     {
       // Fill the (2,2) band matrix with (W + lambda D'D) (Eq.(6) in Ref.[1])
@@ -90,6 +112,13 @@ namespace Altaxo.Science.Spectroscopy.BaselineEstimation
       m[countM1, countM1] = weights[countM1] + lambda;
     }
 
+    /// <summary>
+    /// Updates only the diagonal of a pentadiagonal band matrix for a second-order difference penalty.
+    /// </summary>
+    /// <param name="m">The band matrix whose diagonal is updated.</param>
+    /// <param name="weights">The weighting coefficients.</param>
+    /// <param name="lambda">The smoothing parameter.</param>
+    /// <param name="countM1">The last valid index (<c>count - 1</c>).</param>
     public void UpdateBandMatrixDiagonalOrder2(IMatrix<double> m, double[] weights, double lambda, int countM1)
     {
       // Fill the (2,2) band matrix with (W + lambda D'D) (Eq.(6) in Ref.[1])

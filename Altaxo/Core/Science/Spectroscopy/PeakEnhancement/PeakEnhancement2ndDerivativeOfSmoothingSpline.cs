@@ -36,15 +36,18 @@ namespace Altaxo.Science.Spectroscopy.PeakEnhancement
   /// </summary>
   public record PeakEnhancement2ndDerivativeOfSmoothingSpline : IPeakEnhancement
   {
+    /// <summary>
+    /// The default value for <see cref="Smoothness"/> used when <see cref="Smoothness"/> is <see langword="null"/>.
+    /// </summary>
     public const double SmoothnessDefaultValue = 1;
 
     private double? _smoothness = null;
 
     /// <summary>
-    /// Get/sets the smoothness parameter.
-    /// If null, this parameter is set automatically.
-    /// If not null, it must be in the interval [0,Infinity], where a
-    /// value of 0 means no smoothing (evaluation of a cubic spline), while a value of Infinity
+    /// Gets or sets the smoothness parameter.
+    /// If <see langword="null"/>, this parameter is set automatically.
+    /// If not <see langword="null"/>, it must be in the interval [0, Infinity], where
+    /// a value of 0 means no smoothing (evaluation of a cubic spline), while a value of Infinity
     /// means evaluation of a regression.
     /// </summary>
     public double? Smoothness
@@ -70,12 +73,14 @@ namespace Altaxo.Science.Spectroscopy.PeakEnhancement
     [Altaxo.Serialization.Xml.XmlSerializationSurrogateFor(typeof(PeakEnhancement2ndDerivativeOfSmoothingSpline), 0)]
     public class SerializationSurrogate0 : Altaxo.Serialization.Xml.IXmlSerializationSurrogate
     {
+      /// <inheritdoc/>
       public void Serialize(object obj, Altaxo.Serialization.Xml.IXmlSerializationInfo info)
       {
         var s = (PeakEnhancement2ndDerivativeOfSmoothingSpline)obj;
         info.AddValue("Smoothness", s.Smoothness);
       }
 
+      /// <inheritdoc/>
       public object Deserialize(object? o, Altaxo.Serialization.Xml.IXmlDeserializationInfo info, object? parent)
       {
         var smoothness = info.GetNullableDouble("Smoothness");

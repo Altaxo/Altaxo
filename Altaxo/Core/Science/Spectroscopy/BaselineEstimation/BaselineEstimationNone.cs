@@ -27,20 +27,25 @@ using System;
 namespace Altaxo.Science.Spectroscopy.BaselineEstimation
 {
   /// <summary>
-  /// Does nothing (null operation).
+  /// Baseline estimation implementation that performs no baseline estimation.
   /// </summary>
   /// <seealso cref="Altaxo.Science.Spectroscopy.BaselineEstimation.IBaselineEstimation" />
   public class BaselineEstimationNone : IBaselineEstimation
   {
     #region Serialization
 
+    /// <summary>
+    /// XML serialization surrogate for <see cref="BaselineEstimationNone"/>.
+    /// </summary>
     [Altaxo.Serialization.Xml.XmlSerializationSurrogateFor(typeof(BaselineEstimationNone), 0)]
     public class SerializationSurrogate0 : Altaxo.Serialization.Xml.IXmlSerializationSurrogate
     {
+      /// <inheritdoc/>
       public void Serialize(object obj, Altaxo.Serialization.Xml.IXmlSerializationInfo info)
       {
       }
 
+      /// <inheritdoc/>
       public object Deserialize(object? o, Altaxo.Serialization.Xml.IXmlDeserializationInfo info, object? parent)
       {
         return new BaselineEstimationNone();
@@ -54,6 +59,7 @@ namespace Altaxo.Science.Spectroscopy.BaselineEstimation
       return (x, y, regions);
     }
 
+    /// <inheritdoc/>
     public void Execute(ReadOnlySpan<double> xArray, ReadOnlySpan<double> yArray, Span<double> resultingBaseline)
     {
       for (int i = 0; i < resultingBaseline.Length; i++)

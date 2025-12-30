@@ -29,6 +29,9 @@ using System.Linq;
 namespace Altaxo.Science.Spectroscopy.Calibration
 {
 
+  /// <summary>
+  /// Y-axis (intensity) calibration that applies scaling factors derived from a referenced data source/table.
+  /// </summary>
   public record YCalibrationByDataSource : IYCalibration, Main.IImmutable, IYCalibrationTable, IReferencingTable
   {
     /// <inheritdoc/>
@@ -41,11 +44,15 @@ namespace Altaxo.Science.Spectroscopy.Calibration
     #region Serialization
 
     /// <summary>
-    /// 2023-03-27 Initial version
+    /// XML serialization surrogate for <see cref="YCalibrationByDataSource"/>.
     /// </summary>
+    /// <remarks>
+    /// 2023-03-27 Initial version.
+    /// </remarks>
     [Altaxo.Serialization.Xml.XmlSerializationSurrogateFor(typeof(YCalibrationByDataSource), 0)]
     public class SerializationSurrogate0 : Altaxo.Serialization.Xml.IXmlSerializationSurrogate
     {
+      /// <inheritdoc/>
       public void Serialize(object obj, Altaxo.Serialization.Xml.IXmlSerializationInfo info)
       {
         var s = (YCalibrationByDataSource)obj;
@@ -65,6 +72,7 @@ namespace Altaxo.Science.Spectroscopy.Calibration
         info.CommitArray();
       }
 
+      /// <inheritdoc/>
       public object Deserialize(object? o, Altaxo.Serialization.Xml.IXmlDeserializationInfo info, object? parent)
       {
         var tableName = info.GetString("TableName");
@@ -139,6 +147,7 @@ namespace Altaxo.Science.Spectroscopy.Calibration
       return this with { TableName = tableName };
     }
 
+    /// <inheritdoc/>
     public override string ToString()
     {
       return $"{this.GetType().Name} Table={TableName}";

@@ -28,6 +28,9 @@ using System.Linq;
 namespace Altaxo.Science.Spectroscopy.Calibration
 {
 
+  /// <summary>
+  /// X-axis calibration that applies a correction curve derived from a referenced data source/table.
+  /// </summary>
   public record XCalibrationByDataSource : IXCalibration, Main.IImmutable, IXCalibrationTable, IReferencingTable
   {
     /// <inheritdoc/>
@@ -40,11 +43,15 @@ namespace Altaxo.Science.Spectroscopy.Calibration
     #region Serialization
 
     /// <summary>
-    /// 2022-08-06 Initial version
+    /// XML serialization surrogate for <see cref="XCalibrationByDataSource"/>.
     /// </summary>
+    /// <remarks>
+    /// 2022-08-06 Initial version.
+    /// </remarks>
     [Altaxo.Serialization.Xml.XmlSerializationSurrogateFor(typeof(XCalibrationByDataSource), 0)]
     public class SerializationSurrogate0 : Altaxo.Serialization.Xml.IXmlSerializationSurrogate
     {
+      /// <inheritdoc/>
       public void Serialize(object obj, Altaxo.Serialization.Xml.IXmlSerializationInfo info)
       {
         var s = (XCalibrationByDataSource)obj;
@@ -64,6 +71,7 @@ namespace Altaxo.Science.Spectroscopy.Calibration
         info.CommitArray();
       }
 
+      /// <inheritdoc/>
       public object Deserialize(object? o, Altaxo.Serialization.Xml.IXmlDeserializationInfo info, object? parent)
       {
         var tableName = info.GetString("TableName");
@@ -122,6 +130,7 @@ namespace Altaxo.Science.Spectroscopy.Calibration
       return this with { TableName = tableName };
     }
 
+    /// <inheritdoc/>
     public override string ToString()
     {
       return $"{this.GetType().Name} Table={TableName}";

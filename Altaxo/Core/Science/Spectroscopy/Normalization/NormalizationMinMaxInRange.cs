@@ -35,21 +35,25 @@ namespace Altaxo.Science.Spectroscopy.Normalization
   public record NormalizationMinMaxInRange : INormalization
   {
     /// <summary>
-    /// Gets the minimal value x-value (inclusive) of the range of the spectrum, which is used to determine the minimal and maximal y-values used for normalization.
+    /// Gets the minimum x-value (inclusive) of the spectrum range used to determine the minimum and maximum y-values for normalization.
     /// </summary>
     public double MinimalValue { get; init; } = double.NegativeInfinity;
 
     /// <summary>
-    /// Gets the maximal value x-value (inclusive) of the range of the spectrum, which is used to determine the minimal and maximal y-values used for normalization.
+    /// Gets the maximum x-value (inclusive) of the spectrum range used to determine the minimum and maximum y-values for normalization.
     /// </summary>
     public double MaximalValue { get; init; } = double.PositiveInfinity;
 
 
     #region Serialization
 
+    /// <summary>
+    /// XML serialization surrogate for <see cref="NormalizationMinMaxInRange"/>.
+    /// </summary>
     [Altaxo.Serialization.Xml.XmlSerializationSurrogateFor(typeof(NormalizationMinMaxInRange), 0)]
     public class SerializationSurrogate0 : Altaxo.Serialization.Xml.IXmlSerializationSurrogate
     {
+      /// <inheritdoc/>
       public void Serialize(object obj, Altaxo.Serialization.Xml.IXmlSerializationInfo info)
       {
         var s = (NormalizationMinMaxInRange)obj;
@@ -57,6 +61,7 @@ namespace Altaxo.Science.Spectroscopy.Normalization
         info.AddValue("MaximalValue", s.MaximalValue);
       }
 
+      /// <inheritdoc/>
       public object Deserialize(object? o, Altaxo.Serialization.Xml.IXmlDeserializationInfo info, object? parent)
       {
         var minimalValue = info.GetDouble("MinimalValue");

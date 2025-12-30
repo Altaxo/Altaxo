@@ -34,8 +34,8 @@ using Altaxo.Calc.Regression.Nonlinear;
 namespace Altaxo.Science.Spectroscopy.PeakFitting
 {
   /// <summary>
-  /// Fits all peaks that were found together in one single fitting function.
-  /// Then, in order to get the variances for each single peak, each of the peaks it fitted again.
+  /// Fits all peaks found together using a single composite fit function and then evaluates each peak separately
+  /// to obtain per-peak parameter variances.
   /// </summary>
   public record PeakFittingTogetherWithSeparateVariances : PeakFittingTogether, IPeakFitting
   {
@@ -43,15 +43,20 @@ namespace Altaxo.Science.Spectroscopy.PeakFitting
 
     #region Version 0
 
+    /// <summary>
+    /// XML serialization surrogate (version 0).
+    /// </summary>
     [Altaxo.Serialization.Xml.XmlSerializationSurrogateFor("AltaxoCore", "Altaxo.Science.Spectroscopy.PeakFitting.PeakFittingTogetherWithSeparateVariances", 0)]
     public new class SerializationSurrogate0 : Altaxo.Serialization.Xml.IXmlSerializationSurrogate
     {
+      /// <inheritdoc/>
       public void Serialize(object obj, Altaxo.Serialization.Xml.IXmlSerializationInfo info)
       {
         var s = (PeakFittingTogetherWithSeparateVariances)obj;
         info.AddValue("FitFunction", s.FitFunction);
       }
 
+      /// <inheritdoc/>
       public object Deserialize(object? o, Altaxo.Serialization.Xml.IXmlDeserializationInfo info, object? parent)
       {
         var fitFunction = info.GetValue<IFitFunctionPeak>("FitFunction", null); return new PeakFittingTogetherWithSeparateVariances()
@@ -66,11 +71,12 @@ namespace Altaxo.Science.Spectroscopy.PeakFitting
     #region Version 1
 
     /// <summary>
-    /// 2022-08-06 Added FitWidthScalingFactor
+    /// 2022-08-06 V1: Added <see cref="PeakFittingBase.FitWidthScalingFactor"/>.
     /// </summary>
     [Altaxo.Serialization.Xml.XmlSerializationSurrogateFor("AltaxoCore", "Altaxo.Science.Spectroscopy.PeakFitting.PeakFittingTogetherWithSeparateVariances", 1)]
     public new class SerializationSurrogate1 : Altaxo.Serialization.Xml.IXmlSerializationSurrogate
     {
+      /// <inheritdoc/>
       public void Serialize(object obj, Altaxo.Serialization.Xml.IXmlSerializationInfo info)
       {
         var s = (PeakFittingTogetherWithSeparateVariances)obj;
@@ -78,6 +84,7 @@ namespace Altaxo.Science.Spectroscopy.PeakFitting
         info.AddValue("FitWidthScalingFactor", s.FitWidthScalingFactor);
       }
 
+      /// <inheritdoc/>
       public object Deserialize(object? o, Altaxo.Serialization.Xml.IXmlDeserializationInfo info, object? parent)
       {
         var fitFunction = info.GetValue<IFitFunctionPeak>("FitFunction", null);
@@ -95,12 +102,13 @@ namespace Altaxo.Science.Spectroscopy.PeakFitting
     #region Version 2
 
     /// <summary>
-    /// 2022-08-06 V1: Added FitWidthScalingFactor
-    /// 2023-04-11 V2: Added IsMinimalFWHMValueInXUnits and MinimalFWHMValue
+    /// 2022-08-06 V1: Added <see cref="PeakFittingBase.FitWidthScalingFactor"/>.
+    /// 2023-04-11 V2: Added <see cref="PeakFittingBase.IsMinimalFWHMValueInXUnits"/> and <see cref="PeakFittingBase.MinimalFWHMValue"/>.
     /// </summary>
     [Altaxo.Serialization.Xml.XmlSerializationSurrogateFor(typeof(PeakFittingTogetherWithSeparateVariances), 2)]
     public new class SerializationSurrogate2 : Altaxo.Serialization.Xml.IXmlSerializationSurrogate
     {
+      /// <inheritdoc/>
       public void Serialize(object obj, Altaxo.Serialization.Xml.IXmlSerializationInfo info)
       {
         var s = (PeakFittingTogetherWithSeparateVariances)obj;
@@ -110,6 +118,7 @@ namespace Altaxo.Science.Spectroscopy.PeakFitting
         info.AddValue("MinimalFWHMValue", s.MinimalFWHMValue);
       }
 
+      /// <inheritdoc/>
       public object Deserialize(object? o, Altaxo.Serialization.Xml.IXmlDeserializationInfo info, object? parent)
       {
         var fitFunction = info.GetValue<IFitFunctionPeak>("FitFunction", null);
@@ -131,6 +140,7 @@ namespace Altaxo.Science.Spectroscopy.PeakFitting
 
     #endregion
 
+    /// <inheritdoc/>
     protected override List<PeakDescription> GetPeakDescriptionList(
       double[] xArray,
       double[] yArray,
@@ -155,8 +165,8 @@ namespace Altaxo.Science.Spectroscopy.PeakFitting
       int idx = 0;
       var isFixed = Enumerable.Repeat(true, param.Length).ToArray();
       var parameterTemp = new double[param.Length];
-      var parametersSeparate = new double[param.Length]; // Array to accomodate the parameter variances evaluated for each peak separately
-      var standardErrorsSeparate = new double[param.Length]; // Array to accomodate the parameter variances evaluated for each peak separately
+      var parametersSeparate = new double[param.Length]; // Array to accommodate the parameter variances evaluated for each peak separately
+      var standardErrorsSeparate = new double[param.Length]; // Array to accommodate the parameter variances evaluated for each peak separately
       var covariancesSeparate = new Matrix<double>[param.Length]; // Array of matrices that holds the covariances of each peak separately
       var sumChiSquareSeparate = new double[param.Length];
       var sigmaSquareSeparate = new double[param.Length];
@@ -234,6 +244,7 @@ namespace Altaxo.Science.Spectroscopy.PeakFitting
       return list;
     }
 
+    /// <inheritdoc/>
     public override string ToString()
     {
       return base.ToString();

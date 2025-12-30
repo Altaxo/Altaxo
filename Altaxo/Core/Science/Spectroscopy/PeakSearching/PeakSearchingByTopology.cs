@@ -31,13 +31,17 @@ using Altaxo.Science.Spectroscopy.PeakEnhancement;
 namespace Altaxo.Science.Spectroscopy.PeakSearching
 {
   /// <summary>
-  /// Executes area normalization : y' = (y-min)/(mean), in which min and mean are the minimal and the mean values of the array.
+  /// Executes peak searching based on topological peak properties.
   /// </summary>
-  /// <seealso cref="Altaxo.Science.Spectroscopy.Normalization.INormalization" />
   public record PeakSearchingByTopology : IPeakSearching
   {
     private double? _minimalProminence = 0.01;
 
+    /// <summary>
+    /// Gets/sets the minimal required peak prominence.
+    /// The value is interpreted relative to the y-span of the region (see implementation).
+    /// </summary>
+    /// <exception cref="ArgumentOutOfRangeException">Value must be &gt;= 0.</exception>
     public double? MinimalProminence
     {
       get => _minimalProminence;
@@ -53,12 +57,10 @@ namespace Altaxo.Science.Spectroscopy.PeakSearching
     private int? _maximalNumberOfPeaks = 50;
 
     /// <summary>
-    /// If a value is set, this limits the number of peaks included in the result to this number of peaks with the highest amplitude.
+    /// Gets/sets a limit for the number of peaks included in the result.
+    /// If set, only the peaks with the highest amplitudes are included (up to this number).
     /// </summary>
-    /// <value>
-    /// The maximal number of peaks.
-    /// </value>
-    /// <exception cref="System.ArgumentException">Value must either be null or >0</exception>
+    /// <exception cref="System.ArgumentException">Value must either be <see langword="null"/> or &gt; 0.</exception>
     public int? MaximalNumberOfPeaks
     {
       get => _maximalNumberOfPeaks;
@@ -84,15 +86,20 @@ namespace Altaxo.Science.Spectroscopy.PeakSearching
 
     #region Serialization
 
+    /// <summary>
+    /// XML serialization surrogate (version 0).
+    /// </summary>
     [Altaxo.Serialization.Xml.XmlSerializationSurrogateFor("AltaxoCore", "Altaxo.Science.Spectroscopy.PeakSearching.PeakSearchingByTopology", 0)]
     public class SerializationSurrogate0 : Altaxo.Serialization.Xml.IXmlSerializationSurrogate
     {
+      /// <inheritdoc/>
       public void Serialize(object obj, Altaxo.Serialization.Xml.IXmlSerializationInfo info)
       {
         var s = (PeakSearchingByTopology)obj;
         info.AddValue("MinimalProminence", s._minimalProminence);
       }
 
+      /// <inheritdoc/>
       public object Deserialize(object? o, Altaxo.Serialization.Xml.IXmlDeserializationInfo info, object? parent)
       {
         var minimalProminence = info.GetNullableDouble("MinimalProminence");
@@ -104,9 +111,13 @@ namespace Altaxo.Science.Spectroscopy.PeakSearching
       }
     }
 
+    /// <summary>
+    /// XML serialization surrogate (version 1).
+    /// </summary>
     [Altaxo.Serialization.Xml.XmlSerializationSurrogateFor("AltaxoCore", "Altaxo.Science.Spectroscopy.PeakSearching.PeakSearchingByTopology", 1)]
     public class SerializationSurrogate1 : Altaxo.Serialization.Xml.IXmlSerializationSurrogate
     {
+      /// <inheritdoc/>
       public void Serialize(object obj, Altaxo.Serialization.Xml.IXmlSerializationInfo info)
       {
         var s = (PeakSearchingByTopology)obj;
@@ -114,6 +125,7 @@ namespace Altaxo.Science.Spectroscopy.PeakSearching
         info.AddValue("MaximalNumberOfPeaks", s.MaximalNumberOfPeaks);
       }
 
+      /// <inheritdoc/>
       public object Deserialize(object? o, Altaxo.Serialization.Xml.IXmlDeserializationInfo info, object? parent)
       {
         return new PeakSearchingByTopology()
@@ -125,12 +137,13 @@ namespace Altaxo.Science.Spectroscopy.PeakSearching
     }
 
     /// <summary>
-    /// 2023-01-27 V2: Add property 'PeakEnhancement'
+    /// 2023-01-27 V2: Added property <see cref="PeakEnhancement"/>.
     /// </summary>
     /// <seealso cref="Altaxo.Serialization.Xml.IXmlSerializationSurrogate" />
     [Altaxo.Serialization.Xml.XmlSerializationSurrogateFor(typeof(PeakSearchingByTopology), 2)]
     public class SerializationSurrogate2 : Altaxo.Serialization.Xml.IXmlSerializationSurrogate
     {
+      /// <inheritdoc/>
       public void Serialize(object obj, Altaxo.Serialization.Xml.IXmlSerializationInfo info)
       {
         var s = (PeakSearchingByTopology)obj;
@@ -139,6 +152,7 @@ namespace Altaxo.Science.Spectroscopy.PeakSearching
         info.AddValue("PeakEnhancement", s.PeakEnhancement);
       }
 
+      /// <inheritdoc/>
       public object Deserialize(object? o, Altaxo.Serialization.Xml.IXmlDeserializationInfo info, object? parent)
       {
         return new PeakSearchingByTopology()
@@ -152,6 +166,7 @@ namespace Altaxo.Science.Spectroscopy.PeakSearching
 
     #endregion
 
+    /// <inheritdoc/>
     public
       (
       double[] x,
@@ -231,7 +246,7 @@ namespace Altaxo.Science.Spectroscopy.PeakSearching
       // if there are too many peaks, we prune the peaks with the lowest amplitude
       if (_maximalNumberOfPeaks.HasValue && peakDescriptions.Count > _maximalNumberOfPeaks.Value)
       {
-        // Sort so that the hightest peaks are at the beginning of the list
+        // Sort so that the highest peaks are at the beginning of the list
         peakDescriptions.Sort((p1, p2) => Comparer<double>.Default.Compare(p2.Prominence, p1.Prominence));
 
         // cut the end of the list to the maximal allowed number of peaks
@@ -247,6 +262,7 @@ namespace Altaxo.Science.Spectroscopy.PeakSearching
       return peakDescriptions;
     }
 
+    /// <inheritdoc/>
     public override string ToString()
     {
       return $"{this.GetType().Name} MinProm={MinimalProminence} MaxPeaks={this.MaximalNumberOfPeaks} Enh={(PeakEnhancement is PeakEnhancementNone ? "No" : PeakEnhancement.ToString())}";

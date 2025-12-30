@@ -45,9 +45,6 @@ namespace Altaxo.Science.Spectroscopy.PeakSearching
     /// <summary>
     /// Gets the wavelet function used for transformation. Default is <see cref="WaveletRicker"/>.
     /// </summary>
-    /// <value>
-    /// The wavelet.
-    /// </value>
     /// <exception cref="System.ArgumentNullException">Wavelet</exception>
     public IWaveletForPeakSearching Wavelet
     {
@@ -58,13 +55,11 @@ namespace Altaxo.Science.Spectroscopy.PeakSearching
     private int _pointsPerOctave = 8;
 
     /// <summary>
-    /// The width of the wavelets is varied logarithmically. The value gives the number of points per octave of width variation (octave = factor of two).
+    /// The width of the wavelets is varied logarithmically.
+    /// The value gives the number of points per octave of width variation (octave = factor of two).
     /// The default value is 8.
     /// </summary>
-    /// <value>
-    /// The number of points per octave.
-    /// </value>
-    /// <exception cref="System.ArgumentOutOfRangeException">Points per octave must be >= 4 - NumberOfPointsPerOctave</exception>
+    /// <exception cref="System.ArgumentOutOfRangeException">Points per octave must be &gt;= 4 - NumberOfPointsPerOctave</exception>
     public int NumberOfPointsPerOctave
     {
       get
@@ -82,11 +77,8 @@ namespace Altaxo.Science.Spectroscopy.PeakSearching
     private double _minimalRidgeLengthInOctaves = 2;
 
     /// <summary>
-    /// Gets the minimal ridge length in octaves a ridge must have, in order to be considered as an indication of a peak.
+    /// Gets the minimal ridge length (in octaves) that a ridge must have to be considered an indication of a peak.
     /// </summary>
-    /// <value>
-    /// The minimal ridge length in octaves.
-    /// </value>
     public double MinimalRidgeLengthInOctaves
     {
       get => _minimalRidgeLengthInOctaves;
@@ -99,12 +91,11 @@ namespace Altaxo.Science.Spectroscopy.PeakSearching
     private double _minimalWidthOfRidgeMaximumInOctaves = 2;
 
     /// <summary>
-    /// Going along a ridge, the maximum of the Cwt coefficient indicates the best fit of the peak with the wavelet. The width of the peak can be derived from this location.
-    /// The value designates the minimal width of the ridge maximum. Default value is 2 octaves (1 to the left, 1 to the right).
+    /// Gets the minimal width (in octaves) of the ridge maximum.
+    /// Along a ridge, the maximum CWT coefficient indicates the best match of the peak with the wavelet; the peak width can be derived
+    /// from that location.
+    /// The default value is 2 octaves (1 to the left, 1 to the right).
     /// </summary>
-    /// <value>
-    /// The minimal width of the ridge maximum in octaves.
-    /// </value>
     public double MinimalWidthOfRidgeMaximumInOctaves
     {
       get => _minimalWidthOfRidgeMaximumInOctaves;
@@ -117,10 +108,10 @@ namespace Altaxo.Science.Spectroscopy.PeakSearching
     private double _minimalSignalToNoiseRatio = 3;
 
     /// <summary>
-    /// Gets the minimal signal to noise ratio a peak must have in order to be included in the result list.
+    /// Gets the minimal signal-to-noise ratio a peak must have to be included in the result.
     /// </summary>
     /// <value>
-    /// The minimal signal to noise ratio. Default value is 3.
+    /// The minimal signal-to-noise ratio. Default value is 3.
     /// </value>
     public double MinimalSignalToNoiseRatio
     {
@@ -134,12 +125,10 @@ namespace Altaxo.Science.Spectroscopy.PeakSearching
     private double _minimalRelativeGaussianAmplitude = 0.005;
 
     /// <summary>
-    /// Gets the minimal relative gaussian amplitude (relative to the maximum Gaussian amplitude) of the signal, that a peak must have in order to be included in the result.
+    /// Gets the minimal relative Gaussian amplitude (relative to the maximum Gaussian amplitude) that a peak must have to be included
+    /// in the result.
     /// The default value is 0.005 (0.5%).
     /// </summary>
-    /// <value>
-    /// The minimal relative gaussian amplitude.
-    /// </value>
     public double MinimalRelativeGaussianAmplitude
     {
       get => _minimalRelativeGaussianAmplitude;
@@ -152,12 +141,10 @@ namespace Altaxo.Science.Spectroscopy.PeakSearching
     private int? _maximalNumberOfPeaks = 50;
 
     /// <summary>
-    /// If a value is set, this limits the number of peaks included in the result to this number of peaks with the highest amplitude.
+    /// Gets/sets a limit for the number of peaks returned.
+    /// If set, only the peaks with the highest amplitudes are included (up to this number).
     /// </summary>
-    /// <value>
-    /// The maximal number of peaks.
-    /// </value>
-    /// <exception cref="System.ArgumentException">Value must either be null or >0</exception>
+    /// <exception cref="System.ArgumentException">Value must either be <see langword="null"/> or &gt; 0.</exception>
     public int? MaximalNumberOfPeaks
     {
       get => _maximalNumberOfPeaks;
@@ -183,9 +170,13 @@ namespace Altaxo.Science.Spectroscopy.PeakSearching
 
     #region Serialization
 
+    /// <summary>
+    /// XML serialization surrogate (version 0).
+    /// </summary>
     [Altaxo.Serialization.Xml.XmlSerializationSurrogateFor("AltaxoCore", "Altaxo.Science.Spectroscopy.PeakSearching.PeakSearchingByCwt", 0)]
     public class SerializationSurrogate0 : Altaxo.Serialization.Xml.IXmlSerializationSurrogate
     {
+      /// <inheritdoc/>
       public void Serialize(object obj, Altaxo.Serialization.Xml.IXmlSerializationInfo info)
       {
         var s = (PeakSearchingByCwt)obj;
@@ -198,6 +189,7 @@ namespace Altaxo.Science.Spectroscopy.PeakSearching
         info.AddValue("MinimalRelativeGaussianAmplitude", s.MinimalRelativeGaussianAmplitude);
       }
 
+      /// <inheritdoc/>
       public object Deserialize(object? o, Altaxo.Serialization.Xml.IXmlDeserializationInfo info, object? parent)
       {
         return new PeakSearchingByCwt()
@@ -214,12 +206,13 @@ namespace Altaxo.Science.Spectroscopy.PeakSearching
     }
 
     /// <summary>
-    /// 2022-10-19 V1: Add property 'MaximalNumberOfPeaks'
+    /// 2022-10-19 V1: Added property <see cref="MaximalNumberOfPeaks"/>.
     /// </summary>
     /// <seealso cref="Altaxo.Serialization.Xml.IXmlSerializationSurrogate" />
     [Altaxo.Serialization.Xml.XmlSerializationSurrogateFor("AltaxoCore", "Altaxo.Science.Spectroscopy.PeakSearching.PeakSearchingByCwt", 1)]
     public class SerializationSurrogate1 : Altaxo.Serialization.Xml.IXmlSerializationSurrogate
     {
+      /// <inheritdoc/>
       public void Serialize(object obj, Altaxo.Serialization.Xml.IXmlSerializationInfo info)
       {
         var s = (PeakSearchingByCwt)obj;
@@ -233,6 +226,7 @@ namespace Altaxo.Science.Spectroscopy.PeakSearching
         info.AddValue("MaximalNumberOfPeaks", s.MaximalNumberOfPeaks);
       }
 
+      /// <inheritdoc/>
       public object Deserialize(object? o, Altaxo.Serialization.Xml.IXmlDeserializationInfo info, object? parent)
       {
         return new PeakSearchingByCwt()
@@ -249,12 +243,13 @@ namespace Altaxo.Science.Spectroscopy.PeakSearching
     }
 
     /// <summary>
-    /// 2023-01-27 V2: Add property 'PeakEnhancement'
+    /// 2023-01-27 V2: Added property <see cref="PeakEnhancement"/>.
     /// </summary>
     /// <seealso cref="Altaxo.Serialization.Xml.IXmlSerializationSurrogate" />
     [Altaxo.Serialization.Xml.XmlSerializationSurrogateFor(typeof(PeakSearchingByCwt), 2)]
     public class SerializationSurrogate2 : Altaxo.Serialization.Xml.IXmlSerializationSurrogate
     {
+      /// <inheritdoc/>
       public void Serialize(object obj, Altaxo.Serialization.Xml.IXmlSerializationInfo info)
       {
         var s = (PeakSearchingByCwt)obj;
@@ -269,6 +264,7 @@ namespace Altaxo.Science.Spectroscopy.PeakSearching
         info.AddValue("PeakEnhancement", s.PeakEnhancement);
       }
 
+      /// <inheritdoc/>
       public object Deserialize(object? o, Altaxo.Serialization.Xml.IXmlDeserializationInfo info, object? parent)
       {
         return new PeakSearchingByCwt()
@@ -288,6 +284,7 @@ namespace Altaxo.Science.Spectroscopy.PeakSearching
 
     #endregion
 
+    /// <inheritdoc/>
     public
       (
       double[] x,
@@ -323,6 +320,15 @@ namespace Altaxo.Science.Spectroscopy.PeakSearching
       return (x, y, regions, peakDescriptions);
     }
 
+    /// <summary>
+    /// Executes peak searching by CWT for a single spectral region.
+    /// </summary>
+    /// <param name="x">
+    /// The x-values of the spectrum.
+    /// Can be <see langword="null"/>; in that case, the peak positions are returned as indices.
+    /// </param>
+    /// <param name="y">The y-values of the spectrum.</param>
+    /// <returns>A list of peak descriptions, sorted by ascending position.</returns>
     public List<PeakDescription> Execute(double[]? x, double[] y)
     {
       int numberOfStages = (int)(NumberOfPointsPerOctave * Math.Log(y.Length) / Math.Log(2));
@@ -347,7 +353,7 @@ namespace Altaxo.Science.Spectroscopy.PeakSearching
 
         if (ridgeLine.PointAtLowestWidth.Row == 0 &&                 // ridge line should proceed to stage 0
            ridgeLine.Count >= minimalRequiredRidgeLength &&                // ridge line should have at least 2 octaves
-           (maxPoint.CwtCoefficient / noise[maxPoint.Column]) >= _minimalSignalToNoiseRatio && // required signal-to-noise ration at maximum Cwt coefficient
+           (maxPoint.CwtCoefficient / noise[maxPoint.Column]) >= _minimalSignalToNoiseRatio && // required signal-to-noise ratio at maximum CWT coefficient
            maxPoint.Row > 0
           )
         {
@@ -390,7 +396,7 @@ namespace Altaxo.Science.Spectroscopy.PeakSearching
       // if there are too many peaks, we prune the peaks with the lowest amplitude
       if (_maximalNumberOfPeaks.HasValue && peakDescriptions.Count > _maximalNumberOfPeaks.Value)
       {
-        // Sort so that the hightest peaks are at the beginning of the list
+        // Sort so that the highest peaks are at the beginning of the list
         peakDescriptions.Sort((p1, p2) => Comparer<double>.Default.Compare(p2.Prominence, p1.Prominence));
         // cut the end of the list to the maximal allowed number of peaks
         for (int i = peakDescriptions.Count - 1; i >= _maximalNumberOfPeaks.Value; i--)
@@ -401,6 +407,7 @@ namespace Altaxo.Science.Spectroscopy.PeakSearching
       return peakDescriptions;
     }
 
+    /// <inheritdoc/>
     public override string ToString()
     {
       return $"{this.GetType().Name} MinSNR={MinimalSignalToNoiseRatio} MinAmp={MinimalRelativeGaussianAmplitude} MaxPeaks={MaximalNumberOfPeaks} Pts/Oct={NumberOfPointsPerOctave} MinRidgeLen={MinimalRidgeLengthInOctaves} MinRidgeWidth={MinimalWidthOfRidgeMaximumInOctaves}";

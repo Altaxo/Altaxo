@@ -31,12 +31,11 @@ using Altaxo.Science.Signals;
 namespace Altaxo.Science.Spectroscopy.BaselineEstimation
 {
   /// <summary>
-  /// This class detrends a spectrum. This is done by fitting a smoothing spline through the spectrum.
-  /// Then the spectral data that lies above the spline are reduced in amplitude toward the spline.
-  /// The process is repeated until the resulting curve changes no more.
+  /// Detrends a spectrum by fitting a smoothing spline through the spectrum.
+  /// Points above the spline are reduced in amplitude towards the spline, iteratively, until the curve converges.
   /// </summary>
   /// <remarks>
-  /// Reference: Y.Xu, P.Du, R.Senger, J.Robertson, J.Pirkle, Applied Spectroscopy 2021 Vol 75 (1) 34-45
+  /// Reference: Y. Xu, P. Du, R. Senger, J. Robertson, J. Pirkle, Applied Spectroscopy 2021 Vol 75 (1) 34-45.
   /// </remarks>
   public abstract record ISREABase : Main.IImmutable
   {
@@ -56,7 +55,8 @@ namespace Altaxo.Science.Spectroscopy.BaselineEstimation
     } = SmoothnessSpecification.ByNumberOfFeatures;
 
     /// <summary>
-    /// Determines the smoothness of the spline. This value has different meaning depending on the value of <see cref="SmoothnessSpecifiedBy"/>.
+    /// Determines the smoothness of the spline.
+    /// The meaning of this value depends on <see cref="SmoothnessSpecifiedBy"/>.
     /// </summary>
     public double SmoothnessValue
     {
@@ -72,6 +72,9 @@ namespace Altaxo.Science.Spectroscopy.BaselineEstimation
 
     private Altaxo.Calc.Interpolation.IInterpolationFunctionOptions _interpolationFunctionOptions = new Altaxo.Calc.Interpolation.SmoothingCubicSplineOptions();
 
+    /// <summary>
+    /// Gets the interpolation function options used to create the smoothing spline.
+    /// </summary>
     public Altaxo.Calc.Interpolation.IInterpolationFunctionOptions InterpolationFunctionOptions
     {
       get => _interpolationFunctionOptions;
@@ -102,12 +105,7 @@ namespace Altaxo.Science.Spectroscopy.BaselineEstimation
     }
 
 
-    /// <summary>
-    /// Executes the baseline estimation algorithm with the provided spectrum.
-    /// </summary>
-    /// <param name="xArray">The x values of the spectral values.</param>
-    /// <param name="yArray">The array of spectral values.</param>
-    /// <param name="resultingBaseline">The location to which the estimated baseline should be copied.</param>
+    /// <inheritdoc/>
     public void Execute(ReadOnlySpan<double> xArray, ReadOnlySpan<double> yArray, Span<double> resultingBaseline)
     {
       double stopThreshold = 1E-4;
@@ -158,6 +156,10 @@ namespace Altaxo.Science.Spectroscopy.BaselineEstimation
     }
 
 
+    /// <summary>
+    /// Writes this instance to XML.
+    /// </summary>
+    /// <param name="writer">The XML writer to write to.</param>
     public void Export(XmlWriter writer)
     {
       writer.WriteStartElement("ISREA");
@@ -165,20 +167,21 @@ namespace Altaxo.Science.Spectroscopy.BaselineEstimation
       writer.WriteEndElement();
     }
 
+    /// <inheritdoc/>
     public override string ToString()
     {
       return $"{this.GetType().Name} NumberOfKnots={SmoothnessValue}";
     }
 
     /// <summary>
-    /// Gets the smoothing spline (options) for which the smoothing amount is set to the value given in the options.
+    /// Gets spline interpolation options in which the smoothing amount is set according to the provided parameters.
     /// </summary>
     /// <param name="interpolation">The spline interpolation options.</param>
     /// <param name="smoothnessSpecifiedBy">Determines how the smoothness is specified.</param>
-    /// <param name="smoothnessValue">The smoothness value. The smoothness depends on this value and how the smoothness is specified.</param>
+    /// <param name="smoothnessValue">The smoothness value.</param>
     /// <param name="numberOfArrayPoints">The number of points in the spline curve.</param>
     /// <param name="meanXIncrement">Mean increment of the x-values of the spectrum.</param>
-    /// <returns>The same spline, but now with the smoothing value set according to the parameters.</returns>
+    /// <returns>The spline options with the smoothing value set according to the parameters.</returns>
     /// <exception cref="System.NotImplementedException"></exception>
     protected static IInterpolationFunctionOptions GetSpline(IInterpolationFunctionOptions interpolation, SmoothnessSpecification smoothnessSpecifiedBy, double smoothnessValue, double numberOfArrayPoints, double meanXIncrement)
     {
@@ -214,6 +217,7 @@ namespace Altaxo.Science.Spectroscopy.BaselineEstimation
     [Altaxo.Serialization.Xml.XmlSerializationSurrogateFor(typeof(ISREA), 0)]
     public class SerializationSurrogate0 : Altaxo.Serialization.Xml.IXmlSerializationSurrogate
     {
+      /// <inheritdoc/>
       public void Serialize(object obj, Altaxo.Serialization.Xml.IXmlSerializationInfo info)
       {
         var s = (ISREA)obj;
@@ -222,6 +226,7 @@ namespace Altaxo.Science.Spectroscopy.BaselineEstimation
         info.AddValue("SmoothnessValue", s.SmoothnessValue);
       }
 
+      /// <inheritdoc/>
       public object Deserialize(object? o, Altaxo.Serialization.Xml.IXmlDeserializationInfo info, object? parent)
       {
         var interpolation = info.GetValue<IInterpolationFunctionOptions>("Interpolation", parent);

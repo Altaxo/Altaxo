@@ -34,7 +34,10 @@ namespace Altaxo.Science.Spectroscopy.Calibration
     /// <summary>
     /// Gets the calibration table.
     /// </summary>
-    public ImmutableArray<(double x_uncalibrated, double x_calibrated)> CalibrationTable  { get; }
+    /// <remarks>
+    /// Each entry maps an uncalibrated x value to the corresponding calibrated x value.
+    /// </remarks>
+    public ImmutableArray<(double x_uncalibrated, double x_calibrated)> CalibrationTable { get; }
 
     /// <summary>
     /// Returns a new instance with the provided calibration table.

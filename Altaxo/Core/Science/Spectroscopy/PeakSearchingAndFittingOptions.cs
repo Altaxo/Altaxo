@@ -37,39 +37,41 @@ namespace Altaxo.Science.Spectroscopy
   public record PeakSearchingAndFittingOptions
   {
     /// <summary>
-    /// Gets/sets the methods for spectral preprocessing.
+    /// Gets the options and methods for spectral preprocessing.
     /// </summary>
     public SpectralPreprocessingOptionsBase Preprocessing { get; init; } = new SpectralPreprocessingOptions();
 
     /// <summary>
-    /// Gets/sets the peak searching method (method to find approximate peak positions).
+    /// Gets the peak searching method (method used to find approximate peak positions).
     /// </summary>
     public IPeakSearching PeakSearching { get; init; } = new PeakSearching.PeakSearchingByTopology();
 
     /// <summary>
-    /// Gets/sets the peak fitting method.
+    /// Gets the peak fitting method.
     /// </summary>
     public IPeakFitting PeakFitting { get; init; } = new PeakFittingNone();
 
     /// <summary>
-    /// Gets/set the options that determine which data to include in the output of a peak searching and fitting operation.
+    /// Gets the options that determine which data to include in the output of a peak searching and fitting operation.
     /// </summary>
     public PeakSearchingAndFittingOutputOptions OutputOptions { get; init; } = new();
 
     #region Serialization
 
     /// <summary>
-    /// 2022-06-09 Initial version
+    /// 2022-06-09 Initial version.
     /// </summary>
     /// <seealso cref="Altaxo.Serialization.Xml.IXmlSerializationSurrogate" />
     [Altaxo.Serialization.Xml.XmlSerializationSurrogateFor("AltaxoCore", "Altaxo.Science.Spectroscopy.PeakSearchingAndFittingOptions", 0)]
     public class SerializationSurrogate0 : Altaxo.Serialization.Xml.IXmlSerializationSurrogate
     {
+      /// <inheritdoc/>
       public void Serialize(object obj, Altaxo.Serialization.Xml.IXmlSerializationInfo info)
       {
         throw new InvalidOperationException("Try to serialize old version");
       }
 
+      /// <inheritdoc/>
       public object Deserialize(object? o, Altaxo.Serialization.Xml.IXmlDeserializationInfo info, object? parent)
       {
         var s = (PeakSearchingAndFittingOptions?)o ?? new PeakSearchingAndFittingOptions();
@@ -94,12 +96,13 @@ namespace Altaxo.Science.Spectroscopy
     }
 
     /// <summary>
-    /// 2022-07-14 this class no longer derives from SpectralPreprocessOptions, but has it as member
+    /// 2022-07-14 This class no longer derives from <c>SpectralPreprocessOptions</c>, but has it as a member.
     /// </summary>
     /// <seealso cref="Altaxo.Serialization.Xml.IXmlSerializationSurrogate" />
     [Altaxo.Serialization.Xml.XmlSerializationSurrogateFor("AltaxoCore", "Altaxo.Science.Spectroscopy.PeakSearchingAndFittingOptions", 1)]
     public class SerializationSurrogate1 : Altaxo.Serialization.Xml.IXmlSerializationSurrogate
     {
+      /// <inheritdoc/>
       public void Serialize(object obj, Altaxo.Serialization.Xml.IXmlSerializationInfo info)
       {
         var s = (PeakSearchingAndFittingOptions)obj;
@@ -108,6 +111,7 @@ namespace Altaxo.Science.Spectroscopy
         info.AddValue("PeakFitting", s.PeakFitting);
       }
 
+      /// <inheritdoc/>
       public object Deserialize(object? o, Altaxo.Serialization.Xml.IXmlDeserializationInfo info, object? parent)
       {
         var s = (PeakSearchingAndFittingOptions?)o ?? new PeakSearchingAndFittingOptions();
@@ -126,12 +130,13 @@ namespace Altaxo.Science.Spectroscopy
     }
 
     /// <summary>
-    /// 2022-11-09 add output options
+    /// 2022-11-09 Add output options.
     /// </summary>
     /// <seealso cref="Altaxo.Serialization.Xml.IXmlSerializationSurrogate" />
     [Altaxo.Serialization.Xml.XmlSerializationSurrogateFor(typeof(PeakSearchingAndFittingOptions), 2)]
     public class SerializationSurrogate2 : Altaxo.Serialization.Xml.IXmlSerializationSurrogate
     {
+      /// <inheritdoc/>
       public void Serialize(object obj, Altaxo.Serialization.Xml.IXmlSerializationInfo info)
       {
         var s = (PeakSearchingAndFittingOptions)obj;
@@ -141,6 +146,7 @@ namespace Altaxo.Science.Spectroscopy
         info.AddValue("OutputOptions", s.OutputOptions);
       }
 
+      /// <inheritdoc/>
       public object Deserialize(object? o, Altaxo.Serialization.Xml.IXmlDeserializationInfo info, object? parent)
       {
         var s = (PeakSearchingAndFittingOptions?)o ?? new PeakSearchingAndFittingOptions();
@@ -162,6 +168,7 @@ namespace Altaxo.Science.Spectroscopy
 
     #endregion
 
+    /// <inheritdoc/>
     public override string ToString()
     {
       var stb = new StringBuilder();

@@ -33,7 +33,7 @@ namespace Altaxo.Science.Signals
 {
   /// <summary>
   /// Performs a fit with a Prony series to a relaxation signal, either in the time domain or in the frequency domain.
-  /// If the signal is a time domain signal, it is assumed to be a relaxation signal, i.e. is decreasing with time.
+  /// If the signal is a time-domain signal, it is assumed to be a relaxation signal, i.e. it is decreasing with time.
   /// If the signal is in the frequency domain, it is assumed to be a modulus, i.e. the real part is increasing with frequency.
   /// </summary>
   public record PronySeriesRelaxation : Main.IImmutable
@@ -117,12 +117,16 @@ namespace Altaxo.Science.Signals
     #region Serialization
 
     /// <summary>
-    /// 2023-05-15 initial version
+    /// Serialization surrogate (version 0).
     /// </summary>
+    /// <remarks>
+    /// 2023-05-15: Initial version.
+    /// </remarks>
     /// <seealso cref="Altaxo.Serialization.Xml.IXmlSerializationSurrogate" />
     [Altaxo.Serialization.Xml.XmlSerializationSurrogateFor(typeof(PronySeriesRelaxation), 0)]
     public class SerializationSurrogate0 : Altaxo.Serialization.Xml.IXmlSerializationSurrogate
     {
+      /// <inheritdoc/>
       public void Serialize(object obj, Altaxo.Serialization.Xml.IXmlSerializationInfo info)
       {
         var s = (PronySeriesRelaxation)obj;
@@ -133,6 +137,7 @@ namespace Altaxo.Science.Signals
         info.AddValue("RegularizationParameter", s.RegularizationParameter);
       }
 
+      /// <inheritdoc/>
       public object Deserialize(object? o, Altaxo.Serialization.Xml.IXmlDeserializationInfo info, object? parent)
       {
         var minimalValue = info.GetDouble("MinimalRelaxationTime");
@@ -159,12 +164,12 @@ namespace Altaxo.Science.Signals
           };
       }
     }
+
     #endregion
 
-
-
     /// <summary>
-    /// Evaluates a prony series fit in the time domain, using the properties <see cref="MinimalRelaxationTime"/>, <see cref="MaximalRelaxationTime"/>, <see cref="NumberOfRelaxationTimes"/> and <see cref="RegularizationParameter"/>.
+    /// Evaluates a Prony series fit in the time domain, using the properties <see cref="MinimalRelaxationTime"/>, <see cref="MaximalRelaxationTime"/>,
+    /// <see cref="NumberOfRelaxationTimes"/>, <see cref="UseIntercept"/>, and <see cref="RegularizationParameter"/>.
     /// </summary>
     /// <param name="xarr">The x-values of the signal (all elements must be positive).</param>
     /// <param name="yarr">The y-values of the signal.</param>
@@ -175,12 +180,13 @@ namespace Altaxo.Science.Signals
     }
 
     /// <summary>
-    /// Evaluates a prony series fit in the time domain, using the properties <see cref="MinimalRelaxationTime"/>, <see cref="MaximalRelaxationTime"/>, <see cref="NumberOfRelaxationTimes"/> and <see cref="RegularizationParameter"/>.
+    /// Evaluates a Prony series fit in the time domain, using the properties <see cref="MinimalRelaxationTime"/>, <see cref="MaximalRelaxationTime"/>,
+    /// <see cref="NumberOfRelaxationTimes"/>, <see cref="UseIntercept"/>, and <see cref="RegularizationParameter"/>.
     /// </summary>
     /// <param name="xarr">The x-values of the signal (all elements must be positive).</param>
-    /// <param name="isCircularFrequency">True if xarr contains circular frequencies; false if xarr contains normal frequencies.</param>
-    /// <param name="yarrRe">The real part of the modulus.</param>
-    /// <param name="yarrIm">The imaginary part of the modulus.</param>
+    /// <param name="isCircularFrequency">True if <paramref name="xarr"/> contains circular frequencies; false if <paramref name="xarr"/> contains normal frequencies.</param>
+    /// <param name="yarrRe">The real part of the modulus, or <see langword="null"/> if not available.</param>
+    /// <param name="yarrIm">The imaginary part of the modulus, or <see langword="null"/> if not available.</param>
     /// <returns>The result of the evaluation, see <see cref="PronySeriesRelaxationResult"/>.</returns>
     public PronySeriesRelaxationResult EvaluateFrequencyDomain(IReadOnlyList<double> xarr, bool isCircularFrequency, IReadOnlyList<double>? yarrRe, IReadOnlyList<double>? yarrIm)
     {
@@ -188,10 +194,11 @@ namespace Altaxo.Science.Signals
     }
 
     /// <summary>
-    /// Evaluates a prony series fit in the time domain, using the properties <see cref="MinimalRelaxationTime"/>, <see cref="MaximalRelaxationTime"/>, <see cref="NumberOfRelaxationTimes"/> and <see cref="RegularizationParameter"/>.
+    /// Evaluates a Prony series fit in the frequency domain from a complex modulus, using the properties <see cref="MinimalRelaxationTime"/>,
+    /// <see cref="MaximalRelaxationTime"/>, <see cref="NumberOfRelaxationTimes"/>, <see cref="UseIntercept"/>, and <see cref="RegularizationParameter"/>.
     /// </summary>
     /// <param name="xarr">The x-values of the signal (all elements must be positive).</param>
-    /// <param name="isCircularFrequency">True if xarr contains circular frequencies; false if xarr contains normal frequencies.</param>
+    /// <param name="isCircularFrequency">True if <paramref name="xarr"/> contains circular frequencies; false if <paramref name="xarr"/> contains normal frequencies.</param>
     /// <param name="yarr">The complex modulus.</param>
     /// <returns>The result of the evaluation, see <see cref="PronySeriesRelaxationResult"/>.</returns>
     public PronySeriesRelaxationResult EvaluateFrequencyDomain(IReadOnlyList<double> xarr, bool isCircularFrequency, IReadOnlyList<Complex64> yarr)
@@ -285,9 +292,9 @@ namespace Altaxo.Science.Signals
     /// Evaluates a prony series fit in the frequency domain from the real and imaginary part of a general complex dynamic modulus.
     /// </summary>
     /// <param name="xarr">The x-values of the signal (all elements must be positive).</param>
-    /// <param name="isCircularFrequency">True if xarr contains circular frequencies; false if xarr contains normal frequencies.</param>
-    /// <param name="yarrRe">The real part of the modulus.</param>
-    /// <param name="yarrIm">The imaginary part of the modulus.</param>
+    /// <param name="isCircularFrequency">True if <paramref name="xarr"/> contains circular frequencies; false if <paramref name="xarr"/> contains normal frequencies.</param>
+    /// <param name="yarrRe">The real part of the modulus, or <see langword="null"/> if not available.</param>
+    /// <param name="yarrIm">The imaginary part of the modulus, or <see langword="null"/> if not available.</param>
     /// <param name="tmin">The smallest relaxation time (tau of the first Prony term).</param>
     /// <param name="tmax">The largest relaxation time (tau of the last Prony term).</param>
     /// <param name="numberOfRelaxationTimes">The number of relaxation times (number of Prony terms).</param>
@@ -404,7 +411,7 @@ namespace Altaxo.Science.Signals
     /// Evaluates a prony series fit in the frequency domain from the absolute values (magnitude) of of a general complex dynamic modulus.
     /// </summary>
     /// <param name="xarr">The x-values of the signal (all elements must be positive).</param>
-    /// <param name="isCircularFrequency">True if xarr contains circular frequencies; false if xarr contains normal frequencies.</param>
+    /// <param name="isCircularFrequency">True if <paramref name="xarr"/> contains circular frequencies; false if <paramref name="xarr"/> contains normal frequencies.</param>
     /// <param name="yMagnitude">The magnitude value of the complex dynamic modulus.</param>
     /// <param name="tmin">The smallest relaxation time (tau of the first Prony term).</param>
     /// <param name="tmax">The largest relaxation time (tau of the last Prony term).</param>
@@ -489,6 +496,18 @@ namespace Altaxo.Science.Signals
 
 
 
+    /// <summary>
+    /// Evaluates the Prony series coefficients using the matrix formulation of a (regularized) least-squares problem.
+    /// </summary>
+    /// <param name="tmin">The smallest relaxation time (tau of the first Prony term).</param>
+    /// <param name="tmax">The largest relaxation time (tau of the last Prony term).</param>
+    /// <param name="numberOfRelaxationTimes">The number of relaxation times (number of Prony terms).</param>
+    /// <param name="withIntercept">If set to <c>true</c>, an offset term is added (interpreted as infinite relaxation time).</param>
+    /// <param name="allowNegativeCoefficients">If <c>true</c>, allows negative Prony coefficients.</param>
+    /// <param name="taus">The relaxation times (tau values) used for the Prony terms.</param>
+    /// <param name="X">The design matrix (including optional regularization rows).</param>
+    /// <param name="y">The target vector (including optional regularization entries).</param>
+    /// <returns>The result of the evaluation, see <see cref="PronySeriesRelaxationResult"/>.</returns>
     protected static PronySeriesRelaxationResult Evaluate(double tmin, double tmax, int numberOfRelaxationTimes, bool withIntercept, bool allowNegativeCoefficients, double[] taus, Matrix<double> X, Matrix<double> y)
     {
       // calculate XtX and XtY

@@ -54,9 +54,13 @@ namespace Altaxo.Science.Spectroscopy.Resampling
 
     #region Serialization
 
+    /// <summary>
+    /// XML serialization surrogate for <see cref="ResamplingByInterpolation"/> version 0.
+    /// </summary>
     [Altaxo.Serialization.Xml.XmlSerializationSurrogateFor(typeof(ResamplingByInterpolation), 0)]
     public class SerializationSurrogate0 : Altaxo.Serialization.Xml.IXmlSerializationSurrogate
     {
+      /// <inheritdoc/>
       public void Serialize(object obj, Altaxo.Serialization.Xml.IXmlSerializationInfo info)
       {
         var s = (ResamplingByInterpolation)obj;
@@ -65,6 +69,7 @@ namespace Altaxo.Science.Spectroscopy.Resampling
         info.AddValue("CombineRegions", s.CombineRegions);
       }
 
+      /// <inheritdoc/>
       public object Deserialize(object? o, Altaxo.Serialization.Xml.IXmlDeserializationInfo info, object? parent)
       {
         var interpolation = info.GetValue<IInterpolationFunctionOptions>("Interpolation", null);

@@ -35,17 +35,22 @@ namespace Altaxo.Science.Spectroscopy.Calibration
     #region Serialization
 
     /// <summary>
-    /// 2023-03-30 Version1 renaming to XCalibrationNone
+    /// XML serialization surrogate for <see cref="XCalibrationNone"/>.
     /// </summary>
+    /// <remarks>
+    /// 2023-03-30 Version 1: renaming to <see cref="XCalibrationNone"/>.
+    /// </remarks>
     /// <seealso cref="Altaxo.Serialization.Xml.IXmlSerializationSurrogate" />
     [Altaxo.Serialization.Xml.XmlSerializationSurrogateFor("AltaxoCore", "Altaxo.Science.Spectroscopy.Calibration.CalibrationNone", 0)]
     [Altaxo.Serialization.Xml.XmlSerializationSurrogateFor(typeof(XCalibrationNone), 1)]
     public class SerializationSurrogate0 : Altaxo.Serialization.Xml.IXmlSerializationSurrogate
     {
+      /// <inheritdoc/>
       public void Serialize(object obj, Altaxo.Serialization.Xml.IXmlSerializationInfo info)
       {
       }
 
+      /// <inheritdoc/>
       public object Deserialize(object? o, Altaxo.Serialization.Xml.IXmlDeserializationInfo info, object? parent)
       {
         return new XCalibrationNone();
@@ -59,6 +64,12 @@ namespace Altaxo.Science.Spectroscopy.Calibration
       return (x, y, regions);
     }
 
+    /// <summary>
+    /// Executes the calibrator for baseline-style APIs; since this implementation is a no-op, the resulting baseline is set to zero.
+    /// </summary>
+    /// <param name="xArray">The x values of the spectrum.</param>
+    /// <param name="yArray">The y values of the spectrum.</param>
+    /// <param name="resultingBaseline">The resulting baseline to fill.</param>
     public void Execute(ReadOnlySpan<double> xArray, ReadOnlySpan<double> yArray, Span<double> resultingBaseline)
     {
       for (int i = 0; i < resultingBaseline.Length; i++)

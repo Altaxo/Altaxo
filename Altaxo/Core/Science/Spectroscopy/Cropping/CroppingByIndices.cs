@@ -28,7 +28,7 @@ using System.Collections.Generic;
 namespace Altaxo.Science.Spectroscopy.Cropping
 {
   /// <summary>
-  /// Does cropping of a spectrum by indices.
+  /// Crops a spectrum by indices.
   /// </summary>
   public record CroppingByIndices : ICropping
   {
@@ -45,9 +45,13 @@ namespace Altaxo.Science.Spectroscopy.Cropping
 
     #region Serialization
 
+    /// <summary>
+    /// XML serialization surrogate for <see cref="CroppingByIndices"/>.
+    /// </summary>
     [Altaxo.Serialization.Xml.XmlSerializationSurrogateFor(typeof(CroppingByIndices), 0)]
     public class SerializationSurrogate0 : Altaxo.Serialization.Xml.IXmlSerializationSurrogate
     {
+      /// <inheritdoc/>
       public void Serialize(object obj, Altaxo.Serialization.Xml.IXmlSerializationInfo info)
       {
         var s = (CroppingByIndices)obj;
@@ -55,6 +59,7 @@ namespace Altaxo.Science.Spectroscopy.Cropping
         info.AddValue("MaximalIndex", s.MaximalIndex);
       }
 
+      /// <inheritdoc/>
       public object Deserialize(object? o, Altaxo.Serialization.Xml.IXmlDeserializationInfo info, object? parent)
       {
         var minimalIndex = info.GetInt32("MinimalIndex");
@@ -75,6 +80,7 @@ namespace Altaxo.Science.Spectroscopy.Cropping
     #endregion
 
 
+    /// <inheritdoc/>
     public (double[] x, double[] y, int[]? regions) Execute(double[] x, double[] y, int[]? regions)
     {
       int newArrayLength = 0;
@@ -105,9 +111,9 @@ namespace Altaxo.Science.Spectroscopy.Cropping
     /// <summary>
     /// Gets the cropped regions.
     /// </summary>
-    /// <param name="regions">The regions. Each element is the start index of a new region</param>
-    /// <param name="arrayLength">Total length of the array.</param>
-    /// <returns>Enumeration of start and end (exclusive) index of the cropped regions.</returns>
+    /// <param name="regions">The regions. Each element is the start index of a new region.</param>
+    /// <param name="arrayLength">The total length of the array.</param>
+    /// <returns>An enumeration of the start and end (exclusive) indices of the cropped regions.</returns>
     public IEnumerable<(int start, int end)> GetCroppedRegions(int[]? regions, int arrayLength)
     {
       foreach (var (start, end) in RegionHelper.GetRegionRanges(regions, arrayLength))
@@ -127,6 +133,8 @@ namespace Altaxo.Science.Spectroscopy.Cropping
         }
       }
     }
+
+    /// <inheritdoc/>
     public override string ToString()
     {
       return $"{this.GetType().Name} Min={MinimalIndex} Max={MaximalIndex}";

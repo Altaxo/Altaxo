@@ -218,14 +218,24 @@ namespace Altaxo.Science.Spectroscopy.PeakSearching
 
 
     /// <summary>
-    /// Identifies the ridge lines in a continous wavelet transformation matrix
+    /// Identifies ridge lines in a continuous wavelet transformation matrix.
     /// </summary>
-    /// <param name="matr">The continuous wavelet transformation (Cwt) matrix. Each row in the matrix represents the transformation for one width.
-    /// It is assumed that the width increases with increasing row number.</param>
-    /// <param name="max_distances">A function, using the row number as argument, and returning the maximal distance (in points) that is allowed
-    /// between the current x value of the ridge line and the x-position of a maximum identified in the Cwt matrix.</param>
-    /// <param name="maximalGap">The maximal number of rows that is allowed to bridge between the end of a ridge line and a maximum in the Cwt matrix.</param>
-    /// <returns>List of ridge lines. Each ridge line is represented by a list of tuples (row number, column number, and Cwt coefficient).</returns>
+    /// <param name="matr">
+    /// The continuous wavelet transformation (CWT) matrix.
+    /// Each row in the matrix represents the transformation for one width.
+    /// It is assumed that the width increases with increasing row number.
+    /// </param>
+    /// <param name="max_distances">
+    /// A function that takes a row index and returns the maximal distance (in points) allowed between the current x-position of a ridge line
+    /// and the x-position of a maximum identified in the CWT matrix.
+    /// </param>
+    /// <param name="maximalGap">
+    /// The maximal number of rows that is allowed to bridge between the end of a ridge line and a maximum in the CWT matrix.
+    /// </param>
+    /// <returns>
+    /// List of ridge lines.
+    /// Each ridge line is represented by a list of tuples (row index, column index, and CWT coefficient).
+    /// </returns>
     public static List<RidgeLine> IdentifyRidgeLines(
       IROMatrix<double> matr,
       Func<int, int> max_distances,
@@ -306,6 +316,12 @@ namespace Altaxo.Science.Spectroscopy.PeakSearching
       return finalizedRidgeLines;
     }
 
+    /// <summary>
+    /// Calculates the value at a given percentile.
+    /// </summary>
+    /// <param name="arr">The data.</param>
+    /// <param name="percentile">The percentile (0..1).</param>
+    /// <returns>The value at the requested percentile.</returns>
     public static double ScoreAtPercentile(List<double> arr, double percentile)
     {
       if (!(percentile >= 0 && percentile <= 1))
@@ -328,10 +344,13 @@ namespace Altaxo.Science.Spectroscopy.PeakSearching
     /// <summary>
     /// Gets the noise level along the x-axis.
     /// </summary>
-    /// <param name="cwt">The matrix with the continuous wavelet transformation. Only the first row (stage 0) of that matrix is used for evaluating the noise.</param>
-    /// <param name="window_size">Size of the sliding window to evaluate the noise.</param>
-    /// <param name="noise_perc">The percentile (but given in value from 0..1) at which the noise level is evaluated.</param>
-    /// <returns>Array with a noise level for each point of the spectrum.</returns>
+    /// <param name="cwt">
+    /// The matrix containing the continuous wavelet transform.
+    /// Only the first row (stage 0) of that matrix is used to evaluate the noise.
+    /// </param>
+    /// <param name="window_size">Size of the sliding window used to evaluate the noise.</param>
+    /// <param name="noise_perc">The percentile (0..1) at which the noise level is evaluated.</param>
+    /// <returns>An array containing a noise level for each point of the spectrum.</returns>
     public static double[] GetNoiseLevel(IROMatrix<double> cwt, int? window_size = null, double noise_perc = 0.5)
     {
       var num_points = cwt.ColumnCount;
@@ -359,17 +378,21 @@ namespace Altaxo.Science.Spectroscopy.PeakSearching
     }
 
     /// <summary>
-    /// Filter ridge lines according to prescribed criteria. Intended to be used for finding relative maxima.
+    /// Filter ridge lines according to prescribed criteria.
+    /// Intended to be used for finding relative maxima.
     /// </summary>
     /// <param name="cwt">Continuous wavelet transform from which the <paramref name="ridge_lines"/> were defined.</param>
-    /// <param name="ridge_lines">The ridge lines. Each line consist of a list of tuples (row, column).</param>
-    /// <param name="window_sizen">Size of window to use to calculate noise floor.  Default is cwt.NumberOfColumns/20.</param>
-    /// <param name="min_lengthn">Minimum length a ridge line needs to be acceptable.  Default is cwt.NumberOfRows / 4.</param>
-    /// <param name="min_snr">Minimum SNR ratio. Default 1. The signal is the value of
-    /// the cwt matrix at the shortest length scale(``cwt[0, loc]``), the
-    /// noise is the `noise_perc`th percentile of datapoints contained within a
-    /// window of `window_size` around ``cwt[0, loc]``.</param>
-    /// <param name="noise_perc">When calculating the noise floor, percentile of data points (0..1) examined below which to consider noise. Calculated using scoreatpercentile. Default value: 0.1</param>
+    /// <param name="ridge_lines">The ridge lines. Each line consists of a list of tuples (row index, column index, coefficient).</param>
+    /// <param name="window_sizen">Size of the window used to calculate the noise floor. Default is <c>cwt.ColumnCount / 20</c>.</param>
+    /// <param name="min_lengthn">Minimum length a ridge line needs to be acceptable. Default is <c>cwt.RowCount / 4</c>.</param>
+    /// <param name="min_snr">
+    /// Minimum SNR ratio. Default is 1.
+    /// The signal is the value of the CWT matrix at the shortest length scale (<c>cwt[0, loc]</c>),
+    /// the noise is the <paramref name="noise_perc"/> percentile of the absolute CWT coefficients in a window around that position.
+    /// </param>
+    /// <param name="noise_perc">
+    /// When calculating the noise floor, percentile of data points (0..1) below which to consider noise. Default value is 0.5.
+    /// </param>
     /// <returns>Only those ridge lines that match the criteria.</returns>
     public static List<RidgeLine> FilterRidgeLines(
       IROMatrix<double> cwt,
@@ -423,29 +446,33 @@ namespace Altaxo.Science.Spectroscopy.PeakSearching
 
 
     /// <summary>
-    /// Find peaks in a 1-D array with wavelet transformation.
-    /// The general approach is to smooth `vector` by convolving it with
-    /// wavelet(width) for each width in widths. Relative maxima which
-    /// appear at enough length scales, and with sufficiently high SNR, are
-    /// accepted.
+    /// Finds peaks in a 1-D array using continuous wavelet transformation.
     /// </summary>
-    /// <param name="vector">1-D array in which to find the peaks.</param>
-    /// <param name="widths">Enumeration of widths to use for calculating
-    /// the CWT matrix. In general, this range should cover the expected width of peaks of interest.</param>
-    /// <param name="wavelet">Should take two parameters and return a 1-D array to convolve
-    /// with `vector`. The first parameter determines the number of points
-    /// of the returned wavelet array, the second parameter is the scale
-    /// (`width`) of the wavelet.Should be normalized and symmetric.
-    ///  Default is the ricker wavelet.</param>
-    /// <param name="max_distances">At each row, a ridge line is only connected if the relative max at
-    /// row[n] is within ``max_distances[n]`` from the relative max at
-    /// ``row[n + 1]``.  Default value is ``widths/4``.</param>
-    /// <param name="gap_thresh">If a relative maximum is not found within `max_distances`,
-    /// there will be a gap.A ridge line is discontinued if there are more
-    /// than `gap_thresh` points without connecting a new relative maximum.
-    /// Default is the first value of the widths array i.e.widths[0].</param>
-    /// <returns>A tuple: all ridge lines that were found, and the matrix of Cwt coefficients. The list of ridge lines is not sorted.
-    /// Use a filter function (e.g. <see cref="FilterRidgeLines"/>) in order to filter out the not essential lines.
+    /// <param name="vector">1-D array in which to find peaks.</param>
+    /// <param name="widths">
+    /// Widths to use for calculating the CWT matrix.
+    /// In general, this range should cover the expected widths of peaks of interest.
+    /// </param>
+    /// <param name="wavelet">
+    /// The wavelet function.
+    /// The first parameter is the x-value of the wavelet function, the second parameter is the scale (<paramref name="widths"/>).
+    /// The wavelet should be normalized and symmetric.
+    /// Default is the Ricker wavelet.
+    /// </param>
+    /// <param name="max_distances">
+    /// At each row, a ridge line is only connected if the relative maximum at row n is within <c>max_distances(n)</c>
+    /// from the relative maximum at row n+1.
+    /// Default is <c>ceil(widths[n] / 4)</c>.
+    /// </param>
+    /// <param name="gap_thresh">
+    /// If a relative maximum is not found within <paramref name="max_distances"/>, there will be a gap.
+    /// A ridge line is discontinued if there are more than <paramref name="gap_thresh"/> rows without connecting a new relative maximum.
+    /// Default is <c>ceil(widths[0])</c>.
+    /// </param>
+    /// <returns>
+    /// A tuple containing all ridge lines that were found and the matrix of CWT coefficients.
+    /// The list of ridge lines is not sorted.
+    /// Use a filter function (e.g. <see cref="FilterRidgeLines"/>) to filter out non-essential lines.
     /// </returns>
     public static (List<RidgeLine> RidgeLines, double[,] CwtMatrix) Execute(double[] vector,
                         IEnumerable<double> widths,

@@ -14,24 +14,24 @@ namespace Altaxo.Science.Spectroscopy.Raman
 
     /// <summary>
     /// Gets the approximate laser wavelength in nanometer.
-    /// This is neccessary to convert Raman shift values to absolute wavelength.
+    /// This is necessary to convert Raman shift values to absolute wavelength.
     /// It is enough to give the value approximately here, because a calibration of the laser wavelength itself is done elsewhere.
     /// </summary>
     public double LaserWavelength_Nanometer { get; init; }
 
     /// <summary>
-    /// Wavelength tolerance in nm (this is the value how much the spectrometer can be differ from calibration)
+    /// Wavelength tolerance in nm (this is the value how much the spectrometer can differ from calibration).
     /// </summary>
     public double Wavelength_Tolerance_nm { get; init; } = 15;
 
     /// <summary>
-    /// If true, peaks in the measured spectrum, that corresponds to multiple Nist peaks, are filtered out.
+    /// If true, peaks in the measured spectrum that correspond to multiple NIST peaks are filtered out.
     /// </summary>
-    /// <value>
-    ///   <c>true</c> if [filter out peaks corresponding to multiple nist peaks]; otherwise, <c>false</c>.
-    /// </value>
     public bool FilterOutPeaksCorrespondingToMultipleNistPeaks { get; init; } = true;
 
+    /// <summary>
+    /// Options for peak searching and fitting used when locating calibration peaks.
+    /// </summary>
     public PeakSearchingAndFittingOptions PeakFindingOptions { get; init; } = new PeakSearchingAndFittingOptions()
     {
       Preprocessing = new SpectralPreprocessingOptions
@@ -55,8 +55,8 @@ namespace Altaxo.Science.Spectroscopy.Raman
     };
 
     /// <summary>
-    /// Gets the interpolation method used for interpolating the differences of Nist wavelength and measured wavelength
-    /// in dependence on the measured wavelength.
+    /// Gets the interpolation method used for interpolating the differences of NIST wavelength and measured wavelength
+    /// as a function of the measured wavelength.
     /// </summary>
     public IInterpolationFunctionOptions InterpolationMethod { get; init; } = new PolyharmonicSpline1DOptions { RegularizationParameter = 50, DerivativeOrder = 2 };
 
@@ -68,9 +68,13 @@ namespace Altaxo.Science.Spectroscopy.Raman
 
     #region Serialization
 
+    /// <summary>
+    /// XML serialization surrogate for the older NeonCalibrationOptions representation (version 0 in AltaxoCore).
+    /// </summary>
     [Altaxo.Serialization.Xml.XmlSerializationSurrogateFor("AltaxoCore", "Altaxo.Science.Spectroscopy.Raman.NeonCalibrationOptions", 0)]
     public class SerializationSurrogate0 : Altaxo.Serialization.Xml.IXmlSerializationSurrogate
     {
+      /// <inheritdoc/>
       public void Serialize(object obj, Altaxo.Serialization.Xml.IXmlSerializationInfo info)
       {
         var s = (NeonCalibrationOptions)obj;
@@ -81,6 +85,7 @@ namespace Altaxo.Science.Spectroscopy.Raman
         info.AddValue("PeakFindingOptions", s.PeakFindingOptions);
       }
 
+      /// <inheritdoc/>
       public object Deserialize(object? o, Altaxo.Serialization.Xml.IXmlDeserializationInfo info, object? parent)
       {
         var xAxisUnit = (XAxisUnit)info.GetEnum("XAxisUnit", typeof(XAxisUnit));
@@ -102,12 +107,13 @@ namespace Altaxo.Science.Spectroscopy.Raman
     }
 
     /// <summary>
-    /// 2022-08-17 Added InterpolationMethod, and InterpolationIgnoreStdDev
+    /// Serialization surrogate for version 1 which added interpolation options (2022-08-17).
     /// </summary>
     /// <seealso cref="Altaxo.Serialization.Xml.IXmlSerializationSurrogate" />
     [Altaxo.Serialization.Xml.XmlSerializationSurrogateFor(typeof(NeonCalibrationOptions), 1)]
     public class SerializationSurrogate1 : Altaxo.Serialization.Xml.IXmlSerializationSurrogate
     {
+      /// <inheritdoc/>
       public void Serialize(object obj, Altaxo.Serialization.Xml.IXmlSerializationInfo info)
       {
         var s = (NeonCalibrationOptions)obj;
@@ -120,6 +126,7 @@ namespace Altaxo.Science.Spectroscopy.Raman
         info.AddValue("InterpolationIgnoreStdDev", s.InterpolationIgnoreStdDev);
       }
 
+      /// <inheritdoc/>
       public object Deserialize(object? o, Altaxo.Serialization.Xml.IXmlDeserializationInfo info, object? parent)
       {
         var xAxisUnit = (XAxisUnit)info.GetEnum("XAxisUnit", typeof(XAxisUnit));
@@ -146,6 +153,7 @@ namespace Altaxo.Science.Spectroscopy.Raman
     #endregion
 
 
+    /// <inheritdoc/>
     public override string ToString()
     {
       return $"Unit={XAxisUnit}, LWL={LaserWavelength_Nanometer}nm, Tol={Wavelength_Tolerance_nm}nm FilterMult={FilterOutPeaksCorrespondingToMultipleNistPeaks} PeakFind={PeakFindingOptions} Interpol={InterpolationMethod} IgnoreStdDev={InterpolationIgnoreStdDev}";

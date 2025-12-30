@@ -43,23 +43,21 @@ namespace Altaxo.Science.Spectroscopy.PeakFitting.MultipleSpectra
     public PeakFittingOfMultipleSpectraByIncrementalPeakAddition PeakFitting { get; init; } = new PeakFittingOfMultipleSpectraByIncrementalPeakAddition();
 
     /// <summary>
-    /// Gets/set the options that determine which data to include in the output of a peak searching and fitting operation.
+    /// Gets/sets the options that determine which data to include in the output of a peak searching and fitting operation.
     /// </summary>
     public PeakSearchingAndFittingOutputOptions OutputOptions { get; init; } = new();
 
 
 
     #region Serialization
-
-
-
     /// <summary>
-    /// 2024-09-11 initial version
+    /// 2024-09-11 V0: Initial version.
     /// </summary>
     /// <seealso cref="Altaxo.Serialization.Xml.IXmlSerializationSurrogate" />
     [Altaxo.Serialization.Xml.XmlSerializationSurrogateFor(typeof(PeakFittingOfMultipleSpectraByIncrementalPeakAdditionOptions), 0)]
     public class SerializationSurrogate0 : Altaxo.Serialization.Xml.IXmlSerializationSurrogate
     {
+      /// <inheritdoc/>
       public void Serialize(object obj, Altaxo.Serialization.Xml.IXmlSerializationInfo info)
       {
         var s = (PeakFittingOfMultipleSpectraByIncrementalPeakAdditionOptions)obj;
@@ -68,6 +66,7 @@ namespace Altaxo.Science.Spectroscopy.PeakFitting.MultipleSpectra
         info.AddValue("OutputOptions", s.OutputOptions);
       }
 
+      /// <inheritdoc/>
       public object Deserialize(object? o, Altaxo.Serialization.Xml.IXmlDeserializationInfo info, object? parent)
       {
         var s = (PeakFittingOfMultipleSpectraByIncrementalPeakAdditionOptions?)o ?? new PeakFittingOfMultipleSpectraByIncrementalPeakAdditionOptions();
@@ -87,6 +86,7 @@ namespace Altaxo.Science.Spectroscopy.PeakFitting.MultipleSpectra
 
     #endregion
 
+    /// <inheritdoc/>
     public override string ToString()
     {
       var stb = new StringBuilder();

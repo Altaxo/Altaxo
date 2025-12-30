@@ -26,25 +26,26 @@
 namespace Altaxo.Science.Spectroscopy.PeakSearching
 {
   /// <summary>
-  /// Interface to a wavelet that can be used for peak searching. The class must provide the wavelet function, plus a method to transform the Cwt coefficient and width at the maximum
-  /// of the ridge line to amplitude and sigma of a Gaussian peak.
+  /// Interface to a wavelet that can be used for peak searching.
+  /// Implementations provide the wavelet function and a method to convert the CWT coefficient and ridge width at the ridge maximum
+  /// to amplitude and sigma of a Gaussian peak.
   /// </summary>
   public interface IWaveletForPeakSearching
   {
     /// <summary>
-    /// The function that calculates the wavelet.
+    /// Calculates the wavelet function value.
     /// </summary>
     /// <param name="x">The x value.</param>
     /// <param name="width">The width of the wavelet.</param>
-    /// <returns>The function value of the wavelet at x.</returns>
+    /// <returns>The value of the wavelet function at <paramref name="x"/>.</returns>
     double WaveletFunction(double x, double width);
 
     /// <summary>
-    /// Gets the parameters of a Gaussian peak that would best fit.
+    /// Gets the parameters of a Gaussian peak that best fits.
     /// </summary>
-    /// <param name="cwtCoefficient">The maximal Cwt coefficient at the ridge line.</param>
-    /// <param name="width">The width that corresponds to the point of the ridge line, at which the Cwt coefficient is maximal.</param>
-    /// <returns>The amplitude (not the area!) and the parameter sigma of a Gaussian that best fits the peak.</returns>
+    /// <param name="cwtCoefficient">The maximal CWT coefficient at the ridge line.</param>
+    /// <param name="width">The width that corresponds to the point on the ridge line at which the CWT coefficient is maximal.</param>
+    /// <returns>The amplitude (not the area) and the sigma parameter of a Gaussian peak that best fits.</returns>
     (double GaussAmplitude, double GaussSigma) GetParametersForGaussianPeak(double cwtCoefficient, double width);
   }
 }

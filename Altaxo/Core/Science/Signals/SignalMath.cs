@@ -30,6 +30,9 @@ using Altaxo.Calc.Regression;
 
 namespace Altaxo.Science.Signals
 {
+  /// <summary>
+  /// Provides helper methods for common operations on one-dimensional signals.
+  /// </summary>
   public static class SignalMath
   {
     /// <summary>
@@ -71,12 +74,21 @@ namespace Altaxo.Science.Signals
     }
 
     /// <summary>
-    /// Gets the indices of the extrema (minima and maxima) of the signal
+    /// Gets the indices of the extrema (minima and maxima) of the signal.
     /// </summary>
     /// <param name="y">The y-values of the signal.</param>
-    /// <param name="indicesOfMinima">A list that can be recycled as the list of indices of minima. If null, a new list for the indices of minima will be allocated.</param>
-    /// <param name="indicesOfMaxima">A list that can be recycled as the list of indices of maxima. If null, a new list for the indices of maxima will be allocated.</param>
-    /// <returns>A tuple, which contains the list of indices of the minima and maxima of the signal. Note that the start and end of the signal can not be a minimum or maximum.</returns>
+    /// <param name="indicesOfMinima">
+    /// A list that can be reused as return value for the indices of minima.
+    /// If <see langword="null"/>, a new list for the indices of minima will be allocated.
+    /// </param>
+    /// <param name="indicesOfMaxima">
+    /// A list that can be reused as return value for the indices of maxima.
+    /// If <see langword="null"/>, a new list for the indices of maxima will be allocated.
+    /// </param>
+    /// <returns>
+    /// A tuple containing the list of indices of the minima and maxima of the signal.
+    /// Note that the start and end of the signal cannot be a minimum or maximum.
+    /// </returns>
     public static (List<int> IndicesOfMinima, List<int> IndicesOfMaxima) GetIndicesOfExtrema(IReadOnlyList<double> y, List<int>? indicesOfMinima = null, List<int>? indicesOfMaxima = null)
     {
       if (y is null)
@@ -126,10 +138,17 @@ namespace Altaxo.Science.Signals
     /// <summary>
     /// Gets the index of the provided value in an array of ascending elements.
     /// </summary>
-    /// <param name="xArray">The x array.</param>
+    /// <param name="xArray">The x array (must be sorted in ascending order).</param>
     /// <param name="x">The x value that is searched.</param>
-    /// <param name="roundUp">If there is no exact match, and the parameter is false, the next lower index will be returned, else if true, the index with the higher value will be returned. If null, the index for which x is closest to the element will be returned..</param>
-    /// <returns>For an exact match with x, the index of x in the array. Otherwise, either the index of a value lower than x (roundUp=false), higher than x (roundUp=true), or closest to x (roundUp=null).
+    /// <param name="roundUp">
+    /// If there is no exact match and this parameter is <c>false</c>, the next lower index will be returned.
+    /// If it is <c>true</c>, the index with the higher value will be returned.
+    /// If it is <see langword="null"/>, the index for which <paramref name="x"/> is closest to the corresponding element will be returned.
+    /// </param>
+    /// <returns>
+    /// For an exact match with <paramref name="x"/>, the index of <paramref name="x"/> in the array.
+    /// Otherwise, either the index of a value lower than <paramref name="x"/> (<paramref name="roundUp"/> = <c>false</c>),
+    /// higher than <paramref name="x"/> (<paramref name="roundUp"/> = <c>true</c>), or closest to <paramref name="x"/> (<paramref name="roundUp"/> = <see langword="null"/>).
     /// The return value is always a valid index into the provided array.
     /// </returns>
     public static int GetIndexOfXInAscendingArray(double[] xArray, double x, bool? roundUp)
@@ -248,10 +267,10 @@ namespace Altaxo.Science.Signals
     }
 
     /// <summary>
-    /// Gets the mean increment of an array of values, i.e. the mean of array[i]-array[i-1].
+    /// Gets the mean increment of an array of values, i.e. the mean of <c>array[i] - array[i - 1]</c>.
     /// </summary>
     /// <param name="array">The array.</param>
-    /// <returns>The mean value of array[i]-array[i-1].</returns>
+    /// <returns>The mean value of <c>array[i] - array[i - 1]</c>.</returns>
     public static double GetMeanIncrement(IReadOnlyList<double> array)
     {
       double sum = 0;

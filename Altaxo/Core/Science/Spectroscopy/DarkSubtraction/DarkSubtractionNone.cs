@@ -24,17 +24,25 @@
 
 namespace Altaxo.Science.Spectroscopy.DarkSubtraction
 {
+  /// <summary>
+  /// Dark subtraction preprocessor that performs no subtraction (null operation).
+  /// </summary>
   public record DarkSubtractionNone : IDarkSubtraction
   {
     #region Serialization
 
+    /// <summary>
+    /// XML serialization surrogate for <see cref="DarkSubtractionNone"/>.
+    /// </summary>
     [Altaxo.Serialization.Xml.XmlSerializationSurrogateFor(typeof(DarkSubtractionNone), 0)]
     public class SerializationSurrogate0 : Altaxo.Serialization.Xml.IXmlSerializationSurrogate
     {
+      /// <inheritdoc/>
       public void Serialize(object obj, Altaxo.Serialization.Xml.IXmlSerializationInfo info)
       {
       }
 
+      /// <inheritdoc/>
       public object Deserialize(object? o, Altaxo.Serialization.Xml.IXmlDeserializationInfo info, object? parent)
       {
         return new DarkSubtractionNone();

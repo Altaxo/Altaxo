@@ -26,7 +26,7 @@
 namespace Altaxo.Science.Spectroscopy.Normalization
 {
   /// <summary>
-  /// Interface to normalization methods.
+  /// Interface for spectrum normalization methods.
   /// </summary>
   public interface INormalization : ISingleSpectrumPreprocessor
   {

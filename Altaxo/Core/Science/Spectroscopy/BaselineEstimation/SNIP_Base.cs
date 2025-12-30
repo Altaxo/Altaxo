@@ -27,6 +27,9 @@ using Altaxo.Calc.Regression;
 
 namespace Altaxo.Science.Spectroscopy.BaselineEstimation
 {
+  /// <summary>
+  /// Base type for SNIP (Statistics-sensitive Non-linear Iterative Procedure) baseline estimation methods.
+  /// </summary>
   public abstract record SNIP_Base
   {
     protected const double sqrt2 = 1.41421356237;
@@ -37,9 +40,11 @@ namespace Altaxo.Science.Spectroscopy.BaselineEstimation
     protected int _numberOfRegularStages = 40;
 
     /// <summary>
-    /// Half of the width of the averaging window. This value should be set to
-    /// roughly the FWHM (full width half maximum) of the broadest peak in the spectrum.
+    /// Gets half of the width of the averaging window.
     /// </summary>
+    /// <remarks>
+    /// This value should be set to roughly the FWHM (full width at half maximum) of the broadest peak in the spectrum.
+    /// </remarks>
     public double HalfWidth
     {
       get { return _halfWidth; }
@@ -52,9 +57,11 @@ namespace Altaxo.Science.Spectroscopy.BaselineEstimation
     }
 
     /// <summary>
-    /// Gets a value indicating whether the half width is given in x-axis units.
+    /// Gets a value indicating whether <see cref="HalfWidth"/> is specified in x-axis units.
     /// </summary>
-    /// <value>If true, the <see cref="HalfWidth"/> value is given in x-axis units; otherwise (false) the <see cref="HalfWidth"/> is given in points.</value>
+    /// <value>
+    /// <see langword="true"/> if <see cref="HalfWidth"/> is given in x-axis units; otherwise, <see langword="false"/>.
+    /// </value>
     public bool IsHalfWidthInXUnits
     {
       get
@@ -69,12 +76,11 @@ namespace Altaxo.Science.Spectroscopy.BaselineEstimation
 
 
     /// <summary>
-    /// Gets or sets the number of regular iterations. Default is 40.
+    /// Gets the number of regular iterations.
+    /// The default is 40.
     /// </summary>
-    /// <value>
-    /// The number of regular iterations.
-    /// </value>
-    /// <exception cref="System.ArgumentOutOfRangeException">Number of iterations must be at least one. - NumberOfRegularStages</exception>
+    /// <value>The number of regular iterations.</value>
+    /// <exception cref="System.ArgumentOutOfRangeException">Number of iterations must be at least one.</exception>
     public int NumberOfRegularIterations
     {
       get { return _numberOfRegularStages; }
@@ -109,12 +115,11 @@ namespace Altaxo.Science.Spectroscopy.BaselineEstimation
     }
 
     /// <summary>
-    /// Executes the algorithm with the provided spectrum.
+    /// Executes the algorithm for the provided spectrum and writes the estimated baseline into <paramref name="result"/>.
     /// </summary>
-    /// <param name="xArray">The x values of the spectral values.</param>
-    /// <param name="yArray">The array of spectral values.</param>
-    /// <param name="result">The location where the baseline corrected spectrum should be stored.</param>
-    /// <returns>The evaluated background of the provided spectrum.</returns>
+    /// <param name="xArray">The x-values of the spectrum.</param>
+    /// <param name="yArray">The y-values of the spectrum.</param>
+    /// <param name="result">The destination span to which the estimated baseline is written.</param>
     public virtual void Execute(ReadOnlySpan<double> xArray, ReadOnlySpan<double> yArray, Span<double> result)
     {
       var srcY = new double[yArray.Length];
@@ -124,7 +129,7 @@ namespace Altaxo.Science.Spectroscopy.BaselineEstimation
       var stat = GetStatisticsOfInterPointDistance(xArray);
       if (_isHalfWidthInXUnits && 0.5 * (stat.Max - stat.Min) / stat.Max > 1.0 / xArray.Length)
       {
-        // if the interpoint distant is not uniform, we need to use the algorithm with locally calculated half width
+        // if the interpoint distance is not uniform, we need to use the algorithm with locally calculated half width
         EvaluateBaselineWithLocalHalfWidth(xArray, srcY, tmpY, result);
         return;
       }
@@ -148,14 +153,14 @@ namespace Altaxo.Science.Spectroscopy.BaselineEstimation
     }
 
     /// <summary>
-    /// Executes the algorithm to find the baseline with the provided spectrum. This method is specialized for (almost) equally spaced x-values, thus the half width can be given in points.
+    /// Executes the algorithm to estimate the baseline for the provided spectrum.
+    /// This method is specialized for (almost) equally spaced x-values; thus the half width can be given in points.
     /// </summary>
-    /// <param name="x">The x values of the spectral values.</param>
-    /// <param name="srcY">The array of spectral values.</param>
-    /// <param name="tmpY">A temporary working array of the same length than <paramref name="srcY"/>.</param>
-    /// <param name="w">The half width in points. The value must be equal to or greater than 1.</param>
-    /// <param name="result">The location where the baseline corrected spectrum should be stored.</param>
-    /// <returns>The evaluated baseline of the provided spectrum.</returns>
+    /// <param name="x">The x-values of the spectrum.</param>
+    /// <param name="srcY">The y-values of the spectrum.</param>
+    /// <param name="tmpY">A temporary working array of the same length as <paramref name="srcY"/>.</param>
+    /// <param name="w">The half width in points. The value must be greater than or equal to 1.</param>
+    /// <param name="result">The destination span to which the estimated baseline is written.</param>
     protected virtual void EvaluateBaselineWithConstantHalfWidth(ReadOnlySpan<double> x, double[] srcY, double[] tmpY, int w, Span<double> result)
     {
       int last = srcY.Length - 1;
@@ -194,14 +199,14 @@ namespace Altaxo.Science.Spectroscopy.BaselineEstimation
     }
 
     /// <summary>
-    /// Executes the algorithm with the provided spectrum. This method is specialized for not equally spaced x-values, and the half width given in x-units.
-    /// The half width in points is calculated for each point individually.
+    /// Executes the algorithm using a locally calculated half width.
+    /// This method is specialized for non-uniformly spaced x-values and a half width specified in x-units.
+    /// The half width in points is calculated individually for each point.
     /// </summary>
-    /// <param name="x">The x values of the spectral values.</param>
-    /// <param name="srcY">The array of spectral values.</param>
-    /// <param name="tmpY">A temporary working array of the same length than <paramref name="srcY"/>.</param>
-    /// <param name="result">The location where the baseline corrected spectrum should be stored.</param>
-    /// <returns>The evaluated background of the provided spectrum.</returns>
+    /// <param name="x">The x-values of the spectrum.</param>
+    /// <param name="srcY">The y-values of the spectrum.</param>
+    /// <param name="tmpY">A temporary working array of the same length as <paramref name="srcY"/>.</param>
+    /// <param name="result">The destination span to which the estimated baseline is written.</param>
     protected virtual void EvaluateBaselineWithLocalHalfWidth(ReadOnlySpan<double> x, double[] srcY, double[] tmpY, Span<double> result)
     {
       int last = srcY.Length - 1;
@@ -257,12 +262,15 @@ namespace Altaxo.Science.Spectroscopy.BaselineEstimation
 
 
     /// <summary>
-    /// Given the half width in x-axis unit, the half width in points (to the left and right) is calculated for every point in array x.
+    /// Given the half width in x-axis units, calculates the half width in points (to the left and right) for every point in <paramref name="x"/>.
     /// </summary>
     /// <param name="x">The array of x-values.</param>
-    /// <param name="halfWidthInXUnits">The half width in x units.</param>
-    /// <param name="w">On returns, contains the half width in points for every point in array x. The half width is given to the left and to the right of each point.</param>
-    /// <returns>The maximal half width (left and right) of all points.</returns>
+    /// <param name="halfWidthInXUnits">The half width in x-units.</param>
+    /// <param name="w">
+    /// On return, contains the half width in points for every point in <paramref name="x"/>.
+    /// The half width is given to the left and to the right of each point.
+    /// </param>
+    /// <returns>The maximum half width (left or right) over all points.</returns>
     public static int CalculateHalfWidthInPointsLocallyRoundUp(ReadOnlySpan<double> x, double halfWidthInXUnits, (int left, int right)[] w)
     {
       int hmax = 1;
@@ -278,12 +286,15 @@ namespace Altaxo.Science.Spectroscopy.BaselineEstimation
     }
 
     /// <summary>
-    /// Given the half width in x-axis unit, the half width in points (to the left and right) is calculated for every point in array x.
+    /// Given the half width in x-axis units, calculates the half width in points (to the left and right) for every point in <paramref name="x"/>.
     /// </summary>
     /// <param name="x">The array of x-values.</param>
-    /// <param name="halfWidthInXUnits">The half width in x units.</param>
-    /// <param name="w">On returns, contains the half width in points for every point in array x. The half width is given to the left and to the right of each point.</param>
-    /// <returns>The maximal half width (left and right) of all points.</returns>
+    /// <param name="halfWidthInXUnits">The half width in x-units.</param>
+    /// <param name="w">
+    /// On return, contains the half width in points for every point in <paramref name="x"/>.
+    /// The half width is given to the left and to the right of each point.
+    /// </param>
+    /// <returns>The maximum half width (left or right) over all points.</returns>
     public static int CalculateHalfWidthInPointsLocallyRoundDown(ReadOnlySpan<double> x, double halfWidthInXUnits, (int left, int right)[] w)
     {
       // Find a hypothetical point to the left and to the right

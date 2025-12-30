@@ -25,20 +25,25 @@
 namespace Altaxo.Science.Spectroscopy.Normalization
 {
   /// <summary>
-  /// Executes area normalization : y' = (y-min)/(mean), in which min and mean are the minimal and the mean values of the array.
+  /// Executes area normalization: y' = (y - min) / mean, in which min and mean are the minimum and the mean values of the array.
   /// </summary>
   /// <seealso cref="Altaxo.Science.Spectroscopy.Normalization.INormalization" />
   public record NormalizationArea : INormalization
   {
     #region Serialization
 
+    /// <summary>
+    /// XML serialization surrogate for <see cref="NormalizationArea"/>.
+    /// </summary>
     [Altaxo.Serialization.Xml.XmlSerializationSurrogateFor(typeof(NormalizationArea), 0)]
     public class SerializationSurrogate0 : Altaxo.Serialization.Xml.IXmlSerializationSurrogate
     {
+      /// <inheritdoc/>
       public void Serialize(object obj, Altaxo.Serialization.Xml.IXmlSerializationInfo info)
       {
       }
 
+      /// <inheritdoc/>
       public object Deserialize(object? o, Altaxo.Serialization.Xml.IXmlDeserializationInfo info, object? parent)
       {
         return new NormalizationArea();

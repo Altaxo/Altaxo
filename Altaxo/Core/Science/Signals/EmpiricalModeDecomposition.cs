@@ -61,14 +61,14 @@ namespace Altaxo.Science.Signals
     /// </summary>
     /// <remarks>If the mean value of the lower and upper envelope, divided by the difference of upper and
     /// lower envelope, exceeds the <see cref="AvgByDiffThreshold"/> for more points than this value times the total number of points,
-    /// the sifting process is proceeded until this criterion is met.</remarks>
+    /// the sifting process continues until this criterion is met.</remarks>
     public double MaximumFractionAvgByDiffThresholdExceeded { get; init; } = 0.05;
 
     /// <summary>
     /// Gets the maximum allowed average by difference value.
     /// </summary>
     /// <remarks>If for any point of the waveform, the mean value of the lower and upper envelope, divided by the difference of upper and
-    /// lower envelope, exceeds this value, the sifting process is proceeded until this criterion is met.</remarks>
+    /// lower envelope, exceeds this value, the sifting process continues until this criterion is met.</remarks>
     public double MaximumAllowedAvgByDiff { get; init; } = 0.5;
 
 
@@ -78,7 +78,7 @@ namespace Altaxo.Science.Signals
     /// <param name="x">The x-values of the signal.</param>
     /// <param name="y">The y-values of the signal.</param>
     /// <param name="maximumNumberOfModesToReturn">The maximum number of modes to return from this enumeration.</param>
-    /// <param name="returnRest">If true, the returned enumerattion will also include the rest.</param>
+    /// <param name="returnRest">If true, the returned enumeration will also include the rest.</param>
     /// <returns>An endless enumeration of signals, consisting of the mode y, the residual yResidual, and representing the modes of the original signal.</returns>
     public IEnumerable<(double[] yIMFC, double[] yResidual, int modeNumber)> ExtractIntrinsicModeFunctionComponents(double[] x, double[] y, int maximumNumberOfModesToReturn, bool returnRest)
     {
@@ -184,6 +184,14 @@ namespace Altaxo.Science.Signals
       return (signal, isIMF);
     }
 
+    /// <summary>
+    /// Creates interpolation data for the envelope by mirroring the extrema at the boundaries.
+    /// </summary>
+    /// <param name="x">The x-values of the signal.</param>
+    /// <param name="y">The y-values of the signal.</param>
+    /// <param name="extremaIndices">The indices of the extrema to use for interpolation.</param>
+    /// <param name="alternativeExtremaIndices">The indices of the alternative extrema (used for spacing in case of single extrema).</param>
+    /// <returns>The x and y values for interpolation.</returns>
     public static (double[] xs, double[] ys) CreateInterpolationDataByMirroring(ReadOnlySpan<double> x, double[] y, IReadOnlyList<int> extremaIndices, IReadOnlyList<int> alternativeExtremaIndices)
     {
       // prepare new arrays that can be used as input for the interpolations
@@ -227,7 +235,14 @@ namespace Altaxo.Science.Signals
       return (xs, ys);
     }
 
-
+    /// <summary>
+    /// Creates interpolation data for the envelope by continuing the extrema trend at the boundaries.
+    /// </summary>
+    /// <param name="x">The x-values of the signal.</param>
+    /// <param name="y">The y-values of the signal.</param>
+    /// <param name="extremaIndices">The indices of the extrema to use for interpolation.</param>
+    /// <param name="alternativeExtremaIndices">The indices of the alternative extrema (used for spacing in case of single extrema).</param>
+    /// <returns>The x and y values for interpolation.</returns>
     public static (double[] xs, double[] ys) CreateInterpolationDataByContinuation(ReadOnlySpan<double> x, double[] y, IReadOnlyList<int> extremaIndices, IReadOnlyList<int> alternativeExtremaIndices)
     {
       // prepare new arrays that can be used as input for the interpolations
@@ -332,6 +347,13 @@ namespace Altaxo.Science.Signals
       return proceed;
     }
 
+    /// <summary>
+    /// Subtracts the mean envelope from the signal in the special case where there is exactly one minimum and one maximum.
+    /// </summary>
+    /// <param name="x">The x values of the signal.</param>
+    /// <param name="signal">The y-values of the signal. On return, this array is modified (mean envelope is subtracted).</param>
+    /// <param name="minIndex">The index of the minimum.</param>
+    /// <param name="maxIndex">The index of the maximum.</param>
     public static void SubtractMeanEnvelope_1_1(ReadOnlySpan<double> x, double[] signal, int minIndex, int maxIndex)
     {
       var x0 = x[minIndex];

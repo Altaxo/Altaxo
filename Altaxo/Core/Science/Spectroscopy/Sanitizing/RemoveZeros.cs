@@ -3,14 +3,15 @@
 namespace Altaxo.Science.Spectroscopy.Sanitizing
 {
   /// <summary>
-  /// Remove zeros at the start and the end of the spectrum, and optionally also in the middle of the spectrum. Although normally there is no
-  /// problem of having those values at the start or end of the spectrum, they lead to wrong estimates of the noise level.
+  /// Remove zeros at the start and the end of the spectrum, and optionally also in the middle of the spectrum.
+  /// Although normally there is no problem of having those values at the start or end of the spectrum, they lead to wrong
+  /// estimates of the noise level.
   /// </summary>
   public record RemoveZeros : ISanitizer
   {
     /// <summary>
     /// Gets the threshold value. Values in the spectrum greater than this value are considered as true measurement values,
-    /// the other values are considered as candidates for fake values, that can be removed.
+    /// the other values are considered as candidates for fake values that can be removed.
     /// </summary>
     public double ThresholdValue { get; init; }
 
@@ -32,7 +33,7 @@ namespace Altaxo.Science.Spectroscopy.Sanitizing
 
     /// <summary>
     /// If true, and the <see cref="RemoveZerosInMiddleOfSpectrum"/> is set to true,
-    /// then the spectrum is split into to regions, at the position where zero pixels are detected.
+    /// then the spectrum is split into two regions at the position where zero pixels are detected.
     /// </summary>
     public bool SplitIntoSeparateRegions { get; init; }
 
@@ -47,6 +48,7 @@ namespace Altaxo.Science.Spectroscopy.Sanitizing
     [Altaxo.Serialization.Xml.XmlSerializationSurrogateFor(typeof(RemoveZeros), 0)]
     public class SerializationSurrogate0 : Altaxo.Serialization.Xml.IXmlSerializationSurrogate
     {
+      /// <inheritdoc/>
       public void Serialize(object obj, Altaxo.Serialization.Xml.IXmlSerializationInfo info)
       {
         var s = (RemoveZeros)obj;
@@ -58,6 +60,7 @@ namespace Altaxo.Science.Spectroscopy.Sanitizing
         info.AddValue("SplitIntoSeparateRegions", s.SplitIntoSeparateRegions);
       }
 
+      /// <inheritdoc/>
       public object Deserialize(object? o, Altaxo.Serialization.Xml.IXmlDeserializationInfo info, object? parent)
       {
         double thresholdValue = info.GetDouble("ThresholdValue");

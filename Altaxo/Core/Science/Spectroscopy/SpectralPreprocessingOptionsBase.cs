@@ -30,14 +30,27 @@ using Altaxo.Main;
 
 namespace Altaxo.Science.Spectroscopy
 {
+  /// <summary>
+  /// Base type for spectral preprocessing option sets.
+  /// </summary>
+  /// <remarks>
+  /// Instances represent an immutable ordered list of <see cref="ISingleSpectrumPreprocessor"/> elements that are applied
+  /// sequentially.
+  /// </remarks>
   public abstract record SpectralPreprocessingOptionsBase : IImmutable, ISingleSpectrumPreprocessorCompound, IEnumerable<ISingleSpectrumPreprocessor>, IReadOnlyList<ISingleSpectrumPreprocessor>
   {
+    /// <inheritdoc/>
     public ISingleSpectrumPreprocessor this[int index] => ((IReadOnlyList<ISingleSpectrumPreprocessor>)InnerList)[index];
 
+    /// <inheritdoc/>
     public int Count => InnerList.Count;
 
+    /// <summary>
+    /// Gets the immutable list of preprocessing elements.
+    /// </summary>
     protected ImmutableList<ISingleSpectrumPreprocessor> InnerList { get; init; } = ImmutableList<ISingleSpectrumPreprocessor>.Empty;
 
+    /// <inheritdoc/>
     public (double[] x, double[] y, int[]? regions) Execute(double[] x, double[] y, int[]? regions)
     {
       if (regions is null || regions.Length == 0)
@@ -52,21 +65,25 @@ namespace Altaxo.Science.Spectroscopy
       return (x, y, regions);
     }
 
+    /// <inheritdoc/>
     public IEnumerator<ISingleSpectrumPreprocessor> GetEnumerator()
     {
       return ((IEnumerable<ISingleSpectrumPreprocessor>)InnerList).GetEnumerator();
     }
 
+    /// <inheritdoc/>
     public IEnumerable<ISingleSpectrumPreprocessor> GetProcessorElements()
     {
       return InnerList;
     }
 
+    /// <inheritdoc/>
     IEnumerator IEnumerable.GetEnumerator()
     {
       return ((IEnumerable)InnerList).GetEnumerator();
     }
 
+    /// <inheritdoc/>
     public override string ToString()
     {
       var stb = new StringBuilder();
@@ -83,7 +100,8 @@ namespace Altaxo.Science.Spectroscopy
     }
 
     /// <summary>
-    /// Checks the data for validity (no NaNs, no infinite values), and x strictly monotonically increasing. If the data are not valid, a <see cref="System.InvalidOperationException"/> is thrown.
+    /// Checks whether the data is valid (no NaNs, no infinite values) and whether <paramref name="x"/> is strictly monotonically increasing.
+    /// If the data is not valid, a <see cref="System.InvalidOperationException"/> is thrown.
     /// </summary>
     /// <param name="x">The x data.</param>
     /// <param name="y">The y data.</param>
@@ -96,7 +114,7 @@ namespace Altaxo.Science.Spectroscopy
         return; // no data
 
       if (!double.IsNaN(x[0]) || double.IsInfinity(x[0]) || double.IsNaN(y[0]) || double.IsInfinity(y[0]))
-        throw new System.InvalidOperationException($"The first elements of x and y should be value, but are x={x[0]} and y={y[0]}");
+        throw new System.InvalidOperationException($"The first elements of x and y should be valid, but are x={x[0]} and y={y[0]}");
 
       for (int i = 1; i < x.Length; ++i)
       {

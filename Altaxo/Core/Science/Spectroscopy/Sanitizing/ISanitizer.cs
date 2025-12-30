@@ -24,7 +24,14 @@
 
 namespace Altaxo.Science.Spectroscopy.Sanitizing
 {
-  /// <summary>Brings the raw spectrum to reasonable values, i.e. removes NaNs, cuts of negative values etc.</summary>
+  /// <summary>
+  /// Brings the raw spectrum to reasonable values, e.g. removes NaNs and cuts off negative values.
+  /// </summary>
+  /// <remarks>
+  /// Implementations should correct or remove invalid or obviously wrong measurement values
+  /// such as NaN, infinities, or out-of-range samples. Sanitizers typically operate on the
+  /// provided x/y arrays and may restrict processing to the specified regions.
+  /// </remarks>
   public interface ISanitizer : ISingleSpectrumPreprocessor
   {
   }

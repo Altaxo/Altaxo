@@ -28,16 +28,16 @@ using Altaxo.Calc.FitFunctions.Probability;
 
 namespace Altaxo.Science.Spectroscopy.PeakFitting
 {
+  /// <summary>
+  /// Base settings used for peak fitting.
+  /// </summary>
   public record class PeakFittingBase
   {
     private IFitFunctionPeak _fitFunction = new VoigtAreaParametrizationNu();
 
     /// <summary>
-    /// Gets /sets the fit function to use.
+    /// Gets/sets the fit function to use.
     /// </summary>
-    /// <value>
-    /// The fit function.
-    /// </value>
     public IFitFunctionPeak FitFunction
     {
       get { return _fitFunction; }
@@ -45,14 +45,14 @@ namespace Altaxo.Science.Spectroscopy.PeakFitting
     }
 
     /// <summary>
-    /// Gets / sets the scaling factor of the fit width. To calculate the fit width, the scaling factor is
-    /// multiplied by the FullWidthHalfMaximum of the peak.
+    /// Gets/sets the scaling factor of the fit width.
+    /// To calculate the fit width, the scaling factor is multiplied by the full width at half maximum (FWHM) of the peak.
     /// </summary>
     private double _fitWidthScalingFactor = 2;
 
     /// <summary>
-    /// Gets / sets the scaling factor of the fit width. To calculate the fit width, the scaling factor is
-    /// multiplied by the FullWidthHalfMaximum of the peak.
+    /// Gets/sets the scaling factor of the fit width.
+    /// To calculate the fit width, the scaling factor is multiplied by the full width at half maximum (FWHM) of the peak.
     /// </summary>
     public double FitWidthScalingFactor
     {
@@ -70,6 +70,10 @@ namespace Altaxo.Science.Spectroscopy.PeakFitting
     }
 
     private double _minimalFWHMValue;
+
+    /// <summary>
+    /// Gets/sets the minimal allowed FWHM value.
+    /// </summary>
     public double MinimalFWHMValue
     {
       get
@@ -85,6 +89,9 @@ namespace Altaxo.Science.Spectroscopy.PeakFitting
       }
     }
 
+    /// <summary>
+    /// Gets a value indicating whether <see cref="MinimalFWHMValue"/> is specified in x-units.
+    /// </summary>
     public bool IsMinimalFWHMValueInXUnits { get; init; } = true;
   }
 }

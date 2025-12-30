@@ -23,15 +23,11 @@
 #endregion Copyright
 
 using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace Altaxo.Science.Spectroscopy.Cropping
 {
   /// <summary>
-  /// Interface to a <see cref="Altaxo.Science.Spectroscopy.ISingleSpectrumPreprocessor"/> that does cropping of the data.
+  /// Marker interface for <see cref="Altaxo.Science.Spectroscopy.ISingleSpectrumPreprocessor"/> implementations that crop spectrum data.
   /// </summary>
   /// <seealso cref="Altaxo.Science.Spectroscopy.ISingleSpectrumPreprocessor" />
   public interface ICropping : ISingleSpectrumPreprocessor

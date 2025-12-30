@@ -32,22 +32,27 @@ namespace Altaxo.Science.Spectroscopy.PeakSearching
   /// <remarks>
   /// <para>It models the function:</para>
   /// <code>
-  /// A* (1 - (x/a)**2) * exp(-0.5*(x/a)**2),
-  /// where A = 2/(sqrt(3*a)*(pi**0.25)).
+  /// A * (1 - (x/w)**2) * exp(-0.5*(x/w)**2),
+  /// where A = 2/(sqrt(3*w)*(pi**0.25)).
   /// </code>
   /// </remarks>
   public record WaveletRicker : IWaveletForPeakSearching
   {
     #region Serialization
 
+    /// <summary>
+    /// XML serialization surrogate (version 0).
+    /// </summary>
     [Altaxo.Serialization.Xml.XmlSerializationSurrogateFor(typeof(WaveletRicker), 0)]
     public class SerializationSurrogate0 : Altaxo.Serialization.Xml.IXmlSerializationSurrogate
     {
+      /// <inheritdoc/>
       public void Serialize(object obj, Altaxo.Serialization.Xml.IXmlSerializationInfo info)
       {
         var s = (WaveletRicker)obj;
       }
 
+      /// <inheritdoc/>
       public object Deserialize(object? o, Altaxo.Serialization.Xml.IXmlDeserializationInfo info, object? parent)
       {
         return new WaveletRicker();
@@ -72,7 +77,7 @@ namespace Altaxo.Science.Spectroscopy.PeakSearching
       const double facA = 0.73963075766688317378; // Math.Pow(Math.Pi, 0.25) * 5.0 / 9.0;
       const double facW = 2.2360679774997896964; // Math.Sqrt(5)
 
-      return (cwtCoefficient / (Math.Sqrt(width) * facA), width/facW);
+      return (cwtCoefficient / (Math.Sqrt(width) * facA), width / facW);
     }
   }
 }

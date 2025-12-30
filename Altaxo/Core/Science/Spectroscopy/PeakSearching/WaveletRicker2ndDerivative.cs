@@ -28,27 +28,32 @@ namespace Altaxo.Science.Spectroscopy.PeakSearching
 {
 
   /// <summary>
-  /// Normalized 2nd derivative of the Ricker wavelet function.
+  /// Normalized second derivative of the Ricker wavelet function.
   /// </summary>
   /// <remarks>
   /// <para>It models the function:</para>
   /// <code>
   /// A * (3 - 6*(x/w)**2 + (x/w)**4) * exp(-0.5*(x/w)**2),
-  /// where A = 4/(sqrt(105*a)*(pi**0.25)).
+  /// where A = 4/(sqrt(105*w)*(pi**0.25)).
   /// </code>
   /// </remarks>
   public record WaveletRicker2ndDerivative : IWaveletForPeakSearching
   {
     #region Serialization
 
+    /// <summary>
+    /// XML serialization surrogate (version 0).
+    /// </summary>
     [Altaxo.Serialization.Xml.XmlSerializationSurrogateFor(typeof(WaveletRicker2ndDerivative), 0)]
     public class SerializationSurrogate0 : Altaxo.Serialization.Xml.IXmlSerializationSurrogate
     {
+      /// <inheritdoc/>
       public void Serialize(object obj, Altaxo.Serialization.Xml.IXmlSerializationInfo info)
       {
         var s = (WaveletRicker2ndDerivative)obj;
       }
 
+      /// <inheritdoc/>
       public object Deserialize(object? o, Altaxo.Serialization.Xml.IXmlDeserializationInfo info, object? parent)
       {
         return new WaveletRicker2ndDerivative();
@@ -71,9 +76,9 @@ namespace Altaxo.Science.Spectroscopy.PeakSearching
     public (double GaussAmplitude, double GaussSigma) GetParametersForGaussianPeak(double cwtCoefficient, double width)
     {
       const double facA = 0.56477320169021190223; // Math.Pow(Math.Pi, 0.25) * Math.Sqrt(3.0/7.0) * 81.0 / 125.0;
-      const double facW = 3; 
+      const double facW = 3;
 
-      return (cwtCoefficient / (Math.Sqrt(width) * facA), width/facW);
+      return (cwtCoefficient / (Math.Sqrt(width) * facA), width / facW);
     }
   }
 }

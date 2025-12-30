@@ -32,11 +32,13 @@ using Altaxo.Science.Signals;
 namespace Altaxo.Science.Spectroscopy.BaselineEstimation
 {
   /// <summary>
-  /// This class detrends a spectrum. This is done by fitting a smoothing spline through the spectrum.
-  /// Then the spectral data that lies significantly above the spline are excluded from the spline.
-  /// The process is repeated until the resulting curve changes no more.
+  /// Detrends a spectrum by fitting a smoothing spline through the spectrum.
+  /// Spectral data points that lie significantly above the spline are excluded from the spline fit.
+  /// The process is repeated until the result no longer changes.
   /// </summary>
-  /// <remarks>Reference: developed by D. Lellinger (currently, no paper is available).</remarks>
+  /// <remarks>
+  /// Reference: developed by D. Lellinger (currently no paper is available).
+  /// </remarks>
   public abstract partial record SSProbBase : Main.IImmutable
   {
     /// <summary>
@@ -55,7 +57,8 @@ namespace Altaxo.Science.Spectroscopy.BaselineEstimation
     } = SmoothnessSpecification.ByNumberOfFeatures;
 
     /// <summary>
-    /// Determines the smoothness of the spline. This value has different meaning depending on the value of <see cref="SmoothnessSpecifiedBy"/>.
+    /// Determines the smoothness of the spline.
+    /// The meaning of this value depends on <see cref="SmoothnessSpecifiedBy"/>.
     /// </summary>
     public double SmoothnessValue
     {
@@ -71,6 +74,9 @@ namespace Altaxo.Science.Spectroscopy.BaselineEstimation
 
     private Altaxo.Calc.Interpolation.IInterpolationFunctionOptions _interpolationFunctionOptions = new Altaxo.Calc.Interpolation.SmoothingCubicSplineOptions();
 
+    /// <summary>
+    /// Gets the interpolation function options used to create the smoothing spline.
+    /// </summary>
     public Altaxo.Calc.Interpolation.IInterpolationFunctionOptions InterpolationFunctionOptions
     {
       get => _interpolationFunctionOptions;
@@ -79,6 +85,13 @@ namespace Altaxo.Science.Spectroscopy.BaselineEstimation
 
     private double _relativeProbabilityThreshold = 1E-5;
 
+    /// <summary>
+    /// Gets or sets a relative threshold that controls how aggressively points above the spline are excluded.
+    /// </summary>
+    /// <remarks>
+    /// Internally, the effective threshold is scaled by the number of points.
+    /// </remarks>
+    /// <exception cref="ArgumentOutOfRangeException">Value must be &gt; 0 and &lt;= 1.</exception>
     public double RelativeProbabilityThreshold
     {
       get => _relativeProbabilityThreshold;
@@ -117,18 +130,13 @@ namespace Altaxo.Science.Spectroscopy.BaselineEstimation
     }
 
 
-    /// <summary>
-    /// Executes the baseline estimation algorithm with the provided spectrum.
-    /// </summary>
-    /// <param name="xArray">The x values of the spectral values.</param>
-    /// <param name="yArray">The array of spectral values.</param>
-    /// <param name="resultingBaseline">The location to which the estimated baseline should be copied.</param>
+    /// <inheritdoc/>
     public void Execute(ReadOnlySpan<double> xArray, ReadOnlySpan<double> yArray, Span<double> resultingBaseline)
     {
       var originalX = xArray.ToArray();
       var originalY = yArray.ToArray();
 
-      // probability threshold - it is choosen thus, that there is no false positive for all the points x all iteration x some curves
+      // probability threshold - it is chosen such that there is no false positive for all points × all iterations × some curves
       double probabilityThreshold = _relativeProbabilityThreshold / originalX.Length;
 
       double meanXIncrement = SignalMath.GetMeanIncrement(originalX);
@@ -143,7 +151,7 @@ namespace Altaxo.Science.Spectroscopy.BaselineEstimation
       var participatingX = new List<double>();
       var participatingY = new List<double>();
 
-      // store the previous combinations of the estimate of sigma, and the number of participating points
+      // store the previous combinations of the estimate of sigma and the number of participating points
       // in order to have a criterion to end the iterations
       var previousSigmasAndPoints = new HashSet<(double SigmaEstimate, int participatingPoints)>();
 
@@ -160,17 +168,17 @@ namespace Altaxo.Science.Spectroscopy.BaselineEstimation
 
         // a first estimate of sigma is calculated by calculating the mean deviation of the subtracted
         // values from zero. If the baseline goes through a noise signal, then this is the sigma
-        // Note that only the points are taken into account, which are part of the baseline
+        // Note that only the points are taken into account which are part of the baseline
         var sigmaEstimate = GetMeanDeviationFromZero(subtractedY, isParticipating);
 
 #if SSProbDiagnostics
         System.Diagnostics.Debug.WriteLine($"Sigma (Stufe {iteration}): {sigmaEstimate}");
 #endif
-        // this is the stop criterion: if the pair of sigmaEstimate and number of participating points has
-        // already occured before, we stop the iteration
+        // stop criterion: if the pair of sigmaEstimate and number of participating points has
+        // already occurred before, stop the iteration
         if (previousSigmasAndPoints.Contains((sigmaEstimate, participatingY.Count)))
         {
-          break; // has occured before, thus stop the iteration
+          break; // has occurred before, thus stop the iteration
         }
         else
         {
@@ -178,13 +186,14 @@ namespace Altaxo.Science.Spectroscopy.BaselineEstimation
         }
 
         // now, estimate the probabilities that a point belongs to the noise (i.e. the smaller the probability, the more it belongs to a peak)
-        // here, we not simple calculate the probabilities on a point by point base
+        // here, we do not simply calculate the probabilities on a point-by-point basis
         // instead, when we have a series of more than one consecutive point that is positive, we calculate the probability
         // for this series of positive points to occur
-        // Remember that the sum of two normal distributed values with sigma is also normal distributed with Sqrt(2)*sigma; a sum of 3 values is distributed with Sqrt(3)*sigma etc.
-        // IMPORTANT: the correct formula for the probability that a positive value x belong to noise would be
-        // p(x) = Erfc(x/(sigma*Sqrt(2)))
-        // Since calculation of Erfc is costly, it is approximated with a function. The approximation is not very accurate, but sufficient for this purpose
+        // Remember that the sum of two normally distributed values with sigma is also normally distributed with sqrt(2)*sigma;
+        // a sum of 3 values is distributed with sqrt(3)*sigma, etc.
+        // IMPORTANT: the correct formula for the probability that a positive value x belongs to noise would be
+        // p(x) = Erfc(x/(sigma*sqrt(2)))
+        // Since calculation of Erfc is costly, it is approximated with a function. The approximation is not very accurate, but sufficient for this purpose.
         int positiveSequenceLength = 0;
         double sumPositiveValues = 0;
         for (int i = 0; i < originalY.Length; ++i)
@@ -201,7 +210,7 @@ namespace Altaxo.Science.Spectroscopy.BaselineEstimation
             positiveSequenceLength++;
             sumPositiveValues += y;
 
-            // we calculate the probability, that the sum of positive values is within the noise level
+            // we calculate the probability that the sum of positive values is within the noise level
             double p = ProbabilityThatXIsNoise(sumPositiveValues, sigmaEstimate, positiveSequenceLength); // Probability that the sum of the values is noise
 
             // if the sequence has more than one point,
@@ -301,6 +310,10 @@ namespace Altaxo.Science.Spectroscopy.BaselineEstimation
     }
 
 
+    /// <summary>
+    /// Writes this instance to XML.
+    /// </summary>
+    /// <param name="writer">The XML writer to write to.</param>
     public void Export(XmlWriter writer)
     {
       writer.WriteStartElement("SSProb");
@@ -308,20 +321,21 @@ namespace Altaxo.Science.Spectroscopy.BaselineEstimation
       writer.WriteEndElement();
     }
 
+    /// <inheritdoc/>
     public override string ToString()
     {
       return $"{this.GetType().Name} NumberOfFeatures={SmoothnessValue}";
     }
 
     /// <summary>
-    /// Gets the smoothing spline (options) for which the smoothing amount is set to the value given in the options.
+    /// Gets spline interpolation options in which the smoothing amount is set according to the provided parameters.
     /// </summary>
     /// <param name="interpolation">The spline interpolation options.</param>
     /// <param name="smoothnessSpecifiedBy">Determines how the smoothness is specified.</param>
     /// <param name="smoothnessValue">The smoothness value. The smoothness depends on this value and how the smoothness is specified.</param>
     /// <param name="numberOfArrayPoints">The number of points in the spline curve.</param>
     /// <param name="meanXIncrement">Mean increment of the x-values of the spectrum.</param>
-    /// <returns>The same spline, but now with the smoothing value set according to the parameters.</returns>
+    /// <returns>The spline options with the smoothing value set according to the parameters.</returns>
     /// <exception cref="System.NotImplementedException"></exception>
     protected static IInterpolationFunctionOptions GetSpline(IInterpolationFunctionOptions interpolation, SmoothnessSpecification smoothnessSpecifiedBy, double smoothnessValue, double numberOfArrayPoints, double meanXIncrement)
     {
@@ -346,20 +360,31 @@ namespace Altaxo.Science.Spectroscopy.BaselineEstimation
     }
 
     /// <summary>
-    /// Approximation for the probability that the value x belongs to the noise level. Attention: x has to be positive (this is not tested!).
-    /// This function is an approximation for Erfc(x/(sigma*Sqrt(2)).
+    /// Approximation for the probability that the value <paramref name="x"/> belongs to the noise level.
     /// </summary>
+    /// <remarks>
+    /// <paramref name="x"/> must be positive (this is not validated).
+    /// This function is an approximation for <c>Erfc(x/(sigma*sqrt(2)))</c>.
+    /// </remarks>
     /// <param name="x">The x value.</param>
     /// <param name="sigma">The sigma of the noise.</param>
-    /// <param name="numberOfAddedPoints">The parameter <paramref name="x"/>can contain of a single value, or of a sum of consecutive values.
-    /// The number represents the number of values that were added up. Provide 1  if x is a single value.</param>
-    /// <returns>Approximation for the Erfc function.</returns>
+    /// <param name="numberOfAddedPoints">
+    /// The parameter <paramref name="x"/> can represent a single value or a sum of consecutive values.
+    /// This parameter is the number of values that were added up. Provide 1 if <paramref name="x"/> is a single value.
+    /// </param>
+    /// <returns>An approximation of the complementary error function.</returns>
     protected static double ProbabilityThatXIsNoise(double x, double sigma, int numberOfAddedPoints)
     {
       x /= sigma * Math.Sqrt(numberOfAddedPoints);
       return Math.Exp(-0.5 * x * x) / (1 + x);
     }
 
+    /// <summary>
+    /// Calculates an estimate of the standard deviation of <paramref name="arr"/>, restricted to elements where <paramref name="crit"/> is <see langword="true"/>.
+    /// </summary>
+    /// <param name="arr">The data values.</param>
+    /// <param name="crit">Criterion indicating which values are considered.</param>
+    /// <returns>The estimated standard deviation.</returns>
     protected static double GetMeanDeviationFromZero(IReadOnlyList<double> arr, IReadOnlyList<bool> crit)
     {
       var sum = 0d;
@@ -388,6 +413,7 @@ namespace Altaxo.Science.Spectroscopy.BaselineEstimation
     [Altaxo.Serialization.Xml.XmlSerializationSurrogateFor(typeof(SSProb), 0)]
     public class SerializationSurrogate0 : Altaxo.Serialization.Xml.IXmlSerializationSurrogate
     {
+      /// <inheritdoc/>
       public void Serialize(object obj, Altaxo.Serialization.Xml.IXmlSerializationInfo info)
       {
         var s = (SSProb)obj;
@@ -397,6 +423,7 @@ namespace Altaxo.Science.Spectroscopy.BaselineEstimation
         info.AddValue("Probability", s.RelativeProbabilityThreshold);
       }
 
+      /// <inheritdoc/>
       public object Deserialize(object? o, Altaxo.Serialization.Xml.IXmlDeserializationInfo info, object? parent)
       {
         var interpolation = info.GetValue<IInterpolationFunctionOptions>("Interpolation", parent);

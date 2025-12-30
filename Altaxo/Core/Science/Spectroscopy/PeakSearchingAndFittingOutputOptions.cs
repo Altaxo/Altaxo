@@ -34,10 +34,10 @@ namespace Altaxo.Science.Spectroscopy
   public record PeakSearchingAndFittingOutputOptions
   {
     /// <summary>
-    /// Gets a value indicating whether the preprocessed spectrum (i.e. the spectrum that is used for peak fitting) is included in the output.
+    /// Gets a value indicating whether the preprocessed spectrum (i.e., the spectrum that is used for peak fitting) is included in the output.
     /// </summary>
     /// <value>
-    ///   <c>true</c> if the preprocessed spectrum is included in the output; otherwise, <c>false</c>.
+    /// <see langword="true"/> if the preprocessed spectrum is included in the output; otherwise, <see langword="false"/>.
     /// </value>
     public bool OutputPreprocessedCurve { get; init; } = true;
 
@@ -45,17 +45,23 @@ namespace Altaxo.Science.Spectroscopy
     /// Gets a value indicating whether the fit curve of the peak fitting(s) is included in the output.
     /// </summary>
     /// <value>
-    ///   <c>true</c> if the fit curve of the peak fitting(s) is included in the output; otherwise, <c>false</c>.
+    /// <see langword="true"/> if the fit curve of the peak fitting(s) is included in the output; otherwise, <see langword="false"/>.
     /// </value>
     public bool OutputFitCurve { get; init; } = true;
 
+    /// <summary>
+    /// Gets a value indicating whether the fit curve is also included as separate peak curves in the output.
+    /// </summary>
+    /// <value>
+    /// <see langword="true"/> if separate peak curves are included in the output; otherwise, <see langword="false"/>.
+    /// </value>
     public bool OutputFitCurveAsSeparatePeaks { get; init; } = true;
 
     /// <summary>
     /// Gets a value indicating whether the baseline curve(s) is included in the output.
     /// </summary>
     /// <value>
-    ///   <c>true</c> if the baseline curve is included in the output; otherwise, <c>false</c>.
+    /// <see langword="true"/> if the baseline curve is included in the output; otherwise, <see langword="false"/>.
     /// </value>
     public bool OutputBaselineCurve { get; init; } = false;
 
@@ -63,7 +69,7 @@ namespace Altaxo.Science.Spectroscopy
     /// Gets a value indicating whether the fit residual curve(s) is included in the output.
     /// </summary>
     /// <value>
-    ///   <c>true</c> if the fit residual curve is included in the output; otherwise, <c>false</c>.
+    /// <see langword="true"/> if the fit residual curve is included in the output; otherwise, <see langword="false"/>.
     /// </value>
     public bool OutputFitResidualCurve { get; init; } = false;
 
@@ -74,13 +80,14 @@ namespace Altaxo.Science.Spectroscopy
     private IReadOnlyList<string> _propertyNames = [];
 
     /// <summary>
-    /// Gets/sets the sampling factor of the fit curve. A sampling factor of 1 samples the fit curve at
-    /// the same positions at the fitted curve, a factor of 2 takes one additional point inbetween to original points, etc.
+    /// Gets/sets the sampling factor of the fit curve.
+    /// A sampling factor of 1 samples the fit curve at the same positions as the fitted curve;
+    /// a factor of 2 inserts one additional point between the original points, etc.
     /// </summary>
     /// <value>
     /// The output fit curve sampling factor.
     /// </value>
-    /// <exception cref="ArgumentOutOfRangeException">Value must be >=1, nameof(OutputFitCurveScalingFactor)</exception>
+    /// <exception cref="ArgumentOutOfRangeException">Value must be &gt;= 1.</exception>
     public int OutputFitCurveSamplingFactor
     {
       get => _outputFitCurveSamplingFactor;
@@ -94,13 +101,14 @@ namespace Altaxo.Science.Spectroscopy
     }
 
     /// <summary>
-    /// Gets/sets the sampling factor of the separate peak curves. A sampling factor of 1 samples the fit curve at
-    /// the same positions at the fitted curve, a factor of 2 takes one additional point inbetween to original points, etc.
+    /// Gets/sets the sampling factor of the separate peak curves.
+    /// A sampling factor of 1 samples the fit curve at the same positions as the fitted curve;
+    /// a factor of 2 inserts one additional point between the original points, etc.
     /// </summary>
     /// <value>
     /// The output separate peaks fit curves sampling factor.
     /// </value>
-    /// <exception cref="ArgumentOutOfRangeException">Value must be >=1, nameof(OutputFitCurveAsSeparatePeaksSamplingFactor)</exception>
+    /// <exception cref="ArgumentOutOfRangeException">Value must be &gt;= 1.</exception>
     public int OutputFitCurveAsSeparatePeaksSamplingFactor
     {
       get => _outputFitCurveAsSeparatePeaksSamplingFactor;
@@ -114,7 +122,8 @@ namespace Altaxo.Science.Spectroscopy
     }
 
     /// <summary>
-    /// Gets or sets name of additional properties. These properties are intended to be shown in the columns of the resulting peak fitting table.
+    /// Gets or sets the names of additional properties.
+    /// These properties are intended to be shown in the columns of the resulting peak fitting table.
     /// </summary>
     public IReadOnlyList<string> PropertyNames
     {
@@ -130,12 +139,13 @@ namespace Altaxo.Science.Spectroscopy
     #region Serialization
 
     /// <summary>
-    /// 2022-11-09 Initial version
+    /// 2022-11-09 Initial version.
     /// </summary>
     /// <seealso cref="Altaxo.Serialization.Xml.IXmlSerializationSurrogate" />
     [Altaxo.Serialization.Xml.XmlSerializationSurrogateFor("AltaxoCore", "Altaxo.Science.Spectroscopy.PeakSearchingAndFittingOutputOptions", 0)]
     public class SerializationSurrogate0 : Altaxo.Serialization.Xml.IXmlSerializationSurrogate
     {
+      /// <inheritdoc/>
       public void Serialize(object obj, Altaxo.Serialization.Xml.IXmlSerializationInfo info)
       {
         var s = (PeakSearchingAndFittingOutputOptions)obj;
@@ -146,6 +156,7 @@ namespace Altaxo.Science.Spectroscopy
         info.AddValue("SeparatePeaksSamplingFactor", s.OutputFitCurveAsSeparatePeaksSamplingFactor);
       }
 
+      /// <inheritdoc/>
       public object Deserialize(object? o, Altaxo.Serialization.Xml.IXmlDeserializationInfo info, object? parent)
       {
         var s = (PeakSearchingAndFittingOutputOptions?)o ?? new PeakSearchingAndFittingOutputOptions();
@@ -167,12 +178,13 @@ namespace Altaxo.Science.Spectroscopy
     }
 
     /// <summary>
-    /// 2024-09-15 V1: added list of properties, output baseline, output fit residual
+    /// 2024-09-15 V1: added list of properties, output baseline, output fit residual.
     /// </summary>
     /// <seealso cref="Altaxo.Serialization.Xml.IXmlSerializationSurrogate" />
     [Altaxo.Serialization.Xml.XmlSerializationSurrogateFor(typeof(PeakSearchingAndFittingOutputOptions), 1)]
     public class SerializationSurrogate1 : Altaxo.Serialization.Xml.IXmlSerializationSurrogate
     {
+      /// <inheritdoc/>
       public void Serialize(object obj, Altaxo.Serialization.Xml.IXmlSerializationInfo info)
       {
         var s = (PeakSearchingAndFittingOutputOptions)obj;
@@ -187,6 +199,7 @@ namespace Altaxo.Science.Spectroscopy
 
       }
 
+      /// <inheritdoc/>
       public object Deserialize(object? o, Altaxo.Serialization.Xml.IXmlDeserializationInfo info, object? parent)
       {
         var s = (PeakSearchingAndFittingOutputOptions?)o ?? new PeakSearchingAndFittingOutputOptions();

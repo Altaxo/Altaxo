@@ -28,24 +28,23 @@ using System.Collections.Generic;
 namespace Altaxo.Science.Spectroscopy.PeakSearching
 {
   /// <summary>
-  /// Represents a ridge line that is the output of the ridge line search in a Continuous Wavelet Transformation (Cwt) matrix.
+  /// Represents a ridge line produced by ridge line search in a continuous wavelet transformation (CWT) matrix.
   /// </summary>
   public class RidgeLine : List<(int Row, int Column, double CwtCoefficient)>
   {
     /// <summary>
-    /// Gets the point at the lowest stage, i.e. at the lowest width. This is not neccessarily the stage 0, since the ridge line can end before reaching stage 0.
+    /// Gets the point at the lowest stage, i.e. at the lowest width.
+    /// This is not necessarily stage 0, since the ridge line can end before reaching stage 0.
     /// </summary>
-    /// <value>
-    /// The point at the lowest stage.
-    /// </value>
     public (int Row, int Column, double CwtCoefficient) PointAtLowestWidth => this[Count - 1];
 
 
     /// <summary>
-    /// Gets the point where the CWT coefficient has the first time a local maximum (searching starts from stage0 (lowest width))
+    /// Gets the point where the CWT coefficient reaches its first local maximum when searching from stage 0 (lowest width).
     /// </summary>
     /// <value>
-    /// The point where the CWT coefficient has a local maximum. If no such point is found, the point with the maximal CWT coefficient is returned.
+    /// The point where the CWT coefficient has a local maximum.
+    /// If no such point is found, the point with the maximal CWT coefficient is returned.
     /// </value>
     public (int Row, int Column, double CwtCoefficient) PointAtMaximalCwtCoefficient
     {
@@ -68,12 +67,12 @@ namespace Altaxo.Science.Spectroscopy.PeakSearching
     }
 
     /// <summary>
-    /// Beginning from stage 0 (lowest width), a point is searched at which the Cwt coefficient has a local maximum. The parameter <paramref name="order"/> determines, how many points to the left
-    /// and the right of the designates local maximum are taken into consideration.
+    /// Starting at stage 0 (lowest width), searches for a point at which the CWT coefficient has a local maximum.
+    /// The parameter <paramref name="order"/> determines how many points to the left and right of the candidate maximum are considered.
     /// </summary>
-    /// <param name="order">The order (must be at least 1). Number of points to the left and right of the designated maximum taken into consideration.</param>
-    /// <returns>The first local maximum that is found. If no local maximum is found, the point at which the Cwt coefficient has its global maximum is returned.</returns>
-    /// <exception cref="System.ArgumentOutOfRangeException">Order has to be >=1 - order</exception>
+    /// <param name="order">The order (must be at least 1). Number of points to the left and right of the candidate maximum considered.</param>
+    /// <returns>The first local maximum that is found. If none is found, the point at which the CWT coefficient has its global maximum is returned.</returns>
+    /// <exception cref="System.ArgumentOutOfRangeException">Order has to be &gt;= 1 - order</exception>
     public (int Row, int Column, double CwtCoefficient) GetPointAtMaximalCwtCoefficient(int order)
     {
       if (!(order >= 1))
@@ -81,9 +80,9 @@ namespace Altaxo.Science.Spectroscopy.PeakSearching
 
       var lenM1 = Count - 1;
 
-      int idxGlobalMax=0;
+      int idxGlobalMax = 0;
       double cwtGlobalMax = double.NegativeInfinity;
-      for(int i=lenM1;i>=0;--i)
+      for (int i = lenM1; i >= 0; --i)
       {
         int j;
         for (j = order; j > 0; --j)
@@ -95,11 +94,11 @@ namespace Altaxo.Science.Spectroscopy.PeakSearching
           if ((i - j) >= 0 && !(this[i].CwtCoefficient > this[i - j].CwtCoefficient))
             break;
         }
-        if(j==0) // found a local maximum, and return it
+        if (j == 0) // found a local maximum, and return it
         {
           return this[i];
         }
-        
+
         if (this[i].CwtCoefficient > cwtGlobalMax) // find global maximum
         {
           cwtGlobalMax = this[i].CwtCoefficient;
@@ -115,43 +114,41 @@ namespace Altaxo.Science.Spectroscopy.PeakSearching
     /// <summary>
     /// Gets a value indicating whether the ridge line starts at stage 0 (the stage with the lowest width).
     /// </summary>
-    /// <value>
-    ///   <c>true</c> if the ridge line starts at stage 0; otherwise, <c>false</c>.
-    /// </value>
     public bool StartsAtStageZero => this[Count - 1].Row == 0;
 
     /// <summary>
     /// Gets a value indicating whether the ridge line has at least the provided length.
     /// </summary>
     /// <param name="minimalLength">Minimal required length of the ridge line.</param>
-    /// <returns>True if the length of the ridge line is &gt;= <paramref name="minimalLength"/>; otherwise, false.</returns>
+    /// <returns><see langword="true"/> if the length of the ridge line is &gt;= <paramref name="minimalLength"/>; otherwise, <see langword="false"/>.</returns>
     public bool LengthIsAtLeast(int minimalLength) => Count >= minimalLength;
 
     /// <summary>
-    /// Gets a value indicating whether the ridge line has at least a signal the provided signal-to-noise ratio.
-    /// The signal-to-noise ratio is calculated at the point of the lowest stage (lowest width, see <see cref="PointAtLowestWidth"/>).
+    /// Gets a value indicating whether the ridge line has a signal-to-noise ratio greater than or equal to the provided value.
+    /// The signal-to-noise ratio is calculated at the point of the lowest stage (lowest width; see <see cref="PointAtLowestWidth"/>).
     /// </summary>
-    /// <param name="noiseLevels">The noise levels along the x-axis. The array must have the same length than the length of the spectrum that was used to create the ridge line(s).</param>
+    /// <param name="noiseLevels">The noise levels along the x-axis. The array must have the same length as the spectrum used to create the ridge line(s).</param>
     /// <param name="minimalSNR">The minimal required signal-to-noise ratio.</param>
-    /// <returns>True if the signal-to-noise ratio is greater than or equal to <paramref name="minimalSNR"/>; otherwise, false.</returns>
+    /// <returns><see langword="true"/> if the signal-to-noise ratio is &gt;= <paramref name="minimalSNR"/>; otherwise, <see langword="false"/>.</returns>
     public bool SignalToNoiseRatioAtLowestWidthIsAtLeast(double[] noiseLevels, double minimalSNR) => GetSignalToNoiseRatioAtLowestWidth(noiseLevels) >= minimalSNR;
 
     /// <summary>
-    /// Gets a value indicating whether the ridge line has at least a signal-to-noise ratio greater than or equal to the provided value.
-    /// The signal-to-noise ratio is calculated at the point with the first maximum of the Cwt coefficient (see <see cref="PointAtMaximalCwtCoefficient"/>).
+    /// Gets a value indicating whether the ridge line has a signal-to-noise ratio greater than or equal to the provided value.
+    /// The signal-to-noise ratio is calculated at the point with the first maximum of the CWT coefficient
+    /// (see <see cref="PointAtMaximalCwtCoefficient"/>).
     /// </summary>
-    /// <param name="noiseLevels">The noise levels along the x-axis. The array must have the same length than the length of the spectrum that was used to create the ridge line(s).</param>
+    /// <param name="noiseLevels">The noise levels along the x-axis. The array must have the same length as the spectrum used to create the ridge line(s).</param>
     /// <param name="minimalSNR">The minimal required signal-to-noise ratio.</param>
-    /// <param name="order">The order (must be at least 1). Number of points to the left and right of the designated maximum taken into consideration. See <see cref="GetPointAtMaximalCwtCoefficient(int)"/>.</param>
-    /// <returns>True if the signal-to-noise ratio is greater than or equal to <paramref name="minimalSNR"/>; otherwise, false.</returns>
+    /// <param name="order">The order (must be at least 1). Number of points to the left and right of the candidate maximum considered. See <see cref="GetPointAtMaximalCwtCoefficient(int)"/>.</param>
+    /// <returns><see langword="true"/> if the signal-to-noise ratio is &gt;= <paramref name="minimalSNR"/>; otherwise, <see langword="false"/>.</returns>
     public bool SignalToNoiseRatioAtMaximalCwtCoefficientIsAtLeast(double[] noiseLevels, double minimalSNR, int order) => GetSignalToNoiseRatioAtMaximalCwtCoefficient(noiseLevels, order) >= minimalSNR;
 
 
     /// <summary>
-    /// Gets the signal-to-noise ratio at the point with the lowest stage (and therefore, the lowest width, see <see cref="PointAtLowestWidth"/>).
+    /// Gets the signal-to-noise ratio at the point with the lowest stage (and therefore the lowest width; see <see cref="PointAtLowestWidth"/>).
     /// </summary>
-    /// <param name="noiseLevels">The noise levels along the x-axis. The array must have the same length than the length of the spectrum that was used to create the ridge line(s).</param>
-    /// <returns>The signal-to-noise ratio at the point with the lowest stage (and therefore, the lowest width).</returns>
+    /// <param name="noiseLevels">The noise levels along the x-axis. The array must have the same length as the spectrum used to create the ridge line(s).</param>
+    /// <returns>The signal-to-noise ratio at the point with the lowest stage.</returns>
     public double GetSignalToNoiseRatioAtLowestWidth(double[] noiseLevels)
     {
       var m = PointAtLowestWidth;
@@ -159,11 +156,11 @@ namespace Altaxo.Science.Spectroscopy.PeakSearching
     }
 
     /// <summary>
-    /// Gets the signal-to-noise ratio at the point with the first maximum of the Cwt coefficient (see <see cref="PointAtMaximalCwtCoefficient"/>).
+    /// Gets the signal-to-noise ratio at the point with the first maximum of the CWT coefficient (see <see cref="PointAtMaximalCwtCoefficient"/>).
     /// </summary>
-    /// <param name="noiseLevels">The noise levels along the x-axis. The array must have the same length than the length of the spectrum that was used to create the ridge line(s).</param>
-    /// <param name="order">The order (must be at least 1). Number of points to the left and right of the designated maximum taken into consideration. See <see cref="GetPointAtMaximalCwtCoefficient(int)"/>.</param>
-    /// <returns>The signal-to-noise ratio at the point with the first maximum of the Cwt coefficient</returns>
+    /// <param name="noiseLevels">The noise levels along the x-axis. The array must have the same length as the spectrum used to create the ridge line(s).</param>
+    /// <param name="order">The order (must be at least 1). Number of points to the left and right of the candidate maximum considered. See <see cref="GetPointAtMaximalCwtCoefficient(int)"/>.</param>
+    /// <returns>The signal-to-noise ratio at the point with the first maximum of the CWT coefficient.</returns>
     public double GetSignalToNoiseRatioAtMaximalCwtCoefficient(double[] noiseLevels, int order)
     {
       var m = GetPointAtMaximalCwtCoefficient(order);

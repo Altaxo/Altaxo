@@ -24,7 +24,14 @@
 
 namespace Altaxo.Science.Spectroscopy.Resampling
 {
-  /// <summary>Resamples the spectrum, i.e. sample the spectrum at different x-values, probably equidistant.</summary>
+  /// <summary>
+  /// Resamples the spectrum, i.e. evaluates the spectrum at different x-values, typically to obtain an equidistant sampling.
+  /// </summary>
+  /// <remarks>
+  /// Implementations provide strategies to generate a new x-axis and corresponding y-values by resampling the original
+  /// spectrum. Resampling may change the number of samples and usually returns updated regions or null if no region structure
+  /// is applicable to the new sampling.
+  /// </remarks>
   public interface IResampling : ISingleSpectrumPreprocessor
   {
   }

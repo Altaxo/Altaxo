@@ -30,7 +30,7 @@ using System.Threading;
 namespace Altaxo.Science.Spectroscopy.Raman
 {
   /// <summary>
-  /// Represents the results of a calibration of a Raman device with light from a Neon lamp.
+  /// Represents the results of a calibration of a Raman device using a silicon reference spectrum.
   /// </summary>
   public class SiliconCalibration
   {
@@ -38,23 +38,43 @@ namespace Altaxo.Science.Spectroscopy.Raman
     #region Operational data
 
     /// <summary>
-    /// The x-vales of the Neon measurement, converted to nm, presumed that the laser has the wavelength
+    /// The preprocessed x-values of the measurement (after preprocessing).
     /// </summary>
     private double[]? _xPreprocessed;
+    /// <summary>
+    /// The preprocessed y-values of the measurement (after preprocessing).
+    /// </summary>
     private double[]? _yPreprocessed;
     private List<PeakSearching.PeakDescription>? _peakSearchingDescriptions;
     private IReadOnlyList<PeakFitting.PeakDescription>? _peakFittingDescriptions;
+
+    /// <summary>
+    /// Gets the preprocessed x-values.
+    /// </summary>
     public double[]? XPreprocessed => _xPreprocessed;
+
+    /// <summary>
+    /// Gets the preprocessed y-values.
+    /// </summary>
     public double[]? YPreprocessed => _yPreprocessed;
 
     #endregion
 
     #region Result data
 
+    /// <summary>
+    /// Gets a value indicating whether a silicon reference peak was found during calibration.
+    /// </summary>
     public bool IsPeakFound { get; private set; }
 
+    /// <summary>
+    /// Gets the detected silicon peak position.
+    /// </summary>
     public double SiliconPeakPosition { get; private set; } = double.NaN;
 
+    /// <summary>
+    /// Gets the standard deviation of the detected silicon peak position.
+    /// </summary>
     public double SiliconPeakPositionStdDev { get; private set; } = double.NaN;
 
     #endregion
@@ -63,11 +83,16 @@ namespace Altaxo.Science.Spectroscopy.Raman
     /// Finds the Silicon peak.
     /// </summary>
     /// <param name="options">The options used for calculation.</param>
-    /// <param name="x">The x values of the measured Neon spectrum.</param>
-    /// <param name="y">The y values of the measured Neon spectrum.</param>
+    /// <param name="x">The x values of the measured silicon spectrum.</param>
+    /// <param name="y">The y values of the measured silicon spectrum.</param>
     /// <param name="cancellationToken">Token used to cancel this task.</param>
-    /// <returns>The position (as shift value) and position tolerance of the silicon peak.</returns>
-    /// The returned value is null if no peaks could be matched.
+    /// <returns>
+    /// The position and position tolerance of the silicon peak if found; otherwise <c>null</c>.
+    /// </returns>
+    /// <remarks>
+    /// Peak finding and fitting are performed using the configured peak finding options in <paramref name="options"/>.
+    /// Peak fitting must be enabled in the options; otherwise an <see cref="InvalidOperationException"/> is thrown.
+    /// </remarks>
     public (double Position, double PositionTolerance)?
     FindMatch(SiliconCalibrationOptions options, double[] x, double[] y, CancellationToken cancellationToken)
     {

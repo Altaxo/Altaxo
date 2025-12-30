@@ -25,10 +25,12 @@
 namespace Altaxo.Science.Spectroscopy.BaselineEvaluation
 {
   /// <summary>
-  /// Interface to all baseline evaluation algorithms for simple (1D) spectra.
-  /// In contrast to <see cref="Altaxo.Science.Spectroscopy.BaselineEstimation.IBaselineEstimation"/> which evaluates and then subtracts the baseline,
-  /// <see cref="IBaselineEvaluation"/> really evaluates the baseline, that is, the output is the baseline itself. 
+  /// Interface for baseline evaluation algorithms for simple (1D) spectra.
   /// </summary>
+  /// <remarks>
+  /// In contrast to <see cref="Altaxo.Science.Spectroscopy.BaselineEstimation.IBaselineEstimation"/>, which evaluates and then subtracts the baseline,
+  /// <see cref="IBaselineEvaluation"/> evaluates the baseline itself (i.e., the output is the baseline).
+  /// </remarks>
   public interface IBaselineEvaluation : ISingleSpectrumPreprocessor
   {
   }

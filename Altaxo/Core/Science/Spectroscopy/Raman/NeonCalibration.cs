@@ -469,21 +469,48 @@ namespace Altaxo.Science.Spectroscopy.Raman
 
     #region Wavelength converter
 
+    /// <summary>
+    /// Simple linear converter between two wavelength intervals used for coarse matching.
+    /// </summary>
     public record WavelengthConverter
     {
+      /// <summary>
+      /// Left boundary of the NIST wavelength interval.
+      /// </summary>
       public double NistWL_Left { get; init; }
+      /// <summary>
+      /// Left boundary of the measured wavelength interval.
+      /// </summary>
       public double MeasWL_Left { get; init; }
+      /// <summary>
+      /// Right boundary of the NIST wavelength interval.
+      /// </summary>
       public double NistWL_Right { get; init; }
+      /// <summary>
+      /// Right boundary of the measured wavelength interval.
+      /// </summary>
       public double MeasWL_Right { get; init; }
 
 
 
+      /// <summary>
+      /// Converts a NIST wavelength to the corresponding measured wavelength using linear interpolation
+      /// between the converter boundaries.
+      /// </summary>
+      /// <param name="x">The NIST wavelength to convert.</param>
+      /// <returns>The corresponding measured wavelength.</returns>
       public double ConvertWavelengthNistToMeas(double x)
       {
         var r = (x - NistWL_Left) / (NistWL_Right - NistWL_Left);
         return (1 - r) * MeasWL_Left + r * MeasWL_Right;
       }
 
+      /// <summary>
+      /// Converts a measured wavelength to the corresponding NIST wavelength using linear interpolation
+      /// between the converter boundaries.
+      /// </summary>
+      /// <param name="x">The measured wavelength to convert.</param>
+      /// <returns>The corresponding NIST wavelength.</returns>
       public double ConvertWavelengthMeasToNist(double x)
       {
         var r = (x - MeasWL_Left) / (MeasWL_Right - MeasWL_Left);
@@ -614,6 +641,9 @@ namespace Altaxo.Science.Spectroscopy.Raman
       return true;
     }
 
+    /// <summary>
+    /// Clears previously calculated results and errors.
+    /// </summary>
     private void ClearResults()
     {
       ErrorMessage = string.Empty;
@@ -627,6 +657,12 @@ namespace Altaxo.Science.Spectroscopy.Raman
       PeakMatchings = new();
     }
 
+    /// <summary>
+    /// Evaluates the peak matchings using the provided coarse match and the options. This fills
+    /// <see cref="PeakMatchings"/> and sets <see cref="MeasuredWavelengthToWavelengthDifference"/>.
+    /// </summary>
+    /// <param name="options">Calibration options.</param>
+    /// <param name="coarseMatch">Coarse match tuple obtained from coarse matching.</param>
     public void EvaluatePeakMatchings(NeonCalibrationOptions options, (double NistWL_Left, double MeasWL_Left, double NistWL_Right, double MeasWL_Right) coarseMatch)
     {
       if (PeakFittingDescriptions is not null)

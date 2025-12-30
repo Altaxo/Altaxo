@@ -30,12 +30,22 @@ using Complex64 = System.Numerics.Complex;
 namespace Altaxo.Science.Signals
 {
   /// <summary>
-  /// Represents the result of a prony series fit to a relaxation process, for instance a modulus, either
-  /// in time or in frequency domain.
+  /// Represents the result of a Prony series fit to a relaxation process (for instance, a modulus), either
+  /// in the time domain or in the frequency domain.
   /// </summary>
   public record PronySeriesRelaxationResult
-
   {
+    /// <summary>
+    /// Initializes a new instance of the <see cref="PronySeriesRelaxationResult"/> record.
+    /// </summary>
+    /// <param name="relaxationTimes">
+    /// The relaxation times (tau values). The list may include <see cref="double.PositiveInfinity"/> if an intercept/static term is present.
+    /// </param>
+    /// <param name="pronyCoefficients">The Prony coefficients corresponding to <paramref name="relaxationTimes"/>.</param>
+    /// <param name="relaxationDensities">The relaxation density values corresponding to <paramref name="relaxationTimes"/>.</param>
+    /// <exception cref="ArgumentNullException">
+    /// Thrown if <paramref name="relaxationTimes"/>, <paramref name="pronyCoefficients"/>, or <paramref name="relaxationDensities"/> is <see langword="null"/>.
+    /// </exception>
     public PronySeriesRelaxationResult(IReadOnlyList<double> relaxationTimes, IReadOnlyList<double> pronyCoefficients, IReadOnlyList<double> relaxationDensities)
     {
       RelaxationTimes = relaxationTimes ?? throw new ArgumentNullException(nameof(relaxationTimes));
@@ -75,7 +85,7 @@ namespace Altaxo.Science.Signals
     public IReadOnlyList<double> RelaxationTimes { get; init; }
 
     /// <summary>
-    /// Gets the prony coefficients, corresponding to the <see cref="RelaxationTimes"/>.
+    /// Gets the Prony coefficients, corresponding to the <see cref="RelaxationTimes"/>.
     /// </summary>
     public IReadOnlyList<double> PronyCoefficients { get; init; }
 
@@ -88,29 +98,31 @@ namespace Altaxo.Science.Signals
     /// Gets the relative relaxation coefficients. See remarks for details.
     /// </summary>
     /// <remarks>
-    /// ANSYS and maybe other simulation programs request relativeCoefficients,
-    /// in a way that the sum of relativeCoefficients is equal to 1 - E_u/E_o,
-    /// in which E_u is the lower frequency modulus and E_o is the high frequency modulus.
-    /// The low frequency modulus is the modulus at the highest time, thus the last element of the <see cref="PronyCoefficients"/> array,
-    /// whereas the high frequency modulus is the sum of all elements in <see cref="PronyCoefficients"/>.
+    /// ANSYS (and possibly other simulation programs) request relative coefficients
+    /// such that the sum of the relative coefficients equals <c>1 - E_u/E_0</c>,
+
+    /// where <c>E_u</c> is the low-frequency modulus and <c>E_0</c> is the high-frequency modulus.
+    ///
+    /// The low-frequency modulus is the modulus at the highest time, thus the last element of the <see cref="PronyCoefficients"/> array,
+    /// whereas the high-frequency modulus is the sum of all elements in <see cref="PronyCoefficients"/>.
     /// </remarks>
     public IReadOnlyList<double> RelativeRelaxationCoefficients { get; init; }
 
     /// <summary>
-    /// Gets the high frequency modulus. This is the sum of all prony coefficients.
+    /// Gets the high-frequency modulus. This is the sum of all Prony coefficients.
     /// </summary>
     public double ModulusHighFrequency { get; init; }
 
     /// <summary>
-    /// Gets the low frequency modulus (the last element of the Prony coefficient array).
+    /// Gets the low-frequency modulus (the last element of the Prony coefficient array).
     /// </summary>
     public double ModulusLowFrequency { get => PronyCoefficients[^1]; }
 
     /// <summary>
-    /// Gets (in the time domain) the y-value in dependence on x.
+    /// Gets (in the time domain) the y-value as a function of time.
     /// </summary>
-    /// <param name="t">The x-value (time).</param>
-    /// <returns>The y-value in the time domain at time x.</returns>
+    /// <param name="t">The time value.</param>
+    /// <returns>The y-value in the time domain at time <paramref name="t"/>.</returns>
     public double GetTimeDomainYOfTime(double t)
     {
       double sum = 0;
@@ -122,10 +134,10 @@ namespace Altaxo.Science.Signals
     }
 
     /// <summary>
-    /// Gets (in the frequency domain) the y-value in dependence on the circular frequency.
+    /// Gets (in the frequency domain) the modulus as a function of the circular frequency.
     /// </summary>
     /// <param name="w">The circular frequency.</param>
-    /// <returns>The y-value (modulus) in the frequency domain.</returns>
+    /// <returns>The modulus in the frequency domain.</returns>
     public Complex64 GetFrequencyDomainYOfOmega(double w)
     {
       Complex64 sum = 0;
@@ -145,10 +157,10 @@ namespace Altaxo.Science.Signals
     }
 
     /// <summary>
-    /// Gets (in the frequency domain) the y-value in dependence on the frequency.
+    /// Gets (in the frequency domain) the modulus as a function of the frequency.
     /// </summary>
     /// <param name="f">The frequency.</param>
-    /// <returns>The y-value (modulus) in the frequency domain.</returns>
+    /// <returns>The modulus in the frequency domain.</returns>
     public Complex64 GetFrequencyDomainYOfFrequency(double f)
     {
       return GetFrequencyDomainYOfOmega(f * 2 * Math.PI);
