@@ -49,13 +49,13 @@ namespace Altaxo.Science.Thermorheology.MasterCurves.ShiftOrder
     public bool IsPivotIndexRequired { get; }
 
     /// <summary>
-    /// Gets /sets the pivot index.
+    /// Gets or sets the pivot index.
     /// </summary>
     public int? PivotIndex { get; init; }
 
     /// <summary>
     /// Returns a new instance of the same class with the pivot index set.
-    /// If no pivot index is required (check by <see cref="IsPivotIndexRequired"/>), the same instance is returned./>
+    /// If no pivot index is required (check by <see cref="IsPivotIndexRequired"/>), the same instance is returned.
     /// </summary>
     public IShiftOrder WithPivotIndex(int? index);
   }
@@ -86,13 +86,18 @@ namespace Altaxo.Science.Thermorheology.MasterCurves.ShiftOrder
 
     #region Serialization
 
+    /// <summary>
+    /// XML serialization surrogate for <see cref="FirstToLast"/>.
+    /// </summary>
     [Altaxo.Serialization.Xml.XmlSerializationSurrogateFor(typeof(FirstToLast), 0)]
     public class SerializationSurrogate0 : Altaxo.Serialization.Xml.IXmlSerializationSurrogate
     {
+      /// <inheritdoc/>
       public void Serialize(object obj, Altaxo.Serialization.Xml.IXmlSerializationInfo info)
       {
       }
 
+      /// <inheritdoc/>
       public object Deserialize(object? o, Altaxo.Serialization.Xml.IXmlDeserializationInfo info, object? parent)
       {
         return new FirstToLast();
@@ -127,13 +132,18 @@ namespace Altaxo.Science.Thermorheology.MasterCurves.ShiftOrder
 
     #region Serialization
 
+    /// <summary>
+    /// XML serialization surrogate for <see cref="LastToFirst"/>.
+    /// </summary>
     [Altaxo.Serialization.Xml.XmlSerializationSurrogateFor(typeof(LastToFirst), 0)]
     public class SerializationSurrogate0 : Altaxo.Serialization.Xml.IXmlSerializationSurrogate
     {
+      /// <inheritdoc/>
       public void Serialize(object obj, Altaxo.Serialization.Xml.IXmlSerializationInfo info)
       {
       }
 
+      /// <inheritdoc/>
       public object Deserialize(object? o, Altaxo.Serialization.Xml.IXmlDeserializationInfo info, object? parent)
       {
         return new LastToFirst();
@@ -171,15 +181,20 @@ namespace Altaxo.Science.Thermorheology.MasterCurves.ShiftOrder
 
     #region Serialization
 
+    /// <summary>
+    /// XML serialization surrogate for <see cref="PivotToLastThenToFirst"/>.
+    /// </summary>
     [Altaxo.Serialization.Xml.XmlSerializationSurrogateFor(typeof(PivotToLastThenToFirst), 0)]
     public class SerializationSurrogate0 : Altaxo.Serialization.Xml.IXmlSerializationSurrogate
     {
+      /// <inheritdoc/>
       public void Serialize(object obj, Altaxo.Serialization.Xml.IXmlSerializationInfo info)
       {
         var s = (PivotToLastThenToFirst)obj;
         info.AddValue("PivotIndex", s._pivotIndex);
       }
 
+      /// <inheritdoc/>
       public object Deserialize(object? o, Altaxo.Serialization.Xml.IXmlDeserializationInfo info, object? parent)
       {
         var pivotIndex = info.GetNullableInt32("PivotIndex");
@@ -218,15 +233,20 @@ namespace Altaxo.Science.Thermorheology.MasterCurves.ShiftOrder
 
     #region Serialization
 
+    /// <summary>
+    /// XML serialization surrogate for <see cref="PivotToFirstThenToLast"/>.
+    /// </summary>
     [Altaxo.Serialization.Xml.XmlSerializationSurrogateFor(typeof(PivotToFirstThenToLast), 0)]
     public class SerializationSurrogate0 : Altaxo.Serialization.Xml.IXmlSerializationSurrogate
     {
+      /// <inheritdoc/>
       public void Serialize(object obj, Altaxo.Serialization.Xml.IXmlSerializationInfo info)
       {
         var s = (PivotToFirstThenToLast)obj;
         info.AddValue("PivotIndex", s._pivotIndex);
       }
 
+      /// <inheritdoc/>
       public object Deserialize(object? o, Altaxo.Serialization.Xml.IXmlDeserializationInfo info, object? parent)
       {
         var pivotIndex = info.GetNullableInt32("PivotIndex");
@@ -269,15 +289,20 @@ namespace Altaxo.Science.Thermorheology.MasterCurves.ShiftOrder
 
     #region Serialization
 
+    /// <summary>
+    /// XML serialization surrogate for <see cref="PivotToLastAlternating"/>.
+    /// </summary>
     [Altaxo.Serialization.Xml.XmlSerializationSurrogateFor(typeof(PivotToLastAlternating), 0)]
     public class SerializationSurrogate0 : Altaxo.Serialization.Xml.IXmlSerializationSurrogate
     {
+      /// <inheritdoc/>
       public void Serialize(object obj, Altaxo.Serialization.Xml.IXmlSerializationInfo info)
       {
         var s = (PivotToLastAlternating)obj;
         info.AddValue("PivotIndex", s._pivotIndex);
       }
 
+      /// <inheritdoc/>
       public object Deserialize(object? o, Altaxo.Serialization.Xml.IXmlDeserializationInfo info, object? parent)
       {
         var pivotIndex = info.GetNullableInt32("PivotIndex");
@@ -320,15 +345,20 @@ namespace Altaxo.Science.Thermorheology.MasterCurves.ShiftOrder
 
     #region Serialization
 
+    /// <summary>
+    /// XML serialization surrogate for <see cref="PivotToFirstAlternating"/>.
+    /// </summary>
     [Altaxo.Serialization.Xml.XmlSerializationSurrogateFor(typeof(PivotToFirstAlternating), 0)]
     public class SerializationSurrogate0 : Altaxo.Serialization.Xml.IXmlSerializationSurrogate
     {
+      /// <inheritdoc/>
       public void Serialize(object obj, Altaxo.Serialization.Xml.IXmlSerializationInfo info)
       {
         var s = (PivotToFirstAlternating)obj;
         info.AddValue("PivotIndex", s._pivotIndex);
       }
 
+      /// <inheritdoc/>
       public object Deserialize(object? o, Altaxo.Serialization.Xml.IXmlDeserializationInfo info, object? parent)
       {
         var pivotIndex = info.GetNullableInt32("PivotIndex");
@@ -374,6 +404,9 @@ namespace Altaxo.Science.Thermorheology.MasterCurves.ShiftOrder
     /// <inheritdoc/>
     public IShiftOrder WithPivotIndex(int? index) => this;
 
+    /// <summary>
+    /// Gets the list of indices that defines the manual ordering. The value is copied on initialization.
+    /// </summary>
     public IReadOnlyList<int> Indices
     {
       get => _indices;
@@ -385,15 +418,20 @@ namespace Altaxo.Science.Thermorheology.MasterCurves.ShiftOrder
 
     #region Serialization
 
+    /// <summary>
+    /// XML serialization surrogate for <see cref="Manual"/>.
+    /// </summary>
     [Altaxo.Serialization.Xml.XmlSerializationSurrogateFor(typeof(Manual), 0)]
     public class SerializationSurrogate0 : Altaxo.Serialization.Xml.IXmlSerializationSurrogate
     {
+      /// <inheritdoc/>
       public void Serialize(object obj, Altaxo.Serialization.Xml.IXmlSerializationInfo info)
       {
         var s = (Manual)obj;
         info.AddArray("Indices", s._indices, s._indices.Length);
       }
 
+      /// <inheritdoc/>
       public object Deserialize(object? o, Altaxo.Serialization.Xml.IXmlDeserializationInfo info, object? parent)
       {
         info.GetArray("Indices", out int[] indices);

@@ -30,7 +30,8 @@ using System.IO;
 namespace Altaxo.Serialization.Jcamp
 {
   /// <summary>
-  /// Reader for Jcamp-Dx files.
+  /// Reader for JCAMP-DX files. Parses one or more JCAMP data blocks from a stream
+  /// and exposes the parsed blocks and any error messages encountered during import.
   /// </summary>
   public partial class JcampReader
   {
@@ -57,13 +58,22 @@ namespace Altaxo.Serialization.Jcamp
     private static readonly char[] _trimCharsDateTime = new char[] { ' ', '\t', ';' };
 
 
+    /// <summary>
+    /// The list of parsed JCAMP blocks read from the input stream. Each block contains metadata
+    /// and the associated X/Y data for a single-spectrum JCAMP block.
+    /// </summary>
     public List<Block> Blocks { get; } = new List<Block>();
 
     /// <summary>
-    /// Messages about any errors during the import of the Jcamp file.
+    /// Messages about any errors during the import of the JCAMP file. Multiple block errors are concatenated.
     /// </summary>
     public string? ErrorMessages { get; protected set; } = null;
 
+    /// <summary>
+    /// Initializes a new instance of <see cref="JcampReader"/> and reads JCAMP blocks from the provided stream.
+    /// The stream is read using a <see cref="StreamReader"/>; the stream must be readable.
+    /// </summary>
+    /// <param name="stream">The stream containing JCAMP-DX formatted text.</param>
     public JcampReader(Stream stream)
     {
       var tr = new StreamReader(stream);
@@ -85,7 +95,12 @@ namespace Altaxo.Serialization.Jcamp
 
 
 
-
+    /// <summary>
+    /// Splits a line that contains numbers separated only by '+' or '-' signs into separate tokens.
+    /// For example, the string "1.0-2.0+3.0" will be split into ["1.0", "-2.0", "+3.0"].
+    /// </summary>
+    /// <param name="s">The input line to split.</param>
+    /// <returns>An array of string tokens representing each numeric value in the line.</returns>
     public static string[] SplitLineByPlusOrMinus(string s)
     {
       var list = new List<string>();
@@ -112,6 +127,13 @@ namespace Altaxo.Serialization.Jcamp
 
     private static NumberFormatInfo _numberFormatCommaDecimalSeparator = new NumberFormatInfo() { NumberDecimalSeparator = "," };
 
+    /// <summary>
+    /// Tries to parse a double value from a string using the invariant number format first and then
+    /// a format using a comma as decimal separator if the invariant parse fails.
+    /// </summary>
+    /// <param name="s">The string to parse.</param>
+    /// <param name="x">When this method returns, contains the parsed double if the conversion succeeded; otherwise, zero.</param>
+    /// <returns>True if parsing succeeded; otherwise false.</returns>
     public static bool DoubleTryParse(string s, out double x)
     {
       if (double.TryParse(s, NumberStyles.Float, NumberFormatInfo.InvariantInfo, out x))
@@ -120,6 +142,12 @@ namespace Altaxo.Serialization.Jcamp
       return double.TryParse(s, NumberStyles.Float, _numberFormatCommaDecimalSeparator, out x);
     }
 
+    /// <summary>
+    /// Parses a double value from a string using the invariant number format first and then
+    /// a format using a comma as decimal separator if the invariant parse fails. Throws on failure.
+    /// </summary>
+    /// <param name="s">The string to parse.</param>
+    /// <param name="x">When this method returns, contains the parsed double value.</param>
     public static void DoubleParse(string s, out double x)
     {
       if (double.TryParse(s, NumberStyles.Float, NumberFormatInfo.InvariantInfo, out x))
@@ -127,8 +155,6 @@ namespace Altaxo.Serialization.Jcamp
 
       x = double.Parse(s, NumberStyles.Float, _numberFormatCommaDecimalSeparator);
     }
-
-
 
 
 

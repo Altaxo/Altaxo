@@ -212,6 +212,7 @@ namespace Altaxo.Serialization.Xml
     void AddBaseValueStandalone(string name, object o, System.Type basetype);
 
     /// <summary>Gets or sets the default array encoding strategy.</summary>
+    /// <value>The default array encoding to use when writing arrays.</value>
     XmlArrayEncoding DefaultArrayEncoding { get; set; }
 
     /// <summary>

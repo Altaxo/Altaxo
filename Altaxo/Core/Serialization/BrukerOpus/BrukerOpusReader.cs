@@ -42,29 +42,34 @@ namespace Altaxo.Serialization.BrukerOpus
     private const int PositionOfFirstMetablock = 24;
 
     /// <summary>
-    /// Gets the error messages.
+    /// Gets the error messages accumulated while reading the file, if any.
     /// </summary>
     public string? ErrorMessages { get; protected set; }
 
     /// <summary>
-    /// Gets the x values of the spectrum.
+    /// Gets the x values of the spectrum (typically the abscissa values).
     /// </summary>
     public double[]? XValues { get; protected set; }
 
     /// <summary>
-    /// Gets the y values of the spectrum.
+    /// Gets the y values of the spectrum (typically the measured intensities).
     /// </summary>
     public double[]? YValues { get; protected set; }
 
     private Dictionary<string, object> _parsedData = new();
 
     /// <summary>
-    /// Gets the parsed metadata and data.
+    /// Gets the parsed metadata and data blocks indexed by their block names.
     /// </summary>
     public IReadOnlyDictionary<string, object> ParsedData => _parsedData;
 
 
 
+    /// <summary>
+    /// Creates a new <see cref="BrukerOpusReader"/> and parses the provided stream as a Bruker Opus file.
+    /// </summary>
+    /// <param name="stream">The stream containing the Bruker Opus file data. The stream must support seeking.</param>
+    /// <exception cref="InvalidDataException">Thrown when metadata indicates a different number of points than the data array length.</exception>
     public BrukerOpusReader(Stream stream)
     {
       var streamLength = stream.Length;
@@ -126,12 +131,24 @@ namespace Altaxo.Serialization.BrukerOpus
       }
     }
 
+    /// <summary>
+    /// Represents a single metablock described in the file's metablock table.
+    /// This internal helper reads and interprets the block at the given offset.
+    /// </summary>
     private class Metablock
     {
       private int _dataType, _channelType, _textType, _chunkSize, _offset;
       private static readonly Encoding _latin1Encoding = Encoding.GetEncoding("ISO-8859-1");
 
 
+      /// <summary>
+      /// Initializes a new instance of the <see cref="Metablock"/> class with the given header values.
+      /// </summary>
+      /// <param name="dataType">The data type identifier for the metablock.</param>
+      /// <param name="channelType">The channel type identifier for the metablock.</param>
+      /// <param name="textType">The text type identifier for the metablock.</param>
+      /// <param name="chunkSize">The number of 4-byte words that make up the block payload.</param>
+      /// <param name="offset">The offset (in bytes) from the start of the file where the block payload begins.</param>
       public Metablock(int dataType, int channelType, int textType, int chunkSize, int offset)
       {
         _dataType = dataType;
@@ -141,6 +158,12 @@ namespace Altaxo.Serialization.BrukerOpus
         _offset = offset;
       }
 
+      /// <summary>
+      /// Parses the metablock payload and returns a tuple with the parsed block name and the associated data.
+      /// If the block type is not recognized, returns (null, null).
+      /// </summary>
+      /// <param name="stream">The stream to read the block payload from. The stream must support seeking.</param>
+      /// <returns>A tuple containing the block name and the parsed data object, or (null, null) if the block is unrecognized.</returns>
       public (string Name, object Data) ParseBlock(Stream stream)
       {
         switch (_dataType)
@@ -244,6 +267,11 @@ namespace Altaxo.Serialization.BrukerOpus
         return (null, null);
       }
 
+      /// <summary>
+      /// Reads the raw block payload from the stream and returns it as a byte array.
+      /// </summary>
+      /// <param name="stream">The stream to read from. The stream must support seeking.</param>
+      /// <returns>The payload of the metablock as a byte array.</returns>
       public byte[] ReadChunk(Stream stream)
       {
         var result = new byte[4 * _chunkSize];
@@ -252,6 +280,12 @@ namespace Altaxo.Serialization.BrukerOpus
         return result;
       }
 
+      /// <summary>
+      /// Parses a parameter block payload into a dictionary of parameter names and their values.
+      /// Values can be int, double, string or a byte array depending on the parameter's type.
+      /// </summary>
+      /// <param name="stream">The stream containing the parameter block.</param>
+      /// <returns>A dictionary mapping parameter names (3-character codes) to their values.</returns>
       public Dictionary<string, object> ParseParameter(Stream stream)
       {
         var parameterDict = new Dictionary<string, object>();
@@ -294,6 +328,11 @@ namespace Altaxo.Serialization.BrukerOpus
         return parameterDict;
       }
 
+      /// <summary>
+      /// Parses a text block payload and returns the decoded string.
+      /// </summary>
+      /// <param name="stream">The stream containing the text block.</param>
+      /// <returns>The decoded text with trailing nulls trimmed.</returns>
       public string ParseText(Stream stream)
       {
         var buffer = ReadChunk(stream);
@@ -301,6 +340,12 @@ namespace Altaxo.Serialization.BrukerOpus
         return str.Trim('\0');
       }
 
+      /// <summary>
+      /// Parses a numeric series from the block payload. The series is stored as 4-byte floats and
+      /// is converted to an array of doubles on return.
+      /// </summary>
+      /// <param name="stream">The stream containing the series block.</param>
+      /// <returns>An array of doubles representing the parsed series values.</returns>
       public double[] ParseSeries(Stream stream)
       {
         var buffer = ReadChunk(stream);

@@ -25,9 +25,22 @@
 namespace Altaxo.Serialization.WITec
 {
 
+  /// <summary>
+  /// Represents a space transformation defined in a WITec "TDSpaceTransformation" node.
+  /// This class currently only exposes the underlying node; transformation logic, if any, is implemented in derived classes.
+  /// </summary>
   public class TDSpaceTransformationClass : TDTransformationClass
   {
+    /// <summary>
+    /// Backing node for the "TDSpaceTransformation" child node.
+    /// </summary>
     private WITecTreeNode _tdSpaceTransformation;
+
+    /// <summary>
+    /// Initializes a new instance of the <see cref="TDSpaceTransformationClass"/> class.
+    /// </summary>
+    /// <param name="node">The node representing this transformation in the WITec tree.</param>
+    /// <param name="reader">The reader used to resolve referenced nodes if necessary.</param>
     public TDSpaceTransformationClass(WITecTreeNode node, WITecReader reader) : base(node, reader)
     {
       _tdSpaceTransformation = node.GetChild("TDSpaceTransformation");

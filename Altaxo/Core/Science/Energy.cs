@@ -29,31 +29,55 @@ using System.Text;
 
 namespace Altaxo.Science
 {
-  /// <summary>Different representations of energy.</summary>
+  /// <summary>
+  /// Different representations of energy.
+  /// </summary>
   public enum EnergyRepresentation
   {
     /// <summary>Joule, equivalent to Nm, Ws, VAs.</summary>
     Joule = 0,
 
+    /// <summary>Joule per mole (J mol^-1).</summary>
     JoulePerMole,
+
+    /// <summary>International calorie (cal).</summary>
     CalorieInternational,
+
+    /// <summary>International calorie per mole (cal mol^-1).</summary>
     CalorieInternationalPerMole,
+
+    /// <summary>Electronvolt (eV).</summary>
     ElectronVolt,
+
+    /// <summary>Kilowatt hours (kWh).</summary>
     KilowattHours,
+
+    /// <summary>Interpret energy as temperature in Kelvin via Boltzmann's constant.</summary>
     AsTemperatureKelvin
   }
 
+  /// <summary>
+  /// Represents an energy value together with its unit.
+  /// </summary>
   public struct Energy
   {
     private EnergyRepresentation _unit;
     private double _value;
 
+    /// <summary>
+    /// Initializes a new instance of the <see cref="Energy"/> struct.
+    /// </summary>
+    /// <param name="value">The numeric energy value in the specified unit.</param>
+    /// <param name="unit">The unit of the energy value.</param>
     public Energy(double value, EnergyRepresentation unit)
     {
       _unit = unit;
       _value = value;
     }
 
+    /// <summary>
+    /// Gets the unit of this energy value.
+    /// </summary>
     public EnergyRepresentation Unit
     {
       get
@@ -62,6 +86,9 @@ namespace Altaxo.Science
       }
     }
 
+    /// <summary>
+    /// Gets the raw numeric value of this energy in its <see cref="Unit"/>.
+    /// </summary>
     public double Value
     {
       get
@@ -70,6 +97,9 @@ namespace Altaxo.Science
       }
     }
 
+    /// <summary>
+    /// Gets the energy converted to SI units (Joule).
+    /// </summary>
     public double InSIUnits
     {
       get
@@ -78,16 +108,32 @@ namespace Altaxo.Science
       }
     }
 
+    /// <summary>
+    /// Returns the energy value converted to the specified destination unit.
+    /// </summary>
+    /// <param name="destUnit">The destination energy unit.</param>
+    /// <returns>The energy value expressed in <paramref name="destUnit"/>.</returns>
     public double InUnitsOf(EnergyRepresentation destUnit)
     {
       return FromTo(_value, _unit, destUnit);
     }
 
+    /// <summary>
+    /// Returns a new <see cref="Energy"/> instance converted to the specified unit.
+    /// </summary>
+    /// <param name="destUnit">The destination unit for the conversion.</param>
+    /// <returns>A new <see cref="Energy"/> with the value converted to <paramref name="destUnit"/>.</returns>
     public Energy ConvertTo(EnergyRepresentation destUnit)
     {
       return new Energy(FromTo(_value, _unit, destUnit), destUnit);
     }
 
+    /// <summary>
+    /// Converts a value from the specified unit to Joule (SI unit of energy).
+    /// </summary>
+    /// <param name="srcValue">The source value to convert.</param>
+    /// <param name="srcUnit">The source unit of <paramref name="srcValue"/>.</param>
+    /// <returns>The converted value expressed in Joule.</returns>
     public static double ToJoule(double srcValue, EnergyRepresentation srcUnit)
     {
       switch (srcUnit)
@@ -118,6 +164,12 @@ namespace Altaxo.Science
       }
     }
 
+    /// <summary>
+    /// Converts a value from Joule to the specified destination unit.
+    /// </summary>
+    /// <param name="srcValueInJoule">The source value expressed in Joule.</param>
+    /// <param name="destUnit">The destination unit.</param>
+    /// <returns>The value expressed in <paramref name="destUnit"/>.</returns>
     public static double FromJouleTo(double srcValueInJoule, EnergyRepresentation destUnit)
     {
       switch (destUnit)
@@ -148,6 +200,13 @@ namespace Altaxo.Science
       }
     }
 
+    /// <summary>
+    /// Converts a value from one energy unit to another.
+    /// </summary>
+    /// <param name="srcValue">The source value to convert.</param>
+    /// <param name="srcUnit">The source unit of <paramref name="srcValue"/>.</param>
+    /// <param name="destUnit">The destination unit to convert to.</param>
+    /// <returns>The converted value expressed in <paramref name="destUnit"/>.</returns>
     public static double FromTo(double srcValue, EnergyRepresentation srcUnit, EnergyRepresentation destUnit)
     {
       if (srcUnit == destUnit)

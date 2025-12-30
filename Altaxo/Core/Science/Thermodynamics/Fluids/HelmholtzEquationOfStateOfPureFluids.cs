@@ -24,9 +24,6 @@
 
 using System;
 using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace Altaxo.Science.Thermodynamics.Fluids
 {
@@ -181,7 +178,7 @@ namespace Altaxo.Science.Thermodynamics.Fluids
     /// </summary>
     /// <param name="pressure">The pressure in Pa.</param>
     /// <param name="relativeAccuracy">The relative accuracy (of the pressure, that is calculated back from the iterated temperature).</param>
-    /// <returns>The temperature in Kelvin of the liquid/vapor interface at the given pressure in Pa. See <see cref="double.NaN"/> is returned for pressures below the <see cref="TriplePointPressure"/> or above the <see cref="CriticalPointPressure"/>.</returns>
+    /// <returns>Returns the saturated vapor temperature in K; returns <see cref="double.NaN"/> for pressures outside [TriplePointPressure, CriticalPointPressure].</returns>
     public virtual double SaturatedVaporTemperature_FromPressure(double pressure, double relativeAccuracy = 1E-6)
     {
       if (!(pressure >= TriplePointPressure && pressure <= CriticalPointPressure))
@@ -226,7 +223,7 @@ namespace Altaxo.Science.Thermodynamics.Fluids
     /// </summary>
     /// <param name="pressure">The pressure in Pa. Must be greater than or equal the triple point pressure and less than or equal to the critical point pressure.</param>
     /// <param name="relativeAccuracy">The relative accuracy of the calculation.</param>
-    /// <returns></returns>
+    /// <returns>Tuple with liquid mole density (mol/m³), vapor mole density (mol/m³) and temperature (K).</returns>
     /// <exception cref="NotImplementedException"></exception>
     public (double liquidMoleDensity, double vaporMoleDensity, double temperature) SaturatedLiquidAndVaporMoleDensitiesAndTemperature_FromPressure(double pressure, double relativeAccuracy = 1E-6)
     {
@@ -341,7 +338,6 @@ namespace Altaxo.Science.Thermodynamics.Fluids
     /// <param name="temperature">The temperature in Kelvin. Must be greater than or equal the triple point temperature and less than or equal to the critical point temperature.</param>
     /// <param name="relativeAccuracy">The relative accuracy of the calculation.</param>
     /// <returns>A tuple consisting of the liquid mole density (mol/m³), the vapor mole density (mol/m³), and the pressure in Pa.</returns>
-    /// <exception cref="NotImplementedException"></exception>
     public (double liquidMoleDensity, double vaporMoleDensity, double pressure) SaturatedLiquidAndVaporMoleDensitiesAndPressure_FromTemperature(double temperature, double relativeAccuracy = 1E-6)
     {
       double liquidMoleDensity = SaturatedLiquidMoleDensityEstimate_FromTemperature(temperature);
@@ -456,6 +452,21 @@ namespace Altaxo.Science.Thermodynamics.Fluids
       return (double.NaN, double.NaN, double.NaN);
     }
 
+    /// <summary>
+    /// Computes a symmetric relative error between two numeric values.
+    /// </summary>
+    /// <param name="x">The first value to compare.</param>
+    /// <param name="y">The second value to compare.</param>
+    /// <returns>
+    /// The relative error defined as |x - y| / min(|x|, |y|).
+    /// Returns <see cref="double.PositiveInfinity"/> if either value is NaN or infinite, or when the smaller absolute value is zero while the values differ.
+    /// Returns 0 when both values are equal (including both zero).
+    /// </returns>
+    /// <remarks>
+    /// This helper is used to compare two numbers in a scale-invariant way. It avoids division by very small numbers
+    /// by using the smaller of the absolute magnitudes as denominator and signals an undefined comparison with
+    /// <see cref="double.PositiveInfinity"/> when comparison is not meaningful.
+    /// </remarks>
     public static double GetRelativeErrorBetween(double x, double y)
     {
       var min = Math.Min(Math.Abs(x), Math.Abs(y));

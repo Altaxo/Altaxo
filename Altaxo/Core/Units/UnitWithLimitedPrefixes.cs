@@ -24,8 +24,6 @@
 
 using System;
 using System.Collections.Generic;
-using System.Linq;
-using System.Text;
 
 #nullable enable
 
@@ -40,38 +38,63 @@ namespace Altaxo.Units
     private IUnit _unit;
 
     #region Serialization
-  [Altaxo.Serialization.Xml.XmlSerializationSurrogateFor(typeof(UnitWithLimitedPrefixes), 0)]
-  public class SerializationSurrogate0 : Altaxo.Serialization.Xml.IXmlSerializationSurrogate
-  {
-    public void Serialize(object obj, Altaxo.Serialization.Xml.IXmlSerializationInfo info)
+
+    /// <summary>
+    /// XML serialization surrogate for <see cref="UnitWithLimitedPrefixes"/> (version 0).
+    /// Handles custom serialization and deserialization of the outer type.
+    /// </summary>
+    [Altaxo.Serialization.Xml.XmlSerializationSurrogateFor(typeof(UnitWithLimitedPrefixes), 0)]
+    public class SerializationSurrogate0 : Altaxo.Serialization.Xml.IXmlSerializationSurrogate
     {
-      var s = (UnitWithLimitedPrefixes)obj;
+      /// <summary>
+      /// Serializes the specified <see cref="UnitWithLimitedPrefixes"/> instance into the provided
+      /// <see cref="Altaxo.Serialization.Xml.IXmlSerializationInfo"/>.
+      /// </summary>
+      /// <param name="obj">The object to serialize (expected to be a <see cref="UnitWithLimitedPrefixes"/>).</param>
+      /// <param name="info">The serialization info where values should be written.</param>
+      public void Serialize(object obj, Altaxo.Serialization.Xml.IXmlSerializationInfo info)
+      {
+        var s = (UnitWithLimitedPrefixes)obj;
 
-      info.AddValue("Unit", s.Unit);
+        info.AddValue("Unit", s.Unit);
 
-      info.CreateArray("PrefixList", s.Prefixes.Count);
-      foreach (var prefix in s.Prefixes)
-        info.AddValue("e", prefix);
-      info.CommitArray();
+        info.CreateArray("PrefixList", s.Prefixes.Count);
+        foreach (var prefix in s.Prefixes)
+          info.AddValue("e", prefix);
+        info.CommitArray();
+      }
+
+      /// <summary>
+      /// Deserializes an instance of <see cref="UnitWithLimitedPrefixes"/> from the provided
+      /// <see cref="Altaxo.Serialization.Xml.IXmlDeserializationInfo"/> and returns the reconstructed object.
+      /// </summary>
+      /// <param name="o">An optional existing object instance (ignored).</param>
+      /// <param name="info">The deserialization info to read values from.</param>
+      /// <param name="parent">The parent object in the object graph (may be <c>null</c>).</param>
+      /// <returns>A new <see cref="UnitWithLimitedPrefixes"/> instance created from the serialized data.</returns>
+      public object Deserialize(object? o, Altaxo.Serialization.Xml.IXmlDeserializationInfo info, object? parent)
+      {
+        var unit = (IUnit)info.GetValue("Unit", parent);
+
+        int count = info.OpenArray("PrefixList");
+
+        var list = new SIPrefix[count];
+        for (int i = 0; i < count; ++i)
+          list[i] = (SIPrefix)info.GetValue("e", parent);
+        info.CloseArray(count);
+
+        return new UnitWithLimitedPrefixes(unit, list);
+      }
     }
-
-    public object Deserialize(object? o, Altaxo.Serialization.Xml.IXmlDeserializationInfo info, object? parent)
-    {
-      var unit = (IUnit)info.GetValue("Unit", parent);
-
-      int count = info.OpenArray("PrefixList");
-
-      var list = new SIPrefix[count];
-      for (int i = 0; i < count; ++i)
-        list[i] = (SIPrefix)info.GetValue("e", parent);
-      info.CloseArray(count);
-
-      return new UnitWithLimitedPrefixes(unit, list);
-    }
-  }
 
     #endregion
 
+    /// <summary>
+    /// Initializes a new instance of the <see cref="UnitWithLimitedPrefixes"/> class that wraps an existing unit
+    /// and restricts its allowed SI prefixes to the provided set.
+    /// </summary>
+    /// <param name="unit">The underlying unit to wrap (must not be <c>null</c>).</param>
+    /// <param name="allowedPrefixes">The set of allowed prefixes for the resulting unit.</param>
     public UnitWithLimitedPrefixes(IUnit unit, IEnumerable<SIPrefix> allowedPrefixes)
     {
       if (allowedPrefixes is null)
@@ -83,48 +106,46 @@ namespace Altaxo.Units
       _prefixes = new SIPrefixList(l);
     }
 
+    /// <inheritdoc/>
     public string Name
     {
       get { return _unit.Name; }
     }
 
+    /// <inheritdoc/>
     public string ShortCut
     {
       get { return _unit.ShortCut; }
     }
 
+    /// <inheritdoc/>
     public double ToSIUnit(double x)
     {
       return _unit.ToSIUnit(x);
     }
 
+    /// <inheritdoc/>
     public double FromSIUnit(double x)
     {
       return _unit.FromSIUnit(x);
     }
 
-    /// <summary>
-    /// Returns a list of possible prefixes for this unit (like µ, m, k, M, G..).
-    /// </summary>
+    /// <inheritdoc/>
     public ISIPrefixList Prefixes
     {
       get { return _prefixes; }
     }
 
     /// <summary>
-    /// Gets the underlying unit.
+    /// Gets the underlying unit that is wrapped by this instance.
     /// </summary>
-    /// <value>
-    /// The underlying unit.
-    /// </value>
+    /// <value>The underlying <see cref="IUnit"/>.</value>
     public IUnit Unit
     {
       get { return _unit; }
     }
 
-    /// <summary>
-    /// Returns the underlying unit, transformed to the corresponding SI unit.
-    /// </summary>
+    /// <inheritdoc/>
     public SIUnit SIUnit
     {
       get { return _unit.SIUnit; }

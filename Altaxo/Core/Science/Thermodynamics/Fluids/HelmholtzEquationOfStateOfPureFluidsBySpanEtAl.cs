@@ -25,8 +25,6 @@
 using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace Altaxo.Science.Thermodynamics.Fluids
 {
@@ -122,11 +120,15 @@ namespace Altaxo.Science.Thermodynamics.Fluids
     protected (double ni, double thetai)[] _alpha0_Sinh = _emptyDoubleDoubleArray;
 
     /// <summary>
-    /// Phi0s the of reduced variables. (Page 1541, Table 28 in [2])
+    /// Calculates the ideal (zero-density) part of the dimensionless Helmholtz free energy for the supplied reduced variables.
+    /// See Page 1541, Table 28 in [2].
     /// </summary>
-    /// <param name="delta">The delta.</param>
-    /// <param name="tau">The tau.</param>
-    /// <returns></returns>
+    /// <param name="delta">Reduced density (density / density at the critical point).</param>
+    /// <param name="tau">Reduced inverse temperature (critical temperature / temperature).</param>
+    /// <returns>
+    /// The ideal contribution to the dimensionless Helmholtz energy evaluated at the supplied reduced variables.
+    /// The returned value is dimensionless.
+    /// </returns>
     public override double Phi0_OfReducedVariables(double delta, double tau)
     {
       double sum = 0;
@@ -1660,8 +1662,13 @@ namespace Altaxo.Science.Thermodynamics.Fluids
     /// Melting pressure for water. Note that more than one pressure value is possible for a given temperature.
     /// If in doubt, the lowest pressure solution is returned.
     /// </summary>
-    /// <param name="temperature">The temperature in K</param>
-    /// <returns></returns>
+    /// <param name="temperature">The temperature in kelvin (K).</param>
+    /// <returns>
+    /// A tuple containing:
+    /// - <c>pressure</c>: the melting pressure in Pascal (Pa),
+    /// - <c>dpdT</c>: the derivative of pressure with respect to temperature in Pa/K.
+    /// Returns (<see cref="double.NaN"/>, <see cref="double.NaN"/>) if no applicable solution exists for the supplied temperature.
+    /// </returns>
     protected (double pressure, double dpdT) MeltingPressure_TypeH(double temperature)
     {
       for (int eqidx = 0; eqidx < _triplePointsOfWater.Length - 1; ++eqidx)
@@ -1674,6 +1681,18 @@ namespace Altaxo.Science.Thermodynamics.Fluids
       return (double.NaN, double.NaN);
     }
 
+    /// <summary>
+    /// Melting pressure for a specific water equation segment.
+    /// Calculates the melting pressure and its temperature derivative using the coefficient set for the selected triple-point segment.
+    /// </summary>
+    /// <param name="temperature">The temperature in kelvin (K).</param>
+    /// <param name="eqidx">Index selecting which triple-point segment / coefficient set to use.</param>
+    /// <returns>
+    /// A tuple containing:
+    /// - <c>pressure</c>: the melting pressure in pascal (Pa),
+    /// - <c>dpdT</c>: the derivative of pressure with respect to temperature in Pa/K.
+    /// Returns (<see cref="double.NaN"/>, <see cref="double.NaN"/>) if the selected segment does not provide a solution.
+    /// </returns>
     protected (double pressure, double dpdT) MeltingPressure_TypeH(double temperature, int eqidx)
     {
       var reducingTemperature = _triplePointsOfWater[eqidx].temperature;

@@ -110,54 +110,79 @@ namespace Altaxo.Units
 
     #endregion
 
+    /// <summary>Gets the 'quecto' prefix instance (exponent -30).</summary>
     public static SIPrefix Quecto { get { return _prefix_quecto; } }
 
+    /// <summary>Gets the 'ronto' prefix instance (exponent -27).</summary>
     public static SIPrefix Ronto { get { return _prefix_ronto; } }
 
+    /// <summary>Gets the 'yocto' prefix instance (exponent -24).</summary>
     public static SIPrefix Yocto { get { return _prefix_yocto; } }
 
+    /// <summary>Gets the 'zepto' prefix instance (exponent -21).</summary>
     public static SIPrefix Zepto { get { return _prefix_zepto; } }
 
+    /// <summary>Gets the 'atto' prefix instance (exponent -18).</summary>
     public static SIPrefix Atto { get { return _prefix_atto; } }
 
+    /// <summary>Gets the 'femto' prefix instance (exponent -15).</summary>
     public static SIPrefix Femto { get { return _prefix_femto; } }
 
+    /// <summary>Gets the 'pico' prefix instance (exponent -12).</summary>
     public static SIPrefix Pico { get { return _prefix_pico; } }
 
+    /// <summary>Gets the 'nano' prefix instance (exponent -9).</summary>
     public static SIPrefix Nano { get { return _prefix_nano; } }
 
+    /// <summary>Gets the 'micro' prefix instance (exponent -6).</summary>
     public static SIPrefix Micro { get { return _prefix_micro; } }
 
+    /// <summary>Gets the 'milli' prefix instance (exponent -3).</summary>
     public static SIPrefix Milli { get { return _prefix_milli; } }
 
+    /// <summary>Gets the 'centi' prefix instance (exponent -2).</summary>
     public static SIPrefix Centi { get { return _prefix_centi; } }
 
+    /// <summary>Gets the 'deci' prefix instance (exponent -1).</summary>
     public static SIPrefix Deci { get { return _prefix_deci; } }
 
+    /// <summary>Gets the 'none' prefix instance (exponent 0).</summary>
     public static SIPrefix None { get { return _prefix_none; } }
 
+    /// <summary>Gets the 'deca' prefix instance (exponent 1).</summary>
     public static SIPrefix Deca { get { return _prefix_deca; } }
 
+    /// <summary>Gets the 'hecto' prefix instance (exponent 2).</summary>
     public static SIPrefix Hecto { get { return _prefix_hecto; } }
 
+    /// <summary>Gets the 'kilo' prefix instance (exponent 3).</summary>
     public static SIPrefix Kilo { get { return _prefix_kilo; } }
 
+    /// <summary>Gets the 'mega' prefix instance (exponent 6).</summary>
     public static SIPrefix Mega { get { return _prefix_mega; } }
 
+    /// <summary>Gets the 'giga' prefix instance (exponent 9).</summary>
     public static SIPrefix Giga { get { return _prefix_giga; } }
 
+    /// <summary>Gets the 'tera' prefix instance (exponent 12).</summary>
     public static SIPrefix Tera { get { return _prefix_tera; } }
 
+    /// <summary>Gets the 'peta' prefix instance (exponent 15).</summary>
     public static SIPrefix Peta { get { return _prefix_peta; } }
 
+    /// <summary>Gets the 'exa' prefix instance (exponent 18).</summary>
     public static SIPrefix Exa { get { return _prefix_exa; } }
 
+    /// <summary>Gets the 'zetta' prefix instance (exponent 21).</summary>
     public static SIPrefix Zetta { get { return _prefix_zetta; } }
 
+    /// <summary>Gets the 'yotta' prefix instance (exponent 24).</summary>
     public static SIPrefix Yotta { get { return _prefix_yotta; } }
 
+    /// <summary>Gets the 'ronna' prefix instance (exponent 27).</summary>
     public static SIPrefix Ronna { get { return _prefix_ronna; } }
 
+    /// <summary>Gets the 'quetta' prefix instance (exponent 30).</summary>
     public static SIPrefix Quetta { get { return _prefix_quetta; } }
 
     /// <summary>
@@ -176,8 +201,10 @@ namespace Altaxo.Units
     /// </value>
     public static int MinShortCutLength { get { return 1; } }
 
+    /// <summary>Gets the smallest known prefix (lowest exponent).</summary>
     public static SIPrefix SmallestPrefix { get { return _prefix_quecto; } }
 
+    /// <summary>Gets the largest known prefix (highest exponent).</summary>
     public static SIPrefix LargestPrefix { get { return _prefix_quetta; } }
 
     static SIPrefix()
@@ -276,11 +303,13 @@ namespace Altaxo.Units
     }
 
     /// <summary>
-    /// Try the get a prefix given the prefix'es shortcut.
+    /// Try to get a prefix given the prefix's shortcut.
     /// </summary>
     /// <param name="shortcut">The shortcut of the prefix.</param>
-    /// <returns>The prefix to which the given shortcut belongs. Null if no such prefix could be found.</returns>
-    /// <exception cref="ArgumentNullException">shortcut</exception>
+    /// <returns>
+    /// The prefix to which the given shortcut belongs, or <c>null</c> if no such prefix could be found.
+    /// </returns>
+    /// <exception cref="ArgumentNullException"><paramref name="shortcut"/> is null or empty.</exception>
     public static SIPrefix? TryGetPrefixFromShortcut(string shortcut)
     {
       if (string.IsNullOrEmpty(shortcut))
@@ -290,8 +319,8 @@ namespace Altaxo.Units
     }
 
     /// <summary>
-    /// Deserialization constructor. Initializes a new instance of the <see cref="SIPrefix"/> class. Do not use this constructor unless you don't find
-    /// the prefix in the list of known prefixes.
+    /// Deserialization constructor. Initializes a new instance of the <see cref="SIPrefix"/> class.
+    /// Do not use this constructor unless you don't find the prefix in the list of known prefixes.
     /// </summary>
     /// <param name="name">The name of the prefix.</param>
     /// <param name="shortCut">The short cut of the prefix.</param>
@@ -310,26 +339,48 @@ namespace Altaxo.Units
       _cachedDivider = Altaxo.Calc.RMath.Pow(10, -exponent);
     }
 
+    /// <summary>
+    /// Multiplies two prefixes and returns the prefix and any remaining factor.
+    /// </summary>
+    /// <param name="p1">The first prefix.</param>
+    /// <param name="p2">The second prefix.</param>
+    /// <returns>
+    /// A tuple containing the resulting prefix and the remaining factor when the exact prefix is not available.
+    /// </returns>
     public static (SIPrefix prefix, double remainingFactor) FromMultiplication(SIPrefix p1, SIPrefix p2)
     {
       return _allPrefixes.GetPrefixFromExponent(p1._exponent + p2._exponent);
     }
 
+    /// <summary>
+    /// Divides two prefixes and returns the prefix and any remaining factor.
+    /// </summary>
+    /// <param name="p1">The numerator prefix.</param>
+    /// <param name="p2">The denominator prefix.</param>
+    /// <returns>
+    /// A tuple containing the resulting prefix and the remaining factor when the exact prefix is not available.
+    /// </returns>
     public static (SIPrefix prefix, double remainingFactor) FromDivision(SIPrefix p1, SIPrefix p2)
     {
       return _allPrefixes.GetPrefixFromExponent(p1._exponent - p2._exponent);
     }
 
+    /// <inheritdoc/>
     public string Name
     {
       get { return _name; }
     }
 
+    /// <inheritdoc/>
     public string ShortCut
     {
       get { return _shortCut; }
     }
 
+    /// <summary>
+    /// Gets the exponent of this prefix (power of ten).
+    /// </summary>
+    /// <value>The exponent of this prefix, e.g. -3 for milli.</value>
     public int Exponent
     {
       get { return _exponent; }
@@ -339,43 +390,53 @@ namespace Altaxo.Units
     /// Try to get a known prefix with a given exponent.
     /// </summary>
     /// <param name="exponent">The exponent.</param>
-    /// <param name="prefix">If sucessfull, returns the prefix.</param>
+    /// <param name="prefix">If successful, returns the prefix.</param>
     /// <returns>True if a known prefix with the given exponent was found; otherwise, false.</returns>
     public static bool TryGetPrefixFromExponent(int exponent, [MaybeNullWhen(false)] out SIPrefix prefix)
     {
       return _prefixByExponent.TryGetValue(exponent, out prefix);
     }
 
+    /// <inheritdoc/>
     public double ToSIUnit(double x)
     {
       return _cachedFactor >= 1 ? x * _cachedFactor : x / _cachedDivider;
     }
 
+    /// <inheritdoc/>
     public double FromSIUnit(double x)
     {
       return _cachedDivider >= 1 ? x * _cachedDivider : x / _cachedFactor;
     }
 
+    /// <summary>
+    /// Indicates whether this unit can have an SI prefix applied to it.
+    /// </summary>
+    /// <value>Always <c>false</c> for SIPrefix instances.</value>
     public bool CanApplySIPrefix
     {
       get { return false; }
     }
 
+    /// <inheritdoc/>
     public bool Equals(SIPrefix? other)
     {
       return other is { } b ? _exponent == b._exponent : false;
     }
 
+    /// <inheritdoc/>
     public override bool Equals(object? obj)
     {
       return (obj is SIPrefix other) ? Equals(other) : false;
     }
 
+    /// <inheritdoc/>
     public override int GetHashCode()
     {
       return _exponent.GetHashCode();
     }
 
+    /// <inheritdoc/>
     public int CompareTo(SIPrefix? other)
     {
       if (other is null)
@@ -394,7 +455,7 @@ namespace Altaxo.Units
     /// <returns>
     /// The result of the operator.
     /// </returns>
-    /// <exception cref="InvalidOperationException">$"Result of multiplication of prefix {x} and {y} is not a known prefix!</exception>
+    /// <exception cref="InvalidOperationException">Result of multiplication of prefix {x} and {y} is not a known prefix!</exception>
     public static SIPrefix operator *(SIPrefix x, SIPrefix y)
     {
       var exponent = x.Exponent + y.Exponent;
@@ -407,11 +468,13 @@ namespace Altaxo.Units
 
     #region IUnit implementation
 
+    /// <inheritdoc/>
     ISIPrefixList IUnit.Prefixes
     {
       get { return SIPrefix.ListWithNonePrefixOnly; }
     }
 
+    /// <inheritdoc/>
     SIUnit IUnit.SIUnit
     {
       get { return Units.Dimensionless.Unity.Instance; }

@@ -57,6 +57,11 @@ namespace Altaxo.Science.Thermodynamics.Fluids
       CollectAllFluidDefinitions();
     }
 
+    /// <summary>
+    /// Creates a mixture from CAS registry numbers and mole fractions.
+    /// </summary>
+    /// <param name="casNumbersAndMoleFractions">An enumeration of tuples containing the CAS registry number and the mole fraction for each component.</param>
+    /// <returns>A <see cref="MixtureOfFluids"/> instance representing the specified mixture.</returns>
     public static MixtureOfFluids FromCASRegistryNumbersAndMoleFractions(IEnumerable<(string casNumber, double moleFraction)> casNumbersAndMoleFractions)
     {
       var list = new List<(HelmholtzEquationOfStateOfPureFluidsBySpanEtAl fluid, double moleFraction)>();
@@ -78,6 +83,11 @@ namespace Altaxo.Science.Thermodynamics.Fluids
       return new MixtureOfFluids(list);
     }
 
+    /// <summary>
+    /// Creates a mixture from CAS registry numbers and mass fractions. The provided mass fractions are converted to mole fractions.
+    /// </summary>
+    /// <param name="casNumbersAndMassFractions">An enumeration of tuples containing the CAS registry number and the mass fraction for each component.</param>
+    /// <returns>A <see cref="MixtureOfFluids"/> instance representing the specified mixture.</returns>
     public static MixtureOfFluids FromCASRegistryNumbersAndMassFractions(IEnumerable<(string casNumber, double massFraction)> casNumbersAndMassFractions)
     {
       var list = new List<(HelmholtzEquationOfStateOfPureFluidsBySpanEtAl fluid, double moleFraction)>();
@@ -115,6 +125,14 @@ namespace Altaxo.Science.Thermodynamics.Fluids
     }
 
 
+    /// <summary>
+    /// Initializes a new instance of the <see cref="MixtureOfFluids"/> class with two components.
+    /// </summary>
+    /// <param name="fluid1">First component definition.</param>
+    /// <param name="moleFraction1">Mole fraction of the first component.</param>
+    /// <param name="fluid2">Second component definition.</param>
+    /// <param name="moleFraction2">Mole fraction of the second component.</param>
+    /// <param name="checkForSumEqualsOne">If true, the mole fractions are validated to sum to one.</param>
     public MixtureOfFluids(
       HelmholtzEquationOfStateOfPureFluidsBySpanEtAl fluid1, double moleFraction1,
       HelmholtzEquationOfStateOfPureFluidsBySpanEtAl fluid2, double moleFraction2,
@@ -127,6 +145,10 @@ namespace Altaxo.Science.Thermodynamics.Fluids
     {
     }
 
+    /// <summary>
+    /// Initializes a new instance of the <see cref="MixtureOfFluids"/> class with three components.
+    /// </summary>
+    /// <remarks>Overload that forwards to the main constructor.</remarks>
     public MixtureOfFluids(
       HelmholtzEquationOfStateOfPureFluidsBySpanEtAl fluid1, double moleFraction1,
       HelmholtzEquationOfStateOfPureFluidsBySpanEtAl fluid2, double moleFraction2,
@@ -141,6 +163,9 @@ namespace Altaxo.Science.Thermodynamics.Fluids
     {
     }
 
+    /// <summary>
+    /// Initializes a new instance of the <see cref="MixtureOfFluids"/> class with four components.
+    /// </summary>
     public MixtureOfFluids(
     HelmholtzEquationOfStateOfPureFluidsBySpanEtAl fluid1, double moleFraction1,
     HelmholtzEquationOfStateOfPureFluidsBySpanEtAl fluid2, double moleFraction2,
@@ -157,6 +182,9 @@ namespace Altaxo.Science.Thermodynamics.Fluids
     {
     }
 
+    /// <summary>
+    /// Initializes a new instance of the <see cref="MixtureOfFluids"/> class with five components.
+    /// </summary>
     public MixtureOfFluids(
       HelmholtzEquationOfStateOfPureFluidsBySpanEtAl fluid1, double moleFraction1,
       HelmholtzEquationOfStateOfPureFluidsBySpanEtAl fluid2, double moleFraction2,
@@ -175,6 +203,11 @@ namespace Altaxo.Science.Thermodynamics.Fluids
     {
     }
 
+    /// <summary>
+    /// Initializes a new instance of the <see cref="MixtureOfFluids"/> class from a read-only list of components and their mole fractions.
+    /// </summary>
+    /// <param name="fluidsAndMoleFractions">A read-only list containing tuples of pure fluid definitions and their mole fractions.</param>
+    /// <param name="checkForSumEqualToOne">If set to true, the sum of the supplied mole fractions is validated to equal one.</param>
     public MixtureOfFluids(IReadOnlyList<(HelmholtzEquationOfStateOfPureFluidsBySpanEtAl pureFluid, double moleFraction)> fluidsAndMoleFractions, bool checkForSumEqualToOne = true)
     {
       // Parameter check and copy of the provided array
@@ -268,7 +301,7 @@ namespace Altaxo.Science.Thermodynamics.Fluids
     /// </summary>
     /// <param name="moleFractions">The mole fractions of the components.</param>
     /// <param name="checkForSumEqualToOne">If set to <c>true</c>, it is checked that the sum of mole fractions equals to 1. If this is not the case, a <see cref="ArgumentOutOfRangeException"/> is thrown.</param>
-    /// <returns></returns>
+    /// <returns>A new <see cref="MixtureOfFluids"/> instance with the given mole fractions.</returns>
     public MixtureOfFluids WithMoleFractions(IEnumerable<double> moleFractions, bool checkForSumEqualToOne = true)
     {
       var result = (MixtureOfFluids)MemberwiseClone();
@@ -639,6 +672,7 @@ namespace Altaxo.Science.Thermodynamics.Fluids
 
     #region Derived quantities
 
+    /// <inheritdoc/>
     public override IEnumerable<double> MoleDensityEstimates_FromPressureAndTemperature(double pressure, double temperature)
     {
       foreach (var fluidAndMF in _fluidsAndMoleFractions)
@@ -682,7 +716,7 @@ namespace Altaxo.Science.Thermodynamics.Fluids
     }
 
     /// <summary>
-    /// Tries  to the get fluid from its CAS registry number.
+    /// Tries to get the fluid from its CAS registry number.
     /// </summary>
     /// <param name="casRegistryNumber">The CAS registry number of the fluid.</param>
     /// <param name="fluid">If the return value is true, an instance of the fluid; otherwise null.</param>

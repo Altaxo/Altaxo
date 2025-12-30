@@ -38,6 +38,9 @@ namespace Altaxo.Science.Thermodynamics.Fluids
     /// </summary>
     public static readonly double UniversalGasConstant = 8.314459848;
 
+    /// <summary>
+    /// The universal gas constant as a <see cref="DimensionfulQuantity"/> in J/(K mol)
+    /// </summary>
     public static readonly DimensionfulQuantity UniversalGasConstantWithDimension = new DimensionfulQuantity(UniversalGasConstant, Altaxo.Units.MolarEntropy.JoulePerMoleKelvin.Instance);
 
     #region Reduced density and pressure
@@ -1852,6 +1855,11 @@ namespace Altaxo.Science.Thermodynamics.Fluids
 
     #region Helper functions
 
+    /// <summary>
+    /// Calculates the square of the given value.
+    /// </summary>
+    /// <param name="x">The value to square.</param>
+    /// <returns>The square of x.</returns>
     protected static double Pow2(double x)
     {
       return x * x;

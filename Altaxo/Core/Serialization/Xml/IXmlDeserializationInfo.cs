@@ -35,109 +35,142 @@ namespace Altaxo.Serialization.Xml
   /// </summary>
   public interface IXmlDeserializationInfo
   {
-    /// <summary>Returns the name of the current xml element.</summary>
+    /// <summary>Gets the name of the current XML element.</summary>
     string CurrentElementName { get; }
 
     /// <summary>Reads a boolean value from the current element content.</summary>
+    /// <returns>The boolean value parsed from the current element.</returns>
     bool GetBoolean();
 
     /// <summary>Reads a named boolean child element.</summary>
     /// <param name="name">Element name.</param>
+    /// <returns>The boolean value parsed from the named child element.</returns>
     bool GetBoolean(string name);
 
     /// <summary>Reads a named nullable boolean child element.</summary>
     /// <param name="name">Element name.</param>
+    /// <returns>The boolean value parsed from the named child element, or <c>null</c> if the element is missing or contains a null marker.</returns>
     bool? GetNullableBoolean(string name);
 
     /// <summary>Reads a named char child element.</summary>
     /// <param name="name">Element name.</param>
+    /// <returns>The character parsed from the named child element.</returns>
     char GetChar(string name);
 
     /// <summary>Reads an Int32 from the current element content.</summary>
+    /// <returns>The Int32 value parsed from the current element.</returns>
     int GetInt32();
 
     /// <summary>Reads a named Int32 child element.</summary>
     /// <param name="name">Element name.</param>
+    /// <returns>The Int32 value parsed from the named child element.</returns>
     int GetInt32(string name);
 
     /// <summary>Reads a named Int64 child element.</summary>
     /// <param name="name">Element name.</param>
+    /// <returns>The Int64 value parsed from the named child element.</returns>
     long GetInt64(string name);
 
     /// <summary>Reads a named nullable Int32 child element.</summary>
     /// <param name="name">Element name.</param>
+    /// <returns>The Int32 value parsed from the named child element, or <c>null</c> if not present.</returns>
     int? GetNullableInt32(string name);
 
     /// <summary>Reads a Single from the current element content.</summary>
+    /// <returns>The Single value parsed from the current element.</returns>
     float GetSingle();
 
     /// <summary>Reads a named Single child element.</summary>
     /// <param name="name">Element name.</param>
+    /// <returns>The Single value parsed from the named child element.</returns>
     float GetSingle(string name);
 
     /// <summary>Reads a Double from the current element content.</summary>
+    /// <returns>The Double value parsed from the current element.</returns>
     double GetDouble();
 
     /// <summary>Reads a named Double child element.</summary>
     /// <param name="name">Element name.</param>
+    /// <returns>The Double value parsed from the named child element.</returns>
     double GetDouble(string name);
 
     /// <summary>Reads a named nullable Double child element.</summary>
     /// <param name="name">Element name.</param>
+    /// <returns>The Double value parsed from the named child element, or <c>null</c> if not present.</returns>
     double? GetNullableDouble(string name);
 
     /// <summary>Reads a string from the current element content.</summary>
+    /// <returns>The string parsed from the current element.</returns>
     string GetString();
 
     /// <summary>Reads a named string child element.</summary>
     /// <param name="name">Element name.</param>
+    /// <returns>The string parsed from the named child element.</returns>
     string GetString(string name);
 
     /// <summary>Reads a named DateTime child element.</summary>
     /// <param name="name">Element name.</param>
+    /// <returns>The DateTime parsed from the named child element.</returns>
     DateTime GetDateTime(string name);
 
     /// <summary>Reads a named TimeSpan child element.</summary>
     /// <param name="name">Element name.</param>
+    /// <returns>The TimeSpan parsed from the named child element.</returns>
     TimeSpan GetTimeSpan(string name);
 
     /// <summary>Reads a named MemoryStream child element.</summary>
     /// <param name="name">Element name.</param>
+    /// <returns>The MemoryStream populated from the named child element, or <c>null</c> if not present.</returns>
     System.IO.MemoryStream? GetMemoryStream(string name);
 
     /// <summary>Reads a named enum value of the given <paramref name="type"/>.</summary>
     /// <param name="name">Element name.</param>
     /// <param name="type">Enum type.</param>
+    /// <returns>The enum value boxed as <see cref="object"/>.</returns>
+    /// <remarks>
+    /// Implementations should support the same enum representation used by the serializer. See the serializer documentation
+    /// for details about how enum values are encoded (name, numeric value, or fully qualified value).
+    /// </remarks>
     object GetEnum(string name, System.Type type); // see remarks on serialization
 
     /// <summary>Reads a named enum value of type <typeparamref name="T"/>.</summary>
+    /// <typeparam name="T">Enum type to read.</typeparam>
     /// <param name="name">Element name.</param>
+    /// <returns>The deserialized enum value of type <typeparamref name="T"/>.</returns>
     T GetEnum<T>(string name) where T : Enum;
 
     /// <summary>Reads a named nullable enum value of type <typeparamref name="T"/>.</summary>
+    /// <typeparam name="T">Underlying enum type.</typeparam>
     /// <param name="name">Element name.</param>
+    /// <returns>The deserialized enum value or <c>null</c> if missing.</returns>
     T? GetNullableEnum<T>(string name) where T : struct;
 
     /// <summary>Gets the inner text content of the current node.</summary>
+    /// <returns>The inner text content of the current node.</returns>
     string GetNodeContent(); // gets the inner text of the node directly
 
     /// <summary>Reads an Int32 attribute of the current element.</summary>
     /// <param name="name">Attribute name.</param>
+    /// <returns>The Int32 value of the named attribute.</returns>
     int GetInt32Attribute(string name);
 
     /// <summary>Reads a string attribute or returns null if missing.</summary>
     /// <param name="name">Attribute name.</param>
+    /// <returns>The string attribute value or <c>null</c> if the attribute is not present.</returns>
     string? GetStringAttributeOrNull(string name);
 
     /// <summary>Reads a string attribute of the current element.</summary>
     /// <param name="name">Attribute name.</param>
+    /// <returns>The string attribute value.</returns>
     string GetStringAttribute(string name);
 
     /// <summary>Opens the current array and returns its element count.</summary>
+    /// <returns>The number of elements in the currently opened array.</returns>
     int OpenArray(); // get Number of Array elements
 
     /// <summary>Opens a named array element and returns its element count.</summary>
     /// <param name="name">Element name.</param>
+    /// <returns>The number of elements in the named array.</returns>
     int OpenArray(string name);
 
     /// <summary>Closes the current array scope.</summary>
@@ -202,7 +235,7 @@ namespace Altaxo.Serialization.Xml
     /// <summary>Closes the current element.</summary>
     void CloseElement();
 
-    /// <summary>Retrieves the name of the current node</summary>
+    /// <summary>Retrieves the name of the current node.</summary>
     /// <returns>The name of the current node.</returns>
     string GetNodeName();
 
@@ -215,6 +248,7 @@ namespace Altaxo.Serialization.Xml
     /// <summary>Reads a value of unknown type or returns null.</summary>
     /// <param name="name">Element name.</param>
     /// <param name="parent">Parent object for context.</param>
+    /// <returns>Deserialized value or <c>null</c> if the element is not present.</returns>
     object? GetValueOrNull(string name, object? parent);
 
     /// <summary>Reads a value of type <typeparamref name="T"/>.</summary>
@@ -226,17 +260,19 @@ namespace Altaxo.Serialization.Xml
     /// <summary>Reads a value of type <typeparamref name="T"/> or returns null.</summary>
     /// <param name="name">Element name.</param>
     /// <param name="parentObject">Parent object for context.</param>
+    /// <returns>Deserialized value or <c>null</c> if the element is missing.</returns>
     T? GetValueOrNull<T>(string name, object? parentObject) where T : class;
 
     /// <summary>Reads a nullable struct value.</summary>
     /// <param name="name">Element name.</param>
     /// <param name="parentObject">Parent object for context.</param>
+    /// <returns>Deserialized value or <c>null</c>.</returns>
     T? GetNullableStruct<T>(string name, object? parentObject) where T : struct;
 
     /// <summary>Reads a value or returns the outer XML when not deserializable.</summary>
     /// <param name="name">Element name.</param>
     /// <param name="parent">Parent object for context.</param>
-    /// <param name="returnValueIsOuterXml">True if the return value is the outer XML.</param>
+    /// <param name="returnValueIsOuterXml">True if the return value contains the outer XML rather than a deserialized object.</param>
     /// <returns>Value or outer XML.</returns>
     object? GetValueOrOuterXml(string name, object parent, out bool returnValueIsOuterXml);
 
@@ -250,6 +286,9 @@ namespace Altaxo.Serialization.Xml
     /// <param name="instance">The instance of the object to deserialize.</param>
     /// <param name="fullyQualifiedBaseTypeName">Fully qualified base type name. It is the short name of the assembly, comma, the full type name, comma, and the version. The string must not contain whitespaces. Example: 'AltaxoBase,SampleFileRenamer.Main.DocumentPath,0'.</param>
     /// <param name="parent">The parent object of the current object to deserialize.</param>
+    /// <remarks>
+    /// This method is obsolete and kept for backward compatibility if the base type has changed. Prefer using <see cref="GetBaseValueEmbedded(object,System.Type,object?)"/> instead.
+    /// </remarks>
     [Obsolete("For backward compatibility only (if base type has changed). Use 'void GetBaseValueEmbedded(object instance, System.Type basetype, object? parent)' instead!")]
     object? GetBaseValueEmbeddedOrNull(object instance, string fullyQualifiedBaseTypeName, object? parent);
 
@@ -262,10 +301,11 @@ namespace Altaxo.Serialization.Xml
 
     /// <summary>Gets the outer XML of a named element.</summary>
     /// <param name="name">Element name.</param>
+    /// <returns>Outer XML string of the named element.</returns>
     string GetElementAsOuterXml(string name);
 
     /// <summary>
-    /// Gets the property dictionary. This is a dictionary where some string/value pairs could be stored, and used during or after deserialization
+    /// Gets the property dictionary. This is a dictionary where some string/value pairs could be stored, and used during or after deserialization.
     /// </summary>
     /// <value>
     /// The property dictionary.

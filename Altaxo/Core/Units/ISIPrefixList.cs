@@ -29,7 +29,7 @@ using System.Collections.Generic;
 namespace Altaxo.Units
 {
   /// <summary>
-  /// Interface to a list of known <see cref="SIPrefix"/>es.
+  /// Interface to a list of known <see cref="SIPrefix"/> instances.
   /// </summary>
   public interface ISIPrefixList : IEnumerable<SIPrefix>
   {
@@ -42,17 +42,19 @@ namespace Altaxo.Units
     int Count { get; }
 
     /// <summary>
-    /// Try the get a prefix, given its shortcut. Example: given the string 'n', this function will return the prefix <see cref="SIPrefix.Nano"/>.
+    /// Try to get a prefix given its shortcut. Example: given the string 'n', this method will return the prefix <see cref="SIPrefix.Nano"/>.
     /// </summary>
-    /// <param name="shortCut">The short cut.</param>
-    /// <returns>The prefix with the given shortcut. If no such prefix exist, the function will return null.</returns>
+    /// <param name="shortCut">The shortcut to look up (for example, "n" for nano).</param>
+    /// <returns>
+    /// The prefix with the given shortcut, or <c>null</c> if no such prefix exists in this list.
+    /// </returns>
     SIPrefix? TryGetPrefixFromShortCut(string shortCut);
 
     /// <summary>
-    /// Gets a value indicating whether this list only contains the <see cref="SIPrefix.None"/>.
+    /// Gets a value indicating whether this list only contains the <see cref="SIPrefix.None"/> prefix.
     /// </summary>
     /// <value>
-    ///   <c>true</c> if this list only contains the <see cref="SIPrefix.None"/>.; otherwise, <c>false</c>.
+    /// <c>true</c> if this list contains only the <see cref="SIPrefix.None"/>; otherwise, <c>false</c>.
     /// </value>
     bool ContainsNonePrefixOnly { get; }
   }

@@ -37,6 +37,10 @@ namespace Altaxo.Serialization.TA_Instruments
   /// </summary>
   public class Q800FileReader : Main.IImmutable
   {
+    /// <summary>
+    /// Mapping of units to their SI equivalents and the factor used to convert.
+    /// Each entry is a tuple of (oldUnit, newUnit, factor).
+    /// </summary>
     private static readonly (string oldUnit, string newUnit, double factor)[] _unitConversion =
       [
       ("min", "s", 60),
@@ -171,6 +175,11 @@ namespace Altaxo.Serialization.TA_Instruments
     }
 
 
+    /// <summary>
+    /// Initializes a new instance of <see cref="Q800FileReader"/> and reads the contents of the provided stream.
+    /// </summary>
+    /// <param name="rs">The stream containing the Q800 file data.</param>
+    /// <param name="convertUnitsToSIUnits">If <c>true</c>, numeric data are converted to SI units when possible.</param>
     private Q800FileReader(Stream rs, bool convertUnitsToSIUnits)
     {
       var notes = new StringBuilder();
@@ -311,6 +320,16 @@ namespace Altaxo.Serialization.TA_Instruments
       Notes = notes.ToString();
     }
 
+    /// <summary>
+    /// Reads the binary data block from a hybrid Q800 file.
+    /// The binary data consist of 32-bit floating point numbers in IEEE 754 format arranged row-wise for each record.
+    /// </summary>
+    /// <param name="rs">The stream that contains the file.</param>
+    /// <param name="separatorPosition">The byte position of the ASCII/binary separator marker within the stream.</param>
+    /// <param name="numberOfSignals">The number of signals (columns) expected in each data record.</param>
+    /// <returns>
+    /// A jagged array with one element per signal. Each element contains the values for that signal as doubles.
+    /// </returns>
     private static double[][] ReadBinaryData(Stream rs, long separatorPosition, int numberOfSignals)
     {
       rs.Seek(separatorPosition + 7, SeekOrigin.Begin);
@@ -338,6 +357,15 @@ namespace Altaxo.Serialization.TA_Instruments
         .ToArray();
     }
 
+    /// <summary>
+    /// Reads ASCII formatted data lines from the provided <see cref="StreamReader"/>.
+    /// Each non-empty line is expected to contain <paramref name="numberOfSignals"/> whitespace-separated values.
+    /// </summary>
+    /// <param name="sr">A <see cref="StreamReader"/> positioned at the first line of the ASCII data block.</param>
+    /// <param name="numberOfSignals">The expected number of values per data row.</param>
+    /// <returns>
+    /// A jagged array where each element corresponds to a signal column and contains the values as doubles.
+    /// </returns>
     private static double[][] ReadAsciiData(StreamReader sr, int numberOfSignals)
     {
       var dataRows = new List<double[]>();
@@ -370,6 +398,12 @@ namespace Altaxo.Serialization.TA_Instruments
         .ToArray();
     }
 
+    /// <summary>
+    /// Rounds a double value to the precision of a single-precision float (approximately 7 significant digits).
+    /// This mirrors the precision that will be obtained when storing values as 32-bit floats.
+    /// </summary>
+    /// <param name="value">The value to round.</param>
+    /// <returns>The value rounded to float precision, returned as a double.</returns>
     private static double RoundToFloatPrecision(double value)
     {
       return double.Parse(value.ToString("G7", System.Globalization.CultureInfo.InvariantCulture), System.Globalization.CultureInfo.InvariantCulture);

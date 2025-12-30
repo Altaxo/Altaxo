@@ -24,41 +24,39 @@
 
 #nullable enable
 
-using System;
-
 namespace Altaxo.Serialization.Xml
 {
   /// <summary>
-  /// Contract for XML serialization surrogates that serialize/deserialize specific types.
-  /// Implementations should emit/read XML for the target type and handle base-type chaining.
+  /// Contract for XML serialization surrogates that serialize and deserialize specific types.
+  /// Implementations should emit/read XML for the target type and handle base-type chaining when needed.
   /// </summary>
   public interface IXmlSerializationSurrogate
   {
     /// <summary>
-    /// Serialize the object <code>o</code> into xml.
+    /// Serialize the provided object into XML using the supplied serialization info.
     /// </summary>
     /// <param name="o">The object to serialize.</param>
-    /// <param name="info">The serialization info used to serialize the object.</param>
+    /// <param name="info">The serialization info used to write values and structure to the XML output.</param>
     void Serialize(object o, IXmlSerializationInfo info);
 
     /// <summary>
-    /// Deserialize the object from xml.
+    /// Deserialize an object from XML.
     /// </summary>
-    /// <param name="o">Is null except when a base type is deserialized, in this case this is the object instance of a super class.</param>
-    /// <param name="info">The serialization info used to deserialize the stream.</param>
-    /// <param name="parentobject">The object which is serialized before in the object hierarchie.</param>
-    /// <returns>The object which is deserialized.</returns>
-    /// <remarks>All deserialization code should check if object o is null. In this case it has to create a instance of the class which is about to
-    /// be deserialized. If it is not null, the deserialization code of a super class has already created a instance. In this case the code had to
-    /// use this instance! It is recommended to use always the following code (except abstract and sealed classes):
+    /// <param name="o">This is <c>null</c> except when a base type is deserialized; in that case it is the instance of the super class to populate.</param>
+    /// <param name="info">The deserialization info used to read values from the XML input.</param>
+    /// <param name="parentobject">The parent object in the object hierarchy which was deserialized before the current object; may be <c>null</c> for top-level objects.</param>
+    /// <returns>The deserialized object instance.</returns>
+    /// <remarks>All deserialization code should check if object <c>o</c> is null. In this case it has to create an instance of the class which is about to
+    /// be deserialized. If it is not null, the deserialization code of a super class has already created an instance. In this case the code must
+    /// use that instance. It is recommended to use the following pattern (except for abstract and sealed classes):
     /// <code>
-    /// public object Deserialize(object o, SampleFileRenamer.Serialization.Xml.IXmlDeserializationInfo info, object parent)
+    /// public object Deserialize(object o, Altaxo.Serialization.Xml.IXmlDeserializationInfo info, object parent)
     /// {
-    /// Foo s = null!=o ? (Foo)o : new Foo();
-    /// // (Deserialization code follows here) ...
+    ///   var s = o as Foo ?? new Foo();
+    ///   // (Deserialization code follows here) ...
     /// }
-    ///</code>
-    ///</remarks>
+    /// </code>
+    /// </remarks>
     object? Deserialize(object? o, IXmlDeserializationInfo info, object? parentobject);
   }
 }

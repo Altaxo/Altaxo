@@ -35,12 +35,19 @@ namespace Altaxo.Units
   /// Represents an arbitrary unit (SI or any other unit).
   /// Implementations define how to convert to/from SI units and expose prefixes and the corresponding SI base unit.
   /// </summary>
+  /// <remarks>
+  /// Implementations of this interface are responsible for converting a value to the corresponding SI value
+  /// and for converting a value from the SI representation back into this unit. Implementations also expose
+  /// available SI prefixes and the associated SI base unit.
+  /// </remarks>
   public interface IUnit
   {
     /// <summary>Full name of the unit.</summary>
+    /// <value>The full (long) name of the unit, for example "meter".</value>
     string Name { get; }
 
     /// <summary>Usual shortcut of the unit.</summary>
+    /// <value>A short representation of the unit, for example "m" for meter.</value>
     string ShortCut { get; }
 
     /// <summary>
@@ -60,11 +67,15 @@ namespace Altaxo.Units
     /// <summary>
     /// Returns a list of possible prefixes for this unit (like µ, m, k, M, G..).
     /// </summary>
+    /// <value>
+    /// The <see cref="ISIPrefixList"/> containing the prefixes that can be applied to this unit.
+    /// </value>
     ISIPrefixList Prefixes { get; }
 
     /// <summary>
     /// Returns the corresponding SI unit.
     /// </summary>
+    /// <value>The associated SI base unit for this unit.</value>
     SIUnit SIUnit { get; }
   }
 }

@@ -27,12 +27,12 @@
 namespace Altaxo.Serialization.Xml
 {
   /// <summary>
-  /// Defines the encoding used to store Arrays of primitive types
+  /// Defines the encoding used to store arrays of primitive types.
   /// </summary>
   public enum XmlArrayEncoding
   {
     /// <summary>
-    /// Use a xml element for every array element.
+    /// Use an XML element for each array element.
     /// </summary>
     Xml,
 
@@ -42,7 +42,7 @@ namespace Altaxo.Serialization.Xml
     Base64,
 
     /// <summary>
-    /// Store th array data in binary form using BinHex encoding.
+    /// Store the array data in binary form using BinHex encoding.
     /// </summary>
     BinHex
   }

@@ -33,6 +33,12 @@ using System.Threading.Tasks;
 namespace Altaxo.Units
 {
   [AttributeUsage(AttributeTargets.Class, AllowMultiple = false, Inherited = false)]
+  /// <summary>
+  /// Describes the dimensionality and quantity name for a unit class.
+  /// Attach this attribute to unit classes to provide a human-readable quantity description
+  /// (for example "Length" or "Temperature") and the exponents of the seven SI base units
+  /// (metre, kilogram, second, ampere, kelvin, mole, candela) that define the unit's dimension.
+  /// </summary>
   public class UnitDescriptionAttribute : Attribute
   {
     private string _quantity;
@@ -67,28 +73,52 @@ namespace Altaxo.Units
       _candela = candela;
     }
 
-    /// <summary>The quantity description. Examples are Length, Temperature, Mass, Time, ElectricalVoltage, ElectricalCurrent, Force, etc.</summary>
+    /// <summary>
+    /// The quantity description. Examples are Length, Temperature, Mass, Time, ElectricalVoltage, ElectricalCurrent, Force, etc.
+    /// </summary>
+    /// <value>A short, human-readable name for the physical quantity described by the unit.</value>
     public string Quantity { get { return _quantity; } }
 
-    /// <summary>Power of 'Metre' units that the constructed unit will contain.</summary>
+    /// <summary>
+    /// Power of 'Metre' units that the constructed unit will contain.
+    /// </summary>
+    /// <value>The exponent for metres in the unit's dimension.</value>
     public int Metre => _metre;
 
-    /// <summary>Power of 'Kilogram' units that the constructed unit will contain.</summary>
+    /// <summary>
+    /// Power of 'Kilogram' units that the constructed unit will contain.
+    /// </summary>
+    /// <value>The exponent for kilograms in the unit's dimension.</value>
     public int Kilogram => _kilogram;
 
-    /// <summary>Power of 'Second' units that the constructed unit will contain.</summary>
+    /// <summary>
+    /// Power of 'Second' units that the constructed unit will contain.
+    /// </summary>
+    /// <value>The exponent for seconds in the unit's dimension.</value>
     public int Second => _second;
 
-    /// <summary>Power of 'Ampere' units that the constructed unit will contain.</summary>
+    /// <summary>
+    /// Power of 'Ampere' units that the constructed unit will contain.
+    /// </summary>
+    /// <value>The exponent for amperes in the unit's dimension.</value>
     public int Ampere => _ampere;
 
-    /// <summary>Power of 'Kelvin' units that the constructed unit will contain.</summary>
+    /// <summary>
+    /// Power of 'Kelvin' units that the constructed unit will contain.
+    /// </summary>
+    /// <value>The exponent for kelvins in the unit's dimension.</value>
     public int Kelvin => _kelvin;
 
-    /// <summary>Power of 'Mole' units that the constructed unit will contain.</summary>
+    /// <summary>
+    /// Power of 'Mole' units that the constructed unit will contain.
+    /// </summary>
+    /// <value>The exponent for moles in the unit's dimension.</value>
     public int Mole => _mole;
 
-    /// <summary>Power of 'Candela' units that the constructed unit will contain.</summary>
+    /// <summary>
+    /// Power of 'Candela' units that the constructed unit will contain.
+    /// </summary>
+    /// <value>The exponent for candelas in the unit's dimension.</value>
     public int Candela => _candela;
   }
 }

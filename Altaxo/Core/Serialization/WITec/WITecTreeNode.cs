@@ -52,11 +52,19 @@ namespace Altaxo.Serialization.WITec
 
     /// <summary>
     /// Gets the primitive data of this node.
-    /// This are the basic types like string, double, int,
-    /// as well as arrays thereof.
+    /// These are the basic types such as <c>string</c>, <c>double</c>, <c>int</c>,
+    /// and arrays of those types.
     /// </summary>
     public Dictionary<string, object> Data { get; } = [];
 
+    /// <summary>
+    /// Gets a data value by name and casts it to the requested type <typeparamref name="T"/>.
+    /// </summary>
+    /// <typeparam name="T">The expected type of the data value.</typeparam>
+    /// <param name="name">The key/name of the data value to retrieve.</param>
+    /// <returns>The value associated with <paramref name="name"/> cast to <typeparamref name="T"/>.</returns>
+    /// <exception cref="System.IO.InvalidDataException">Thrown when the data exists but is not of type <typeparamref name="T"/>.</exception>
+    /// <exception cref="System.Collections.Generic.KeyNotFoundException">Thrown when a value with the specified <paramref name="name"/> is not present.</exception>
     public T GetData<T>(string name)
     {
       if (Data.TryGetValue(name, out var data))
@@ -82,7 +90,7 @@ namespace Altaxo.Serialization.WITec
     /// </summary>
     /// <param name="name">The name.</param>
     /// <returns>The child node with the provided name.</returns>
-    /// <exception cref="System.IO.InvalidDataException">Node FullName is expected to have a child named \"{name}\"</exception>
+    /// <exception cref="System.IO.InvalidDataException">Node FullName is expected to have a child named "{name}"</exception>
     public WITecTreeNode GetChild(string name)
     {
       return ChildNodes.TryGetValue(name, out var child)
@@ -91,7 +99,7 @@ namespace Altaxo.Serialization.WITec
     }
 
     /// <summary>
-    /// Gets the full name of the node (names from the root to to this node, separated by a slash)
+    /// Gets the full name of the node (names from the root to this node, separated by a slash)
     /// </summary>
     public string FullName
     {
@@ -124,8 +132,8 @@ namespace Altaxo.Serialization.WITec
 
 
     /// <summary>
-    /// Creates a new instance of the <see cref="WITecTreeNode"/> class with the specified name, and then
-    /// reading all child nodes and data of this node.
+    /// Creates a new instance of the <see cref="WITecTreeNode"/> class with the specified name,
+    /// and reads all child nodes and data of this node from the provided stream.
     /// </summary>
     /// <param name="nodeName">Name of the node.</param>
     /// <param name="stream">The stream.</param>
@@ -160,7 +168,7 @@ namespace Altaxo.Serialization.WITec
     /// <param name="stream">The stream to read from.</param>
     /// <param name="buffer">A buffer that can be used for reading the data in.</param>
     /// <param name="parentNode">The parent node of this data.</param>
-    /// <returns>Tuple consisting of the name of the node, and the data. The data can be: a WitecTreeNode, a string, a double, integer, and arrays of the primitive types.</returns>
+    /// <returns>Tuple consisting of the name of the node, and the data. The data can be: a <see cref="WITecTreeNode"/>, a <see cref="string"/>, a <see cref="double"/>, integer, and arrays of the primitive types.</returns>
     public static (string Name, object Value) ReadNameValue(Stream stream, byte[] buffer, WITecTreeNode? parentNode)
     {
       var name = ReadString(stream, buffer);
@@ -358,7 +366,7 @@ namespace Altaxo.Serialization.WITec
     /// </summary>
     /// <param name="stream">The stream.</param>
     /// <param name="buffer">Scratch array used to read the data.</param>
-    /// <returns></returns>
+    /// <returns>The decoded string read from the stream.</returns>
     public static string ReadString(Stream stream, byte[] buffer)
     {
       stream.ReadExactly(buffer, 0, sizeof(Int32));

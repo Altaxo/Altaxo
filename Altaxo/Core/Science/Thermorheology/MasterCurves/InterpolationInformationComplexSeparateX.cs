@@ -31,34 +31,47 @@ using Complex64 = System.Numerics.Complex;
 namespace Altaxo.Science.Thermorheology.MasterCurves
 {
   /// <summary>
-  /// Stores information about an interpolation curve that interpolates the resulting shift curve for one group of columns, e.g. for the real part of measured values.
+  /// Stores information about interpolation curves that are used when building master curves for complex data
+  /// where the real and imaginary parts are stored in separate x-columns.
+  /// This class holds the interpolation data for the real part (via the base class) and for the imaginary part
+  /// using separate collections.
   /// </summary>
   public class InterpolationInformationComplexSeparateX : InterpolationInformationBase<double>
   {
     /// <summary>
-    /// Gets the current interpolation function. The argument of the function is the x-value. The result is the interpolated y-value.
+    /// Gets or sets the current interpolation function. The argument of the function is the x-value. The result is the interpolated complex value.
+    /// The function should be set after building the interpolation; before that it throws an <see cref="InvalidOperationException"/>.
     /// </summary>
     public Func<double, Complex64> InterpolationFunction { get; set; }
 
-    /// <summary>List of all x values of the imaginary points that are used for the interpolation.</summary>
+    /// <summary>
+    /// List of all x values of the imaginary-part points that are used for the interpolation.
+    /// The returned list is a read-only wrapper around the internal storage for imaginary values.
+    /// </summary>
     public IReadOnlyList<double> XValuesImaginary { get { return new WrapperIListToIRoVectorK<double>(ValuesImaginaryToInterpolate.Keys); } }
 
-
-    /// <summary>List of all y values of the imaginary points that are used for the interpolation.</summary>
+    /// <summary>
+    /// List of all y values of the imaginary-part points that are used for the interpolation.
+    /// The returned list is a read-only wrapper around the internal storage for imaginary values.
+    /// </summary>
     public IReadOnlyList<double> YValuesImaginary { get { return new WrapperIListToIRoVectorV<double>(ValuesImaginaryToInterpolate.Values); } }
 
-    /// <summary>List of the index of the imaginary curve to which each point belongs.</summary>
+    /// <summary>
+    /// List of the index of the imaginary curve to which each imaginary point belongs.
+    /// The returned list is a read-only wrapper around the internal storage for imaginary values.
+    /// </summary>
     public IReadOnlyList<int> IndexOfCurveImaginary { get { return new WrapperIListToIRoVectorV2<double>(ValuesImaginaryToInterpolate.Values); } }
 
 
     /// <summary>
-    /// List of all points used for the interpolation, sorted by the x values.
-    /// Keys are the x-Values, values are the y-values, and the index of the curve the y-value belongs to.
+    /// List of all imaginary-part points used for the interpolation, sorted by the x values.
+    /// Keys are the x-Values, values are the imaginary y-values and the index of the curve the y-value belongs to.
     /// </summary>
     protected SortedList<double, (double yImaginary, int indexOfCurve)> ValuesImaginaryToInterpolate { get; }
 
     /// <summary>
-    /// Initialized the instance.
+    /// Initializes a new instance of the <see cref="InterpolationInformationComplexSeparateX"/> class.
+    /// The interpolation function is initialized to a stub that throws until a real interpolation is created.
     /// </summary>
     public InterpolationInformationComplexSeparateX()
     {
@@ -66,9 +79,7 @@ namespace Altaxo.Science.Thermorheology.MasterCurves
       InterpolationFunction = new Func<double, Complex64>((x) => throw new InvalidOperationException("Interpolation was not yet done."));
     }
 
-    /// <summary>
-    /// Clears this instance.
-    /// </summary>
+    /// <inheritdoc/>
     public override void Clear()
     {
       base.Clear();
@@ -77,14 +88,17 @@ namespace Altaxo.Science.Thermorheology.MasterCurves
     }
 
     /// <summary>
-    /// Adds values to the data that should be interpolated, but does not evaluate a new interpolation. 
+    /// Adds values to the data that should be interpolated for either the real or the imaginary part, but does not evaluate a new interpolation.
+    /// The <paramref name="groupNumber"/> selects which internal collection to use (0 = real/base collection, 1 = imaginary collection).
+    /// Existing points belonging to the specified curve index are removed before adding the new column. The tracked minimum and maximum x values
+    /// are updated to include the new points.
     /// </summary>
     /// <param name="shift">Shift value used to modify the x values.</param>
     /// <param name="indexOfCurve">Index of the curve in the group of curves.</param>
     /// <param name="x">Column of x values.</param>
     /// <param name="y">Column of y values.</param>
-    /// <param name="groupNumber">Number of the curve group.</param>
-    /// <param name="options">Options for creating the master curve.</param>
+    /// <param name="groupNumber">Number of the curve group: 0 for real part (base storage), 1 for imaginary part (separate storage).</param>
+    /// <param name="options">Options for creating the master curve (controls logarithmization and shift mode).</param>
     public void AddXYColumn(double shift, int indexOfCurve, IReadOnlyList<double> x, IReadOnlyList<double> y, int groupNumber, ShiftGroupBase options)
     {
       var valuesToInterpolate = groupNumber switch

@@ -29,49 +29,123 @@ using Altaxo.Calc.LinearAlgebra;
 
 namespace Altaxo.Serialization.WITec
 {
+  /// <summary>
+  /// Represents a graph data class (TDGraph) read from a WITec project node.
+  /// This class extracts the X and Z values as well as metadata such as units and titles.
+  /// </summary>
   public class TDGraphClass : TDataClass
   {
+    /// <summary>
+    /// Backing node for the TDGraph section of the data class.
+    /// </summary>
     protected WITecTreeNode _tdGraph;
+
+    /// <summary>
+    /// Backing node for the GraphData child node inside the TDGraph node.
+    /// </summary>
     protected WITecTreeNode _tdGraph_GraphData;
 
 
+    /// <summary>
+    /// Gets or sets the X axis values for the graph.
+    /// </summary>
     public double[] XValues { get; set; }
 
+    /// <summary>
+    /// Gets or sets the collection of Z value arrays. Each entry represents one spectrum or series.
+    /// </summary>
     public List<double[]> ZValues { get; set; }
 
+    /// <summary>
+    /// Gets the graph title.
+    /// </summary>
     public string Title { get; } = string.Empty;
 
+    /// <summary>
+    /// Gets the unit shortcut for the X axis.
+    /// </summary>
     public string XUnitShortcut { get; } = string.Empty;
+    /// <summary>
+    /// Gets the unit description for the X axis.
+    /// </summary>
     public string XUnitDescription { get; } = string.Empty;
 
+    /// <summary>
+    /// Gets the unit shortcut for the Z values.
+    /// </summary>
     public string ZUnitShortcut { get; } = string.Empty;
+    /// <summary>
+    /// Gets the unit description for the Z values.
+    /// </summary>
     public string ZUnitDescription { get; } = string.Empty;
 
+    /// <summary>
+    /// Gets any informational RTF text associated with this graph.
+    /// </summary>
     public string InformationRtfText { get; } = string.Empty;
 
+    /// <summary>
+    /// Type of graph represented by this class.
+    /// </summary>
     public enum GraphClassType
     {
+      /// <summary>
+      /// Unknown graph type.
+      /// </summary>
       Unknown,
+      /// <summary>
+      /// Spectral data (e.g. spectra).
+      /// </summary>
       SpectralData,
+      /// <summary>
+      /// Time series data.
+      /// </summary>
       TimeSeries,
     }
 
+    /// <summary>
+    /// Gets the determined graph type for this instance.
+    /// </summary>
     public GraphClassType GraphType { get; }
 
+    /// <summary>
+    /// Metadata for Z values that may be shared or derived from other graphs.
+    /// </summary>
     public class MetaData
     {
+      /// <summary>
+      /// Gets the unit shortcut for the Z values.
+      /// </summary>
       public string ZUnitShortcut { get; init; } = string.Empty;
+      /// <summary>
+      /// Gets the unit description for the Z values.
+      /// </summary>
       public string ZUnitDescription { get; init; } = string.Empty;
 
+      /// <summary>
+      /// Gets the Z values used as metadata (for example when the Z axis represents a measured parameter across spectra).
+      /// </summary>
       public double[] ZValues { get; init; }
     }
 
 
+    /// <summary>
+    /// Optional metadata for Z values. May be null if no metadata was found or inferred.
+    /// </summary>
     public MetaData? ZMetaData { get; }
 
 
+    /// <summary>
+    /// Gets the kind text (suffix) extracted from the caption that describes the data kind (for example "Spec.Data" or "Elapsed Time").
+    /// </summary>
     public string KindText { get; } = string.Empty;
 
+    /// <summary>
+    /// Initializes a new instance of the <see cref="TDGraphClass"/> class using the provided node and reader.
+    /// The constructor extracts graph data, units, titles and optional metadata from the WITec nodes.
+    /// </summary>
+    /// <param name="node">The node representing the data class entry in the WITec tree.</param>
+    /// <param name="reader">The reader used to resolve referenced nodes by their identifiers.</param>
     public TDGraphClass(WITecTreeNode node, WITecReader reader)
       : base(node)
     {

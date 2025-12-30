@@ -32,8 +32,8 @@ using System.Text;
 namespace Altaxo.Units
 {
   /// <summary>
-  /// Represents a unit that refers to a reference quantity. Example: 'Percent of page with' is a unit, which refers to the quantity 'page width' (which has the dimension of length).
-  /// Thus this unit is a combination of a dimensionless unit (in the example: 'percent') and the reference quantity (in the example: 'page width'). This dimension of
+  /// Represents a unit that refers to a reference quantity. Example: 'Percent of page width' is a unit, which refers to the quantity 'page width' (which has the dimension of length).
+  /// Thus this unit is a combination of a dimensionless unit (in the example: 'percent') and the reference quantity (in the example: 'page width'). The dimension of
   /// this unit is equal to the dimension of the reference quantity (i.e. in the above example 'length').
   /// </summary>
   public interface IRelativeUnit : IUnit
@@ -41,15 +41,20 @@ namespace Altaxo.Units
     /// <summary>
     /// The corresponding quantity that this unit encapsulates.
     /// </summary>
+    /// <value>
+    /// The reference quantity whose dimension defines the dimension of this relative unit.
+    /// </value>
     DimensionfulQuantity ReferenceQuantity { get; }
 
     /// <summary>
-    /// Calculated the dimensionless prefactor to multiply the <see cref="ReferenceQuantity"/> with.
-    /// Example: Given that the relative unit is 'percent of page with', a value of <paramref name="x"/>=5 is converted to 0.05. The result can then be used
-    /// to calculate the absolute quantity by multiplying the result of 0.05 with the 'page with'.
+    /// Calculates the dimensionless prefactor to multiply the <see cref="ReferenceQuantity"/> with.
+    /// Example: Given that the relative unit is 'percent of page width', a value of <paramref name="x"/> = 5 is converted to 0.05. The result can then be used
+    /// to calculate the absolute quantity by multiplying 0.05 with the page width.
     /// </summary>
     /// <param name="x">Numerical value to convert.</param>
-    /// <returns>The prefactor to multiply the <see cref="ReferenceQuantity"/> with in order to get the absolute quantity.</returns>
+    /// <returns>
+    /// The prefactor to multiply the <see cref="ReferenceQuantity"/> with in order to get the absolute quantity.
+    /// </returns>
     double GetRelativeValueFromValue(double x);
   }
 }

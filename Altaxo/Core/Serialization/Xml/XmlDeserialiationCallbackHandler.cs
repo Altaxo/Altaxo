@@ -26,10 +26,10 @@
 namespace Altaxo.Serialization.Xml
 {
   /// <summary>
-  /// This function is used to call back Deserialization surrogates after finishing deserialization
+  /// Delegate invoked to notify deserialization surrogates after finishing deserialization.
   /// </summary>
-  /// <param name="info">The deserialization info from which this call is initiated.</param>
-  /// <param name="documentRoot">The first element (the root element) in the hierarchy of deserialized elements.</param>
-  /// <param name="isFinalCall">If true, this is the last call of this kind.</param>
+  /// <param name="info">The deserialization info instance that originated the callback.</param>
+  /// <param name="documentRoot">The root object of the deserialized object hierarchy.</param>
+  /// <param name="isFinalCall">Indicates whether this is the final callback invocation for the deserialization process.</param>
   public delegate void XmlDeserializationCallbackEventHandler(IXmlDeserializationInfo info, object documentRoot, bool isFinalCall);
 }

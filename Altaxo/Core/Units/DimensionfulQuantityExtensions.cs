@@ -27,21 +27,24 @@ using System;
 namespace Altaxo.Units
 {
   /// <summary>
-  /// Extensions methods for <see cref="DimensionfulQuantity"/>.
+  /// Extension methods for <see cref="DimensionfulQuantity"/>.
   /// </summary>
   public static class DimensionfulQuantityExtensions
   {
     /// <summary>
     /// Checks whether the quantity <paramref name="x"/> has the expected <paramref name="expectedUnit"/>, and if not, throws an <see cref="ArgumentException"/>.
     /// </summary>
-    /// <param name="x">The dimensionful quantity x.</param>
-    /// <param name="expectedUnit">The expected unit.</param>
-    /// <param name="valueName">Name of the value <paramref name="x"/>.</param>
-    /// <exception cref="System.ArgumentException">Argument '{valueName}' has a unit {x.Unit} that is not compatible with '{expectedUnit}'</exception>
+    /// <param name="x">The dimensionful quantity to check.</param>
+    /// <param name="expectedUnit">The expected unit the quantity should have.</param>
+    /// <param name="valueName">Name of the value <paramref name="x"/>. When compiled with C# 10 or later the caller argument expression will be supplied automatically.</param>
+    /// <remarks>
+    /// This helper is intended to validate that the runtime unit of <paramref name="x"/> is compatible with the provided
+    /// <paramref name="expectedUnit"/> (i.e. both share the same SI base dimensions). If they are incompatible an
+    /// <see cref="ArgumentException"/> is thrown identifying the argument name and the incompatible units.
+    /// </remarks>
+    /// <exception cref="System.ArgumentException">Argument '{valueName}' has a unit {x.Unit} that is not compatible with '{expectedUnit}'.</exception>
     public static void CheckUnitCompatibleWith(this DimensionfulQuantity x, IUnit expectedUnit,
-#if NET9_0_OR_GREATER
     [System.Runtime.CompilerServices.CallerArgumentExpression(nameof(x))]
-#endif
     string valueName = "")
     {
       if (!(x.Unit.SIUnit == expectedUnit.SIUnit))

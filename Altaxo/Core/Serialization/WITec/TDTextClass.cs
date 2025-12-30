@@ -24,11 +24,28 @@
 
 namespace Altaxo.Serialization.WITec
 {
+  /// <summary>
+  /// Represents a text data class (TDText) extracted from a WITec project node.
+  /// The class reads RTF formatted text stored in the underlying node's stream data and
+  /// exposes it as a string in RTF format.
+  /// </summary>
   public class TDTextClass : TDataClass
   {
+    /// <summary>
+    /// Backing node for the "TDStream" child node containing the text stream data.
+    /// </summary>
     private WITecTreeNode _tdStream;
 
+    /// <summary>
+    /// Gets the text in RTF format as read from the node's stream data. If no stream data is present, this is an empty string.
+    /// </summary>
     public string TextRtfFormat { get; }
+
+    /// <summary>
+    /// Initializes a new instance of the <see cref="TDTextClass"/> class using the provided node.
+    /// The constructor reads the "TDStream" child node and decodes the <c>StreamData</c> byte array into an RTF string.
+    /// </summary>
+    /// <param name="node">The node representing this text data class in the WITec tree.</param>
     public TDTextClass(WITecTreeNode node) : base(node)
     {
       _tdStream = node.GetChild("TDStream");

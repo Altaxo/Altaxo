@@ -64,7 +64,7 @@ namespace Altaxo.Science.Thermorheology.MasterCurves
     public Func<(IReadOnlyList<double> X, IReadOnlyList<Complex64> Y, IReadOnlyList<Complex64>? YErr), Func<double, Complex64>> CreateInterpolationFunction { get; }
 
     /// <summary>
-    /// Initializes a new instance of the <see cref="ShiftGroupDouble"/> class.
+    /// Initializes a new instance of the <see cref="ShiftGroupComplexCommonX"/> class.
     /// </summary>
     /// <param name="data">Collection of multiple x-y curves that will finally form one master curve.</param>
     /// <param name="xShiftBy">Shift method, either additive or multiplicative.</param>
@@ -92,11 +92,7 @@ namespace Altaxo.Science.Thermorheology.MasterCurves
       return x.Count >= 2 && x.Max() > x.Min();
     }
 
-    /// <summary>
-    /// Gets the index of the curve in the given group with the most variation. The variation is determined by calculating the absolute slope,
-    /// with applying the logarithmic transformations according to the interpolation settings in that group.
-    /// </summary>
-    /// <returns>The index of the curve with most variation. If no suitable curve was found, then the return value is null.</returns>
+    /// <inheritdoc/>
     public int? GetCurveIndexWithMostVariation()
     {
       double maxAbsoluteSlope = 0;
@@ -123,6 +119,10 @@ namespace Altaxo.Science.Thermorheology.MasterCurves
       return idxMaxAbsoluteSlope >= 0 ? idxMaxAbsoluteSlope : null;
     }
 
+    /// <summary>
+    /// Transforms the curve data (complex valued) according to the group's interpolation options (logarithmization of x and/or y) and filters invalid points.
+    /// Returns the transformed x and complex y arrays suitable for interpolation.
+    /// </summary>
     public (IReadOnlyList<double> x, IReadOnlyList<Complex64> y) TransformCurveForInterpolationAccordingToGroupOptions(int idx)
     {
       var xarr = new List<double>();
@@ -173,6 +173,7 @@ namespace Altaxo.Science.Thermorheology.MasterCurves
       }
     }
 
+    /// <inheritdoc/>
     public void Interpolate()
     {
       if (_interpolationInformation is null)
@@ -184,11 +185,7 @@ namespace Altaxo.Science.Thermorheology.MasterCurves
       _interpolationInformation.InterpolationFunction = interpol;
     }
 
-    /// <summary>
-    /// Gets the minimum and maximum of the x-values, taking into account different options and whether the y-values are valid.
-    /// </summary>
-    /// <param name="idxCurve">Index of the curve.</param>
-    /// <returns>Minimum and maximum of the x-values, for x and y values appropriate for the conditions given by the parameter.</returns>
+    /// <inheritdoc/>
     public override (double min, double max) GetXMinimumMaximumOfCurvePointsSuitableForInterpolation(int idxCurve)
     {
       var min = double.PositiveInfinity;
@@ -333,14 +330,7 @@ namespace Altaxo.Science.Thermorheology.MasterCurves
     }
 
 
-    /// <summary>
-    /// Gets the mean difference between the y column and the interpolation function, provided that the x column is shifted by a factor.
-    /// </summary>
-    /// <param name="idxCurve">The index of the curve to fit.</param>
-    /// <param name="shift">Shift offset (direct offset or natural logarithm of the shiftFactor for the new part of the master curve.</param>
-    /// <returns>Returns the calculated penalty value (mean difference between interpolation curve and provided data),
-    /// and the number of points (of the new part of the curve) used for calculating the penalty value.</returns>
-    /// 
+    /// <inheritdoc/>
     public (double Penalty, int EvaluatedPoints) GetMeanAbsYDifference(int idxCurve, double shift)
     {
       if (_interpolationInformation is null)
@@ -406,6 +396,7 @@ namespace Altaxo.Science.Thermorheology.MasterCurves
       }
     }
 
+    /// <inheritdoc/>
     public (double Penalty, int EvaluatedPoints) GetMeanSquaredYDifference(int idxCurve, double shift)
     {
       if (_interpolationInformation is null) throw NewExceptionNoInterpolationInformation;

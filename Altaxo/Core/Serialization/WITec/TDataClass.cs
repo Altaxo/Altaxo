@@ -24,14 +24,42 @@
 
 namespace Altaxo.Serialization.WITec
 {
+  /// <summary>
+  /// Represents a TData class extracted from a WITec project node.
+  /// This wraps the underlying <see cref="WITecTreeNode"/> and provides easy access to
+  /// commonly used values such as the ID, caption and class name.
+  /// </summary>
   public class TDataClass
   {
+    /// <summary>
+    /// Gets the underlying node for this data class.
+    /// </summary>
     public WITecTreeNode Node { get; }
+
+    /// <summary>
+    /// Gets the node named "TData" that contains the data values for this class.
+    /// </summary>
     public WITecTreeNode TData { get; }
+
+    /// <summary>
+    /// Gets the identifier of this data class.
+    /// </summary>
     public int ID { get; }
+
+    /// <summary>
+    /// Gets the caption of this data class.
+    /// </summary>
     public string Caption { get; }
+
+    /// <summary>
+    /// Gets the class name associated with this data class.
+    /// </summary>
     public string ClassName { get; }
 
+    /// <summary>
+    /// Initializes a new instance of the <see cref="TDataClass"/> class using the provided node.
+    /// </summary>
+    /// <param name="node">The node that represents this data class in the WITec tree.</param>
     public TDataClass(WITecTreeNode node)
     {
       Node = node;
@@ -41,6 +69,12 @@ namespace Altaxo.Serialization.WITec
       Caption = TData.GetData<string>("Caption");
     }
 
+    /// <summary>
+    /// Gets the class name key corresponding to a data node name.
+    /// For example, a node name ending with "Data" will be converted to the key ending with "DataClassName".
+    /// </summary>
+    /// <param name="name">The node name to convert.</param>
+    /// <returns>The corresponding class-name key for the given node name.</returns>
     public static string GetClassNameOfName(string name)
     {
       return name.Replace("Data", "DataClassName");

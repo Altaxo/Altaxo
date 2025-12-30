@@ -34,16 +34,50 @@ namespace Altaxo.Serialization.Galactic
   /// </summary>
   public class GalacticSPCReader
   {
+    /// <summary>
+    /// Flags present in the SPC file header that describe file and axis formats.
+    /// </summary>
     [Flags]
     public enum Ftflgs : byte
     {
+      /// <summary>
+      /// Unknown / additional precision flag for time series (TSPREC).
+      /// </summary>
       TSPREC = 0x01,
+
+      /// <summary>
+      /// Indicates that X axis represents a CGRAM (TCGRAM).
+      /// </summary>
       TCGRAM = 0x02,
+
+      /// <summary>
+      /// Multi-spectrum file flag (TMULTI).
+      /// </summary>
       TMULTI = 0x04,
+
+      /// <summary>
+      /// Random order flag (TRANDM).
+      /// </summary>
       TRANDM = 0x08,
+
+      /// <summary>
+      /// Ordered data flag (TORDRD).
+      /// </summary>
       TORDRD = 0x10,
+
+      /// <summary>
+      /// Absolute scaling flag (TALABS).
+      /// </summary>
       TALABS = 0x20,
+
+      /// <summary>
+      /// X and Y values stored together (TXYXYS).
+      /// </summary>
       TXYXYS = 0x40,
+
+      /// <summary>
+      /// Explicit X values are present in the file (TXVALS).
+      /// </summary>
       TXVALS = 0x80,
     };
 
@@ -53,13 +87,44 @@ namespace Altaxo.Serialization.Galactic
     /// </summary>
     public struct SPCHDR
     {
+      /// <summary>
+      /// File flags that describe axis and file format (see <see cref="Ftflgs"/>).
+      /// </summary>
       public Ftflgs ftflgs;
+
+      /// <summary>
+      /// File version byte.
+      /// </summary>
       public byte fversn;
+
+      /// <summary>
+      /// General experimental technique code.
+      /// </summary>
       public byte fexper;
+
+      /// <summary>
+      /// Fractional scaling exponent for Y values (0x80 indicates floating point storage).
+      /// </summary>
       public byte fexp;
+
+      /// <summary>
+      /// Number of points in each spectrum.
+      /// </summary>
       public int fnpts;
+
+      /// <summary>
+      /// First X value (start of the X axis).
+      /// </summary>
       public double ffirst;
+
+      /// <summary>
+      /// Last X value (end of the X axis).
+      /// </summary>
       public double flast;
+
+      /// <summary>
+      /// Number of subfiles (spectra) contained in the file.
+      /// </summary>
       public int fnsub;
     }
 
@@ -99,15 +164,26 @@ namespace Altaxo.Serialization.Galactic
       public int subresv;
     }
 
+    /// <summary>
+    /// Gets the X-axis values for the currently read spectrum (or null if reading failed).
+    /// </summary>
     public double[]? XValues { get; private set; }
 
+    /// <summary>
+    /// Gets the Y-axis values as a read-only list of arrays. For multi-spectrum files,
+    /// each array represents one subfile (spectrum).
+    /// </summary>
     public IReadOnlyList<double[]> YValues { get; private set; } = [];
 
+    /// <summary>
+    /// Gets error information collected during reading, or null when no error occurred.
+    /// </summary>
     public string? ErrorMessages { get; private set; }
 
     /// <summary>
     /// Constructs the reader by reading in a stream.
     /// </summary>
+    /// <param name="stream">A seekable stream containing SPC file data.</param>
     public GalacticSPCReader(Stream stream)
     {
 

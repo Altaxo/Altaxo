@@ -25,22 +25,25 @@
 namespace Altaxo.Science.Thermorheology.MasterCurves
 {
   /// <summary>
-  /// Determines how to best fit the data into the master curve.
+  /// Specifies how to best fit (optimize) the data into the master curve.
   /// </summary>
   public enum OptimizationMethod
   {
     /// <summary>
-    /// Evaluates the mean absolute difference (L1-Norm) between master curve and new data and tries to minimize this difference.
+    /// Evaluates the mean absolute difference (L1-norm) between the master curve and the new data
+    /// and tries to minimize this difference.
     /// </summary>
     OptimizeAbsoluteDifference,
 
     /// <summary>
-    /// Evaluates the mean squared difference (L2-Norm) between master curve and new data and tries to minimize this value (minimization method).
+    /// Evaluates the mean squared difference (L2-norm) between the master curve and the new data
+    /// and tries to minimize this value using a minimization method.
     /// </summary>
     OptimizeSquaredDifference,
 
     /// <summary>
-    /// Evaluates the mean squared difference (L2-Norm) between master curve and new data and tries to minimize this value by brute force search.
+    /// Evaluates the mean squared difference (L2-norm) between the master curve and the new data
+    /// and tries to minimize this value by brute-force search.
     /// </summary>
     OptimizeSquaredDifferenceByBruteForce
   }

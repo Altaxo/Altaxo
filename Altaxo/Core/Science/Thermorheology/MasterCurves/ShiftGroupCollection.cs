@@ -64,7 +64,7 @@ namespace Altaxo.Science.Thermorheology.MasterCurves
     private bool[] _isCurveParticipatingInFit;
 
     /// <summary>
-    /// Contains the indices of the curves that participate in the fit. Contains the same information as <see cref="_isCurveParticipatingInFit"/>, but more convienient for foreach.. statements
+    /// Contains the indices of the curves that participate in the fit. Contains the same information as <see cref="_isCurveParticipatingInFit"/>, but more convenient for foreach.. statements
     /// </summary>
     private int[] _curvesParticipatingInFit;
 
@@ -74,7 +74,7 @@ namespace Altaxo.Science.Thermorheology.MasterCurves
     private bool[] _isGroupParticipatingInFit;
 
     /// <summary>
-    /// Contains the indices of the groups that participate in the fit. Contains the same information as <see cref="_isGroupParticipatingInFit"/>, but more convienient for foreach.. statements
+    /// Contains the indices of the groups that participate in the fit. Contains the same information as <see cref="_isGroupParticipatingInFit"/>, but more convenient for foreach.. statements
     /// </summary>
     private int[] _groupsParticipatingInFit;
 
@@ -104,6 +104,9 @@ namespace Altaxo.Science.Thermorheology.MasterCurves
     /// </summary>
     public OptimizationMethod OptimizationMethod { get; init; }
 
+    /// <summary>
+    /// Gets or sets the shift order strategy used to determine the order in which curves are fixed and fitted.
+    /// </summary>
     public ShiftOrder.IShiftOrder ShiftOrder { get; init; } = new ShiftOrder.FirstToLast();
 
     protected int _numberOfIterations = 20;
@@ -155,12 +158,12 @@ namespace Altaxo.Science.Thermorheology.MasterCurves
 
 
     /// <summary>
-    /// Contains the indices of the groups that participate in the fit. Contains the same information as <see cref="_isGroupParticipatingInFit"/>, but more convienient for foreach.. statements
+    /// Contains the indices of the groups that participate in the fit. Contains the same information as <see cref="_isGroupParticipatingInFit"/>, but more convenient for foreach.. statements
     /// </summary>
     public IReadOnlyList<int> GroupsParticipatingInFit => _groupsParticipatingInFit;
 
     /// <summary>
-    /// Contains the indices of the curves that participate in the fit. Contains the same information as <see cref="_isCurveParticipatingInFit"/>, but more convienient for foreach.. statements
+    /// Contains the indices of the curves that participate in the fit. Contains the same information as <see cref="_isCurveParticipatingInFit"/>, but more convenient for foreach.. statements
     /// </summary>
     public IReadOnlyList<int> CurvesParticipatingInFit => _curvesParticipatingInFit;
 
@@ -168,6 +171,11 @@ namespace Altaxo.Science.Thermorheology.MasterCurves
     /// If the element is true, the curve(s) with that curve index participate in the fit; otherwise, the element is false.
     /// </summary>
     public IReadOnlyList<bool> IsCurveParticipatingInFit => _isCurveParticipatingInFit;
+
+    /// <summary>
+    /// Gets the maximum number of curves across all groups (i.e. the maximum number of columns available).
+    /// </summary>
+    public int MaximumNumberOfCurves => _shiftValues.Length;
 
     /// <summary>
     /// Initializes a new instance of the <see cref="ShiftGroupCollection"/> class.
@@ -191,8 +199,6 @@ namespace Altaxo.Science.Thermorheology.MasterCurves
     /// <inheritdoc/>
     public int Count => _shiftGroups.Length;
 
-    public int MaximumNumberOfCurves => _shiftValues.Length;
-
     /// <inheritdoc/>
     public IEnumerator<IShiftGroup> GetEnumerator()
     {
@@ -205,6 +211,9 @@ namespace Altaxo.Science.Thermorheology.MasterCurves
       return _shiftGroups.GetEnumerator();
     }
 
+    /// <summary>
+    /// Evaluates and determines which curves and groups are participating in the fitting process.
+    /// </summary>
     [MemberNotNull(nameof(_isGroupParticipatingInFit))]
     [MemberNotNull(nameof(_isCurveParticipatingInFit))]
     [MemberNotNull(nameof(_groupsParticipatingInFit))]
@@ -699,7 +708,7 @@ namespace Altaxo.Science.Thermorheology.MasterCurves
 
     /// <summary>
     /// Reinterpolates the master curves in all groups, using the current shift values.
-    /// This call will also interpolate the curves in thoses groups, which do not participate in the master curve fitting.
+    /// This call will also interpolate the curves in those groups, which do not participate in the master curve fitting.
     /// </summary>
     public void ReinterpolateAllGroups()
     {

@@ -38,28 +38,70 @@ namespace Altaxo.Serialization.Origin
   /// </summary>
   public class OriginAnyParser
   {
+    /// <summary>
+    /// Gets the datasets.
+    /// </summary>
     public List<SpreadColumn> Datasets { get; set; } = [];
+    /// <summary>
+    /// Gets the spreadsheets.
+    /// </summary>
     public List<SpreadSheet> SpreadSheets { get; set; } = [];
+    /// <summary>
+    /// Gets the matrices.
+    /// </summary>
     public List<Matrix> Matrixes { get; set; } = [];
+    /// <summary>
+    /// Gets the excels.
+    /// </summary>
     public List<Excel> Excels { get; set; } = [];
+    /// <summary>
+    /// Gets the functions.
+    /// </summary>
     public List<Function> Functions { get; set; } = [];
+    /// <summary>
+    /// Gets the graphs.
+    /// </summary>
     public List<Graph> Graphs { get; set; } = [];
+    /// <summary>
+    /// Gets the notes.
+    /// </summary>
     public List<Note> Notes { get; set; } = [];
+    /// <summary>
+    /// Gets the parameters.
+    /// </summary>
     public List<(string Name, double Value)> Parameters { get; } = [];
 
-    /// <summary>Gets the attachments. Consist of name/value pairs, but the name often seems to be empty.</summary>
+    /// <summary>Gets the attachments. Consists of name/value pairs, but the name often seems to be empty.</summary>
     public List<(string Name, string Value)> Attachments { get; } = [];
 
+    /// <summary>
+    /// Gets or sets the project tree.
+    /// </summary>
     public ProjectNode ProjectTree { get; set; } = new();
+    /// <summary>
+    /// Gets or sets the results log.
+    /// </summary>
     public string ResultsLog { get; set; }
+    /// <summary>
+    /// Gets or sets the windows count.
+    /// </summary>
     public int WindowsCount { get; set; }
 
     private int _fileVersion;
+    /// <summary>
+    /// Gets the file version.
+    /// </summary>
     public int FileVersion => _fileVersion;
 
     private int _buildVersion;
+    /// <summary>
+    /// Gets the build version.
+    /// </summary>
     public int BuildVersion => _buildVersion;
 
+    /// <summary>
+    /// Gets the version.
+    /// </summary>
     public double Version => FileVersion / 100.0;
 
     // Process data
@@ -79,6 +121,9 @@ namespace Altaxo.Serialization.Origin
     private int _iaxispar;
     private byte[] _buffer16;
 
+    /// <summary>
+    /// Gets the parse error code.
+    /// </summary>
     public int ParseError => _parseError;
 
     /// <summary>
@@ -90,6 +135,11 @@ namespace Altaxo.Serialization.Origin
     {
     }
 
+    /// <summary>
+    /// Initializes a new instance of the <see cref="OriginAnyParser"/> class.
+    /// </summary>
+    /// <param name="originFile">The origin file stream.</param>
+    /// <param name="logFile">The log file writer.</param>
     public OriginAnyParser(Stream originFile, StreamWriter? logFile)
     {
       this._file = originFile;
@@ -110,6 +160,10 @@ namespace Altaxo.Serialization.Origin
       Parse();
     }
 
+    /// <summary>
+    /// Parses the Origin file.
+    /// </summary>
+    /// <returns>True if parsing was successful, otherwise false.</returns>
     private bool Parse()
     {
       _d_file_size = _file.Length;
@@ -268,6 +322,10 @@ namespace Altaxo.Serialization.Origin
       return true;
     }
 
+    /// <summary>
+    /// Reads the size of an object from the file stream.
+    /// </summary>
+    /// <returns>The size of the object.</returns>
     public int ReadObjectSize()
     {
       _file.ReadExactly(_buffer16, 0, sizeof(Int32) + 1);
@@ -282,6 +340,11 @@ namespace Altaxo.Serialization.Origin
       return BitConverter.ToInt32(_buffer16, 0);
     }
 
+    /// <summary>
+    /// Reads an object as a byte array.
+    /// </summary>
+    /// <param name="size">The size of the object.</param>
+    /// <returns>The byte array.</returns>
     public byte[] ReadObjectAsByteArray(int size)
     {
       // read a size-byte blob of data followed by '\n'
@@ -526,6 +589,9 @@ namespace Altaxo.Serialization.Origin
       return (fileVersion, newFileVersion, buildVersion, isOpjuFile, null);
     }
 
+    /// <summary>
+    /// Reads the global header from the file stream.
+    /// </summary>
     public void ReadGlobalHeader()
     {
       // get global header size
@@ -567,10 +633,12 @@ namespace Altaxo.Serialization.Origin
       }
     }
 
+    /// <summary>
+    /// Reads a dataset element from the file stream.
+    /// </summary>
+    /// <returns>True if a dataset element is found, otherwise false.</returns>
     public bool ReadDataSetElement()
     {
-      /* get info and values of a DataSet (worksheet column, matrix sheet, ...)
-       * return true if a DataSet is found, otherwise return false */
       int dse_header_size = 0, dse_data_size = 0, dse_mask_size = 0;
       long dsh_start = 0, dsd_start = 0, dsm_start = 0;
 
@@ -4291,7 +4359,7 @@ namespace Altaxo.Serialization.Origin
     #endregion
 
     /// <summary>
-    /// Gets the type of data toe deserialize from dataType, dataTypeU and valueSize.
+    /// Gets the type of data to deserialize from dataType, dataTypeU and valueSize.
     /// </summary>
     /// <param name="dataType">Type of the data.</param>
     /// <param name="dataTypeU">The data typeU.</param>
@@ -4389,4 +4457,3 @@ namespace Altaxo.Serialization.Origin
     }
   }
 }
-

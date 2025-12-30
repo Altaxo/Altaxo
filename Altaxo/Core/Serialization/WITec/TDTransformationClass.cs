@@ -24,19 +24,44 @@
 
 namespace Altaxo.Serialization.WITec
 {
+  /// <summary>
+  /// Represents a transformation definition (TDTransformation) read from a WITec project node.
+  /// Provides access to the standard unit, optional interpretation, calibration state and unit kind.
+  /// </summary>
   public class TDTransformationClass : TDataClass
   {
+    /// <summary>
+    /// Backing node for the "TDTransformation" child node.
+    /// </summary>
     private WITecTreeNode _tdTransformation;
 
+    /// <summary>
+    /// Gets the standard unit string as defined in the transformation node.
+    /// </summary>
     public string StandardUnit { get; }
 
+    /// <summary>
+    /// Gets the optional interpretation associated with this transformation, or <c>null</c> if none is defined.
+    /// </summary>
     public TDInterpretationClass? Interpretation { get; }
 
+    /// <summary>
+    /// Gets a value indicating whether the transformation is calibrated.
+    /// </summary>
     public bool IsCalibrated { get; }
 
+    /// <summary>
+    /// Gets the integer code describing the kind of units used by the transformation.
+    /// </summary>
     public int UnitKind { get; }
 
 
+    /// <summary>
+    /// Initializes a new instance of the <see cref="TDTransformationClass"/> class.
+    /// The constructor reads transformation metadata from the provided node and resolves any referenced interpretation using the reader.
+    /// </summary>
+    /// <param name="node">The node representing the transformation in the WITec tree.</param>
+    /// <param name="reader">The reader used to resolve referenced nodes by identifier.</param>
     public TDTransformationClass(WITecTreeNode node, WITecReader reader)
       : base(node)
     {

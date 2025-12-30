@@ -29,8 +29,15 @@ using System.IO;
 
 namespace Altaxo.Serialization.Jcamp
 {
+  /// <summary>
+  /// Represents a single data block read from a JCAMP file. This class parses block headers
+  /// and the XY data section for single-spectrum JCAMP blocks.
+  /// </summary>
   public partial class JcampReader
   {
+    /// <summary>
+    /// Represents a parsed JCAMP block containing metadata and numeric series.
+    /// </summary>
     public class Block
     {
       protected double _xFirst = double.NaN;
@@ -41,15 +48,34 @@ namespace Altaxo.Serialization.Jcamp
       public int? _numberOfPoints = null;
 
 
+      /// <summary>
+      /// Gets the first X value read from the block header, or NaN if not specified.
+      /// </summary>
       public double XFirst => _xFirst;
+
+      /// <summary>
+      /// Gets the X increment value read from the block header, or NaN if not specified.
+      /// </summary>
       public double XIncrement => _xInc;
+
+      /// <summary>
+      /// Gets the X scaling factor read from the header, or NaN if not specified.
+      /// </summary>
       public double XScale => _xScale;
+
+      /// <summary>
+      /// Gets the Y scaling factor read from the header, or NaN if not specified.
+      /// </summary>
       public double YScale => _yScale;
 
 
       /// <summary>The title of the file.</summary>
       public string? Title { get; protected set; } = null;
+
+      /// <summary>Owner of the dataset when present in the header.</summary>
       public string? Owner { get; protected set; } = null;
+
+      /// <summary>System name as reported in the header.</summary>
       public string? SystemName { get; protected set; } = null;
 
       /// <summary>The label of the x-axis.</summary>
@@ -65,12 +91,12 @@ namespace Altaxo.Serialization.Jcamp
       public string? YUnit { get; protected set; } = null;
 
       /// <summary>
-      /// Messages about any errors during the import of the Jcamp file.
+      /// Messages about any errors during the import of the JCAMP file.
       /// </summary>
       public string? ErrorMessages { get; protected set; } = null;
 
       /// <summary>
-      /// Creation date/time of the Jcamp file. Be aware that due to different date/time formats, the creation time may be wrong.
+      /// Creation date/time of the JCAMP file. Be aware that due to different date/time formats, the creation time may be incorrect.
       /// If the creation time could not be parsed, the value is <see cref="DateTime.MinValue"/>.
       /// </summary>
       public DateTime CreationTime { get; protected set; } = DateTime.MinValue;
@@ -78,14 +104,21 @@ namespace Altaxo.Serialization.Jcamp
       private double[] _xValues;
       private double[] _yValues;
 
+      /// <summary>
+      /// Gets the computed X values for the block data.
+      /// </summary>
       public double[] XValues => _xValues;
+
+      /// <summary>
+      /// Gets the parsed Y values for the block data.
+      /// </summary>
       public double[] YValues => _yValues;
 
       /// <summary>
-      /// Imports a Jcamp file into an DataTable. The file must not be a multi spectrum file (an exception is thrown in this case).
+      /// Imports a JCAMP block from the given text reader and parses its headers and data.
+      /// The block must not be a multi-spectrum block; a multi-spectrum file will cause a format exception.
       /// </summary>
-      /// <param name="tr">A <see cref="System.IO.TextReader"/> where to import from.</param>
-      /// <returns>Null if successful, otherwise an error description.</returns>
+      /// <param name="tr">A <see cref="TextReader"/> to read the JCAMP block from.</param>
       public Block(TextReader tr)
       {
         DateTime dateValue = DateTime.MinValue;
@@ -267,9 +300,10 @@ namespace Altaxo.Serialization.Jcamp
       }
 
       /// <summary>
-      /// Handles the date line (a line that has started with ##DATE=
+      /// Handles a date line (a line that starts with the <c>##DATE=</c> header) and extracts an optional date and time.
       /// </summary>
-      /// <param name="s">The remaining of the line</param>
+      /// <param name="s">The remainder of the date line after the header.</param>
+      /// <returns>A tuple with the parsed date and time values. Each element is null if parsing failed or the value is not present.</returns>
       protected (DateTime? dateValue, DateTime? timeValue) HandleDateLine(string s)
       {
         DateTime? time = null;
@@ -288,6 +322,11 @@ namespace Altaxo.Serialization.Jcamp
         return (date, time);
       }
 
+      /// <summary>
+      /// Parses a time string using several exact formats and returns a <see cref="DateTime"/> representing the time portion.
+      /// </summary>
+      /// <param name="s">The time string to parse.</param>
+      /// <returns>A <see cref="DateTime"/> containing the parsed time, or null if parsing failed.</returns>
       public static DateTime? ParseTime(string s)
       {
         s = s.Trim(_trimCharsDateTime);
@@ -307,6 +346,11 @@ namespace Altaxo.Serialization.Jcamp
       }
 
 
+      /// <summary>
+      /// Parses a date string using several exact formats and validates the parsed date.
+      /// </summary>
+      /// <param name="s">The date string to parse.</param>
+      /// <returns>A <see cref="DateTime"/> containing the parsed date if successful and reasonable; otherwise null.</returns>
       public static DateTime? ParseDate(string s)
       {
         s = s.Trim(_trimCharsDateTime);
@@ -332,6 +376,11 @@ namespace Altaxo.Serialization.Jcamp
         return null;
       }
 
+      /// <summary>
+      /// Validates whether a parsed date is within a reasonable range.
+      /// </summary>
+      /// <param name="date">The date to validate.</param>
+      /// <returns>True if the date appears reasonable; otherwise false.</returns>
       public static bool IsDateReasonable(DateTime date)
       {
         if (date.Year < 1980 || date.Year > DateTime.UtcNow.Year)

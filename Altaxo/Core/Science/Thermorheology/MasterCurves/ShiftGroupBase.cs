@@ -36,10 +36,14 @@ namespace Altaxo.Science.Thermorheology.MasterCurves
     /// </summary>
     public ShiftXBy XShiftBy { get; }
 
-    /// <summary>Logarithmize x values before adding to the interpolation curve. (Only for interpolation).</summary>
+    /// <summary>
+    /// If true, x values are logarithmized before being added to the interpolation curve. (Only used for interpolation.)
+    /// </summary>
     public bool LogarithmizeXForInterpolation { get; }
 
-    /// <summary>Logarithmize y values before adding to the interpolation curve. (Only for interpolation).</summary>
+    /// <summary>
+    /// If true, y values are logarithmized before being added to the interpolation curve. (Only used for interpolation.)
+    /// </summary>
     public bool LogarithmizeYForInterpolation { get; }
 
 
@@ -47,7 +51,7 @@ namespace Altaxo.Science.Thermorheology.MasterCurves
 
     /// <summary>
     /// Gets the tracked x minimum and x maximum values. For explanation, see <see cref="TrackXMinimumMaximumOfMasterCurvePoints(int, double, bool)"/>.
-    /// The convention is, that when shifting by multiplication, the returned values are already logarithmized, whereas, if shifted by offset, the returned values are not logarithmized.
+    /// The convention is that when shifting by multiplication, the returned values are already logarithmized; whereas if shifted by offset, the returned values are not logarithmized.
     /// That means that the possible shifts can always be calculated by subtraction.
     /// </summary>
     /// <returns>The tracked x-minimum and x-maximum values.</returns>
@@ -55,13 +59,13 @@ namespace Altaxo.Science.Thermorheology.MasterCurves
 
     /// <summary>
     /// Tracks the x minimum and x maximum of the master curve points.
-    /// Here the convention is, that when shifting by multiplication, the values are already logarithmized, whereas, if shifted by offset, the returned values are not logarithmized.
+    /// The convention used is: when shifting by multiplication, the values are already logarithmized; when shifting by offset, the values are not logarithmized.
     /// </summary>
     /// <param name="idxCurve">The index of the curve to consider.</param>
     /// <param name="shift">The shift value for this curve.</param>
-    /// <param name="startNewTracking">If set to true, a new tracking will be started, i.e. the xmin and xmax of the curve (under consideration of the shift value) is
-    /// set as the new tracked xminimum and xmaximum. If false, the xmin and xmax of the curve (under consideration) of the shift value is calculated, and then merged
-    /// into the tracked xminimum and xmaximum.</param>
+    /// <param name="startNewTracking">If set to <c>true</c>, a new tracking will be started: the xmin and xmax of the curve (taking the shift value into account)
+    /// are set as the new tracked x minimum and x maximum. If <c>false</c>, the xmin and xmax of the curve (taking the shift value into account) are calculated
+    /// and then merged into the tracked x minimum and x maximum.</param>
     public void TrackXMinimumMaximumOfMasterCurvePoints(int idxCurve, double shift, bool startNewTracking = false)
     {
       var (min, max) = GetXMinimumMaximumOfCurvePointsSuitableForInterpolation(idxCurve);
@@ -85,11 +89,11 @@ namespace Altaxo.Science.Thermorheology.MasterCurves
 
 
     /// <summary>
-    /// Initializes a new instance of the <see cref="ShiftGroupDouble"/> class.
+    /// Initializes a new instance of the <see cref="ShiftGroupBase"/> class.
     /// </summary>
     /// <param name="xShiftBy">Shift method, either additive or multiplicative.</param>
-    /// <param name="logarithmizeXForInterpolation">If true, the x-values are logarithmized prior to participating in the interpolation function.</param>
-    /// <param name="logarithmizeYForInterpolation">If true, the y-values are logartihmized prior to participating in the interpolation function.</param>
+    /// <param name="logarithmizeXForInterpolation">If <c>true</c>, the x-values are logarithmized prior to participating in the interpolation function.</param>
+    /// <param name="logarithmizeYForInterpolation">If <c>true</c>, the y-values are logarithmized prior to participating in the interpolation function.</param>
     public ShiftGroupBase(ShiftXBy xShiftBy, bool logarithmizeXForInterpolation, bool logarithmizeYForInterpolation)
     {
       XShiftBy = xShiftBy;

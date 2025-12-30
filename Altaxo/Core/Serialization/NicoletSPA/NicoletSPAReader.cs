@@ -27,12 +27,30 @@ using System.IO;
 
 namespace Altaxo.Serialization.NicoletSPA
 {
+  /// <summary>
+  /// Reads data from a Nicolet SPA formatted stream and exposes the
+  /// x and y arrays together with metadata.
+  /// </summary>
   public class NicoletSPAReader
   {
+    /// <summary>
+    /// The first x value (minimum wavenumber) read from the file.
+    /// </summary>
     public double XFirst { get; protected set; }
+
+    /// <summary>
+    /// The last x value (maximum wavenumber) read from the file.
+    /// </summary>
     public double XLast { get; protected set; }
+
+    /// <summary>
+    /// The increment between successive x values.
+    /// </summary>
     public double XIncrement { get; protected set; }
 
+    /// <summary>
+    /// The number of points in the data arrays.
+    /// </summary>
     public int NumberOfPoints { get; protected set; }
 
     /// <summary>The label of the x-axis.</summary>
@@ -52,12 +70,39 @@ namespace Altaxo.Serialization.NicoletSPA
     /// </summary>
     public string? ErrorMessages { get; protected set; } = null;
 
+    /// <summary>
+    /// Comment text extracted from the file header. This is usually the
+    /// comment block present in the SPA header and is trimmed of any
+    /// trailing null characters.
+    /// </summary>
     public string Comment = string.Empty;
 
+    /// <summary>
+    /// The x values read from the file as an array of doubles.
+    /// </summary>
     public double[] X { get; protected set; }
+
+    /// <summary>
+    /// The y values read from the file as an array of doubles.
+    /// </summary>
     public double[] Y { get; protected set; }
 
 
+    /// <summary>
+    /// Initializes a new instance of <see cref="NicoletSPAReader"/> and
+    /// reads the data from the provided <paramref name="stream"/>.
+    /// </summary>
+    /// <param name="stream">A seekable <see cref="System.IO.Stream"/>
+    /// that contains data in the Nicolet SPA file format.</param>
+    /// <exception cref="ArgumentNullException">Thrown when <paramref name="stream"/> is <c>null</c>.</exception>
+    /// <exception cref="ArgumentException">Thrown when <paramref name="stream"/> is not seekable.</exception>
+    /// <remarks>
+    /// The constructor reads fixed offsets from the SPA file header to
+    /// determine comment text, number of points, minimum/maximum
+    /// wavenumbers and the location of the binary data block. Existing
+    /// inline comments in the implementation document the exact offsets
+    /// and markers used.
+    /// </remarks>
     public NicoletSPAReader(Stream stream)
     {
       const int Pos_BeginComment = 0x1E; // 30 dez, position where the comment starts

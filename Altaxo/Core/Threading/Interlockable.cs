@@ -82,11 +82,11 @@ namespace Altaxo.Threading
       }
     }
     /// <summary>
-    /// Modifies the value, by using the provided function. Since the function is executed in
-    /// the locked state, execution must be kept short!
+    /// Modifies the value by using the provided function. Since the function is executed while
+    /// the value is locked, execution must be kept short.
     /// </summary>
-    /// <param name="func">The function.</param>
-    /// <returns>The old value, and the new value.</returns>
+    /// <param name="func">The function to compute the new value from the old value.</param>
+    /// <returns>The old value and the new value.</returns>
     public (T OldValue, T NewValue) Modify(Func<T, T> func)
     {
       lock (this)
@@ -99,22 +99,20 @@ namespace Altaxo.Threading
     }
 
     /// <summary>
-    /// Performs an implicit conversion from <see cref="Interlockable{T}"/> to T/>.
+    /// Performs an implicit conversion from <see cref="Interlockable{T}"/> to <typeparamref name="T"/>.
     /// </summary>
     /// <param name="t">The interlockable instance.</param>
-    /// <returns>
-    /// The value that is managed by the interlockable.
-    /// </returns>
+    /// <returns>The value that is managed by the interlockable.</returns>
     public static implicit operator T(Interlockable<T> t)
     {
       return t.Value;
     }
 
     /// <summary>
-    /// Performs an explicit conversion from the value type T to <see cref="Interlockable{T}"/>.
+    /// Performs an explicit conversion from the value type <typeparamref name="T"/> to <see cref="Interlockable{T}"/>.
     /// </summary>
     /// <param name="t">The initial value.</param>
-    /// <returns>The <see cref="Interlockable{T}"/> that holds the initial.</returns>
+    /// <returns>The <see cref="Interlockable{T}"/> that holds the initial value.</returns>
     public static explicit operator Interlockable<T>(T t) // Explicite because otherwise unintended assignment of a new instance of Interlockable can happen
     {
       return new Interlockable<T>(t);

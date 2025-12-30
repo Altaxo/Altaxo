@@ -42,8 +42,18 @@ namespace Altaxo.Units
 
     #region Serialization
     [Altaxo.Serialization.Xml.XmlSerializationSurrogateFor(typeof(DimensionfulQuantity), 0)]
+    /// <summary>
+    /// XML serialization surrogate for <see cref="DimensionfulQuantity"/> (version 0).
+    /// Handles custom serialization and deserialization of the outer type.
+    /// </summary>
     public class SerializationSurrogate0 : Altaxo.Serialization.Xml.IXmlSerializationSurrogate
     {
+      /// <summary>
+      /// Serializes the specified <see cref="DimensionfulQuantity"/> instance into the provided
+      /// <see cref="Altaxo.Serialization.Xml.IXmlSerializationInfo"/>.
+      /// </summary>
+      /// <param name="obj">The object to serialize (expected to be a <see cref="DimensionfulQuantity"/>).</param>
+      /// <param name="info">The serialization info where values should be written.</param>
       public void Serialize(object obj, Altaxo.Serialization.Xml.IXmlSerializationInfo info)
       {
         var s = (DimensionfulQuantity)obj;
@@ -53,6 +63,14 @@ namespace Altaxo.Units
         info.AddValueOrNull("Unit", s.IsEmpty ? null : s.Unit);
       }
 
+      /// <summary>
+      /// Deserializes an instance of <see cref="DimensionfulQuantity"/> from the provided
+      /// <see cref="Altaxo.Serialization.Xml.IXmlDeserializationInfo"/> and returns the reconstructed object.
+      /// </summary>
+      /// <param name="o">An optional existing object instance (ignored).</param>
+      /// <param name="info">The deserialization info to read values from.</param>
+      /// <param name="parent">The parent object in the object graph (may be <c>null</c>).</param>
+      /// <returns>A new <see cref="DimensionfulQuantity"/> instance created from the serialized data.</returns>
       public object Deserialize(object? o, Altaxo.Serialization.Xml.IXmlDeserializationInfo info, object? parent)
       {
         var value = info.GetDouble("Value");
@@ -302,6 +320,7 @@ namespace Altaxo.Units
     /// <summary>Compares this quanitity to another quantity.</summary>
     /// <param name="other">The other quantity to compare with.</param>
     /// <returns>The value is 1, if this quantity is greater than the other quantity; 0 if both quantities are equal, and -1 if this quantity is less than the other quantity.</returns>
+    /// <inheritdoc/>
     public int CompareTo(DimensionfulQuantity other)
     {
       if (_unit is null || other._unit is null || _unit.SIUnit != other._unit.SIUnit)
@@ -312,6 +331,7 @@ namespace Altaxo.Units
       return thisval.CompareTo(otherval);
     }
 
+    /// <inheritdoc/>
     public int CompareTo(object? value)
     {
       if (value is null)
@@ -322,6 +342,7 @@ namespace Altaxo.Units
         throw new ArgumentException($"Parameter must be of type {typeof(DimensionfulQuantity)}, but acutally is {value?.GetType()}");
     }
 
+    /// <inheritdoc/>
     public readonly bool Equals(DimensionfulQuantity other)
     {
       return this._value.Equals(other._value) &&
@@ -330,16 +351,24 @@ namespace Altaxo.Units
 
     }
 
+    /// <inheritdoc/>
     public override readonly bool Equals(object? obj)
     {
       return obj is DimensionfulQuantity other && this.Equals(other);
     }
 
+    /// <inheritdoc/>
     public override int GetHashCode()
     {
       return _value.GetHashCode() + 17 * (_prefix ?? SIPrefix.None).GetHashCode() + (_unit is null ? 0 : 31 * _unit.GetHashCode());
     }
 
+    /// <summary>
+    /// Determines whether two quantities are equal in all components.
+    /// </summary>
+    /// <param name="a">Left operand.</param>
+    /// <param name="b">Right operand.</param>
+    /// <returns><c>true</c> if both quantities are equal; otherwise <c>false</c>.</returns>
     public static bool operator ==(DimensionfulQuantity a, DimensionfulQuantity b)
     {
       if (!(a._unit == b._unit))
@@ -352,6 +381,12 @@ namespace Altaxo.Units
       return true;
     }
 
+    /// <summary>
+    /// Determines whether two quantities are not equal in any component.
+    /// </summary>
+    /// <param name="a">Left operand.</param>
+    /// <param name="b">Right operand.</param>
+    /// <returns><c>true</c> if they are not equal; otherwise <c>false</c>.</returns>
     public static bool operator !=(DimensionfulQuantity a, DimensionfulQuantity b)
     {
       return !(a == b);
@@ -641,6 +676,7 @@ namespace Altaxo.Units
       return new DimensionfulQuantity(Math.Min(a.Value, c), a.Prefix, a.Unit);
     }
 
+    /// <inheritdoc/>
     public override string ToString()
     {
       if (IsEmpty)
@@ -649,6 +685,7 @@ namespace Altaxo.Units
       return string.Format("{0} {1}{2}", _value, Prefix.ShortCut, Unit.ShortCut);
     }
 
+    /// <inheritdoc/>
     public string ToString(string? format, IFormatProvider? formatProvider)
     {
       return IsEmpty

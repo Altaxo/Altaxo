@@ -26,10 +26,21 @@ using System;
 
 namespace Altaxo.Serialization.WITec
 {
+  /// <summary>
+  /// Interpretation class for spatial units used in WITec data.
+  /// Maps integer unit indices to human-readable descriptions and shortcuts (for example meters -> "m").
+  /// </summary>
   public class TDSpaceInterpretationClass : TDInterpretationClass
   {
+    /// <summary>
+    /// Backing node for the "TDSpaceInterpretation" child node.
+    /// </summary>
     protected WITecTreeNode _tdSpaceInterpretation;
 
+    /// <summary>
+    /// Initializes a new instance of the <see cref="TDSpaceInterpretationClass"/> class using the provided node.
+    /// </summary>
+    /// <param name="node">The node representing this interpretation in the WITec tree.</param>
     public TDSpaceInterpretationClass(WITecTreeNode node)
       : base(node)
     {
@@ -37,6 +48,7 @@ namespace Altaxo.Serialization.WITec
     }
 
 
+    /// <inheritdoc/>
     public override (string Description, string shortCut) GetUnit(int unit)
     {
       return unit switch

@@ -42,8 +42,18 @@ namespace Altaxo.Units
 
     #region Serialization
     [Altaxo.Serialization.Xml.XmlSerializationSurrogateFor(typeof(PrefixedUnit), 0)]
+    /// <summary>
+    /// XML serialization surrogate for <see cref="PrefixedUnit"/> (version 0).
+    /// Handles custom serialization and deserialization for the struct.
+    /// </summary>
     public class SerializationSurrogate0_PrefixUnit : Altaxo.Serialization.Xml.IXmlSerializationSurrogate
     {
+      /// <summary>
+      /// Serializes the specified <see cref="PrefixedUnit"/> instance into the provided
+      /// <see cref="Altaxo.Serialization.Xml.IXmlSerializationInfo"/>.
+      /// </summary>
+      /// <param name="obj">The object to serialize (expected to be a <see cref="PrefixedUnit"/>).</param>
+      /// <param name="info">The serialization info where values should be written.</param>
       public void Serialize(object obj, Altaxo.Serialization.Xml.IXmlSerializationInfo info)
       {
         var s = (PrefixedUnit)obj;
@@ -52,6 +62,14 @@ namespace Altaxo.Units
         info.AddValue("Unit", s.Unit);
       }
 
+      /// <summary>
+      /// Deserializes an instance of <see cref="PrefixedUnit"/> from the provided
+      /// <see cref="Altaxo.Serialization.Xml.IXmlDeserializationInfo"/> and returns the reconstructed object.
+      /// </summary>
+      /// <param name="o">An optional existing object instance (ignored).</param>
+      /// <param name="info">The deserialization info to read values from.</param>
+      /// <param name="parent">The parent object in the object graph (may be <c>null</c>).</param>
+      /// <returns>A new <see cref="PrefixedUnit"/> instance created from the serialized data.</returns>
       public object Deserialize(object? o, Altaxo.Serialization.Xml.IXmlDeserializationInfo info, object? parent)
       {
         var prefix = (SIPrefix)info.GetValue("Prefix", parent);
@@ -70,7 +88,7 @@ namespace Altaxo.Units
     public PrefixedUnit(IUnit unit) : this(SIPrefix.None, unit) { }
 
     /// <summary>
-    /// Initializes a new instance of the <see cref="PrefixedUnit"/> struct.
+    /// Initializes a new instance of the <see cref="PrefixedUnit"/> struct with the specified prefix and unit.
     /// </summary>
     /// <param name="prefix">The SI prefix.</param>
     /// <param name="unit">The unit.</param>
@@ -98,20 +116,10 @@ namespace Altaxo.Units
       }
     }
 
-    /// <summary>
-    /// Gets the unit.
-    /// </summary>
-    /// <value>
-    /// The unit.
-    /// </value>
+    /// <inheritdoc/>
     public IUnit Unit { get { return _unit ?? Units.Dimensionless.Unity.Instance; } }
 
-    /// <summary>
-    /// Gets the prefix.
-    /// </summary>
-    /// <value>
-    /// The prefix.
-    /// </value>
+    /// <inheritdoc/>
     public SIPrefix Prefix { get { return _prefix ?? SIPrefix.None; } }
 
     /// <summary>
@@ -120,6 +128,7 @@ namespace Altaxo.Units
     /// <returns>
     /// A <see cref="System.String" /> that represents this instance.
     /// </returns>
+    /// <inheritdoc/>
     public override string ToString()
     {
       return Prefix.ShortCut + Unit.ShortCut;

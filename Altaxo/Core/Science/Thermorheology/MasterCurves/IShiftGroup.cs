@@ -27,8 +27,8 @@ using System.Collections.Generic;
 namespace Altaxo.Science.Thermorheology.MasterCurves
 {
   /// <summary>
-  /// Interface for a shift group. A shift group consist of a number of curves, which when shifted properly, finally form a master curve.
-  /// The curves can by scalar valued (y is of type <see cref="System.Double"/>, or complex valued.
+  /// Interface for a shift group. A shift group consists of a number of curves which, when shifted properly, finally form a master curve.
+  /// The curves can be scalar-valued (the y values are of type <see cref="System.Double"/>) or complex-valued.
   /// </summary>
   public interface IShiftGroup
   {
@@ -43,7 +43,9 @@ namespace Altaxo.Science.Thermorheology.MasterCurves
     /// </summary>
     ShiftXBy XShiftBy { get; }
 
-    /// <summary>Logarithmize x values before adding to the interpolation curve. (Only for interpolation).</summary>
+    /// <summary>
+    /// Gets a value indicating whether x values are logarithmized before they are added to the interpolation curve. (Only used for interpolation.)
+    /// </summary>
     bool LogarithmizeXForInterpolation { get; }
 
 
@@ -61,7 +63,7 @@ namespace Altaxo.Science.Thermorheology.MasterCurves
 
     /// <summary>
     /// Adds the data of the curve with index <paramref name="idxCurve"/> to the interpolation.
-    /// If data for that curve are already present in the interpolation data, they are removed, and then added anew.
+    /// If data for that curve are already present in the interpolation data, they are removed and then added anew.
     /// </summary>
     /// <param name="idxCurve">The index of the curve to add.</param>
     /// <param name="shift">The current shift that should be used.</param>
@@ -77,7 +79,7 @@ namespace Altaxo.Science.Thermorheology.MasterCurves
     /// taking into account the logarithmize options, and whether the corresponding y-values are valid.
     /// </summary>
     /// <param name="idxCurve">Index of the curve.</param>
-    /// <returns>Minimum and maximum of the x-values, for x and y values appropriate for the conditions given by the parameter.</returns>
+    /// <returns>Minimum and maximum of the x-values for x and y values appropriate for the conditions given by the parameter.</returns>
     public (double min, double max) GetXMinimumMaximumOfCurvePointsSuitableForInterpolation(int idxCurve);
 
     /// <summary>
@@ -85,15 +87,15 @@ namespace Altaxo.Science.Thermorheology.MasterCurves
     /// </summary>
     /// <param name="idxCurve">The index of the curve to consider.</param>
     /// <param name="shift">The shift value for this curve.</param>
-    /// <param name="startNewTracking">If set to true, a new tracking will be started, i.e. the xmin and xmax of the curve (under consideration of the shift value) is
-    /// set as the new tracked xminimum and xmaximum. If false, the xmin and xmax of the curve (under consideration) of the shift value is calculated, and then merged
-    /// into the tracked xminimum and xmaximum.</param>
+    /// <param name="startNewTracking">If set to true, a new tracking will be started; i.e. the xmin and xmax of the curve (taking the shift value into account)
+    /// are set as the new tracked x minimum and x maximum. If false, the xmin and xmax of the curve (taking the shift value into account) are calculated
+    /// and then merged into the tracked x minimum and x maximum.</param>
     public void TrackXMinimumMaximumOfMasterCurvePoints(int idxCurve, double shift, bool startNewTracking);
 
     /// <summary>
     /// Gets the tracked x minimum and x maximum values.
     /// For explanation, see <see cref="TrackXMinimumMaximumOfMasterCurvePoints(int, double, bool)"/>.
-    /// The convention is, that when shifting by multiplication, the returned values are already logarithmized, whereas, if shifted by offset, the returned values are not logarithmized.
+    /// The convention is that when shifting by multiplication, the returned values are already logarithmized, whereas if shifted by offset, the returned values are not logarithmized.
     /// That means that the possible shifts can always be calculated by subtraction.
     /// </summary>
     /// <returns>The tracked x-minimum and x-maximum values.</returns>
@@ -103,7 +105,7 @@ namespace Altaxo.Science.Thermorheology.MasterCurves
     /// Gets the minimum and maximum of the current x-values used for interpolation. Data points that belong
     /// to the curve with the index given in the argument are not taken into account.
     /// </summary>
-    /// <param name="indexOfCurve">The index of curve.</param>
+    /// <param name="indexOfCurve">The index of curve to exclude.</param>
     /// <returns>The minimum and maximum of the x-values, except for those points that belong to the curve with index=<paramref name="indexOfCurve"/>.</returns>
     public (double min, double max) GetXMinimumMaximumOfInterpolationValuesExceptForCurveIndex(int indexOfCurve);
 
@@ -111,8 +113,8 @@ namespace Altaxo.Science.Thermorheology.MasterCurves
     /// Gets the mean difference between the y column and the interpolation function, provided that the x column is shifted by a factor.
     /// </summary>
     /// <param name="idxCurve">The index of the curve to fit.</param>
-    /// <param name="shift">Shift offset (direct offset or natural logarithm of the shiftFactor for the new part of the master curve.</param>
-    /// <returns>Returns the calculated penalty value (mean difference between interpolation curve and provided data),
+    /// <param name="shift">Shift offset (direct offset or natural logarithm of the shift factor for the new part of the master curve).</param>
+    /// <returns>Returns the calculated penalty value (mean absolute difference between the interpolation curve and the provided data),
     /// and the number of points (of the new part of the curve) used for calculating the penalty value.</returns>
     /// 
     public (double Penalty, int EvaluatedPoints) GetMeanAbsYDifference(int idxCurve, double shift);
@@ -121,15 +123,15 @@ namespace Altaxo.Science.Thermorheology.MasterCurves
     /// Gets the mean squared difference between the y column and the interpolation function, provided that the x column is shifted by a factor.
     /// </summary>
     /// <param name="idxCurve">The index of the curve to fit.</param>
-    /// <param name="shift">Shift offset (direct offset or natural logarithm of the shiftFactor for the new part of the master curve.</param>
-    /// <returns>Returns the calculated penalty value (mean difference between interpolation curve and provided data),
+    /// <param name="shift">Shift offset (direct offset or natural logarithm of the shift factor for the new part of the master curve).</param>
+    /// <returns>Returns the calculated penalty value (mean squared difference between the interpolation curve and the provided data),
     /// and the number of points (of the new part of the curve) used for calculating the penalty value.</returns>
     /// 
     public (double Penalty, int EvaluatedPoints) GetMeanSquaredYDifference(int idxCurve, double shift);
 
     /// <summary>
-    /// Gets a value indicating whether this group will participate in the fit, determined by the fit weight. When the fit weigth is zero, the return value is false.
-    /// Otherwise, if the fit weight is positive, the group principally will participate in the fit, and the return value is true.
+    /// Gets a value indicating whether this group will participate in the fit, determined by the fit weight. When the fit weight is zero, the return value is false.
+    /// Otherwise, if the fit weight is positive, the group will participate in the fit and the return value is true.
     /// </summary>
     public bool ParticipateInFitByFitWeight { get; }
 
@@ -137,9 +139,7 @@ namespace Altaxo.Science.Thermorheology.MasterCurves
     /// Determines whether the curve is suitable for participating in the fit. For instance, the curve must have at least two points.
     /// </summary>
     /// <param name="idxCurve">The curve index.</param>
-    /// <returns>
-    ///   <c>true</c> if the curve is suitable for participating in the fit; otherwise, <c>false</c>.
-    /// </returns>
+    /// <returns><c>true</c> if the curve is suitable for participating in the fit; otherwise, <c>false</c>.</returns>
     public bool IsCurveSuitableForParticipatingInFit(int idxCurve);
 
 
@@ -154,23 +154,23 @@ namespace Altaxo.Science.Thermorheology.MasterCurves
     /// </summary>
     /// <param name="idxCurve">The index of the curve.</param>
     /// <param name="idxValueComponent">The index of the value component, see <see cref="NumberOfValueComponents"/>.</param>
-    /// <returns>Pair of x and y arrays (of same length) representing the curve points. For complexed valued y, if <paramref name="idxValueComponent"/> is 0, the real part is returned as y, for <paramref name="idxValueComponent"/>==1 the imaginary part is returned.</returns>
+    /// <returns>Pair of x and y arrays (of same length) representing the curve points. For complex-valued y, if <paramref name="idxValueComponent"/> is 0, the real part is returned as y; for <paramref name="idxValueComponent"/>==1 the imaginary part is returned.</returns>
     public (IReadOnlyList<double> X, IReadOnlyList<double> Y) GetCurvePoints(int idxCurve, int idxValueComponent);
 
     /// <summary>
-    /// Gets the curve points of the shifted curve with  with the provided index.
+    /// Gets the curve points of the shifted curve with the provided index.
     /// </summary>
     /// <param name="idxCurve">The index of the curve.</param>
     /// <param name="idxValueComponent">The index of the value component, see <see cref="NumberOfValueComponents"/>.</param>
     /// <param name="shiftValue">The actual shift value.</param>
-    /// <returns>Pair of x and y arrays (of same length) representing the shifted curve points. For complexed valued y, if <paramref name="idxValueComponent"/> is 0, the real part is returned as y, for <paramref name="idxValueComponent"/>==1 the imaginary part is returned.</returns>
+    /// <returns>Pair of x and y arrays (of same length) representing the shifted curve points. For complex-valued y, if <paramref name="idxValueComponent"/> is 0, the real part is returned as y; for <paramref name="idxValueComponent"/>==1 the imaginary part is returned.</returns>
     public (IReadOnlyList<double> X, IReadOnlyList<double> Y) GetShiftedCurvePoints(int idxCurve, int idxValueComponent, double shiftValue);
 
     /// <summary>
     /// Gets the merged curve points that were used for interpolation. Before calling this function, the interpolation has to be initialized, and curves must be added to the interpolation.
     /// </summary>
     /// <param name="idxValueComponent">The index of the value component, see <see cref="NumberOfValueComponents"/>.</param>
-    /// <returns>Pair of x and y arrays (of same length) representing the merged curve points. For complexed valued y, if <paramref name="idxValueComponent"/> is 0, the real part is returned as y, for <paramref name="idxValueComponent"/>==1 the imaginary part is returned.
+    /// <returns>Pair of x and y arrays (of same length) representing the merged curve points. For complex-valued y, if <paramref name="idxValueComponent"/> is 0, the real part is returned as y; for <paramref name="idxValueComponent"/>==1 the imaginary part is returned.
     /// Furthermore, the array IndexOfCurve contains for every point to which curve it originally belongs.</returns>
     public (IReadOnlyList<double> X, IReadOnlyList<double> Y, IReadOnlyList<int> IndexOfCurve) GetMergedCurvePointsUsedForInterpolation(int idxValueComponent);
 
@@ -180,7 +180,7 @@ namespace Altaxo.Science.Thermorheology.MasterCurves
     /// </summary>
     /// <param name="idxValueComponent">The index of the value component, see <see cref="NumberOfValueComponents"/>.</param>
     /// <param name="numberOfInterpolationPoints">Number of points used for the interpolation. The default value is 1001.</param>
-    /// <returns>Pair of x and y arrays (of same length) representing the interpolated curve points. For complexed valued y, if <paramref name="idxValueComponent"/> is 0, the real part is returned as y, for <paramref name="idxValueComponent"/>==1 the imaginary part is returned.</returns>
+    /// <returns>Pair of x and y arrays (of same length) representing the interpolated curve points. For complex-valued y, if <paramref name="idxValueComponent"/> is 0, the real part is returned as y; for <paramref name="idxValueComponent"/>==1 the imaginary part is returned.</returns>
     public (IReadOnlyList<double> X, IReadOnlyList<double> Y) GetInterpolatedCurvePoints(int idxValueComponent, int numberOfInterpolationPoints = 1001);
 
   }

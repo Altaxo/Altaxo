@@ -44,8 +44,18 @@ namespace Altaxo.Units
 
     #region Serialization
   [Altaxo.Serialization.Xml.XmlSerializationSurrogateFor(typeof(SIPrefixList), 0)]
+  /// <summary>
+  /// XML serialization surrogate for <see cref="SIPrefixList"/> (version 0).
+  /// Handles custom serialization and deserialization of the outer type.
+  /// </summary>
   public class SerializationSurrogate0 : Altaxo.Serialization.Xml.IXmlSerializationSurrogate
   {
+    /// <summary>
+    /// Serializes the specified <see cref="SIPrefixList"/> instance into the provided
+    /// <see cref="Altaxo.Serialization.Xml.IXmlSerializationInfo"/>.
+    /// </summary>
+    /// <param name="obj">The object to serialize (expected to be a <see cref="SIPrefixList"/>).</param>
+    /// <param name="info">The serialization info where values should be written.</param>
     public void Serialize(object obj, Altaxo.Serialization.Xml.IXmlSerializationInfo info)
     {
       var s = (SIPrefixList)obj;
@@ -56,6 +66,14 @@ namespace Altaxo.Units
       info.CommitArray();
     }
 
+    /// <summary>
+    /// Deserializes an instance of <see cref="SIPrefixList"/> from the provided
+    /// <see cref="Altaxo.Serialization.Xml.IXmlDeserializationInfo"/> and returns the reconstructed object.
+    /// </summary>
+    /// <param name="o">An optional existing object instance (ignored).</param>
+    /// <param name="info">The deserialization info to read values from.</param>
+    /// <param name="parent">The parent object in the object graph (may be <c>null</c>).</param>
+    /// <returns>A new <see cref="SIPrefixList"/> instance created from the serialized data.</returns>
     public object Deserialize(object? o, Altaxo.Serialization.Xml.IXmlDeserializationInfo info, object? parent)
     {
       int count = info.OpenArray("PrefixList");

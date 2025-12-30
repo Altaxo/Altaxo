@@ -70,6 +70,13 @@ namespace Altaxo.Units
 
     #endregion
 
+    /// <summary>
+    /// Initializes a new instance of the <see cref="UnitRatioComposite"/> class.
+    /// </summary>
+    /// <param name="nominatorPrefix">Optional prefix applied to the nominator unit. If <c>null</c>, <see cref="SIPrefix.None"/> is used.</param>
+    /// <param name="nominatorUnit">The nominator unit (must not be null).</param>
+    /// <param name="denominatorPrefix">Optional prefix applied to the denominator unit. If <c>null</c>, <see cref="SIPrefix.None"/> is used.</param>
+    /// <param name="denominatorUnit">The denominator unit (must not be null).</param>
     public UnitRatioComposite(SIPrefix? nominatorPrefix, IUnit nominatorUnit, SIPrefix? denominatorPrefix, IUnit denominatorUnit)
     {
       _nominatorPrefix = nominatorPrefix ?? SIPrefix.None;
@@ -78,6 +85,7 @@ namespace Altaxo.Units
       _denominatorUnit = denominatorUnit ?? throw new ArgumentException(nameof(denominatorUnit));
     }
 
+    /// <inheritdoc/>
     public string Name
     {
       get
@@ -86,6 +94,7 @@ namespace Altaxo.Units
       }
     }
 
+    /// <inheritdoc/>
     public string ShortCut
     {
       get
@@ -94,6 +103,7 @@ namespace Altaxo.Units
       }
     }
 
+    /// <inheritdoc/>
     public ISIPrefixList Prefixes
     {
       get
@@ -102,6 +112,7 @@ namespace Altaxo.Units
       }
     }
 
+    /// <inheritdoc/>
     public SIUnit SIUnit
     {
       get
@@ -110,6 +121,7 @@ namespace Altaxo.Units
       }
     }
 
+    /// <inheritdoc/>
     public double FromSIUnit(double x)
     {
       var a = _nominatorUnit.FromSIUnit(1) / Altaxo.Calc.RMath.Pow(10, _nominatorPrefix?.Exponent ?? 0);
@@ -118,6 +130,7 @@ namespace Altaxo.Units
       return x * a / b;
     }
 
+    /// <inheritdoc/>
     public double ToSIUnit(double x)
     {
       // Attention: both nominator and denominator must be expressed as differences!
@@ -127,6 +140,9 @@ namespace Altaxo.Units
       return x * nom_diff / denom_diff;
     }
 
+    /// <summary>
+    /// Gets the prefix applied to the nominator unit.
+    /// </summary>
     public SIPrefix NominatorPrefix
     {
       get
@@ -135,6 +151,9 @@ namespace Altaxo.Units
       }
     }
 
+    /// <summary>
+    /// Gets the nominator unit of this ratio.
+    /// </summary>
     public IUnit NominatorUnit
     {
       get
@@ -143,6 +162,9 @@ namespace Altaxo.Units
       }
     }
 
+    /// <summary>
+    /// Gets the prefix applied to the denominator unit.
+    /// </summary>
     public SIPrefix DenominatorPrefix
     {
       get
@@ -151,6 +173,9 @@ namespace Altaxo.Units
       }
     }
 
+    /// <summary>
+    /// Gets the denominator unit of this ratio.
+    /// </summary>
     public IUnit DenominatorUnit
     {
       get

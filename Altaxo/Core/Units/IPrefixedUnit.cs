@@ -28,24 +28,20 @@
 namespace Altaxo.Units
 {
   /// <summary>
-  /// Interface to a unit, that is prefixed with an SI prefix. Example: Nanometer (Meter is the unit, Nano is the prefix).
+  /// Interface to a unit that is prefixed with an SI prefix. Example: Nanometer (Meter is the unit, Nano is the prefix).
   /// </summary>
   public interface IPrefixedUnit
   {
     /// <summary>
-    /// Gets the SI prefix (e.g. Nano, Micro, Mega etc.)
+    /// Gets the SI prefix (e.g. nano, micro, mega, etc.).
     /// </summary>
-    /// <value>
-    /// The SI prefix.
-    /// </value>
+    /// <value>The SI prefix applied to the unit.</value>
     SIPrefix Prefix { get; }
 
     /// <summary>
-    /// Gets the unit.
+    /// Gets the underlying unit that the prefix is applied to.
     /// </summary>
-    /// <value>
-    /// The unit.
-    /// </value>
+    /// <value>The unit without the prefix (for example, meter for nanometer).</value>
     IUnit Unit { get; }
   }
 }

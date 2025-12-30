@@ -29,6 +29,9 @@ using Altaxo.Calc;
 
 namespace Altaxo.Science.Thermorheology.MasterCurves
 {
+  /// <summary>
+  /// Marker interface for interpolation information types.
+  /// </summary>
   public interface IInterpolationInformation
   {
 
@@ -40,21 +43,21 @@ namespace Altaxo.Science.Thermorheology.MasterCurves
   public class InterpolationInformationDouble : InterpolationInformationBase<double>
   {
     /// <summary>
-    /// Gets the current interpolation function. The argument of the function is the x-value. The result is the interpolated y-value.
+    /// Gets or sets the current interpolation function. The argument of the function is the x-value. The result is the interpolated y-value.
+    /// The function throws an <see cref="InvalidOperationException"/> if interpolation has not yet been performed.
     /// </summary>
     public Func<double, double> InterpolationFunction { get; set; }
 
     /// <summary>
-    /// Initialized the instance.
+    /// Initializes a new instance of the <see cref="InterpolationInformationDouble"/> class.
+    /// The <see cref="InterpolationFunction"/> is initialized to a function that throws if called before interpolation is performed.
     /// </summary>
     public InterpolationInformationDouble()
     {
       InterpolationFunction = new Func<double, double>((x) => throw new InvalidOperationException("Interpolation was not yet done."));
     }
 
-    /// <summary>
-    /// Clears this instance.
-    /// </summary>
+    /// <inheritdoc/>
     public override void Clear()
     {
       base.Clear();
@@ -63,12 +66,14 @@ namespace Altaxo.Science.Thermorheology.MasterCurves
 
     /// <summary>
     /// Adds values to the data that should be interpolated, but does not evaluate a new interpolation.
+    /// Existing points belonging to the specified curve index are removed before adding the new column.
+    /// The method updates the tracked minimum and maximum x values used for interpolation.
     /// </summary>
     /// <param name="shift">Shift value used to modify the x values.</param>
     /// <param name="indexOfCurve">Index of the curve in the group of curves.</param>
     /// <param name="x">Column of x values.</param>
     /// <param name="y">Column of y values.</param>
-    /// <param name="options">Options for creating the master curve.</param>
+    /// <param name="options">Options for creating the master curve (controls logarithmization and shift mode).</param>
     public void AddXYColumn(double shift, int indexOfCurve, IReadOnlyList<double> x, IReadOnlyList<double> y, ShiftGroupDouble options)
     {
       // first, Remove all points with indexOfCurve

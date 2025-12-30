@@ -24,13 +24,27 @@
 
 namespace Altaxo.Serialization.WITec
 {
+  /// <summary>
+  /// Interpretation class for Z-axis units used in WITec data.
+  /// Reads the unit name from the underlying node and exposes it via <see cref="UnitName"/>.
+  /// </summary>
   public class TDZInterpretationClass : TDInterpretationClass
   {
+    /// <summary>
+    /// Backing node for the "TDZInterpretation" child node.
+    /// </summary>
     private WITecTreeNode _tdzInterpretation;
 
+    /// <summary>
+    /// Gets the name of the unit used for Z values as read from the node.
+    /// </summary>
     public string UnitName { get; }
 
 
+    /// <summary>
+    /// Initializes a new instance of the <see cref="TDZInterpretationClass"/> class using the provided node.
+    /// </summary>
+    /// <param name="node">The node representing this Z-interpretation in the WITec tree.</param>
     public TDZInterpretationClass(WITecTreeNode node) : base(node)
     {
       _tdzInterpretation = node.GetChild("TDZInterpretation");

@@ -25,14 +25,20 @@
 namespace Altaxo.Science.Thermorheology.MasterCurves
 {
   /// <summary>
-  /// Determines how to shift the x-values.
+  /// Determines how the x-values are shifted when building the master curve.
+  /// Use <see cref="Factor"/> when the original x-values are not logarithmized and should be scaled by a multiplicative factor.
+  /// Use <see cref="Offset"/> when the original x-values are already logarithmized and should be shifted by an additive offset.
   /// </summary>
   public enum ShiftXBy
   {
-    /// <summary>Shifts by multiplying a constant value to all x values. Use this if your x values are not logarithmized already.</summary>
+    /// <summary>
+    /// Shift by multiplying all x-values by a constant factor. Use this if your x-values are not already logarithmized.
+    /// </summary>
     Factor,
 
-    /// <summary>Shifts by adding a constant value to all x values. Use this if your x values are already logarithmized.</summary>
+    /// <summary>
+    /// Shift by adding a constant offset to all x-values. Use this if your x-values are already logarithmized.
+    /// </summary>
     Offset
   }
 }

@@ -34,8 +34,18 @@ namespace Altaxo.Units
   {
     #region Serialization
     [Altaxo.Serialization.Xml.XmlSerializationSurrogateFor(typeof(ChangeableRelativePercentUnit), 0)]
+    /// <summary>
+    /// XML serialization surrogate for <see cref="ChangeableRelativePercentUnit"/> (version 0).
+    /// Handles custom serialization and deserialization of the outer type.
+    /// </summary>
     public class SerializationSurrogateB0 : Altaxo.Serialization.Xml.IXmlSerializationSurrogate
     {
+      /// <summary>
+      /// Serializes the specified <see cref="ChangeableRelativePercentUnit"/> instance into the provided
+      /// <see cref="Altaxo.Serialization.Xml.IXmlSerializationInfo"/>.
+      /// </summary>
+      /// <param name="obj">The object to serialize (expected to be a <see cref="ChangeableRelativePercentUnit"/>).</param>
+      /// <param name="info">The serialization info where values should be written.</param>
       public void Serialize(object obj, Altaxo.Serialization.Xml.IXmlSerializationInfo info)
       {
         var s = (ChangeableRelativePercentUnit)obj;
@@ -45,6 +55,14 @@ namespace Altaxo.Units
         info.AddValue("Reference", s.ReferenceQuantity);
       }
 
+      /// <summary>
+      /// Deserializes an instance of <see cref="ChangeableRelativePercentUnit"/> from the provided
+      /// <see cref="Altaxo.Serialization.Xml.IXmlDeserializationInfo"/> and returns the reconstructed object.
+      /// </summary>
+      /// <param name="o">An optional existing object instance (ignored).</param>
+      /// <param name="info">The deserialization info to read values from.</param>
+      /// <param name="parent">The parent object in the object graph (may be <c>null</c>).</param>
+      /// <returns>A new <see cref="ChangeableRelativePercentUnit"/> instance created from the serialized data.</returns>
       public object Deserialize(object? o, Altaxo.Serialization.Xml.IXmlDeserializationInfo info, object? parent)
       {
         var value = info.GetString("Name");

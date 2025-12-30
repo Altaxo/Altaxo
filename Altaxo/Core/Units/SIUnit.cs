@@ -93,6 +93,12 @@ namespace Altaxo.Units
       _candela = candela;
     }
 
+    /// <summary>
+    /// Multiplies two SI units together by adding their corresponding exponents.
+    /// </summary>
+    /// <param name="x">The left operand.</param>
+    /// <param name="y">The right operand.</param>
+    /// <returns>A new <see cref="SIUnit"/> that represents the product of the two units.</returns>
     public static SIUnit operator *(SIUnit x, SIUnit y)
     {
       checked
@@ -108,6 +114,12 @@ namespace Altaxo.Units
       }
     }
 
+    /// <summary>
+    /// Divides two SI units by subtracting the exponents of the divisor from the dividend.
+    /// </summary>
+    /// <param name="x">The dividend unit.</param>
+    /// <param name="y">The divisor unit.</param>
+    /// <returns>A new <see cref="SIUnit"/> representing the quotient.</returns>
     public static SIUnit operator /(SIUnit x, SIUnit y)
     {
       checked
@@ -123,10 +135,12 @@ namespace Altaxo.Units
       }
     }
 
-    /// <summary>Compares this unit with another unit <paramref name="other"/> and returns <c>true</c> when both are equal. Two SI units are considered equal if the exponents
-    /// are equal, independently of the unit name. This means e.g. that J (Joule), Nm, and Ws are considered equal. If you want to compare the name too, use <see cref="Equals(IUnit)"/></summary>.
+    /// <summary>
+    /// Determines whether this instance and another specified <see cref="SIUnit"/> object have the same exponents for all base units.
+    /// Two SI units are considered equal if the exponents are equal, independently of the unit name. This means e.g. that J (Joule), Nm, and Ws are considered equal.
+    /// </summary>
     /// <param name="other">The other unit.</param>
-    /// <returns><c>True</c> when both units are equal.</returns>
+    /// <returns><c>true</c> when both units are equal.</returns>
     public bool Equals(SIUnit? other)
     {
       return other is { } b ?
@@ -140,28 +154,54 @@ namespace Altaxo.Units
       false;
     }
 
+    /// <summary>
+    /// Determines whether two <see cref="SIUnit"/> instances are equal by comparing their exponents.
+    /// </summary>
+    /// <param name="a">Left operand.</param>
+    /// <param name="b">Right operand.</param>
+    /// <returns><c>true</c> if both are equal; otherwise <c>false</c>.</returns>
     public static bool operator ==(SIUnit? a, SIUnit? b)
     {
       return a is { } aa ? aa.Equals(b) : b is { } bb ? bb.Equals(a) : true;
     }
 
+    /// <summary>
+    /// Compares an <see cref="SIUnit"/> with an <see cref="IUnit"/> for equality.
+    /// </summary>
+    /// <param name="a">The SI unit.</param>
+    /// <param name="b">The other unit.</param>
+    /// <returns><c>true</c> if both represent the same SI exponents; otherwise <c>false</c>.</returns>
     public static bool operator ==(SIUnit a, IUnit b)
     {
       return a is { } aa ? aa.Equals(b) : b is { } bb ? bb.Equals(a) : true;
     }
 
+    /// <summary>
+    /// Determines whether two <see cref="SIUnit"/> instances are not equal.
+    /// </summary>
+    /// <param name="a">Left operand.</param>
+    /// <param name="b">Right operand.</param>
+    /// <returns><c>true</c> if they are not equal; otherwise <c>false</c>.</returns>
     public static bool operator !=(SIUnit a, SIUnit b)
     {
       return !(a == b);
     }
 
+    /// <summary>
+    /// Determines whether an <see cref="SIUnit"/> and an <see cref="IUnit"/> are not equal.
+    /// </summary>
+    /// <param name="a">The SI unit.</param>
+    /// <param name="b">The other unit.</param>
+    /// <returns><c>true</c> if they are not equal; otherwise <c>false</c>.</returns>
     public static bool operator !=(SIUnit a, IUnit b)
     {
       return !(a == b);
     }
 
-    /// <summary>Compares this unit with another unit <paramref name="obj"/> and returns <c>true</c> if both are equal.
-    /// To be equal, the other unit has to be (i) a SI unit, and (ii) the same name. Thus, J (Joule) and Nm (Newtonmeter) are not considered equal.</summary>
+    /// <summary>
+    /// Compares this unit with another unit <paramref name="obj"/> and returns <c>true</c> if both are equal.
+    /// To be equal, the other unit has to be (i) a SI unit, and (ii) the same name. Thus, J (Joule) and Nm (Newtonmeter) are not considered equal.
+    /// </summary>
     /// <param name="obj">The other unit.</param>
     /// <returns><c>True</c> when both units are equal.</returns>
     public bool Equals(IUnit? obj)
@@ -169,14 +209,22 @@ namespace Altaxo.Units
       return obj is { } other ? GetType() == other.GetType() : false;
     }
 
-    /// <summary>Determines whether the specified <see cref="object"/> is equal to this instance.</summary>
+    /// <summary>
+    /// Determines whether the specified <see cref="object"/> is equal to this instance.
+    /// </summary>
     /// <param name="obj">The <see cref="object"/> to compare with this instance.</param>
-    /// <returns><c>true</c> if the specified <see cref="object"/> is equal to this instance; otherwise, <c>false</c>.</returns>
+    /// <returns><c>true</c> if the specified <see cref="object"/> is equal to this instance; otherwise, <c>false</c>.
+    /// </returns>
     public override bool Equals(object? obj)
     {
       return obj is IUnit other ? Equals(other) : false;
     }
 
+    /// <summary>
+    /// Checks whether this SIUnit is compatible with the dimensions described by the provided <see cref="UnitDescriptionAttribute"/>.
+    /// </summary>
+    /// <param name="attr">The attribute describing the required dimension exponents.</param>
+    /// <returns><c>true</c> when this SIUnit has the same exponents as described by <paramref name="attr"/>.</returns>
     public bool IsCompatibleTo(UnitDescriptionAttribute attr)
     {
       return
@@ -189,8 +237,10 @@ namespace Altaxo.Units
        _candela == attr.Candela;
     }
 
-    /// <summary>Returns a hash code for this instance.</summary>
-    /// <returns>A hash code for this instance, suitable for use in hashing algorithms and data structures like a hash table. </returns>
+    /// <summary>
+    /// Returns a hash code for this instance.
+    /// </summary>
+    /// <returns>A hash code for this instance, suitable for use in hashing algorithms and data structures like a hash table.</returns>
     public override int GetHashCode()
     {
       return
@@ -203,7 +253,7 @@ namespace Altaxo.Units
           _candela;
     }
 
-    /// <summary>Full name of the unit.</summary>
+    /// <inheritdoc/>
     public virtual string Name
     {
       get
@@ -291,6 +341,11 @@ namespace Altaxo.Units
       }
     }
 
+    /// <summary>
+    /// Appends the superscript representation of the given integer to the provided <see cref="StringBuilder"/>.
+    /// </summary>
+    /// <param name="n">The number to append as superscript.</param>
+    /// <param name="sb">The <see cref="StringBuilder"/> to which the superscript will be appended.</param>
     private static void AppendSuperscript(int n, StringBuilder sb)
     {
       if (n == 0)
@@ -319,29 +374,25 @@ namespace Altaxo.Units
       }
     }
 
-    /// <summary>Usual shortcut of the unit.</summary>
+    /// <inheritdoc/>
     public virtual string ShortCut
     {
       get { return Name; }
     }
 
-    /// <summary>Converts <paramref name="x"/> to the corresponding SI unit.</summary>
-    /// <param name="x">Value to convert.</param>
-    /// <returns>The corresponding value of <paramref name="x"/> in SI units. Since this instance represents a SI unit, the value <paramref name="x"/> is returned unchanged.</returns>
+    /// <inheritdoc/>
     public double ToSIUnit(double x)
     {
       return x;
     }
 
-    /// <summary>Converts <paramref name="x"/> (in SI units) to the corresponding value in this unit.</summary>
-    /// <param name="x">Value in SI units.</param>
-    /// <returns>The corresponding value in this unit. Since this instance represents a SI unit, the value <paramref name="x"/> is returned unchanged.</returns>
+    /// <inheritdoc/>
     public double FromSIUnit(double x)
     {
       return x;
     }
 
-    /// <summary>Returns a list of possible prefixes for this unit (like µ, m, k, M, G..).</summary>
+    /// <inheritdoc/>
     public virtual ISIPrefixList Prefixes
     {
       get
@@ -350,7 +401,7 @@ namespace Altaxo.Units
       }
     }
 
-    /// <summary>Returns the corresponding SI unit. Since this instance already represents a SI unit, the returned value is this instance itself.</summary>
+    /// <inheritdoc/>
     SIUnit IUnit.SIUnit
     {
       get { return this; }

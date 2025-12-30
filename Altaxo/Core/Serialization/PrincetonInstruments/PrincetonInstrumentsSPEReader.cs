@@ -31,7 +31,7 @@ using System.Xml;
 namespace Altaxo.Serialization.PrincetonInstruments
 {
   /// <summary>
-  /// Reader for Princeton Instruments SPE files. Those files are binary files with an Xml section containing the document metadata at the end of the file.
+  /// Reader for Princeton Instruments SPE files. These files are binary files with an XML section containing the document metadata at the end of the file.
   /// </summary>
   /// <remarks>
   /// <para>References:</para>
@@ -44,16 +44,27 @@ namespace Altaxo.Serialization.PrincetonInstruments
     /// </summary>
     public enum SPEDataType
     {
+      /// <summary>32-bit single precision floating point (4 bytes).</summary>
       Single = 0,
+      /// <summary>32-bit signed integer (4 bytes).</summary>
       Int32 = 1,
+      /// <summary>16-bit signed integer (2 bytes).</summary>
       Int16 = 2,
+      /// <summary>16-bit unsigned integer (2 bytes).</summary>
       UInt16 = 3,
+      /// <summary>32-bit unsigned integer (4 bytes).</summary>
       UInt32 = 8,
     };
 
     /// <summary>
     /// Region of Interest record.
     /// </summary>
+    /// <param name="x">The X start coordinate of the region.</param>
+    /// <param name="xBinning">The binning factor in X direction.</param>
+    /// <param name="width">The width of the region in pixels.</param>
+    /// <param name="y">The Y start coordinate of the region.</param>
+    /// <param name="yBinning">The binning factor in Y direction.</param>
+    /// <param name="height">The height of the region in pixels.</param>
     public record RegionOfInterest(int x, int xBinning, int width, int y, int yBinning, int height)
     {
 
@@ -72,6 +83,9 @@ namespace Altaxo.Serialization.PrincetonInstruments
     /// </value>
     public bool XValuesAreShiftValues => LaserWavelength.HasValue;
 
+    /// <summary>
+    /// Backing storage for <see cref="Data"/>.
+    /// </summary>
     private List<List<double[,]>> _data = new();
     /// <summary>
     /// Gets the data. The first index is the frame number. The second index is the index of the region of interest.
@@ -79,6 +93,9 @@ namespace Altaxo.Serialization.PrincetonInstruments
     /// </summary>
     public IReadOnlyList<IReadOnlyList<double[,]>> Data => _data;
 
+    /// <summary>
+    /// Gets the dimensions of the data blocks. Each entry is a tuple of (width, height) describing a data block.
+    /// </summary>
     public IReadOnlyList<(int width, int height)> Dimensions { get; }
 
     /// <summary>
@@ -248,7 +265,7 @@ namespace Altaxo.Serialization.PrincetonInstruments
         meta_names = new List<string>();
         string previousItem = null;
 
-        foreach (XmlElement item in doc["SpeFormat"]["MetaFormat"]["MetaBlock"])
+        foreach (XmlElement item in doc["SpeFormat"]["MetaFormat"]["MetaBlock"]) 
         {
           if (item.Name == "TimeStamp" && previousItem != "TimeStap") // Specify ExposureStarted vs. ExposureEnded
           {

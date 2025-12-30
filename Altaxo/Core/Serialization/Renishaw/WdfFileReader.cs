@@ -188,13 +188,28 @@ namespace Altaxo.Serialization.Renishaw
     /// <summary>Wavelength of the exciting laser in nm.</summary>
     public double LaserWavelength_nm { get; private set; }
 
+    /// <summary>Positions in X for origin list entries (one per spectrum).</summary>
     public double[] XPositions { get; private set; }
+
+    /// <summary>Positions in Y for origin list entries (one per spectrum).</summary>
     public double[] YPositions { get; private set; }
+
+    /// <summary>Positions in Z for origin list entries (one per spectrum).</summary>
     public double[] ZPositions { get; private set; }
+
+    /// <summary>Unit of X position values.</summary>
     public UnitType XPositionUnit { get; private set; }
+
+    /// <summary>Unit of Y position values.</summary>
     public UnitType YPositionUnit { get; private set; }
+
+    /// <summary>Unit of Z position values.</summary>
     public UnitType ZPositionUnit { get; private set; }
 
+    /// <summary>
+    /// Header information for origin list rows. Each entry contains a tuple of:
+    /// (isY, data type, unit type, annotation, array of values).
+    /// </summary>
     public (bool isY, DataType dataType, UnitType unitType, string annotation, Array array)[] OriginListHeader { get; private set; }
 
 
@@ -210,6 +225,7 @@ namespace Altaxo.Serialization.Renishaw
       get => _blockInfo.ContainsKey("WMAP");
     }
 
+    /// <summary>Shape of the map data (width, height) when present.</summary>
     public (int w, int h) MapShape { get; private set; }
 
     private Dictionary<string, object> _map_info = new();
@@ -219,23 +235,19 @@ namespace Altaxo.Serialization.Renishaw
     private (int Type, int Unit, int Length, float[] Data)[] listinfo = new (int Type, int Unit, int Length, float[] Data)[2];
 
     /// <summary>
-    /// Gets the x data. This are usually the spectrum's x values (wavelength, shift, etc.).
+    /// Gets the x data. These are usually the spectrum's x values (wavelength, shift, etc.).
     /// </summary>
     public float[] XData => listinfo[(int)ListKind.X].Data;
 
     /// <summary>
-    /// Gets the y data. ATTENTION: this are usually <b>NOT</b> the spectrum's intensity values (these are stored in <see cref="Spectra"/>, or use <see cref="GetSpectrum(int)"/>).
+    /// Gets the y data. ATTENTION: these are usually <b>NOT</b> the spectrum's intensity values (these are stored in <see cref="Spectra"/>, or use <see cref="GetSpectrum(int)"/>).
     /// </summary>
     public float[] YData => listinfo[(int)ListKind.Y].Data;
 
-    /// <summary>
-    /// Gets the unit of the <see cref="XData"/> values.
-    /// </summary>
+    /// <summary>Gets the unit of the <see cref="XData"/> values.</summary>
     public UnitType XUnit => (UnitType)listinfo[(int)ListKind.X].Unit;
 
-    /// <summary>
-    /// Gets the unit of the <see cref="YData"/> values.
-    /// </summary>
+    /// <summary>Gets the unit of the <see cref="YData"/> values.</summary>
     public UnitType YUnit => (UnitType)listinfo[(int)ListKind.Y].Unit;
 
 
@@ -275,17 +287,33 @@ namespace Altaxo.Serialization.Renishaw
     private Dictionary<string, BlockInfo> _blockInfo = new();
 
 
+    /// <summary>
+    /// Create a WdfFileReader from a file name by opening a read-only stream.
+    /// </summary>
+    /// <param name="fileName">Path to the .wdf file.</param>
+    /// <returns>A new <see cref="WdfFileReader"/> instance for the given file.</returns>
     public static WdfFileReader FromFileName(string fileName)
     {
       using var rs = new FileStream(fileName, FileMode.Open, FileAccess.Read, FileShare.Read);
       return FromStream(rs);
     }
 
+    /// <summary>
+    /// Create a WdfFileReader from an existing readable stream.
+    /// </summary>
+    /// <param name="rs">A readable and seekable stream positioned at the beginning of a .wdf file.</param>
+    /// <returns>A new <see cref="WdfFileReader"/> instance.</returns>
     public static WdfFileReader FromStream(Stream rs)
     {
       return new WdfFileReader(rs);
     }
 
+    /// <summary>
+    /// Initialize a new reader from the provided stream and parse the essential blocks.
+    /// </summary>
+    /// <param name="rs">A readable and seekable stream positioned at the beginning of a .wdf file.</param>
+    /// <exception cref="ArgumentNullException">If <paramref name="rs"/> is null.</exception>
+    /// <exception cref="ArgumentException">If the provided stream is not seekable.</exception>
     public WdfFileReader(Stream rs)
     {
       if (rs is null)
@@ -311,7 +339,7 @@ namespace Altaxo.Serialization.Renishaw
     /// <summary>
     /// Get information for all data blocks and store them inside block_info
     /// </summary>
-    /// <returns></returns>
+    /// <param name="sr">Stream to read block headers from.</param>
     private void LocateAllBlocks(Stream sr)
     {
 
@@ -352,7 +380,6 @@ namespace Altaxo.Serialization.Renishaw
     /// </summary>
     /// <param name="block_name">Name of the block.</param>
     /// <param name="isOptional">True if this block is optional, i.e. not mandatory.</param>
-    /// <returns></returns>
     private void TreatBlockData(Stream sr, string block_name, bool isOptional = false)
     {
       if (!_blockInfo.TryGetValue(block_name, out var blockinfo))
@@ -396,9 +423,10 @@ namespace Altaxo.Serialization.Renishaw
     }
 
     /// <summary>
-    /// Parses the header block WDF1
+    /// Parses the header block WDF1 and populates reader metadata.
     /// </summary>
-    /// <returns></returns>
+    /// <param name="sr">Stream positioned at the beginning of the file.</param>
+    /// <param name="blockinfo">Information about the WDF1 block (uid, position, size).</param>
     private void ParseHeader(Stream sr, BlockInfo blockinfo)
     {
       if (blockinfo.Size != Offsets.data_block)
@@ -447,11 +475,10 @@ namespace Altaxo.Serialization.Renishaw
     /// <summary>
     /// Get information from DATA block
     /// </summary>
-    /// <param name="sr">The sr.</param>
+    /// <param name="sr">The stream.</param>
     /// <param name="blockinfo">The blockinfo.</param>
-    /// <param name="start">The start.</param>
-    /// <param name="end">The end.</param>
-    /// <returns></returns>
+    /// <param name="start">The start index of spectra to read (inclusive).</param>
+    /// <param name="end">The end index of spectra to read (inclusive). Use -1 to read to the last spectrum.</param>
     private void ParseSpectra(Stream sr, BlockInfo blockinfo, long start = 0, long end = -1)
     {
       end = (end < 0) ? (Count - 1) : end;        // take all spectra
@@ -482,10 +509,9 @@ namespace Altaxo.Serialization.Renishaw
     /// <summary>
     /// Get information from XLST or YLST blocks
     /// </summary>
-    /// <param name="sr">The sr.</param>
+    /// <param name="sr">The stream.</param>
     /// <param name="blockinfo">The blockinfo.</param>
     /// <param name="kind">The kind.</param>
-    /// <returns></returns>
     private void ParseXYList(Stream sr, BlockInfo blockinfo, ListKind kind)
     {
 
@@ -514,9 +540,8 @@ namespace Altaxo.Serialization.Renishaw
     /// <summary>
     /// Get information from OriginList
     /// </summary>
-    /// <param name="sr">The sr.</param>
+    /// <param name="sr">The stream.</param>
     /// <param name="blockinfo">The blockinfo.</param>
-    /// <returns></returns>
     private void ParseOrginList(Stream sr, BlockInfo blockinfo)
     {
       // First confirm origin list type
@@ -603,7 +628,6 @@ namespace Altaxo.Serialization.Renishaw
     /// </summary>
     /// <param name="sr">The sr.</param>
     /// <param name="blockinfo">The blockinfo.</param>
-    /// <returns></returns>
     private void ParseWmap(Stream sr, BlockInfo blockinfo)
     {
       sr.Seek(blockinfo.Position + Offsets.wmap_origin, SeekOrigin.Begin);
@@ -667,11 +691,10 @@ namespace Altaxo.Serialization.Renishaw
     }
 
     /// <summary>
-    /// Extract the white-light JPEG image. The size of while-light image is coded in its EXIF.
+    /// Extract the white-light JPEG image. The size of white-light image is coded in its EXIF.
     /// </summary>
-    /// <param name="sr">The sr.</param>
+    /// <param name="sr">The stream.</param>
     /// <param name="blockinfo">The blockinfo.</param>
-    /// <returns></returns>
     private void ParseImg(Stream sr, BlockInfo blockinfo)
     {
       // Read the bytes. `self.img` is a wrapped IO object mimicking a file
@@ -748,6 +771,14 @@ namespace Altaxo.Serialization.Renishaw
     /// <returns>Wavelength in nm</returns>
     private static double ConvertWavenumberToWavelength_nm(double wn) => 1 / (wn * 1e2) / 1e-9;
 
+    /// <summary>
+    /// Return true if two double values are close within given absolute and relative tolerances.
+    /// </summary>
+    /// <param name="x">First value.</param>
+    /// <param name="y">Second value.</param>
+    /// <param name="atol">Absolute tolerance.</param>
+    /// <param name="rtol">Relative tolerance.</param>
+    /// <returns>True if values are within tolerances; otherwise false.</returns>
     private static bool IsClose(double x, double y, double atol = 0, double rtol = 0)
     {
       var tol = Math.Max(atol, Math.Max(Math.Abs(x), Math.Abs(y)) * rtol);

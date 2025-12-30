@@ -30,6 +30,8 @@ namespace Altaxo.Serialization.Xml
 {
   /// <summary>
   /// Used to point to the target type for which this class provides a serialization surrogate.
+  /// Apply this attribute to a surrogate class to indicate the type (or the assembly/type name)
+  /// and version for which the surrogate handles serialization/deserialization.
   /// </summary>
   [AttributeUsage(AttributeTargets.Class, AllowMultiple = true, Inherited = false)]
   public class XmlSerializationSurrogateForAttribute : Attribute
@@ -40,7 +42,8 @@ namespace Altaxo.Serialization.Xml
     protected string? _typeName;
 
     /// <summary>
-    /// Constructor. The class this attribute is applied provides a serialization surrogate for the type <code>serializationtype</code>, version <code>version.</code>.
+    /// Initializes a new instance of the <see cref="XmlSerializationSurrogateForAttribute"/> class.
+    /// The class this attribute is applied to provides a serialization surrogate for the specified <paramref name="serializationtype"/>, version <paramref name="version"/>.
     /// </summary>
     /// <param name="serializationtype">The type this class provides a surrogate for.</param>
     /// <param name="version">The version of the class for which this surrogate is intended.</param>
@@ -51,12 +54,13 @@ namespace Altaxo.Serialization.Xml
     }
 
     /// <summary>
-    /// Constructor. Used when the target type is deprecated and no longer available. The class this attribute is applied for is then
-    /// responsible for deserialization
+    /// Initializes a new instance of the <see cref="XmlSerializationSurrogateForAttribute"/> class.
+    /// Use this constructor when the target type is deprecated and the original type is no longer available. In that case the class this attribute is applied to
+    /// is responsible for deserialization of the deprecated type identified by the assembly and type name.
     /// </summary>
-    /// <param name="assembly"></param>
-    /// <param name="typename"></param>
-    /// <param name="version"></param>
+    /// <param name="assembly">The short assembly name containing the deprecated type.</param>
+    /// <param name="typename">The fully qualified type name (including namespace) of the deprecated type.</param>
+    /// <param name="version">The version of the deprecated type for which this surrogate is intended.</param>
     public XmlSerializationSurrogateForAttribute(string assembly, string typename, int version)
     {
       _version = version;
@@ -65,7 +69,7 @@ namespace Altaxo.Serialization.Xml
     }
 
     /// <summary>
-    /// returns the version of the class, for which the surrogate is intended
+    /// Gets the version of the class for which the surrogate is intended.
     /// </summary>
     public int Version
     {
@@ -73,7 +77,8 @@ namespace Altaxo.Serialization.Xml
     }
 
     /// <summary>
-    ///Returns the target type for which the class this attribute is applied for is the serialization surrogate.
+    /// Gets the target type for which the class this attribute is applied to is the serialization surrogate.
+    /// The value is <c>null</c> when the surrogate targets a deprecated type specified by assembly and type name instead.
     /// </summary>
     public System.Type? SerializationType
     {
@@ -81,8 +86,10 @@ namespace Altaxo.Serialization.Xml
     }
 
     /// <summary>
-    /// Returns the assembly name (short form) of the target class type.
+    /// Gets the assembly short name of the target class type.
+    /// If the <see cref="SerializationType"/> is set, the assembly name is derived from that type; otherwise the explicitly provided assembly name is returned.
     /// </summary>
+    /// <exception cref="InvalidOperationException">Thrown when neither <see cref="SerializationType"/> nor the assembly name were provided.</exception>
     public string AssemblyName
     {
       get
@@ -106,7 +113,8 @@ namespace Altaxo.Serialization.Xml
     }
 
     /// <summary>
-    /// Returns the name of the target type (the full name inclusive namespaces).
+    /// Gets the name of the target type (the full name inclusive of namespaces).
+    /// If the <see cref="SerializationType"/> is set, its full name is returned; otherwise the supplied type name is returned.
     /// </summary>
     public string TypeName
     {

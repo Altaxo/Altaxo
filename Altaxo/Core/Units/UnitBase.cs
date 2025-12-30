@@ -38,26 +38,44 @@ namespace Altaxo.Units
   /// </summary>
   public abstract class UnitBase
   {
+    /// <summary>
+    /// Determines whether the specified <see cref="SIUnit"/> is equal to this unit.
+    /// </summary>
+    /// <param name="obj">The SI unit to compare with this instance.</param>
+    /// <returns><c>true</c> if the specified <see cref="SIUnit"/> is equal to this unit; otherwise, <c>false</c>.</returns>
     public bool Equals(SIUnit obj)
     {
       return obj is null ? false : obj.Equals(this);
     }
 
+    /// <summary>
+    /// Determines whether the specified <see cref="IUnit"/> is equal to this unit by comparing their runtime types.
+    /// </summary>
+    /// <param name="obj">The unit to compare with this instance.</param>
+    /// <returns><c>true</c> if the specified <see cref="IUnit"/> has the same runtime type as this unit; otherwise, <c>false</c>.</returns>
     public bool Equals(IUnit obj)
     {
       return obj is null ? false : GetType() == obj.GetType();
     }
 
+    /// <inheritdoc/>
     public override bool Equals(object? obj)
     {
       return obj is IUnit other ? GetType() == other.GetType() : false;
     }
 
+    /// <inheritdoc/>
     public override int GetHashCode()
     {
       return GetType().GetHashCode();
     }
 
+    /// <summary>
+    /// Determines whether two units are equal using the <see cref="Equals(IUnit)"/> implementation.
+    /// </summary>
+    /// <param name="a">The left operand.</param>
+    /// <param name="b">The right operand.</param>
+    /// <returns><c>true</c> if both operands are considered equal; otherwise, <c>false</c>.</returns>
     public static bool operator ==(UnitBase a, IUnit b)
     {
       if (a is { } aa)
@@ -68,6 +86,12 @@ namespace Altaxo.Units
         return true; // null==null
     }
 
+    /// <summary>
+    /// Determines whether two units are not equal using the <see cref="Equals(IUnit)"/> implementation.
+    /// </summary>
+    /// <param name="a">The left operand.</param>
+    /// <param name="b">The right operand.</param>
+    /// <returns><c>true</c> if the operands are not equal; otherwise, <c>false</c>.</returns>
     public static bool operator !=(UnitBase a, IUnit b)
     {
       return !(a == b);

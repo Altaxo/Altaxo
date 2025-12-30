@@ -32,7 +32,7 @@ namespace Altaxo.Science.Thermodynamics.Fluids
 {
   /// <summary>
   /// Base class for binary mixtures,  consisting of a component 1 and a component 2.
-  /// The components are indentified by their CAS registry numbers. Derived classes should have two <see cref="CASRegistryNumberAttribute" />s associated with the class.
+  /// The components are identified by their CAS registry numbers. Derived classes should have two <see cref="CASRegistryNumberAttribute" />s associated with the class.
   /// </summary>
   public abstract class BinaryMixtureDefinitionBase
   {
@@ -42,7 +42,7 @@ namespace Altaxo.Science.Thermodynamics.Fluids
     /// <summary>Gets the CAS registry number of component 2.</summary>
     public abstract string CASRegistryNumber2 { get; }
 
-    /// <summary>The beta parameter used to calculate the reducing temperatur of the mixture.</summary>
+    /// <summary>The beta parameter used to calculate the reducing temperature of the mixture.</summary>
     protected double _beta_T;
 
     /// <summary>The gamma parameter used to calculate the reducing temperature of the mixture.</summary>
@@ -57,7 +57,7 @@ namespace Altaxo.Science.Thermodynamics.Fluids
     /// <summary>The F parameter (prefactor of the departure function, see <see cref="DepartureFunction_OfReducedVariables(double, double)"/>).</summary>
     protected double _F;
 
-    /// <summary>The beta parameter used to calculate the reducing temperatur of the mixture.</summary>
+    /// <summary>The beta parameter used to calculate the reducing temperature of the mixture.</summary>
     public double Beta_T { get { return _beta_T; } }
 
     /// <summary>The gamma parameter used to calculate the reducing temperature of the mixture.</summary>
@@ -348,6 +348,11 @@ namespace Altaxo.Science.Thermodynamics.Fluids
       return sum1 + sum2 + sum3;
     }
 
+    /// <summary>
+    /// Returns the square of <paramref name="x"/>.
+    /// </summary>
+    /// <param name="x">Value to square.</param>
+    /// <returns>The square of <paramref name="x"/>.</returns>
     private static double Pow2(double x) => x * x;
   }
 }

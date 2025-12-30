@@ -27,6 +27,9 @@ using System.IO;
 
 namespace Altaxo.Serialization
 {
+  /// <summary>
+  /// Small helper extension methods for file and stream IO operations used by the serialization framework.
+  /// </summary>
   public static class FileIOExtensions
   {
     /// <summary>
@@ -62,6 +65,8 @@ namespace Altaxo.Serialization
     /// <param name="stream">The stream.</param>
     /// <param name="sequence">The searched sequence.</param>
     /// <returns>When the sequence is found, it returns the position in the stream where the sequence starts; if the sequence was not found, -1 is returned.</returns>
+    /// <exception cref="System.ArgumentNullException">Thrown when <paramref name="stream"/> is <c>null</c>.</exception>
+    /// <exception cref="System.ArgumentException">Thrown when <paramref name="sequence"/> is empty.</exception>
     public static long PositionOf(this Stream stream, ReadOnlySpan<byte> sequence)
     {
       if (stream is null)

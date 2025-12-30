@@ -29,16 +29,37 @@ using Altaxo.Calc;
 
 namespace Altaxo.Serialization.WITec
 {
+  /// <summary>
+  /// Represents a spectral transformation defined in a WITec "TDSpectralTransformation" node.
+  /// The transformation can be a polynomial, spectrometer grating model or a free polynomial applied to spectral bin indices.
+  /// This class reads the transformation parameters from the underlying node and exposes a <see cref="Transform"/> method
+  /// to apply the transformation to a sequence of input values.
+  /// </summary>
   public class TDSpectralTransformationClass : TDTransformationClass
   {
+    /// <summary>
+    /// Backing node for the "TDSpectralTransformation" child node.
+    /// </summary>
     protected WITecTreeNode _tdSpectralTransformation;
 
+    /// <summary>
+    /// Initializes a new instance of the <see cref="TDSpectralTransformationClass"/> class.
+    /// </summary>
+    /// <param name="node">The node representing the transformation in the WITec project tree.</param>
+    /// <param name="reader">The reader used to resolve referenced nodes if necessary.</param>
     public TDSpectralTransformationClass(WITecTreeNode node, WITecReader reader)
       : base(node, reader)
     {
       _tdSpectralTransformation = node.GetChild("TDSpectralTransformation");
     }
 
+    /// <summary>
+    /// Transforms a sequence of values according to the spectral transformation defined in the node.
+    /// The exact mapping depends on the node's <c>SpectralTransformationType</c> and may be a polynomial evaluation,
+    /// a spectrometer grating model, or a free polynomial applied to a subrange of indices.
+    /// </summary>
+    /// <param name="values">The input values (typically spectral bin indices) to transform.</param>
+    /// <returns>An enumeration of transformed values in the same order as the input sequence.</returns>
     public IEnumerable<double> Transform(IEnumerable<double> values)
     {
       var transformationType = _tdSpectralTransformation.GetData<int>("SpectralTransformationType");

@@ -40,12 +40,12 @@ namespace Altaxo.Science.Thermorheology.MasterCurves
     protected ShiftCurve<double>?[] _curvesImaginary;
 
     /// <summary>
-    /// Gets the fitting weight, a number number &gt; 0.
+    /// Gets the fitting weight for the real part; a number &gt; 0.
     /// </summary>
     public double FittingWeightReal { get; }
 
     /// <summary>
-    /// Gets the fitting weight, a number number &gt; 0.
+    /// Gets the fitting weight for the imaginary part; a number &gt; 0.
     /// </summary>
     public double FittingWeightImaginary { get; }
 
@@ -58,21 +58,21 @@ namespace Altaxo.Science.Thermorheology.MasterCurves
 
 
     /// <summary>
-    /// Creates the fit function. Argument is the tuple consisting of X, Y, and optional YErr. Return value is a function that calculates y for a given x.
+    /// Creates the fit function. Argument is the tuple consisting of X and Y for the real and imaginary parts. Return value is a function that calculates a complex value for a given x.
     /// </summary>
     public Func<(IReadOnlyList<double> XRe, IReadOnlyList<double> YRe, IReadOnlyList<double> XIm, IReadOnlyList<double> YIm), Func<double, Complex64>> CreateInterpolationFunction { get; }
 
     /// <summary>
-    /// Initializes a new instance of the <see cref="ShiftGroupDouble"/> class.
+    /// Initializes a new instance of the <see cref="ShiftGroupComplexSeparateX"/> class.
     /// </summary>
-    /// <param name="dataRe">Collection of multiple x-y curves that will finally form the real part master curve.</param>
-    /// <param name="dataIm">Collection of multiple x-y curves that will finally form the imaginary part of the master curve.</param>
+    /// <param name="dataRe">Collection of multiple x-y curves that will form the real part of the master curve.</param>
+    /// <param name="dataIm">Collection of multiple x-y curves that will form the imaginary part of the master curve.</param>
     /// <param name="xShiftBy">Shift method, either additive or multiplicative.</param>
-    /// <param name="fitWeightRe">The weight with which the real part participate in the fit. Has to be &gt; 0.</param>
-    /// <param name="fitWeightIm">The weight with which the imaginary part participate in the fit. Has to be &gt; 0.</param>
+    /// <param name="fitWeightRe">The weight with which the real part participates in the fit. Must be &gt; 0 to participate.</param>
+    /// <param name="fitWeightIm">The weight with which the imaginary part participates in the fit. Must be &gt; 0 to participate.</param>
     /// <param name="logarithmizeXForInterpolation">If true, the x-values are logarithmized prior to participating in the interpolation function.</param>
-    /// <param name="logarithmizeYForInterpolation">If true, the y-values are logartihmized prior to participating in the interpolation function.</param>
-    /// <param name="createInterpolationFunction">Function that creates the interpolation. Input are the x-array, y-array, and optionally, the array of y-errors. Output is an interpolation function which returns an interpolated y-value for a given x-value.</param>
+    /// <param name="logarithmizeYForInterpolation">If true, the y-values are logarithmized prior to participating in the interpolation function.</param>
+    /// <param name="createInterpolationFunction">Function that creates the interpolation. Input are the x- and y-arrays for real and imaginary parts. Output is an interpolation function which returns an interpolated complex value for a given x-value.</param>
     public ShiftGroupComplexSeparateX(IEnumerable<ShiftCurve<double>?> dataRe, IEnumerable<ShiftCurve<double>?> dataIm, ShiftXBy xShiftBy, double fitWeightRe, double fitWeightIm, bool logarithmizeXForInterpolation, bool logarithmizeYForInterpolation, Func<(IReadOnlyList<double> XRe, IReadOnlyList<double> YRe, IReadOnlyList<double> XIm, IReadOnlyList<double> YIm), Func<double, Complex64>> createInterpolationFunction)
       : base(xShiftBy, logarithmizeXForInterpolation, logarithmizeYForInterpolation)
     {
@@ -114,11 +114,7 @@ namespace Altaxo.Science.Thermorheology.MasterCurves
       }
     }
 
-    /// <summary>
-    /// Gets the index of the curve in the given group with the most variation. The variation is determined by calculating the absolute slope,
-    /// with applying the logarithmic transformations according to the interpolation settings in that group.
-    /// </summary>
-    /// <returns>The index of the curve with most variation. If no suitable curve was found, then the return value is null.</returns>
+    /// <inheritdoc/>
     public int? GetCurveIndexWithMostVariation()
     {
       double maxAbsoluteSlope = 0;
@@ -145,6 +141,10 @@ namespace Altaxo.Science.Thermorheology.MasterCurves
       return idxMaxAbsoluteSlope >= 0 ? idxMaxAbsoluteSlope : null;
     }
 
+    /// <summary>
+    /// Transforms the real-part curve data according to the group's interpolation options (logarithmization of x and/or y) and filters invalid points.
+    /// Returns the transformed x and y arrays suitable for interpolation.
+    /// </summary>
     public (IReadOnlyList<double> x, IReadOnlyList<double> y) TransformCurveRealForInterpolationAccordingToGroupOptions(int idx)
     {
       var xarr = new List<double>();
@@ -173,6 +173,10 @@ namespace Altaxo.Science.Thermorheology.MasterCurves
       return (xarr, yarr);
     }
 
+    /// <summary>
+    /// Transforms the imaginary-part curve data according to the group's interpolation options (logarithmization of x and/or y) and filters invalid points.
+    /// Returns the transformed x and y arrays suitable for interpolation.
+    /// </summary>
     public (IReadOnlyList<double> x, IReadOnlyList<double> y) TransformCurveImaginaryForInterpolationAccordingToGroupOptions(int idx)
     {
       var xarr = new List<double>();
@@ -226,6 +230,7 @@ namespace Altaxo.Science.Thermorheology.MasterCurves
       }
     }
 
+    /// <inheritdoc/>
     public void Interpolate()
     {
       if (_interpolationInformation is null)
@@ -237,11 +242,7 @@ namespace Altaxo.Science.Thermorheology.MasterCurves
       _interpolationInformation.InterpolationFunction = interpol;
     }
 
-    /// <summary>
-    /// Gets the minimum and maximum of the x-values, taking into account different options and whether the y-values are valid.
-    /// </summary>
-    /// <param name="idxCurve">Index of the curve.</param>
-    /// <returns>Minimum and maximum of the x-values, for x and y values appropriate for the conditions given by the parameter.</returns>
+    /// <inheritdoc/>
     public override (double min, double max) GetXMinimumMaximumOfCurvePointsSuitableForInterpolation(int idxCurve)
     {
       var min = double.PositiveInfinity;
@@ -400,14 +401,7 @@ namespace Altaxo.Science.Thermorheology.MasterCurves
       return (xcol, ycol);
     }
 
-    /// <summary>
-    /// Gets the mean difference between the y column and the interpolation function, provided that the x column is shifted by a factor.
-    /// </summary>
-    /// <param name="idxCurve">The index of the curve to fit.</param>
-    /// <param name="shift">Shift offset (direct offset or natural logarithm of the shiftFactor for the new part of the master curve.</param>
-    /// <returns>Returns the calculated penalty value (mean difference between interpolation curve and provided data),
-    /// and the number of points (of the new part of the curve) used for calculating the penalty value.</returns>
-    /// 
+    /// <inheritdoc/>
     public (double Penalty, int EvaluatedPoints) GetMeanAbsYDifference(int idxCurve, double shift)
     {
       if (_interpolationInformation is null)
@@ -468,6 +462,7 @@ namespace Altaxo.Science.Thermorheology.MasterCurves
       return (totalPenaltySum, validPoints);
     }
 
+    /// <inheritdoc/>
     public (double Penalty, int EvaluatedPoints) GetMeanSquaredYDifference(int idxCurve, double shift)
     {
       if (_interpolationInformation is null)

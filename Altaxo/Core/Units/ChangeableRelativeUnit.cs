@@ -41,8 +41,18 @@ namespace Altaxo.Units
 
     #region Serialization
     [Altaxo.Serialization.Xml.XmlSerializationSurrogateFor(typeof(ChangeableRelativeUnit), 0)]
+    /// <summary>
+    /// XML serialization surrogate for <see cref="ChangeableRelativeUnit"/> (version 0).
+    /// Handles custom serialization and deserialization of the outer type.
+    /// </summary>
     public class SerializationSurrogate0 : Altaxo.Serialization.Xml.IXmlSerializationSurrogate
     {
+      /// <summary>
+      /// Serializes the specified <see cref="ChangeableRelativeUnit"/> instance into the provided
+      /// <see cref="Altaxo.Serialization.Xml.IXmlSerializationInfo"/>.
+      /// </summary>
+      /// <param name="obj">The object to serialize (expected to be a <see cref="ChangeableRelativeUnit"/>).</param>
+      /// <param name="info">The serialization info where values should be written.</param>
       public void Serialize(object obj, Altaxo.Serialization.Xml.IXmlSerializationInfo info)
       {
         var s = (ChangeableRelativeUnit)obj;
@@ -53,6 +63,14 @@ namespace Altaxo.Units
         info.AddValue("Reference", s._referenceQuantity);
       }
 
+      /// <summary>
+      /// Deserializes an instance of <see cref="ChangeableRelativeUnit"/> from the provided
+      /// <see cref="Altaxo.Serialization.Xml.IXmlDeserializationInfo"/> and returns the reconstructed object.
+      /// </summary>
+      /// <param name="o">An optional existing object instance (ignored).</param>
+      /// <param name="info">The deserialization info to read values from.</param>
+      /// <param name="parent">The parent object in the object graph (may be <c>null</c>).</param>
+      /// <returns>A new <see cref="ChangeableRelativeUnit"/> instance created from the serialized data.</returns>
       public object Deserialize(object? o, Altaxo.Serialization.Xml.IXmlDeserializationInfo info, object? parent)
       {
         var value = info.GetString("Name");
@@ -77,19 +95,19 @@ namespace Altaxo.Units
       _referenceQuantity = referenceQuantity;
     }
 
-    /// <summary>Full name of the unit.</summary>
+    /// <inheritdoc/>
     public string Name
     {
       get { return _name; }
     }
 
-    /// <summary>Usual shortcut of the unit.</summary>
+    /// <inheritdoc/>
     public string ShortCut
     {
       get { return _shortCut; }
     }
 
-    /// <summary>The corresponding quantity that this unit encapsulates.</summary>
+    /// <inheritdoc/>
     public DimensionfulQuantity ReferenceQuantity
     {
       get
@@ -102,41 +120,31 @@ namespace Altaxo.Units
       }
     }
 
-    /// <summary>Converts <paramref name="x"/> to the corresponding SI unit.</summary>
-    /// <param name="x">Value to convert.</param>
-    /// <returns>The corresponding value of <paramref name="x"/> in SI units.</returns>
+    /// <inheritdoc/>
     public double ToSIUnit(double x)
     {
       return (x / _divider) * _referenceQuantity.AsValueInSIUnits;
     }
 
-    /// <summary>Converts <paramref name="x"/> (in SI units) to the corresponding value in this unit.</summary>
-    /// <param name="x">Value in SI units.</param>
-    /// <returns>The corresponding value in this unit.</returns>
+    /// <inheritdoc/>
     public double FromSIUnit(double x)
     {
       return _divider * x / _referenceQuantity.AsValueInSIUnits;
     }
 
-    /// <summary>
-    /// Calculated the dimensionless prefactor to multiply the <see cref="ReferenceQuantity"/> with.
-    /// Example: Given that the relative unit is 'percent of page with', a value of <paramref name="x"/>=5 is converted to 0.05. The result can then be used
-    /// to calculate the absolute quantity by multiplying the result of 0.05 with the 'page with'.
-    /// </summary>
-    /// <param name="x">Numerical value to convert.</param>
-    /// <returns>The prefactor to multiply the <see cref="ReferenceQuantity"/> with in order to get the absolute quantity.</returns>
+    /// <inheritdoc/>
     public double GetRelativeValueFromValue(double x)
     {
       return x / _divider;
     }
 
-    /// <summary>Returns a list of possible prefixes for this unit (like µ, m, k, M, G..).</summary>
+    /// <inheritdoc/>
     public ISIPrefixList Prefixes
     {
       get { return SIPrefix.ListWithNonePrefixOnly; }
     }
 
-    /// <summary>Returns the corresponding SI unit.</summary>
+    /// <inheritdoc/>
     public SIUnit SIUnit
     {
       get { return _referenceQuantity.Unit.SIUnit; }

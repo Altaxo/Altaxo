@@ -28,9 +28,17 @@ using System.Runtime.Serialization;
 
 namespace Altaxo.Serialization
 {
+  /// <summary>
+  /// Indicates that an assembly or module supports serialization versioning.
+  /// Apply this attribute to assemblies or modules to mark that the contained
+  /// types support version tolerant serialization.
+  /// </summary>
   [AttributeUsage(AttributeTargets.Assembly | AttributeTargets.Module)]
   public class SupportsSerializationVersioningAttribute : Attribute
   {
+    /// <summary>
+    /// Initializes a new instance of the <see cref="SupportsSerializationVersioningAttribute"/> class.
+    /// </summary>
     public SupportsSerializationVersioningAttribute()
     {
     }

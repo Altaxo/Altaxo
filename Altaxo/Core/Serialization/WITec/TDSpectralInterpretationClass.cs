@@ -26,12 +26,26 @@ using System;
 
 namespace Altaxo.Serialization.WITec
 {
+  /// <summary>
+  /// Interpretation class for spectral units used in WITec data.
+  /// Maps integer unit indices to human-readable descriptions and shortcuts (for example nanometers -> "nm").
+  /// </summary>
   public class TDSpectralInterpretationClass : TDInterpretationClass
   {
+    /// <summary>
+    /// Backing node for the "TDSpectralInterpretation" child node.
+    /// </summary>
     protected WITecTreeNode _tdSpectralInterpretation;
 
+    /// <summary>
+    /// Gets the excitation wavelength read from the node, if present.
+    /// </summary>
     public double ExcitationWaveLength { get; }
 
+    /// <summary>
+    /// Initializes a new instance of the <see cref="TDSpectralInterpretationClass"/> class.
+    /// </summary>
+    /// <param name="node">The node representing this interpretation in the WITec tree.</param>
     public TDSpectralInterpretationClass(WITecTreeNode node)
       : base(node)
     {
@@ -40,6 +54,7 @@ namespace Altaxo.Serialization.WITec
     }
 
 
+    /// <inheritdoc/>
     public override (string Description, string shortCut) GetUnit(int unit)
     {
       return unit switch

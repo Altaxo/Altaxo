@@ -47,16 +47,38 @@ namespace Altaxo.Serialization.WITec
     public static Encoding TextEncoding { get; } = Encoding.GetEncoding("Windows-1252");
 
 
+    /// <summary>
+    /// The root node of the parsed WITec tree.
+    /// </summary>
     private WITecTreeNode RootNode { get; }
+
+    /// <summary>
+    /// The data node (child named "Data") within the root node.
+    /// </summary>
     private WITecTreeNode DataNode { get; }
 
+    /// <summary>
+    /// The magic string read from the file header (first 8 bytes) used to identify the file type.
+    /// </summary>
     private string MagicString { get; }
 
+    /// <summary>
+    /// Mapping from numeric identifier to the name of the corresponding Data child node.
+    /// Key is the identifier, value is the name of the Data child node.
+    /// </summary>
     private Dictionary<int, string> ID_To_Name { get; } = new Dictionary<int, string>();
 
+    /// <summary>
+    /// List of extracted spectra (TDGraphClass instances) found in the file.
+    /// </summary>
     public List<TDGraphClass> Spectra { get; } = [];
 
 
+    /// <summary>
+    /// Initializes a new instance of the <see cref="WITecReader"/> class and parses the provided stream.
+    /// The constructor reads the file header, the node tree and prepares the data dictionary.
+    /// </summary>
+    /// <param name="stream">The stream to read the WITec project from. The stream must be readable and positioned at the beginning of the file.</param>
     public WITecReader(Stream stream)
     {
       var buffer = new byte[8];
@@ -69,11 +91,10 @@ namespace Altaxo.Serialization.WITec
     }
 
     /// <summary>
-    /// Gets the identifier dictionary.
-    /// Key is the indentifier, value is the name of the Data child node.
+    /// Populates the internal identifier dictionary from the provided data node.
+    /// The method iterates over the child nodes of <paramref name="dataNode"/> and extracts the integer ID from the child's "TData" node.
     /// </summary>
-    /// <param name="dataNode">The data node.</param>
-    /// <returns></returns>
+    /// <param name="dataNode">The data node whose children are inspected to build the ID dictionary.</param>
     protected void Create_ID_Dictionary(WITecTreeNode dataNode)
     {
       ID_To_Name.Clear();
@@ -88,6 +109,16 @@ namespace Altaxo.Serialization.WITec
       }
     }
 
+    /// <summary>
+    /// Builds a data class instance for the node identified by the provided identifier.
+    /// The method resolves the name of the data node from the internal ID dictionary and constructs the appropriate <see cref="TDataClass"/> derived instance.
+    /// </summary>
+    /// <typeparam name="T">The expected return type, which must derive from <see cref="TDataClass"/>.</typeparam>
+    /// <param name="id">The identifier of the node to build.</param>
+    /// <returns>An instance of <typeparamref name="T"/> representing the node with the requested identifier.</returns>
+    /// <exception cref="KeyNotFoundException">Thrown when the specified <paramref name="id"/> does not exist in the ID dictionary.</exception>
+    /// <exception cref="NotImplementedException">Thrown when the found class name is not implemented in the switch statement.</exception>
+    /// <exception cref="InvalidDataException">Thrown when the constructed instance is not of the expected type <typeparamref name="T"/>.</exception>
     public T BuildNodeWithID<T>(int id) where T : TDataClass
     {
       var name = ID_To_Name[id];
@@ -116,6 +147,10 @@ namespace Altaxo.Serialization.WITec
     }
 
 
+    /// <summary>
+    /// Searches the parsed data node for all entries of class "TDGraph" and constructs corresponding <see cref="TDGraphClass"/> instances.
+    /// Found instances are appended to the public <see cref="Spectra"/> list.
+    /// </summary>
     public void ExtractSpectra()
     {
       // search for all nodes that are TDGraph nodes
