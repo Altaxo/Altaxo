@@ -23,22 +23,18 @@
 #endregion Copyright
 
 using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 #nullable enable
 
 namespace Altaxo.Units
 {
-  [AttributeUsage(AttributeTargets.Class, AllowMultiple = false, Inherited = false)]
   /// <summary>
   /// Describes the dimensionality and quantity name for a unit class.
   /// Attach this attribute to unit classes to provide a human-readable quantity description
   /// (for example "Length" or "Temperature") and the exponents of the seven SI base units
   /// (metre, kilogram, second, ampere, kelvin, mole, candela) that define the unit's dimension.
   /// </summary>
+  [AttributeUsage(AttributeTargets.Class, AllowMultiple = false, Inherited = false)]
   public class UnitDescriptionAttribute : Attribute
   {
     private string _quantity;

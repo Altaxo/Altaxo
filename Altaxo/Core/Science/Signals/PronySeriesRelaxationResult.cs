@@ -100,7 +100,6 @@ namespace Altaxo.Science.Signals
     /// <remarks>
     /// ANSYS (and possibly other simulation programs) request relative coefficients
     /// such that the sum of the relative coefficients equals <c>1 - E_u/E_0</c>,
-
     /// where <c>E_u</c> is the low-frequency modulus and <c>E_0</c> is the high-frequency modulus.
     ///
     /// The low-frequency modulus is the modulus at the highest time, thus the last element of the <see cref="PronyCoefficients"/> array,

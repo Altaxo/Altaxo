@@ -40,11 +40,12 @@ namespace Altaxo.Units
     private DimensionfulQuantity _referenceQuantity;
 
     #region Serialization
-    [Altaxo.Serialization.Xml.XmlSerializationSurrogateFor(typeof(ChangeableRelativeUnit), 0)]
+
     /// <summary>
     /// XML serialization surrogate for <see cref="ChangeableRelativeUnit"/> (version 0).
     /// Handles custom serialization and deserialization of the outer type.
     /// </summary>
+    [Altaxo.Serialization.Xml.XmlSerializationSurrogateFor(typeof(ChangeableRelativeUnit), 0)]
     public class SerializationSurrogate0 : Altaxo.Serialization.Xml.IXmlSerializationSurrogate
     {
       /// <summary>

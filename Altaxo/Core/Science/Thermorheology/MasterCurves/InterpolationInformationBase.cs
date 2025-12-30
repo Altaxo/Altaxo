@@ -167,7 +167,7 @@ namespace Altaxo.Science.Thermorheology.MasterCurves
     }
 
     /// <summary>
-    /// Wraps an <see cref="IList{(TW,int)}"/> to an <see cref="IReadOnlyList{TW}"/> that exposes the first component of the tuple.
+    /// Wraps an <see cref="IList{T}"/> of <c>(TW, int)</c> tuples to an <see cref="IReadOnlyList{TW}"/> that exposes the first component of the tuple.
     /// </summary>
     protected class WrapperIListToIRoVectorV<TW>(IList<(TW, int)> list) : IReadOnlyList<TW>
     {
@@ -216,7 +216,7 @@ namespace Altaxo.Science.Thermorheology.MasterCurves
     }
 
     /// <summary>
-    /// Wraps an <see cref="IList{(TW,int)}"/> to an <see cref="IReadOnlyList{int}"/> that exposes the second component of the tuple (the curve index).
+    /// Wraps an <see cref="IList{T}"/> of <c>(TW, int)</c> tuples to an <see cref="IReadOnlyList{Int32}"/> that exposes the second component of the tuple (the curve index).
     /// </summary>
     protected class WrapperIListToIRoVectorV2<TW>(IList<(TW, int)> list) : IReadOnlyList<int>
     {

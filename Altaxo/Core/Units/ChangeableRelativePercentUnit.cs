@@ -33,11 +33,12 @@ namespace Altaxo.Units
   public class ChangeableRelativePercentUnit : ChangeableRelativeUnit
   {
     #region Serialization
-    [Altaxo.Serialization.Xml.XmlSerializationSurrogateFor(typeof(ChangeableRelativePercentUnit), 0)]
+
     /// <summary>
     /// XML serialization surrogate for <see cref="ChangeableRelativePercentUnit"/> (version 0).
     /// Handles custom serialization and deserialization of the outer type.
     /// </summary>
+    [Altaxo.Serialization.Xml.XmlSerializationSurrogateFor(typeof(ChangeableRelativePercentUnit), 0)]
     public class SerializationSurrogateB0 : Altaxo.Serialization.Xml.IXmlSerializationSurrogate
     {
       /// <summary>

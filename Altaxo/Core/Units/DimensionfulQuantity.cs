@@ -41,11 +41,12 @@ namespace Altaxo.Units
     private IUnit? _unit;
 
     #region Serialization
-    [Altaxo.Serialization.Xml.XmlSerializationSurrogateFor(typeof(DimensionfulQuantity), 0)]
+
     /// <summary>
     /// XML serialization surrogate for <see cref="DimensionfulQuantity"/> (version 0).
     /// Handles custom serialization and deserialization of the outer type.
     /// </summary>
+    [Altaxo.Serialization.Xml.XmlSerializationSurrogateFor(typeof(DimensionfulQuantity), 0)]
     public class SerializationSurrogate0 : Altaxo.Serialization.Xml.IXmlSerializationSurrogate
     {
       /// <summary>

@@ -329,7 +329,7 @@ namespace Altaxo.Calc.Regression
     /// <param name="info">Output status code.</param>
     /// <param name="nfev">On output, receives the number of calls to <paramref name="fcn"/>.</param>
     /// <param name="fjac">Jacobian array (m-by-n, column-major). On output contains the final QR information.</param>
-    /// <param name="ldfjac">Leading dimension of <paramref name="fjac"/> (must be at least <paramref name="m"/>).</param>
+    /// <param name="ldfjac">Leading dimension of <paramref name="fjac"/>.</param>
     /// <param name="ipvt">Pivot indices defining permutation matrix.</param>
     /// <param name="qtf">The first <c>n</c> elements of <c>(Qᵀ)f</c>.</param>
     /// <param name="wa1">Working array of length <c>n</c>.</param>
@@ -1499,7 +1499,7 @@ L40:
           wa[k] = rdiag[k];
 L80:
           ;
-    }
+        }
 L100:
         rdiag[j] = -ajnorm;
       }

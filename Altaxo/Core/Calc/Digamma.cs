@@ -250,7 +250,7 @@ namespace Altaxo.Calc
     }
 
     /// <summary>
-    /// Computes the Hurwitz zeta function c6(s, z) = a3_{k=0}^{c0} 1/(k+z)^s for integer <paramref name="n"/> = s.
+    /// Computes the Hurwitz zeta function for integer <paramref name="n"/> = s.
     /// </summary>
     /// <param name="n">The integer parameter s.</param>
     /// <param name="z">The real parameter z.</param>

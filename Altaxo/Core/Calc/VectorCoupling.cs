@@ -568,8 +568,8 @@ L250:
     ///
     /// The restrictions imposed by this subroutine are
     ///
-    ///       1. l1 >= abs(m1) and l1+abs(m1) must be an integer
-    ///       2. abs(l1-l2) <= l3 <= l1+l2
+    ///       1. l1 &gt;= abs(m1) and l1+abs(m1) must be an integer
+    ///       2. abs(l1-l2) &lt;= l3 &lt;= l1+l2
     ///       3. l1+l2+l3 must be an integer
     ///       4. m2max-m2min must be an integer, where
     ///          m2max=min(l2,l3-m1) and m2min=max(-l2,-l3-m1)
@@ -807,7 +807,7 @@ L80:
 //  with backward recursion values.
 
 L100:
-      // mmatch = m2 - 1
+// mmatch = m2 - 1
       nstep2 = nfin - lstep + 3;
       x1 = x;
       x2 = thrcof[lstep - 2];
@@ -931,7 +931,7 @@ L230:
         goto L236;
 
 L235:
-        cnorm = -cnorm;
+      cnorm = -cnorm;
 
 L236:
       if (Math.Abs(cnorm) < one)

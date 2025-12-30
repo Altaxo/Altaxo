@@ -25,7 +25,6 @@
 using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Text;
 using Altaxo.Calc;
 
 #nullable enable
@@ -43,49 +42,50 @@ namespace Altaxo.Units
     private int[] _allExponentsSorted;
 
     #region Serialization
-  [Altaxo.Serialization.Xml.XmlSerializationSurrogateFor(typeof(SIPrefixList), 0)]
-  /// <summary>
-  /// XML serialization surrogate for <see cref="SIPrefixList"/> (version 0).
-  /// Handles custom serialization and deserialization of the outer type.
-  /// </summary>
-  public class SerializationSurrogate0 : Altaxo.Serialization.Xml.IXmlSerializationSurrogate
-  {
-    /// <summary>
-    /// Serializes the specified <see cref="SIPrefixList"/> instance into the provided
-    /// <see cref="Altaxo.Serialization.Xml.IXmlSerializationInfo"/>.
-    /// </summary>
-    /// <param name="obj">The object to serialize (expected to be a <see cref="SIPrefixList"/>).</param>
-    /// <param name="info">The serialization info where values should be written.</param>
-    public void Serialize(object obj, Altaxo.Serialization.Xml.IXmlSerializationInfo info)
-    {
-      var s = (SIPrefixList)obj;
-
-      info.CreateArray("PrefixList", s.Count);
-      foreach (var prefix in s)
-        info.AddValue("e", prefix);
-      info.CommitArray();
-    }
 
     /// <summary>
-    /// Deserializes an instance of <see cref="SIPrefixList"/> from the provided
-    /// <see cref="Altaxo.Serialization.Xml.IXmlDeserializationInfo"/> and returns the reconstructed object.
+    /// XML serialization surrogate for <see cref="SIPrefixList"/> (version 0).
+    /// Handles custom serialization and deserialization of the outer type.
     /// </summary>
-    /// <param name="o">An optional existing object instance (ignored).</param>
-    /// <param name="info">The deserialization info to read values from.</param>
-    /// <param name="parent">The parent object in the object graph (may be <c>null</c>).</param>
-    /// <returns>A new <see cref="SIPrefixList"/> instance created from the serialized data.</returns>
-    public object Deserialize(object? o, Altaxo.Serialization.Xml.IXmlDeserializationInfo info, object? parent)
+    [Altaxo.Serialization.Xml.XmlSerializationSurrogateFor(typeof(SIPrefixList), 0)]
+    public class SerializationSurrogate0 : Altaxo.Serialization.Xml.IXmlSerializationSurrogate
     {
-      int count = info.OpenArray("PrefixList");
+      /// <summary>
+      /// Serializes the specified <see cref="SIPrefixList"/> instance into the provided
+      /// <see cref="Altaxo.Serialization.Xml.IXmlSerializationInfo"/>.
+      /// </summary>
+      /// <param name="obj">The object to serialize (expected to be a <see cref="SIPrefixList"/>).</param>
+      /// <param name="info">The serialization info where values should be written.</param>
+      public void Serialize(object obj, Altaxo.Serialization.Xml.IXmlSerializationInfo info)
+      {
+        var s = (SIPrefixList)obj;
 
-      var list = new SIPrefix[count];
-      for (int i = 0; i < count; ++i)
-        list[i] = (SIPrefix)info.GetValue("e", parent);
-      info.CloseArray(count);
+        info.CreateArray("PrefixList", s.Count);
+        foreach (var prefix in s)
+          info.AddValue("e", prefix);
+        info.CommitArray();
+      }
 
-      return new SIPrefixList(list);
+      /// <summary>
+      /// Deserializes an instance of <see cref="SIPrefixList"/> from the provided
+      /// <see cref="Altaxo.Serialization.Xml.IXmlDeserializationInfo"/> and returns the reconstructed object.
+      /// </summary>
+      /// <param name="o">An optional existing object instance (ignored).</param>
+      /// <param name="info">The deserialization info to read values from.</param>
+      /// <param name="parent">The parent object in the object graph (may be <c>null</c>).</param>
+      /// <returns>A new <see cref="SIPrefixList"/> instance created from the serialized data.</returns>
+      public object Deserialize(object? o, Altaxo.Serialization.Xml.IXmlDeserializationInfo info, object? parent)
+      {
+        int count = info.OpenArray("PrefixList");
+
+        var list = new SIPrefix[count];
+        for (int i = 0; i < count; ++i)
+          list[i] = (SIPrefix)info.GetValue("e", parent);
+        info.CloseArray(count);
+
+        return new SIPrefixList(list);
+      }
     }
-  }
 
     #endregion
 

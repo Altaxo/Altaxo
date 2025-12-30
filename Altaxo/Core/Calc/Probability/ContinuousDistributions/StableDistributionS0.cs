@@ -24,8 +24,6 @@
 #endregion Copyright
 
 using System;
-using System.Collections.Generic;
-using System.Text;
 
 namespace Altaxo.Calc.Probability
 {
@@ -48,7 +46,7 @@ namespace Altaxo.Calc.Probability
   /// Communications in Statistics - Stochastic Models, 13, 759-774, 1999
   /// </para>
   /// <para>
-  /// Reference: S. Borak, W. H0rdle, R. Weron, Stable distributions. SFB 649 Discussion paper 2005-2008,
+  /// Reference: S. Borak, W. Härdle, R. Weron, Stable distributions. SFB 649 Discussion paper 2005-2008,
   /// http://sfb649.wiwi.hu-berlin.de, ISSN 1860-5664
   /// </para>
   /// <para/>

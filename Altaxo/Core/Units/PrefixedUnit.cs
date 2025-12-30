@@ -23,9 +23,6 @@
 #endregion Copyright
 
 using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
 
 #nullable enable
 
@@ -41,11 +38,12 @@ namespace Altaxo.Units
     private SIPrefix _prefix;
 
     #region Serialization
-    [Altaxo.Serialization.Xml.XmlSerializationSurrogateFor(typeof(PrefixedUnit), 0)]
+
     /// <summary>
     /// XML serialization surrogate for <see cref="PrefixedUnit"/> (version 0).
     /// Handles custom serialization and deserialization for the struct.
     /// </summary>
+    [Altaxo.Serialization.Xml.XmlSerializationSurrogateFor(typeof(PrefixedUnit), 0)]
     public class SerializationSurrogate0_PrefixUnit : Altaxo.Serialization.Xml.IXmlSerializationSurrogate
     {
       /// <summary>
