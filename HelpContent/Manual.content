@@ -209,6 +209,10 @@
 </Topic>
 <Topic id="D7216AC7DC127824F9628052A8B61BF1" visible="True" title="Appendix">
 <Topic id="C217D5E95E222A9979E190190DB7F706" visible="True" title="Built-in fit functions">
+<Topic id="30068218F592D266F354207ADE3D954D" visible="True" title="Fit functions for chemistry">
+</Topic>
+<Topic id="2821021F59680DC40E95974B308DED27" visible="True" title="Fit functions for sorption isotherms">
+</Topic>
 <Topic id="D3DE4F0F5AD518E85FF95AB60594EE2A" visible="True" title="Diffusion fit functions">
 </Topic>
 <Topic id="DF83DC7D40FD2649BAB5FCA82077D8B5" visible="True" title="General fit functions">

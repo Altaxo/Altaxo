@@ -77,7 +77,7 @@ After selection of the required methods and pressing <codeInline>OK</codeInline>
 </para>
 
 <para>
-The newly created table contains a data source for the peak searching+fitting. The data source remembers where the data for peak searching + fitting came from, and which options have been used. If the result of the peak searching + fitting is not satisfactory, the data source can be opened by clicking on the question mark <mediaLinkInline><image xlink:href="Icons.16x16"></image></mediaLinkInline> in the toolbar. Using this <link xlink:href="3A0137E53CEEEFFC3A49CDCA2CC5B88D#Screenshot_Dialog_SpectralPreprocessingDataSource">dialog</link>, the steps can be changed, or data can be added or removed.
+The newly created table contains a data source for the peak searching+fitting. The data source remembers where the data for peak searching + fitting came from, and which options have been used. If the result of the peak searching + fitting is not satisfactory, the data source can be opened by clicking on the question mark <mediaLinkInline><image xlink:href="res:Icons.16x16"></image></mediaLinkInline> in the toolbar. Using this <link xlink:href="3A0137E53CEEEFFC3A49CDCA2CC5B88D#Screenshot_Dialog_SpectralPreprocessingDataSource">dialog</link>, the steps can be changed, or data can be added or removed.
 </para>
 
 <para>
@@ -89,7 +89,7 @@ Fig.2: Data source of the worksheet containing the peak data. The expander in th
 </para>
 
 <para>
-Additionally, when the original data have changed, you can re-apply the preprocessing by clicking on the <codeInline>Requery table data source</codeInline> button <mediaLinkInline><image xlink:href="Icons.16x16"></image></mediaLinkInline> in the toolbar.
+Additionally, when the original data have changed, you can re-apply the preprocessing by clicking on the <codeInline>Requery table data source</codeInline> button <mediaLinkInline><image xlink:href="res:Icons.16x16"></image></mediaLinkInline> in the toolbar.
 </para>
 
 <para>
@@ -143,7 +143,7 @@ Filter criteria are e.g. the height of the peak (peaks under a threshold height 
 </para>
 
 <para>
-<markup><a href="ACAC6A80-7CE0-4CB9-B36C-B2FB6ACAB027.htm#FCFCA9E0A036FE18168EE7BA3A7D07F0"><img src="../media/FCFCA9E0A036FE18168EE7BA3A7D07F0.png" width="378"></img></a></markup>
+<markup><a href="ACAC6A80-7CE0-4CB9-B36C-B2FB6ACAB027.htm#8C8673B5417319F51AC65D21DA75394A"><img src="../media/8C8673B5417319F51AC65D21DA75394A.png" width="378"></img></a></markup>
 </para>
 
 <para>
@@ -193,7 +193,7 @@ The algorithm starts with a very narrow Ricker wavelet (which has a width of 1 p
 </para>
 
 <para>
-<markup><a href="ACAC6A80-7CE0-4CB9-B36C-B2FB6ACAB027.htm#E07935D4C50882C71880BE39D6C2701E"><img src="../media/E07935D4C50882C71880BE39D6C2701E.png" width="378"></img></a></markup>
+<markup><a href="ACAC6A80-7CE0-4CB9-B36C-B2FB6ACAB027.htm#243574EC910BBB4B29D9EAA57844F913"><img src="../media/243574EC910BBB4B29D9EAA57844F913.png" width="378"></img></a></markup>
 </para>
 
 <para>
@@ -201,7 +201,7 @@ Fig. 2: Example of a spectrum that is used for CWT transformation, see below.
 </para>
 
 <para>
-<markup><a href="ACAC6A80-7CE0-4CB9-B36C-B2FB6ACAB027.htm#340D8CCDE220AAFC677FC00E50DF7B4B"><img src="../media/340D8CCDE220AAFC677FC00E50DF7B4B.png" width="567"></img></a></markup>  
+<markup><a href="ACAC6A80-7CE0-4CB9-B36C-B2FB6ACAB027.htm#E50CB9EB66EBD2E285ED055A5FD170BF"><img src="../media/E50CB9EB66EBD2E285ED055A5FD170BF.png" width="567"></img></a></markup>  
 </para>
 
 <para>

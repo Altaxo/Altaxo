@@ -92,7 +92,7 @@ Some of these formats, e.g. Galactic SPC files, can contain more than one spectr
 </para>
 
 <para>
-The easiest way to import a new spectrum is to use the import toolbar button <mediaLinkInline><image xlink:href="Icons.16x16"></image></mediaLinkInline> for import. If multiple spectra needs to be imported into one worksheet (for instance for chemometric analysis), use the menu item appropriate for your format from the <codeInline>File</codeInline> → <codeInline>Import</codeInline>  menu. Select all files that should be imported. Further information can be found in the <link xlink:href="0D1CC7EABBD1395A9C7E70C02EE259E7#Section_Tables_ImportingData">section &quot;Importing data&quot;</link>.
+The easiest way to import a new spectrum is to use the import toolbar button <mediaLinkInline><image xlink:href="res:Icons.16x16"></image></mediaLinkInline> for import. If multiple spectra needs to be imported into one worksheet (for instance for chemometric analysis), use the menu item appropriate for your format from the <codeInline>File</codeInline> → <codeInline>Import</codeInline>  menu. Select all files that should be imported. Further information can be found in the <link xlink:href="0D1CC7EABBD1395A9C7E70C02EE259E7#Section_Tables_ImportingData">section &quot;Importing data&quot;</link>.
 </para>
 
 <para>
@@ -104,7 +104,7 @@ Fig. 1: Example of a worksheet after import of three .spc files. Note that the f
 </para>
 
 <para>
-After successful import of the data, the worksheet contains a data source that holds all information of the import: which file(s) were imported, and which options were used for import. You can open the dialog to edit these data by clicking on the question mark <mediaLinkInline><image xlink:href="Icons.16x16"></image></mediaLinkInline> in the toolbar. If you simple want to reimport the data without changing the file names or the options (e.g. when you have accidentally deleted your data), you can click on the <codeInline>Requery table data source</codeInline> button <mediaLinkInline><image xlink:href="Icons.16x16"></image></mediaLinkInline> in the toolbar.
+After successful import of the data, the worksheet contains a data source that holds all information of the import: which file(s) were imported, and which options were used for import. You can open the dialog to edit these data by clicking on the question mark <mediaLinkInline><image xlink:href="res:Icons.16x16"></image></mediaLinkInline> in the toolbar. If you simple want to reimport the data without changing the file names or the options (e.g. when you have accidentally deleted your data), you can click on the <codeInline>Requery table data source</codeInline> button <mediaLinkInline><image xlink:href="res:Icons.16x16"></image></mediaLinkInline> in the toolbar.
 </para>
 
 <para>

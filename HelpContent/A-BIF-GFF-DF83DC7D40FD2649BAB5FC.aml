@@ -787,6 +787,83 @@ Fig. 1: Stretched exponential growth with <markup><a href="ACAC6A80-7CE0-4CB9-B3
 </para>
 <markup><hr/></markup></content>
 </section>
+
+<section address="78534D51A32C7DF82A2F74E91E516BB4">
+<title>Two polynomial segments
+</title>
+<content>
+
+<para>
+This function evaluates two polynomial segments that are connected at the point <markup><a href="ACAC6A80-7CE0-4CB9-B36C-B2FB6ACAB027.htm#84382D1787FB417776455FBB969B7CBD"><img src="../media/84382D1787FB417776455FBB969B7CBD.png" width="42" height="16" align="bottom"></img></a></markup>, according to:
+</para>
+<markup><a href="ACAC6A80-7CE0-4CB9-B36C-B2FB6ACAB027.htm#11FE29D6D6A82124822921EBC3C164D3"><img src="../media/11FE29D6D6A82124822921EBC3C164D3.png" width="446" height="46"></img></a></markup>
+
+<para>
+in which:
+</para>
+
+<list class="bullet">
+
+<listItem>
+
+<para>
+<markup><a href="ACAC6A80-7CE0-4CB9-B36C-B2FB6ACAB027.htm#5044785ED478986003A9B7AF1116685D"><img src="../media/5044785ED478986003A9B7AF1116685D.png" width="14" height="11" align="bottom"></img></a></markup> is the x-coordinate of the point at which the two polynomial segments are joined
+</para>
+</listItem>
+
+<listItem>
+
+<para>
+<markup><a href="ACAC6A80-7CE0-4CB9-B36C-B2FB6ACAB027.htm#59726F5FEEFB8E9B14AC5939079A9199"><img src="../media/59726F5FEEFB8E9B14AC5939079A9199.png" width="13" height="10" align="bottom"></img></a></markup> is the y-coordinate of the point at which the two polynomial segments are joined
+</para>
+</listItem>
+
+<listItem>
+
+<para>
+<markup><a href="ACAC6A80-7CE0-4CB9-B36C-B2FB6ACAB027.htm#F25C79C6D7017BC68EC22CCF11EA6E65"><img src="../media/F25C79C6D7017BC68EC22CCF11EA6E65.png" width="41" height="11" align="bottom"></img></a></markup> are the polynomial coefficients of the left polynomial segment (<markup><a href="ACAC6A80-7CE0-4CB9-B36C-B2FB6ACAB027.htm#8DB5BD3E738F8C2629BCFC516445DC66"><img src="../media/8DB5BD3E738F8C2629BCFC516445DC66.png" width="43" height="13" align="bottom"></img></a></markup>)
+</para>
+</listItem>
+
+<listItem>
+
+<para>
+<markup><a href="ACAC6A80-7CE0-4CB9-B36C-B2FB6ACAB027.htm#F79B36DB4D02016E9A5A404DD1D7736B"><img src="../media/F79B36DB4D02016E9A5A404DD1D7736B.png" width="12" height="13" align="middle"></img></a></markup> ... <markup><a href="ACAC6A80-7CE0-4CB9-B36C-B2FB6ACAB027.htm#46F191F85064C24B520C604EB988D53F"><img src="../media/46F191F85064C24B520C604EB988D53F.png" width="16" height="13" align="middle"></img></a></markup> are the polynomial coefficients of the right polynomial segment (<markup><a href="ACAC6A80-7CE0-4CB9-B36C-B2FB6ACAB027.htm#485FC51A953CF2D1D04B4A16A7D51BE6"><img src="../media/485FC51A953CF2D1D04B4A16A7D51BE6.png" width="43" height="13" align="middle"></img></a></markup>)
+</para>
+</listItem>
+
+<listItem>
+
+<para>
+<markup><a href="ACAC6A80-7CE0-4CB9-B36C-B2FB6ACAB027.htm#63BAF2C6E1D151502445F0425493D190"><img src="../media/63BAF2C6E1D151502445F0425493D190.png" width="9" height="8" align="middle"></img></a></markup> is the order of the left polynomial segment (<markup><a href="ACAC6A80-7CE0-4CB9-B36C-B2FB6ACAB027.htm#88BC71AB7901F338A9A8B9E6CAD38059"><img src="../media/88BC71AB7901F338A9A8B9E6CAD38059.png" width="72" height="13" align="middle"></img></a></markup>)
+</para>
+</listItem>
+
+<listItem>
+
+<para>
+<markup><a href="ACAC6A80-7CE0-4CB9-B36C-B2FB6ACAB027.htm#2C3A6651FE3DC1F1594E7ADEC315B14B"><img src="../media/2C3A6651FE3DC1F1594E7ADEC315B14B.png" width="13" height="8" align="middle"></img></a></markup> is the order of the right polynomial segment (<markup><a href="ACAC6A80-7CE0-4CB9-B36C-B2FB6ACAB027.htm#848F93E5BA2915DB481E1CE9B89D5CD2"><img src="../media/848F93E5BA2915DB481E1CE9B89D5CD2.png" width="76" height="13" align="middle"></img></a></markup>)
+</para>
+</listItem>
+</list>
+
+<para>
+The polynomial orders <markup><a href="ACAC6A80-7CE0-4CB9-B36C-B2FB6ACAB027.htm#63BAF2C6E1D151502445F0425493D190"><img src="../media/63BAF2C6E1D151502445F0425493D190.png" width="9" height="8" align="middle"></img></a></markup> and <markup><a href="ACAC6A80-7CE0-4CB9-B36C-B2FB6ACAB027.htm#2C3A6651FE3DC1F1594E7ADEC315B14B"><img src="../media/2C3A6651FE3DC1F1594E7ADEC315B14B.png" width="13" height="8" align="middle"></img></a></markup> can be changed by double-clicking on the fit function. The default value is <markup><a href="ACAC6A80-7CE0-4CB9-B36C-B2FB6ACAB027.htm#287447E6CCD693FF440BCD8E3A58F8F1"><img src="../media/287447E6CCD693FF440BCD8E3A58F8F1.png" width="37" height="12" align="middle"></img></a></markup> and <markup><a href="ACAC6A80-7CE0-4CB9-B36C-B2FB6ACAB027.htm#A78A8000C5850BC6D662AF05F2A62FE1"><img src="../media/A78A8000C5850BC6D662AF05F2A62FE1.png" width="41" height="12" align="middle"></img></a></markup>, resulting in two straight lines joined at <markup><a href="ACAC6A80-7CE0-4CB9-B36C-B2FB6ACAB027.htm#84382D1787FB417776455FBB969B7CBD"><img src="../media/84382D1787FB417776455FBB969B7CBD.png" width="42" height="16" align="bottom"></img></a></markup>. If some of the terms are not needed, set the corresponding coefficients fixed to zero.
+</para>
+
+<para>
+The domain of the function is <markup><a href="ACAC6A80-7CE0-4CB9-B36C-B2FB6ACAB027.htm#804EA2CA099DDEA06FDA0443AA3F27F8"><img src="../media/804EA2CA099DDEA06FDA0443AA3F27F8.png" width="90" height="11" align="middle"></img></a></markup>.
+</para>
+
+<para>
+<markup><a href="ACAC6A80-7CE0-4CB9-B36C-B2FB6ACAB027.htm#4349081B1E0BD10A1D72F5477A735D00"><img src="../media/4349081B1E0BD10A1D72F5477A735D00.png" width="567"></img></a></markup>
+</para>
+
+<para>
+Fig. 1: Two polynomial segments (<markup><a href="ACAC6A80-7CE0-4CB9-B36C-B2FB6ACAB027.htm#287447E6CCD693FF440BCD8E3A58F8F1"><img src="../media/287447E6CCD693FF440BCD8E3A58F8F1.png" width="37" height="12" align="middle"></img></a></markup>, <markup><a href="ACAC6A80-7CE0-4CB9-B36C-B2FB6ACAB027.htm#A78A8000C5850BC6D662AF05F2A62FE1"><img src="../media/A78A8000C5850BC6D662AF05F2A62FE1.png" width="41" height="12" align="middle"></img></a></markup>) with <markup><a href="ACAC6A80-7CE0-4CB9-B36C-B2FB6ACAB027.htm#6C016D6B746F0D381C57F4C7182FC43F"><img src="../media/6C016D6B746F0D381C57F4C7182FC43F.png" width="42" height="13" align="middle"></img></a></markup>, <markup><a href="ACAC6A80-7CE0-4CB9-B36C-B2FB6ACAB027.htm#E34C78692925BF2B8F652AB2966D06C7"><img src="../media/E34C78692925BF2B8F652AB2966D06C7.png" width="40" height="14" align="bottom"></img></a></markup>, <markup><a href="ACAC6A80-7CE0-4CB9-B36C-B2FB6ACAB027.htm#33A702BAE9F328FC4A310A8DC6478D50"><img src="../media/33A702BAE9F328FC4A310A8DC6478D50.png" width="64" height="13" align="middle"></img></a></markup> and <markup><a href="ACAC6A80-7CE0-4CB9-B36C-B2FB6ACAB027.htm#6F0D469BECE0C9F214FE164E0FB98384"><img src="../media/6F0D469BECE0C9F214FE164E0FB98384.png" width="40" height="13" align="middle"></img></a></markup>.
+</para>
+</content>
+</section>
 <markup><hr/></markup>
 <section>
 

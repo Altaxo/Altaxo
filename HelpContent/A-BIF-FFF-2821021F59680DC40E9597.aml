@@ -1,0 +1,813 @@
+﻿
+<topic id="2821021F59680DC40E95974B308DED27" revisionNumber="1">
+
+<developerConceptualDocument xmlns="http://ddue.schemas.microsoft.com/authoring/2003/5" xmlns:xlink="http://www.w3.org/1999/xlink">
+
+<introduction>
+
+<para>
+Previous section: <link xlink:href="30068218F592D266F354207ADE3D954D">Fit functions for chemistry</link></para>
+<autoOutline />
+<markup><hr/></markup></introduction>
+
+<section address="434A31FD2377DE833636C2CC85A88F9D">
+<title>Mass uptake according to the Brunauer-Emmett-Teller model (BET model)
+</title>
+<content>
+
+<para>
+The mass uptake of e.g. water by a sample material in dependence of the water activity can be described by the following formula:
+</para>
+<markup><a href="ACAC6A80-7CE0-4CB9-B36C-B2FB6ACAB027.htm#525E2C24F1BE57E0B03CDE1647C95781"><img src="../media/525E2C24F1BE57E0B03CDE1647C95781.png" width="254" height="36"></img></a></markup>
+
+<para>
+in which:
+</para>
+
+<list class="bullet">
+
+<listItem>
+
+<para>
+<markup><a href="ACAC6A80-7CE0-4CB9-B36C-B2FB6ACAB027.htm#99C2BB9E5D32CE94A60DEF2FDA6ADFF1"><img src="../media/99C2BB9E5D32CE94A60DEF2FDA6ADFF1.png" width="33" height="16" align="bottom"></img></a></markup> is the sample mass in dependence on the water activity
+</para>
+</listItem>
+
+<listItem>
+
+<para>
+<markup><a href="ACAC6A80-7CE0-4CB9-B36C-B2FB6ACAB027.htm#5ED458CDA331F6EBCF128442AF12742E"><img src="../media/5ED458CDA331F6EBCF128442AF12742E.png" width="9" height="8" align="middle"></img></a></markup> is the water activity (0 ... 1) (approx. the relative humidity in percent / 100)
+</para>
+</listItem>
+
+<listItem>
+
+<para>
+<markup><a href="ACAC6A80-7CE0-4CB9-B36C-B2FB6ACAB027.htm#14DE41281D4F5776B1FA18713B9E34A8"><img src="../media/14DE41281D4F5776B1FA18713B9E34A8.png" width="41" height="14" align="middle"></img></a></markup> is sample mass at activity x=0 (dry conditions)
+</para>
+</listItem>
+
+<listItem>
+
+<para>
+<markup><a href="ACAC6A80-7CE0-4CB9-B36C-B2FB6ACAB027.htm#5A86C002C48D07CDC17F5AA3F906A7B4"><img src="../media/5A86C002C48D07CDC17F5AA3F906A7B4.png" width="20" height="13" align="middle"></img></a></markup> is the monolayer moisture content
+</para>
+</listItem>
+
+<listItem>
+
+<para>
+<markup><a href="ACAC6A80-7CE0-4CB9-B36C-B2FB6ACAB027.htm#A6DDC8207DD2A5A65F1233DC000F2E53"><img src="../media/A6DDC8207DD2A5A65F1233DC000F2E53.png" width="11" height="13" align="middle"></img></a></markup> is a constant (usually much greater than 1)
+</para>
+</listItem>
+</list>
+
+<para>
+The domain of the function is  <markup><a href="ACAC6A80-7CE0-4CB9-B36C-B2FB6ACAB027.htm#507128E4CAE5397D88AB91B6790F6941"><img src="../media/507128E4CAE5397D88AB91B6790F6941.png" width="64" height="13" align="middle"></img></a></markup>.
+</para>
+
+<para>
+<markup><a href="ACAC6A80-7CE0-4CB9-B36C-B2FB6ACAB027.htm#8F609C38C617DFF0D9E469B13006C5ED"><img src="../media/8F609C38C617DFF0D9E469B13006C5ED.png" width="567"></img></a></markup>
+</para>
+
+<para>
+Fig. 1: Brunauer-Emmett-Teller model with <markup><a href="ACAC6A80-7CE0-4CB9-B36C-B2FB6ACAB027.htm#F682A2C49354A091FDE4E5310DC04605"><img src="../media/F682A2C49354A091FDE4E5310DC04605.png" width="69" height="14" align="middle"></img></a></markup>, <markup><a href="ACAC6A80-7CE0-4CB9-B36C-B2FB6ACAB027.htm#5399D440BC52311703F6FE6661ED8D2D"><img src="../media/5399D440BC52311703F6FE6661ED8D2D.png" width="59" height="13" align="middle"></img></a></markup> and <markup><a href="ACAC6A80-7CE0-4CB9-B36C-B2FB6ACAB027.htm#54C13CD97792B0B0E31F43236D5E2956"><img src="../media/54C13CD97792B0B0E31F43236D5E2956.png" width="46" height="13" align="middle"></img></a></markup>.
+</para>
+<markup><hr/></markup>
+
+<para>
+References:
+</para>
+
+<para>
+[1] S. Brunauer, P.H. Emmett, E. Teller, &quot;Adsorption of Gases in Multimolecular Layers&quot;, J. Am. Chem. Soc.  60 (1938), 2, pp. 309–319, DOI: <externalLink><linkText>10.1021/ja01269a023</linkText><linkUri>https://pubs.acs.org/doi/abs/10.1021/ja01269a023</linkUri></externalLink>
+</para>
+</content>
+</section>
+
+<section address="BCABDCF7F35488BABDE8FE8C324325E0">
+<title>Mass uptake according to the Guggenheim-Anderson-de Boer model (GAB model)
+</title>
+<content>
+
+<para>
+The mass uptake of e.g. water by a sample material in dependence of the water activity can be described by the following formula:
+</para>
+<markup><a href="ACAC6A80-7CE0-4CB9-B36C-B2FB6ACAB027.htm#DBBFFE37CAB052DF142562ED0D81361A"><img src="../media/DBBFFE37CAB052DF142562ED0D81361A.png" width="279" height="36"></img></a></markup>
+
+<para>
+in which:
+</para>
+
+<list class="bullet">
+
+<listItem>
+
+<para>
+<markup><a href="ACAC6A80-7CE0-4CB9-B36C-B2FB6ACAB027.htm#99C2BB9E5D32CE94A60DEF2FDA6ADFF1"><img src="../media/99C2BB9E5D32CE94A60DEF2FDA6ADFF1.png" width="33" height="16" align="bottom"></img></a></markup> is the sample mass in dependence on the water activity
+</para>
+</listItem>
+
+<listItem>
+
+<para>
+<markup><a href="ACAC6A80-7CE0-4CB9-B36C-B2FB6ACAB027.htm#5ED458CDA331F6EBCF128442AF12742E"><img src="../media/5ED458CDA331F6EBCF128442AF12742E.png" width="9" height="8" align="middle"></img></a></markup> is the water activity (0 ... 1) (approx. the relative humidity in percent / 100)
+</para>
+</listItem>
+
+<listItem>
+
+<para>
+<markup><a href="ACAC6A80-7CE0-4CB9-B36C-B2FB6ACAB027.htm#14DE41281D4F5776B1FA18713B9E34A8"><img src="../media/14DE41281D4F5776B1FA18713B9E34A8.png" width="41" height="14" align="middle"></img></a></markup> is sample mass at activity x=0 (dry conditions)
+</para>
+</listItem>
+
+<listItem>
+
+<para>
+<markup><a href="ACAC6A80-7CE0-4CB9-B36C-B2FB6ACAB027.htm#5A86C002C48D07CDC17F5AA3F906A7B4"><img src="../media/5A86C002C48D07CDC17F5AA3F906A7B4.png" width="20" height="13" align="middle"></img></a></markup> is the monolayer moisture content
+</para>
+</listItem>
+
+<listItem>
+
+<para>
+<markup><a href="ACAC6A80-7CE0-4CB9-B36C-B2FB6ACAB027.htm#A6DDC8207DD2A5A65F1233DC000F2E53"><img src="../media/A6DDC8207DD2A5A65F1233DC000F2E53.png" width="11" height="13" align="middle"></img></a></markup> is a constant (usually much greater than 1)
+</para>
+</listItem>
+
+<listItem>
+
+<para>
+<markup><a href="ACAC6A80-7CE0-4CB9-B36C-B2FB6ACAB027.htm#FF3D15A11EA1435A7BB6F944AB0C19B4"><img src="../media/FF3D15A11EA1435A7BB6F944AB0C19B4.png" width="13" height="13" align="middle"></img></a></markup> is another constant (usually close to 1). If <markup><a href="ACAC6A80-7CE0-4CB9-B36C-B2FB6ACAB027.htm#3377711032AEC559FF201C1A4080CD8E"><img src="../media/3377711032AEC559FF201C1A4080CD8E.png" width="40" height="13" align="middle"></img></a></markup>, this model is identical to the Brunauer-Emmett-Teller model.
+</para>
+</listItem>
+</list>
+
+<para>
+The domain of the function is  <markup><a href="ACAC6A80-7CE0-4CB9-B36C-B2FB6ACAB027.htm#FFA3268B7472269ED9F4778183EF4C0C"><img src="../media/FFA3268B7472269ED9F4778183EF4C0C.png" width="84" height="16" align="bottom"></img></a></markup> if <markup><a href="ACAC6A80-7CE0-4CB9-B36C-B2FB6ACAB027.htm#D7295113C3F61413B80456701A13A545"><img src="../media/D7295113C3F61413B80456701A13A545.png" width="38" height="13" align="middle"></img></a></markup>.
+</para>
+
+<para>
+<markup><a href="ACAC6A80-7CE0-4CB9-B36C-B2FB6ACAB027.htm#3C4E986E3C256F61F0AA71E0FEAD0909"><img src="../media/3C4E986E3C256F61F0AA71E0FEAD0909.png" width="567"></img></a></markup>
+</para>
+
+<para>
+Fig. 1: Guggenheim-Anderson-de Boer function with <markup><a href="ACAC6A80-7CE0-4CB9-B36C-B2FB6ACAB027.htm#F682A2C49354A091FDE4E5310DC04605"><img src="../media/F682A2C49354A091FDE4E5310DC04605.png" width="69" height="14" align="middle"></img></a></markup>, <markup><a href="ACAC6A80-7CE0-4CB9-B36C-B2FB6ACAB027.htm#5399D440BC52311703F6FE6661ED8D2D"><img src="../media/5399D440BC52311703F6FE6661ED8D2D.png" width="59" height="13" align="middle"></img></a></markup>, <markup><a href="ACAC6A80-7CE0-4CB9-B36C-B2FB6ACAB027.htm#54C13CD97792B0B0E31F43236D5E2956"><img src="../media/54C13CD97792B0B0E31F43236D5E2956.png" width="46" height="13" align="middle"></img></a></markup> and <markup><a href="ACAC6A80-7CE0-4CB9-B36C-B2FB6ACAB027.htm#49B28C6A608A4DADB7BBB7037C87DEA5"><img src="../media/49B28C6A608A4DADB7BBB7037C87DEA5.png" width="52" height="13" align="middle"></img></a></markup>.
+</para>
+<markup><hr/></markup>
+
+<para>
+References:
+</para>
+
+<para>
+[1] R.B. Anderson, &quot;Modification of the Brunauer, Emmett and Teller equation&quot;, Journal of the American Chemical Society, 68 (1946), pp. 686–691, DOI: <externalLink><linkText>10.1021/ja01208a049</linkText><linkUri>https://doi.org/10.1021/ja01208a049</linkUri></externalLink>
+</para>
+
+<para>
+[2] R.B. Anderson, W.K. Hall, &quot;Modification of the Brunauer, Emmett and Teller equation II.&quot;, Journal of the American Chemical Society, 70 (1948), pp. 1727–1734, DOI: <externalLink><linkText>doi.org/10.1021/ja01185a017</linkText><linkUri>https://doi.org/10.1021/ja01185a017</linkUri></externalLink>
+</para>
+
+<para>
+[3] C. van den Berg, S. Bruin, &quot;Water activity and its estimation in food systems: Theoretical aspects&quot;, in L. B. Rockland &amp; G. F. Stewart (Eds.), Water Activity: Influences on Food Quality (pp. 1–61). Academic Press 1981, doi: <externalLink><linkText>10.1016/b978-0-12-591350-8.50007-3</linkText><linkUri>https://doi.org/10.1016/B978-0-12-591350-8.50007-3</linkUri></externalLink>
+</para>
+
+<para>
+[4] R. Andrade, R. Lemus M., C.E.Perez, &quot;Models of sorption isotherms for food: uses and limitations&quot;, Vitae, Revista de la Facultad de Quimica Farmaceutica, 18 (2011), pp. 325-334, ISSN 0121-4004
+</para>
+</content>
+</section>
+
+<section address="A3F78B256CAF097FF9A2D86DE03F9AC2">
+<title>Mass uptake according to the Guggenheim-Anderson-de Boer model (GAB model) in simplified parametrization
+</title>
+<content>
+
+<para>
+The mass uptake of e.g. water by a sample material in dependence of the water activity can be described with the following formula:
+</para>
+<markup><a href="ACAC6A80-7CE0-4CB9-B36C-B2FB6ACAB027.htm#E23FEA5430215BBDF18D641324529A5A"><img src="../media/E23FEA5430215BBDF18D641324529A5A.png" width="217" height="36"></img></a></markup>
+
+<para>
+in which:
+</para>
+
+<list class="bullet">
+
+<listItem>
+
+<para>
+<markup><a href="ACAC6A80-7CE0-4CB9-B36C-B2FB6ACAB027.htm#99C2BB9E5D32CE94A60DEF2FDA6ADFF1"><img src="../media/99C2BB9E5D32CE94A60DEF2FDA6ADFF1.png" width="33" height="16" align="bottom"></img></a></markup> is the sample mass in dependence on the water activity
+</para>
+</listItem>
+
+<listItem>
+
+<para>
+<markup><a href="ACAC6A80-7CE0-4CB9-B36C-B2FB6ACAB027.htm#5ED458CDA331F6EBCF128442AF12742E"><img src="../media/5ED458CDA331F6EBCF128442AF12742E.png" width="9" height="8" align="middle"></img></a></markup> is the water activity (0 ... 1) (relative humidity in percent / 100)
+</para>
+</listItem>
+
+<listItem>
+
+<para>
+<markup><a href="ACAC6A80-7CE0-4CB9-B36C-B2FB6ACAB027.htm#14DE41281D4F5776B1FA18713B9E34A8"><img src="../media/14DE41281D4F5776B1FA18713B9E34A8.png" width="41" height="14" align="middle"></img></a></markup> is mass at x=0 (dry conditions)
+</para>
+</listItem>
+
+<listItem>
+
+<para>
+<markup><a href="ACAC6A80-7CE0-4CB9-B36C-B2FB6ACAB027.htm#3A199C7B0F5A1A30E4B0D402B8197255"><img src="../media/3A199C7B0F5A1A30E4B0D402B8197255.png" width="14" height="11" align="bottom"></img></a></markup>, <markup><a href="ACAC6A80-7CE0-4CB9-B36C-B2FB6ACAB027.htm#EB1925055E86CA7CD18748A96487489F"><img src="../media/EB1925055E86CA7CD18748A96487489F.png" width="14" height="11" align="bottom"></img></a></markup>, and <markup><a href="ACAC6A80-7CE0-4CB9-B36C-B2FB6ACAB027.htm#3C305779C0B86326238AE3E6DCDDAE15"><img src="../media/3C305779C0B86326238AE3E6DCDDAE15.png" width="14" height="11" align="bottom"></img></a></markup> are (empirical) parameter
+</para>
+</listItem>
+</list>
+
+<para>
+The domain of the function is  <markup><a href="ACAC6A80-7CE0-4CB9-B36C-B2FB6ACAB027.htm#EF57A7F306C213561E3D40292ABC5B1E"><img src="../media/EF57A7F306C213561E3D40292ABC5B1E.png" width="70" height="13" align="middle"></img></a></markup>.
+</para>
+
+<para>
+The relation of the simplified parameters (<markup><a href="ACAC6A80-7CE0-4CB9-B36C-B2FB6ACAB027.htm#21B05179DA3F7411EF34AE85449DEA11"><img src="../media/21B05179DA3F7411EF34AE85449DEA11.png" width="54" height="10" align="bottom"></img></a></markup>) to the original parameters (<markup><a href="ACAC6A80-7CE0-4CB9-B36C-B2FB6ACAB027.htm#0D77D94CB396707F88FFD679E7993527"><img src="../media/0D77D94CB396707F88FFD679E7993527.png" width="57" height="14" align="middle"></img></a></markup>) of the GAB model are:
+</para>
+<markup><a href="ACAC6A80-7CE0-4CB9-B36C-B2FB6ACAB027.htm#1C76EA64B0F2E33562E528AD59E4C5F7"><img src="../media/1C76EA64B0F2E33562E528AD59E4C5F7.png" width="254" height="36"></img></a></markup>
+
+<para>
+or
+</para>
+<markup><a href="ACAC6A80-7CE0-4CB9-B36C-B2FB6ACAB027.htm#891E63118C4ADE5566EB37F9E4AAF9AC"><img src="../media/891E63118C4ADE5566EB37F9E4AAF9AC.png" width="226" height="33"></img></a></markup>
+
+<para>
+respectively.
+</para>
+
+<para>
+<markup><a href="ACAC6A80-7CE0-4CB9-B36C-B2FB6ACAB027.htm#D36958D653FDC01BF4DF83A5AA71B560"><img src="../media/D36958D653FDC01BF4DF83A5AA71B560.png" width="567"></img></a></markup>
+</para>
+
+<para>
+Fig. 1: Guggenheim-Anderson-de Boer model (simplified parametrization) with <markup><a href="ACAC6A80-7CE0-4CB9-B36C-B2FB6ACAB027.htm#F682A2C49354A091FDE4E5310DC04605"><img src="../media/F682A2C49354A091FDE4E5310DC04605.png" width="69" height="14" align="middle"></img></a></markup>, <markup><a href="ACAC6A80-7CE0-4CB9-B36C-B2FB6ACAB027.htm#7C0BB78E86E85CC236B74B3FC760F5D8"><img src="../media/7C0BB78E86E85CC236B74B3FC760F5D8.png" width="83" height="13" align="middle"></img></a></markup>, <markup><a href="ACAC6A80-7CE0-4CB9-B36C-B2FB6ACAB027.htm#826F728D582F7C1870DBBCCFD48CB97F"><img src="../media/826F728D582F7C1870DBBCCFD48CB97F.png" width="83" height="13" align="middle"></img></a></markup> and <markup><a href="ACAC6A80-7CE0-4CB9-B36C-B2FB6ACAB027.htm#3DC23575CB25C8142559CE5EC760FB3D"><img src="../media/3DC23575CB25C8142559CE5EC760FB3D.png" width="93" height="14" align="bottom"></img></a></markup>.
+</para>
+<markup><hr/></markup>
+
+<para>
+References:
+</para>
+
+<para>
+[1] R.B. Anderson, &quot;Modification of the Brunauer, Emmett and Teller equation&quot;, Journal of the American Chemical Society, 68 (1946), pp. 686–691, DOI: <externalLink><linkText>10.1021/ja01208a049</linkText><linkUri>https://doi.org/10.1021/ja01208a049</linkUri></externalLink>
+</para>
+
+<para>
+[2] R.B. Anderson, W.K. Hall, &quot;Modification of the Brunauer, Emmett and Teller equation II.&quot;, Journal of the American Chemical Society, 70 (1948), pp. 1727–1734, DOI: <externalLink><linkText>10.1021/ja01185a017</linkText><linkUri>https://doi.org/10.1021/ja01185a017</linkUri></externalLink>
+</para>
+
+<para>
+[3] C. van den Berg, S. Bruin, &quot;Water activity and its estimation in food systems: Theoretical aspects&quot;, in L. B. Rockland &amp; G. F. Stewart (Eds.), Water Activity: Influences on Food Quality (pp. 1–61). Academic Press 1981, DOI: <externalLink><linkText>10.1016/b978-0-12-591350-8.50007-3</linkText><linkUri>https://doi.org/10.1016/B978-0-12-591350-8.50007-3</linkUri></externalLink>
+</para>
+
+<para>
+[4] R. Andrade, R. Lemus M., C.E. Perez, &quot;Models of sorption isotherms for food: uses and limitations&quot;, Vitae, Revista de la Facultad de Quimica Farmaceutica, 18 (2011), pp. 325-334, ISSN 0121-4004
+</para>
+</content>
+</section>
+
+<section address="EB449210DB72D436F6624C32EA66D9DA">
+<title>Mass uptake according to the Halsey model
+</title>
+<content>
+
+<para>
+The mass uptake of e.g. water by a sample material in dependence of the water activity can be described by the following formula:
+</para>
+<markup><a href="ACAC6A80-7CE0-4CB9-B36C-B2FB6ACAB027.htm#A0F2AE745CD6B043DB42096BFFBBA783"><img src="../media/A0F2AE745CD6B043DB42096BFFBBA783.png" width="185" height="44"></img></a></markup>
+
+<para>
+in which:
+</para>
+
+<list class="bullet">
+
+<listItem>
+
+<para>
+<markup><a href="ACAC6A80-7CE0-4CB9-B36C-B2FB6ACAB027.htm#99C2BB9E5D32CE94A60DEF2FDA6ADFF1"><img src="../media/99C2BB9E5D32CE94A60DEF2FDA6ADFF1.png" width="33" height="16" align="bottom"></img></a></markup> is the relative mass uptake (if <markup><a href="ACAC6A80-7CE0-4CB9-B36C-B2FB6ACAB027.htm#D8665650B0877F9C8378C6F34A3BB476"><img src="../media/D8665650B0877F9C8378C6F34A3BB476.png" width="69" height="14" align="middle"></img></a></markup>) or the sample mass in dependence on the water activity
+</para>
+</listItem>
+
+<listItem>
+
+<para>
+<markup><a href="ACAC6A80-7CE0-4CB9-B36C-B2FB6ACAB027.htm#5ED458CDA331F6EBCF128442AF12742E"><img src="../media/5ED458CDA331F6EBCF128442AF12742E.png" width="9" height="8" align="middle"></img></a></markup> is the water activity (0 ... 1) (approx. the relative humidity in percent / 100)
+</para>
+</listItem>
+
+<listItem>
+
+<para>
+<markup><a href="ACAC6A80-7CE0-4CB9-B36C-B2FB6ACAB027.htm#14DE41281D4F5776B1FA18713B9E34A8"><img src="../media/14DE41281D4F5776B1FA18713B9E34A8.png" width="41" height="14" align="middle"></img></a></markup> is sample mass at activity x=0 (dry conditions)
+</para>
+</listItem>
+
+<listItem>
+
+<para>
+<markup><a href="ACAC6A80-7CE0-4CB9-B36C-B2FB6ACAB027.htm#A6DDC8207DD2A5A65F1233DC000F2E53"><img src="../media/A6DDC8207DD2A5A65F1233DC000F2E53.png" width="11" height="13" align="middle"></img></a></markup> is a constant (usually much greater than 1)
+</para>
+</listItem>
+
+<listItem>
+
+<para>
+<markup><a href="ACAC6A80-7CE0-4CB9-B36C-B2FB6ACAB027.htm#63BAF2C6E1D151502445F0425493D190"><img src="../media/63BAF2C6E1D151502445F0425493D190.png" width="9" height="8" align="middle"></img></a></markup> is an exponent
+</para>
+</listItem>
+</list>
+
+<para>
+The domain of the function is  <markup><a href="ACAC6A80-7CE0-4CB9-B36C-B2FB6ACAB027.htm#507128E4CAE5397D88AB91B6790F6941"><img src="../media/507128E4CAE5397D88AB91B6790F6941.png" width="64" height="13" align="middle"></img></a></markup>.
+</para>
+
+<para>
+<markup><a href="ACAC6A80-7CE0-4CB9-B36C-B2FB6ACAB027.htm#94A1F23A287B05AA15628B54A4A6B64D"><img src="../media/94A1F23A287B05AA15628B54A4A6B64D.png" width="567"></img></a></markup>
+</para>
+
+<para>
+Fig. 1: Halsey model with <markup><a href="ACAC6A80-7CE0-4CB9-B36C-B2FB6ACAB027.htm#F682A2C49354A091FDE4E5310DC04605"><img src="../media/F682A2C49354A091FDE4E5310DC04605.png" width="69" height="14" align="middle"></img></a></markup>, <markup><a href="ACAC6A80-7CE0-4CB9-B36C-B2FB6ACAB027.htm#54C13CD97792B0B0E31F43236D5E2956"><img src="../media/54C13CD97792B0B0E31F43236D5E2956.png" width="46" height="13" align="middle"></img></a></markup> and <markup><a href="ACAC6A80-7CE0-4CB9-B36C-B2FB6ACAB027.htm#3B7B1EF2B4EE1110EE0DEC333E643694"><img src="../media/3B7B1EF2B4EE1110EE0DEC333E643694.png" width="48" height="12" align="middle"></img></a></markup>.
+</para>
+<markup><hr/></markup>
+
+<para>
+References:
+</para>
+
+<para>
+[1] R. Andrade, R. Lemus M., C.E.Perez, &quot;Models of sorption isotherms for food: uses and limitations&quot;, Vitae, Revista de la Facultad de Quimica Farmaceutica, 18 (2011), pp. 325-334, <externalLink><linkText>ISSN 0121-4004</linkText><linkUri>https://www.redalyc.org/pdf/1698/169822677013.pdf</linkUri></externalLink>
+</para>
+</content>
+</section>
+
+<section address="25572148FAA87ADA2A9E7EB02F44BBB2">
+<title>Mass uptake according to the Henderson model
+</title>
+<content>
+
+<para>
+The mass uptake of e.g. water by a sample material in dependence of the water activity can be described by the following formula:
+</para>
+<markup><a href="ACAC6A80-7CE0-4CB9-B36C-B2FB6ACAB027.htm#9667DA6FB4E3982A7F1DC5E94DCBA9EF"><img src="../media/9667DA6FB4E3982A7F1DC5E94DCBA9EF.png" width="225" height="44"></img></a></markup>
+
+<para>
+in which:
+</para>
+
+<list class="bullet">
+
+<listItem>
+
+<para>
+<markup><a href="ACAC6A80-7CE0-4CB9-B36C-B2FB6ACAB027.htm#99C2BB9E5D32CE94A60DEF2FDA6ADFF1"><img src="../media/99C2BB9E5D32CE94A60DEF2FDA6ADFF1.png" width="33" height="16" align="bottom"></img></a></markup> is the relative mass uptake (if <markup><a href="ACAC6A80-7CE0-4CB9-B36C-B2FB6ACAB027.htm#D8665650B0877F9C8378C6F34A3BB476"><img src="../media/D8665650B0877F9C8378C6F34A3BB476.png" width="69" height="14" align="middle"></img></a></markup>) or the sample mass in dependence on the water activity
+</para>
+</listItem>
+
+<listItem>
+
+<para>
+<markup><a href="ACAC6A80-7CE0-4CB9-B36C-B2FB6ACAB027.htm#5ED458CDA331F6EBCF128442AF12742E"><img src="../media/5ED458CDA331F6EBCF128442AF12742E.png" width="9" height="8" align="middle"></img></a></markup> is the water activity (0 ... 1) (approx. the relative humidity in percent / 100)
+</para>
+</listItem>
+
+<listItem>
+
+<para>
+<markup><a href="ACAC6A80-7CE0-4CB9-B36C-B2FB6ACAB027.htm#14DE41281D4F5776B1FA18713B9E34A8"><img src="../media/14DE41281D4F5776B1FA18713B9E34A8.png" width="41" height="14" align="middle"></img></a></markup> is sample mass at activity x=0 (dry conditions)
+</para>
+</listItem>
+
+<listItem>
+
+<para>
+<markup><a href="ACAC6A80-7CE0-4CB9-B36C-B2FB6ACAB027.htm#A6DDC8207DD2A5A65F1233DC000F2E53"><img src="../media/A6DDC8207DD2A5A65F1233DC000F2E53.png" width="11" height="13" align="middle"></img></a></markup> is a constant (usually much greater than 1)
+</para>
+</listItem>
+
+<listItem>
+
+<para>
+<markup><a href="ACAC6A80-7CE0-4CB9-B36C-B2FB6ACAB027.htm#63BAF2C6E1D151502445F0425493D190"><img src="../media/63BAF2C6E1D151502445F0425493D190.png" width="9" height="8" align="middle"></img></a></markup> is an exponent
+</para>
+</listItem>
+</list>
+
+<para>
+The domain of the function is  <markup><a href="ACAC6A80-7CE0-4CB9-B36C-B2FB6ACAB027.htm#507128E4CAE5397D88AB91B6790F6941"><img src="../media/507128E4CAE5397D88AB91B6790F6941.png" width="64" height="13" align="middle"></img></a></markup>.
+</para>
+
+<para>
+<markup><a href="ACAC6A80-7CE0-4CB9-B36C-B2FB6ACAB027.htm#E721E26A5C9795448839E5E1D1759B18"><img src="../media/E721E26A5C9795448839E5E1D1759B18.png" width="567"></img></a></markup>
+</para>
+
+<para>
+Fig. 1: Henderson model with <markup><a href="ACAC6A80-7CE0-4CB9-B36C-B2FB6ACAB027.htm#F682A2C49354A091FDE4E5310DC04605"><img src="../media/F682A2C49354A091FDE4E5310DC04605.png" width="69" height="14" align="middle"></img></a></markup>, <markup><a href="ACAC6A80-7CE0-4CB9-B36C-B2FB6ACAB027.htm#2BFD896F9EC9C8C756E90309E732D21B"><img src="../media/2BFD896F9EC9C8C756E90309E732D21B.png" width="57" height="13" align="middle"></img></a></markup> and <markup><a href="ACAC6A80-7CE0-4CB9-B36C-B2FB6ACAB027.htm#4E904CCA57F8FDFD4160C6D91683A1E2"><img src="../media/4E904CCA57F8FDFD4160C6D91683A1E2.png" width="63" height="12" align="middle"></img></a></markup>.
+</para>
+<markup><hr/></markup>
+
+<para>
+References:
+</para>
+
+<para>
+[1] R. Andrade, R. Lemus M., C.E.Perez, &quot;Models of sorption isotherms for food: uses and limitations&quot;, Vitae, Revista de la Facultad de Quimica Farmaceutica, 18 (2011), pp. 325-334, <externalLink><linkText>ISSN 0121-4004</linkText><linkUri>https://www.redalyc.org/pdf/1698/169822677013.pdf</linkUri></externalLink>
+</para>
+</content>
+</section>
+
+<section address="C3A059D1974DBB34AAA171A9DFB5B001">
+<title>Mass uptake according to the Iglesias-Chirife model
+</title>
+<content>
+
+<para>
+The mass uptake of e.g. water by a sample material in dependence of the water activity can be described by the following formula:
+</para>
+<markup><a href="ACAC6A80-7CE0-4CB9-B36C-B2FB6ACAB027.htm#6A7F7A1323BBF3A090A83A2EE210CF92"><img src="../media/6A7F7A1323BBF3A090A83A2EE210CF92.png" width="213" height="28"></img></a></markup>
+
+<para>
+which results in:
+</para>
+<markup><a href="ACAC6A80-7CE0-4CB9-B36C-B2FB6ACAB027.htm#B75B276C9CA2CF5F31B4740504381CCB"><img src="../media/B75B276C9CA2CF5F31B4740504381CCB.png" width="340" height="32"></img></a></markup>
+
+<para>
+in which:
+</para>
+
+<list class="bullet">
+
+<listItem>
+
+<para>
+<markup><a href="ACAC6A80-7CE0-4CB9-B36C-B2FB6ACAB027.htm#99C2BB9E5D32CE94A60DEF2FDA6ADFF1"><img src="../media/99C2BB9E5D32CE94A60DEF2FDA6ADFF1.png" width="33" height="16" align="bottom"></img></a></markup> is the relative mass uptake (if <markup><a href="ACAC6A80-7CE0-4CB9-B36C-B2FB6ACAB027.htm#D8665650B0877F9C8378C6F34A3BB476"><img src="../media/D8665650B0877F9C8378C6F34A3BB476.png" width="69" height="14" align="middle"></img></a></markup>) or the sample mass in dependence on the water activity <markup><a href="ACAC6A80-7CE0-4CB9-B36C-B2FB6ACAB027.htm#5ED458CDA331F6EBCF128442AF12742E"><img src="../media/5ED458CDA331F6EBCF128442AF12742E.png" width="9" height="8" align="middle"></img></a></markup>
+</para>
+</listItem>
+
+<listItem>
+
+<para>
+<markup><a href="ACAC6A80-7CE0-4CB9-B36C-B2FB6ACAB027.htm#5ED458CDA331F6EBCF128442AF12742E"><img src="../media/5ED458CDA331F6EBCF128442AF12742E.png" width="9" height="8" align="middle"></img></a></markup> is the water activity (0 ... 1) (approx. the relative humidity in percent / 100)
+</para>
+</listItem>
+
+<listItem>
+
+<para>
+<markup><a href="ACAC6A80-7CE0-4CB9-B36C-B2FB6ACAB027.htm#14DE41281D4F5776B1FA18713B9E34A8"><img src="../media/14DE41281D4F5776B1FA18713B9E34A8.png" width="41" height="14" align="middle"></img></a></markup> is a sample mass offset
+</para>
+</listItem>
+
+<listItem>
+
+<para>
+<markup><a href="ACAC6A80-7CE0-4CB9-B36C-B2FB6ACAB027.htm#0F1B7144DA3026DD6BB33D8065107256"><img src="../media/0F1B7144DA3026DD6BB33D8065107256.png" width="21" height="14" align="middle"></img></a></markup> are constants
+</para>
+</listItem>
+
+<listItem>
+
+<para>
+<markup><a href="ACAC6A80-7CE0-4CB9-B36C-B2FB6ACAB027.htm#ECA35FEA9FA9200FBB50A514306A52AA"><img src="../media/ECA35FEA9FA9200FBB50A514306A52AA.png" width="25" height="13" align="middle"></img></a></markup> is the relative mass uptake at <markup><a href="ACAC6A80-7CE0-4CB9-B36C-B2FB6ACAB027.htm#4F7DBC7771CDB230500483BCEA6774D7"><img src="../media/4F7DBC7771CDB230500483BCEA6774D7.png" width="51" height="16" align="bottom"></img></a></markup> (? this is questionable, it doesn't result from the equation ?)
+</para>
+</listItem>
+</list>
+
+<para>
+The domain of the function is  <markup><a href="ACAC6A80-7CE0-4CB9-B36C-B2FB6ACAB027.htm#507128E4CAE5397D88AB91B6790F6941"><img src="../media/507128E4CAE5397D88AB91B6790F6941.png" width="64" height="13" align="middle"></img></a></markup>.
+</para>
+
+<para>
+<markup><a href="ACAC6A80-7CE0-4CB9-B36C-B2FB6ACAB027.htm#1A076D980146F7B71D23D740F343FCD9"><img src="../media/1A076D980146F7B71D23D740F343FCD9.png" width="567"></img></a></markup>
+</para>
+
+<para>
+Fig. 1: Iglesias-Chirife model with <markup><a href="ACAC6A80-7CE0-4CB9-B36C-B2FB6ACAB027.htm#F682A2C49354A091FDE4E5310DC04605"><img src="../media/F682A2C49354A091FDE4E5310DC04605.png" width="69" height="14" align="middle"></img></a></markup>, <markup><a href="ACAC6A80-7CE0-4CB9-B36C-B2FB6ACAB027.htm#A137653F1C8E3AD81535040233D0C1BB"><img src="../media/A137653F1C8E3AD81535040233D0C1BB.png" width="73" height="14" align="bottom"></img></a></markup>, <markup><a href="ACAC6A80-7CE0-4CB9-B36C-B2FB6ACAB027.htm#4257DA450F5DCB2ED5B45C0BB3DD938F"><img src="../media/4257DA450F5DCB2ED5B45C0BB3DD938F.png" width="61" height="13" align="middle"></img></a></markup> and <markup><a href="ACAC6A80-7CE0-4CB9-B36C-B2FB6ACAB027.htm#4AA28B9C6719CFA1D926ACF5885E7C47"><img src="../media/4AA28B9C6719CFA1D926ACF5885E7C47.png" width="72" height="13" align="middle"></img></a></markup>.
+</para>
+<markup><hr/></markup>
+
+<para>
+References:
+</para>
+
+<para>
+[1] Iglesias, H.A.; Chirife, J. &quot;An Empirical Equation for Fitting Water Sorption Isotherms of Fruits and Related Products&quot;, Canadian Institute of Food Science and Technology Journal, 11(1) 1978, 12-15. doi: <externalLink><linkText>10.1016/S0315-5463(78)73153-6</linkText><linkUri>https://doi.org/10.1016/S0315-5463(78)73153-6</linkUri></externalLink>
+</para>
+
+<para>
+[2] R. Andrade, R. Lemus M., C.E.Perez, &quot;Models of sorption isotherms for food: uses and limitations&quot;, Vitae, Revista de la Facultad de Quimica Farmaceutica, 18 (2011), pp. 325-334, <externalLink><linkText>ISSN 0121-4004</linkText><linkUri>https://www.redalyc.org/pdf/1698/169822677013.pdf</linkUri></externalLink>
+</para>
+</content>
+</section>
+
+<section address="63AF9F708A8A356FE32E8C9056DD6BA5">
+<title>Mass uptake according to the Langmuir model
+</title>
+<content>
+
+<para>
+The mass uptake of e.g. water by a sample material in dependence of the water activity can be described by the following formula:
+</para>
+<markup><a href="ACAC6A80-7CE0-4CB9-B36C-B2FB6ACAB027.htm#449F5993AE140593492260E3741FD052"><img src="../media/449F5993AE140593492260E3741FD052.png" width="181" height="34"></img></a></markup>
+
+<para>
+in which:
+</para>
+
+<list class="bullet">
+
+<listItem>
+
+<para>
+<markup><a href="ACAC6A80-7CE0-4CB9-B36C-B2FB6ACAB027.htm#99C2BB9E5D32CE94A60DEF2FDA6ADFF1"><img src="../media/99C2BB9E5D32CE94A60DEF2FDA6ADFF1.png" width="33" height="16" align="bottom"></img></a></markup> is the relative mass uptake (if <markup><a href="ACAC6A80-7CE0-4CB9-B36C-B2FB6ACAB027.htm#D8665650B0877F9C8378C6F34A3BB476"><img src="../media/D8665650B0877F9C8378C6F34A3BB476.png" width="69" height="14" align="middle"></img></a></markup>) or the sample mass in dependence on the water activity
+</para>
+</listItem>
+
+<listItem>
+
+<para>
+<markup><a href="ACAC6A80-7CE0-4CB9-B36C-B2FB6ACAB027.htm#5ED458CDA331F6EBCF128442AF12742E"><img src="../media/5ED458CDA331F6EBCF128442AF12742E.png" width="9" height="8" align="middle"></img></a></markup> is the water activity (0 ... 1) (approx. the relative humidity in percent / 100)
+</para>
+</listItem>
+
+<listItem>
+
+<para>
+<markup><a href="ACAC6A80-7CE0-4CB9-B36C-B2FB6ACAB027.htm#14DE41281D4F5776B1FA18713B9E34A8"><img src="../media/14DE41281D4F5776B1FA18713B9E34A8.png" width="41" height="14" align="middle"></img></a></markup> is sample mass at activity x=0 (dry conditions)
+</para>
+</listItem>
+
+<listItem>
+
+<para>
+<markup><a href="ACAC6A80-7CE0-4CB9-B36C-B2FB6ACAB027.htm#5A86C002C48D07CDC17F5AA3F906A7B4"><img src="../media/5A86C002C48D07CDC17F5AA3F906A7B4.png" width="20" height="13" align="middle"></img></a></markup> is the monolayer mass uptake
+</para>
+</listItem>
+
+<listItem>
+
+<para>
+<markup><a href="ACAC6A80-7CE0-4CB9-B36C-B2FB6ACAB027.htm#A6DDC8207DD2A5A65F1233DC000F2E53"><img src="../media/A6DDC8207DD2A5A65F1233DC000F2E53.png" width="11" height="13" align="middle"></img></a></markup> is a constant (usually much greater than 1)
+</para>
+</listItem>
+</list>
+
+<para>
+The domain of the function is  <markup><a href="ACAC6A80-7CE0-4CB9-B36C-B2FB6ACAB027.htm#507128E4CAE5397D88AB91B6790F6941"><img src="../media/507128E4CAE5397D88AB91B6790F6941.png" width="64" height="13" align="middle"></img></a></markup>.
+</para>
+
+<para>
+<markup><a href="ACAC6A80-7CE0-4CB9-B36C-B2FB6ACAB027.htm#FC0EA69F87064213AC0717E3A8EE0AA9"><img src="../media/FC0EA69F87064213AC0717E3A8EE0AA9.png" width="567"></img></a></markup>
+</para>
+
+<para>
+Fig. 1: Langmuir model with <markup><a href="ACAC6A80-7CE0-4CB9-B36C-B2FB6ACAB027.htm#F682A2C49354A091FDE4E5310DC04605"><img src="../media/F682A2C49354A091FDE4E5310DC04605.png" width="69" height="14" align="middle"></img></a></markup>, <markup><a href="ACAC6A80-7CE0-4CB9-B36C-B2FB6ACAB027.htm#5C3922FF81E9A577D25E7716CC22E713"><img src="../media/5C3922FF81E9A577D25E7716CC22E713.png" width="50" height="13" align="middle"></img></a></markup> and <markup><a href="ACAC6A80-7CE0-4CB9-B36C-B2FB6ACAB027.htm#47D41CD56177BB9294EA4ABF8F904A44"><img src="../media/47D41CD56177BB9294EA4ABF8F904A44.png" width="50" height="13" align="middle"></img></a></markup>.
+</para>
+<markup><hr/></markup>
+
+<para>
+References:
+</para>
+
+<para>
+[1] R. Andrade, R. Lemus M., C.E.Perez, &quot;Models of sorption isotherms for food: uses and limitations&quot;, Vitae, Revista de la Facultad de Quimica Farmaceutica, 18 (2011), pp. 325-334, <externalLink><linkText>ISSN 0121-4004</linkText><linkUri>https://www.redalyc.org/pdf/1698/169822677013.pdf</linkUri></externalLink>
+</para>
+</content>
+</section>
+
+<section address="7E024129DD53D2BABBE0C829FCA7E3B2">
+<title>Mass uptake according to the Oswin model
+</title>
+<content>
+
+<para>
+The mass uptake of e.g. water by a sample material in dependence of the water activity can be described by the following formula:
+</para>
+<markup><a href="ACAC6A80-7CE0-4CB9-B36C-B2FB6ACAB027.htm#D1B101AAE1FE6BA962F6F8DE4E134905"><img src="../media/D1B101AAE1FE6BA962F6F8DE4E134905.png" width="187" height="37"></img></a></markup>
+
+<para>
+in which:
+</para>
+
+<list class="bullet">
+
+<listItem>
+
+<para>
+<markup><a href="ACAC6A80-7CE0-4CB9-B36C-B2FB6ACAB027.htm#99C2BB9E5D32CE94A60DEF2FDA6ADFF1"><img src="../media/99C2BB9E5D32CE94A60DEF2FDA6ADFF1.png" width="33" height="16" align="bottom"></img></a></markup> is the relative mass uptake (if <markup><a href="ACAC6A80-7CE0-4CB9-B36C-B2FB6ACAB027.htm#D8665650B0877F9C8378C6F34A3BB476"><img src="../media/D8665650B0877F9C8378C6F34A3BB476.png" width="69" height="14" align="middle"></img></a></markup>) or the sample mass in dependence on the water activity
+</para>
+</listItem>
+
+<listItem>
+
+<para>
+<markup><a href="ACAC6A80-7CE0-4CB9-B36C-B2FB6ACAB027.htm#5ED458CDA331F6EBCF128442AF12742E"><img src="../media/5ED458CDA331F6EBCF128442AF12742E.png" width="9" height="8" align="middle"></img></a></markup> is the water activity (0 ... 1) (approx. the relative humidity in percent / 100)
+</para>
+</listItem>
+
+<listItem>
+
+<para>
+<markup><a href="ACAC6A80-7CE0-4CB9-B36C-B2FB6ACAB027.htm#14DE41281D4F5776B1FA18713B9E34A8"><img src="../media/14DE41281D4F5776B1FA18713B9E34A8.png" width="41" height="14" align="middle"></img></a></markup> is sample mass at activity x=0 (dry conditions)
+</para>
+</listItem>
+
+<listItem>
+
+<para>
+<markup><a href="ACAC6A80-7CE0-4CB9-B36C-B2FB6ACAB027.htm#A6DDC8207DD2A5A65F1233DC000F2E53"><img src="../media/A6DDC8207DD2A5A65F1233DC000F2E53.png" width="11" height="13" align="middle"></img></a></markup> is a constant (usually much greater than 1)
+</para>
+</listItem>
+
+<listItem>
+
+<para>
+<markup><a href="ACAC6A80-7CE0-4CB9-B36C-B2FB6ACAB027.htm#63BAF2C6E1D151502445F0425493D190"><img src="../media/63BAF2C6E1D151502445F0425493D190.png" width="9" height="8" align="middle"></img></a></markup> is an exponent
+</para>
+</listItem>
+</list>
+
+<para>
+The domain of the function is  <markup><a href="ACAC6A80-7CE0-4CB9-B36C-B2FB6ACAB027.htm#507128E4CAE5397D88AB91B6790F6941"><img src="../media/507128E4CAE5397D88AB91B6790F6941.png" width="64" height="13" align="middle"></img></a></markup>.
+</para>
+
+<para>
+<markup><a href="ACAC6A80-7CE0-4CB9-B36C-B2FB6ACAB027.htm#2B566BF516C66044996D73B0BD7A6CBE"><img src="../media/2B566BF516C66044996D73B0BD7A6CBE.png" width="567"></img></a></markup>
+</para>
+
+<para>
+Fig. 1: Oswin model with <markup><a href="ACAC6A80-7CE0-4CB9-B36C-B2FB6ACAB027.htm#F682A2C49354A091FDE4E5310DC04605"><img src="../media/F682A2C49354A091FDE4E5310DC04605.png" width="69" height="14" align="middle"></img></a></markup>, <markup><a href="ACAC6A80-7CE0-4CB9-B36C-B2FB6ACAB027.htm#7E7FC7EEDA3422268286A5B99BA1EEE0"><img src="../media/7E7FC7EEDA3422268286A5B99BA1EEE0.png" width="65" height="13" align="middle"></img></a></markup> and <markup><a href="ACAC6A80-7CE0-4CB9-B36C-B2FB6ACAB027.htm#7414471BE2950982EF2E4326782E79D3"><img src="../media/7414471BE2950982EF2E4326782E79D3.png" width="63" height="12" align="middle"></img></a></markup>.
+</para>
+<markup><hr/></markup>
+
+<para>
+References:
+</para>
+
+<para>
+[1] R. Andrade, R. Lemus M., C.E.Perez, &quot;Models of sorption isotherms for food: uses and limitations&quot;, Vitae, Revista de la Facultad de Quimica Farmaceutica, 18 (2011), pp. 325-334, <externalLink><linkText>ISSN 0121-4004</linkText><linkUri>https://www.redalyc.org/pdf/1698/169822677013.pdf</linkUri></externalLink>
+</para>
+</content>
+</section>
+
+<section address="E16EA2332772EFE7E47B8095EBBA477C">
+<title>Mass uptake according to the Peleg model
+</title>
+<content>
+
+<para>
+The mass uptake of e.g. water by a sample material in dependence of the water activity can be described by the following formula:
+</para>
+<markup><a href="ACAC6A80-7CE0-4CB9-B36C-B2FB6ACAB027.htm#9A78AF5A4029B3A8FE1562A9007E2E78"><img src="../media/9A78AF5A4029B3A8FE1562A9007E2E78.png" width="205" height="18"></img></a></markup>
+
+<para>
+in which:
+</para>
+
+<list class="bullet">
+
+<listItem>
+
+<para>
+<markup><a href="ACAC6A80-7CE0-4CB9-B36C-B2FB6ACAB027.htm#99C2BB9E5D32CE94A60DEF2FDA6ADFF1"><img src="../media/99C2BB9E5D32CE94A60DEF2FDA6ADFF1.png" width="33" height="16" align="bottom"></img></a></markup> is the relative mass uptake (if <markup><a href="ACAC6A80-7CE0-4CB9-B36C-B2FB6ACAB027.htm#D8665650B0877F9C8378C6F34A3BB476"><img src="../media/D8665650B0877F9C8378C6F34A3BB476.png" width="69" height="14" align="middle"></img></a></markup>) or the sample mass in dependence on the water activity
+</para>
+</listItem>
+
+<listItem>
+
+<para>
+<markup><a href="ACAC6A80-7CE0-4CB9-B36C-B2FB6ACAB027.htm#5ED458CDA331F6EBCF128442AF12742E"><img src="../media/5ED458CDA331F6EBCF128442AF12742E.png" width="9" height="8" align="middle"></img></a></markup> is the water activity (0 ... 1) (approx. the relative humidity in percent / 100)
+</para>
+</listItem>
+
+<listItem>
+
+<para>
+<markup><a href="ACAC6A80-7CE0-4CB9-B36C-B2FB6ACAB027.htm#14DE41281D4F5776B1FA18713B9E34A8"><img src="../media/14DE41281D4F5776B1FA18713B9E34A8.png" width="41" height="14" align="middle"></img></a></markup> is sample mass at activity x=0 (dry conditions)
+</para>
+</listItem>
+
+<listItem>
+
+<para>
+<markup><a href="ACAC6A80-7CE0-4CB9-B36C-B2FB6ACAB027.htm#660E64366E76B908EE634C028A5747B2"><img src="../media/660E64366E76B908EE634C028A5747B2.png" width="39" height="14" align="middle"></img></a></markup> are factors
+</para>
+</listItem>
+
+<listItem>
+
+<para>
+<markup><a href="ACAC6A80-7CE0-4CB9-B36C-B2FB6ACAB027.htm#DCBE40371F404AF6CDA9712A6C815A59"><img src="../media/DCBE40371F404AF6CDA9712A6C815A59.png" width="39" height="14" align="middle"></img></a></markup> are exponents (usually one exponent is chosen to be less than one, the other greater than 1)
+</para>
+</listItem>
+</list>
+
+<para>
+The domain of the function is  <markup><a href="ACAC6A80-7CE0-4CB9-B36C-B2FB6ACAB027.htm#0656A4947ADF86A72E6939A09EDC64CE"><img src="../media/0656A4947ADF86A72E6939A09EDC64CE.png" width="64" height="13" align="middle"></img></a></markup>.
+</para>
+
+<para>
+<markup><a href="ACAC6A80-7CE0-4CB9-B36C-B2FB6ACAB027.htm#FD290ADD52605F5B83CFAE4F74F7911F"><img src="../media/FD290ADD52605F5B83CFAE4F74F7911F.png" width="567"></img></a></markup>
+</para>
+
+<para>
+Fig. 1: Peleg model with <markup><a href="ACAC6A80-7CE0-4CB9-B36C-B2FB6ACAB027.htm#F682A2C49354A091FDE4E5310DC04605"><img src="../media/F682A2C49354A091FDE4E5310DC04605.png" width="69" height="14" align="middle"></img></a></markup>, <markup><a href="ACAC6A80-7CE0-4CB9-B36C-B2FB6ACAB027.htm#B9CB7802A93757492F18514F90E7FB81"><img src="../media/B9CB7802A93757492F18514F90E7FB81.png" width="71" height="13" align="middle"></img></a></markup> , <markup><a href="ACAC6A80-7CE0-4CB9-B36C-B2FB6ACAB027.htm#640F97F90DDE049986B657151CFB125E"><img src="../media/640F97F90DDE049986B657151CFB125E.png" width="71" height="13" align="middle"></img></a></markup>, <markup><a href="ACAC6A80-7CE0-4CB9-B36C-B2FB6ACAB027.htm#EF87D7CFC93C682BC2693A3DA6DD0D6D"><img src="../media/EF87D7CFC93C682BC2693A3DA6DD0D6D.png" width="71" height="13" align="middle"></img></a></markup> and <markup><a href="ACAC6A80-7CE0-4CB9-B36C-B2FB6ACAB027.htm#6A402884343A3E5F57AA2378A8688E6F"><img src="../media/6A402884343A3E5F57AA2378A8688E6F.png" width="71" height="13" align="middle"></img></a></markup>. 
+</para>
+<markup><hr/></markup>
+
+<para>
+References:
+</para>
+
+<para>
+[1] R. Andrade, R. Lemus M., C.E.Perez, &quot;Models of sorption isotherms for food: uses and limitations&quot;, Vitae, Revista de la Facultad de Quimica Farmaceutica, 18 (2011), pp. 325-334, <externalLink><linkText>ISSN 0121-4004</linkText><linkUri>https://www.redalyc.org/pdf/1698/169822677013.pdf</linkUri></externalLink>
+</para>
+</content>
+</section>
+
+<section address="2770978A8B2707CE6141F29A56515632">
+<title>Mass uptake according to the Smith model
+</title>
+<content>
+
+<para>
+The mass uptake of e.g. water by a sample material in dependence of the water activity can be described by the following formula:
+</para>
+<markup><a href="ACAC6A80-7CE0-4CB9-B36C-B2FB6ACAB027.htm#F5277213AB8747788E6694B89C341E59"><img src="../media/F5277213AB8747788E6694B89C341E59.png" width="185" height="16"></img></a></markup>
+
+<para>
+in which:
+</para>
+
+<list class="bullet">
+
+<listItem>
+
+<para>
+<markup><a href="ACAC6A80-7CE0-4CB9-B36C-B2FB6ACAB027.htm#99C2BB9E5D32CE94A60DEF2FDA6ADFF1"><img src="../media/99C2BB9E5D32CE94A60DEF2FDA6ADFF1.png" width="33" height="16" align="bottom"></img></a></markup> is the relative mass uptake (if <markup><a href="ACAC6A80-7CE0-4CB9-B36C-B2FB6ACAB027.htm#D8665650B0877F9C8378C6F34A3BB476"><img src="../media/D8665650B0877F9C8378C6F34A3BB476.png" width="69" height="14" align="middle"></img></a></markup>) or the sample mass in dependence on the water activity
+</para>
+</listItem>
+
+<listItem>
+
+<para>
+<markup><a href="ACAC6A80-7CE0-4CB9-B36C-B2FB6ACAB027.htm#5ED458CDA331F6EBCF128442AF12742E"><img src="../media/5ED458CDA331F6EBCF128442AF12742E.png" width="9" height="8" align="middle"></img></a></markup> is the water activity (0 ... 1) (approx. the relative humidity in percent / 100)
+</para>
+</listItem>
+
+<listItem>
+
+<para>
+<markup><a href="ACAC6A80-7CE0-4CB9-B36C-B2FB6ACAB027.htm#14DE41281D4F5776B1FA18713B9E34A8"><img src="../media/14DE41281D4F5776B1FA18713B9E34A8.png" width="41" height="14" align="middle"></img></a></markup> is sample mass at activity x=0 (dry conditions)
+</para>
+</listItem>
+
+<listItem>
+
+<para>
+<markup><a href="ACAC6A80-7CE0-4CB9-B36C-B2FB6ACAB027.htm#A6DDC8207DD2A5A65F1233DC000F2E53"><img src="../media/A6DDC8207DD2A5A65F1233DC000F2E53.png" width="11" height="13" align="middle"></img></a></markup> is a constant (usually much greater than 1)
+</para>
+</listItem>
+</list>
+
+<para>
+The domain of the function is  <markup><a href="ACAC6A80-7CE0-4CB9-B36C-B2FB6ACAB027.htm#507128E4CAE5397D88AB91B6790F6941"><img src="../media/507128E4CAE5397D88AB91B6790F6941.png" width="64" height="13" align="middle"></img></a></markup>.
+</para>
+
+<para>
+<markup><a href="ACAC6A80-7CE0-4CB9-B36C-B2FB6ACAB027.htm#93CBBED191E80AAC9EFA477CED0B1A62"><img src="../media/93CBBED191E80AAC9EFA477CED0B1A62.png" width="567"></img></a></markup>
+</para>
+
+<para>
+Fig. 1: Smith model with <markup><a href="ACAC6A80-7CE0-4CB9-B36C-B2FB6ACAB027.htm#F682A2C49354A091FDE4E5310DC04605"><img src="../media/F682A2C49354A091FDE4E5310DC04605.png" width="69" height="14" align="middle"></img></a></markup> and <markup><a href="ACAC6A80-7CE0-4CB9-B36C-B2FB6ACAB027.htm#54C13CD97792B0B0E31F43236D5E2956"><img src="../media/54C13CD97792B0B0E31F43236D5E2956.png" width="46" height="13" align="middle"></img></a></markup>.
+</para>
+<markup><hr/></markup>
+
+<para>
+References:
+</para>
+
+<para>
+[1] S.E. Smith, “Sorption of water vapor by proteins at high polymers”  J. Am. Chem. Soc., vol. 69, 1947, pp, 646–651, doi: <externalLink><linkText>10.1021/ja01195a053</linkText><linkUri>https://doi.org/10.1021/ja01195a053</linkUri></externalLink><lineBreak/>
+[2] R. Andrade, R. Lemus M., C.E.Perez, &quot;Models of sorption isotherms for food: uses and limitations&quot;, Vitae, Revista de la Facultad de Quimica Farmaceutica, 18 (2011), pp. 325-334, <externalLink><linkText>ISSN 0121-4004</linkText><linkUri>https://www.redalyc.org/pdf/1698/169822677013.pdf</linkUri></externalLink>
+</para>
+</content>
+</section>
+<markup><hr/></markup>
+<section>
+
+<content>
+
+<para>
+Next section: <link xlink:href="D3DE4F0F5AD518E85FF95AB60594EE2A">Diffusion fit functions</link></para>
+</content>
+</section>
+</developerConceptualDocument>
+</topic>

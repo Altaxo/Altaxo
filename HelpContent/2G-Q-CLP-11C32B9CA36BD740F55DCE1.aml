@@ -31,21 +31,21 @@ You can then click one of the following icons from the toolbar:
 <listItem>
 
 <para>
-<mediaLinkInline><image xlink:href="Icons.16x16"></image></mediaLinkInline> creates a line plot
+<mediaLinkInline><image xlink:href="res:Icons.16x16"></image></mediaLinkInline> creates a line plot
 </para>
 </listItem>
 
 <listItem>
 
 <para>
-<mediaLinkInline><image xlink:href="Icons.16x16"></image></mediaLinkInline> creates a scatter plot
+<mediaLinkInline><image xlink:href="res:Icons.16x16"></image></mediaLinkInline> creates a scatter plot
 </para>
 </listItem>
 
 <listItem>
 
 <para>
-<mediaLinkInline><image xlink:href="Icons.16x16"></image></mediaLinkInline> creates a line-scatter plot.
+<mediaLinkInline><image xlink:href="res:Icons.16x16"></image></mediaLinkInline> creates a line-scatter plot.
 </para>
 </listItem>
 </list>
@@ -63,7 +63,7 @@ If no template has been set, the result, for instance for a line-scatter plot, m
 </para>
 
 <para>
-<markup><a href="ACAC6A80-7CE0-4CB9-B36C-B2FB6ACAB027.htm#8BE8C364335D4C612A144B793E01C6F4"><img src="../media/8BE8C364335D4C612A144B793E01C6F4.png" width="567"></img></a></markup>
+<markup><a href="ACAC6A80-7CE0-4CB9-B36C-B2FB6ACAB027.htm#B9853A7AE1C5661987124074D0424CDD"><img src="../media/B9853A7AE1C5661987124074D0424CDD.png" width="567"></img></a></markup>
 </para>
 
 <para>
@@ -71,7 +71,7 @@ If you have a template set, the result depends on your template. For me, it look
 </para>
 
 <para>
-<markup><a href="ACAC6A80-7CE0-4CB9-B36C-B2FB6ACAB027.htm#E08781223FF0AEE4F0ED670A100FF639"><img src="../media/E08781223FF0AEE4F0ED670A100FF639.png" width="567"></img></a></markup>
+<markup><a href="ACAC6A80-7CE0-4CB9-B36C-B2FB6ACAB027.htm#11B76E89AA8CC11F8024C275B9C30E57"><img src="../media/11B76E89AA8CC11F8024C275B9C30E57.png" width="567"></img></a></markup>
 </para>
 <markup><hr/></markup>
 <para>

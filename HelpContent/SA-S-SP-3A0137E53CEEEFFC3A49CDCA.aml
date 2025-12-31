@@ -112,7 +112,7 @@ After selection of the required methods and pressing <codeInline>OK</codeInline>
 </para>
 
 <para>
-The newly created table contains a data source for the preprocessing. The data source remembers where the data of the preprocessing came from, and which preprocessing steps have been performed. If the result of the preprocessing is not satisfactory, the data source can be opened by clicking on the question mark <mediaLinkInline><image xlink:href="Icons.16x16"></image></mediaLinkInline> in the toolbar. Using this <link xlink:href="3A0137E53CEEEFFC3A49CDCA2CC5B88D#Screenshot_Dialog_SpectralPreprocessingDataSource">dialog</link>, the preprocessing steps can be changed, or data can be added or removed.
+The newly created table contains a data source for the preprocessing. The data source remembers where the data of the preprocessing came from, and which preprocessing steps have been performed. If the result of the preprocessing is not satisfactory, the data source can be opened by clicking on the question mark <mediaLinkInline><image xlink:href="res:Icons.16x16"></image></mediaLinkInline> in the toolbar. Using this <link xlink:href="3A0137E53CEEEFFC3A49CDCA2CC5B88D#Screenshot_Dialog_SpectralPreprocessingDataSource">dialog</link>, the preprocessing steps can be changed, or data can be added or removed.
 </para>
 
 <para>
@@ -124,7 +124,7 @@ Fig.2: Data source of the worksheet containing the preprocessed spectra. The exp
 </para>
 
 <para>
-Additionally, when the original data have changed, you can re-apply the preprocessing by clicking on the <codeInline>Requery table data source</codeInline> button <mediaLinkInline><image xlink:href="Icons.16x16"></image></mediaLinkInline> in the toolbar.
+Additionally, when the original data have changed, you can re-apply the preprocessing by clicking on the <codeInline>Requery table data source</codeInline> button <mediaLinkInline><image xlink:href="res:Icons.16x16"></image></mediaLinkInline> in the toolbar.
 </para>
 
 <para>
