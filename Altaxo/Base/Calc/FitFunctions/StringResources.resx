@@ -102,6 +102,72 @@ References:
 
 </value>
   </data>
+  <data name="Chemistry.MassBasedFloryDistributionWithFixedGaussianBroadening" xml:space="preserve">
+    <value>##### MassBasedFloryDistributionWithFixedGaussianBroadening
+
+The molecular weight $M$ of a polymer which is synthesized in a reactor is often distributed according to a Flory distribution. The only parameter of this distribution (besides the area $A$) is the ratio $\tau$ of the probabilities of the termination step with respect to the chain prolongation step. The mass based Flory distribution can be described by:
+
+$$
+F(M, \tau) = \ln(10) \left ( \frac{\tau M}{M_m} \right )^2 \exp\left ( -\frac{\tau M}{M_m} \right ) 
+$$
+
+Often, the measured signal in GPC is approximately broadened by a Gaussian distribution on the decadic logarithmic M (molecular weight) axis. This can be modelled by convoluting the Flory distribution with a Gaussian distribution on the (decadic) logarithmic M axis:
+
+$$
+FG(M, \tau, \sigma) = \int_{-\infty}^{\infty} F(10^{\log_{10}(M)-z}, \tau) G(z, \sigma) dz
+$$
+
+in which:
+
+$$
+G(z, \sigma) = \frac{1}{\sqrt{2 \pi}} \exp \left ( - \frac{z^2}{2 \sigma^2} \right )
+$$
+
+The broadness parameter $\sigma$ is determined by calibration of the GPC column with reference substances. It is usually dependent on the molecular weight M of the peak.
+
+The function **`MassBasedFloryDistributionWithFixedGaussianBroadening`** evaluates a sum of mass based, Gaussian broadened, Flory distribution terms, plus a baseline polynomial with one or multiple terms, according to
+
+$$
+y(M) = A_0 FG(M, \tau_0, \sigma(M)) + ... + A_{n-1} FG(M, \tau_{n-1}, \sigma(M)) + b_0 + b_1 x +... + b_m x^m 
+$$
+
+in which:
+
+- $x = log_{10}(M)$
+
+- $A_0 ... A_{n-1}$ are the areas of the Flory-Gauss terms (ATTENTION: only if integrated over the $log_{10}M$ x-axis!)
+
+- $\tau_{0} ... \tau_{n-1}$ are the probability ratios of the termination reaction with respect to the chain prolongation reaction. The smaller this probability ratio, the longer the chains will become, i.e. the peak position is increased to higher molecular weight.
+
+- $b_0 ... b_m$ are the coefficients of the baseline polynomial of order  $m$
+
+- The function $\sigma(M)$ is the dependence of the Gaussian broadening parameter $\sigma$ on the molecular weight $M$. This function is modeled as a polynomial of $x = log_{10}(M)$: $\sigma(M) = c_0 + c_1 x +...+ c_{q-1} x^{q-1}$. The polynomial coefficients of this function are fixed and are given in the settings of the fit function.
+
+- $n$ is the number of Flory distribution terms ($n \geq 1$)
+
+- $m$ is the order of the baseline polynomial (set $m=-1$ to disable the baseline polynomial)
+
+- $M_m$ is the molecular weight of one monomer unit
+
+The molecular weight of one monomer unit $M_m$, the number of Flory distribution terms $n$, the order of the baseline polynomial $m$, and the coefficients $c_i$ of the polynomial that models the $\sigma(M)$ dependency can be changed by double-clicking on the fit function. The default values are $M=1$, $n=1$, $m=-1$, and $c_0=0$ corresponding to 1 term, no baseline, and no broadening. 
+
+There is an additional property named `IndependentVariableIsDecadicLogarithm`. If this property is set to true, it is assumed that the x-axis is not the molecular weight, but the decadic logarithm of the molecular weight $\log_{10}(M)$, which is often used in chemistry. An additional property which can be set is the accuracy of the evaluation, since the function can not be evaluated analytically.
+
+The domain of the function is  $0 \leq M &lt; \infty$ (`IndependentVariableIsDecadicLogarithm == false`) or $-\infty &lt; \log_{10}(M) &lt; \infty$ (`IndependentVariableIsDecadicLogarithm == true`). 
+
+^^^
+![](res:Altaxo.Calc.FitFunctions.Chemistry.MassBasedFloryDistributionWithFixedGaussianBroadening.Fig1.png){width=15cm}  
+^^^ Fig. 1: Comparison of a MassBasedFloryDistribution without Gaussian broadening (green) and with Gaussian broadening (orange). The parameters are $n=1$, $m=-1$, $A_0=5$ and $\tau_{0}=10^{-5}$. For the broadened function, the broadening setting was $\sigma(M) = c_0 = 0.3$. $M_m$ was set to 14 (polyethylene).
+---
+
+References:  
+[1] [Flory-Schulz distribution in Wikipedia](https://en.wikipedia.org/wiki/Flory%E2%80%93Schulz_distribution)  
+[2] João B. P. Soares, 'Polyolefin microstructural deconvolution methods: The good, the bad, and the ugly', [ https://doi.org/10.1002/cjce.24833]( https://doi.org/10.1002/cjce.24833)
+
+
+
+</value>
+  </data>
   <data name="Chemistry.SorptionIsotherms.BrunauerEmmettTellerModel" xml:space="preserve">
     <value>##### Mass uptake according to the Brunauer-Emmett-Teller model (BET model)
 
