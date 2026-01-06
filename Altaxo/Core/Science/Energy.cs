@@ -23,9 +23,6 @@
 #endregion Copyright
 
 using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
 
 namespace Altaxo.Science
 {
@@ -158,6 +155,41 @@ namespace Altaxo.Science
 
         case EnergyRepresentation.AsTemperatureKelvin:
           return srcValue * SIConstants.BOLTZMANN;
+
+        default:
+          throw new ArgumentOutOfRangeException("EnergyUnit unknown: " + srcUnit.ToString());
+      }
+    }
+
+    /// <summary>
+    /// Gets the factor neccessary to convert a value from the specified unit to Joule (SI unit of energy).
+    /// </summary>
+    /// <param name="srcUnit">The source unit.</param>
+    /// <returns>The factor that is neccessary to converted a value in the given <paramref name="srcUnit"/> to a value expressed in Joule.</returns>
+    public static double ToJouleFactor(EnergyRepresentation srcUnit)
+    {
+      switch (srcUnit)
+      {
+        case EnergyRepresentation.Joule:
+          return 1;
+
+        case EnergyRepresentation.JoulePerMole:
+          return 1 / SIConstants.AVOGADROS_CONSTANT;
+
+        case EnergyRepresentation.CalorieInternational:
+          return SIConstants.CALORIE;
+
+        case EnergyRepresentation.CalorieInternationalPerMole:
+          return SIConstants.CALORIE / SIConstants.AVOGADROS_CONSTANT;
+
+        case EnergyRepresentation.ElectronVolt:
+          return SIConstants.ELECTRON_VOLT;
+
+        case EnergyRepresentation.KilowattHours:
+          return 3600000;
+
+        case EnergyRepresentation.AsTemperatureKelvin:
+          return SIConstants.BOLTZMANN;
 
         default:
           throw new ArgumentOutOfRangeException("EnergyUnit unknown: " + srcUnit.ToString());

@@ -31,6 +31,7 @@ using Altaxo.Calc.FitFunctions.Peaks;
 using Altaxo.Calc.FitFunctions.Probability;
 using Altaxo.Calc.LinearAlgebra;
 using Altaxo.Calc.Regression.Nonlinear;
+using Altaxo.Science;
 using Xunit;
 
 namespace Altaxo.Calc.FitFunctions
@@ -82,6 +83,12 @@ namespace Altaxo.Calc.FitFunctions
         (() => new General.Polynomial(2,0), 0.25, new double[]{1,3,5}, 1+3*0.25 + 5*0.25*0.25),
         (() => new General.Polynomial(2,1), 0.25, new double[]{1,3,5,7}, 1+3*0.25 + 5*0.25*0.25 + 7/0.25),
         (() => new General.Polynomial(0,2), 0.25, new double[]{1,3,5}, 1+3/0.25 + 5/(0.25*0.25)),
+        (() => new Materials.ArrheniusLawRate(Science.TemperatureRepresentation.Kelvin,Science.EnergyRepresentation.AsTemperatureKelvin), 300, new double[]{1E13, 300}, 1e13*Math.Exp(-1)),
+        (() => new Materials.ArrheniusLawTime(Science.TemperatureRepresentation.Kelvin,Science.EnergyRepresentation.AsTemperatureKelvin), 300, new double[]{1E13, 300}, 1e13*Math.Exp(1)),
+        (() => new Materials.ArrheniusLawRate(Science.TemperatureRepresentation.AsInverseKelvin,Science.EnergyRepresentation.AsTemperatureKelvin), 1d/300, new double[]{1E13, 300}, 1e13*Math.Exp(-1)),
+        (() => new Materials.ArrheniusLawTime(Science.TemperatureRepresentation.AsInverseKelvin,Science.EnergyRepresentation.AsTemperatureKelvin), 1d/300, new double[]{1E13, 300}, 1e13*Math.Exp(1)),
+        (() => new Materials.ArrheniusLawRate(Science.TemperatureRepresentation.Kelvin,Science.EnergyRepresentation.JoulePerMole), 300, new double[]{1E13, 20000}, 1e13*Math.Exp(-20000/(300*SIConstants.BOLTZMANN*SIConstants.AVOGADROS_CONSTANT))),
+        (() => new Materials.ArrheniusLawTime(Science.TemperatureRepresentation.Kelvin,Science.EnergyRepresentation.JoulePerMole), 300, new double[]{1E13, 20000}, 1e13*Math.Exp(20000/(300*SIConstants.BOLTZMANN*SIConstants.AVOGADROS_CONSTANT))),
         (() => new General.TwoPolynomialSegments(2,3), 1, new double[]{ 3, 7, 1 / 11d, -1 / 13d, -1 / 17d, 1 / 19d, -1 / 23d}, 6.5104895104895104895),
         (() => new General.TwoPolynomialSegments(2,3), 5, new double[]{ 3, 7, 1 / 11d, -1 / 13d, -1 / 17d, 1 / 19d, -1 / 23d}, 6.7450531700094225333),
         (() => new Peaks.PearsonIVAmplitude(1, 1), 9, new double[]{17, 7, 3, 5, 7, 1, 3 }, 2.1808325179027502207687005375167 + 1 + 9*3),
@@ -191,6 +198,16 @@ namespace Altaxo.Calc.FitFunctions
       var typeHash = _fitData.Select(x => x.Creation().GetType()).ToHashSet();
       var allTypes = Altaxo.Main.Services.ReflectionService.GetNonAbstractSubclassesOf(typeof(IFitFunctionWithDerivative)).ToHashSet();
       allTypes.ExceptWith(typeHash);
+
+      foreach (var type in allTypes.ToArray())
+      {
+        // Exclude types that are obsolete
+        if (type.GetCustomAttributes(typeof(ObsoleteAttribute), true).Length > 0)
+        {
+          allTypes.Remove(type);
+        }
+      }
+
       var arr = allTypes.Where(t => !(t.Assembly.GetName().Name.EndsWith("Test"))).ToArray();
 
       Assert.True(0 == arr.Length);

@@ -36,7 +36,7 @@ namespace Altaxo.Calc.FitFunctions.Materials
   /// Represents the Arrhenius law for rates. Describes the temperature dependence of reaction rates or similar quantities that increase with temperature.
   /// </summary>
   [FitFunctionClass]
-  public class ArrheniusLawRate : IFitFunction, Main.IImmutable
+  public class ArrheniusLawRate : IFitFunction, IFitFunctionWithDerivative, Main.IImmutable
   {
     private TemperatureRepresentation _temperatureUnitOfX;
     private EnergyRepresentation _paramEnergyUnit;
@@ -253,7 +253,7 @@ namespace Altaxo.Calc.FitFunctions.Materials
     {
       double temperature = Temperature.ToKelvin(X[0], _temperatureUnitOfX);
       double energyAsTemperature = Energy.ToTemperatureSI(P[1], _paramEnergyUnit);
-      Y[0] = P[0] * Math.Exp(-energyAsTemperature / temperature);
+      Y[0] = Math.Exp(Math.Log(P[0]) - energyAsTemperature / temperature);
     }
     /// <inheritdoc/>
     public void Evaluate(IROMatrix<double> independent, IReadOnlyList<double> P, IVector<double> FV, IReadOnlyList<bool>? dependentVariableChoice)
@@ -265,7 +265,7 @@ namespace Altaxo.Calc.FitFunctions.Materials
 
         double temperature = Temperature.ToKelvin(x, _temperatureUnitOfX);
         double energyAsTemperature = Energy.ToTemperatureSI(P[1], _paramEnergyUnit);
-        FV[r] = P[0] * Math.Exp(-energyAsTemperature / temperature);
+        FV[r] = Math.Exp(Math.Log(P[0]) - energyAsTemperature / temperature);
       }
     }
 
@@ -281,5 +281,21 @@ namespace Altaxo.Calc.FitFunctions.Materials
       return (null, null);
     }
 
+    /// <inheritdoc/>
+    public void EvaluateDerivative(IROMatrix<double> independent, IReadOnlyList<double> parameters, IReadOnlyList<bool>? isFixed, IMatrix<double> DF, IReadOnlyList<bool>? dependentVariableChoice)
+    {
+      double factorParam1ToJoule = Energy.ToJouleFactor(_paramEnergyUnit) / SIConstants.BOLTZMANN;
+      double energyAsTemperature = Energy.ToTemperatureSI(parameters[1], _paramEnergyUnit);
+
+      for (int r = 0; r < independent.RowCount; ++r)
+      {
+        var x = independent[r, 0];
+        double temperature = Temperature.ToKelvin(x, _temperatureUnitOfX);
+        var arg = -energyAsTemperature / temperature;
+
+        DF[r, 0] = Math.Exp(arg);
+        DF[r, 1] = Math.Exp(Math.Log(parameters[0]) + arg) * (-factorParam1ToJoule / temperature);
+      }
+    }
   }
 }

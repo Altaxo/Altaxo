@@ -36,7 +36,7 @@ namespace Altaxo.Calc.FitFunctions.Materials
   /// Represents the Arrhenius law for times. Describes the temperature dependence of relaxation time, viscosity, etc., i.e. quantities which decrease with increasing temperature.
   /// </summary>
   [FitFunctionClass]
-  public class ArrheniusLawTime : IFitFunction, Main.IImmutable
+  public class ArrheniusLawTime : IFitFunction, IFitFunctionWithDerivative, Main.IImmutable
   {
     private TemperatureRepresentation _temperatureUnitOfX;
     private EnergyRepresentation _paramEnergyUnit;
@@ -250,7 +250,7 @@ namespace Altaxo.Calc.FitFunctions.Materials
     {
       double temperature = Temperature.ToKelvin(X, _temperatureUnitOfX);
       double energyAsTemperature = Energy.ToTemperatureSI(P[1], _paramEnergyUnit);
-      return P[0] * Math.Exp(energyAsTemperature / temperature);
+      return Math.Exp(Math.Log(P[0]) + energyAsTemperature / temperature);
     }
 
     /// <inheritdoc/>
@@ -283,5 +283,20 @@ namespace Altaxo.Calc.FitFunctions.Materials
       return (null, null);
     }
 
+    /// <inheritdoc/>
+    public void EvaluateDerivative(IROMatrix<double> independent, IReadOnlyList<double> parameters, IReadOnlyList<bool>? isFixed, IMatrix<double> DF, IReadOnlyList<bool>? dependentVariableChoice)
+    {
+      double factorParam1ToJoule = Energy.ToJouleFactor(_paramEnergyUnit) / SIConstants.BOLTZMANN;
+      double energyAsTemperature = Energy.ToTemperatureSI(parameters[1], _paramEnergyUnit);
+
+      for (int r = 0; r < independent.RowCount; ++r)
+      {
+        var x = independent[r, 0];
+        double temperature = Temperature.ToKelvin(x, _temperatureUnitOfX);
+        var arg = energyAsTemperature / temperature;
+        DF[r, 0] = Math.Exp(arg);
+        DF[r, 1] = Math.Exp(Math.Log(parameters[0]) + arg) * (factorParam1ToJoule / temperature);
+      }
+    }
   }
 }
