@@ -25,9 +25,6 @@
 #endregion Copyright
 
 using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
 
 namespace Altaxo.Science
 {
@@ -36,80 +33,167 @@ namespace Altaxo.Science
   /// </summary>
   public static class SIConstants
   {
-    /// <summary>Speed of light in vacuum, in metres per second.</summary>
-    public const double SPEED_OF_LIGHT = (2.99792458e8); /* m / s */
+    #region Defined constants (fixed by definition)
 
-    /// <summary>Newtonian gravitational constant, in m^3 / kg s^2.</summary>
-    public const double GRAVITATIONAL_CONSTANT = (6.673e-11); /* m^3 / kg s^2 */
+    /// <summary>Hyperfine transition frequency of the caesium-133 atom, in hertz.</summary>
+    public const double Caesium133HyperfineTransitionFrequency = 9_192_631_770; /* Hz */
+
+    /// <summary>Speed of light in vacuum, in metres per second.</summary>
+    public const double SPEED_OF_LIGHT = 299_792_458; /* m / s */
 
     /// <summary>Planck's constant h, in kg m^2 / s.</summary>
-    public const double PLANCKS_CONSTANT_H = (6.62606876e-34); /* kg m^2 / s */
+    public const double PLANCKS_CONSTANT_H = (6.62607015e-34); /* kg m^2 / s */
+
+    /// <summary>Elementary charge in coulombs (A s).</summary>
+    public const double ELECTRON_CHARGE = (1.602176634e-19); /* A s */
+
+    /// <summary>Boltzmann constant, in kg m^2 / K s^2 (J/K).</summary>
+    public const double BOLTZMANN = (1.380649e-23); /* kg m^2 / K s^2 */
+
+    /// <summary>Avogadro's constant (number of particles per mole).</summary>
+    public const double AVOGADROS_CONSTANT = (6.02214076e23); /* no unit */
+
+    /// <summary>Luminous efficacy of monochromatic radiation at 540 THz, in lumens per watt.</summary>
+    public const double LUMINOUS_EFFICIACY = 683; /* lm/W */
 
     /// <summary>Reduced Planck's constant ħ (h-bar), in kg m^2 / s.</summary>
-    public const double PLANCKS_CONSTANT_HBAR = (1.05457159642e-34); /* kg m^2 / s */
+    public const double PLANCKS_CONSTANT_HBAR = PLANCKS_CONSTANT_H / Math.Tau; /* kg m^2 / s */
 
-    /// <summary>Astronomical unit (mean Earth–Sun distance), in metres.</summary>
-    public const double ASTRONOMICAL_UNIT = (1.49597870691e11); /* m */
+    #endregion Defined constants (fixed by definition)
 
-    /// <summary>Light year, in metres.</summary>
-    public const double LIGHT_YEAR = (9.46053620707e15); /* m */
+    #region Derived physical constants
 
-    /// <summary>Parsec, in metres.</summary>
-    public const double PARSEC = (3.08567758135e16); /* m */
+    /// <summary>Molar gas constant R, in J / (K mol).</summary>
+    public const double MOLAR_GAS = (BOLTZMANN * AVOGADROS_CONSTANT); /* kg m^2 / K mol s^2 */
+
+    /// <summary>Standard molar volume of an ideal gas at 0°C and standard atmosphere (101325 Pa), in cubic metres per mole.</summary>
+    public const double STANDARD_GAS_VOLUME = (BOLTZMANN * AVOGADROS_CONSTANT * ZERO_DEGREE_CELSIUS_TO_KELVIN / STD_ATMOSPHERE); /* m^3 / mol */
+
+    /// <summary>Faraday constant, coulombs per mole (A s / mol).</summary>
+    public const double FARADAY = (ELECTRON_CHARGE * AVOGADROS_CONSTANT); /* A s / mol */
+
+    /// <summary>Debye in coulomb-metre (A s^2 / m^2).</summary>
+    public const double DEBYE = (1 / (1E21 * SPEED_OF_LIGHT)); /* A s^2 / m^2 */
+
+    #endregion
+
+    #region Other physical constants (experimentally determined)
+
+    /// <summary>Newtonian gravitational constant, in m^3 / kg s^2.</summary>
+    public const double GRAVITATIONAL_CONSTANT = (6.67430e-11); /* m^3 / kg s^2 */
+
+    /// <summary>Mass of the electron, in kilograms.</summary>
+    public const double MASS_ELECTRON = (9.1093837139e-31); /* kg */
+
+    /// <summary>Mass of the muon, in kilograms.</summary>
+    public const double MASS_MUON = (1.883531627e-28); /* kg */
+
+    /// <summary>Mass of the proton, in kilograms.</summary>
+    public const double MASS_PROTON = (1.67262192595e-27); /* kg */
+
+    /// <summary>Mass of the neutron, in kilograms.</summary>
+    public const double MASS_NEUTRON = (1.67492750056e-27); /* kg */
+
+    /// <summary>Rydberg energy, in joules (kg m^2 / s^2).</summary>
+    public const double RYDBERG = (2.1798723611030e-18); /* kg m^2 / s^2 */
+
+    /// <summary>Bohr magneton, in A m^2.</summary>
+    public const double BOHR_MAGNETON = (9.2740100657e-24); /* A m^2 */
+
+    /// <summary>Nuclear magneton, in A m^2.</summary>
+    public const double NUCLEAR_MAGNETON = (5.0507837393e-27); /* A m^2 */
+
+    /// <summary>Electron magnetic moment, in A m^2.</summary>
+    public const double ELECTRON_MAGNETIC_MOMENT = (9.2847646917e-24); /* A m^2 */
+
+    /// <summary>Proton magnetic moment, in A m^2.</summary>
+    public const double PROTON_MAGNETIC_MOMENT = (1.41060679545e-26); /* A m^2 */
+
+    /// <summary>Bohr radius in metres.</summary>
+    public const double BOHR_RADIUS = (5.29177210544e-11); /* m */
+
+    /// <summary>Stefan-Boltzmann constant in kg / K^4 s^3 (W / m^2 K^4).</summary>
+    public const double STEFAN_BOLTZMANN_CONSTANT = (5.670374419e-8); /* kg / K^4 s^3 */
+
+    /// <summary>Thomson scattering cross-section in square metres.</summary>
+    public const double THOMSON_CROSS_SECTION = (6.6524587051e-29); /* m^2 */
+
+    /// <summary>Vacuum permittivity (electric constant) in A^2 s^4 / kg m^3.</summary>
+    public const double VACUUM_PERMITTIVITY = (8.8541878188e-12); /* A^2 s^4 / kg m^3 */
+
+    /// <summary>Vacuum permeability (magnetic constant) in kg m / A^2 s^2.</summary>
+    public const double VACUUM_PERMEABILITY = (1.25663706127e-6); /* kg m / A^2 s^2 */
+
+    #endregion
+
+    #region Unit conversions
+
+    #region Acceleration conversions
 
     /// <summary>Standard acceleration of gravity, in metres per second squared.</summary>
     public const double GRAV_ACCEL = (9.80665e0); /* m / s^2 */
 
+    #endregion Acceleration conversions
+
+    #region Area conversions
+
+    /// <summary>Hectare in square metres.</summary>
+    public const double HECTARE = (1e4); /* m^2 */
+
+    /// <summary>Acre in square metres.</summary>
+    public const double ACRE = (4.04685642241e3); /* m^2 */
+
+    /// <summary>Barn in square metres.</summary>
+    public const double BARN = (1e-28); /* m^2 */
+
+    #endregion Area conversions
+
+
+    #region Energy conversions
+
+    /// <summary>International calorie in joules.</summary>
+    public const double CALORIE = (4.1868e0); /* kg m^2 / s^2 */
+
+    /// <summary>British Thermal Unit (BTU) in joules.</summary>
+    public const double BTU = (1.05505585262e3); /* kg m^2 / s^2 */
+
+    /// <summary>Therm in joules.</summary>
+    public const double THERM = (1.05506e8); /* kg m^2 / s^2 */
+
+    /// <summary>Joule (unit of energy) in SI base units (kg m^2 / s^2).</summary>
+    public const double JOULE = (1e0); /* kg m^2 / s^2 */
+
+    /// <summary>Erg (unit of energy) in SI base units (kg m^2 / s^2).</summary>
+    public const double ERG = (1e-7); /* kg m^2 / s^2 */
+
     /// <summary>Electron volt in joules (kg m^2 / s^2).</summary>
-    public const double ELECTRON_VOLT = (1.6021765314e-19); /* kg m^2 / s^2 */
+    public const double ELECTRON_VOLT = ELECTRON_CHARGE; /* kg m^2 / s^2 */
 
-    /// <summary>Mass of the electron, in kilograms.</summary>
-    public const double MASS_ELECTRON = (9.10938188e-31); /* kg */
+    #endregion  Energy conversions
 
-    /// <summary>Mass of the muon, in kilograms.</summary>
-    public const double MASS_MUON = (1.88353109e-28); /* kg */
+    #region Force conversions
 
-    /// <summary>Mass of the proton, in kilograms.</summary>
-    public const double MASS_PROTON = (1.67262158e-27); /* kg */
+    /// <summary>Gram-force in newtons (kg m / s^2).</summary>
+    public const double GRAM_FORCE = (9.80665e-3); /* kg m / s^2 */
 
-    /// <summary>Mass of the neutron, in kilograms.</summary>
-    public const double MASS_NEUTRON = (1.67492716e-27); /* kg */
+    /// <summary>Pound-force in newtons (kg m / s^2).</summary>
+    public const double POUND_FORCE = (4.44822161526e0); /* kg m / s^2 */
 
-    /// <summary>Rydberg energy, in joules (kg m^2 / s^2).</summary>
-    public const double RYDBERG = (2.17987190389e-18); /* kg m^2 / s^2 */
+    /// <summary>Kilopound-force in newtons (kg m / s^2).</summary>
+    public const double KILOPOUND_FORCE = (4.44822161526e3); /* kg m / s^2 */
 
-    /// <summary>Boltzmann constant, in kg m^2 / K s^2 (J/K).</summary>
-    public const double BOLTZMANN = (1.3806503e-23); /* kg m^2 / K s^2 */
+    /// <summary>Poundal in newtons (kg m / s^2).</summary>
+    public const double POUNDAL = (1.38255e-1); /* kg m / s^2 */
 
-    /// <summary>Bohr magneton, in A m^2.</summary>
-    public const double BOHR_MAGNETON = (9.27400899e-24); /* A m^2 */
+    /// <summary>Newton (unit of force) in SI base units (kg m / s^2).</summary>
+    public const double NEWTON = (1e0); /* kg m / s^2 */
 
-    /// <summary>Nuclear magneton, in A m^2.</summary>
-    public const double NUCLEAR_MAGNETON = (5.05078317e-27); /* A m^2 */
+    /// <summary>Dyne (unit of force) in SI base units (kg m / s^2).</summary>
+    public const double DYNE = (1e-5); /* kg m / s^2 */
 
-    /// <summary>Electron magnetic moment, in A m^2.</summary>
-    public const double ELECTRON_MAGNETIC_MOMENT = (9.28476362e-24); /* A m^2 */
+    #endregion Force conversions
 
-    /// <summary>Proton magnetic moment, in A m^2.</summary>
-    public const double PROTON_MAGNETIC_MOMENT = (1.410606633e-26); /* A m^2 */
-
-    /// <summary>Molar gas constant R, in J / (K mol).</summary>
-    public const double MOLAR_GAS = (8.314472e0); /* kg m^2 / K mol s^2 */
-
-    /// <summary>Standard molar volume of an ideal gas at STP, in cubic metres per mole.</summary>
-    public const double STANDARD_GAS_VOLUME = (2.2710981e-2); /* m^3 / mol */
-
-    /// <summary>One minute in seconds.</summary>
-    public const double MINUTE = (6e1); /* s */
-
-    /// <summary>One hour in seconds.</summary>
-    public const double HOUR = (3.6e3); /* s */
-
-    /// <summary>One day in seconds.</summary>
-    public const double DAY = (8.64e4); /* s */
-
-    /// <summary>One week in seconds.</summary>
-    public const double WEEK = (6.048e5); /* s */
+    #region Length conversions
 
     /// <summary>One inch in metres.</summary>
     public const double INCH = (2.54e-2); /* m */
@@ -121,7 +205,7 @@ namespace Altaxo.Science
     public const double YARD = (9.144e-1); /* m */
 
     /// <summary>One mile in metres.</summary>
-    public const double MILE = (1.609344e3); /* m */
+    public const double MILE = (1609.344); /* m */
 
     /// <summary>Nautical mile in metres.</summary>
     public const double NAUTICAL_MILE = (1.852e3); /* m */
@@ -130,7 +214,7 @@ namespace Altaxo.Science
     public const double FATHOM = (1.8288e0); /* m */
 
     /// <summary>Thousandth of an inch (mil) in metres.</summary>
-    public const double MIL = (2.54e-5); /* m */
+    public const double MIL = (INCH / 1000); /* m */
 
     /// <summary>Typographic point in metres.</summary>
     public const double POINT = (3.52777777778e-4); /* m */
@@ -144,53 +228,25 @@ namespace Altaxo.Science
     /// <summary>Angstrom in metres.</summary>
     public const double ANGSTROM = (1e-10); /* m */
 
-    /// <summary>Hectare in square metres.</summary>
-    public const double HECTARE = (1e4); /* m^2 */
+    /// <summary>Light year, in metres.</summary>
+    public const double LIGHT_YEAR = (SPEED_OF_LIGHT * YEAR); /* m */
 
-    /// <summary>Acre in square metres.</summary>
-    public const double ACRE = (4.04685642241e3); /* m^2 */
+    /// <summary>Astronomical unit (mean Earth–Sun distance), in metres.</summary>
+    public const double ASTRONOMICAL_UNIT = (1.49597870691e11); /* m */
 
-    /// <summary>Barn in square metres.</summary>
-    public const double BARN = (1e-28); /* m^2 */
+    /// <summary>Parsec, in metres.</summary>
+    public const double PARSEC = (3.08567758135e16); /* m */
 
-    /// <summary>Liter in cubic metres.</summary>
-    public const double LITER = (1e-3); /* m^3 */
+    #endregion Length conversions
 
-    /// <summary>US gallon in cubic metres.</summary>
-    public const double US_GALLON = (3.78541178402e-3); /* m^3 */
+    #region Magnetic field conversions
 
-    /// <summary>Quart in cubic metres.</summary>
-    public const double QUART = (9.46352946004e-4); /* m^3 */
+    /// <summary>Gauss to tesla conversion (1 G = 1e-4 T).</summary>
+    public const double GAUSS = (1e-4); /* kg / A s^2 */
 
-    /// <summary>Pint in cubic metres.</summary>
-    public const double PINT = (4.73176473002e-4); /* m^3 */
+    #endregion
 
-    /// <summary>Cup in cubic metres.</summary>
-    public const double CUP = (2.36588236501e-4); /* m^3 */
-
-    /// <summary>Fluid ounce in cubic metres.</summary>
-    public const double FLUID_OUNCE = (2.95735295626e-5); /* m^3 */
-
-    /// <summary>Tablespoon in cubic metres.</summary>
-    public const double TABLESPOON = (1.47867647813e-5); /* m^3 */
-
-    /// <summary>Teaspoon in cubic metres.</summary>
-    public const double TEASPOON = (4.92892159375e-6); /* m^3 */
-
-    /// <summary>Canadian gallon in cubic metres.</summary>
-    public const double CANADIAN_GALLON = (4.54609e-3); /* m^3 */
-
-    /// <summary>UK gallon in cubic metres.</summary>
-    public const double UK_GALLON = (4.546092e-3); /* m^3 */
-
-    /// <summary>Miles per hour in metres per second.</summary>
-    public const double MILES_PER_HOUR = (4.4704e-1); /* m / s */
-
-    /// <summary>Kilometers per hour in metres per second.</summary>
-    public const double KILOMETERS_PER_HOUR = (2.77777777778e-1); /* m / s */
-
-    /// <summary>Knot (nautical mile per hour) in metres per second.</summary>
-    public const double KNOT = (5.14444444444e-1); /* m / s */
+    #region Mass conversions
 
     /// <summary>Pound mass in kilograms.</summary>
     public const double POUND_MASS = (4.5359237e-1); /* kg */
@@ -216,35 +272,25 @@ namespace Altaxo.Science
     /// <summary>Unified atomic mass unit (Dalton) in kilograms.</summary>
     public const double UNIFIED_ATOMIC_MASS = (1.66053873e-27); /* kg */
 
-    /// <summary>Gram-force in newtons (kg m / s^2).</summary>
-    public const double GRAM_FORCE = (9.80665e-3); /* kg m / s^2 */
+    /// <summary>Solar mass in kilograms.</summary>
+    public const double SOLAR_MASS = (1.98892e30); /* kg */
 
-    /// <summary>Pound-force in newtons (kg m / s^2).</summary>
-    public const double POUND_FORCE = (4.44822161526e0); /* kg m / s^2 */
+    #endregion Mass conversions
 
-    /// <summary>Kilopound-force in newtons (kg m / s^2).</summary>
-    public const double KILOPOUND_FORCE = (4.44822161526e3); /* kg m / s^2 */
-
-    /// <summary>Poundal in newtons (kg m / s^2).</summary>
-    public const double POUNDAL = (1.38255e-1); /* kg m / s^2 */
-
-    /// <summary>International calorie in joules.</summary>
-    public const double CALORIE = (4.1868e0); /* kg m^2 / s^2 */
-
-    /// <summary>British Thermal Unit (BTU) in joules.</summary>
-    public const double BTU = (1.05505585262e3); /* kg m^2 / s^2 */
-
-    /// <summary>Therm in joules.</summary>
-    public const double THERM = (1.05506e8); /* kg m^2 / s^2 */
+    #region Power conversions
 
     /// <summary>Horsepower in watts (kg m^2 / s^3).</summary>
     public const double HORSEPOWER = (7.457e2); /* kg m^2 / s^3 */
+
+    #endregion Power conversions
+
+    #region Pressure conversions
 
     /// <summary>Bar in pascals (kg / m s^2).</summary>
     public const double BAR = (1e5); /* kg / m s^2 */
 
     /// <summary>Standard atmosphere in pascals.</summary>
-    public const double STD_ATMOSPHERE = (1.01325e5); /* kg / m s^2 */
+    public const double STD_ATMOSPHERE = (101325); /* kg / m s^2 */
 
     /// <summary>Torr in pascals.</summary>
     public const double TORR = (1.33322368421e2); /* kg / m s^2 */
@@ -261,20 +307,9 @@ namespace Altaxo.Science
     /// <summary>Pound per square inch (psi) in pascals.</summary>
     public const double PSI = (6.89475729317e3); /* kg / m s^2 */
 
-    /// <summary>Poise (dynamic viscosity) in kg m^-1 s^-1.</summary>
-    public const double POISE = (1e-1); /* kg m^-1 s^-1 */
+    #endregion Pressure conversions
 
-    /// <summary>Stokes (kinematic viscosity) in square metres per second.</summary>
-    public const double STOKES = (1e-4); /* m^2 / s */
-
-    /// <summary>Faraday constant, coulombs per mole (A s / mol).</summary>
-    public const double FARADAY = (9.6485341472e4); /* A s / mol */
-
-    /// <summary>Elementary charge in coulombs (A s).</summary>
-    public const double ELECTRON_CHARGE = (1.602176462e-19); /* A s */
-
-    /// <summary>Gauss to tesla conversion (1 G = 1e-4 T).</summary>
-    public const double GAUSS = (1e-4); /* kg / A s^2 */
+    #region Radiation conversions
 
     /// <summary>Stilb (candela per square metre) conversion factor.</summary>
     public const double STILB = (1e4); /* cd / m^2 */
@@ -306,40 +341,94 @@ namespace Altaxo.Science
     /// <summary>Rad (radiation absorbed dose) in joules per kilogram.</summary>
     public const double RAD = (1e-2); /* m^2 / s^2 */
 
-    /// <summary>Solar mass in kilograms.</summary>
-    public const double SOLAR_MASS = (1.98892e30); /* kg */
+    #endregion Radiation conversions
 
-    /// <summary>Bohr radius in metres.</summary>
-    public const double BOHR_RADIUS = (5.291772083e-11); /* m */
+    #region Temperature conversions
 
-    /// <summary>Newton (unit of force) in SI base units (kg m / s^2).</summary>
-    public const double NEWTON = (1e0); /* kg m / s^2 */
+    /// <summary>Zero degree Celsius in kelvins.</summary>
+    public const double ZERO_DEGREE_CELSIUS_TO_KELVIN = 273.15; /* K */
 
-    /// <summary>Dyne (unit of force) in SI base units (kg m / s^2).</summary>
-    public const double DYNE = (1e-5); /* kg m / s^2 */
+    #endregion Temperature conversions
 
-    /// <summary>Joule (unit of energy) in SI base units (kg m^2 / s^2).</summary>
-    public const double JOULE = (1e0); /* kg m^2 / s^2 */
+    #region Time conversions
 
-    /// <summary>Erg (unit of energy) in SI base units (kg m^2 / s^2).</summary>
-    public const double ERG = (1e-7); /* kg m^2 / s^2 */
+    /// <summary>One minute in seconds.</summary>
+    public const double MINUTE = (60); /* s */
 
-    /// <summary>Stefan-Boltzmann constant in kg / K^4 s^3 (W / m^2 K^4).</summary>
-    public const double STEFAN_BOLTZMANN_CONSTANT = (5.67039934436e-8); /* kg / K^4 s^3 */
+    /// <summary>One hour in seconds.</summary>
+    public const double HOUR = (3600); /* s */
 
-    /// <summary>Thomson scattering cross-section in square metres.</summary>
-    public const double THOMSON_CROSS_SECTION = (6.65245853542e-29); /* m^2 */
+    /// <summary>One day in seconds.</summary>
+    public const double DAY = (86400); /* s */
 
-    /// <summary>Vacuum permittivity (electric constant) in A^2 s^4 / kg m^3.</summary>
-    public const double VACUUM_PERMITTIVITY = (8.854187817e-12); /* A^2 s^4 / kg m^3 */
+    /// <summary>One week in seconds.</summary>
+    public const double WEEK = (7 * 86400); /* s */
 
-    /// <summary>Vacuum permeability (magnetic constant) in kg m / A^2 s^2.</summary>
-    public const double VACUUM_PERMEABILITY = (1.25663706144e-6); /* kg m / A^2 s^2 */
+    /// <summary>One standard year (365.25 days) in seconds.</summary>
+    public const double YEAR = (31557600); /* s */
 
-    /// <summary>Debye in coulomb-metre (A s^2 / m^2).</summary>
-    public const double DEBYE = (3.33564095198e-30); /* A s^2 / m^2 */
+    #endregion Time conversions
 
-    /// <summary>Avogadro's constant (number of particles per mole).</summary>
-    public const double AVOGADROS_CONSTANT = (6.0221417930e23); /* no unit */
+
+    #region Velocity conversions
+
+    /// <summary>Miles per hour in metres per second.</summary>
+    public const double MILES_PER_HOUR = (MILE / HOUR); /* m / s */
+
+    /// <summary>Kilometers per hour in metres per second.</summary>
+    public const double KILOMETERS_PER_HOUR = (1000d / HOUR); /* m / s */
+
+    /// <summary>Knot (nautical mile per hour) in metres per second.</summary>
+    public const double KNOT = (NAUTICAL_MILE / HOUR); /* m / s */
+
+    #endregion Velocity conversions
+
+    #region Viscosity conversions
+
+    /// <summary>Poise (dynamic viscosity) in kg m^-1 s^-1.</summary>
+    public const double POISE = (1e-1); /* kg m^-1 s^-1 */
+
+    /// <summary>Stokes (kinematic viscosity) in square metres per second.</summary>
+    public const double STOKES = (1e-4); /* m^2 / s */
+
+    #endregion Viscosity conversions
+
+    #region Volume conversions
+
+    /// <summary>Liter in cubic metres.</summary>
+    public const double LITER = (1e-3); /* m^3 */
+
+    /// <summary>US gallon in cubic metres.</summary>
+    public const double US_GALLON = (3.78541178402e-3); /* m^3 */
+
+    /// <summary>Quart in cubic metres.</summary>
+    public const double QUART = (9.46352946004e-4); /* m^3 */
+
+    /// <summary>Pint in cubic metres.</summary>
+    public const double PINT = (4.73176473002e-4); /* m^3 */
+
+    /// <summary>Cup in cubic metres.</summary>
+    public const double CUP = (2.36588236501e-4); /* m^3 */
+
+    /// <summary>Fluid ounce in cubic metres.</summary>
+    public const double FLUID_OUNCE = (2.95735295626e-5); /* m^3 */
+
+    /// <summary>Tablespoon in cubic metres.</summary>
+    public const double TABLESPOON = (1.47867647813e-5); /* m^3 */
+
+    /// <summary>Teaspoon in cubic metres.</summary>
+    public const double TEASPOON = (4.92892159375e-6); /* m^3 */
+
+    /// <summary>Canadian gallon in cubic metres.</summary>
+    public const double CANADIAN_GALLON = (4.54609e-3); /* m^3 */
+
+    /// <summary>UK gallon in cubic metres.</summary>
+    public const double UK_GALLON = (4.546092e-3); /* m^3 */
+
+    #endregion Volume conversions
+
+
+
+    #endregion Unit conversions
   }
 }
