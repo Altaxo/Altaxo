@@ -38,6 +38,9 @@ namespace Altaxo.Units.Time
 
     private static readonly Week _instance = new Week();
 
+    /// <summary>
+    /// Gets the singleton instance of the <see cref="Week"/> unit.
+    /// </summary>
     public static Week Instance { get { return _instance; } }
 
     #region Serialization
@@ -56,35 +59,42 @@ namespace Altaxo.Units.Time
     }
     #endregion
 
+
     protected Week()
     {
     }
 
+    /// <inheritdoc/>
     public string Name
     {
       get { return "Week"; }
     }
 
+    /// <inheritdoc/>
     public string ShortCut
     {
       get { return "week"; }
     }
 
+    /// <inheritdoc/>
     public double ToSIUnit(double x)
     {
       return x * OneWeekInSeconds;
     }
 
+    /// <inheritdoc/>
     public double FromSIUnit(double x)
     {
       return x / OneWeekInSeconds;
     }
 
+    /// <inheritdoc/>
     public ISIPrefixList Prefixes
     {
       get { return SIPrefix.ListWithNonePrefixOnly; }
     }
 
+    /// <inheritdoc/>
     public SIUnit SIUnit
     {
       get { return Second.Instance; }

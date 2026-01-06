@@ -27,20 +27,31 @@
 
 namespace Altaxo.Units.ElectricResistivity
 {
+  /// <summary>
+  /// The SI unit ohm for electric resistivity.
+  /// </summary>
   [UnitDescription("Electric resistivity", 2, 1, -3, -2, 0, 0, 0)]
   public class Ohm : SIUnit
   {
+    /// <summary>
+    /// Gets the singleton instance of <see cref="Ohm"/>.
+    /// </summary>
     public static Ohm Instance { get; } = new();
 
     #region Serialization
 
+    /// <summary>
+    /// XML serialization surrogate for <see cref="Ohm"/>.
+    /// </summary>
     [Altaxo.Serialization.Xml.XmlSerializationSurrogateFor(typeof(Ohm), 0)]
     public class SerializationSurrogate0 : Altaxo.Serialization.Xml.IXmlSerializationSurrogate
     {
+      /// <inheritdoc/>
       public void Serialize(object obj, Altaxo.Serialization.Xml.IXmlSerializationInfo info)
       {
       }
 
+      /// <inheritdoc/>
       public object Deserialize(object? o, Altaxo.Serialization.Xml.IXmlDeserializationInfo info, object? parent)
       {
         return Ohm.Instance;
@@ -48,21 +59,27 @@ namespace Altaxo.Units.ElectricResistivity
     }
     #endregion
 
+    /// <summary>
+    /// Prevents external instantiation. Use <see cref="Instance"/> to obtain the singleton.
+    /// </summary>
     private Ohm()
         : base(2, 1, -3, -2, 0, 0, 0)
     {
     }
 
+    /// <inheritdoc/>
     public override string Name
     {
       get { return "Ohm"; }
     }
 
+    /// <inheritdoc/>
     public override string ShortCut
     {
       get { return "Ω"; }
     }
 
+    /// <inheritdoc/>
     public override ISIPrefixList Prefixes
     {
       get { return SIPrefix.ListWithAllKnownPrefixes; }

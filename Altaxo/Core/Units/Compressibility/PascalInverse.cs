@@ -26,20 +26,31 @@
 
 namespace Altaxo.Units.Compressibility
 {
+  /// <summary>
+  /// The SI unit inverse pascal for compressibility.
+  /// </summary>
   [UnitDescription("Compressibility", 1, -1, 2, 0, 0, 0, 0)]
   public class PascalInverse : SIUnit
   {
+    /// <summary>
+    /// Gets the singleton instance of <see cref="PascalInverse"/>.
+    /// </summary>
     public static PascalInverse Instance { get; } = new();
 
     #region Serialization
 
+    /// <summary>
+    /// XML serialization surrogate for <see cref="PascalInverse"/>.
+    /// </summary>
     [Altaxo.Serialization.Xml.XmlSerializationSurrogateFor(typeof(PascalInverse), 0)]
     public class SerializationSurrogate0 : Altaxo.Serialization.Xml.IXmlSerializationSurrogate
     {
+      /// <inheritdoc/>
       public void Serialize(object obj, Altaxo.Serialization.Xml.IXmlSerializationInfo info)
       {
       }
 
+      /// <inheritdoc/>
       public object Deserialize(object? o, Altaxo.Serialization.Xml.IXmlDeserializationInfo info, object? parent)
       {
         return PascalInverse.Instance;
@@ -47,21 +58,27 @@ namespace Altaxo.Units.Compressibility
     }
     #endregion
 
+    /// <summary>
+    /// Prevents external instantiation. Use <see cref="Instance"/> to obtain the singleton.
+    /// </summary>
     private PascalInverse()
         : base(1, -1, 2, 0, 0, 0, 0)
     {
     }
 
+    /// <inheritdoc/>
     public override string Name
     {
       get { return "PascalInverse"; }
     }
 
+    /// <inheritdoc/>
     public override string ShortCut
     {
       get { return "1/Pa"; }
     }
 
+    /// <inheritdoc/>
     public override ISIPrefixList Prefixes
     {
       get { return SIPrefix.ListWithNonePrefixOnly; }

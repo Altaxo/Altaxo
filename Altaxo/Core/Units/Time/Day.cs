@@ -38,6 +38,9 @@ namespace Altaxo.Units.Time
 
     private static readonly Day _instance = new Day();
 
+    /// <summary>
+    /// Gets the singleton instance of the <see cref="Day"/> unit.
+    /// </summary>
     public static Day Instance { get { return _instance; } }
 
     #region Serialization
@@ -56,35 +59,42 @@ namespace Altaxo.Units.Time
     }
     #endregion
 
+
     protected Day()
     {
     }
 
+    /// <inheritdoc/>
     public string Name
     {
       get { return "Day"; }
     }
 
+    /// <inheritdoc/>
     public string ShortCut
     {
       get { return "d"; }
     }
 
+    /// <inheritdoc/>
     public double ToSIUnit(double x)
     {
       return x * OneDayInSeconds;
     }
 
+    /// <inheritdoc/>
     public double FromSIUnit(double x)
     {
       return x / OneDayInSeconds;
     }
 
+    /// <inheritdoc/>
     public ISIPrefixList Prefixes
     {
       get { return SIPrefix.ListWithNonePrefixOnly; }
     }
 
+    /// <inheritdoc/>
     public SIUnit SIUnit
     {
       get { return Second.Instance; }

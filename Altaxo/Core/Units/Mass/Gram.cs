@@ -37,6 +37,9 @@ namespace Altaxo.Units.Mass
   {
     private static readonly Gram _instance = new Gram();
 
+    /// <summary>
+    /// Gets the singleton instance of the <see cref="Gram"/> unit.
+    /// </summary>
     public static Gram Instance { get { return _instance; } }
 
     #region Serialization
@@ -59,31 +62,37 @@ namespace Altaxo.Units.Mass
     {
     }
 
+    /// <inheritdoc/>
     public string Name
     {
       get { return "Gram"; }
     }
 
+    /// <inheritdoc/>
     public string ShortCut
     {
       get { return "g"; }
     }
 
+    /// <inheritdoc/>
     public double ToSIUnit(double x)
     {
       return x / 1000;
     }
 
+    /// <inheritdoc/>
     public double FromSIUnit(double x)
     {
       return x * 1000;
     }
 
+    /// <inheritdoc/>
     public ISIPrefixList Prefixes
     {
       get { return SIPrefix.ListWithAllKnownPrefixes; }
     }
 
+    /// <inheritdoc/>
     public SIUnit SIUnit
     {
       get { return Kilogram.Instance; }

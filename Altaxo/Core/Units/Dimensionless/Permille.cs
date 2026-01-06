@@ -31,22 +31,33 @@ using System.Text;
 
 namespace Altaxo.Units.Dimensionless
 {
+  /// <summary>
+  /// Represents permille as a dimensionless unit (ratio).
+  /// </summary>
   [UnitDescription("Relation", 0, 0, 0, 0, 0, 0, 0)]
   public class Permille : UnitBase, IUnit
   {
     private static readonly Permille _instance = new Permille();
 
+    /// <summary>
+    /// Gets the singleton instance of <see cref="Permille"/>.
+    /// </summary>
     public static Permille Instance { get { return _instance; } }
 
     #region Serialization
 
+    /// <summary>
+    /// XML serialization surrogate for <see cref="Permille"/>.
+    /// </summary>
     [Altaxo.Serialization.Xml.XmlSerializationSurrogateFor(typeof(Permille), 0)]
     public class SerializationSurrogate0 : Altaxo.Serialization.Xml.IXmlSerializationSurrogate
     {
+      /// <inheritdoc/>
       public void Serialize(object obj, Altaxo.Serialization.Xml.IXmlSerializationInfo info)
       {
       }
 
+      /// <inheritdoc/>
       public object Deserialize(object? o, Altaxo.Serialization.Xml.IXmlDeserializationInfo info, object? parent)
       {
         return Permille.Instance;
@@ -54,35 +65,44 @@ namespace Altaxo.Units.Dimensionless
     }
     #endregion
 
+    /// <summary>
+    /// Protected constructor to enforce singleton pattern.
+    /// </summary>
     protected Permille()
     {
     }
 
+    /// <inheritdoc/>
     public string Name
     {
       get { return "Per mill"; }
     }
 
+    /// <inheritdoc/>
     public string ShortCut
     {
       get { return "‰"; }
     }
 
+    /// <inheritdoc/>
     public double ToSIUnit(double x)
     {
       return x / 1000;
     }
 
+    /// <inheritdoc/>
     public double FromSIUnit(double x)
     {
       return x * 1000;
     }
 
+    /// <inheritdoc/>
     public ISIPrefixList Prefixes
     {
       get { return SIPrefix.ListWithNonePrefixOnly; }
     }
 
+    /// <inheritdoc/>
     public SIUnit SIUnit
     {
       get { return Unity.Instance; }

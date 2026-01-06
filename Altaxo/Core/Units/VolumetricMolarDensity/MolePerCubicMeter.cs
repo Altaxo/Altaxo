@@ -26,21 +26,32 @@
 
 namespace Altaxo.Units.VolumetricMolarDensity
 {
+  /// <summary>
+  /// The SI unit mole per cubic meter for volumetric molar density.
+  /// </summary>
   [UnitDescription("Volumetric molar density", -3, 0, 0, 0, 0, 1, 0)]
   public class MolePerCubicMeter : SIUnit
   {
 
+    /// <summary>
+    /// Gets the singleton instance of <see cref="MolePerCubicMeter"/>.
+    /// </summary>
     public static MolePerCubicMeter Instance { get; } = new();
 
     #region Serialization
 
+    /// <summary>
+    /// XML serialization surrogate for <see cref="MolePerCubicMeter"/>.
+    /// </summary>
     [Altaxo.Serialization.Xml.XmlSerializationSurrogateFor(typeof(MolePerCubicMeter), 0)]
     public class SerializationSurrogate0 : Altaxo.Serialization.Xml.IXmlSerializationSurrogate
     {
+      /// <inheritdoc/>
       public void Serialize(object obj, Altaxo.Serialization.Xml.IXmlSerializationInfo info)
       {
       }
 
+      /// <inheritdoc/>
       public object Deserialize(object? o, Altaxo.Serialization.Xml.IXmlDeserializationInfo info, object? parent)
       {
         return MolePerCubicMeter.Instance;
@@ -48,21 +59,27 @@ namespace Altaxo.Units.VolumetricMolarDensity
     }
     #endregion
 
+    /// <summary>
+    /// Prevents external instantiation. Use <see cref="Instance"/> to obtain the singleton.
+    /// </summary>
     private MolePerCubicMeter()
         : base(-3, 0, 0, 0, 0, 1, 0)
     {
     }
 
+    /// <inheritdoc/>
     public override string Name
     {
       get { return "MolePerCubicMeter"; }
     }
 
+    /// <inheritdoc/>
     public override string ShortCut
     {
       get { return "mol/m³"; }
     }
 
+    /// <inheritdoc/>
     public override ISIPrefixList Prefixes
     {
       get { return SIPrefix.ListWithNonePrefixOnly; }

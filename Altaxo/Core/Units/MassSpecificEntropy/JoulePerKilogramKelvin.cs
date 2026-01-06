@@ -26,20 +26,31 @@
 
 namespace Altaxo.Units.MassSpecificEntropy
 {
+  /// <summary>
+  /// The SI unit joule per kilogram kelvin for mass specific entropy.
+  /// </summary>
   [UnitDescription("Mass specific entropy", 2, 0, -2, 0, -1, 0, 0)]
   public class JoulePerKilogramKelvin : SIUnit
   {
+    /// <summary>
+    /// Gets the singleton instance of <see cref="JoulePerKilogramKelvin"/>.
+    /// </summary>
     public static JoulePerKilogramKelvin Instance { get; } = new();
 
     #region Serialization
 
+    /// <summary>
+    /// XML serialization surrogate for <see cref="JoulePerKilogramKelvin"/>.
+    /// </summary>
     [Altaxo.Serialization.Xml.XmlSerializationSurrogateFor(typeof(JoulePerKilogramKelvin), 0)]
     public class SerializationSurrogate0 : Altaxo.Serialization.Xml.IXmlSerializationSurrogate
     {
+      /// <inheritdoc/>
       public void Serialize(object obj, Altaxo.Serialization.Xml.IXmlSerializationInfo info)
       {
       }
 
+      /// <inheritdoc/>
       public object Deserialize(object? o, Altaxo.Serialization.Xml.IXmlDeserializationInfo info, object? parent)
       {
         return JoulePerKilogramKelvin.Instance;
@@ -47,21 +58,27 @@ namespace Altaxo.Units.MassSpecificEntropy
     }
     #endregion
 
+    /// <summary>
+    /// Prevents external instantiation. Use <see cref="Instance"/> to obtain the singleton.
+    /// </summary>
     private JoulePerKilogramKelvin()
         : base(2, 0, -2, 0, -1, 0, 0)
     {
     }
 
+    /// <inheritdoc/>
     public override string Name
     {
       get { return "Joule per Kilogram and Kelvin"; }
     }
 
+    /// <inheritdoc/>
     public override string ShortCut
     {
       get { return "J/(kg·K)"; }
     }
 
+    /// <inheritdoc/>
     public override ISIPrefixList Prefixes
     {
       get { return SIPrefix.ListWithAllKnownPrefixes; }

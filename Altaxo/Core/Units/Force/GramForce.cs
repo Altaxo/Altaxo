@@ -31,24 +31,35 @@ using System.Text;
 
 namespace Altaxo.Units.Force
 {
+  /// <summary>
+  /// Represents the unit gram-force.
+  /// </summary>
   [UnitDescription("Force", 1, 1, -2, 0, 0, 0, 0)]
   public class GramForce : UnitBase, IUnit
   {
     private static readonly GramForce _instance = new GramForce();
 
+    /// <summary>
+    /// Gets the singleton instance of <see cref="GramForce"/>.
+    /// </summary>
     public static GramForce Instance { get { return _instance; } }
 
     private const double _factorToSI = Science.SIConstants.GRAV_ACCEL / 1000d;
 
     #region Serialization
 
+    /// <summary>
+    /// XML serialization surrogate for <see cref="GramForce"/>.
+    /// </summary>
     [Altaxo.Serialization.Xml.XmlSerializationSurrogateFor(typeof(GramForce), 0)]
     public class SerializationSurrogate0 : Altaxo.Serialization.Xml.IXmlSerializationSurrogate
     {
+      /// <inheritdoc/>
       public void Serialize(object obj, Altaxo.Serialization.Xml.IXmlSerializationInfo info)
       {
       }
 
+      /// <inheritdoc/>
       public object Deserialize(object? o, Altaxo.Serialization.Xml.IXmlDeserializationInfo info, object? parent)
       {
         return GramForce.Instance;
@@ -56,35 +67,44 @@ namespace Altaxo.Units.Force
     }
     #endregion
 
+    /// <summary>
+    /// Protected constructor to enforce singleton pattern.
+    /// </summary>
     protected GramForce()
     {
     }
 
+    /// <inheritdoc/>
     public string Name
     {
       get { return "GramForce"; }
     }
 
+    /// <inheritdoc/>
     public string ShortCut
     {
       get { return "gf"; }
     }
 
+    /// <inheritdoc/>
     public double ToSIUnit(double x)
     {
       return x * _factorToSI;
     }
 
+    /// <inheritdoc/>
     public double FromSIUnit(double x)
     {
       return x / _factorToSI;
     }
 
+    /// <inheritdoc/>
     public ISIPrefixList Prefixes
     {
       get { return SIPrefix.ListWithNonePrefixOnly; }
     }
 
+    /// <inheritdoc/>
     public SIUnit SIUnit
     {
       get { return Newton.Instance; }

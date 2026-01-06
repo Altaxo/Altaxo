@@ -36,6 +36,9 @@ namespace Altaxo.Units.Length
   {
     private static readonly Meter _instance = new Meter();
 
+    /// <summary>
+    /// Gets the singleton instance of the <see cref="Meter"/> unit.
+    /// </summary>
     public static Meter Instance { get { return _instance; } }
 
     #region Serialization
@@ -59,16 +62,19 @@ namespace Altaxo.Units.Length
     {
     }
 
+    /// <inheritdoc/>
     public override string Name
     {
       get { return "Meter"; }
     }
 
+    /// <inheritdoc/>
     public override string ShortCut
     {
       get { return "m"; }
     }
 
+    /// <inheritdoc/>
     public override ISIPrefixList Prefixes
     {
       get { return SIPrefix.ListWithAllKnownPrefixes; }

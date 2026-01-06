@@ -36,6 +36,9 @@ namespace Altaxo.Units.Length
   {
     private static readonly Point _instance = new Point();
 
+    /// <summary>
+    /// Gets the singleton instance of the <see cref="Point"/> unit.
+    /// </summary>
     public static Point Instance { get { return _instance; } }
 
     #region Serialization
@@ -54,35 +57,42 @@ namespace Altaxo.Units.Length
     }
     #endregion
 
+
     protected Point()
     {
     }
 
+    /// <inheritdoc/>
     public string Name
     {
       get { return "Point"; }
     }
 
+    /// <inheritdoc/>
     public string ShortCut
     {
       get { return "pt"; }
     }
 
+    /// <inheritdoc/>
     public double ToSIUnit(double x)
     {
       return x * (2.54E-2 / 72.0);
     }
 
+    /// <inheritdoc/>
     public double FromSIUnit(double x)
     {
       return x * (72.0 / 2.54E-2);
     }
 
+    /// <inheritdoc/>
     public ISIPrefixList Prefixes
     {
       get { return SIPrefix.ListWithNonePrefixOnly; }
     }
 
+    /// <inheritdoc/>
     public SIUnit SIUnit
     {
       get { return Meter.Instance; }

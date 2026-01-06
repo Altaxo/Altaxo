@@ -31,22 +31,33 @@ using System.Text;
 
 namespace Altaxo.Units.Area
 {
+  /// <summary>
+  /// The SI unit square meter for area.
+  /// </summary>
   [UnitDescription("Area", 2, 0, 0, 0, 0, 0, 0)]
   public class SquareMeter : SIUnit
   {
     private static readonly SquareMeter _instance = new SquareMeter();
 
+    /// <summary>
+    /// Gets the singleton instance of <see cref="SquareMeter"/>.
+    /// </summary>
     public static SquareMeter Instance { get { return _instance; } }
 
     #region Serialization
 
+    /// <summary>
+    /// XML serialization surrogate for <see cref="SquareMeter"/>.
+    /// </summary>
     [Altaxo.Serialization.Xml.XmlSerializationSurrogateFor(typeof(SquareMeter), 0)]
     public class SerializationSurrogate0 : Altaxo.Serialization.Xml.IXmlSerializationSurrogate
     {
+      /// <inheritdoc/>
       public void Serialize(object obj, Altaxo.Serialization.Xml.IXmlSerializationInfo info)
       {
       }
 
+      /// <inheritdoc/>
       public object Deserialize(object? o, Altaxo.Serialization.Xml.IXmlDeserializationInfo info, object? parent)
       {
         return SquareMeter.Instance;
@@ -54,21 +65,27 @@ namespace Altaxo.Units.Area
     }
     #endregion
 
+    /// <summary>
+    /// Prevents external instantiation. Use <see cref="Instance"/> to obtain the singleton.
+    /// </summary>
     private SquareMeter()
         : base(2, 0, 0, 0, 0, 0, 0)
     {
     }
 
+    /// <inheritdoc/>
     public override string Name
     {
       get { return "SquareMeter"; }
     }
 
+    /// <inheritdoc/>
     public override string ShortCut
     {
       get { return "m²"; }
     }
 
+    /// <inheritdoc/>
     public override ISIPrefixList Prefixes
     {
       get { return SIPrefix.ListWithNonePrefixOnly; }

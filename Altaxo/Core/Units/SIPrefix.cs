@@ -50,7 +50,7 @@ namespace Altaxo.Units
     /// <summary>List with only the prefix <see cref="None"/>.</summary>
     private static SIPrefixList _nonePrefixList;
 
-    /// <summary>List with only the prefixes with an exponent as a multiple of 3..</summary>
+    /// <summary>List with only the prefixes with an exponent as a multiple of 3.</summary>
     private static SIPrefixList _multipleOf3Prefixes;
 
     /// <summary>Dictionary of known prefixes, where the key is the exponent and the value is the known prefix.</summary>
@@ -86,6 +86,7 @@ namespace Altaxo.Units
     [Altaxo.Serialization.Xml.XmlSerializationSurrogateFor(typeof(SIPrefix), 0)]
     public class SerializationSurrogate0 : Altaxo.Serialization.Xml.IXmlSerializationSurrogate
     {
+      /// <inheritdoc/>
       public void Serialize(object obj, Altaxo.Serialization.Xml.IXmlSerializationInfo info)
       {
         var s = (SIPrefix)obj;
@@ -95,6 +96,7 @@ namespace Altaxo.Units
         info.AddValue("Shortcut", s.ShortCut);
       }
 
+      /// <inheritdoc/>
       public object Deserialize(object? o, Altaxo.Serialization.Xml.IXmlDeserializationInfo info, object? parent)
       {
         var exponent = info.GetInt32("Exponent");

@@ -31,22 +31,33 @@ using System.Text;
 
 namespace Altaxo.Units.VolumetricMassDensity
 {
+  /// <summary>
+  /// The SI unit kilogram per cubic meter for volumetric mass density.
+  /// </summary>
   [UnitDescription("Volumetric mass density", -3, 1, 0, 0, 0, 0, 0)]
   public class KilogramPerCubicMeter : SIUnit
   {
     private static readonly KilogramPerCubicMeter _instance = new KilogramPerCubicMeter();
 
+    /// <summary>
+    /// Gets the singleton instance of <see cref="KilogramPerCubicMeter"/>.
+    /// </summary>
     public static KilogramPerCubicMeter Instance { get { return _instance; } }
 
     #region Serialization
 
+    /// <summary>
+    /// XML serialization surrogate for <see cref="KilogramPerCubicMeter"/>.
+    /// </summary>
     [Altaxo.Serialization.Xml.XmlSerializationSurrogateFor(typeof(KilogramPerCubicMeter), 0)]
     public class SerializationSurrogate0 : Altaxo.Serialization.Xml.IXmlSerializationSurrogate
     {
+      /// <inheritdoc/>
       public void Serialize(object obj, Altaxo.Serialization.Xml.IXmlSerializationInfo info)
       {
       }
 
+      /// <inheritdoc/>
       public object Deserialize(object? o, Altaxo.Serialization.Xml.IXmlDeserializationInfo info, object? parent)
       {
         return KilogramPerCubicMeter.Instance;
@@ -54,21 +65,27 @@ namespace Altaxo.Units.VolumetricMassDensity
     }
     #endregion
 
+    /// <summary>
+    /// Prevents external instantiation. Use <see cref="Instance"/> to obtain the singleton.
+    /// </summary>
     private KilogramPerCubicMeter()
         : base(-3, 1, 0, 0, 0, 0, 0)
     {
     }
 
+    /// <inheritdoc/>
     public override string Name
     {
       get { return "KilogramPerCubicMeter"; }
     }
 
+    /// <inheritdoc/>
     public override string ShortCut
     {
       get { return "kg/m³"; }
     }
 
+    /// <inheritdoc/>
     public override ISIPrefixList Prefixes
     {
       get { return SIPrefix.ListWithNonePrefixOnly; }

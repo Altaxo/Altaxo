@@ -32,22 +32,33 @@ using System.Threading.Tasks;
 
 namespace Altaxo.Units.ElectricFieldStrength
 {
+  /// <summary>
+  /// The SI unit volt per meter for electric field strength.
+  /// </summary>
   [UnitDescription("Electric field strength", 1, 1, -3, -1, 0, 0, 0)]
   public class VoltPerMeter : SIUnit
   {
     private static readonly VoltPerMeter _instance = new VoltPerMeter();
 
+    /// <summary>
+    /// Gets the singleton instance of <see cref="VoltPerMeter"/>.
+    /// </summary>
     public static VoltPerMeter Instance { get { return _instance; } }
 
     #region Serialization
 
+    /// <summary>
+    /// XML serialization surrogate for <see cref="VoltPerMeter"/>.
+    /// </summary>
     [Altaxo.Serialization.Xml.XmlSerializationSurrogateFor(typeof(VoltPerMeter), 0)]
     public class SerializationSurrogate0 : Altaxo.Serialization.Xml.IXmlSerializationSurrogate
     {
+      /// <inheritdoc/>
       public void Serialize(object obj, Altaxo.Serialization.Xml.IXmlSerializationInfo info)
       {
       }
 
+      /// <inheritdoc/>
       public object Deserialize(object? o, Altaxo.Serialization.Xml.IXmlDeserializationInfo info, object? parent)
       {
         return VoltPerMeter.Instance;
@@ -55,21 +66,27 @@ namespace Altaxo.Units.ElectricFieldStrength
     }
     #endregion
 
+    /// <summary>
+    /// Prevents external instantiation. Use <see cref="Instance"/> to obtain the singleton.
+    /// </summary>
     private VoltPerMeter()
         : base(1, 1, -3, -1, 0, 0, 0)
     {
     }
 
+    /// <inheritdoc/>
     public override string Name
     {
       get { return "Volt per meter"; }
     }
 
+    /// <inheritdoc/>
     public override string ShortCut
     {
       get { return "V/m"; }
     }
 
+    /// <inheritdoc/>
     public override ISIPrefixList Prefixes
     {
       get { return SIPrefix.ListWithAllKnownPrefixes; }

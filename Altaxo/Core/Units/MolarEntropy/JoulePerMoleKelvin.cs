@@ -26,20 +26,31 @@
 
 namespace Altaxo.Units.MolarEntropy
 {
+  /// <summary>
+  /// The SI unit joule per mole kelvin for molar entropy.
+  /// </summary>
   [UnitDescription("Molar entropy", 2, 1, -2, 0, -1, -1, 0)]
   public class JoulePerMoleKelvin : SIUnit
   {
+    /// <summary>
+    /// Gets the singleton instance of <see cref="JoulePerMoleKelvin"/>.
+    /// </summary>
     public static JoulePerMoleKelvin Instance { get; } = new();
 
     #region Serialization
 
+    /// <summary>
+    /// XML serialization surrogate for <see cref="JoulePerMoleKelvin"/>.
+    /// </summary>
     [Altaxo.Serialization.Xml.XmlSerializationSurrogateFor(typeof(JoulePerMoleKelvin), 0)]
     public class SerializationSurrogate0 : Altaxo.Serialization.Xml.IXmlSerializationSurrogate
     {
+      /// <inheritdoc/>
       public void Serialize(object obj, Altaxo.Serialization.Xml.IXmlSerializationInfo info)
       {
       }
 
+      /// <inheritdoc/>
       public object Deserialize(object? o, Altaxo.Serialization.Xml.IXmlDeserializationInfo info, object? parent)
       {
         return JoulePerMoleKelvin.Instance;
@@ -47,21 +58,27 @@ namespace Altaxo.Units.MolarEntropy
     }
     #endregion
 
+    /// <summary>
+    /// Prevents external instantiation. Use <see cref="Instance"/> to obtain the singleton.
+    /// </summary>
     private JoulePerMoleKelvin()
         : base(2, 1, -2, 0, -1, -1, 0)
     {
     }
 
+    /// <inheritdoc/>
     public override string Name
     {
       get { return "JoulePerMoleKelvin"; }
     }
 
+    /// <inheritdoc/>
     public override string ShortCut
     {
       get { return "J/(mol·K)"; }
     }
 
+    /// <inheritdoc/>
     public override ISIPrefixList Prefixes
     {
       get { return SIPrefix.ListWithAllKnownPrefixes; }

@@ -26,20 +26,31 @@
 
 namespace Altaxo.Units.MolarMass
 {
+  /// <summary>
+  /// The SI unit kilogram per mole for molar mass.
+  /// </summary>
   [UnitDescription("Molar mass", 0, 1, 0, 0, 0, -1, 0)]
   public class KilogramPerMole : SIUnit
   {
+    /// <summary>
+    /// Gets the singleton instance of <see cref="KilogramPerMole"/>.
+    /// </summary>
     public static KilogramPerMole Instance { get; } = new();
 
     #region Serialization
 
+    /// <summary>
+    /// XML serialization surrogate for <see cref="KilogramPerMole"/>.
+    /// </summary>
     [Altaxo.Serialization.Xml.XmlSerializationSurrogateFor(typeof(KilogramPerMole), 0)]
     public class SerializationSurrogate0 : Altaxo.Serialization.Xml.IXmlSerializationSurrogate
     {
+      /// <inheritdoc/>
       public void Serialize(object obj, Altaxo.Serialization.Xml.IXmlSerializationInfo info)
       {
       }
 
+      /// <inheritdoc/>
       public object Deserialize(object? o, Altaxo.Serialization.Xml.IXmlDeserializationInfo info, object? parent)
       {
         return KilogramPerMole.Instance;
@@ -47,21 +58,27 @@ namespace Altaxo.Units.MolarMass
     }
     #endregion
 
+    /// <summary>
+    /// Prevents external instantiation. Use <see cref="Instance"/> to obtain the singleton.
+    /// </summary>
     private KilogramPerMole()
         : base(0, 1, 0, 0, 0, -1, 0)
     {
     }
 
+    /// <inheritdoc/>
     public override string Name
     {
       get { return "KilogramPerMole"; }
     }
 
+    /// <inheritdoc/>
     public override string ShortCut
     {
       get { return "kg/mol"; }
     }
 
+    /// <inheritdoc/>
     public override ISIPrefixList Prefixes
     {
       get { return SIPrefix.ListWithNonePrefixOnly; }

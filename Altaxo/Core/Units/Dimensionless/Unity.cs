@@ -31,22 +31,33 @@ using System.Text;
 
 namespace Altaxo.Units.Dimensionless
 {
+  /// <summary>
+  /// The SI unit representing a dimensionless unity (ratio 1).
+  /// </summary>
   [UnitDescription("Relation", 0, 0, 0, 0, 0, 0, 0)]
   public class Unity : SIUnit
   {
     private static readonly Unity _instance = new Unity();
 
+    /// <summary>
+    /// Gets the singleton instance of <see cref="Unity"/>.
+    /// </summary>
     public static Unity Instance { get { return _instance; } }
 
     #region Serialization
 
+    /// <summary>
+    /// XML serialization surrogate for <see cref="Unity"/>.
+    /// </summary>
     [Altaxo.Serialization.Xml.XmlSerializationSurrogateFor(typeof(Unity), 0)]
     public class SerializationSurrogate0 : Altaxo.Serialization.Xml.IXmlSerializationSurrogate
     {
+      /// <inheritdoc/>
       public void Serialize(object obj, Altaxo.Serialization.Xml.IXmlSerializationInfo info)
       {
       }
 
+      /// <inheritdoc/>
       public object Deserialize(object? o, Altaxo.Serialization.Xml.IXmlDeserializationInfo info, object? parent)
       {
         return Unity.Instance;
@@ -54,21 +65,27 @@ namespace Altaxo.Units.Dimensionless
     }
     #endregion
 
+    /// <summary>
+    /// Prevents external instantiation. Use <see cref="Instance"/> to obtain the singleton.
+    /// </summary>
     private Unity()
         : base(0, 0, 0, 0, 0, 0, 0)
     {
     }
 
+    /// <inheritdoc/>
     public override string Name
     {
       get { return "Unity"; }
     }
 
+    /// <inheritdoc/>
     public override string ShortCut
     {
       get { return string.Empty; }
     }
 
+    /// <inheritdoc/>
     public override ISIPrefixList Prefixes
     {
       get { return SIPrefix.ListWithNonePrefixOnly; }

@@ -2,7 +2,7 @@
 
 /////////////////////////////////////////////////////////////////////////////
 //    Altaxo:  a data processing and data plotting program
-//    Copyright (C) 2002-2020 Dr. Dirk Lellinger
+//    Copyright (C) 2002-2011 Dr. Dirk Lellinger
 //
 //    This program is free software; you can redistribute it and/or modify
 //    it under the terms of the GNU General Public License as published by
@@ -22,71 +22,65 @@
 
 #endregion Copyright
 
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-
 #nullable enable
 
-namespace Altaxo.Units.ElectricCurrent
+namespace Altaxo.Units.Angle
 {
   /// <summary>
-  /// The SI unit ampere for electric current.
+  /// Unit of solid angle in the SI system.
   /// </summary>
-  [UnitDescription("Electric current", 0, 0, 0, 1, 0, 0, 0)]
-  public class Ampere : SIUnit
+  /// <seealso cref="Altaxo.Units.SIUnit" />
+  /// <seealso href="https://en.wikipedia.org/wiki/Steradian"/>
+  [UnitDescription("Solid angle", 0, 0, 0, 0, 0, 0, 0)]
+  public class Steradian : SIUnit
   {
-    private static readonly Ampere _instance = new Ampere();
+    private static readonly Steradian _instance = new Steradian();
+
+    /// <summary>List with only the prefix <see cref="SIPrefix.None"/>.</summary>
+    private static SIPrefixList _prefixList = new SIPrefixList(new SIPrefix[] { SIPrefix.None, SIPrefix.Micro, SIPrefix.Nano, SIPrefix.Pico });
 
     /// <summary>
-    /// Gets the singleton instance of the <see cref="Ampere"/> unit.
+    /// Gets the singleton instance of the <see cref="Steradian"/> unit.
     /// </summary>
-    public static Ampere Instance { get { return _instance; } }
+    public static Steradian Instance { get { return _instance; } }
 
     #region Serialization
 
-    /// <summary>
-    /// XML serialization surrogate for <see cref="Ampere"/>.
-    /// </summary>
-    [Altaxo.Serialization.Xml.XmlSerializationSurrogateFor(typeof(Ampere), 0)]
+    [Altaxo.Serialization.Xml.XmlSerializationSurrogateFor(typeof(Steradian), 0)]
     public class SerializationSurrogate0 : Altaxo.Serialization.Xml.IXmlSerializationSurrogate
     {
-      /// <inheritdoc/>
       public void Serialize(object obj, Altaxo.Serialization.Xml.IXmlSerializationInfo info)
       {
       }
 
-      /// <inheritdoc/>
       public object Deserialize(object? o, Altaxo.Serialization.Xml.IXmlDeserializationInfo info, object? parent)
       {
-        return Ampere.Instance;
+        return Steradian.Instance;
       }
     }
     #endregion
 
-    private Ampere()
-        : base(0, 0, 0, 1, 0, 0, 0)
+    private Steradian()
+        : base(0, 0, 0, 0, 0, 0, 0)
     {
     }
 
     /// <inheritdoc/>
     public override string Name
     {
-      get { return "Ampere"; }
+      get { return "Steradian"; }
     }
 
     /// <inheritdoc/>
     public override string ShortCut
     {
-      get { return "A"; }
+      get { return "sr"; }
     }
 
     /// <inheritdoc/>
     public override ISIPrefixList Prefixes
     {
-      get { return SIPrefix.ListWithAllKnownPrefixes; }
+      get { return _prefixList; }
     }
   }
 }

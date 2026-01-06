@@ -22,11 +22,6 @@
 
 #endregion Copyright
 
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-
 #nullable enable
 
 namespace Altaxo.Units.Angle
@@ -39,6 +34,9 @@ namespace Altaxo.Units.Angle
     /// <summary>List with only the prefix <see cref="SIPrefix.None"/>.</summary>
     private static SIPrefixList _prefixList = new SIPrefixList(new SIPrefix[] { SIPrefix.None, SIPrefix.Micro, SIPrefix.Nano, SIPrefix.Pico });
 
+    /// <summary>
+    /// Gets the singleton instance of the <see cref="Radian"/> unit.
+    /// </summary>
     public static Radian Instance { get { return _instance; } }
 
     #region Serialization
@@ -62,16 +60,19 @@ namespace Altaxo.Units.Angle
     {
     }
 
+    /// <inheritdoc/>
     public override string Name
     {
       get { return "Radian"; }
     }
 
+    /// <inheritdoc/>
     public override string ShortCut
     {
       get { return "rad"; }
     }
 
+    /// <inheritdoc/>
     public override ISIPrefixList Prefixes
     {
       get { return _prefixList; }

@@ -36,6 +36,9 @@ namespace Altaxo.Units.Angle
   {
     private static readonly Degree _instance = new Degree();
 
+    /// <summary>
+    /// Gets the singleton instance of the <see cref="Degree"/> unit.
+    /// </summary>
     public static Degree Instance { get { return _instance; } }
 
     private const double DegreeToRad = Math.PI / 180;
@@ -62,31 +65,37 @@ namespace Altaxo.Units.Angle
     {
     }
 
+    /// <inheritdoc/>
     public string Name
     {
       get { return "Degree"; }
     }
 
+    /// <inheritdoc/>
     public string ShortCut
     {
       get { return "°"; }
     }
 
+    /// <inheritdoc/>
     public double ToSIUnit(double x)
     {
       return x * DegreeToRad;
     }
 
+    /// <inheritdoc/>
     public double FromSIUnit(double x)
     {
       return x / DegreeToRad;
     }
 
+    /// <inheritdoc/>
     public ISIPrefixList Prefixes
     {
       get { return SIPrefix.ListWithNonePrefixOnly; }
     }
 
+    /// <inheritdoc/>
     public SIUnit SIUnit
     {
       get { return Radian.Instance; }

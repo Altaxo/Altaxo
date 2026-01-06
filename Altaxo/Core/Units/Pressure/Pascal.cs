@@ -31,20 +31,31 @@ using System.Text;
 
 namespace Altaxo.Units.Pressure
 {
+  /// <summary>
+  /// The SI unit pascal for pressure.
+  /// </summary>
   [UnitDescription("Pressure", -1, 1, -2, 0, 0, 0, 0)]
   public class Pascal : SIUnit
   {
+    /// <summary>
+    /// Gets the singleton instance of <see cref="Pascal"/>.
+    /// </summary>
     public static Pascal Instance { get; } = new();
 
     #region Serialization
 
+    /// <summary>
+    /// XML serialization surrogate for <see cref="Pascal"/>.
+    /// </summary>
     [Altaxo.Serialization.Xml.XmlSerializationSurrogateFor(typeof(Pascal), 0)]
     public class SerializationSurrogate0 : Altaxo.Serialization.Xml.IXmlSerializationSurrogate
     {
+      /// <inheritdoc/>
       public void Serialize(object obj, Altaxo.Serialization.Xml.IXmlSerializationInfo info)
       {
       }
 
+      /// <inheritdoc/>
       public object Deserialize(object? o, Altaxo.Serialization.Xml.IXmlDeserializationInfo info, object? parent)
       {
         return Pascal.Instance;
@@ -52,21 +63,27 @@ namespace Altaxo.Units.Pressure
     }
     #endregion
 
+    /// <summary>
+    /// Prevents external instantiation. Use <see cref="Instance"/> to obtain the singleton.
+    /// </summary>
     private Pascal()
         : base(-1, 1, -2, 0, 0, 0, 0)
     {
     }
 
+    /// <inheritdoc/>
     public override string Name
     {
       get { return "Pascal"; }
     }
 
+    /// <inheritdoc/>
     public override string ShortCut
     {
       get { return "Pa"; }
     }
 
+    /// <inheritdoc/>
     public override ISIPrefixList Prefixes
     {
       get { return SIPrefix.ListWithAllKnownPrefixes; }

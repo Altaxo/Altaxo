@@ -32,22 +32,33 @@ using System.Threading.Tasks;
 
 namespace Altaxo.Units.VolumetricMassDensity
 {
+  /// <summary>
+  /// Represents the unit "gram per cubic centimeter" for volumetric mass density.
+  /// </summary>
   [UnitDescription("Volumetric mass density", -3, 1, 0, 0, 0, 0, 0)]
   public class GramPerCubicCentimeter : UnitBase, IUnit
   {
     private static readonly GramPerCubicCentimeter _instance = new GramPerCubicCentimeter();
 
+    /// <summary>
+    /// Gets the singleton instance of <see cref="GramPerCubicCentimeter"/>.
+    /// </summary>
     public static GramPerCubicCentimeter Instance { get { return _instance; } }
 
     #region Serialization
 
+    /// <summary>
+    /// XML serialization surrogate for <see cref="GramPerCubicCentimeter"/>.
+    /// </summary>
     [Altaxo.Serialization.Xml.XmlSerializationSurrogateFor(typeof(GramPerCubicCentimeter), 0)]
     public class SerializationSurrogate0 : Altaxo.Serialization.Xml.IXmlSerializationSurrogate
     {
+      /// <inheritdoc/>
       public void Serialize(object obj, Altaxo.Serialization.Xml.IXmlSerializationInfo info)
       {
       }
 
+      /// <inheritdoc/>
       public object Deserialize(object? o, Altaxo.Serialization.Xml.IXmlDeserializationInfo info, object? parent)
       {
         return GramPerCubicCentimeter.Instance;
@@ -55,35 +66,44 @@ namespace Altaxo.Units.VolumetricMassDensity
     }
     #endregion
 
+    /// <summary>
+    /// Prevents external instantiation. Use <see cref="Instance"/> to obtain the singleton.
+    /// </summary>
     private GramPerCubicCentimeter()
     {
     }
 
+    /// <inheritdoc/>
     public string Name
     {
       get { return "GramPerCubicCentimeter"; }
     }
 
+    /// <inheritdoc/>
     public string ShortCut
     {
       get { return "g/cm³"; }
     }
 
+    /// <inheritdoc/>
     public double ToSIUnit(double x)
     {
       return x * 1000;
     }
 
+    /// <inheritdoc/>
     public double FromSIUnit(double x)
     {
       return x / 1000;
     }
 
+    /// <inheritdoc/>
     public ISIPrefixList Prefixes
     {
       get { return SIPrefix.ListWithNonePrefixOnly; }
     }
 
+    /// <inheritdoc/>
     public SIUnit SIUnit
     {
       get { return KilogramPerCubicMeter.Instance; }

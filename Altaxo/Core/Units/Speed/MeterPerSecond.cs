@@ -31,6 +31,9 @@ namespace Altaxo.Units.Speed
   {
     private static readonly MeterPerSecond _instance = new MeterPerSecond();
 
+    /// <summary>
+    /// Gets the singleton instance of the <see cref="MeterPerSecond"/> unit.
+    /// </summary>
     public static MeterPerSecond Instance { get { return _instance; } }
 
     #region Serialization
@@ -54,16 +57,19 @@ namespace Altaxo.Units.Speed
     {
     }
 
+    /// <inheritdoc/>
     public override string Name
     {
       get { return "MeterPerSecond"; }
     }
 
+    /// <inheritdoc/>
     public override string ShortCut
     {
       get { return "m/s"; }
     }
 
+    /// <inheritdoc/>
     public override ISIPrefixList Prefixes
     {
       get { return SIPrefix.ListWithAllKnownPrefixes; }

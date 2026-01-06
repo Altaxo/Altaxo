@@ -32,20 +32,31 @@ using System.Threading.Tasks;
 
 namespace Altaxo.Units.SpecificElectricConductivity
 {
+  /// <summary>
+  /// The SI unit siemens per meter for specific electric conductivity.
+  /// </summary>
   [UnitDescription("Specific electric conductivity", -3, -1, 3, 2, 0, 0, 0)]
   public class SiemensPerMeter : SIUnit
   {
+    /// <summary>
+    /// Gets the singleton instance of <see cref="SiemensPerMeter"/>.
+    /// </summary>
     public static SiemensPerMeter Instance { get; } = new();
 
     #region Serialization
 
+    /// <summary>
+    /// XML serialization surrogate for <see cref="SiemensPerMeter"/>.
+    /// </summary>
     [Altaxo.Serialization.Xml.XmlSerializationSurrogateFor(typeof(SiemensPerMeter), 0)]
     public class SerializationSurrogate0 : Altaxo.Serialization.Xml.IXmlSerializationSurrogate
     {
+      /// <inheritdoc/>
       public void Serialize(object obj, Altaxo.Serialization.Xml.IXmlSerializationInfo info)
       {
       }
 
+      /// <inheritdoc/>
       public object Deserialize(object? o, Altaxo.Serialization.Xml.IXmlDeserializationInfo info, object? parent)
       {
         return SiemensPerMeter.Instance;
@@ -53,21 +64,27 @@ namespace Altaxo.Units.SpecificElectricConductivity
     }
     #endregion
 
+    /// <summary>
+    /// Prevents external instantiation. Use <see cref="Instance"/> to obtain the singleton.
+    /// </summary>
     private SiemensPerMeter()
         : base(-3, -1, 3, 2, 0, 0, 0)
     {
     }
 
+    /// <inheritdoc/>
     public override string Name
     {
       get { return "Siemens per meter"; }
     }
 
+    /// <inheritdoc/>
     public override string ShortCut
     {
       get { return "S/m"; }
     }
 
+    /// <inheritdoc/>
     public override ISIPrefixList Prefixes
     {
       get { return SIPrefix.ListWithAllKnownPrefixes; }

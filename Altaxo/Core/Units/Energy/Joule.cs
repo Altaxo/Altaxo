@@ -26,20 +26,31 @@
 
 namespace Altaxo.Units.Energy
 {
+  /// <summary>
+  /// The SI unit joule for energy.
+  /// </summary>
   [UnitDescription("Energy", 2, 1, -2, 0, 0, 0, 0)]
   public class Joule : SIUnit
   {
+    /// <summary>
+    /// Gets the singleton instance of <see cref="Joule"/>.
+    /// </summary>
     public static Joule Instance { get; } = new();
 
     #region Serialization
 
+    /// <summary>
+    /// XML serialization surrogate for <see cref="Joule"/>.
+    /// </summary>
     [Altaxo.Serialization.Xml.XmlSerializationSurrogateFor(typeof(Joule), 0)]
     public class SerializationSurrogate0 : Altaxo.Serialization.Xml.IXmlSerializationSurrogate
     {
+      /// <inheritdoc/>
       public void Serialize(object obj, Altaxo.Serialization.Xml.IXmlSerializationInfo info)
       {
       }
 
+      /// <inheritdoc/>
       public object Deserialize(object? o, Altaxo.Serialization.Xml.IXmlDeserializationInfo info, object? parent)
       {
         return Joule.Instance;
@@ -47,21 +58,27 @@ namespace Altaxo.Units.Energy
     }
     #endregion
 
+    /// <summary>
+    /// Prevents external instantiation. Use <see cref="Instance"/> to obtain the singleton.
+    /// </summary>
     private Joule()
         : base(2, 1, -2, 0, 0, 0, 0)
     {
     }
 
+    /// <inheritdoc/>
     public override string Name
     {
       get { return "Joule"; }
     }
 
+    /// <inheritdoc/>
     public override string ShortCut
     {
       get { return "J"; }
     }
 
+    /// <inheritdoc/>
     public override ISIPrefixList Prefixes
     {
       get { return SIPrefix.ListWithAllKnownPrefixes; }

@@ -36,6 +36,9 @@ namespace Altaxo.Units.Time
   {
     private static readonly Second _instance = new Second();
 
+    /// <summary>
+    /// Gets the singleton instance of the <see cref="Second"/> unit.
+    /// </summary>
     public static Second Instance { get { return _instance; } }
 
     #region Serialization
@@ -59,16 +62,19 @@ namespace Altaxo.Units.Time
     {
     }
 
+    /// <inheritdoc/>
     public override string Name
     {
       get { return "Second"; }
     }
 
+    /// <inheritdoc/>
     public override string ShortCut
     {
       get { return "s"; }
     }
 
+    /// <inheritdoc/>
     public override ISIPrefixList Prefixes
     {
       get { return SIPrefix.ListWithAllKnownPrefixes; }

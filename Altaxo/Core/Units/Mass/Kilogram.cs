@@ -26,20 +26,31 @@
 
 namespace Altaxo.Units.Mass
 {
+  /// <summary>
+  /// The SI unit kilogram for mass.
+  /// </summary>
   [UnitDescription("Mass", 0, 1, 0, 0, 0, 0, 0)]
   public class Kilogram : SIUnit, IPrefixedUnit
   {
+    /// <summary>
+    /// Gets the singleton instance of <see cref="Kilogram"/>.
+    /// </summary>
     public static Kilogram Instance { get; } = new();
 
     #region Serialization
 
+    /// <summary>
+    /// XML serialization surrogate for <see cref="Kilogram"/>.
+    /// </summary>
     [Altaxo.Serialization.Xml.XmlSerializationSurrogateFor(typeof(Kilogram), 0)]
     public class SerializationSurrogate0 : Altaxo.Serialization.Xml.IXmlSerializationSurrogate
     {
+      /// <inheritdoc/>
       public void Serialize(object obj, Altaxo.Serialization.Xml.IXmlSerializationInfo info)
       {
       }
 
+      /// <inheritdoc/>
       public object Deserialize(object? o, Altaxo.Serialization.Xml.IXmlDeserializationInfo info, object? parent)
       {
         return Kilogram.Instance;
@@ -47,21 +58,27 @@ namespace Altaxo.Units.Mass
     }
     #endregion
 
+    /// <summary>
+    /// Prevents external instantiation. Use <see cref="Instance"/> to obtain the singleton.
+    /// </summary>
     private Kilogram()
         : base(0, 1, 0, 0, 0, 0, 0)
     {
     }
 
+    /// <inheritdoc/>
     public override string Name
     {
       get { return "Kilogram"; }
     }
 
+    /// <inheritdoc/>
     public override string ShortCut
     {
       get { return "kg"; }
     }
 
+    /// <inheritdoc/>
     public override ISIPrefixList Prefixes
     {
       get { return SIPrefix.ListWithNonePrefixOnly; }
@@ -69,8 +86,14 @@ namespace Altaxo.Units.Mass
 
     #region IPrefixedUnit explicit implementation
 
+    /// <summary>
+    /// Gets the SI prefix for this prefixed unit (<see cref="SIPrefix.Kilo"/>).
+    /// </summary>
     SIPrefix IPrefixedUnit.Prefix => SIPrefix.Kilo;
 
+    /// <summary>
+    /// Gets the base unit corresponding to this prefixed unit (<see cref="Gram"/>).
+    /// </summary>
     IUnit IPrefixedUnit.Unit => Gram.Instance;
 
     #endregion IPrefixedUnit explicit implementation

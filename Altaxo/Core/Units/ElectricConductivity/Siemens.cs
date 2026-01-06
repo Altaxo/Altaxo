@@ -32,20 +32,31 @@ using System.Threading.Tasks;
 
 namespace Altaxo.Units.ElectricConductivity
 {
+  /// <summary>
+  /// The SI unit siemens for electric conductivity.
+  /// </summary>
   [UnitDescription("Electric conductivity", -2, -1, 3, 2, 0, 0, 0)]
   public class Siemens : SIUnit
   {
+    /// <summary>
+    /// Gets the singleton instance of <see cref="Siemens"/>.
+    /// </summary>
     public static Siemens Instance { get; } = new();
 
     #region Serialization
 
+    /// <summary>
+    /// XML serialization surrogate for <see cref="Siemens"/>.
+    /// </summary>
     [Altaxo.Serialization.Xml.XmlSerializationSurrogateFor(typeof(Siemens), 0)]
     public class SerializationSurrogate0 : Altaxo.Serialization.Xml.IXmlSerializationSurrogate
     {
+      /// <inheritdoc/>
       public void Serialize(object obj, Altaxo.Serialization.Xml.IXmlSerializationInfo info)
       {
       }
 
+      /// <inheritdoc/>
       public object Deserialize(object? o, Altaxo.Serialization.Xml.IXmlDeserializationInfo info, object? parent)
       {
         return Siemens.Instance;
@@ -53,21 +64,27 @@ namespace Altaxo.Units.ElectricConductivity
     }
     #endregion
 
+    /// <summary>
+    /// Prevents external instantiation. Use <see cref="Instance"/> to obtain the singleton.
+    /// </summary>
     private Siemens()
         : base(-2, -1, 3, 2, 0, 0, 0)
     {
     }
 
+    /// <inheritdoc/>
     public override string Name
     {
       get { return "Siemens"; }
     }
 
+    /// <inheritdoc/>
     public override string ShortCut
     {
       get { return "S"; }
     }
 
+    /// <inheritdoc/>
     public override ISIPrefixList Prefixes
     {
       get { return SIPrefix.ListWithAllKnownPrefixes; }

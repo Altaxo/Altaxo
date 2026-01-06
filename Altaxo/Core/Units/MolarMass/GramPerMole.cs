@@ -26,20 +26,31 @@
 
 namespace Altaxo.Units.MolarMass
 {
+  /// <summary>
+  /// Represents gram per mole for molar mass.
+  /// </summary>
   [UnitDescription("Molar mass", 0, 1, 0, 0, 0, -1, 0)]
   public class GramPerMole : UnitBase, IUnit
   {
+    /// <summary>
+    /// Gets the singleton instance of <see cref="GramPerMole"/>.
+    /// </summary>
     public static GramPerMole Instance { get; } = new();
 
     #region Serialization
 
+    /// <summary>
+    /// XML serialization surrogate for <see cref="GramPerMole"/>.
+    /// </summary>
     [Altaxo.Serialization.Xml.XmlSerializationSurrogateFor(typeof(GramPerMole), 0)]
     public class SerializationSurrogate0 : Altaxo.Serialization.Xml.IXmlSerializationSurrogate
     {
+      /// <inheritdoc/>
       public void Serialize(object obj, Altaxo.Serialization.Xml.IXmlSerializationInfo info)
       {
       }
 
+      /// <inheritdoc/>
       public object Deserialize(object? o, Altaxo.Serialization.Xml.IXmlDeserializationInfo info, object? parent)
       {
         return GramPerMole.Instance;
@@ -47,35 +58,44 @@ namespace Altaxo.Units.MolarMass
     }
     #endregion
 
+    /// <summary>
+    /// Protected constructor to enforce singleton pattern.
+    /// </summary>
     private GramPerMole()
     {
     }
 
+    /// <inheritdoc/>
     public string Name
     {
       get { return "GramPerMole"; }
     }
 
+    /// <inheritdoc/>
     public string ShortCut
     {
       get { return "g/mol"; }
     }
 
+    /// <inheritdoc/>
     public double ToSIUnit(double x)
     {
       return x / 1000;
     }
 
+    /// <inheritdoc/>
     public double FromSIUnit(double x)
     {
       return x * 1000;
     }
 
+    /// <inheritdoc/>
     public ISIPrefixList Prefixes
     {
       get { return SIPrefix.ListWithAllKnownPrefixes; }
     }
 
+    /// <inheritdoc/>
     public SIUnit SIUnit
     {
       get { return KilogramPerMole.Instance; }

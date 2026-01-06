@@ -38,6 +38,9 @@ namespace Altaxo.Units.Time
 
     private static readonly Hour _instance = new Hour();
 
+    /// <summary>
+    /// Gets the singleton instance of the <see cref="Hour"/> unit.
+    /// </summary>
     public static Hour Instance { get { return _instance; } }
 
     #region Serialization
@@ -56,35 +59,42 @@ namespace Altaxo.Units.Time
     }
     #endregion
 
+
     protected Hour()
     {
     }
 
+    /// <inheritdoc/>
     public string Name
     {
       get { return "Hour"; }
     }
 
+    /// <inheritdoc/>
     public string ShortCut
     {
       get { return "hr"; }
     }
 
+    /// <inheritdoc/>
     public double ToSIUnit(double x)
     {
       return x * OneHourInSeconds;
     }
 
+    /// <inheritdoc/>
     public double FromSIUnit(double x)
     {
       return x / OneHourInSeconds;
     }
 
+    /// <inheritdoc/>
     public ISIPrefixList Prefixes
     {
       get { return SIPrefix.ListWithNonePrefixOnly; }
     }
 
+    /// <inheritdoc/>
     public SIUnit SIUnit
     {
       get { return Second.Instance; }

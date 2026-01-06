@@ -38,6 +38,9 @@ namespace Altaxo.Units.Time
 
     private static readonly Minute _instance = new Minute();
 
+    /// <summary>
+    /// Gets the singleton instance of the <see cref="Minute"/> unit.
+    /// </summary>
     public static Minute Instance { get { return _instance; } }
 
     #region Serialization
@@ -56,35 +59,42 @@ namespace Altaxo.Units.Time
     }
     #endregion
 
+
     protected Minute()
     {
     }
 
+    /// <inheritdoc/>
     public string Name
     {
       get { return "Minute"; }
     }
 
+    /// <inheritdoc/>
     public string ShortCut
     {
       get { return "min"; }
     }
 
+    /// <inheritdoc/>
     public double ToSIUnit(double x)
     {
       return x * OneMinuteInSeconds;
     }
 
+    /// <inheritdoc/>
     public double FromSIUnit(double x)
     {
       return x / OneMinuteInSeconds;
     }
 
+    /// <inheritdoc/>
     public ISIPrefixList Prefixes
     {
       get { return SIPrefix.ListWithNonePrefixOnly; }
     }
 
+    /// <inheritdoc/>
     public SIUnit SIUnit
     {
       get { return Second.Instance; }

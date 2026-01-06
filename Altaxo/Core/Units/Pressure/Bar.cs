@@ -36,6 +36,9 @@ namespace Altaxo.Units.Pressure
   {
     public const double OneBarInPascal = 100000;
 
+    /// <summary>
+    /// Gets the singleton instance of the <see cref="Bar"/> unit.
+    /// </summary>
     public static Bar Instance { get; } = new();
 
     #region Serialization
@@ -58,31 +61,37 @@ namespace Altaxo.Units.Pressure
     {
     }
 
+    /// <inheritdoc/>
     public string Name
     {
       get { return "Bar"; }
     }
 
+    /// <inheritdoc/>
     public string ShortCut
     {
       get { return "bar"; }
     }
 
+    /// <inheritdoc/>
     public double ToSIUnit(double x)
     {
       return x * OneBarInPascal;
     }
 
+    /// <inheritdoc/>
     public double FromSIUnit(double x)
     {
       return x / OneBarInPascal;
     }
 
+    /// <inheritdoc/>
     public ISIPrefixList Prefixes
     {
       get { return SIPrefix.LisOfPrefixesWithMultipleOf3Exponent; }
     }
 
+    /// <inheritdoc/>
     public SIUnit SIUnit
     {
       get { return Pascal.Instance; }

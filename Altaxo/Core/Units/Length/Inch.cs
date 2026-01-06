@@ -36,6 +36,9 @@ namespace Altaxo.Units.Length
   {
     private static readonly Inch _instance = new Inch();
 
+    /// <summary>
+    /// Gets the singleton instance of the <see cref="Inch"/> unit.
+    /// </summary>
     public static Inch Instance { get { return _instance; } }
 
     #region Serialization
@@ -54,35 +57,42 @@ namespace Altaxo.Units.Length
     }
     #endregion
 
+
     protected Inch()
     {
     }
 
+    /// <inheritdoc/>
     public string Name
     {
       get { return "Inch"; }
     }
 
+    /// <inheritdoc/>
     public string ShortCut
     {
       get { return "in"; }
     }
 
+    /// <inheritdoc/>
     public double ToSIUnit(double x)
     {
       return x * (2.54E-2);
     }
 
+    /// <inheritdoc/>
     public double FromSIUnit(double x)
     {
       return x / 2.54E-2;
     }
 
+    /// <inheritdoc/>
     public ISIPrefixList Prefixes
     {
       get { return SIPrefix.ListWithNonePrefixOnly; }
     }
 
+    /// <inheritdoc/>
     public SIUnit SIUnit
     {
       get { return Meter.Instance; }

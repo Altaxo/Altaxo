@@ -31,22 +31,33 @@ using System.Text;
 
 namespace Altaxo.Units.Temperature
 {
+  /// <summary>
+  /// The SI unit kelvin for temperature.
+  /// </summary>
   [UnitDescription("Temperature", 0, 0, 0, 0, 1, 0, 0)]
   public class Kelvin : SIUnit
   {
     private static readonly Kelvin _instance = new Kelvin();
 
+    /// <summary>
+    /// Gets the singleton instance of <see cref="Kelvin"/>.
+    /// </summary>
     public static Kelvin Instance { get { return _instance; } }
 
     #region Serialization
 
+    /// <summary>
+    /// XML serialization surrogate for <see cref="Kelvin"/>.
+    /// </summary>
     [Altaxo.Serialization.Xml.XmlSerializationSurrogateFor(typeof(Kelvin), 0)]
     public class SerializationSurrogate0 : Altaxo.Serialization.Xml.IXmlSerializationSurrogate
     {
+      /// <inheritdoc/>
       public void Serialize(object obj, Altaxo.Serialization.Xml.IXmlSerializationInfo info)
       {
       }
 
+      /// <inheritdoc/>
       public object Deserialize(object? o, Altaxo.Serialization.Xml.IXmlDeserializationInfo info, object? parent)
       {
         return Kelvin.Instance;
@@ -54,21 +65,27 @@ namespace Altaxo.Units.Temperature
     }
     #endregion
 
+    /// <summary>
+    /// Prevents external instantiation. Use <see cref="Instance"/> to obtain the singleton.
+    /// </summary>
     private Kelvin()
         : base(0, 0, 0, 0, 1, 0, 0)
     {
     }
 
+    /// <inheritdoc/>
     public override string Name
     {
       get { return "Kelvin"; }
     }
 
+    /// <inheritdoc/>
     public override string ShortCut
     {
       get { return "K"; }
     }
 
+    /// <inheritdoc/>
     public override ISIPrefixList Prefixes
     {
       get { return SIPrefix.ListWithAllKnownPrefixes; }

@@ -27,22 +27,33 @@
 
 namespace Altaxo.Units.Frequency
 {
+  /// <summary>
+  /// The SI unit hertz for frequency.
+  /// </summary>
   [UnitDescription("Frequency", 0, 0, -1, 0, 0, 0, 0)]
   public class Hertz : SIUnit
   {
     private static readonly Hertz _instance = new Hertz();
 
+    /// <summary>
+    /// Gets the singleton instance of <see cref="Hertz"/>.
+    /// </summary>
     public static Hertz Instance { get { return _instance; } }
 
     #region Serialization
 
+    /// <summary>
+    /// XML serialization surrogate for <see cref="Hertz"/>.
+    /// </summary>
     [Altaxo.Serialization.Xml.XmlSerializationSurrogateFor(typeof(Hertz), 0)]
     public class SerializationSurrogate0 : Altaxo.Serialization.Xml.IXmlSerializationSurrogate
     {
+      /// <inheritdoc/>
       public void Serialize(object obj, Altaxo.Serialization.Xml.IXmlSerializationInfo info)
       {
       }
 
+      /// <inheritdoc/>
       public object Deserialize(object? o, Altaxo.Serialization.Xml.IXmlDeserializationInfo info, object? parent)
       {
         return Hertz.Instance;
@@ -50,21 +61,27 @@ namespace Altaxo.Units.Frequency
     }
     #endregion
 
+    /// <summary>
+    /// Prevents external instantiation. Use <see cref="Instance"/> to obtain the singleton.
+    /// </summary>
     private Hertz()
         : base(0, 0, -1, 0, 0, 0, 0)
     {
     }
 
+    /// <inheritdoc/>
     public override string Name
     {
       get { return "Hertz"; }
     }
 
+    /// <inheritdoc/>
     public override string ShortCut
     {
       get { return "Hz"; }
     }
 
+    /// <inheritdoc/>
     public override ISIPrefixList Prefixes
     {
       get { return SIPrefix.ListWithAllKnownPrefixes; }

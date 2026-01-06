@@ -32,22 +32,33 @@ using System.Threading.Tasks;
 
 namespace Altaxo.Units.ElectricPotential
 {
+  /// <summary>
+  /// The SI unit volt for electric potential.
+  /// </summary>
   [UnitDescription("Electric potential", 2, 1, -3, -1, 0, 0, 0)]
   public class Volt : SIUnit
   {
     private static readonly Volt _instance = new Volt();
 
+    /// <summary>
+    /// Gets the singleton instance of <see cref="Volt"/>.
+    /// </summary>
     public static Volt Instance { get { return _instance; } }
 
     #region Serialization
 
+    /// <summary>
+    /// XML serialization surrogate for <see cref="Volt"/>.
+    /// </summary>
     [Altaxo.Serialization.Xml.XmlSerializationSurrogateFor(typeof(Volt), 0)]
     public class SerializationSurrogate0 : Altaxo.Serialization.Xml.IXmlSerializationSurrogate
     {
+      /// <inheritdoc/>
       public void Serialize(object obj, Altaxo.Serialization.Xml.IXmlSerializationInfo info)
       {
       }
 
+      /// <inheritdoc/>
       public object Deserialize(object? o, Altaxo.Serialization.Xml.IXmlDeserializationInfo info, object? parent)
       {
         return Volt.Instance;
@@ -55,21 +66,27 @@ namespace Altaxo.Units.ElectricPotential
     }
     #endregion
 
+    /// <summary>
+    /// Prevents external instantiation. Use <see cref="Instance"/> to obtain the singleton.
+    /// </summary>
     private Volt()
         : base(2, 1, -3, -1, 0, 0, 0)
     {
     }
 
+    /// <inheritdoc/>
     public override string Name
     {
       get { return "Volt"; }
     }
 
+    /// <inheritdoc/>
     public override string ShortCut
     {
       get { return "V"; }
     }
 
+    /// <inheritdoc/>
     public override ISIPrefixList Prefixes
     {
       get { return SIPrefix.ListWithAllKnownPrefixes; }

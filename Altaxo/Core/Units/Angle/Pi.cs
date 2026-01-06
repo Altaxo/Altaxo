@@ -36,6 +36,9 @@ namespace Altaxo.Units.Angle
   {
     private static readonly Pi _instance = new Pi();
 
+    /// <summary>
+    /// Gets the singleton instance of the <see cref="Pi"/> unit.
+    /// </summary>
     public static Pi Instance { get { return _instance; } }
 
     #region Serialization
@@ -60,31 +63,37 @@ namespace Altaxo.Units.Angle
     {
     }
 
+    /// <inheritdoc/>
     public string Name
     {
       get { return "Pi"; }
     }
 
+    /// <inheritdoc/>
     public string ShortCut
     {
       get { return "π"; }
     }
 
+    /// <inheritdoc/>
     public double ToSIUnit(double x)
     {
       return x * Math.PI;
     }
 
+    /// <inheritdoc/>
     public double FromSIUnit(double x)
     {
       return x / Math.PI;
     }
 
+    /// <inheritdoc/>
     public ISIPrefixList Prefixes
     {
       get { return SIPrefix.ListWithNonePrefixOnly; }
     }
 
+    /// <inheritdoc/>
     public SIUnit SIUnit
     {
       get { return Radian.Instance; }

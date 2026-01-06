@@ -31,22 +31,33 @@ using System.Text;
 
 namespace Altaxo.Units.Force
 {
+  /// <summary>
+  /// The SI unit newton for force.
+  /// </summary>
   [UnitDescription("Force", 1, 1, -2, 0, 0, 0, 0)]
   public class Newton : SIUnit
   {
     private static readonly Newton _instance = new Newton();
 
+    /// <summary>
+    /// Gets the singleton instance of <see cref="Newton"/>.
+    /// </summary>
     public static Newton Instance { get { return _instance; } }
 
     #region Serialization
 
+    /// <summary>
+    /// XML serialization surrogate for <see cref="Newton"/>.
+    /// </summary>
     [Altaxo.Serialization.Xml.XmlSerializationSurrogateFor(typeof(Newton), 0)]
     public class SerializationSurrogate0 : Altaxo.Serialization.Xml.IXmlSerializationSurrogate
     {
+      /// <inheritdoc/>
       public void Serialize(object obj, Altaxo.Serialization.Xml.IXmlSerializationInfo info)
       {
       }
 
+      /// <inheritdoc/>
       public object Deserialize(object? o, Altaxo.Serialization.Xml.IXmlDeserializationInfo info, object? parent)
       {
         return Newton.Instance;
@@ -54,21 +65,27 @@ namespace Altaxo.Units.Force
     }
     #endregion
 
+    /// <summary>
+    /// Prevents external instantiation. Use <see cref="Instance"/> to obtain the singleton.
+    /// </summary>
     private Newton()
         : base(1, 1, -2, 0, 0, 0, 0)
     {
     }
 
+    /// <inheritdoc/>
     public override string Name
     {
       get { return "Newton"; }
     }
 
+    /// <inheritdoc/>
     public override string ShortCut
     {
       get { return "N"; }
     }
 
+    /// <inheritdoc/>
     public override ISIPrefixList Prefixes
     {
       get { return SIPrefix.ListWithAllKnownPrefixes; }

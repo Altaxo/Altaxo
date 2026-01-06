@@ -2,7 +2,7 @@
 
 /////////////////////////////////////////////////////////////////////////////
 //    Altaxo:  a data processing and data plotting program
-//    Copyright (C) 2002-2020 Dr. Dirk Lellinger
+//    Copyright (C) 2002-2026 Dr. Dirk Lellinger
 //
 //    This program is free software; you can redistribute it and/or modify
 //    it under the terms of the GNU General Public License as published by
@@ -22,35 +22,27 @@
 
 #endregion Copyright
 
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-
 #nullable enable
 
-namespace Altaxo.Units.ElectricCurrent
+namespace Altaxo.Units.Luminous
 {
   /// <summary>
-  /// The SI unit ampere for electric current.
+  /// Represents the SI illuminance unit lux.
   /// </summary>
-  [UnitDescription("Electric current", 0, 0, 0, 1, 0, 0, 0)]
-  public class Ampere : SIUnit
+  [UnitDescription("Illuminance", -2, 0, 0, 0, 0, 0, 1)]
+  public class Lux : SIUnit
   {
-    private static readonly Ampere _instance = new Ampere();
-
     /// <summary>
-    /// Gets the singleton instance of the <see cref="Ampere"/> unit.
+    /// Gets the singleton instance of the <see cref="Lux"/> unit.
     /// </summary>
-    public static Ampere Instance { get { return _instance; } }
+    public static Lux Instance { get; } = new();
 
     #region Serialization
 
     /// <summary>
-    /// XML serialization surrogate for <see cref="Ampere"/>.
+    /// XML serialization surrogate for <see cref="Lux"/>.
     /// </summary>
-    [Altaxo.Serialization.Xml.XmlSerializationSurrogateFor(typeof(Ampere), 0)]
+    [Altaxo.Serialization.Xml.XmlSerializationSurrogateFor(typeof(Lux), 0)]
     public class SerializationSurrogate0 : Altaxo.Serialization.Xml.IXmlSerializationSurrogate
     {
       /// <inheritdoc/>
@@ -61,26 +53,29 @@ namespace Altaxo.Units.ElectricCurrent
       /// <inheritdoc/>
       public object Deserialize(object? o, Altaxo.Serialization.Xml.IXmlDeserializationInfo info, object? parent)
       {
-        return Ampere.Instance;
+        return Lux.Instance;
       }
     }
     #endregion
 
-    private Ampere()
-        : base(0, 0, 0, 1, 0, 0, 0)
+    /// <summary>
+    /// Initializes a new instance of the <see cref="Lux"/> class.
+    /// </summary>
+    private Lux()
+      : base(-2, 0, 0, 0, 0, 0, 1)
     {
     }
 
     /// <inheritdoc/>
     public override string Name
     {
-      get { return "Ampere"; }
+      get { return "Lux"; }
     }
 
     /// <inheritdoc/>
     public override string ShortCut
     {
-      get { return "A"; }
+      get { return "lx"; }
     }
 
     /// <inheritdoc/>

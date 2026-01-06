@@ -2,7 +2,7 @@
 
 /////////////////////////////////////////////////////////////////////////////
 //    Altaxo:  a data processing and data plotting program
-//    Copyright (C) 2002-2020 Dr. Dirk Lellinger
+//    Copyright (C) 2002-2026 Dr. Dirk Lellinger
 //
 //    This program is free software; you can redistribute it and/or modify
 //    it under the terms of the GNU General Public License as published by
@@ -23,34 +23,32 @@
 #endregion Copyright
 
 using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 #nullable enable
 
-namespace Altaxo.Units.ElectricCurrent
+namespace Altaxo.Units.Luminous
 {
   /// <summary>
-  /// The SI unit ampere for electric current.
+  /// Represents the SI unit lumen used for luminous flux.
   /// </summary>
-  [UnitDescription("Electric current", 0, 0, 0, 1, 0, 0, 0)]
-  public class Ampere : SIUnit
+  [UnitDescription("Luminous flux", 0, 0, 0, 0, 0, 0, 1)]
+  public class Lumen : UnitBase, IUnit
   {
-    private static readonly Ampere _instance = new Ampere();
+    private static readonly SIPrefixList _prefixes = new([SIPrefix.None, SIPrefix.Milli, SIPrefix.Micro]);
+
+    private static readonly Lumen _instance = new();
 
     /// <summary>
-    /// Gets the singleton instance of the <see cref="Ampere"/> unit.
+    /// Gets the singleton instance of the <see cref="Lumen"/> unit.
     /// </summary>
-    public static Ampere Instance { get { return _instance; } }
+    public static Lumen Instance { get { return _instance; } }
 
     #region Serialization
 
     /// <summary>
-    /// XML serialization surrogate for <see cref="Ampere"/>.
+    /// XML serialization surrogate for <see cref="Lumen"/>.
     /// </summary>
-    [Altaxo.Serialization.Xml.XmlSerializationSurrogateFor(typeof(Ampere), 0)]
+    [Altaxo.Serialization.Xml.XmlSerializationSurrogateFor(typeof(Lumen), 0)]
     public class SerializationSurrogate0 : Altaxo.Serialization.Xml.IXmlSerializationSurrogate
     {
       /// <inheritdoc/>
@@ -61,32 +59,53 @@ namespace Altaxo.Units.ElectricCurrent
       /// <inheritdoc/>
       public object Deserialize(object? o, Altaxo.Serialization.Xml.IXmlDeserializationInfo info, object? parent)
       {
-        return Ampere.Instance;
+        return Lumen.Instance;
       }
     }
     #endregion
 
-    private Ampere()
-        : base(0, 0, 0, 1, 0, 0, 0)
+    /// <summary>
+    /// Initializes a new instance of the <see cref="Lumen"/> class.
+    /// </summary>
+    protected Lumen()
     {
     }
 
     /// <inheritdoc/>
-    public override string Name
+    public string Name
     {
-      get { return "Ampere"; }
+      get { return "Lumen"; }
     }
 
     /// <inheritdoc/>
-    public override string ShortCut
+    public string ShortCut
     {
-      get { return "A"; }
+      get { return "lm"; }
     }
 
     /// <inheritdoc/>
-    public override ISIPrefixList Prefixes
+    public double ToSIUnit(double x)
     {
-      get { return SIPrefix.ListWithAllKnownPrefixes; }
+      // lumen is candela * steradian; SI unit for luminous flux is lumen (dimension: cd·sr) - treat as ratio to candela
+      return x / (4 * Math.PI); // Candela = Lumen / Steradian  
+    }
+
+    /// <inheritdoc/>
+    public double FromSIUnit(double x)
+    {
+      return x * 4 * Math.PI; // Candela * Steradian
+    }
+
+    /// <inheritdoc/>
+    public ISIPrefixList Prefixes
+    {
+      get { return _prefixes; }
+    }
+
+    /// <inheritdoc/>
+    public SIUnit SIUnit
+    {
+      get { return Candela.Instance; }
     }
   }
 }

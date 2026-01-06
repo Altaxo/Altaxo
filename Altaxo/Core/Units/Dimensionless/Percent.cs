@@ -31,22 +31,33 @@ using System.Text;
 
 namespace Altaxo.Units.Dimensionless
 {
+  /// <summary>
+  /// Represents percent as a dimensionless unit (ratio).
+  /// </summary>
   [UnitDescription("Relation", 0, 0, 0, 0, 0, 0, 0)]
   public class Percent : UnitBase, IUnit
   {
     private static readonly Percent _instance = new Percent();
 
+    /// <summary>
+    /// Gets the singleton instance of <see cref="Percent"/>.
+    /// </summary>
     public static Percent Instance { get { return _instance; } }
 
     #region Serialization
 
+    /// <summary>
+    /// XML serialization surrogate for <see cref="Percent"/>.
+    /// </summary>
     [Altaxo.Serialization.Xml.XmlSerializationSurrogateFor(typeof(Percent), 0)]
     public class SerializationSurrogate0 : Altaxo.Serialization.Xml.IXmlSerializationSurrogate
     {
+      /// <inheritdoc/>
       public void Serialize(object obj, Altaxo.Serialization.Xml.IXmlSerializationInfo info)
       {
       }
 
+      /// <inheritdoc/>
       public object Deserialize(object? o, Altaxo.Serialization.Xml.IXmlDeserializationInfo info, object? parent)
       {
         return Percent.Instance;
@@ -54,35 +65,44 @@ namespace Altaxo.Units.Dimensionless
     }
     #endregion
 
+    /// <summary>
+    /// Protected constructor to enforce singleton pattern.
+    /// </summary>
     protected Percent()
     {
     }
 
+    /// <inheritdoc/>
     public string Name
     {
       get { return "Percent"; }
     }
 
+    /// <inheritdoc/>
     public string ShortCut
     {
       get { return "%"; }
     }
 
+    /// <inheritdoc/>
     public double ToSIUnit(double x)
     {
       return x / 100;
     }
 
+    /// <inheritdoc/>
     public double FromSIUnit(double x)
     {
       return x * 100;
     }
 
+    /// <inheritdoc/>
     public ISIPrefixList Prefixes
     {
       get { return SIPrefix.ListWithNonePrefixOnly; }
     }
 
+    /// <inheritdoc/>
     public SIUnit SIUnit
     {
       get { return Unity.Instance; }
