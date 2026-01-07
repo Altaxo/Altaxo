@@ -233,53 +233,90 @@ namespace Altaxo.Serialization.WITec
           }
 
           // now add the y-values
-
-          for (int iSpectrum = 0; iSpectrum < spectrum.ZValues.Count; ++iSpectrum)
+          var numberOfOtherDimensions = spectrum.ZValues.GetLength(1) > 1 ? 2 : 1;
+          for (int otherDim1 = 0; otherDim1 < spectrum.ZValues.GetLength(1); ++otherDim1)
           {
-            string columnName = importOptions.UseNeutralColumnName ?
-            $"{(string.IsNullOrEmpty(importOptions.NeutralColumnName) ? "Y" : importOptions.NeutralColumnName)}{idxYColumn}" :
-                                System.IO.Path.GetFileNameWithoutExtension(fileName);
-            columnName = table.DataColumns.FindUniqueColumnName(columnName);
-            var ycol = table.DataColumns.EnsureExistence(columnName, typeof(DoubleColumn), ColumnKind.V, lastColumnGroup);
-            ++idxYColumn;
-            ycol.CopyDataFrom(spectrum.ZValues[iSpectrum]);
-
-            if (!string.IsNullOrEmpty(spectrum.ZUnitShortcut))
+            for (int iSpectrum = 0; iSpectrum < spectrum.ZValues.GetLength(0); ++iSpectrum)
             {
-              var xPC = table.PropCols.EnsureExistence("Unit", typeof(TextColumn), ColumnKind.V, 0);
-              xPC[table.DataColumns.GetColumnNumber(ycol)] = spectrum.ZUnitShortcut;
-            }
-            if (!string.IsNullOrEmpty(spectrum.ZUnitDescription))
-            {
-              var xPC = table.PropCols.EnsureExistence("UnitDescription", typeof(TextColumn), ColumnKind.V, 0);
-              xPC[table.DataColumns.GetColumnNumber(ycol)] = spectrum.ZUnitDescription;
-            }
-            if (!string.IsNullOrEmpty(spectrum.Title))
-            {
-              var xPC = table.PropCols.EnsureExistence("Title", typeof(TextColumn), ColumnKind.V, 0);
-              xPC[table.DataColumns.GetColumnNumber(ycol)] = spectrum.Title;
-            }
-            if (spectrum.ZMetaData is { } zMeta)
-            {
-              var xPC = table.PropCols.EnsureExistence(!string.IsNullOrEmpty(zMeta.ZUnitDescription) ? zMeta.ZUnitDescription : (!string.IsNullOrEmpty(zMeta.ZUnitShortcut) ? zMeta.ZUnitShortcut : "MetaData"), typeof(DoubleColumn), ColumnKind.V, 0);
-              xPC[table.DataColumns.GetColumnNumber(ycol)] = zMeta.ZValues[iSpectrum];
-            }
-
-            if (importOptions.IncludeFilePathAsProperty)
-            {
-              // add also a property column named "FilePath" if not existing so far
-              if (!table.PropCols.ContainsColumn("FilePath"))
-                table.PropCols.Add(new Altaxo.Data.TextColumn(), "FilePath");
-
-              // now set the file name property cell
-              int yColumnNumber = table.DataColumns.GetColumnNumber(ycol);
-              if (table.PropCols["FilePath"] is Altaxo.Data.TextColumn)
+              string columnName;
+              if (importOptions.UseNeutralColumnName)
               {
-                table.PropCols["FilePath"][yColumnNumber] = fileName;
+                columnName = string.IsNullOrEmpty(importOptions.NeutralColumnName) ? "Y" : importOptions.NeutralColumnName;
+              }
+              else
+              {
+                columnName = System.IO.Path.GetFileNameWithoutExtension(fileName);
+              }
+              if (fileNames.Count == 1 && spectra.Count() == 1 && numberOfOtherDimensions == 2)
+              {
+                columnName = $"{columnName}{otherDim1}_{iSpectrum}";
+              }
+              else // for multiple files or multiple spectra in one table we use continuous numbering
+              {
+                columnName = $"{columnName}{idxYColumn}";
+              }
+
+              columnName = table.DataColumns.FindUniqueColumnName(columnName);
+              var ycol = table.DataColumns.EnsureExistence(columnName, typeof(DoubleColumn), ColumnKind.V, lastColumnGroup);
+              ++idxYColumn;
+              ycol.CopyDataFrom(spectrum.ZValues[iSpectrum, otherDim1]);
+
+              if (!string.IsNullOrEmpty(spectrum.ZUnitShortcut))
+              {
+                var xPC = table.PropCols.EnsureExistence("Unit", typeof(TextColumn), ColumnKind.V, 0);
+                xPC[table.DataColumns.GetColumnNumber(ycol)] = spectrum.ZUnitShortcut;
+              }
+              if (!string.IsNullOrEmpty(spectrum.ZUnitDescription))
+              {
+                var xPC = table.PropCols.EnsureExistence("UnitDescription", typeof(TextColumn), ColumnKind.V, 0);
+                xPC[table.DataColumns.GetColumnNumber(ycol)] = spectrum.ZUnitDescription;
+              }
+              if (spectrum.ZValues.GetLength(0) > 1)
+              {
+                var pC = table.PropCols.EnsureExistence("Index1", typeof(DoubleColumn), ColumnKind.V, 0);
+                pC[table.DataColumns.GetColumnNumber(ycol)] = iSpectrum;
+              }
+              if (spectrum.ZValues.GetLength(1) > 1)
+              {
+                var pC = table.PropCols.EnsureExistence("Index2", typeof(DoubleColumn), ColumnKind.V, 0);
+                pC[table.DataColumns.GetColumnNumber(ycol)] = otherDim1;
+              }
+              if (spectrum.SpacePositionValues is { } posValues)
+              {
+                var pC = table.PropCols.EnsureExistence("PositionX", typeof(DoubleColumn), ColumnKind.V, 0);
+                pC[table.DataColumns.GetColumnNumber(ycol)] = posValues[iSpectrum, otherDim1].X;
+                pC = table.PropCols.EnsureExistence("PositionY", typeof(DoubleColumn), ColumnKind.V, 0);
+                pC[table.DataColumns.GetColumnNumber(ycol)] = posValues[iSpectrum, otherDim1].Y;
+                pC = table.PropCols.EnsureExistence("PositionZ", typeof(DoubleColumn), ColumnKind.V, 0);
+                pC[table.DataColumns.GetColumnNumber(ycol)] = posValues[iSpectrum, otherDim1].Z;
+              }
+              if (!string.IsNullOrEmpty(spectrum.Title))
+              {
+                var xPC = table.PropCols.EnsureExistence("Title", typeof(TextColumn), ColumnKind.V, 0);
+                xPC[table.DataColumns.GetColumnNumber(ycol)] = spectrum.Title;
+              }
+              if (spectrum.ZMetaData is { } zMeta)
+              {
+                var xPC = table.PropCols.EnsureExistence(!string.IsNullOrEmpty(zMeta.ZUnitDescription) ? zMeta.ZUnitDescription : (!string.IsNullOrEmpty(zMeta.ZUnitShortcut) ? zMeta.ZUnitShortcut : "MetaData"), typeof(DoubleColumn), ColumnKind.V, 0);
+                xPC[table.DataColumns.GetColumnNumber(ycol)] = zMeta.ZValues[iSpectrum];
+              }
+
+              if (importOptions.IncludeFilePathAsProperty)
+              {
+                // add also a property column named "FilePath" if not existing so far
+                if (!table.PropCols.ContainsColumn("FilePath"))
+                  table.PropCols.Add(new Altaxo.Data.TextColumn(), "FilePath");
+
+                // now set the file name property cell
+                int yColumnNumber = table.DataColumns.GetColumnNumber(ycol);
+                if (table.PropCols["FilePath"] is Altaxo.Data.TextColumn)
+                {
+                  table.PropCols["FilePath"][yColumnNumber] = fileName;
+                }
               }
             }
-          }
-        } // for each spectrum
+          } // for each spectrum
+        }
       } // for each file
 
       if (attachDataSource)

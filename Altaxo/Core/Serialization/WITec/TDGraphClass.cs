@@ -23,9 +23,9 @@
 #endregion Copyright
 
 using System;
-using System.Collections.Generic;
 using System.Linq;
 using Altaxo.Calc.LinearAlgebra;
+using Altaxo.Geometry;
 
 namespace Altaxo.Serialization.WITec
 {
@@ -45,16 +45,20 @@ namespace Altaxo.Serialization.WITec
     /// </summary>
     protected WITecTreeNode _tdGraph_GraphData;
 
-
     /// <summary>
-    /// Gets or sets the X axis values for the graph.
+    /// Gets or sets the X axis values for the graph. This usually represents the spectral axis.
     /// </summary>
     public double[] XValues { get; set; }
 
     /// <summary>
     /// Gets or sets the collection of Z value arrays. Each entry represents one spectrum or series.
     /// </summary>
-    public List<double[]> ZValues { get; set; }
+    public double[,][] ZValues { get; set; }
+
+    /// <summary>
+    /// Gets or sets the position in space that is associated with each spectrum. Only valid if this instance contains a <see cref="TDSpaceTransformationClass"/>.
+    /// </summary>
+    public PointD3D[,]? SpacePositionValues { get; set; }
 
     /// <summary>
     /// Gets the graph title.
@@ -128,12 +132,10 @@ namespace Altaxo.Serialization.WITec
       public double[] ZValues { get; init; }
     }
 
-
     /// <summary>
     /// Optional metadata for Z values. May be null if no metadata was found or inferred.
     /// </summary>
     public MetaData? ZMetaData { get; }
-
 
     /// <summary>
     /// Gets the kind text (suffix) extracted from the caption that describes the data kind (for example "Spec.Data" or "Elapsed Time").
@@ -157,12 +159,11 @@ namespace Altaxo.Serialization.WITec
       {
         Title = Caption[..idx];
         KindText = Caption[(idx + 1)..];
-
-        if (KindText.Contains("Spec.Data"))
-          GraphType = GraphClassType.SpectralData;
-        else if (KindText.Contains("Elapsed Time"))
-          GraphType = GraphClassType.TimeSeries;
       }
+      if (Caption.Contains("Spec.Data"))
+        GraphType = GraphClassType.SpectralData;
+      else if (Caption.Contains("Elapsed Time"))
+        GraphType = GraphClassType.TimeSeries;
 
 
 
@@ -204,35 +205,73 @@ namespace Altaxo.Serialization.WITec
         }
       }
 
+      var spaceTransformationId = _tdGraph.GetData<int>("SpaceTransformationID");
+      TDTransformationClass? spaceTransformation = null;
+      if (0 != spaceTransformationId)
+      {
+        spaceTransformation = reader.BuildNodeWithID<TDTransformationClass>(spaceTransformationId);
+      }
+
 
       var ranges = _tdGraph_GraphData.GetData<int[]>("Ranges");
       var dataType = _tdGraph_GraphData.GetData<int>("DataType");
       var data = _tdGraph_GraphData.GetData<byte[]>("Data");
 
-      double[][] yArrays;
-      int dim1;
-      int dim2;
-      int spectralDimension;
+      int dim1; // x-dimension, e.g. line scan
+      int dim2; // y-dimension, e.g. depth in line scans with different depths, or in x-y-scans
+      int spectralDimension; // number of spectral points
 
       if (ranges.Length == 1)
       {
-        yArrays = Enumerable.Range(0, 1).Select(i => new double[ranges[0]]).ToArray();
         dim1 = 1;
-        dim2 = spectralDimension = ranges[0];
+        dim2 = 1;
+        spectralDimension = _tdGraph.GetData<int>("SizeGraph");
+        if (!(ranges[0] == spectralDimension))
+          throw new NotImplementedException("Please debug. Compare Sizes in _tdGraph with sizes in _tdGraph_GraphData");
       }
       else if (ranges.Length == 2)
       {
-        yArrays = Enumerable.Range(0, ranges[0]).Select(i => new double[ranges[1]]).ToArray();
-        dim1 = ranges[0];
-        dim2 = spectralDimension = ranges[1];
+        dim1 = _tdGraph.GetData<int>("SizeX");
+        dim2 = _tdGraph.GetData<int>("SizeY");
+        spectralDimension = _tdGraph.GetData<int>("SizeGraph");
+        if (dim1 != ranges[0])
+          throw new NotImplementedException("Please debug. Compare Sizes in _tdGraph with sizes in _tdGraph_GraphData");
       }
       else
       {
         throw new NotImplementedException($"Array dimensions of 3 or more are currently not supported");
       }
 
+      if (spaceTransformation is TDSpaceTransformationClass spt)
+      {
+        SpacePositionValues = spt.GetCoordinates(dim1, dim2);
+      }
+
+
+      // allocate the arrays that accommodate the spectral values
+      var yArrays = new double[dim1, dim2][];
+      for (int i = 0; i < dim1; ++i)
+        for (int j = 0; j < dim2; ++j)
+          yArrays[i, j] = new double[spectralDimension];
+
       switch (dataType)
       {
+        case 6: // short array
+          {
+            int ptr = 0;
+            for (int i = 0; i < dim1; ++i)
+            {
+              for (int j = 0; j < dim2; ++j)
+              {
+                for (int k = 0; k < spectralDimension; ++k)
+                {
+                  yArrays[i, j][k] = BitConverter.ToInt16(data, ptr);
+                  ptr += sizeof(short);
+                }
+              }
+            }
+          }
+          break;
         case 9: // float array
           {
             int ptr = 0;
@@ -240,14 +279,17 @@ namespace Altaxo.Serialization.WITec
             {
               for (int j = 0; j < dim2; ++j)
               {
-                yArrays[i][j] = BitConverter.ToSingle(data, ptr);
-                ptr += sizeof(Single);
+                for (int k = 0; k < spectralDimension; ++k)
+                {
+                  yArrays[i, j][k] = BitConverter.ToSingle(data, ptr);
+                  ptr += sizeof(Single);
+                }
               }
             }
           }
           break;
         default:
-          throw new NotImplementedException();
+          throw new NotImplementedException("The data type {dataType} is not implemented yet, but debug this and then implement it.");
       }
 
 
@@ -268,7 +310,7 @@ namespace Altaxo.Serialization.WITec
         xArray = Enumerable.Range(0, spectralDimension).Select(x => (double)x).ToArray();
       }
       XValues = xArray;
-      ZValues = new List<double[]>(yArrays);
+      ZValues = yArrays;
 
       // now some optional things
 
@@ -284,13 +326,13 @@ namespace Altaxo.Serialization.WITec
       {
         // look if the previous graph is a time series graph
         var previousGraph = reader.Spectra[^1];
-        if (previousGraph.GraphType == GraphClassType.TimeSeries && previousGraph.ZValues.Count == 1 && previousGraph.ZValues[0].Length == yArrays.Length)
+        if (previousGraph.GraphType == GraphClassType.TimeSeries && previousGraph.ZValues.GetLength(0) == 1 && previousGraph.ZValues.GetLength(1) == 1 && previousGraph.ZValues[0, 0].Length == yArrays.Length)
         {
           ZMetaData = new MetaData
           {
             ZUnitShortcut = previousGraph.ZUnitShortcut,
             ZUnitDescription = previousGraph.KindText,
-            ZValues = previousGraph.ZValues[0],
+            ZValues = previousGraph.ZValues[0, 0],
           };
         }
       }
