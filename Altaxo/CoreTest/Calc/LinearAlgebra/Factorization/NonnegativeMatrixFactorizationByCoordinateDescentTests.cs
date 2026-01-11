@@ -2,7 +2,7 @@
 
 /////////////////////////////////////////////////////////////////////////////
 //    Altaxo:  a data processing and data plotting program
-//    Copyright (C) 2002-2025 Dr. Dirk Lellinger
+//    Copyright (C) 2002-2026 Dr. Dirk Lellinger
 //
 //    This program is free software; you can redistribute it and/or modify
 //    it under the terms of the GNU General Public License as published by
@@ -19,34 +19,15 @@
 //    Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
 //
 /////////////////////////////////////////////////////////////////////////////
-#endregion
-using System;
+
+#endregion Copyright
+
 using Xunit;
 
 namespace Altaxo.Calc.LinearAlgebra.Factorization
 {
-  public class NonnegativeMatrixFactorizationByMultiplicativeUpdateTests : FactorizationTestBase
+  public class NonnegativeMatrixFactorizationByCoordinateDescentTests : FactorizationTestBase
   {
-    [Fact]
-    public void Test1()
-    {
-      int m = 50;   // Zeilen
-      int n = 40;   // Spalten
-      int r = 10;   // Rang
-
-
-      var W_true = Matrix<double>.Build.Random(m, r).PointwiseAbs();
-      var H_true = Matrix<double>.Build.Random(r, n).PointwiseAbs();
-      var V = W_true * H_true;
-
-      var (W, H, relErr) = NonnegativeMatrixFactorizationByMultiplicativeUpdate.Evaluate(V, r, maxIter: 5000, tol: 1e-7, restarts: 5);
-      Console.WriteLine($"Relativer Fehler ||V - WH||_F / ||V||_F = {relErr:E3}");
-
-      var byDescent = new NonnegativeMatrixFactorizationByCoordinateDescent(r, maxIter: 5000);
-      var relErr2 = byDescent.Fit(V);
-      Console.WriteLine($"Relativer Fehler (Koordinatenabstieg) ||V - WH||_F / ||V||_F = {relErr2:E3}");
-    }
-
     [Fact]
     public void Test2()
     {
@@ -55,11 +36,13 @@ namespace Altaxo.Calc.LinearAlgebra.Factorization
       var originalMatrix = originalScores * originalLoadings;
       var matrixX = originalMatrix.Clone();
 
-      var (mfactors, mloads, relErr) = NonnegativeMatrixFactorizationByMultiplicativeUpdate.Evaluate(matrixX, NumberOfComponents, maxIter: 1000, tol: 1e-7, restarts: 5);
+      var nmf = new NonnegativeMatrixFactorizationByCoordinateDescent(NumberOfComponents, 5000);
+      nmf.Fit(matrixX);
+
+      var (mfactors, mloads) = (nmf.W, nmf.H);
 
       var relError = RelativeError(mfactors, mloads, originalMatrix);
-      Assert.True(relError < 0.0033);
+      Assert.True(relError < 0.022);
     }
   }
 }
-

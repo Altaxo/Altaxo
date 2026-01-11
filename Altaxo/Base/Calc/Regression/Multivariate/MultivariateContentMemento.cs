@@ -377,19 +377,19 @@ namespace Altaxo.Calc.Regression.Multivariate
 
 
     private static (Altaxo.Science.Spectroscopy.ISingleSpectrumPreprocessor SinglePreprocessing,
-      Altaxo.Science.Spectroscopy.EnsembleMeanScale.IEnsembleMeanScalePreprocessor EnsemblePreprocessing)
+      Altaxo.Science.Spectroscopy.EnsembleProcessing.IEnsembleMeanScalePreprocessor EnsemblePreprocessing)
       ConvertPreprocessing(SpectralPreprocessingOptions options)
     {
       var singleProcessor = new Altaxo.Science.Spectroscopy.SpectralPreprocessingOptions();
 
-      Altaxo.Science.Spectroscopy.EnsembleMeanScale.IEnsembleMeanScalePreprocessor ensembleProcessor = null;
+      Altaxo.Science.Spectroscopy.EnsembleProcessing.IEnsembleMeanScalePreprocessor ensembleProcessor = null;
 
       switch (options.Method)
       {
         case SpectralPreprocessingMethod.None:
           break;
         case SpectralPreprocessingMethod.MultiplicativeScatteringCorrection:
-          ensembleProcessor = new Altaxo.Science.Spectroscopy.EnsembleMeanScale.MultiplicativeScatterCorrection() { EnsembleScale = options.EnsembleScale };
+          ensembleProcessor = new Altaxo.Science.Spectroscopy.EnsembleProcessing.MultiplicativeScatterCorrection() { EnsembleScale = options.EnsembleScale };
           break;
         case SpectralPreprocessingMethod.StandardNormalVariate:
           singleProcessor = singleProcessor with { Normalization = new Altaxo.Science.Spectroscopy.Normalization.NormalizationStandardNormalVariate() };
@@ -409,7 +409,7 @@ namespace Altaxo.Calc.Regression.Multivariate
         singleProcessor = singleProcessor with { BaselineEstimation = new Altaxo.Science.Spectroscopy.BaselineEstimation.PolynomialDetrending { DetrendingOrder = options.DetrendingOrder } };
       }
 
-      ensembleProcessor ??= new Altaxo.Science.Spectroscopy.EnsembleMeanScale.EnsembleMeanAndScaleCorrection { EnsembleScale = options.EnsembleScale };
+      ensembleProcessor ??= new Altaxo.Science.Spectroscopy.EnsembleProcessing.EnsembleMeanAndScaleCorrection { EnsembleScale = options.EnsembleScale };
       return (singleProcessor, ensembleProcessor);
     }
 

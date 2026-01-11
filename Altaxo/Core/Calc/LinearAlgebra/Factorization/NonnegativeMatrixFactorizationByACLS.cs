@@ -41,8 +41,48 @@ namespace Altaxo.Calc.LinearAlgebra.Factorization
   /// <para>References:</para>
   /// <para>[1] Langville et al., "Algorithms, Initializations, and Convergence for the Nonnegative Matrix Factorization", https://arxiv.org/abs/1407.7299v1</para>
   /// </remarks>
-  public class NonnegativeMatrixFactorizationACLS
+  public class NonnegativeMatrixFactorizationByACLS : NonnegativeMatrixFactorizationBase
   {
+
+    public (Matrix<double> W, Matrix<double> H) ACLS(Matrix<double> X, int r, int maxIter = 1000, double lambda = 0.0)
+    {
+      // Use NNDSVDa initialization
+      var (W, H) = NNDSVDa(X, r);
+
+      int m = X.RowCount;
+      int n = X.ColumnCount;
+
+      for (int iter = 0; iter < maxIter; iter++)
+      {
+        // === Update H ===
+        // Solve:  min_H ||X - W H||_F^2 + λ||H||_F^2  s.t. H >= 0
+        var WT = W.Transpose();
+        var A = WT * W + lambda * Matrix<double>.Build.DenseDiagonal(r, r, 1.0);
+        var B = WT * X;
+
+        for (int j = 0; j < n; j++)
+        {
+          var h = A.Solve(B.Column(j));
+          H.SetColumn(j, h.PointwiseMaximum(0.0));
+        }
+
+        // === Update W ===
+        // Solve:  min_W ||X - W H||_F^2 + λ||W||_F^2  s.t. W >= 0
+        var HT = H.Transpose();
+        A = H * HT + lambda * Matrix<double>.Build.DenseDiagonal(r, r, 1.0);
+        B = X * HT;
+
+        for (int i = 0; i < m; i++)
+        {
+          var w = A.Solve(B.Row(i).ToColumnMatrix()).Column(0);
+          W.SetRow(i, w.PointwiseMaximum(0.0));
+        }
+      }
+
+      return (W, H);
+    }
+
+
     /// <summary>
     /// Factorizes matrix a into nonnegative factors and nonnegative base vectors.
     /// </summary>
@@ -57,7 +97,7 @@ namespace Altaxo.Calc.LinearAlgebra.Factorization
     /// <para>Algorithm is described in [1], page 7.</para>
     /// <para>Please note that base vectors and factors are output in arbitrary order.</para>
     /// </remarks>
-    public (Matrix<double> W, Matrix<double> H) Evaluate(Matrix<double> a, int r, int maximalNumberOfIterations, double lambdaH = 0, double lambdaW = 0)
+    public (Matrix<double> W, Matrix<double> H) Evaluate(Matrix<double> a, int r, int maximalNumberOfIterations, NonnegativeMatrixFactorizationInitializationMethod initialization, double lambdaH = 0, double lambdaW = 0)
     {
       if (a is null)
       {
@@ -80,7 +120,33 @@ namespace Altaxo.Calc.LinearAlgebra.Factorization
 
       var listOfChi2 = new List<double>(r);
 
-      FillRandomNonnegative(wt); // TODO provide alternative initialization according to [1], section 4
+      switch (initialization)
+      {
+        default:
+        case NonnegativeMatrixFactorizationInitializationMethod.Random:
+          {
+            FillRandomNonnegative(wt);
+          }
+          break;
+        case NonnegativeMatrixFactorizationInitializationMethod.NNDSVD:
+          {
+            var (w, _) = NNDSVD(a, r);
+            wt = w.Transpose();
+          }
+          break;
+        case NonnegativeMatrixFactorizationInitializationMethod.NNDSVDa:
+          {
+            var (w, _) = NNDSVDa(a, r);
+            wt = w.Transpose();
+          }
+          break;
+        case NonnegativeMatrixFactorizationInitializationMethod.NNDSVDar:
+          {
+            var (w, _) = NNDSVDar(a, r);
+            wt = w.Transpose();
+            break;
+          }
+      }
 
       // Algorithm see [1], page 7, "Practical ACLS Algorithm for NMF"
       for (int iIteration = 0; iIteration < maximalNumberOfIterations; iIteration++)

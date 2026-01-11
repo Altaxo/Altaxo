@@ -26,81 +26,25 @@ using System;
 
 namespace Altaxo.Calc.LinearAlgebra.Factorization
 {
-  public class NonnegativeMatrixFactorizationByMultiplicativeUpdate
+  public class NonnegativeMatrixFactorizationByMultiplicativeUpdate : NonnegativeMatrixFactorizationBase
   {
-    static (Matrix<double> W0, Matrix<double> H0) NNDSVD(Matrix<double> X, int r)
-    {
-      var svd = X.Svd(computeVectors: true);
-      var U = svd.U;          // m x m (oder m x k)
-      var S = svd.S;          // Diagonalwerte als Vector
-      var Vt = svd.VT;        // n x n (oder k x n)
-
-      int m = X.RowCount, n = X.ColumnCount;
-      var W0 = Matrix<double>.Build.Dense(m, r);
-      var H0 = Matrix<double>.Build.Dense(r, n);
-
-      // Erste Komponente
-      var u0 = U.Column(0);
-      var v0 = Vt.Row(0); // V^T erste Zeile
-      double s0 = S[0];
-      var u0p = u0.PointwiseMaximum(0.0);
-      var v0p = v0.PointwiseMaximum(0.0);
-      double a0 = u0p.L2Norm(); double b0 = v0p.L2Norm();
-      if (a0 > 0 && b0 > 0)
-      {
-        W0.SetColumn(0, u0p / a0);
-        H0.SetRow(0, v0p / b0 * (s0 * a0 * b0));
-      }
-      else
-      {
-        W0.SetColumn(0, u0.PointwiseAbs());
-        H0.SetRow(0, v0.PointwiseAbs() * s0);
-      }
-
-      // Weitere Komponenten
-      for (int j = 1; j < r && j < S.Count; j++)
-      {
-        var uj = U.Column(j);
-        var vj = Vt.Row(j);
-        double sj = S[j];
-
-        var up = uj.PointwiseMaximum(0.0); var un = uj.PointwiseMinimum(0.0).PointwiseAbs();
-        var vp = vj.PointwiseMaximum(0.0); var vn = vj.PointwiseMinimum(0.0).PointwiseAbs();
-
-        double upNorm = up.L2Norm(); double vpNorm = vp.L2Norm();
-        double unNorm = un.L2Norm(); double vnNorm = vn.L2Norm();
-
-        // wähle positivere Variante
-        var uComp = upNorm * vpNorm >= unNorm * vnNorm ? up : un;
-        var vComp = upNorm * vpNorm >= unNorm * vnNorm ? vp : vn;
-
-        double a = uComp.L2Norm(); double b = vComp.L2Norm();
-        if (a > 0) uComp = uComp / a;
-        if (b > 0) vComp = vComp / b;
-
-        W0.SetColumn(j, uComp);
-        H0.SetRow(j, vComp * (sj * a * b));
-      }
-
-      // Kleine Offsets gegen Nullen
-      W0 = W0.PointwiseMaximum(1e-12);
-      H0 = H0.PointwiseMaximum(1e-12);
-      return (W0, H0);
-    }
-
-    public static (Matrix<double> W, Matrix<double> H, double relErr) NmfMu(
+    public static (Matrix<double> W, Matrix<double> H, double relErr) Evaluate(
     Matrix<double> V, int r, int maxIter = 2000, double tol = 1e-5, int restarts = 3)
     {
-      int m = V.RowCount, n = V.ColumnCount;
+      int m = V.RowCount;
+      int n = V.ColumnCount;
       double eps = 1e-12;
       double bestErr = double.PositiveInfinity;
-      Matrix<double> bestW = null, bestH = null;
+      Matrix<double>? bestW = null, bestH = null;
 
       for (int trial = 0; trial < restarts; trial++)
       {
         // Init: NNDSVD für ersten Versuch, sonst zufällig
         Matrix<double> W, H;
-        if (trial == 0) (W, H) = NNDSVD(V, r);
+        if (trial == 0)
+        {
+          (W, H) = NNDSVDar(V, r);
+        }
         else
         {
           W = Matrix<double>.Build.Random(m, r).PointwiseAbs().PointwiseMaximum(eps);

@@ -2,7 +2,7 @@
 
 /////////////////////////////////////////////////////////////////////////////
 //    Altaxo:  a data processing and data plotting program
-//    Copyright (C) 2002-2011 Dr. Dirk Lellinger
+//    Copyright (C) 2002-2026 Dr. Dirk Lellinger
 //
 //    This program is free software; you can redistribute it and/or modify
 //    it under the terms of the GNU General Public License as published by
@@ -176,6 +176,7 @@ namespace Altaxo.Worksheet.Commands.Analysis
           Current.Gui.ErrorMessageBox(err);
       }
     }
+    /*
 
     public static void PCAOnColumns(IWorksheetController ctrl)
     {
@@ -189,6 +190,92 @@ namespace Altaxo.Worksheet.Commands.Analysis
         var err = PrincipalComponentAnalysis(Current.Project, ctrl.DataTable, ctrl.SelectedDataColumns, ctrl.SelectedDataRows, false, ivictrl.EnteredContents);
         if (!string.IsNullOrEmpty(err))
           Current.Gui.ErrorMessageBox(err);
+      }
+    }
+    */
+
+    public static void PCAOnColumns(IWorksheetController ctrl)
+    {
+      if (false == CheckSelectedColumnsForDimensionReductionShowErrorMessageBox(ctrl))
+        return;
+
+
+      if (!QuestPCAAnalysisOptions(out var options))
+        return;
+
+      var analysis = options.DimensionReductionMethod;
+      var proxy = new DataTableMatrixProxy(ctrl.DataTable, ctrl.SelectedDataRows, ctrl.SelectedDataColumns, ctrl.SelectedPropertyColumns);
+
+      // Create the destination table
+
+      var destTable = new Altaxo.Data.DataTable(ctrl.DataTable.Name + "_" + analysis.GetType().Name);
+
+      var dstName = ctrl.DataTable.Name + "_" + analysis.GetType().Name;
+      if (Current.Project.DataTableCollection.Contains(dstName))
+        dstName = Current.Project.DataTableCollection.FindNewItemName(dstName);
+      destTable.Name = dstName;
+      Current.Project.DataTableCollection.Add(destTable);
+      Current.ProjectService.OpenOrCreateWorksheetForTable(destTable);
+      destTable.DataSource = new DimensionReductionDataSource(proxy, options, new DataSourceImportOptions());
+
+      Current.Gui.ExecuteAsUserCancellable(1000, (reporter) => destTable.DataSource!.FillData(destTable, reporter));
+
+    }
+
+
+
+
+    /// <summary>
+    /// Checks the selected columns for use with multivariate analysis.
+    /// </summary>
+    /// <param name="ctrl">The worksheet controller.</param>
+    /// <returns>True if the selected columns seem appropriate for multivariate analysis; otherwise, false.</returns>
+    public static bool CheckSelectedColumnsForDimensionReductionShowErrorMessageBox(IWorksheetController ctrl)
+    {
+      // Check that there are at least 2 spectral columns
+      if (ctrl.SelectedDataColumns.Count < 2)
+      {
+        Current.Gui.ErrorMessageBox("Please select at least 2 data columns as spectral columns.");
+        return false;
+      }
+      // Check that all columns belong to the same group, that all are numeric, and not of kind x-column
+      int groupNumber = ctrl.DataTable.DataColumns.GetColumnGroup(ctrl.SelectedDataColumns[0]);
+      foreach (var idx in ctrl.SelectedDataColumns)
+      {
+        var dc = ctrl.DataTable.DataColumns[idx];
+        if (dc is not INumericColumn)
+        {
+          Current.Gui.ErrorMessageBox($"All spectral columns need to be numeric, but data column '{ctrl.DataTable.DataColumns.GetColumnName(idx)}' is not numeric.");
+          return false;
+        }
+        if (ctrl.DataTable.DataColumns.GetColumnKind(idx) == ColumnKind.X)
+        {
+          Current.Gui.ErrorMessageBox($"The data column '{ctrl.DataTable.DataColumns.GetColumnName(idx)}' is an x-column. Please unselect the x-column.");
+          return false;
+        }
+        if (ctrl.DataTable.DataColumns.GetColumnGroup(idx) != groupNumber)
+        {
+          Current.Gui.ErrorMessageBox($"All data columns need to belong to the same group, but data column '{ctrl.DataTable.DataColumns.GetColumnName(idx)}' has a different group number than the first selected column.");
+          return false;
+        }
+      }
+
+      return true;
+    }
+
+    public static bool QuestPCAAnalysisOptions(out DimensionReductionOptions options)
+    {
+      var o = new DimensionReductionOptions();
+      var controller = (IMVCANController)Current.Gui.GetControllerAndControl(new object[] { o }, typeof(IMVCANController));
+      if (true == Current.Gui.ShowDialog(controller, "Start analysis"))
+      {
+        options = (DimensionReductionOptions)controller.ModelObject;
+        return true;
+      }
+      else
+      {
+        options = null;
+        return false;
       }
     }
 

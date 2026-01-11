@@ -2,7 +2,7 @@
 
 /////////////////////////////////////////////////////////////////////////////
 //    Altaxo:  a data processing and data plotting program
-//    Copyright (C) 2002-2022 Dr. Dirk Lellinger
+//    Copyright (C) 2002-2026 Dr. Dirk Lellinger
 //
 //    This program is free software; you can redistribute it and/or modify
 //    it under the terms of the GNU General Public License as published by
@@ -22,15 +22,10 @@
 
 #endregion Copyright
 
-using System;
 using System.Collections.Generic;
 using System.Collections.Immutable;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-using Altaxo.Data;
 using Altaxo.Science.Spectroscopy;
-using Altaxo.Science.Spectroscopy.EnsembleMeanScale;
+using Altaxo.Science.Spectroscopy.EnsembleProcessing;
 
 namespace Altaxo.Calc.Regression.Multivariate
 {
@@ -39,9 +34,15 @@ namespace Altaxo.Calc.Regression.Multivariate
   /// </summary>
   public record DimensionReductionAndRegressionOptions : Main.IImmutable
   {
+    /// <summary>
+    /// Gets the preprocessing applied to each individual spectrum prior to analysis.
+    /// </summary>
     public ISingleSpectrumPreprocessor Preprocessing { get; init; } = new NoopSpectrumPreprocessor();
 
-    public IEnsembleMeanScalePreprocessor MeanScaleProcessing { get; init; } = new Altaxo.Science.Spectroscopy.EnsembleMeanScale.EnsembleMeanAndScaleCorrection();
+    /// <summary>
+    /// Gets the preprocessing applied to the ensemble of spectra (for example mean-centering and scaling).
+    /// </summary>
+    public IEnsembleMeanScalePreprocessor MeanScaleProcessing { get; init; } = new Altaxo.Science.Spectroscopy.EnsembleProcessing.EnsembleMeanAndScaleCorrection();
 
     /// <summary>
     /// Gets the analysis method.
@@ -57,23 +58,27 @@ namespace Altaxo.Calc.Regression.Multivariate
     public int MaximumNumberOfFactors { get; init; } = 20;
 
     /// <summary>
-    /// Gets the type of the cross validation used to calculate the cross press values.
+    /// Gets the type of the cross validation used to calculate the cross-press values.
     /// </summary>
     public ICrossValidationGroupingStrategy CrossValidationGroupingStrategy { get; init; } = new CrossValidationGroupingStrategyExcludeGroupsOfSimilarMeasurements();
 
 
     /// <summary>
-    /// Gets the additional columns to calculate. Key is the general name of the quantity / column.
-    /// The value is a set of integer numbers that designate for which factors the columns must be calcuated.
+    /// Gets the additional columns to calculate. Key is the general name of the quantity/column.
+    /// The value is a set of tuples that designate for which factors the columns must be calculated.
     /// </summary>
     public ImmutableDictionary<string, ImmutableHashSet<(int, int?)>> ColumnsToCalculate { get; init; } = ImmutableDictionary.Create<string, ImmutableHashSet<(int, int?)>>();
 
 
     #region Serialization
 
+    /// <summary>
+    /// XML serialization surrogate (version 0).
+    /// </summary>
     [Altaxo.Serialization.Xml.XmlSerializationSurrogateFor(typeof(DimensionReductionAndRegressionOptions), 0)]
     public class SerializationSurrogate0 : Altaxo.Serialization.Xml.IXmlSerializationSurrogate
     {
+      /// <inheritdoc/>
       public void Serialize(object obj, Altaxo.Serialization.Xml.IXmlSerializationInfo info)
       {
         var s = (DimensionReductionAndRegressionOptions)obj;
@@ -84,7 +89,7 @@ namespace Altaxo.Calc.Regression.Multivariate
         info.AddValue("CrossValidationGroupingStrategy", s.CrossValidationGroupingStrategy);
 
         info.CreateArray("ColumnsToCalculate", s.ColumnsToCalculate.Count);
-        foreach(var dictEntry in s.ColumnsToCalculate)
+        foreach (var dictEntry in s.ColumnsToCalculate)
         {
           info.CreateElement("e");
           info.AddValue("ColumnName", dictEntry.Key);
@@ -95,7 +100,7 @@ namespace Altaxo.Calc.Regression.Multivariate
             info.AddValue("NF", pair.Item1);
             info.AddValue("WY", pair.Item2);
 
-          info.CommitElement();
+            info.CommitElement();
           }
           info.CommitArray(); // Indices
           info.CommitElement(); // e
@@ -104,6 +109,7 @@ namespace Altaxo.Calc.Regression.Multivariate
         info.CommitArray(); // ColumnsToCalculate
       }
 
+      /// <inheritdoc/>
       public object Deserialize(object? o, Altaxo.Serialization.Xml.IXmlDeserializationInfo info, object? parent)
       {
         var singlePreprocessing = info.GetValue<ISingleSpectrumPreprocessor>("SinglePreprocessing", null);
@@ -115,14 +121,14 @@ namespace Altaxo.Calc.Regression.Multivariate
         var dict = new Dictionary<string, ImmutableHashSet<(int, int?)>>();
         var countColumnsToCalculate = info.OpenArray("ColumnsToCalculate");
         {
-          for (int i=0;i< countColumnsToCalculate; i++)
+          for (int i = 0; i < countColumnsToCalculate; i++)
           {
             info.OpenElement();
             var name = info.GetString("ColumnName");
             var countIndices = info.OpenArray("Indices");
             {
               var hashSet = new HashSet<(int, int?)>();
-              for (int j=0;j<countIndices;j++)
+              for (int j = 0; j < countIndices; j++)
               {
                 info.OpenElement();
                 {
@@ -157,19 +163,19 @@ namespace Altaxo.Calc.Regression.Multivariate
 
 
     /// <summary>
-    /// Gets a new instance of this class, in which the designated column to calculated is added to the dictionary <see cref="ColumnsToCalculate"/>.
+    /// Gets a new instance of this class in which the designated column to calculate is added to the dictionary <see cref="ColumnsToCalculate"/>.
     /// </summary>
-    /// <param name="columnName">Name of the column that was calculated.</param>
-    /// <param name="first">The first integer parameter (in most cases the number of factors.</param>
+    /// <param name="columnName">Name of the column that should be calculated.</param>
+    /// <param name="first">The first integer parameter (in most cases the number of factors).</param>
     /// <param name="second">The second integer parameter (e.g. the number of the target variable).</param>
-    /// <returns>A new instance of this class, in which a calculated column is set.</returns>
-    public DimensionReductionAndRegressionOptions WithColumnToCalculate(string columnName, int first, int?second=null)
+    /// <returns>A new instance of this class in which a calculated column is set.</returns>
+    public DimensionReductionAndRegressionOptions WithColumnToCalculate(string columnName, int first, int? second = null)
     {
       var additionalColumns = ColumnsToCalculate;
       if (additionalColumns.TryGetValue(columnName, out var columnInfo))
-        {
+      {
         additionalColumns = additionalColumns.SetItem(columnName, columnInfo.Add((first, second)));
-        }
+      }
       else
       {
         var hashSet = ImmutableHashSet.Create<(int, int?)>().Add((first, second));

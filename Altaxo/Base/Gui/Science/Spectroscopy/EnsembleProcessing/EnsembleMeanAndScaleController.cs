@@ -23,17 +23,19 @@
 #endregion Copyright
 
 using System.Collections.Generic;
-using Altaxo.Science.Spectroscopy.EnsembleMeanScale;
+using Altaxo.Science.Spectroscopy.EnsembleProcessing;
 
-namespace Altaxo.Gui.Science.Spectroscopy.EnsembleMeanScale
+namespace Altaxo.Gui.Science.Spectroscopy.EnsembleProcessing
 {
-  public interface IMultiplicativeScatterCorrectionView : IDataContextAwareView
+  // MultiplicativeScatterCorrection
+
+  public interface IEnsembleMeanAndScaleView : IDataContextAwareView
   {
   }
 
-  [UserControllerForObject(typeof(MultiplicativeScatterCorrection))]
-  [ExpectedTypeOfView(typeof(IMultiplicativeScatterCorrectionView))]
-  public class MultiplicativeScatterCorrectionController : MVCANControllerEditImmutableDocBase<MultiplicativeScatterCorrection, IMultiplicativeScatterCorrectionView>
+  [UserControllerForObject(typeof(EnsembleMeanAndScaleCorrection))]
+  [ExpectedTypeOfView(typeof(IEnsembleMeanAndScaleView))]
+  public class EnsembleMeanAndScaleController : MVCANControllerEditImmutableDocBase<EnsembleMeanAndScaleCorrection, IEnsembleMeanAndScaleView>
   {
     public override IEnumerable<ControllerAndSetNullMethod> GetSubControllers()
     {
@@ -42,25 +44,31 @@ namespace Altaxo.Gui.Science.Spectroscopy.EnsembleMeanScale
 
     #region Bindings
 
-    private bool _ensembleScale;
-
-    public bool EnsembleScale
+    public bool EnsembleMean
     {
-      get => _ensembleScale;
+      get => field;
       set
       {
-        if (!(_ensembleScale == value))
+        if (!(field == value))
         {
-          _ensembleScale = value;
-          OnPropertyChanged(nameof(EnsembleScale));
+          field = value;
+          OnPropertyChanged(nameof(EnsembleMean));
         }
       }
     }
 
-
-
-
-
+    public bool EnsembleScale
+    {
+      get => field;
+      set
+      {
+        if (!(field == value))
+        {
+          field = value;
+          OnPropertyChanged(nameof(EnsembleScale));
+        }
+      }
+    }
     #endregion
 
     protected override void Initialize(bool initData)

@@ -33,21 +33,21 @@ using Altaxo.Science.Spectroscopy.EnsembleProcessing;
 namespace Altaxo.Gui.Analysis.Multivariate
 {
 
-  public interface IDimensionReductionAndRegressionOptionsView : IDataContextAwareView
+  public interface IDimensionReductionOptionsView : IDataContextAwareView
   {
   }
 
   /// <summary>
   /// Controller for <see cref="DimensionReductionAndRegressionOptions"/>
   /// </summary>
-  [ExpectedTypeOfView(typeof(IDimensionReductionAndRegressionOptionsView))]
-  [UserControllerForObject(typeof(DimensionReductionAndRegressionOptions))]
-  public class DimensionReductionAndRegressionOptionsController : MVCANControllerEditImmutableDocBase<DimensionReductionAndRegressionOptions, IDimensionReductionAndRegressionOptionsView>
+  [ExpectedTypeOfView(typeof(IDimensionReductionOptionsView))]
+  [UserControllerForObject(typeof(DimensionReductionOptions))]
+  public class DimensionReductionOptionsController : MVCANControllerEditImmutableDocBase<DimensionReductionOptions, IDimensionReductionOptionsView>
   {
     private Dictionary<Type, ISingleSpectrumPreprocessor> _knownSingleSpectrumPreprocessors = new();
     private Dictionary<Type, IEnsembleMeanScalePreprocessor> _knownEnsembleMeanScalePreprocessors = new();
 
-    public DimensionReductionAndRegressionOptionsController()
+    public DimensionReductionOptionsController()
     {
     }
 
@@ -55,7 +55,7 @@ namespace Altaxo.Gui.Analysis.Multivariate
     /// Constructor. Supply a document to control here.
     /// </summary>
     /// <param name="doc">The instance of option to set-up.</param>
-    public DimensionReductionAndRegressionOptionsController(DimensionReductionAndRegressionOptions doc)
+    public DimensionReductionOptionsController(DimensionReductionOptions doc)
     {
       _doc = _originalDoc = doc;
       Initialize(true);
@@ -63,25 +63,12 @@ namespace Altaxo.Gui.Analysis.Multivariate
 
     public override IEnumerable<ControllerAndSetNullMethod> GetSubControllers()
     {
-      yield return new ControllerAndSetNullMethod(_singleSpectrumPreprocessorController, () => SingleSpectrumPreprocessorController = null);
-      yield return new ControllerAndSetNullMethod(_ensembleMeanScalePreprocessorController, () => EnsembleMeanScalePreprocessorController = null);
+      yield return new ControllerAndSetNullMethod(_singleSpectrumPreprocessorController, () => SingleSpectrumPreprocessorController = null!);
+      yield return new ControllerAndSetNullMethod(_ensembleMeanScalePreprocessorController, () => EnsembleMeanScalePreprocessorController = null!);
+      yield return new ControllerAndSetNullMethod(MethodController, () => MethodController = null!);
     }
 
     #region Bindings
-
-    private int _numberOfFactors;
-    public int NumberOfFactors
-    {
-      get => _numberOfFactors;
-      set
-      {
-        if (!(_numberOfFactors == value))
-        {
-          _numberOfFactors = value;
-          OnPropertyChanged(nameof(NumberOfFactors));
-        }
-      }
-    }
 
     private ItemsController<Type> _singleSpectrumPreprocessor;
 
@@ -161,20 +148,21 @@ namespace Altaxo.Gui.Analysis.Multivariate
       }
     }
 
-    private ItemsController<Type> _CROSSPressCalculationTypes;
 
-    public ItemsController<Type> CROSSPressCalculationTypes
+    public IMVCANController MethodController
     {
-      get => _CROSSPressCalculationTypes;
+      get => field;
       set
       {
-        if (!(_CROSSPressCalculationTypes == value))
+        if (!(field == value))
         {
-          _CROSSPressCalculationTypes = value;
-          OnPropertyChanged(nameof(CROSSPressCalculationTypes));
+          field?.Dispose();
+          field = value;
+          OnPropertyChanged(nameof(MethodController));
         }
       }
     }
+
 
     #endregion
 
@@ -184,13 +172,11 @@ namespace Altaxo.Gui.Analysis.Multivariate
 
       if (initData)
       {
-        _knownSingleSpectrumPreprocessors[_doc.Preprocessing.GetType()] = _doc.Preprocessing;
-        _knownEnsembleMeanScalePreprocessors[_doc.MeanScaleProcessing.GetType()] = _doc.MeanScaleProcessing;
+        _knownSingleSpectrumPreprocessors[_doc.SinglePreprocessing.GetType()] = _doc.SinglePreprocessing;
+        _knownEnsembleMeanScalePreprocessors[_doc.EnsemblePreprocessing.GetType()] = _doc.EnsemblePreprocessing;
 
-        NumberOfFactors = _doc.MaximumNumberOfFactors;
         InitializeSingleSpectrumPreprocessor();
         InitializeEnsembleMeanScalePreprocessor();
-        InitializeCrossPressCalculationTypes();
         InitializeAnalysisMethods();
       }
     }
@@ -209,7 +195,7 @@ namespace Altaxo.Gui.Analysis.Multivariate
       list.Add(new SelectableListNode("Standard", typeof(Altaxo.Science.Spectroscopy.SpectralPreprocessingOptions), false));
 
       SingleSpectrumPreprocessor = new ItemsController<Type>(list, EhSingleSpectrumPreprocessorChanged);
-      SingleSpectrumPreprocessor.SelectedValue = _doc.Preprocessing.GetType();
+      SingleSpectrumPreprocessor.SelectedValue = _doc.SinglePreprocessing.GetType();
 
     }
 
@@ -260,7 +246,7 @@ namespace Altaxo.Gui.Analysis.Multivariate
       }
 
       EnsembleMeanScalePreprocessor = new ItemsController<Type>(list, EhEnsembleMeanScalePreprocessorChanged);
-      EnsembleMeanScalePreprocessor.SelectedValue = _doc.MeanScaleProcessing.GetType();
+      EnsembleMeanScalePreprocessor.SelectedValue = _doc.EnsemblePreprocessing.GetType();
 
     }
 
@@ -289,43 +275,16 @@ namespace Altaxo.Gui.Analysis.Multivariate
       EnsembleMeanScalePreprocessorController = (IMVCANController)Current.Gui.GetControllerAndControl(new object[] { instance }, typeof(IMVCANController));
     }
 
-    private void InitializeCrossPressCalculationTypes()
-    {
-      var list = new SelectableListNodeList();
-
-
-
-      var fixedTypes = new HashSet<Type>
-      {
-        typeof(CrossValidationGroupingStrategyNone),
-        typeof(CrossValidationGroupingStrategyExcludeSingleMeasurements),
-        typeof(CrossValidationGroupingStrategyExcludeGroupsOfSimilarMeasurements),
-        typeof(CrossValidationGroupingStrategyExcludeHalfObservations),
-      };
-
-
-      list.Add(new SelectableListNode("None", typeof(CrossValidationGroupingStrategyNone), false));
-      list.Add(new SelectableListNode("Exclude every measurement", typeof(CrossValidationGroupingStrategyExcludeSingleMeasurements), false));
-      list.Add(new SelectableListNode("Exclude groups of similar measurements", typeof(CrossValidationGroupingStrategyExcludeGroupsOfSimilarMeasurements), false));
-      list.Add(new SelectableListNode("Exclude half ensemble of measurements", typeof(CrossValidationGroupingStrategyExcludeHalfObservations), false));
-
-      foreach (var t in Altaxo.Main.Services.ReflectionService.GetNonAbstractSubclassesOf(typeof(ICrossValidationGroupingStrategy)))
-      {
-        if (!fixedTypes.Contains(t))
-        {
-          list.Add(new SelectableListNode(t.Name, t, false));
-        }
-      }
-      CROSSPressCalculationTypes = new ItemsController<Type>(list);
-      CROSSPressCalculationTypes.SelectedValue = _doc.CrossValidationGroupingStrategy.GetType();
-    }
+    IDimensionReductionMethod _currentMethod;
 
     private void InitializeAnalysisMethods()
     {
+      _currentMethod = _doc.DimensionReductionMethod;
+
       var analysisMethods = new SelectableListNodeList();
 
 
-      foreach (var definedtype in Altaxo.Main.Services.ReflectionService.GetNonAbstractSubclassesOf(typeof(Altaxo.Calc.Regression.Multivariate.WorksheetAnalysis)))
+      foreach (var definedtype in Altaxo.Main.Services.ReflectionService.GetNonAbstractSubclassesOf(typeof(IDimensionReductionMethod)))
       {
         Attribute[] descriptionattributes = Attribute.GetCustomAttributes(definedtype, typeof(System.ComponentModel.DescriptionAttribute));
 
@@ -336,23 +295,20 @@ namespace Altaxo.Gui.Analysis.Multivariate
         analysisMethods.Add(new SelectableListNode(name, definedtype, false));
       }
 
-      AnalysisMethods = new ItemsController<Type>(analysisMethods);
-      AnalysisMethods.SelectedValue = _doc.WorksheetAnalysis.GetType();
+      AnalysisMethods = new ItemsController<Type>(analysisMethods, EhAnalysisMethodChanged);
+
+      AnalysisMethods.SelectedValue = _currentMethod.GetType();
     }
 
-    private static bool ReferencesOwnAssembly(System.Reflection.AssemblyName[] references)
+    private void EhAnalysisMethodChanged(Type type)
     {
-      string myassembly = System.Reflection.Assembly.GetCallingAssembly().GetName().FullName;
+      if (type is null)
+        return;
 
-      foreach (System.Reflection.AssemblyName assname in references)
-        if (assname.FullName == myassembly)
-          return true;
-      return false;
-    }
+      if (type != _currentMethod?.GetType())
+        _currentMethod = (IDimensionReductionMethod)Activator.CreateInstance(type);
 
-    private static bool IsOwnAssembly(System.Reflection.Assembly ass)
-    {
-      return ass.FullName == System.Reflection.Assembly.GetCallingAssembly().FullName;
+      MethodController = (IMVCANController)Current.Gui.GetControllerAndControl(new object[] { _currentMethod }, typeof(IMVCANController));
     }
 
     public override bool Apply(bool disposeController)
@@ -361,7 +317,7 @@ namespace Altaxo.Gui.Analysis.Multivariate
       {
         if (true == ctrl1.Apply(disposeController))
         {
-          _doc = _doc with { Preprocessing = (ISingleSpectrumPreprocessor)ctrl1.ModelObject };
+          _doc = _doc with { SinglePreprocessing = (ISingleSpectrumPreprocessor)ctrl1.ModelObject };
         }
         else
         {
@@ -373,7 +329,7 @@ namespace Altaxo.Gui.Analysis.Multivariate
       {
         if (true == ctrl2.Apply(disposeController))
         {
-          _doc = _doc with { MeanScaleProcessing = (IEnsembleMeanScalePreprocessor)ctrl2.ModelObject };
+          _doc = _doc with { EnsemblePreprocessing = (IEnsembleMeanScalePreprocessor)ctrl2.ModelObject };
         }
         else
         {
@@ -384,9 +340,7 @@ namespace Altaxo.Gui.Analysis.Multivariate
 
       _doc = _doc with
       {
-        MaximumNumberOfFactors = NumberOfFactors,
-        CrossValidationGroupingStrategy = (ICrossValidationGroupingStrategy)Activator.CreateInstance(CROSSPressCalculationTypes.SelectedValue),
-        WorksheetAnalysis = (WorksheetAnalysis)Activator.CreateInstance(AnalysisMethods.SelectedValue)
+        DimensionReductionMethod = (IDimensionReductionMethod)Activator.CreateInstance(AnalysisMethods.SelectedValue)
       };
 
 

@@ -31,7 +31,7 @@ using Altaxo.Calc.LinearAlgebra;
 using Altaxo.Collections;
 using Altaxo.Data;
 using Altaxo.Science.Spectroscopy;
-using Altaxo.Science.Spectroscopy.EnsembleMeanScale;
+using Altaxo.Science.Spectroscopy.EnsembleProcessing;
 
 namespace Altaxo.Calc.Regression.Multivariate
 {
@@ -1344,7 +1344,7 @@ namespace Altaxo.Calc.Regression.Multivariate
       var proxy = new DataTableMatrixProxyWithMultipleColumnHeaderColumns(tableWithSpectraToPredict, selectedRows, selectedColumns, new AscendingIntegerCollection());
       PredictValues(proxy, numberOfFactors, tableContainingModel, destTable);
 
-      if(destTable.DataSource is null)
+      if (destTable.DataSource is null)
       {
         destTable.DataSource = new DimensionReductionAndRegressionPredictionDataSource(new DimensionReductionAndRegressionPredictionProcessData(new DataTableProxy(tableContainingModel), (DataTableMatrixProxyWithMultipleColumnHeaderColumns)proxy.Clone()), new DataSourceImportOptions());
       }
@@ -1393,7 +1393,7 @@ namespace Altaxo.Calc.Regression.Multivariate
       {
         var src = tableWithSpectraToPredict.PropertyColumns[idxPC];
         srcPC[idxPC] = src;
-        dstPC[idxPC] = destTable.DataColumns.EnsureExistence( tableWithSpectraToPredict.PropertyColumns.GetColumnName(idxPC),
+        dstPC[idxPC] = destTable.DataColumns.EnsureExistence(tableWithSpectraToPredict.PropertyColumns.GetColumnName(idxPC),
                                                               tableWithSpectraToPredict.PropertyColumns[idxPC].GetType(),
                                                               tableWithSpectraToPredict.PropertyColumns.GetColumnKind(idxPC),
                                                               tableWithSpectraToPredict.PropertyColumns.GetColumnGroup(idxPC));
@@ -1452,7 +1452,7 @@ namespace Altaxo.Calc.Regression.Multivariate
         DataColumn dstPropCol;
         if (srcPCol is DataColumn dc)
         {
-          
+
           var name = srcTable.PropCols.GetColumnName(dc);
           var kind = srcTable.PropCols.GetColumnKind(dc);
           var groupNumber = srcTable.PropCols.GetColumnGroup(dc);
@@ -1463,7 +1463,8 @@ namespace Altaxo.Calc.Regression.Multivariate
           dstPropCol = desttable.PropCols.EnsureExistence(srcPCol.FullName, DataColumn.GetColumnTypeAppropriateForElementType(srcPCol.ItemType), ColumnKind.V, 0);
         }
         columnHeaderWrappers[i] = (wrapper, dstPropCol);
-      };
+      }
+      ;
 
       for (int n = 0; n < resultMatrixX.RowCount; n++)
       {

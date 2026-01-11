@@ -23,19 +23,17 @@
 #endregion Copyright
 
 using System.Collections.Generic;
-using Altaxo.Science.Spectroscopy.EnsembleMeanScale;
+using Altaxo.Science.Spectroscopy.EnsembleProcessing;
 
-namespace Altaxo.Gui.Science.Spectroscopy.EnsembleMeanScale
+namespace Altaxo.Gui.Science.Spectroscopy.EnsembleProcessing
 {
-  // MultiplicativeScatterCorrection
-
-  public interface IEnsembleMeanAndScaleView : IDataContextAwareView
+  public interface IMultiplicativeScatterCorrectionView : IDataContextAwareView
   {
   }
 
-  [UserControllerForObject(typeof(EnsembleMeanAndScaleCorrection))]
-  [ExpectedTypeOfView(typeof(IEnsembleMeanAndScaleView))]
-  public class EnsembleMeanAndScaleController : MVCANControllerEditImmutableDocBase<EnsembleMeanAndScaleCorrection, IEnsembleMeanAndScaleView>
+  [UserControllerForObject(typeof(MultiplicativeScatterCorrection))]
+  [ExpectedTypeOfView(typeof(IMultiplicativeScatterCorrectionView))]
+  public class MultiplicativeScatterCorrectionController : MVCANControllerEditImmutableDocBase<MultiplicativeScatterCorrection, IMultiplicativeScatterCorrectionView>
   {
     public override IEnumerable<ControllerAndSetNullMethod> GetSubControllers()
     {

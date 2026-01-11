@@ -2,7 +2,7 @@
 
 /////////////////////////////////////////////////////////////////////////////
 //    Altaxo:  a data processing and data plotting program
-//    Copyright (C) 2014 Dr. Dirk Lellinger
+//    Copyright (C) 2002-2026 Dr. Dirk Lellinger
 //
 //    This program is free software; you can redistribute it and/or modify
 //    it under the terms of the GNU General Public License as published by
@@ -1136,6 +1136,62 @@ namespace Altaxo.Data
       resultantMatrix = new MyMatrixWrapper(table.DataColumns, participatingDataRowsSelectedNow, participatingDataColumnsSelectedNow);
       resultantTransformedRowHeaderValues = VectorMath.ToROVector(transformedAndSelectedRowHeaderValues.ToArray());
       resultantTransformedColumnHeaderValues = VectorMath.ToROVector(transformedAndSelectedColumnHeaderValues.ToArray());
+    }
+
+    /// <summary>
+    /// Gets the X matrix and the corresponding column numbers.
+    /// </summary>
+    /// <param name="transposeMatrix">If set to <c>true</c>, the matrix is transposed, i.e. the columns of the <see cref="DataTable"/> become rows of the returned matrix.</param>
+    /// <returns>A tuple containing the X matrix and the column numbers.</returns>
+    public (Matrix<double> matrixXRaw, double[] xOfXRaw, int[] columnNumbers) GetMatrixAndColumnNumbers(bool transposeMatrix)
+    {
+      if (_isDirty)
+      {
+        Update();
+      }
+
+      var table = _dataTable?.Document;
+
+      if (table is null)
+      {
+        return (CreateMatrix.Dense<double>(0, 0), Array.Empty<double>(), Array.Empty<int>());
+      }
+
+      var rowCount = _participatingDataRows.Count;
+      var columnCount = _participatingDataColumns.Count;
+      var columnNumbers = new int[columnCount];
+      Matrix<double> matrixXRaw;
+
+      var xCol = GetRowHeaderWrapper();
+      var xOfXRaw = new double[rowCount];
+      for (int row = 0; row < rowCount; ++row)
+      {
+        xOfXRaw[row] = xCol[row];
+      }
+
+      if (!transposeMatrix)
+      {
+        matrixXRaw = CreateMatrix.Dense<double>(rowCount, columnCount);
+        for (int col = 0; col < columnCount; ++col)
+        {
+          var dataCol = table.DataColumns[_participatingDataColumns[col]];
+          columnNumbers[col] = _participatingDataColumns[col];
+          for (int row = 0; row < rowCount; ++row)
+            matrixXRaw[row, col] = dataCol[_participatingDataRows[row]];
+        }
+      }
+      else
+      {
+        matrixXRaw = CreateMatrix.Dense<double>(columnCount, rowCount);
+        for (int col = 0; col < columnCount; ++col)
+        {
+          var dataCol = table.DataColumns[_participatingDataColumns[col]];
+          columnNumbers[col] = _participatingDataColumns[col];
+          for (int row = 0; row < rowCount; ++row)
+            matrixXRaw[col, row] = dataCol[_participatingDataRows[row]];
+        }
+      }
+      return (matrixXRaw, xOfXRaw, columnNumbers);
     }
 
     /// <summary>

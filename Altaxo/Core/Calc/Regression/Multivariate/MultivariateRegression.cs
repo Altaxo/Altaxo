@@ -2,7 +2,7 @@
 
 /////////////////////////////////////////////////////////////////////////////
 //    Altaxo:  a data processing and data plotting program
-//    Copyright (C) 2002-2011 Dr. Dirk Lellinger
+//    Copyright (C) 2002-2026 Dr. Dirk Lellinger
 //
 //    This program is free software; you can redistribute it and/or modify
 //    it under the terms of the GNU General Public License as published by
@@ -26,7 +26,7 @@ using System;
 using System.Collections.Generic;
 using Altaxo.Calc.LinearAlgebra;
 using Altaxo.Science.Spectroscopy;
-using Altaxo.Science.Spectroscopy.EnsembleMeanScale;
+using Altaxo.Science.Spectroscopy.EnsembleProcessing;
 
 namespace Altaxo.Calc.Regression.Multivariate
 {
@@ -191,7 +191,7 @@ namespace Altaxo.Calc.Regression.Multivariate
     }
 
     /// <summary>
-    /// Preprocesses the spectra. This is the common first part, without ensemble processing.
+    /// Preprocesses the spectra, both as single spectra, and after that as the ensemble. 
     /// </summary>
     /// <param name="preprocessSingleSpectrum">Information how to preprocess the spectra, here: how to process each spectrum separately.</param>
     /// <param name="preprocessEnsembleOfSpectra">Information how to preprocess the spectra, here: how to process the spectra ensemble.</param>
@@ -664,7 +664,7 @@ namespace Altaxo.Calc.Regression.Multivariate
       IMatrix<double> yCrossPredicted // vertical value of PRESS values for the cross validation
       )
     {
-      var worker = new CrossPredictedYEvaluator(xOfXRaw, numberOfFactors, groupingStrategy, preprocessSingleSpectrum, preprocessEnsembleOfSpectra,regressionMethod, yCrossPredicted);
+      var worker = new CrossPredictedYEvaluator(xOfXRaw, numberOfFactors, groupingStrategy, preprocessSingleSpectrum, preprocessEnsembleOfSpectra, regressionMethod, yCrossPredicted);
       double result = CrossValidationIteration(matrixXRaw, matrixYRaw, groupingStrategy, new CrossValidationIterationFunction(worker.EhYCrossPredicted));
 
       return result;

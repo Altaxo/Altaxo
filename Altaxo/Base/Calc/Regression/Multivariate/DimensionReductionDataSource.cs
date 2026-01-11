@@ -30,12 +30,12 @@ using Altaxo.Data;
 namespace Altaxo.Calc.Regression.Multivariate
 {
   /// <summary>
-  /// Data source for an algorithm based on dimension reduction and then regression of the reduced dimensions (PLS1, PLS2, PCR).
+  /// Data source for an algorithm based on dimension reduction (principal component analysis PCA, non-negative matrix factorization NMF, etc.).
   /// </summary>
-  public class DimensionReductionAndRegressionDataSource : TableDataSourceBase, Altaxo.Data.IAltaxoTableDataSource
+  public class DimensionReductionDataSource : TableDataSourceBase, Altaxo.Data.IAltaxoTableDataSource
   {
-    private DimensionReductionAndRegressionOptions _processOptions;
-    private DataTableMatrixProxyWithMultipleColumnHeaderColumns _processData;
+    private DimensionReductionOptions _processOptions;
+    private DataTableMatrixProxy _processData;
     private IDataSourceImportOptions _importOptions;
 
     /// <summary>
@@ -55,13 +55,13 @@ namespace Altaxo.Calc.Regression.Multivariate
     /// <summary>
     /// 2022-06-28 initial version.
     /// </summary>
-    [Altaxo.Serialization.Xml.XmlSerializationSurrogateFor(typeof(DimensionReductionAndRegressionDataSource), 0)]
+    [Altaxo.Serialization.Xml.XmlSerializationSurrogateFor(typeof(DimensionReductionDataSource), 0)]
     private class XmlSerializationSurrogate0 : Altaxo.Serialization.Xml.IXmlSerializationSurrogate
     {
       /// <inheritdoc/>
       public virtual void Serialize(object obj, Altaxo.Serialization.Xml.IXmlSerializationInfo info)
       {
-        var s = (DimensionReductionAndRegressionDataSource)obj;
+        var s = (DimensionReductionDataSource)obj;
 
         info.AddValue("ProcessData", s._processData);
         info.AddValue("ProcessOptions", s._processOptions);
@@ -74,10 +74,10 @@ namespace Altaxo.Calc.Regression.Multivariate
       /// <inheritdoc/>
       public object Deserialize(object? o, Altaxo.Serialization.Xml.IXmlDeserializationInfo info, object? parent)
       {
-        if (o is DimensionReductionAndRegressionDataSource s)
+        if (o is DimensionReductionDataSource s)
           s.DeserializeSurrogate0(info);
         else
-          s = new DimensionReductionAndRegressionDataSource(info, 0);
+          s = new DimensionReductionDataSource(info, 0);
         return s;
       }
     }
@@ -85,10 +85,10 @@ namespace Altaxo.Calc.Regression.Multivariate
     [MemberNotNull(nameof(_importOptions), nameof(_processOptions), nameof(_processData))]
     private void DeserializeSurrogate0(Altaxo.Serialization.Xml.IXmlDeserializationInfo info)
     {
-      ChildSetMember(ref _processData, (DataTableMatrixProxyWithMultipleColumnHeaderColumns)info.GetValue("ProcessData", this));
-      _processOptions = (DimensionReductionAndRegressionOptions)info.GetValue("ProcessOptions", this);
+      ChildSetMember(ref _processData, info.GetValue<DataTableMatrixProxy>("ProcessData", this));
+      _processOptions = info.GetValue<DimensionReductionOptions>("ProcessOptions", this);
       ChildSetMember(ref _importOptions, (IDataSourceImportOptions)info.GetValue("ImportOptions", this));
-      _processResult = (DimensionReductionAndRegressionResult)info.GetValue("ProcessResult", this);
+      _processResult = info.GetValue<DimensionReductionAndRegressionResult>("ProcessResult", this);
 
       ProcessData = _processData;
     }
@@ -98,12 +98,12 @@ namespace Altaxo.Calc.Regression.Multivariate
     #endregion Version 0
 
     /// <summary>
-    /// Initializes a new instance of the <see cref="DimensionReductionAndRegressionDataSource"/> class during XML deserialization.
+    /// Initializes a new instance of the <see cref="DimensionReductionDataSource"/> class during XML deserialization.
     /// </summary>
     /// <param name="info">The XML deserialization info.</param>
     /// <param name="version">The serialized version.</param>
     /// <exception cref="ArgumentOutOfRangeException">Thrown when the version is not supported.</exception>
-    protected DimensionReductionAndRegressionDataSource(Altaxo.Serialization.Xml.IXmlDeserializationInfo info, int version)
+    protected DimensionReductionDataSource(Altaxo.Serialization.Xml.IXmlDeserializationInfo info, int version)
     {
       switch (version)
       {
@@ -120,7 +120,7 @@ namespace Altaxo.Calc.Regression.Multivariate
 
 
     /// <summary>
-    /// Initializes a new instance of the <see cref="DimensionReductionAndRegressionDataSource"/> class.
+    /// Initializes a new instance of the <see cref="DimensionReductionDataSource"/> class.
     /// </summary>
     /// <param name="inputData">The input data designates the original source of data (used then for the processing).</param>
     /// <param name="dataSourceOptions">The dimension reduction and regression options.</param>
@@ -128,7 +128,7 @@ namespace Altaxo.Calc.Regression.Multivariate
     /// <exception cref="ArgumentNullException">
     /// Thrown if <paramref name="inputData"/>, <paramref name="dataSourceOptions"/>, or <paramref name="importOptions"/> is <c>null</c>.
     /// </exception>
-    public DimensionReductionAndRegressionDataSource(DataTableMatrixProxyWithMultipleColumnHeaderColumns inputData, DimensionReductionAndRegressionOptions dataSourceOptions, IDataSourceImportOptions importOptions)
+    public DimensionReductionDataSource(DataTableMatrixProxy inputData, DimensionReductionOptions dataSourceOptions, IDataSourceImportOptions importOptions)
     {
       if (inputData is null)
         throw new ArgumentNullException(nameof(inputData));
@@ -146,21 +146,21 @@ namespace Altaxo.Calc.Regression.Multivariate
     }
 
     /// <summary>
-    /// Initializes a new instance of the <see cref="DimensionReductionAndRegressionDataSource"/> class by copying from another instance.
+    /// Initializes a new instance of the <see cref="DimensionReductionDataSource"/> class by copying from another instance.
     /// </summary>
     /// <param name="from">Another instance to copy from.</param>
-    public DimensionReductionAndRegressionDataSource(DimensionReductionAndRegressionDataSource from)
+    public DimensionReductionDataSource(DimensionReductionDataSource from)
     {
       CopyFrom(from);
     }
 
     [MemberNotNull(nameof(_importOptions), nameof(_processOptions), nameof(_processData))]
-    private void CopyFrom(DimensionReductionAndRegressionDataSource from)
+    private void CopyFrom(DimensionReductionDataSource from)
     {
       using (var token = SuspendGetToken())
       {
-        DimensionReductionAndRegressionOptions? dataSourceOptions = null;
-        DataTableMatrixProxyWithMultipleColumnHeaderColumns? inputData = null;
+        DimensionReductionOptions? dataSourceOptions = null;
+        DataTableMatrixProxy? inputData = null;
         IDataSourceImportOptions? importOptions = null;
 
         CopyHelper.Copy(ref importOptions, from._importOptions);
@@ -185,7 +185,7 @@ namespace Altaxo.Calc.Regression.Multivariate
       if (ReferenceEquals(this, obj))
         return true;
 
-      if (obj is DimensionReductionAndRegressionDataSource from)
+      if (obj is DimensionReductionDataSource from)
       {
         CopyFrom(from);
         return true;
@@ -196,7 +196,7 @@ namespace Altaxo.Calc.Regression.Multivariate
     /// <inheritdoc/>
     public object Clone()
     {
-      return new DimensionReductionAndRegressionDataSource(this);
+      return new DimensionReductionDataSource(this);
     }
 
     #region IAltaxoTableDataSource
@@ -206,14 +206,11 @@ namespace Altaxo.Calc.Regression.Multivariate
     {
       destinationTable.DataColumns.RemoveColumnsAll();
 
-      _processOptions.WorksheetAnalysis.ExecuteAnalysis(
-        Current.Project,
-        _processData,
-        _processOptions,
-        destinationTable
-        );
+      var (matrix, xOfXRaw, columnNumbers) = _processData.GetMatrixAndColumnNumbers(transposeMatrix: true);
+      MultivariateRegression.PreprocessSpectraForAnalysis(_processOptions.SinglePreprocessing, _processOptions.EnsemblePreprocessing, xOfXRaw, matrix, out var regions, out var xOfXPreprocessed, out var matrixXPreprocessed, out var meanX, out var scaleX);
+      var result = _processOptions.DimensionReductionMethod.ExecuteDimensionReduction(matrixXPreprocessed);
 
-      _processOptions.WorksheetAnalysis.CalculateAdditionalColumns(destinationTable, _processOptions.ColumnsToCalculate);
+      result.SaveResultToTable(_processData.DataTable, destinationTable, columnNumbers, xOfXPreprocessed);
     }
 
     /// <summary>
@@ -246,7 +243,7 @@ namespace Altaxo.Calc.Regression.Multivariate
     /// <value>
     /// The input data.
     /// </value>
-    public DataTableMatrixProxyWithMultipleColumnHeaderColumns ProcessData
+    public DataTableMatrixProxy ProcessData
     {
       get
       {
@@ -291,7 +288,7 @@ namespace Altaxo.Calc.Regression.Multivariate
     /// <value>
     /// The data source options.
     /// </value>
-    public DimensionReductionAndRegressionOptions ProcessOptions
+    public DimensionReductionOptions ProcessOptions
     {
       get
       {
@@ -332,14 +329,14 @@ namespace Altaxo.Calc.Regression.Multivariate
     object IAltaxoTableDataSource.ProcessOptionsObject
     {
       get => _processOptions;
-      set => ProcessOptions = (DimensionReductionAndRegressionOptions)value;
+      set => ProcessOptions = (DimensionReductionOptions)value;
     }
 
     /// <inheritdoc/>
     object IAltaxoTableDataSource.ProcessDataObject
     {
       get => _processData;
-      set => ProcessData = (DataTableMatrixProxyWithMultipleColumnHeaderColumns)value;
+      set => ProcessData = (DataTableMatrixProxy)value;
     }
 
     #region Change event handling

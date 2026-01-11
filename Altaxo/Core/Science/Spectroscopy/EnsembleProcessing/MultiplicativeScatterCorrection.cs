@@ -1,13 +1,9 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
+﻿using System.Collections.Generic;
 using System.Xml;
 using Altaxo.Calc.LinearAlgebra;
 using Altaxo.Calc.Regression;
 
-namespace Altaxo.Science.Spectroscopy.EnsembleMeanScale
+namespace Altaxo.Science.Spectroscopy.EnsembleProcessing
 {
   /// <summary>
   /// This class processes the spectra for the influence of multiplicative scattering.
@@ -21,7 +17,8 @@ namespace Altaxo.Science.Spectroscopy.EnsembleMeanScale
 
     #region Serialization
 
-    [Altaxo.Serialization.Xml.XmlSerializationSurrogateFor(typeof(MultiplicativeScatterCorrection), 0)]
+    [Altaxo.Serialization.Xml.XmlSerializationSurrogateFor("AltaxoCore", "Altaxo.Science.Spectroscopy.EnsembleMeanScale.MultiplicativeScatterCorrection", 0)]
+    [Altaxo.Serialization.Xml.XmlSerializationSurrogateFor(typeof(MultiplicativeScatterCorrection), 1)]
     public class SerializationSurrogate0 : Altaxo.Serialization.Xml.IXmlSerializationSurrogate
     {
       /// <inheritdoc/>
