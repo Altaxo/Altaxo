@@ -53,6 +53,20 @@ namespace Altaxo.Calc.LinearAlgebra.Factorization
       return scores;
     }
 
+    /// <summary>
+    /// Gets a 4 x 3 nonnegative test matrix.
+    /// </summary>
+    /// <returns>4 x 3 nonnegative test matrix from <see href="https://resources.wolframcloud.com/FunctionRepository/resources/NonNegativeMatrixFactorization/"/></returns>
+    public static Matrix<double> GetTestMatrixNN4x3()
+    {
+      var m = CreateMatrix.Dense<double>(4, 3);
+      m.SetRow(0, new double[] { 4, 7, 4 });
+      m.SetRow(1, new double[] { 10, 8, 8 });
+      m.SetRow(2, new double[] { 5, 3, 4 });
+      m.SetRow(3, new double[] { 5, 4, 5 });
+      return m;
+    }
+
 
     protected static double RelativeError(Matrix<double> scores, Matrix<double> loadings, Matrix<double> originalMatrix)
     {

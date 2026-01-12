@@ -383,7 +383,7 @@ namespace Altaxo.Worksheet.Commands.Analysis
       var meanX = new MatrixMath.MatrixWithOneRow<double>(matrixX.ColumnCount);
       // first, center the matrix
       MatrixMath.ColumnsToZeroMean(matrixX, meanX);
-      MatrixMath.NIPALS_HO(matrixX, maxNumberOfFactors, 1E-9, factors, loads, residualVariances);
+      Altaxo.Calc.LinearAlgebra.Factorization.PrincipalComponentAnalysis.NIPALS_HO(matrixX, maxNumberOfFactors, 1E-9, factors, loads, residualVariances);
 
       // now we have to create a new table where to place the calculated factors and loads
       // we will do that in a vertical oriented manner, i.e. even if the loads are

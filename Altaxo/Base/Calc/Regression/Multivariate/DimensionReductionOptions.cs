@@ -28,7 +28,7 @@ using Altaxo.Science.Spectroscopy.EnsembleProcessing;
 namespace Altaxo.Calc.Regression.Multivariate
 {
   /// <summary>
-  /// Process options for the multivariate analyses that feature a dimension reduction and regression.
+  /// Process options for multivariate analyses that feature a dimension reduction.
   /// </summary>
   public record DimensionReductionOptions : Main.IImmutable
   {

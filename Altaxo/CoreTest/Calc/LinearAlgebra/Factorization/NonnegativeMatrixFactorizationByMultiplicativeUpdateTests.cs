@@ -25,6 +25,9 @@ using Xunit;
 
 namespace Altaxo.Calc.LinearAlgebra.Factorization
 {
+  // Test matrices see https://resources.wolframcloud.com/FunctionRepository/resources/NonNegativeMatrixFactorization/
+  // https://github.com/trigeorgis/Deep-Semi-NMF/blob/master/matlab/NNDSVD.m
+
   public class NonnegativeMatrixFactorizationByMultiplicativeUpdateTests : FactorizationTestBase
   {
     [Fact]

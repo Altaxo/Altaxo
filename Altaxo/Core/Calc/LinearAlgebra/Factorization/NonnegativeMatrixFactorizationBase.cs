@@ -22,38 +22,45 @@
 
 #endregion Copyright
 
+using System;
 using System.Linq;
 
 namespace Altaxo.Calc.LinearAlgebra.Factorization
 {
-  public enum NonnegativeMatrixFactorizationInitializationMethod
-  {
-    Random,
 
-    NNDSVD,
-
-    NNDSVDa,
-
-    NNDSVDar,
-  };
-
+  /// <summary>
+  /// Provides initialization helpers for non-negative matrix factorization (NMF),
+  /// specifically NNDSVD-based initializations.
+  /// </summary>
   public class NonnegativeMatrixFactorizationBase
   {
-    private static (Matrix<double> W0, Matrix<double> H0) NNDSVDRaw(Matrix<double> X, int r)
+    /// <summary>
+    /// Creates an NNDSVD initialization for NMF. Intentionally allows zeros in the result (algorithm for sparse matrices).
+    /// </summary>
+    /// <param name="X">The non-negative input matrix to be factorized.</param>
+    /// <param name="r">The target factorization rank.</param>
+    /// <returns>
+    /// A tuple <c>(W0, H0)</c> containing non-negative initial factors. Both factors may contain zeros; callers are expected
+    /// to handle zeros as needed (e.g. by adding small offsets).
+    /// </returns>
+    /// <remarks>
+    /// References: <see href="https://doi.org/10.1016/j.patcog.2007.09.010">Boutsidis, C., Gallopoulos, E., SVD based initialization: A head start for nonnegative matrix factorization, Pattern Recognition, Volume 41, Issue 4, April 2008, Pages 1350-1362</see>
+    /// </remarks>
+    public static (Matrix<double> W0, Matrix<double> H0) NNDSVDWithZerosPossibleInResult(Matrix<double> X, int r)
     {
-      var svd = X.Svd(computeVectors: true);
-      var U = svd.U;          // m x m (oder m x k)
-      var S = svd.S;          // Diagonalwerte als Vector
-      var Vt = svd.VT;        // n x n (oder k x n)
+      var svd = X.Svd(computeVectors: true); // TODO: replace by a partial SVD (psvd) of the first r factors
+      var U = svd.U;          // m x m (or m x k)
+      var S = svd.S;          // singular values as a Vector
+      var Vt = svd.VT;        // n x n (or k x n)
 
       int m = X.RowCount;
       int n = X.ColumnCount;
       var W0 = Matrix<double>.Build.Dense(m, r);
       var H0 = Matrix<double>.Build.Dense(r, n);
 
-      // Erste Komponente
+      // First component
       var u0 = U.Column(0);
-      var v0 = Vt.Row(0); // V^T erste Zeile
+      var v0 = Vt.Row(0); // first row of V^T
       double s0 = S[0];
       var u0p = u0.PointwiseMaximum(0.0);
       var v0p = v0.PointwiseMaximum(0.0);
@@ -70,7 +77,7 @@ namespace Altaxo.Calc.LinearAlgebra.Factorization
         H0.SetRow(0, v0.PointwiseAbs() * s0);
       }
 
-      // Weitere Komponenten
+      // Further components
       for (int j = 1; j < r && j < S.Count; j++)
       {
         var uj = U.Column(j);
@@ -87,7 +94,7 @@ namespace Altaxo.Calc.LinearAlgebra.Factorization
         double unNorm = un.L2Norm();
         double vnNorm = vn.L2Norm();
 
-        // wähle positivere Variante
+        // Choose the more positive variant
         var uComp = upNorm * vpNorm >= unNorm * vnNorm ? up : un;
         var vComp = upNorm * vpNorm >= unNorm * vnNorm ? vp : vn;
 
@@ -105,30 +112,113 @@ namespace Altaxo.Calc.LinearAlgebra.Factorization
       return (W0, H0); // note that both W0 and H0 are non-negative, but can contain zeros! Those zeros should be handled in the calling function.
     }
 
+    /// <summary>
+    /// Creates an NNDSVD initialization for NMF. Intentionally allows zeros in the result (algorithm for sparse matrices).
+    /// </summary>
+    /// <param name="X">The non-negative input matrix to be factorized.</param>
+    /// <param name="r">The target factorization rank.</param>
+    /// <returns>
+    /// A tuple <c>(W0, H0)</c> containing non-negative initial factors. Both factors may contain zeros; callers are expected
+    /// to handle zeros as needed (e.g. by adding small offsets).
+    /// </returns>
+    /// <remarks>
+    /// References: <see href="https://doi.org/10.1016/j.patcog.2007.09.010">Boutsidis, C., Gallopoulos, E., SVD based initialization: A head start for nonnegative matrix factorization, Pattern Recognition, Volume 41, Issue 4, April 2008, Pages 1350-1362</see>
+    /// </remarks>
+    public static (Matrix<double> W0, Matrix<double> H0) NNDSVDWithZerosPossibleInResultV02(Matrix<double> X, int r)
+    {
+      var svd = X.Svd(computeVectors: true); // TODO: replace by a partial SVD (psvd) of the first r factors,see e.g.https://scikit-learn.org/stable/modules/generated/sklearn.decomposition.TruncatedSVD.html# Math.NET Numerics Extended
+      var U = svd.U;          // m x m (or m x k)
+      var S = svd.S;          // singular values as a Vector
+      var Vt = svd.VT;        // n x n (or k x n)
+
+      int m = X.RowCount;
+      int n = X.ColumnCount;
+      var W = Matrix<double>.Build.Dense(m, r);
+      var H = Matrix<double>.Build.Dense(r, n);
+
+      // First component
+      // Note that the first component can be used directly
+      W.SetColumn(0, U.Column(0).PointwiseAbs() * Math.Sqrt(S[0]));
+      H.SetRow(0, Vt.Row(0).PointwiseAbs() * Math.Sqrt(S[0]));
+
+      // Further components
+      for (int j = 1; j < r && j < S.Count; j++)
+      {
+        var xj = U.Column(j);
+        var yj = Vt.Row(j);
+        double sj = S[j];
+
+        var xp = xj.PointwiseMaximum(0.0);
+        var xn = xj.PointwiseMinimum(0.0).PointwiseAbs();
+        var yp = yj.PointwiseMaximum(0.0);
+        var yn = yj.PointwiseMinimum(0.0).PointwiseAbs();
+
+        double xpnrm = xp.L2Norm();
+        double ypnrm = yp.L2Norm();
+        double mp = xpnrm * ypnrm;
+        double xnnrm = xn.L2Norm();
+        double ynnrm = yn.L2Norm();
+        double mn = xnnrm * ynnrm;
+
+        // Choose the more positive variant
+        Vector<double> u, v;
+        if (mp > mn)
+        {
+          u = xp * (Math.Sqrt(sj * mp) / xpnrm);
+          v = yp * (Math.Sqrt(sj * mp) / ypnrm);
+        }
+        else
+        {
+          u = xn * (Math.Sqrt(sj * mn) / xnnrm);
+          v = yn * (Math.Sqrt(sj * mn) / ynnrm);
+        }
+
+        W.SetColumn(j, u);
+        H.SetRow(j, v);
+      }
+
+      return (W, H); // note that both W0 and H0 are non-negative, but can contain zeros! Those zeros should be handled in the calling function.
+    }
+
+    /// <summary>
+    /// Creates an NNDSVD initialization for NMF and replaces zeros by a small positive value.
+    /// </summary>
+    /// <param name="X">The non-negative input matrix to be factorized.</param>
+    /// <param name="r">The target factorization rank.</param>
+    /// <returns>A tuple <c>(W0, H0)</c> containing strictly positive initial factors.</returns>
+    ///     /// <remarks>
+    /// References: <see href="https://doi.org/10.1016/j.patcog.2007.09.010">Boutsidis, C., Gallopoulos, E., SVD based initialization: A head start for nonnegative matrix factorization, Pattern Recognition, Volume 41, Issue 4, April 2008, Pages 1350-1362</see>
+    /// </remarks>
     public static (Matrix<double> W0, Matrix<double> H0) NNDSVD(Matrix<double> X, int r)
     {
-      var (W0, H0) = NNDSVDRaw(X, r);
+      var (W0, H0) = NNDSVDWithZerosPossibleInResult(X, r);
 
-      // Kleine Offsets gegen Nullen
+      // Small offsets to avoid zeros
       W0 = W0.PointwiseMaximum(1e-12);
       H0 = H0.PointwiseMaximum(1e-12);
       return (W0, H0);
     }
 
+    /// <summary>
+    /// Creates an NNDSVDa initialization for NMF by replacing zeros with a data-dependent small value.
+    /// </summary>
+    /// <param name="X">The non-negative input matrix to be factorized.</param>
+    /// <param name="r">The target factorization rank.</param>
+    /// <returns>A tuple <c>(W0, H0)</c> containing non-negative initial factors with zeros replaced by a small value.</returns>
     public static (Matrix<double> W0, Matrix<double> H0) NNDSVDa(Matrix<double> X, int r)
     {
-      // Erst normale NNDSVD erzeugen
-      var (W0, H0) = NNDSVDRaw(X, r);
+      // First, create the standard NNDSVD initialization
+      var (W0, H0) = NNDSVDWithZerosPossibleInResult(X, r);
 
-      // Mittelwert der Datenmatrix (nur positive Werte)
+      // Mean of the data matrix (positive values only)
       double avg = X.Enumerate().Where(v => v > 0).DefaultIfEmpty(0.0).Average();
       double eps = avg * 1e-4; // paper Boutsidis & Gallopoulos, 2008, https://doi.org/10.1016/j.patcog.2007.09.010
 
-      // Falls avg == 0 (extrem selten), fallback
+      // If avg == 0 (extremely rare), fallback
       if (eps == 0.0)
         eps = 1e-4;
 
-      // Alle Nullen ersetzen
+      // Replace all zeros
       for (int i = 0; i < W0.RowCount; i++)
         for (int j = 0; j < W0.ColumnCount; j++)
           if (W0[i, j] == 0.0)
@@ -142,22 +232,31 @@ namespace Altaxo.Calc.LinearAlgebra.Factorization
       return (W0, H0);
     }
 
+    /// <summary>
+    /// Creates an NNDSVDar initialization for NMF by applying NNDSVDa and adding small random noise.
+    /// </summary>
+    /// <param name="X">The non-negative input matrix to be factorized.</param>
+    /// <param name="r">The target factorization rank.</param>
+    /// <returns>A tuple <c>(W0, H0)</c> containing non-negative initial factors with small random perturbations.</returns>
+    /// <remarks>
+    /// References: <see href="https://doi.org/10.1016/j.patcog.2007.09.010">Boutsidis, C., Gallopoulos, E., SVD based initialization: A head start for nonnegative matrix factorization, Pattern Recognition, Volume 41, Issue 4, April 2008, Pages 1350-1362</see>
+    /// </remarks>
     public static (Matrix<double> W0, Matrix<double> H0) NNDSVDar(Matrix<double> X, int r)
     {
-      // Erst NNDSVDa erzeugen
+      // First, create NNDSVDa
       var (W0, H0) = NNDSVDa(X, r);
 
-      // Mittelwert der Datenmatrix (nur positive Werte)
+      // Mean of the data matrix (positive values only)
       double avg = X.Enumerate().Where(v => v > 0).DefaultIfEmpty(0.0).Average();
       double eps = avg * 1e-4;
 
       if (eps == 0.0)
         eps = 1e-4;
 
-      // Zufallsinstanz
+      // Random number generator
       var rnd = System.Random.Shared;
 
-      // Zufallsrauschen hinzufügen
+      // Add random noise
       for (int i = 0; i < W0.RowCount; i++)
         for (int j = 0; j < W0.ColumnCount; j++)
           W0[i, j] += rnd.NextDouble() * eps;

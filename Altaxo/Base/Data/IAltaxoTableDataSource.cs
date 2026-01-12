@@ -38,35 +38,45 @@ namespace Altaxo.Data
     Main.IHasDocumentReferences
   {
     /// <summary>
-    /// Fills (or refills) the data, with exception catching and supsension of the destination table.
+    /// Fills (or refills) the data, with exception catching and suspension of the destination table.
     /// The table script is executed (if specified in the import options).
     /// Use <see cref="DataTable.UpdateTableFromTableDataSource"/> if the table script should be executed.
-    /// The data source is represented by this instance, the destination table is provided in the argument <paramref name="destinationTable"/>.
-    /// Exceptions are catched, and will be written to the Notes of the destination data table.
+    /// The data source is represented by this instance; the destination table is provided in the argument <paramref name="destinationTable"/>.
+    /// Exceptions are caught and will be written to the Notes of the destination data table.
     /// </summary>
     /// <param name="destinationTable">The destination table.</param>
     /// <param name="reporter">The progress reporter (can be null).</param>
-    /// <returns>Null if no exception was catched during processing; otherwise an error message.</returns>
+    /// <returns>Null if no exception was caught during processing; otherwise an error message.</returns>
     string? FillData(Altaxo.Data.DataTable destinationTable, IProgressReporter reporter);
 
 
     /// <summary>
     /// Fills (or refills) the data, without exception catching.
-    /// The table script is <b>not executed</b>!
+    /// The table script is <b>not executed</b>.
     /// Use <see cref="FillData(DataTable, IProgressReporter)"/> if the table script should be executed.
-    /// The data source is represented by this instance, the destination table is provided in the argument <paramref name="destinationTable"/>.
+    /// The data source is represented by this instance; the destination table is provided in the argument <paramref name="destinationTable"/>.
     /// </summary>
     /// <param name="destinationTable">The destination table.</param>
-    /// <param name="reporter"></param>
+    /// <param name="reporter">The progress reporter (can be null).</param>
     void FillData_Unchecked(Altaxo.Data.DataTable destinationTable, IProgressReporter reporter);
 
+    /// <summary>
+    /// Gets or sets the import options that control how and when the data is imported.
+    /// </summary>
     IDataSourceImportOptions ImportOptions { get; set; }
 
+    /// <summary>
+    /// Gets or sets the process options (strongly typed by the concrete data source) as an object.
+    /// </summary>
     object ProcessOptionsObject { get; set; }
+
+    /// <summary>
+    /// Gets or sets the process input data (strongly typed by the concrete data source) as an object.
+    /// </summary>
     object ProcessDataObject { get; set; }
 
     /// <summary>
-    /// Called after deserization of a data source instance, when it is already associated with a data table.
+    /// Called after deserialization of a data source instance, when it is already associated with a data table.
     /// </summary>
     void OnAfterDeserialization();
   }
@@ -77,17 +87,17 @@ namespace Altaxo.Data
   public enum ImportTriggerSource
   {
     /// <summary>
-    /// The user triggers a reread of the data source.
+    /// The user triggers a re-read of the data source.
     /// </summary>
     Manual,
 
     /// <summary>
-    /// The data source is reread if the associated table is used for the first time.
+    /// The data source is re-read if the associated table is used for the first time.
     /// </summary>
     FirstUse,
 
     /// <summary>
-    /// The data source is reread every time the data source has changed. This includes the first use of the associated table.
+    /// The data source is re-read every time the data source has changed. This includes the first use of the associated table.
     /// </summary>
     DataSourceChanged
   }
@@ -97,6 +107,9 @@ namespace Altaxo.Data
   /// </summary>
   public class TableDataSourceChangedEventArgs : EventArgs
   {
+    /// <summary>
+    /// Gets an empty instance of <see cref="TableDataSourceChangedEventArgs"/>.
+    /// </summary>
     public static new readonly TableDataSourceChangedEventArgs Empty = new TableDataSourceChangedEventArgs();
   }
 }

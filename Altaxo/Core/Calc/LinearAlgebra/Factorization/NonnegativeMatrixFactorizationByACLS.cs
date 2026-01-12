@@ -2,7 +2,7 @@
 
 /////////////////////////////////////////////////////////////////////////////
 // Altaxo:  a data processing and data plotting program
-// Copyright (C) 2023 Dr. Dirk Lellinger
+// Copyright (C) 2002 - 2026 Dr. Dirk Lellinger
 //
 // Permission is hereby granted, free of charge, to any person
 // obtaining a copy of this software and associated documentation
@@ -35,7 +35,7 @@ using System.Collections.Generic;
 namespace Altaxo.Calc.LinearAlgebra.Factorization
 {
   /// <summary>
-  /// Implements the Nonnegative Matrix Factorization (NMF) algorithm based on Alternating Constrained Least Squares (ACLS)
+  /// Implements the Nonnegative Matrix Factorization (NMF) algorithm based on Alternating Constrained Least Squares (ACLS).
   /// </summary>
   /// <remarks>
   /// <para>References:</para>
@@ -44,6 +44,14 @@ namespace Altaxo.Calc.LinearAlgebra.Factorization
   public class NonnegativeMatrixFactorizationByACLS : NonnegativeMatrixFactorizationBase
   {
 
+    /// <summary>
+    /// Computes an NMF factorization using an ACLS-like alternating constrained (non-negative) least-squares scheme.
+    /// </summary>
+    /// <param name="X">The (typically non-negative) input matrix to be factorized.</param>
+    /// <param name="r">The factorization rank.</param>
+    /// <param name="maxIter">The number of iterations to perform.</param>
+    /// <param name="lambda">The Tikhonov regularization parameter (&lambda;).</param>
+    /// <returns>A tuple containing (W, H) such that <c>X ≈ W * H</c> with non-negative factors.</returns>
     public (Matrix<double> W, Matrix<double> H) ACLS(Matrix<double> X, int r, int maxIter = 1000, double lambda = 0.0)
     {
       // Use NNDSVDa initialization
@@ -84,18 +92,19 @@ namespace Altaxo.Calc.LinearAlgebra.Factorization
 
 
     /// <summary>
-    /// Factorizes matrix a into nonnegative factors and nonnegative base vectors.
+    /// Factorizes matrix <paramref name="a"/> into non-negative factors and non-negative base vectors.
     /// </summary>
     /// <param name="a">The matrix to factorize.</param>
     /// <param name="r">The number of components (number of base vectors).</param>
-    /// <param name="maximalNumberOfIterations">The maximal number of iterations for the calculation.</param>
+    /// <param name="maximalNumberOfIterations">The maximum number of iterations for the calculation.</param>
+    /// <param name="initialization">The initialization method used for the starting values.</param>
     /// <param name="lambdaH">Regularization parameter for the factors.</param>
     /// <param name="lambdaW">Regularization parameter for the base vectors.</param>
-    /// <returns>Matrix of base vectors W (each base vector is a column of the matrix), and matrix of factors H.</returns>
+    /// <returns>Matrix of base vectors W (each base vector is a column of the matrix) and matrix of factors H.</returns>
     /// <exception cref="System.ArgumentNullException">a</exception>
     /// <remarks>
-    /// <para>Algorithm is described in [1], page 7.</para>
-    /// <para>Please note that base vectors and factors are output in arbitrary order.</para>
+    /// <para>The algorithm is described in [1], page 7.</para>
+    /// <para>Please note that base vectors and factors are output in an arbitrary order.</para>
     /// </remarks>
     public (Matrix<double> W, Matrix<double> H) Evaluate(Matrix<double> a, int r, int maximalNumberOfIterations, NonnegativeMatrixFactorizationInitializationMethod initialization, double lambdaH = 0, double lambdaW = 0)
     {
@@ -182,7 +191,7 @@ namespace Altaxo.Calc.LinearAlgebra.Factorization
     /// <summary>
     /// Replaces negative elements of the matrix with zero.
     /// </summary>
-    /// <param name="m">The matrix m.</param>
+    /// <param name="m">The matrix.</param>
     private static void ClearNonnegativeElements(Matrix<double> m)
     {
       for (int r = 0; r < m.RowCount; r++)
@@ -198,9 +207,9 @@ namespace Altaxo.Calc.LinearAlgebra.Factorization
     }
 
     /// <summary>
-    /// Fills the matrix with random nonnegative values.
+    /// Fills the matrix with random non-negative values.
     /// </summary>
-    /// <param name="m">The matrix m.</param>
+    /// <param name="m">The matrix.</param>
     private static void FillRandomNonnegative(Matrix<double> m)
     {
       var rnd = new System.Random();
@@ -214,11 +223,11 @@ namespace Altaxo.Calc.LinearAlgebra.Factorization
     }
 
     /// <summary>
-    /// Calculates the sum the of squared differences between the matrix elements in m and y.
+    /// Calculates the sum of squared differences between the matrix elements in <paramref name="m"/> and <paramref name="y"/>.
     /// </summary>
-    /// <param name="m">The matrix m.</param>
-    /// <param name="y">The matrix y.</param>
-    /// <returns>Sum the of squared differences between the matrix elements in m and y.</returns>
+    /// <param name="m">The first matrix.</param>
+    /// <param name="y">The second matrix.</param>
+    /// <returns>The sum of squared differences between the matrix elements in <paramref name="m"/> and <paramref name="y"/>.</returns>
     private static double SumOfSquaredDifferences(Matrix<double> m, Matrix<double> y)
     {
       double sum = 0;

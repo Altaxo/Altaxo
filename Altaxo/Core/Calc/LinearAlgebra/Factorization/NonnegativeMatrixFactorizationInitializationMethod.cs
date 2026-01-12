@@ -2,7 +2,7 @@
 
 /////////////////////////////////////////////////////////////////////////////
 //    Altaxo:  a data processing and data plotting program
-//    Copyright (C) 2002-2026 Dr. Dirk Lellinger
+//    Copyright (C) 2002-2025 Dr. Dirk Lellinger
 //
 //    This program is free software; you can redistribute it and/or modify
 //    it under the terms of the GNU General Public License as published by
@@ -22,25 +22,31 @@
 
 #endregion Copyright
 
-using Altaxo.Calc.LinearAlgebra;
-
-namespace Altaxo.Calc.Regression.Multivariate
+namespace Altaxo.Calc.LinearAlgebra.Factorization
 {
   /// <summary>
-  /// Base interface for dimension reduction analyses, for example principal component analysis (PCA), non-negative matrix factorization (NMF), etc.
+  /// Specifies the initialization method to use for non-negative matrix factorization (NMF).
   /// </summary>
-  public interface IDimensionReductionMethod : Main.IImmutable
+  public enum NonnegativeMatrixFactorizationInitializationMethod
   {
     /// <summary>
-    /// Executes the dimension reduction on the provided process data.
+    /// Use a random non-negative initialization.
     /// </summary>
-    /// <param name="processData">The preprocessed data matrix to be analyzed. It is assumed that each row of the matrix represents a spectrum.</param>
-    /// <returns>The dimension reduction result.</returns>
-    IDimensionReductionResult ExecuteDimensionReduction(IROMatrix<double> processData);
+    Random,
 
     /// <summary>
-    /// Gets a user-friendly name for the GUI.
+    /// Use NNDSVD initialization. Only suited for sparse matrices.
     /// </summary>
-    string DisplayName { get; }
-  }
+    NNDSVD,
+
+    /// <summary>
+    /// Use NNDSVDa initialization. Suitable for dense matrices.
+    /// </summary>
+    NNDSVDa,
+
+    /// <summary>
+    /// Use NNDSVDar initialization. Suitable for dense matrices.
+    /// </summary>
+    NNDSVDar,
+  };
 }

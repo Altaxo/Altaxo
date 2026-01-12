@@ -27,7 +27,8 @@ using Altaxo.Calc.LinearAlgebra;
 namespace Altaxo.Calc.Regression.Multivariate
 {
   /// <summary>
-  /// Base class for dimension reduction analyses based on a factorization, for example principal component analysis (PCA) or non-negative matrix factorization (NMF).
+  /// Base class for dimension reduction analyses based on a factorization, for example principal component analysis (PCA)
+  /// or non-negative matrix factorization (NMF).
   /// </summary>
   public abstract record DimensionReductionByFactorizationMethod : IDimensionReductionMethod
   {

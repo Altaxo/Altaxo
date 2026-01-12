@@ -58,13 +58,13 @@ namespace Altaxo.Calc.Regression.Multivariate
     public int MaximumNumberOfFactors { get; init; } = 20;
 
     /// <summary>
-    /// Gets the type of the cross validation used to calculate the cross-press values.
+    /// Gets the type of cross validation used to calculate the cross-press values.
     /// </summary>
     public ICrossValidationGroupingStrategy CrossValidationGroupingStrategy { get; init; } = new CrossValidationGroupingStrategyExcludeGroupsOfSimilarMeasurements();
 
 
     /// <summary>
-    /// Gets the additional columns to calculate. Key is the general name of the quantity/column.
+    /// Gets the additional columns to calculate. The key is the general name of the quantity/column.
     /// The value is a set of tuples that designate for which factors the columns must be calculated.
     /// </summary>
     public ImmutableDictionary<string, ImmutableHashSet<(int, int?)>> ColumnsToCalculate { get; init; } = ImmutableDictionary.Create<string, ImmutableHashSet<(int, int?)>>();

@@ -24,12 +24,19 @@
 
 using System.ComponentModel;
 using Altaxo.Calc.LinearAlgebra;
+using Altaxo.Calc.LinearAlgebra.Factorization;
 
 namespace Altaxo.Calc.Regression.Multivariate
 {
   /// <summary>
   /// Dimension reduction using principal component analysis (PCA).
   /// </summary>
+  /// <remarks>
+  /// This class performs dimension reduction on the given data matrix using the
+  /// NIPALS algorithm for Principal Component Analysis (PCA). The PCA method
+  /// transforms the data to a new coordinate system, reducing its dimensionality
+  /// while preserving as much variance as possible.
+  /// </remarks>
   [Description("Principal component analysis (PCA)")]
   public record DimensionReductionByPrincipalComponentAnalysis : DimensionReductionByFactorizationMethod
   {
@@ -79,7 +86,7 @@ namespace Altaxo.Calc.Regression.Multivariate
       var meanX = new MatrixMath.MatrixWithOneRow<double>(matrixX.ColumnCount);
       // first, center the matrix
       MatrixMath.ColumnsToZeroMean(matrix, meanX);
-      MatrixMath.NIPALS_HO(matrix, MaximumNumberOfFactors, 1E-9, factors, loads, residualVariances);
+      PrincipalComponentAnalysis.NIPALS_HO(matrix, MaximumNumberOfFactors, 1E-9, factors, loads, residualVariances);
 
       return new DimensionReductionByFactorizationResult(factors, loads, residualVariances, meanX);
     }

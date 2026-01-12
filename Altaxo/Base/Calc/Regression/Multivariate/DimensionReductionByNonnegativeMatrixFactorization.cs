@@ -35,12 +35,24 @@ namespace Altaxo.Calc.Regression.Multivariate.Foo
   [Description("Nonnegative matrix factorization (NMF)")]
   public record DimensionReductionByNonnegativeMatrixFactorization : DimensionReductionByFactorizationMethod
   {
+    /// <summary>
+    /// Gets the initialization method used for the NMF algorithm.
+    /// </summary>
     public NonnegativeMatrixFactorizationInitializationMethod InitializationMethod { get; init; } = NonnegativeMatrixFactorizationInitializationMethod.Random;
 
+    /// <summary>
+    /// Gets the maximum number of iterations used for each NMF run.
+    /// </summary>
     public int MaximumNumberOfIterations { get; init; } = 1000;
 
+    /// <summary>
+    /// Gets the number of restarts (independent initializations) used for the NMF algorithm.
+    /// </summary>
     public int Restarts { get; init; } = 3;
 
+    /// <summary>
+    /// Gets the convergence tolerance for the NMF algorithm.
+    /// </summary>
     public double Tolerance { get; init; } = 1e-5;
 
 

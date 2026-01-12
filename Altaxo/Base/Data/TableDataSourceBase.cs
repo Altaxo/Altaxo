@@ -28,6 +28,18 @@ using System.Threading;
 
 namespace Altaxo.Data
 {
+  /// <summary>
+  /// Base class for table data sources.
+  /// </summary>
+  /// <remarks>
+  /// <para>
+  /// This base class provides a default implementation of <c>FillData</c> that suspends notifications on the destination table,
+  /// executes the derived <see cref="FillData_Unchecked"/> implementation and optionally runs the table script.
+  /// </para>
+  /// <para>
+  /// A reentrancy guard ensures that concurrent or recursive calls to <see cref="FillData"/> do not execute the data source multiple times.
+  /// </para>
+  /// </remarks>
   public abstract class TableDataSourceBase :
     Main.SuspendableDocumentNodeWithSingleAccumulatedData<EventArgs>
   {
@@ -50,10 +62,26 @@ namespace Altaxo.Data
 
     private int _fillDataEntranceCounter;
 
+    /// <summary>
+    /// Fills (or refills) the destination table without exception catching.
+    /// The table script is not executed by this method.
+    /// </summary>
+    /// <param name="destinationTable">The destination table.</param>
+    /// <param name="reporter">The progress reporter (can be null).</param>
     public abstract void FillData_Unchecked(Altaxo.Data.DataTable destinationTable, IProgressReporter reporter);
 
+    /// <summary>
+    /// Gets or sets the import options.
+    /// </summary>
     public abstract IDataSourceImportOptions ImportOptions { get; set; }
 
+    /// <summary>
+    /// Fills (or refills) the destination table with exception catching.
+    /// Optionally runs the table script depending on <see cref="ImportOptions"/>.
+    /// </summary>
+    /// <param name="destinationTable">The destination table.</param>
+    /// <param name="reporter">The progress reporter.</param>
+    /// <returns>Null if no exception was caught during processing; otherwise an error message.</returns>
     public string? FillData(DataTable destinationTable, IProgressReporter reporter)
     {
       if (destinationTable is null)

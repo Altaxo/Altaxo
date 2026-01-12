@@ -30,14 +30,18 @@ using Altaxo.Data;
 namespace Altaxo.Calc.Regression.Multivariate
 {
   /// <summary>
-  /// Data source for a table that contains preprocessed spectra, originated from a <see cref="DimensionReductionAndRegressionDataSource"/>.
-  /// Thus, this data source contains only a reference to a table containing the <see cref="DimensionReductionAndRegressionDataSource"/>. All
-  /// data how to obtain the preprocessed spectra are contained in that data source.
+  /// Data source for a table that contains preprocessed spectra originating from a <see cref="DimensionReductionAndRegressionDataSource"/>.
+  /// Thus, this data source contains only a reference to a table containing the <see cref="DimensionReductionAndRegressionDataSource"/>.
+  /// All data required to obtain the preprocessed spectra are contained in that data source.
   /// </summary>
   public class DimensionReductionAndRegressionPreprocessedXDataSource : TableDataSourceBase, Altaxo.Data.IAltaxoTableDataSource
   {
     private DataTableProxy _processData;
     private IDataSourceImportOptions _importOptions;
+
+    /// <summary>
+    /// Backing field for the <see cref="DataSourceChanged"/> event.
+    /// </summary>
     public Action<IAltaxoTableDataSource>? _dataSourceChanged;
 
     #region Serialization
@@ -50,6 +54,7 @@ namespace Altaxo.Calc.Regression.Multivariate
     [Altaxo.Serialization.Xml.XmlSerializationSurrogateFor(typeof(DimensionReductionAndRegressionPreprocessedXDataSource), 0)]
     private class XmlSerializationSurrogate0 : Altaxo.Serialization.Xml.IXmlSerializationSurrogate
     {
+      /// <inheritdoc/>
       public virtual void Serialize(object obj, Altaxo.Serialization.Xml.IXmlSerializationInfo info)
       {
         var s = (DimensionReductionAndRegressionPreprocessedXDataSource)obj;
@@ -60,6 +65,7 @@ namespace Altaxo.Calc.Regression.Multivariate
 
 
 
+      /// <inheritdoc/>
       public object Deserialize(object? o, Altaxo.Serialization.Xml.IXmlDeserializationInfo info, object? parent)
       {
         if (o is DimensionReductionAndRegressionPreprocessedXDataSource s)
@@ -83,6 +89,12 @@ namespace Altaxo.Calc.Regression.Multivariate
 
     #endregion Version 0
 
+    /// <summary>
+    /// Initializes a new instance of the <see cref="DimensionReductionAndRegressionPreprocessedXDataSource"/> class during XML deserialization.
+    /// </summary>
+    /// <param name="info">The XML deserialization info.</param>
+    /// <param name="version">The serialized version.</param>
+    /// <exception cref="ArgumentOutOfRangeException">Thrown when the version is not supported.</exception>
     protected DimensionReductionAndRegressionPreprocessedXDataSource(Altaxo.Serialization.Xml.IXmlDeserializationInfo info, int version)
     {
       switch (version)
@@ -102,15 +114,9 @@ namespace Altaxo.Calc.Regression.Multivariate
     /// <summary>
     /// Initializes a new instance of the <see cref="DimensionReductionAndRegressionPreprocessedXDataSource"/> class.
     /// </summary>
-    /// <param name="inputData">The input data designates the original source of data (used then for the processing).</param>
+    /// <param name="inputData">The input data designates the table that provides the preprocessing settings.</param>
     /// <param name="importOptions">The data source import options.</param>
-    /// <exception cref="System.ArgumentNullException">
-    /// inputData
-    /// or
-    /// transformationOptions
-    /// or
-    /// importOptions
-    /// </exception>
+    /// <exception cref="ArgumentNullException">Thrown if <paramref name="inputData"/> or <paramref name="importOptions"/> is <c>null</c>.</exception>
     public DimensionReductionAndRegressionPreprocessedXDataSource(DataTableProxy inputData, IDataSourceImportOptions importOptions)
     {
       if (inputData is null)
@@ -126,7 +132,7 @@ namespace Altaxo.Calc.Regression.Multivariate
     }
 
     /// <summary>
-    /// Initializes a new instance of the class.
+    /// Initializes a new instance of the <see cref="DimensionReductionAndRegressionPreprocessedXDataSource"/> class by copying from another instance.
     /// </summary>
     /// <param name="from">Another instance to copy from.</param>
     public DimensionReductionAndRegressionPreprocessedXDataSource(DimensionReductionAndRegressionPreprocessedXDataSource from)
@@ -155,7 +161,7 @@ namespace Altaxo.Calc.Regression.Multivariate
     /// Copies from another instance.
     /// </summary>
     /// <param name="obj">The object to copy from.</param>
-    /// <returns><c>True</c> if anything could be copied from the object, otherwise <c>false</c>.</returns>
+    /// <returns><c>true</c> if anything could be copied from the object; otherwise, <c>false</c>.</returns>
     public bool CopyFrom(object obj)
     {
       if (ReferenceEquals(this, obj))
@@ -169,12 +175,7 @@ namespace Altaxo.Calc.Regression.Multivariate
       return false;
     }
 
-    /// <summary>
-    /// Creates a new object that is a copy of the current instance.
-    /// </summary>
-    /// <returns>
-    /// A new object that is a copy of this instance.
-    /// </returns>
+    /// <inheritdoc/>
     public object Clone()
     {
       return new DimensionReductionAndRegressionPreprocessedXDataSource(this);
@@ -182,11 +183,7 @@ namespace Altaxo.Calc.Regression.Multivariate
 
     #region IAltaxoTableDataSource
 
-    /// <summary>
-    /// Fills (or refills) the data table with the processed data. The data source is represented by this instance, the destination table is provided in the argument <paramref name="destinationTable" />.
-    /// </summary>
-    /// <param name="destinationTable">The destination table.</param>
-    /// <param name="reporter"></param>
+    /// <inheritdoc/>
     public override void FillData_Unchecked(DataTable destinationTable, IProgressReporter reporter)
     {
       destinationTable.DataColumns.RemoveColumnsAll();
@@ -196,7 +193,8 @@ namespace Altaxo.Calc.Regression.Multivariate
     }
 
     /// <summary>
-    /// Occurs when the data source has changed and the import trigger source is DataSourceChanged. The argument is the sender of this event.
+    /// Occurs when the data source has changed and the import trigger source is <see cref="ImportTriggerSource.DataSourceChanged"/>.
+    /// The argument is the sender of this event.
     /// </summary>
     public event Action<Data.IAltaxoTableDataSource> DataSourceChanged
     {
@@ -223,7 +221,7 @@ namespace Altaxo.Calc.Regression.Multivariate
     /// Gets or sets the input data.
     /// </summary>
     /// <value>
-    /// The input data. This data is the input for the 2D-Fourier transformation.
+    /// The input data.
     /// </value>
     public DataTableProxy ProcessData
     {
@@ -241,13 +239,7 @@ namespace Altaxo.Calc.Regression.Multivariate
       }
     }
 
-    /// <summary>
-    /// Gets or sets the data source import options.
-    /// </summary>
-    /// <value>
-    /// The import options.
-    /// </value>
-    /// <exception cref="System.ArgumentNullException">ImportOptions</exception>
+    /// <inheritdoc/>
     public override Data.IDataSourceImportOptions ImportOptions
     {
       get
@@ -265,8 +257,11 @@ namespace Altaxo.Calc.Regression.Multivariate
     }
 
     /// <summary>
-    /// Gets or sets the data source options. Here, null is returned.
+    /// Gets or sets the data source options.
     /// </summary>
+    /// <remarks>
+    /// This data source does not use additional options; therefore, the getter always returns <c>null</c> and the setter is ignored.
+    /// </remarks>
     /// <value>
     /// The data source options.
     /// </value>
@@ -283,12 +278,14 @@ namespace Altaxo.Calc.Regression.Multivariate
 
 
 
+    /// <inheritdoc/>
     object IAltaxoTableDataSource.ProcessOptionsObject
     {
       get => null;
       set { }
     }
 
+    /// <inheritdoc/>
     object IAltaxoTableDataSource.ProcessDataObject
     {
       get => _processData;
@@ -297,6 +294,7 @@ namespace Altaxo.Calc.Regression.Multivariate
 
     #region Change event handling
 
+    /// <inheritdoc/>
     protected override bool HandleHighPriorityChildChangeCases(object? sender, ref EventArgs e)
     {
       if (object.ReferenceEquals(_processData, sender)) // incoming call from data proxy
@@ -318,6 +316,7 @@ namespace Altaxo.Calc.Regression.Multivariate
 
     #region Document Node functions
 
+    /// <inheritdoc/>
     protected override IEnumerable<Main.DocumentNodeAndName> GetDocumentNodeChildrenWithName()
     {
       if (_processData is not null)
@@ -330,17 +329,12 @@ namespace Altaxo.Calc.Regression.Multivariate
 
     #endregion Document Node functions
 
-    /// <summary>
-    /// Called after deserization of a data source instance, when it is already associated with a data table.
-    /// </summary>
+    /// <inheritdoc/>
     public void OnAfterDeserialization()
     {
     }
 
-    /// <summary>
-    /// Visits all document references.
-    /// </summary>
-    /// <param name="ReportProxies">The report proxies.</param>
+    /// <inheritdoc/>
     public void VisitDocumentReferences(Main.DocNodeProxyReporter ReportProxies)
     {
       if (_processData is not null)

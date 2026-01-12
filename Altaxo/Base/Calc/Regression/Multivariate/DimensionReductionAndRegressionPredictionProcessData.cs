@@ -29,17 +29,19 @@ using Altaxo.Data;
 namespace Altaxo.Calc.Regression.Multivariate
 {
   /// <summary>
-  /// Contains the data used in <see cref="DimensionReductionAndRegressionPredictionDataSource"/> to predict data using a prediction model, and some spectral data.
+  /// Contains the data used in <see cref="DimensionReductionAndRegressionPredictionDataSource"/> to predict values using a prediction model
+  /// and spectral data.
   /// </summary>
   public class DimensionReductionAndRegressionPredictionProcessData : Altaxo.Main.SuspendableDocumentLeafNodeWithEventArgs, ICloneable
   {
     /// <summary>
-    /// Proxy to the table containing the model. This table should contain a <see cref="DimensionReductionAndRegressionDataSource"/>.
+    /// Gets or sets the proxy to the table containing the model.
+    /// This table should contain a <see cref="DimensionReductionAndRegressionDataSource"/>.
     /// </summary>
     public DataTableProxy TableWithModel { get; set; }
 
     /// <summary>
-    /// Gets the data to predict.
+    /// Gets or sets the data to predict.
     /// </summary>
     public DataTableMatrixProxyWithMultipleColumnHeaderColumns DataToPredict { get; set; }
 
@@ -53,6 +55,7 @@ namespace Altaxo.Calc.Regression.Multivariate
     [Altaxo.Serialization.Xml.XmlSerializationSurrogateFor(typeof(DimensionReductionAndRegressionPredictionProcessData), 0)]
     private class XmlSerializationSurrogate0 : Altaxo.Serialization.Xml.IXmlSerializationSurrogate
     {
+      /// <inheritdoc/>
       public virtual void Serialize(object obj, Altaxo.Serialization.Xml.IXmlSerializationInfo info)
       {
         var s = (DimensionReductionAndRegressionPredictionProcessData)obj;
@@ -61,6 +64,7 @@ namespace Altaxo.Calc.Regression.Multivariate
         info.AddValue("DataToPredict", s.DataToPredict);
       }
 
+      /// <inheritdoc/>
       public object Deserialize(object? o, Altaxo.Serialization.Xml.IXmlDeserializationInfo info, object? parent)
       {
         var modelProxy = (DataTableProxy)info.GetValue("ModelTable", parent);
@@ -70,12 +74,12 @@ namespace Altaxo.Calc.Regression.Multivariate
     }
     #endregion
 
-    #endregion  
+    #endregion
 
     /// <summary>
     /// Initializes a new instance of the <see cref="DimensionReductionAndRegressionPredictionProcessData"/> class.
     /// </summary>
-    /// <param name="tableWithModel">The table with model.</param>
+    /// <param name="tableWithModel">The table with the prediction model.</param>
     /// <param name="dataToPredict">The data to predict.</param>
     public DimensionReductionAndRegressionPredictionProcessData(DataTableProxy tableWithModel, DataTableMatrixProxyWithMultipleColumnHeaderColumns dataToPredict)
     {
@@ -93,8 +97,8 @@ namespace Altaxo.Calc.Regression.Multivariate
     }
 
     /// <summary>
-    /// Replaces path of items (intended for data items like tables and columns) by other paths. Thus it is possible
-    /// to change a plot so that the plot items refer to another table.
+    /// Replaces paths of items (intended for data items like tables and columns) by other paths.
+    /// Thus it is possible to change a plot so that the plot items refer to another table.
     /// </summary>
     /// <param name="Report">Function that reports the found <see cref="T:Altaxo.Main.DocNodeProxy"/> instances to the visitor.</param>
     public void VisitDocumentReferences(Altaxo.Main.DocNodeProxyReporter Report)

@@ -45,7 +45,7 @@ namespace Altaxo.Calc.LinearAlgebra.Factorization
 
       var originalMatrix2 = matrixX.Clone();
 
-      MatrixMath.NIPALS_HO(matrixX, 3, 1E-9, factors, loads, residualVariances);
+      PrincipalComponentAnalysis.NIPALS_HO(matrixX, 3, 1E-9, factors, loads, residualVariances);
 
       var mfactors = CreateMatrix.Dense<double>(factors.RowCount, factors.ColumnCount);
       var mloads = CreateMatrix.Dense<double>(loads.RowCount, loads.ColumnCount);

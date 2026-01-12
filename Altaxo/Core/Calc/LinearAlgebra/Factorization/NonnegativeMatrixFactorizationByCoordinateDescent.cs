@@ -26,17 +26,55 @@ using System;
 
 namespace Altaxo.Calc.LinearAlgebra.Factorization
 {
+  /// <summary>
+  /// Non-negative matrix factorization (NMF) using an alternating coordinate-descent style update with non-negativity enforcement.
+  /// </summary>
   public class NonnegativeMatrixFactorizationByCoordinateDescent
   {
+    /// <summary>
+    /// Gets the factorization rank.
+    /// </summary>
     public int Rank { get; }
-    public int MaxIter { get; }
-    public double Lambda { get; }      // L2-Regularisierung
-    public double Tol { get; }         // Abbruch-Toleranz
-    public double Damping { get; }     // Dämpfung bei Fehleranstieg (0..1)
 
+    /// <summary>
+    /// Gets the maximum number of iterations.
+    /// </summary>
+    public int MaxIter { get; }
+
+
+    /// <summary>
+    /// Gets the L2 regularization parameter.
+    /// </summary>
+    public double Lambda { get; }      // L2 regularization
+
+    /// <summary>
+    /// Gets the stopping tolerance.
+    /// </summary>
+    public double Tol { get; }         // stopping tolerance
+
+    /// <summary>
+    /// Gets the damping factor used when a proposed update increases the error.
+    /// </summary>
+    public double Damping { get; }     // damping on error increase (0..1)
+
+    /// <summary>
+    /// Gets the current estimate of the left factor matrix.
+    /// </summary>
     public Matrix<double> W { get; private set; }
+
+    /// <summary>
+    /// Gets the current estimate of the right factor matrix.
+    /// </summary>
     public Matrix<double> H { get; private set; }
 
+    /// <summary>
+    /// Initializes a new instance of the <see cref="NonnegativeMatrixFactorizationByCoordinateDescent"/> class.
+    /// </summary>
+    /// <param name="rank">The factorization rank.</param>
+    /// <param name="maxIter">The maximum number of iterations.</param>
+    /// <param name="lambda">The L2 regularization parameter.</param>
+    /// <param name="tol">The stopping tolerance.</param>
+    /// <param name="damping">The damping factor applied when a proposed update increases the error (clamped to [0, 1]).</param>
     public NonnegativeMatrixFactorizationByCoordinateDescent(int rank, int maxIter = 500, double lambda = 1e-4, double tol = 1e-6, double damping = 0.5)
     {
       Rank = rank;
@@ -46,17 +84,22 @@ namespace Altaxo.Calc.LinearAlgebra.Factorization
       Damping = Math.Min(Math.Max(damping, 0.0), 1.0);
     }
 
+    /// <summary>
+    /// Fits a factorization <c>V ≈ W * H</c> with non-negative factors.
+    /// </summary>
+    /// <param name="V">The input matrix to factorize.</param>
+    /// <returns>The final relative reconstruction error.</returns>
     public double Fit(Matrix<double> V)
     {
       int m = V.RowCount;
       int n = V.ColumnCount;
       double eps = 1e-12;
 
-      // Initialisierung: nicht-negative Startwerte
+      // Initialization: non-negative starting values
       W = Matrix<double>.Build.Random(m, Rank).PointwiseAbs().PointwiseMaximum(eps);
       H = Matrix<double>.Build.Random(Rank, n).PointwiseAbs().PointwiseMaximum(eps);
 
-      // Optionale Anfangsreskalierung
+      // Optional initial rescaling
       RescaleFactors(W, H, eps);
 
       double vNorm = V.FrobeniusNorm();
@@ -64,49 +107,49 @@ namespace Altaxo.Calc.LinearAlgebra.Factorization
 
       for (int iter = 0; iter < MaxIter; iter++)
       {
-        // === Update H (spaltenweise) ===
+        // === Update H (column-wise) ===
         var WtW = W.TransposeThisAndMultiply(W);
-        WtW = AddDiagonal(WtW, Lambda); // Regularisierung
+        WtW = AddDiagonal(WtW, Lambda); // regularization
 
         var H_proposed = H.Clone();
         for (int j = 0; j < n; j++)
         {
-          Vector<double> vj = V.Column(j);                 // m-Vector
-          Vector<double> rhsH = W.TransposeThisAndMultiply(vj); // r-Vector
-          Vector<double> hj = WtW.Solve(rhsH);             // r-Vector
+          Vector<double> vj = V.Column(j);                 // m-vector
+          Vector<double> rhsH = W.TransposeThisAndMultiply(vj); // r-vector
+          Vector<double> hj = WtW.Solve(rhsH);             // r-vector
           for (int k = 0; k < Rank; k++) hj[k] = Math.Max(hj[k], eps);
           H_proposed.SetColumn(j, hj);
         }
 
-        // Safeguard: nur übernehmen, wenn Fehler nicht steigt, sonst gedämpft
+        // Safeguard: accept only if error does not increase; otherwise apply damping
         double errBeforeH = RelativeError(V, W, H, vNorm);
         double errAfterHProposed = RelativeError(V, W, H_proposed, vNorm);
 
         if (errAfterHProposed <= errBeforeH)
           H = H_proposed;
         else
-          H = Blend(H, H_proposed, Damping); // gedämpftes Update
+          H = Blend(H, H_proposed, Damping); // damped update
 
         H = H.PointwiseMaximum(eps);
 
-        // Reskalierung nach H-Update
+        // Rescaling after H update
         RescaleFactors(W, H, eps);
 
-        // === Update W (zeilenweise) ===
+        // === Update W (row-wise) ===
         var HHT = H * H.Transpose();
-        HHT = AddDiagonal(HHT, Lambda); // Regularisierung
+        HHT = AddDiagonal(HHT, Lambda); // regularization
 
         var W_proposed = W.Clone();
         for (int i = 0; i < m; i++)
         {
-          Vector<double> vi = V.Row(i);   // n-Vector
-          Vector<double> rhsW = H * vi;   // r-Vector
-          Vector<double> wi = HHT.Solve(rhsW); // r-Vector
+          Vector<double> vi = V.Row(i);   // n-vector
+          Vector<double> rhsW = H * vi;   // r-vector
+          Vector<double> wi = HHT.Solve(rhsW); // r-vector
           for (int k = 0; k < Rank; k++) wi[k] = Math.Max(wi[k], eps);
           W_proposed.SetRow(i, wi);
         }
 
-        // Safeguard: W-Update prüfen
+        // Safeguard: check W update
         double errBeforeW = RelativeError(V, W, H, vNorm);
         double errAfterWProposed = RelativeError(V, W_proposed, H, vNorm);
 
@@ -117,10 +160,10 @@ namespace Altaxo.Calc.LinearAlgebra.Factorization
 
         W = W.PointwiseMaximum(eps);
 
-        // Reskalierung nach W-Update
+        // Rescaling after W update
         RescaleFactors(W, H, eps);
 
-        // Monitoring & Abbruchkriterium
+        // Monitoring & stopping criterion
         double relErr = RelativeError(V, W, H, vNorm);
         if (iter % 10 == 0)
           Console.WriteLine($"Iter {iter}: relErr = {relErr:E6}");
@@ -134,10 +177,19 @@ namespace Altaxo.Calc.LinearAlgebra.Factorization
       return prevRelErr;
     }
 
+    /// <summary>
+    /// Reconstructs the approximation matrix <c>W * H</c> using the current factors.
+    /// </summary>
     public Matrix<double> Reconstruct() => W * H;
 
-    // Hilfsfunktionen
+    // Helper functions
 
+    /// <summary>
+    /// Adds <paramref name="lambda"/> to the diagonal of <paramref name="A"/>.
+    /// </summary>
+    /// <param name="A">The matrix to regularize.</param>
+    /// <param name="lambda">The diagonal value to add.</param>
+    /// <returns>The regularized matrix.</returns>
     private static Matrix<double> AddDiagonal(Matrix<double> A, double lambda)
     {
       if (lambda <= 0) return A;
@@ -145,6 +197,13 @@ namespace Altaxo.Calc.LinearAlgebra.Factorization
       return A + D;
     }
 
+    /// <summary>
+    /// Rescales columns of <paramref name="W"/> to unit L2 norm and compensates the scaling in the corresponding rows of <paramref name="H"/>.
+    /// Floors elements to <paramref name="eps"/> to keep values strictly positive.
+    /// </summary>
+    /// <param name="W">The left factor matrix.</param>
+    /// <param name="H">The right factor matrix.</param>
+    /// <param name="eps">The minimum allowed value.</param>
     private static void RescaleFactors(Matrix<double> W, Matrix<double> H, double eps)
     {
       int r = W.ColumnCount;
@@ -162,12 +221,27 @@ namespace Altaxo.Calc.LinearAlgebra.Factorization
       }
     }
 
+    /// <summary>
+    /// Computes the relative reconstruction error <c>||V - W*H||_F / ||V||_F</c>.
+    /// </summary>
+    /// <param name="V">The input matrix.</param>
+    /// <param name="W">The left factor matrix.</param>
+    /// <param name="H">The right factor matrix.</param>
+    /// <param name="vNorm">The Frobenius norm of <paramref name="V"/>.</param>
+    /// <returns>The relative reconstruction error.</returns>
     private static double RelativeError(Matrix<double> V, Matrix<double> W, Matrix<double> H, double vNorm)
     {
       var Vhat = W * H;
       return (V - Vhat).FrobeniusNorm() / vNorm;
     }
 
+    /// <summary>
+    /// Computes a convex combination of <paramref name="A"/> and <paramref name="B"/>.
+    /// </summary>
+    /// <param name="A">The first matrix.</param>
+    /// <param name="B">The second matrix.</param>
+    /// <param name="alpha">The blend factor.</param>
+    /// <returns>The blended matrix.</returns>
     private static Matrix<double> Blend(Matrix<double> A, Matrix<double> B, double alpha)
     {
       // A_new = (1 - alpha) * A + alpha * B

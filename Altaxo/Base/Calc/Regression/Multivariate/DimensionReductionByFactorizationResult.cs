@@ -11,8 +11,8 @@
 //
 //    This program is distributed in the hope that it will be useful,
 //    but WITHOUT ANY WARRANTY; without even the implied warranty of
-//    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-//    GNU General Public License for more details.
+//    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
+//    General Public License for more details.
 //
 //    You should have received a copy of the GNU General Public License
 //    along with this program; if not, write to the Free Software
@@ -38,8 +38,8 @@ namespace Altaxo.Calc.Regression.Multivariate
     /// </summary>
     /// <param name="factors">The factor scores.</param>
     /// <param name="loads">The loadings.</param>
-    /// <param name="residualVariances">Residual variances per factor.</param>
-    /// <param name="meanOfProcessData">Mean values used for preprocessing/centering of the process data.</param>
+    /// <param name="residualVariances">Residual variances per factor, or <c>null</c> if not available.</param>
+    /// <param name="meanOfProcessData">Mean values used for preprocessing/centering of the process data, or <c>null</c> if not available.</param>
     public DimensionReductionByFactorizationResult(IROMatrix<double> factors, IROMatrix<double> loads, IROMatrix<double> residualVariances, IReadOnlyCollection<double> meanOfProcessData)
     {
       Factors = factors;

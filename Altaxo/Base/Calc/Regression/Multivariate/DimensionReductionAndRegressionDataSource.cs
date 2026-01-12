@@ -30,7 +30,7 @@ using Altaxo.Data;
 namespace Altaxo.Calc.Regression.Multivariate
 {
   /// <summary>
-  /// Data source for an algorithm based on dimension reduction and then regression of the reduced dimensions (PLS1, PLS2, PCR).
+  /// Data source for algorithms based on dimension reduction and subsequent regression of the reduced dimensions (PLS1, PLS2, PCR).
   /// </summary>
   public class DimensionReductionAndRegressionDataSource : TableDataSourceBase, Altaxo.Data.IAltaxoTableDataSource
   {
@@ -39,7 +39,7 @@ namespace Altaxo.Calc.Regression.Multivariate
     private IDataSourceImportOptions _importOptions;
 
     /// <summary>
-    /// Some data that will be created when executing the data source.
+    /// Result data that may be created when executing the data source.
     /// </summary>
     private DimensionReductionAndRegressionResult _processResult;
 
@@ -122,7 +122,7 @@ namespace Altaxo.Calc.Regression.Multivariate
     /// <summary>
     /// Initializes a new instance of the <see cref="DimensionReductionAndRegressionDataSource"/> class.
     /// </summary>
-    /// <param name="inputData">The input data designates the original source of data (used then for the processing).</param>
+    /// <param name="inputData">The input data that designates the original source of data used for processing.</param>
     /// <param name="dataSourceOptions">The dimension reduction and regression options.</param>
     /// <param name="importOptions">The data source import options.</param>
     /// <exception cref="ArgumentNullException">
@@ -217,7 +217,8 @@ namespace Altaxo.Calc.Regression.Multivariate
     }
 
     /// <summary>
-    /// Occurs when the data source has changed and the import trigger source is <see cref="ImportTriggerSource.DataSourceChanged"/>. The argument is the sender of this event.
+    /// Occurs when the data source has changed and the import trigger source is <see cref="ImportTriggerSource.DataSourceChanged"/>.
+    /// The argument is the sender of this event.
     /// </summary>
     public event Action<Data.IAltaxoTableDataSource> DataSourceChanged
     {
@@ -262,13 +263,7 @@ namespace Altaxo.Calc.Regression.Multivariate
       }
     }
 
-    /// <summary>
-    /// Gets or sets the data source import options.
-    /// </summary>
-    /// <value>
-    /// The import options.
-    /// </value>
-    /// <exception cref="ArgumentNullException">ImportOptions</exception>
+    /// <inheritdoc/>
     public override Data.IDataSourceImportOptions ImportOptions
     {
       get
@@ -379,17 +374,12 @@ namespace Altaxo.Calc.Regression.Multivariate
 
     #endregion Document Node functions
 
-    /// <summary>
-    /// Called after deserialization of a data source instance, when it is already associated with a data table.
-    /// </summary>
+    /// <inheritdoc/>
     public void OnAfterDeserialization()
     {
     }
 
-    /// <summary>
-    /// Visits all document references.
-    /// </summary>
-    /// <param name="ReportProxies">The report proxies.</param>
+    /// <inheritdoc/>
     public void VisitDocumentReferences(Main.DocNodeProxyReporter ReportProxies)
     {
       if (_processData is not null)

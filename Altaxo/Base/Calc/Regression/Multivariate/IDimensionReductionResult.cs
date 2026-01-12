@@ -36,7 +36,7 @@ namespace Altaxo.Calc.Regression.Multivariate
     /// </summary>
     /// <param name="sourceTable">The source table containing the original data.</param>
     /// <param name="destinationTable">The destination table that will receive the result data.</param>
-    /// <param name="columnNumbersOfSpectraInSourceTable">Indices of the spectra columns in the source table.</param>
+    /// <param name="columnNumbersOfSpectraInSourceTable">Column indices of the spectra in <paramref name="sourceTable"/>.</param>
     /// <param name="xValuesOfPreprocessedSpectra">X values associated with the preprocessed spectra.</param>
     public void SaveResultToTable(DataTable sourceTable, DataTable destinationTable, int[] columnNumbersOfSpectraInSourceTable, double[] xValuesOfPreprocessedSpectra);
   }

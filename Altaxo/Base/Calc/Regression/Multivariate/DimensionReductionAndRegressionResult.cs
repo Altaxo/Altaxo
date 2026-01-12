@@ -26,40 +26,44 @@
 namespace Altaxo.Calc.Regression.Multivariate
 {
   /// <summary>
-  /// 
+  /// Holds summary results created during execution of a dimension reduction and regression analysis.
   /// </summary>
   public record DimensionReductionAndRegressionResult : Main.IImmutable
   {
     /// <summary>
-    /// Number of spectra in analysis.
+    /// Gets the number of measurements (spectra) included in the analysis.
     /// </summary>
     public int NumberOfMeasurements { get; init; }
 
     /// <summary>
-    /// Number of factors calculated.
+    /// Gets the number of factors that were calculated.
     /// </summary>
     public int CalculatedNumberOfFactors { get; init; }
 
     /// <summary>
-    /// Number of factors for calculation and plotting.
+    /// Gets the preferred number of factors used for calculation and plotting.
     /// </summary>
     public int PreferredNumberOfFactors { get; init; }
 
-    
+
 
     /// <summary>
-    /// Mean number of observations included in Cross PRESS calculation (used to calculate F-Ratio).
+    /// Gets the mean number of measurements included in the Cross-PRESS calculation (used to calculate the F-ratio).
     /// </summary>
     public double MeanNumberOfMeasurementsInCrossPRESSCalculation { get; init; }
 
-    
+
 
 
     #region Serialization
 
+    /// <summary>
+    /// XML serialization surrogate (version 0).
+    /// </summary>
     [Altaxo.Serialization.Xml.XmlSerializationSurrogateFor(typeof(DimensionReductionAndRegressionResult), 0)]
     public class SerializationSurrogate0 : Altaxo.Serialization.Xml.IXmlSerializationSurrogate
     {
+      /// <inheritdoc/>
       public void Serialize(object obj, Altaxo.Serialization.Xml.IXmlSerializationInfo info)
       {
         var s = (DimensionReductionAndRegressionResult)obj;
@@ -69,6 +73,7 @@ namespace Altaxo.Calc.Regression.Multivariate
         info.AddValue("MeanNumberOfMeasurementsInCrossPRESSCalculation", s.MeanNumberOfMeasurementsInCrossPRESSCalculation);
       }
 
+      /// <inheritdoc/>
       public object Deserialize(object? o, Altaxo.Serialization.Xml.IXmlDeserializationInfo info, object? parent)
       {
         var numberOfMeasurements = info.GetInt32("NumberOfMeasurements");

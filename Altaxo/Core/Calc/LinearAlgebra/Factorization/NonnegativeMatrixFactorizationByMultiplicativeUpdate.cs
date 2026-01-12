@@ -26,8 +26,22 @@ using System;
 
 namespace Altaxo.Calc.LinearAlgebra.Factorization
 {
+  /// <summary>
+  /// Non-negative matrix factorization (NMF) using the classic multiplicative update rules.
+  /// </summary>
   public class NonnegativeMatrixFactorizationByMultiplicativeUpdate : NonnegativeMatrixFactorizationBase
   {
+    /// <summary>
+    /// Factorizes a non-negative matrix <paramref name="V"/> into non-negative factors <c>W</c> and <c>H</c> using multiplicative updates.
+    /// </summary>
+    /// <param name="V">The input matrix to factorize.</param>
+    /// <param name="r">The factorization rank.</param>
+    /// <param name="maxIter">The maximum number of iterations per restart.</param>
+    /// <param name="tol">The stopping tolerance (change in relative error).</param>
+    /// <param name="restarts">The number of restarts with different initializations.</param>
+    /// <returns>
+    /// A tuple containing the factors <c>W</c> and <c>H</c> and the final relative reconstruction error <c>relErr</c>.
+    /// </returns>
     public static (Matrix<double> W, Matrix<double> H, double relErr) Evaluate(
     Matrix<double> V, int r, int maxIter = 2000, double tol = 1e-5, int restarts = 3)
     {
@@ -39,7 +53,7 @@ namespace Altaxo.Calc.LinearAlgebra.Factorization
 
       for (int trial = 0; trial < restarts; trial++)
       {
-        // Init: NNDSVD für ersten Versuch, sonst zufällig
+        // Initialization: NNDSVD for the first trial; otherwise random
         Matrix<double> W, H;
         if (trial == 0)
         {
@@ -69,11 +83,11 @@ namespace Altaxo.Calc.LinearAlgebra.Factorization
           var denominatorW = WH * H.Transpose() + eps;
           W = W.PointwiseMultiply(numeratorW.PointwiseDivide(denominatorW));
 
-          // Stabilisierung
+          // Stabilization
           W = W.PointwiseMaximum(eps);
           H = H.PointwiseMaximum(eps);
 
-          // Optional: Reskalierung zur Konditionierung
+          // Optional: rescaling for conditioning
           for (int k = 0; k < r; k++)
           {
             double normWk = W.Column(k).L2Norm();
