@@ -2,7 +2,7 @@
 
 /////////////////////////////////////////////////////////////////////////////
 //    Altaxo:  a data processing and data plotting program
-//    Copyright (C) 2002-2025 Dr. Dirk Lellinger
+//    Copyright (C) 2002-2026 Dr. Dirk Lellinger
 //
 //    This program is free software; you can redistribute it and/or modify
 //    it under the terms of the GNU General Public License as published by
@@ -22,31 +22,22 @@
 
 #endregion Copyright
 
-namespace Altaxo.Calc.LinearAlgebra.Factorization
+namespace Altaxo.Calc.LinearAlgebra.Double.Factorization
 {
   /// <summary>
-  /// Specifies the initialization method to use for non-negative matrix factorization (NMF).
+  /// Defines a low-rank matrix factorization that approximates an input matrix <c>A</c> by a product of two lower-rank matrices.
   /// </summary>
-  public enum NonnegativeMatrixFactorizationInitializationMethod
+  public interface ILowRankMatrixFactorization
   {
-    /// <summary>
-    /// Use a random non-negative initialization.
-    /// </summary>
-    Random,
 
     /// <summary>
-    /// Use NNDSVD initialization. Only suited for sparse matrices.
+    /// Factorizes the input matrix <paramref name="X"/> into a product of two matrices with the specified rank.
     /// </summary>
-    NNDSVD,
-
-    /// <summary>
-    /// Use NNDSVDa initialization. Suitable for dense matrices.
-    /// </summary>
-    NNDSVDa,
-
-    /// <summary>
-    /// Use NNDSVDar initialization. Suitable for dense matrices.
-    /// </summary>
-    NNDSVDar,
-  };
+    /// <param name="X">The input matrix to factorize.</param>
+    /// <param name="rank">The target rank of the factorization.</param>
+    /// <returns>
+    /// A tuple of factor matrices <c>(W, H)</c> such that <c>X ≈ W * H</c>.
+    /// </returns>
+    (Matrix<double> W, Matrix<double> H) Factorize(Matrix<double> X, int rank);
+  }
 }

@@ -24,9 +24,6 @@
 
 using System;
 using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace Altaxo.Collections
 {
@@ -76,6 +73,35 @@ namespace Altaxo.Collections
         result[i] = array[i] is { } ele ? (T)ele.Clone() : (T?)null;
       }
       return result;
+    }
+
+    /// <summary>
+    /// Tests whether two arrays are equal.
+    /// </summary>
+    /// <typeparam name="T"></typeparam>
+    /// <param name="x">The x array.</param>
+    /// <param name="y">The y array.</param>
+    /// <param name="comparer">The comparer that is used to compare two elements. If <c>null</c> is provided, then the default equality comparer is used.</param>
+    /// <returns><c>true</c> if the arrays are equal, or both are <c>null</c>; otherwise, <c>false</c>.</returns>
+    public static bool AreEqual<T>(T[]? x, T[]? y, IEqualityComparer<T>? comparer = null)
+    {
+      if (object.ReferenceEquals(x, y))
+        return true;
+
+      if (x is null || y is null)
+        return false;
+
+      if (x.Length != y.Length)
+        return false;
+
+      comparer ??= EqualityComparer<T>.Default;
+
+      for (int i = 0; i < x.Length; i++)
+      {
+        if (!comparer.Equals(x[i], y[i]))
+          return false;
+      }
+      return true;
     }
   }
 }

@@ -32,7 +32,7 @@
 using System;
 using System.Collections.Generic;
 
-namespace Altaxo.Calc.LinearAlgebra.Factorization
+namespace Altaxo.Calc.LinearAlgebra.Double.Factorization
 {
   /// <summary>
   /// Implements the Nonnegative Matrix Factorization (NMF) algorithm based on Alternating Constrained Least Squares (ACLS).
@@ -41,8 +41,76 @@ namespace Altaxo.Calc.LinearAlgebra.Factorization
   /// <para>References:</para>
   /// <para>[1] Langville et al., "Algorithms, Initializations, and Convergence for the Nonnegative Matrix Factorization", https://arxiv.org/abs/1407.7299v1</para>
   /// </remarks>
-  public class NonnegativeMatrixFactorizationByACLS : NonnegativeMatrixFactorizationBase
+  public record NonnegativeMatrixFactorizationByACLS : NonnegativeMatrixFactorizationBase
   {
+    double LambdaW
+    {
+      get => field;
+      init
+      {
+        if (!(value >= 0))
+          throw new ArgumentOutOfRangeException(nameof(LambdaW), "LambdaW must be non-negative.");
+        field = value;
+      }
+    } = 0;
+
+    double LambdaH
+    {
+      get => field;
+      init
+      {
+        if (!(value >= 0))
+          throw new ArgumentOutOfRangeException(nameof(LambdaH), "LambdaH must be non-negative.");
+        field = value;
+      }
+    } = 0;
+
+
+    #region Serialization
+
+    /// <summary>
+    /// XML serialization surrogate (version 0).
+    /// </summary>
+    /// <remarks>V0: 2026-01-13.</remarks>
+    [Altaxo.Serialization.Xml.XmlSerializationSurrogateFor(typeof(NonnegativeMatrixFactorizationByACLS), 0)]
+    public class SerializationSurrogate0 : Altaxo.Serialization.Xml.IXmlSerializationSurrogate
+    {
+      /// <inheritdoc/>
+      public void Serialize(object obj, Altaxo.Serialization.Xml.IXmlSerializationInfo info)
+      {
+        var s = (NonnegativeMatrixFactorizationByACLS)obj;
+        info.AddValue("InitializationMethod", s.InitializationMethod);
+        info.AddValue("MaximumNumberOfIterations", s.MaximumNumberOfIterations);
+        info.AddValue("NumberOfTrials", s.NumberOfTrials);
+        info.AddValue("Tolerance", s.Tolerance);
+        info.AddValue("LambdaW", s.LambdaW);
+        info.AddValue("LambdaH", s.LambdaH);
+      }
+
+      /// <inheritdoc/>
+      public object Deserialize(object? o, Altaxo.Serialization.Xml.IXmlDeserializationInfo info, object? parent)
+      {
+        var initializationMethod = info.GetValue<INonnegativeMatrixFactorizationInitializer>("InitializationMethod", parent);
+        var maximumNumberOfIterations = info.GetValue<int>("MaximumNumberOfIterations", parent);
+        var numberOfTrials = info.GetInt32("NumberOfTrials");
+        var tolerance = info.GetDouble("Tolerance");
+        var lambdaW = info.GetDouble("LambdaW");
+        var lambdaH = info.GetDouble("LambdaH");
+
+        return ((o as NonnegativeMatrixFactorizationByACLS) ?? new NonnegativeMatrixFactorizationByACLS()) with
+        {
+          InitializationMethod = initializationMethod,
+          MaximumNumberOfIterations = maximumNumberOfIterations,
+          NumberOfTrials = numberOfTrials,
+          Tolerance = tolerance,
+          LambdaW = lambdaW,
+          LambdaH = lambdaH
+        };
+      }
+    }
+
+    #endregion
+
 
     /// <summary>
     /// Computes an NMF factorization using an ACLS-like alternating constrained (non-negative) least-squares scheme.
@@ -55,7 +123,7 @@ namespace Altaxo.Calc.LinearAlgebra.Factorization
     public (Matrix<double> W, Matrix<double> H) ACLS(Matrix<double> X, int r, int maxIter = 1000, double lambda = 0.0)
     {
       // Use NNDSVDa initialization
-      var (W, H) = NNDSVDa(X, r);
+      var (W, H) = InitializationMethod.GetInitialFactors(X, r);
 
       int m = X.RowCount;
       int n = X.ColumnCount;
@@ -92,29 +160,22 @@ namespace Altaxo.Calc.LinearAlgebra.Factorization
 
 
     /// <summary>
-    /// Factorizes matrix <paramref name="a"/> into non-negative factors and non-negative base vectors.
+    /// Factorizes matrix <paramref name="X"/> into non-negative factors and non-negative base vectors.
     /// </summary>
-    /// <param name="a">The matrix to factorize.</param>
+    /// <param name="X">The matrix to factorize.</param>
     /// <param name="r">The number of components (number of base vectors).</param>
-    /// <param name="maximalNumberOfIterations">The maximum number of iterations for the calculation.</param>
-    /// <param name="initialization">The initialization method used for the starting values.</param>
-    /// <param name="lambdaH">Regularization parameter for the factors.</param>
-    /// <param name="lambdaW">Regularization parameter for the base vectors.</param>
     /// <returns>Matrix of base vectors W (each base vector is a column of the matrix) and matrix of factors H.</returns>
     /// <exception cref="System.ArgumentNullException">a</exception>
     /// <remarks>
     /// <para>The algorithm is described in [1], page 7.</para>
     /// <para>Please note that base vectors and factors are output in an arbitrary order.</para>
     /// </remarks>
-    public (Matrix<double> W, Matrix<double> H) Evaluate(Matrix<double> a, int r, int maximalNumberOfIterations, NonnegativeMatrixFactorizationInitializationMethod initialization, double lambdaH = 0, double lambdaW = 0)
+    public override (Matrix<double> W, Matrix<double> H) FactorizeOneTrial(Matrix<double> X, int r)
     {
-      if (a is null)
-      {
-        throw new ArgumentNullException(nameof(a));
-      }
+      ArgumentNullException.ThrowIfNull(X, nameof(X));
 
-      var m = a.RowCount;
-      var n = a.ColumnCount;
+      var m = X.RowCount;
+      var n = X.ColumnCount;
 
       var wt = Matrix<double>.Build.Dense(r, m); // instead of w in [1], we use w-transposed
       var h = Matrix<double>.Build.Dense(r, n);
@@ -129,42 +190,16 @@ namespace Altaxo.Calc.LinearAlgebra.Factorization
 
       var listOfChi2 = new List<double>(r);
 
-      switch (initialization)
-      {
-        default:
-        case NonnegativeMatrixFactorizationInitializationMethod.Random:
-          {
-            FillRandomNonnegative(wt);
-          }
-          break;
-        case NonnegativeMatrixFactorizationInitializationMethod.NNDSVD:
-          {
-            var (w, _) = NNDSVD(a, r);
-            wt = w.Transpose();
-          }
-          break;
-        case NonnegativeMatrixFactorizationInitializationMethod.NNDSVDa:
-          {
-            var (w, _) = NNDSVDa(a, r);
-            wt = w.Transpose();
-          }
-          break;
-        case NonnegativeMatrixFactorizationInitializationMethod.NNDSVDar:
-          {
-            var (w, _) = NNDSVDar(a, r);
-            wt = w.Transpose();
-            break;
-          }
-      }
+      (var w, _) = InitializationMethod.GetInitialFactors(X, r);
 
       // Algorithm see [1], page 7, "Practical ACLS Algorithm for NMF"
-      for (int iIteration = 0; iIteration < maximalNumberOfIterations; iIteration++)
+      for (int iIteration = 0; iIteration < MaximumNumberOfIterations; iIteration++)
       {
         wt.TransposeAndMultiply(wt, wtw); // wtw = wᵀ w
-        wt.Multiply(a, wta);              // wta = wᵀ a
+        wt.Multiply(X, wta);              // wta = wᵀ a
         for (int i = 0; i < r; ++i)       // Add lambdaH to the diagonal of wtw
         {
-          wtw[i, i] += lambdaH;           // wᵀ w + lambdaH I   
+          wtw[i, i] += LambdaH;           // wᵀ w + lambdaH I   
         }
         wtw.Solve(wta, h);                // (wᵀ w + lambdaH I) h = wᵀ a
 
@@ -172,17 +207,17 @@ namespace Altaxo.Calc.LinearAlgebra.Factorization
         ClearNonnegativeElements(h);      // set all negative elements of h to zero
 
         h.TransposeAndMultiply(h, hht);   // hht = h hᵀ
-        h.TransposeAndMultiply(a, hat);   // hat = h aᵀ
+        h.TransposeAndMultiply(X, hat);   // hat = h aᵀ
         for (int i = 0; i < r; ++i)       // Add lambdaW to the diagonal of hht
         {
-          hht[i, i] += lambdaW;           // h hᵀ + lambdaW I 
+          hht[i, i] += LambdaW;           // h hᵀ + lambdaW I 
         }
         hht.Solve(hat, wt);               // (h hᵀ + lambdaW I) wᵀ = h aᵀ
         ClearNonnegativeElements(wt);     // set all negative elements of w to zero
 
         // Evaluation of the quality
         wt.TransposeThisAndMultiply(h, abar);
-        listOfChi2.Add(SumOfSquaredDifferences(a, abar)); // TODO find a criterion for ending the loop prematurely
+        listOfChi2.Add(SumOfSquaredDifferences(X, abar)); // TODO find a criterion for ending the loop prematurely
       }
 
       return (wt.Transpose(), h);

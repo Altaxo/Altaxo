@@ -33,11 +33,13 @@ using Altaxo.Science.Spectroscopy.BaselineEstimation;
 using Altaxo.Science.Spectroscopy.Calibration;
 using Altaxo.Science.Spectroscopy.Cropping;
 using Altaxo.Science.Spectroscopy.DarkSubtraction;
+using Altaxo.Science.Spectroscopy.EnsembleProcessing;
 using Altaxo.Science.Spectroscopy.Normalization;
 using Altaxo.Science.Spectroscopy.Resampling;
 using Altaxo.Science.Spectroscopy.Sanitizing;
 using Altaxo.Science.Spectroscopy.Smoothing;
 using Altaxo.Science.Spectroscopy.SpikeRemoval;
+
 
 namespace Altaxo.Gui.Science.Spectroscopy
 {
@@ -184,6 +186,7 @@ namespace Altaxo.Gui.Science.Spectroscopy
             ("Resample", typeof(ResamplingNone), () => new Resampling.ResamplingController()),
             ("Cropping", typeof(CroppingNone), () => new Cropping.CroppingController()),
             ("Normalization", typeof(NormalizationNone), () => new Normalization.NormalizationController()),
+            ("Ensemble", typeof(EnsembleProcessingNone), () => new EnsembleProcessing.EnsembleProcessingController()),
         };
 
         _controllerDict.Clear();

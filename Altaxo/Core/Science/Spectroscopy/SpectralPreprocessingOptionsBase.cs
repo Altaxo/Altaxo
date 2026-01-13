@@ -25,7 +25,9 @@
 using System.Collections;
 using System.Collections.Generic;
 using System.Collections.Immutable;
+using System.Linq;
 using System.Text;
+using Altaxo.Calc.LinearAlgebra;
 using Altaxo.Main;
 
 namespace Altaxo.Science.Spectroscopy
@@ -131,8 +133,27 @@ namespace Altaxo.Science.Spectroscopy
           throw new System.InvalidOperationException($"The element x[{i}] = {x[i]} should be greater than x[{i - 1}]={x[i - 1]}, but it isn't. It is not allowed to have NaNs or multiple equal x values in the data.");
         }
       }
+    }
 
+    public (double[] x, Matrix<double> y, int[]? regions) Execute(double[] x, Matrix<double> y, int[]? regions)
+    {
+      var yNew = y;
+      if (regions is null || regions.Length == 0)
+      {
+        var indices = Enumerable.Range(0, x.Length).ToArray();
+        System.Array.Sort(x, indices);
+        yNew = Matrix<double>.Build.Dense(y.RowCount, y.ColumnCount);
+        for (int col = 0; col < y.ColumnCount; ++col)
+        {
+          yNew.SetRow(col, y.Row(indices[col]));
+        }
+      }
 
+      foreach (var processor in InnerList)
+      {
+        (x, y, regions, var aux) = processor.Execute(x, y, regions);
+      }
+      return (x, y, regions);
     }
   }
 }

@@ -31,6 +31,7 @@ using Altaxo.Science.Spectroscopy.BaselineEvaluation;
 using Altaxo.Science.Spectroscopy.Calibration;
 using Altaxo.Science.Spectroscopy.Cropping;
 using Altaxo.Science.Spectroscopy.DarkSubtraction;
+using Altaxo.Science.Spectroscopy.EnsembleProcessing;
 using Altaxo.Science.Spectroscopy.Normalization;
 using Altaxo.Science.Spectroscopy.Resampling;
 using Altaxo.Science.Spectroscopy.Sanitizing;
@@ -88,6 +89,9 @@ namespace Altaxo.Gui.Science.Spectroscopy
             break;
           case INormalization normalization:
             yield return ("Normalization", normalization, () => new Normalization.NormalizationController());
+            break;
+          case IEnsemblePreprocessor ensemble:
+            yield return ("Ensemble", ensemble, () => new EnsembleProcessing.EnsembleProcessingController());
             break;
           default:
             throw new NotImplementedException($"Processor type {processor?.GetType()} is not implemented");

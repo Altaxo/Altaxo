@@ -77,13 +77,18 @@ namespace Altaxo.Gui.Science.Spectroscopy.EnsembleProcessing
 
       if (initData)
       {
+        EnsembleMean = _doc.EnsembleMean;
         EnsembleScale = _doc.EnsembleScale;
       }
     }
 
     public override bool Apply(bool disposeController)
     {
-      _doc = _doc with { EnsembleScale = EnsembleScale };
+      _doc = _doc with
+      {
+        EnsembleMean = EnsembleMean,
+        EnsembleScale = EnsembleScale
+      };
       return ApplyEnd(true, disposeController);
     }
   }

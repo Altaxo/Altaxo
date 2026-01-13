@@ -24,7 +24,7 @@
 
 using Xunit;
 
-namespace Altaxo.Calc.LinearAlgebra.Factorization
+namespace Altaxo.Calc.LinearAlgebra.Double.Factorization
 {
   public class PrincipalComponentAnalysisTests : FactorizationTestBase
   {
@@ -45,7 +45,7 @@ namespace Altaxo.Calc.LinearAlgebra.Factorization
 
       var originalMatrix2 = matrixX.Clone();
 
-      PrincipalComponentAnalysis.NIPALS_HO(matrixX, 3, 1E-9, factors, loads, residualVariances);
+      PrincipalComponentAnalysisByNIPALS.NIPALS_HO(matrixX, 3, 1E-9, factors, loads, residualVariances);
 
       var mfactors = CreateMatrix.Dense<double>(factors.RowCount, factors.ColumnCount);
       var mloads = CreateMatrix.Dense<double>(loads.RowCount, loads.ColumnCount);
@@ -106,7 +106,7 @@ namespace Altaxo.Calc.LinearAlgebra.Factorization
 
       var originalMatrix2 = matrixX.Clone();
 
-      var (mfactors, mloadings) = PrincipalComponentAnalysis.BySVD(matrixX, NumberOfComponents);
+      var (mfactors, mloadings) = new PrincipalComponentAnalysisBySVD().Factorize(matrixX, NumberOfComponents);
 
       var relError = RelativeError(mfactors, mloadings, originalMatrix2);
       Assert.True(relError < 1E-15);

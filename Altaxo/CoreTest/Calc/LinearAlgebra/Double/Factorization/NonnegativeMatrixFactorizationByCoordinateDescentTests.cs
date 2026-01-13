@@ -24,20 +24,21 @@
 
 using Xunit;
 
-namespace Altaxo.Calc.LinearAlgebra.Factorization
+namespace Altaxo.Calc.LinearAlgebra.Double.Factorization
 {
-  public class NonnegativeMatrixFactorizationACLSTests : FactorizationTestBase
+  public class NonnegativeMatrixFactorizationByCoordinateDescentTests : FactorizationTestBase
   {
     [Fact]
-    public void Test()
+    public void Test2()
     {
       var originalLoadings = GetThreeSpectra();
       var originalScores = GetScores3D(NumberOfSpectra);
       var originalMatrix = originalScores * originalLoadings;
       var matrixX = originalMatrix.Clone();
 
-      var nmf = new NonnegativeMatrixFactorizationByACLS();
-      var (mfactors, mloads) = nmf.Evaluate(matrixX, 3, 100, NonnegativeMatrixFactorizationInitializationMethod.Random);
+      var nmf = new NonnegativeMatrixFactorizationByCoordinateDescent { MaximumNumberOfIterations = 5000 };
+      var (mfactors, mloads) = nmf.Factorize(matrixX, 3);
+
 
       var relError = RelativeError(mfactors, mloads, originalMatrix);
       Assert.True(relError < 0.022);

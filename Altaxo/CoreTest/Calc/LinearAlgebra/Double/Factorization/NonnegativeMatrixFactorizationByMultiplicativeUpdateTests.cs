@@ -2,7 +2,7 @@
 
 /////////////////////////////////////////////////////////////////////////////
 //    Altaxo:  a data processing and data plotting program
-//    Copyright (C) 2002-2026 Dr. Dirk Lellinger
+//    Copyright (C) 2002-2025 Dr. Dirk Lellinger
 //
 //    This program is free software; you can redistribute it and/or modify
 //    it under the terms of the GNU General Public License as published by
@@ -19,15 +19,32 @@
 //    Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
 //
 /////////////////////////////////////////////////////////////////////////////
-
-#endregion Copyright
-
+#endregion
 using Xunit;
 
-namespace Altaxo.Calc.LinearAlgebra.Factorization
+namespace Altaxo.Calc.LinearAlgebra.Double.Factorization
 {
-  public class NonnegativeMatrixFactorizationByCoordinateDescentTests : FactorizationTestBase
+  // Test matrices see https://resources.wolframcloud.com/FunctionRepository/resources/NonNegativeMatrixFactorization/
+  // https://github.com/trigeorgis/Deep-Semi-NMF/blob/master/matlab/NNDSVD.m
+
+  public class NonnegativeMatrixFactorizationByMultiplicativeUpdateTests : FactorizationTestBase
   {
+    [Fact]
+    public void Test1()
+    {
+      int m = 50;   // Zeilen
+      int n = 40;   // Spalten
+      int r = 10;   // Rang
+
+
+      var W_true = Matrix<double>.Build.Random(m, r).PointwiseAbs();
+      var H_true = Matrix<double>.Build.Random(r, n).PointwiseAbs();
+      var V = W_true * H_true;
+
+      var (W, H) = new NonnegativeMatrixFactorizationByMultiplicativeUpdate().Factorize(V, r);
+
+    }
+
     [Fact]
     public void Test2()
     {
@@ -35,14 +52,17 @@ namespace Altaxo.Calc.LinearAlgebra.Factorization
       var originalScores = GetScores3D(NumberOfSpectra);
       var originalMatrix = originalScores * originalLoadings;
       var matrixX = originalMatrix.Clone();
-
-      var nmf = new NonnegativeMatrixFactorizationByCoordinateDescent(NumberOfComponents, 5000);
-      nmf.Fit(matrixX);
-
-      var (mfactors, mloads) = (nmf.W, nmf.H);
+      var nmf = new NonnegativeMatrixFactorizationByMultiplicativeUpdate()
+      {
+        InitializationMethod = new NNDSVDar(),
+        NumberOfTrials = 5,
+        MaximumNumberOfIterations = 2000,
+      };
+      var (mfactors, mloads) = nmf.Factorize(matrixX, NumberOfComponents);
 
       var relError = RelativeError(mfactors, mloads, originalMatrix);
-      Assert.True(relError < 0.022);
+      Assert.True(relError < 0.0033);
     }
   }
 }
+

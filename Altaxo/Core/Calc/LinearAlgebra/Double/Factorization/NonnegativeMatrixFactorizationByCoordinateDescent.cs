@@ -24,97 +24,129 @@
 
 using System;
 
-namespace Altaxo.Calc.LinearAlgebra.Factorization
+namespace Altaxo.Calc.LinearAlgebra.Double.Factorization
 {
   /// <summary>
   /// Non-negative matrix factorization (NMF) using an alternating coordinate-descent style update with non-negativity enforcement.
   /// </summary>
-  public class NonnegativeMatrixFactorizationByCoordinateDescent
+  public record NonnegativeMatrixFactorizationByCoordinateDescent : NonnegativeMatrixFactorizationBase
   {
-    /// <summary>
-    /// Gets the factorization rank.
-    /// </summary>
-    public int Rank { get; }
+    public double LambdaW
+    {
+      get => field;
+      init
+      {
+        if (!(value >= 0))
+          throw new ArgumentOutOfRangeException(nameof(LambdaW), "LambdaW must be non-negative.");
+        field = value;
+      }
+    } = 0;
 
-    /// <summary>
-    /// Gets the maximum number of iterations.
-    /// </summary>
-    public int MaxIter { get; }
-
-
-    /// <summary>
-    /// Gets the L2 regularization parameter.
-    /// </summary>
-    public double Lambda { get; }      // L2 regularization
-
-    /// <summary>
-    /// Gets the stopping tolerance.
-    /// </summary>
-    public double Tol { get; }         // stopping tolerance
+    public double LambdaH
+    {
+      get => field;
+      init
+      {
+        if (!(value >= 0))
+          throw new ArgumentOutOfRangeException(nameof(LambdaH), "LambdaH must be non-negative.");
+        field = value;
+      }
+    } = 0;
 
     /// <summary>
     /// Gets the damping factor used when a proposed update increases the error.
     /// </summary>
-    public double Damping { get; }     // damping on error increase (0..1)
-
-    /// <summary>
-    /// Gets the current estimate of the left factor matrix.
-    /// </summary>
-    public Matrix<double> W { get; private set; }
-
-    /// <summary>
-    /// Gets the current estimate of the right factor matrix.
-    /// </summary>
-    public Matrix<double> H { get; private set; }
-
-    /// <summary>
-    /// Initializes a new instance of the <see cref="NonnegativeMatrixFactorizationByCoordinateDescent"/> class.
-    /// </summary>
-    /// <param name="rank">The factorization rank.</param>
-    /// <param name="maxIter">The maximum number of iterations.</param>
-    /// <param name="lambda">The L2 regularization parameter.</param>
-    /// <param name="tol">The stopping tolerance.</param>
-    /// <param name="damping">The damping factor applied when a proposed update increases the error (clamped to [0, 1]).</param>
-    public NonnegativeMatrixFactorizationByCoordinateDescent(int rank, int maxIter = 500, double lambda = 1e-4, double tol = 1e-6, double damping = 0.5)
+    public double Damping
     {
-      Rank = rank;
-      MaxIter = maxIter;
-      Lambda = lambda;
-      Tol = tol;
-      Damping = Math.Min(Math.Max(damping, 0.0), 1.0);
+      get => field;
+      init
+      {
+        if (!(value > 0))
+          throw new ArgumentOutOfRangeException(nameof(Damping), "Damping must be >0 and <1.");
+        field = value;
+      }
+    } = 0.5;    // damping on error increase (0..1)
+
+    #region Serialization
+
+    /// <summary>
+    /// XML serialization surrogate (version 0).
+    /// </summary>
+    /// <remarks>V0: 2026-01-13.</remarks>
+    [Altaxo.Serialization.Xml.XmlSerializationSurrogateFor(typeof(NonnegativeMatrixFactorizationByCoordinateDescent), 0)]
+    public class SerializationSurrogate0 : Altaxo.Serialization.Xml.IXmlSerializationSurrogate
+    {
+      /// <inheritdoc/>
+      public void Serialize(object obj, Altaxo.Serialization.Xml.IXmlSerializationInfo info)
+      {
+        var s = (NonnegativeMatrixFactorizationByCoordinateDescent)obj;
+        info.AddValue("InitializationMethod", s.InitializationMethod);
+        info.AddValue("MaximumNumberOfIterations", s.MaximumNumberOfIterations);
+        info.AddValue("NumberOfTrials", s.NumberOfTrials);
+        info.AddValue("Tolerance", s.Tolerance);
+        info.AddValue("Damping", s.Damping);
+        info.AddValue("LambdaW", s.LambdaW);
+        info.AddValue("LambdaH", s.LambdaH);
+      }
+
+      /// <inheritdoc/>
+      public object Deserialize(object? o, Altaxo.Serialization.Xml.IXmlDeserializationInfo info, object? parent)
+      {
+        var initializationMethod = info.GetValue<INonnegativeMatrixFactorizationInitializer>("InitializationMethod", parent);
+        var maximumNumberOfIterations = info.GetValue<int>("MaximumNumberOfIterations", parent);
+        var numberOfTrials = info.GetInt32("NumberOfTrials");
+        var tolerance = info.GetDouble("Tolerance");
+        var damping = info.GetDouble("Damping");
+        var lambdaW = info.GetDouble("LambdaW");
+        var lambdaH = info.GetDouble("LambdaH");
+
+        return ((o as NonnegativeMatrixFactorizationByCoordinateDescent) ?? new NonnegativeMatrixFactorizationByCoordinateDescent()) with
+        {
+          InitializationMethod = initializationMethod,
+          MaximumNumberOfIterations = maximumNumberOfIterations,
+          NumberOfTrials = numberOfTrials,
+          Tolerance = tolerance,
+          Damping = damping,
+          LambdaW = lambdaW,
+          LambdaH = lambdaH
+        };
+      }
     }
+
+    #endregion Serialization
 
     /// <summary>
     /// Fits a factorization <c>V ≈ W * H</c> with non-negative factors.
     /// </summary>
-    /// <param name="V">The input matrix to factorize.</param>
+    /// <param name="X">The input matrix to factorize.</param>
     /// <returns>The final relative reconstruction error.</returns>
-    public double Fit(Matrix<double> V)
+    ///
+
+    public override (Matrix<double> W, Matrix<double> H) FactorizeOneTrial(Matrix<double> X, int Rank)
     {
-      int m = V.RowCount;
-      int n = V.ColumnCount;
+      int m = X.RowCount;
+      int n = X.ColumnCount;
       double eps = 1e-12;
 
       // Initialization: non-negative starting values
-      W = Matrix<double>.Build.Random(m, Rank).PointwiseAbs().PointwiseMaximum(eps);
-      H = Matrix<double>.Build.Random(Rank, n).PointwiseAbs().PointwiseMaximum(eps);
+      var (W, H) = InitializationMethod.GetInitialFactors(X, Rank);
 
       // Optional initial rescaling
       RescaleFactors(W, H, eps);
 
-      double vNorm = V.FrobeniusNorm();
+      double vNorm = X.FrobeniusNorm();
       double prevRelErr = double.PositiveInfinity;
 
-      for (int iter = 0; iter < MaxIter; iter++)
+      for (int iter = 0; iter < MaximumNumberOfIterations; iter++)
       {
         // === Update H (column-wise) ===
         var WtW = W.TransposeThisAndMultiply(W);
-        WtW = AddDiagonal(WtW, Lambda); // regularization
+        WtW = AddDiagonal(WtW, LambdaW); // regularization
 
         var H_proposed = H.Clone();
         for (int j = 0; j < n; j++)
         {
-          Vector<double> vj = V.Column(j);                 // m-vector
+          Vector<double> vj = X.Column(j);                 // m-vector
           Vector<double> rhsH = W.TransposeThisAndMultiply(vj); // r-vector
           Vector<double> hj = WtW.Solve(rhsH);             // r-vector
           for (int k = 0; k < Rank; k++) hj[k] = Math.Max(hj[k], eps);
@@ -122,8 +154,8 @@ namespace Altaxo.Calc.LinearAlgebra.Factorization
         }
 
         // Safeguard: accept only if error does not increase; otherwise apply damping
-        double errBeforeH = RelativeError(V, W, H, vNorm);
-        double errAfterHProposed = RelativeError(V, W, H_proposed, vNorm);
+        double errBeforeH = RelativeError(X, W, H, vNorm);
+        double errAfterHProposed = RelativeError(X, W, H_proposed, vNorm);
 
         if (errAfterHProposed <= errBeforeH)
           H = H_proposed;
@@ -137,12 +169,12 @@ namespace Altaxo.Calc.LinearAlgebra.Factorization
 
         // === Update W (row-wise) ===
         var HHT = H * H.Transpose();
-        HHT = AddDiagonal(HHT, Lambda); // regularization
+        HHT = AddDiagonal(HHT, LambdaH); // regularization
 
         var W_proposed = W.Clone();
         for (int i = 0; i < m; i++)
         {
-          Vector<double> vi = V.Row(i);   // n-vector
+          Vector<double> vi = X.Row(i);   // n-vector
           Vector<double> rhsW = H * vi;   // r-vector
           Vector<double> wi = HHT.Solve(rhsW); // r-vector
           for (int k = 0; k < Rank; k++) wi[k] = Math.Max(wi[k], eps);
@@ -150,8 +182,8 @@ namespace Altaxo.Calc.LinearAlgebra.Factorization
         }
 
         // Safeguard: check W update
-        double errBeforeW = RelativeError(V, W, H, vNorm);
-        double errAfterWProposed = RelativeError(V, W_proposed, H, vNorm);
+        double errBeforeW = RelativeError(X, W, H, vNorm);
+        double errAfterWProposed = RelativeError(X, W_proposed, H, vNorm);
 
         if (errAfterWProposed <= errBeforeW)
           W = W_proposed;
@@ -164,23 +196,20 @@ namespace Altaxo.Calc.LinearAlgebra.Factorization
         RescaleFactors(W, H, eps);
 
         // Monitoring & stopping criterion
-        double relErr = RelativeError(V, W, H, vNorm);
+        double relErr = RelativeError(X, W, H, vNorm);
         if (iter % 10 == 0)
           Console.WriteLine($"Iter {iter}: relErr = {relErr:E6}");
 
-        if (Math.Abs(prevRelErr - relErr) < Tol)
+        if (Math.Abs(prevRelErr - relErr) < Tolerance)
           break;
 
         prevRelErr = relErr;
       }
 
-      return prevRelErr;
+      return (W, H);
     }
 
-    /// <summary>
-    /// Reconstructs the approximation matrix <c>W * H</c> using the current factors.
-    /// </summary>
-    public Matrix<double> Reconstruct() => W * H;
+
 
     // Helper functions
 
@@ -247,5 +276,6 @@ namespace Altaxo.Calc.LinearAlgebra.Factorization
       // A_new = (1 - alpha) * A + alpha * B
       return A * (1.0 - alpha) + B * alpha;
     }
+
   }
 }

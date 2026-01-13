@@ -45,7 +45,7 @@ namespace Altaxo.Calc.Regression.Multivariate
     /// <summary>
     /// Gets the dimension reduction method.
     /// </summary>
-    public IDimensionReductionMethod DimensionReductionMethod { get; init; } = new DimensionReductionByPrincipalComponentAnalysis();
+    public IDimensionReductionMethod DimensionReductionMethod { get; init; } = new DimensionReductionByLowRankFactorization();
 
 
 

@@ -102,6 +102,9 @@
     <Compile Update="Gui\Science\Spectroscopy\DarkSubtraction\DarkSubtractionControl.xaml.cs">
       <SubType>Code</SubType>
     </Compile>
+    <Compile Update="Gui\Science\Spectroscopy\EnsembleProcessing\EnsembleProcessingControl.xaml.cs">
+      <SubType>Code</SubType>
+    </Compile>
     <Compile Update="Gui\Science\Spectroscopy\Normalization\NormalizationMinMaxInRangeControl.xaml.cs">
       <SubType>Code</SubType>
     </Compile>

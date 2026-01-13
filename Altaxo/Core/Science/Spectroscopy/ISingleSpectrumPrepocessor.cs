@@ -23,7 +23,11 @@
 #endregion Copyright
 
 
+using System;
 using System.Collections.Immutable;
+using Altaxo.Calc.LinearAlgebra;
+using Altaxo.Collections;
+using Altaxo.Science.Spectroscopy.EnsembleProcessing;
 
 namespace Altaxo.Science.Spectroscopy
 {
@@ -44,6 +48,37 @@ namespace Altaxo.Science.Spectroscopy
     /// </param>
     /// <returns>X-values, y-values, and regions of the processed spectrum.</returns>
     (double[] x, double[] y, int[]? regions) Execute(double[] x, double[] y, int[]? regions);
+
+
+    /// <summary>
+    /// Executes the processor for an ensemble of spectra.
+    /// </summary>
+    /// <param name="x">The x-values of the spectrum.</param>
+    /// <param name="y">The spectra. Each row of the matrix represents a spectrum.</param>
+    /// <param name="regions">
+    /// The spectral regions. Can be <see langword="null"/> (if the array is one region). Each element in this array
+    /// is the start index of a new spectral region.
+    /// </param>
+    /// <returns>X-values, y-values, and regions of the processed spectrum.</returns>
+    public (double[] x, Matrix<double> y, int[]? regions, IEnsembleProcessingAuxillaryData? auxillaryData) Execute(double[] x, Matrix<double> y, int[]? regions)
+    {
+      var (newX, newY, newRegions) = Execute(x, y.Row(0).ToArray(), regions);
+      var yresult = Matrix<double>.Build.Dense(y.RowCount, newX.Length);
+      yresult.SetRow(0, newY);
+
+      for (int r = 1; r < y.RowCount; r++)
+      {
+        var (otherX, otherY, otherRegions) = Execute(x, y.Row(r).ToArray(), regions);
+
+        if (!ArrayExtensions.AreEqual(newX, otherX))
+          throw new InvalidOperationException("The preprocessor produced different x-values for different rows.");
+        if (!ArrayExtensions.AreEqual(newRegions, otherRegions))
+          throw new InvalidOperationException("The preprocessor produced different regions for different rows.");
+
+        yresult.SetRow(r, otherY);
+      }
+      return (x, yresult, newRegions, null);
+    }
   }
 
   /// <summary>

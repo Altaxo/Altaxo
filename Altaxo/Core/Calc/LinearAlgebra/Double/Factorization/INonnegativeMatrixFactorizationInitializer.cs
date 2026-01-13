@@ -22,28 +22,21 @@
 
 #endregion Copyright
 
-using Altaxo.Calc.LinearAlgebra;
-
-namespace Altaxo.Calc.Regression.Multivariate
+namespace Altaxo.Calc.LinearAlgebra.Double.Factorization
 {
   /// <summary>
-  /// Base class for dimension reduction analyses based on a factorization, for example principal component analysis (PCA)
-  /// or non-negative matrix factorization (NMF).
+  /// Provides initialization factors for non-negative matrix factorization (NMF).
   /// </summary>
-  public abstract record DimensionReductionByFactorizationMethod : IDimensionReductionMethod
+  public interface INonnegativeMatrixFactorizationInitializer
   {
-    /// <inheritdoc/>
-    public abstract IDimensionReductionResult ExecuteDimensionReduction(IROMatrix<double> processData);
-
-    /// <inheritdoc/>
-    public abstract string DisplayName { get; }
-
     /// <summary>
-    /// Gets the maximum number of factors to calculate.
+    /// Gets initial non-negative factor matrices for an NMF of the input matrix <paramref name="X"/>.
     /// </summary>
-    /// <value>
-    /// The maximum number of factors.
-    /// </value>
-    public int MaximumNumberOfFactors { get; init; } = 3;
+    /// <param name="X">The input matrix to factorize.</param>
+    /// <param name="rank">The target rank of the factorization.</param>
+    /// <returns>
+    /// A tuple of factor matrices <c>(W, H)</c> such that <c>X ≈ W * H</c>.
+    /// </returns>
+    (Matrix<double> W, Matrix<double> H) GetInitialFactors(Matrix<double> X, int rank);
   }
 }

@@ -1,6 +1,30 @@
-﻿using System;
+﻿#region Copyright
 
-namespace Altaxo.Calc.LinearAlgebra.Factorization
+/////////////////////////////////////////////////////////////////////////////
+//    Altaxo:  a data processing and data plotting program
+//    Copyright (C) 2002-2026 Dr. Dirk Lellinger
+//
+//    This program is free software; you can redistribute it and/or modify
+//    it under the terms of the GNU General Public License as published by
+//    the Free Software Foundation; either version 2 of the License, or
+//    (at your option) any later version.
+//
+//    This program is distributed in the hope that it will be useful,
+//    but WITHOUT ANY WARRANTY; without even the implied warranty of
+//    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+//    GNU General Public License for more details.
+//
+//    You should have received a copy of the GNU General Public License
+//    along with this program; if not, write to the Free Software
+//    Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
+//
+/////////////////////////////////////////////////////////////////////////////
+
+#endregion Copyright
+
+using System;
+
+namespace Altaxo.Calc.LinearAlgebra.Double.Factorization
 {
   public class FactorizationTestBase
   {
@@ -59,13 +83,14 @@ namespace Altaxo.Calc.LinearAlgebra.Factorization
     /// <returns>4 x 3 nonnegative test matrix from <see href="https://resources.wolframcloud.com/FunctionRepository/resources/NonNegativeMatrixFactorization/"/></returns>
     public static Matrix<double> GetTestMatrixNN4x3()
     {
-      var m = CreateMatrix.Dense<double>(4, 3);
-      m.SetRow(0, new double[] { 4, 7, 4 });
-      m.SetRow(1, new double[] { 10, 8, 8 });
-      m.SetRow(2, new double[] { 5, 3, 4 });
-      m.SetRow(3, new double[] { 5, 4, 5 });
-      return m;
+      return CreateMatrix.DenseOfRowArrays<double>(
+        [4, 7, 4],
+        [10, 8, 8],
+        [5, 3, 4],
+        [5, 4, 5]
+        );
     }
+
 
 
     protected static double RelativeError(Matrix<double> scores, Matrix<double> loadings, Matrix<double> originalMatrix)

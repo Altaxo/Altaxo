@@ -25,41 +25,53 @@
 using System;
 using static Altaxo.Calc.LinearAlgebra.MatrixMath;
 
-namespace Altaxo.Calc.LinearAlgebra.Factorization
+namespace Altaxo.Calc.LinearAlgebra.Double.Factorization
 {
   /// <summary>
   /// Provides principal component analysis (PCA) routines.
   /// </summary>
-  public class PrincipalComponentAnalysis
+  public record PrincipalComponentAnalysisByNIPALS : ILowRankMatrixFactorization
   {
-    /// <summary>
-    /// Computes PCA factors and loadings by singular value decomposition (SVD).
-    /// </summary>
-    /// <param name="data">The data matrix (rows: observations/spectra; columns: variables/spectral points).</param>
-    /// <param name="numberOfComponents">The number of principal components to extract.</param>
-    /// <returns>
-    /// A tuple containing the matrix of factors (scores) and the matrix of loadings.
-    /// </returns>
-    public static (Matrix<double> factors, Matrix<double> loadings) BySVD(Matrix<double> data, int numberOfComponents)
+    public double Accuracy
     {
-      int numberOfSpectra = data.RowCount;
-      int spectralPoints = data.ColumnCount;
-
-      var svd = data.Svd();
-
-      var mfactors = CreateMatrix.Dense<double>(numberOfSpectra, numberOfComponents);
-      for (int i = 0; i < numberOfComponents; i++)
+      get => field;
+      init
       {
-        var singularValue = svd.S[i];
-        for (int r = 0; r < numberOfSpectra; r++)
-        {
-          mfactors[r, i] = svd.U[r, i] * singularValue;
-        }
+        if (!(value > 0 && value < 1))
+          throw new ArgumentOutOfRangeException(nameof(Accuracy), "Accuracy must be in the range (0, 1).");
+        field = value;
       }
-      var mloads = svd.VT.SubMatrix(0, numberOfComponents, 0, spectralPoints);
-      return (mfactors, mloads);
+    } = 1E-9;
+
+
+    #region Serialization
+
+    /// <summary>
+    /// XML serialization surrogate (version 0).
+    /// </summary>
+    /// <remarks>V0: 2026-01-13.</remarks>
+    [Altaxo.Serialization.Xml.XmlSerializationSurrogateFor(typeof(PrincipalComponentAnalysisByNIPALS), 0)]
+    public class SerializationSurrogate0 : Altaxo.Serialization.Xml.IXmlSerializationSurrogate
+    {
+      /// <inheritdoc/>
+      public void Serialize(object obj, Altaxo.Serialization.Xml.IXmlSerializationInfo info)
+      {
+        var s = (PrincipalComponentAnalysisByNIPALS)obj;
+        info.AddValue("Accuracy", s.Accuracy);
+      }
+
+      /// <inheritdoc/>
+      public object Deserialize(object? o, Altaxo.Serialization.Xml.IXmlDeserializationInfo info, object? parent)
+      {
+        var accuracy = info.GetDouble("Accuracy");
+        return ((o as PrincipalComponentAnalysisByNIPALS) ?? new PrincipalComponentAnalysisByNIPALS()) with
+        {
+          Accuracy = accuracy
+        };
+      }
     }
 
+    #endregion
 
     /// <summary>
     /// Calculates eigenvectors (loads) and the corresponding eigenvalues (scores)
@@ -148,5 +160,18 @@ namespace Altaxo.Calc.LinearAlgebra.Factorization
         }
       } // for all factors
     } // end NIPALS
+
+    public (Matrix<double> W, Matrix<double> H) Factorize(Matrix<double> A, int rank)
+    {
+      var factors = new MatrixMath.TopSpineJaggedArrayMatrix<double>(0, 0);
+      var loads = new MatrixMath.LeftSpineJaggedArrayMatrix<double>(0, 0);
+      var residualVariances = new MatrixMath.LeftSpineJaggedArrayMatrix<double>(0, 0);
+      NIPALS_HO(A, rank, 1E-9, factors, loads, residualVariances);
+      var W = CreateMatrix.Dense<double>(A.RowCount, rank);
+      var H = CreateMatrix.Dense<double>(rank, A.ColumnCount);
+      MatrixMath.Copy(factors, W);
+      MatrixMath.Copy(loads, H);
+      return (W, H);
+    }
   }
 }

@@ -18,14 +18,24 @@
         <Grid.RowDefinitions>
             <RowDefinition Height="Auto" />
             <RowDefinition Height="4" />
-            <RowDefinition Height="Auto" />
+            <RowDefinition Height="*" />
             <RowDefinition Height="4" />
-           
         </Grid.RowDefinitions>
         <Label Grid.Row="0"
                Grid.Column="0"
+               Content="Factorization method:" />
+
+        <ComboBox Grid.Row="0"
+                  Grid.Column="2"
+                  Width="200"
+                  ItemsSource="{Binding Method.Items}"
+                  SelectedItem="{Binding Method.SelectedItem, Mode=TwoWay}"
+                  />
+
+        <Label Grid.Row="2"
+               Grid.Column="0"
                Content="Maximum number of factors to calculate:" />
-        <axogc:Int32UpDown Grid.Row="0"
+        <axogc:Int32UpDown Grid.Row="2"
                            Grid.Column="2"
                            Minimum="1"
                            Value="{Binding MaximumNumberOfFactors}" />
