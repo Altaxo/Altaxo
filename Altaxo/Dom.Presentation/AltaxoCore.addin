@@ -484,7 +484,9 @@
                                   class="Altaxo.Worksheet.Commands.PlotLineAndScatter" />
                     <MenuItem id="PlotDensityImage" label="${res:XML.MainMenu.PlotMenu.PlotDensityImage}" description="${res:XML.MainMenu.PlotMenu.PlotDensityImage.Description}"
                                   class="Altaxo.Worksheet.Commands.PlotDensityImage" />
-                    <MenuItem id="PlotArea" label="${res:XML.MainMenu.PlotMenu.PlotLineArea}" description="${res:XML.MainMenu.PlotMenu.PlotLineArea.Description}"
+                  <MenuItem id="PlotDensityImageXYZ" label="${res:XML.MainMenu.PlotMenu.PlotDensityImageFromXYZ}" description="${res:XML.MainMenu.PlotMenu.PlotDensityImageFromXYZ.Description}"
+                                class="Altaxo.Worksheet.Commands.PlotDensityImageFromXYZ" />
+                  <MenuItem id="PlotArea" label="${res:XML.MainMenu.PlotMenu.PlotLineArea}" description="${res:XML.MainMenu.PlotMenu.PlotLineArea.Description}"
                                   class="Altaxo.Worksheet.Commands.PlotLineArea" />
                     <MenuItem id="PlotLineStack" label="${res:XML.MainMenu.PlotMenu.PlotLineStack}" description="${res:XML.MainMenu.PlotMenu.PlotLineStack.Description}"
                                   class="Altaxo.Worksheet.Commands.PlotLineStack" />
@@ -1237,17 +1239,12 @@
         <Condition name="SelectedDataColumns" selected="one" action="Disable">
             <MenuItem id="Rename" label="${res:XML.MainMenu.ColumnMenu.Rename}" description="${res:XML.MainMenu.ColumnMenu.Rename.Description}"
                       class="Altaxo.Worksheet.Commands.RenameColumn" />
-            <MenuItem	id="SetColumnValues" label="${res:XML.MainMenu.ColumnMenu.SetColumnValues}"	description="${res:XML.MainMenu.ColumnMenu.SetColumnValues.Description}"
-                      class="Altaxo.Worksheet.Commands.SetColumnValues"	/>
             <MenuItem	id="SetColumnAsX"	label="${res:XML.MainMenu.ColumnMenu.SetColumnAsX}"	description="${res:XML.MainMenu.ColumnMenu.SetColumnAsX.Description}"
                       class="Altaxo.Worksheet.Commands.SetColumnAsX" />
+          <MenuItem	id="SetColumnAsY"	label="${res:XML.MainMenu.ColumnMenu.SetColumnAsY}"	description="${res:XML.MainMenu.ColumnMenu.SetColumnAsY.Description}"
+                    class="Altaxo.Worksheet.Commands.SetColumnAsY" />
         </Condition>
        <Condition name="SelectedDataColumns" selected="oneormore" action="Disable">
-        <MenuItem	id="SortTableAsc"	label="${res:XML.MainMenu.ColumnMenu.SortTableAscending}"	description="${res:XML.MainMenu.ColumnMenu.SortTableAscending.Description}"
-                  class="Altaxo.Worksheet.Commands.SortTableAscending" />
-        <MenuItem	id="SortTableDesc"	label="${res:XML.MainMenu.ColumnMenu.SortTableDescending}"	description="${res:XML.MainMenu.ColumnMenu.SortTableDescending.Description}"
-                  class="Altaxo.Worksheet.Commands.SortTableDescending" />
-
       <MenuItem	id="SetColumnAsV"	label="${res:XML.MainMenu.ColumnMenu.SetColumnAsValue}"	description="${res:XML.MainMenu.ColumnMenu.SetColumnAsValue.Description}"
                 class="Altaxo.Worksheet.Commands.SetColumnAsValue" />
         <MenuItem	id="SetColumnAsLabel"	label="${res:XML.MainMenu.ColumnMenu.SetColumnAsLabel}"	description="${res:XML.MainMenu.ColumnMenu.SetColumnAsLabel.Description}"
@@ -1262,8 +1259,11 @@
                 class="Altaxo.Worksheet.Commands.SetColumnGroupNumber" />
         <MenuItem	id="MoveColumns" label="${res:XML.MainMenu.ColumnMenu.MoveColumns}"	description="${res:XML.MainMenu.ColumnMenu.MoveColumns.Description}"
                 class="Altaxo.Worksheet.Commands.SetColumnPosition"	/>
-
-        <MenuItem id="CleanSeparator"  type = "Separator" />
+         <MenuItem	id="SortTableAsc"	label="${res:XML.MainMenu.ColumnMenu.SortTableAscending}"	description="${res:XML.MainMenu.ColumnMenu.SortTableAscending.Description}"
+                   class="Altaxo.Worksheet.Commands.SortTableAscending" />
+         <MenuItem	id="SortTableDesc"	label="${res:XML.MainMenu.ColumnMenu.SortTableDescending}"	description="${res:XML.MainMenu.ColumnMenu.SortTableDescending.Description}"
+                   class="Altaxo.Worksheet.Commands.SortTableDescending" />
+         <MenuItem id="CleanSeparator"  type = "Separator" />
         <MenuItem id="Clean" label="${res:XML.MainMenu.EditMenu.Clean}" icon="Icons.16x16.CleanWorksheetIcon"
                 description="${res:XML.MainMenu.EditMenu.Clean.Description}" class="Altaxo.Worksheet.Commands.EditClean" />
         <MenuItem id="Delete" label="${res:XML.MainMenu.EditMenu.Delete}" icon="Icons.16x16.DeleteIcon"
@@ -1271,8 +1271,12 @@
         <MenuItem id="Delete" label="${res:XML.MainMenu.EditMenu.DeleteAllButSelected}" icon="Icons.16x16.DeleteIcon"
                 description="${res:XML.MainMenu.EditMenu.DeleteAllButSelected.Description}" class="Altaxo.Worksheet.Commands.RemoveAllButSelected" />
        </Condition>
+      <Condition name="SelectedDataColumns" selected="one" action="Disable">
+        <MenuItem	id="SetColumnValues" label="${res:XML.MainMenu.ColumnMenu.SetColumnValues}"	description="${res:XML.MainMenu.ColumnMenu.SetColumnValues.Description}"
+                  class="Altaxo.Worksheet.Commands.SetColumnValues"	/>
+      </Condition>
 
-     </Path>
+    </Path>
 
     <Path name = "/Altaxo/Views/Worksheet/DataRowHeader/ContextMenu">
 

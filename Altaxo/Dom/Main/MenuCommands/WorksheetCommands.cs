@@ -405,7 +405,15 @@ namespace Altaxo.Worksheet.Commands
   {
     public override void Run(Altaxo.Gui.Worksheet.Viewing.WorksheetController ctrl)
     {
-      Altaxo.Worksheet.Commands.PlotCommands.PlotDensityImage(ctrl, true, true);
+      Altaxo.Worksheet.Commands.PlotCommands.PlotDensityImage(ctrl);
+    }
+  }
+
+  public class PlotDensityImageFromXYZ : AbstractWorksheetControllerCommand
+  {
+    public override void Run(Altaxo.Gui.Worksheet.Viewing.WorksheetController ctrl)
+    {
+      Altaxo.Worksheet.Commands.PlotCommands.PlotDensityImageFromXYZ(ctrl);
     }
   }
 

@@ -1594,7 +1594,7 @@
     <value>Plot the selected columns as areas</value>
   </data>
   <data name="XML.MainMenu.PlotMenu.PlotDensityImage" xml:space="preserve">
-    <value>&amp;Density Image</value>
+    <value>&amp;Density Image (from matrix)</value>
   </data>
   <data name="XML.MainMenu.NewLayerMenu.LinkedTopXRightY" xml:space="preserve">
     <value>(Linked): Top X + Right Y</value>
@@ -1890,5 +1890,11 @@
   </data>
   <data name="XML.MainMenu.FileMenu.Import.AnyDataFile.Description" xml:space="preserve">
     <value>Imports data file(s) (Ascii, spectra files, etc.)</value>
+  </data>
+  <data name="XML.MainMenu.PlotMenu.PlotDensityImageFromXYZ" xml:space="preserve">
+    <value>Density Image (from X-Y-V)</value>
+  </data>
+  <data name="XML.MainMenu.PlotMenu.PlotDensityImageFromXYZ.Description" xml:space="preserve">
+    <value>Creates a linear density image of the selected V column. The X- and Y-column must be marked as 'X' and 'Y'.</value>
   </data>
 </root>

@@ -24,6 +24,7 @@
 
 #nullable enable
 using System;
+using System.Collections.Generic;
 
 namespace Altaxo.Data
 {
@@ -89,6 +90,40 @@ namespace Altaxo.Data
         column = trc.UnderlyingReadableColumn;
       }
       return column as DataColumn;
+    }
+
+    /// <summary>
+    /// Returns an enumerable for this column.
+    /// </summary>
+    /// <returns>A enumerable.</returns>
+    public IEnumerable<AltaxoVariant> AsEnumerable()
+    {
+      if (Count.HasValue)
+      {
+        for (int i = 0; i < Count.Value; i++)
+        {
+          yield return this[i];
+        }
+      }
+      else
+      {
+        throw new InvalidOperationException("Cannot enumerate column with undefined count.");
+      }
+    }
+
+    /// <summary>
+    /// Returns an enumerable collection of elements.
+    /// </summary>
+    /// <param name="countForInfiniteSequences">If this column has no count defined (i.e. it is an infinte sequence),
+    /// then the provided count is used instead.</param>
+    /// <returns>An enumerable sequence of up to either (i) the defined number of elements of this column, or (ii) the provided <paramref name="countForInfiniteSequences"/>.</returns>
+    public IEnumerable<AltaxoVariant> AsEnumerable(int countForInfiniteSequences)
+    {
+      int count = Count ?? countForInfiniteSequences;
+      for (int i = 0; i < count; i++)
+      {
+        yield return this[i];
+      }
     }
   }
 }

@@ -361,6 +361,25 @@ namespace Altaxo.Graph.Gdi.Plot.Styles
     }
 
     /// <summary>
+    /// This routine ensures that the plot item updates all its cached data and send the appropriate
+    /// events if something has changed. Called before the layer paint routine paints the axes because
+    /// it must be ensured that the axes are scaled correctly before the plots are painted.
+    /// </summary>
+    /// <param name="layer">The plot layer.</param>
+    /// <param name="plotData">The plot data which are here used to determine the bounds of the independent data column.</param>
+    public void PrepareScales(IPlotArea layer, XYZColumnPlotData plotData)
+    {
+      NumericalBoundaries pb = _scale.DataBounds;
+      plotData.SetZBoundsFromTemplate(pb); // ensure that the right v-boundary type is set
+      using (var suspendToken = pb.SuspendGetToken())
+      {
+        pb.Reset();
+        plotData.MergeZBoundsInto(pb);
+        suspendToken.Resume();
+      }
+    }
+
+    /// <summary>
     /// Paint the density image in the layer.
     /// </summary>
     /// <param name="gfrx">The graphics context painting in.</param>
@@ -368,10 +387,48 @@ namespace Altaxo.Graph.Gdi.Plot.Styles
     /// <param name="plotObject">The data to plot.</param>
     public void Paint(Graphics gfrx, IPlotArea gl, object plotObject) // plots the curve with the choosen style
     {
-      if (!(plotObject is XYZMeshedColumnPlotData))
-        return; // we cannot plot any other than a TwoDimMeshDataAssociation now
+      if (plotObject is XYZMeshedColumnPlotData myPlotAssociation)
+      {
+        Paint(gfrx, gl, myPlotAssociation);
+      }
+      else if (plotObject is XYZColumnPlotData xyzData)
+      {
+        Paint(gfrx, gl, xyzData);
+      }
+    }
 
-      var myPlotAssociation = (XYZMeshedColumnPlotData)plotObject;
+    /// <summary>
+    /// Paint the density image in the layer.
+    /// </summary>
+    /// <param name="gfrx">The graphics context painting in.</param>
+    /// <param name="gl">The layer painting in.</param>
+    /// <param name="plotObject">The data to plot.</param>
+    public void Paint(Graphics gfrx, IPlotArea gl, XYZColumnPlotData plotData) // plots the curve with the choosen style
+    {
+      // Find out if the plot data can be treated as meshed column data
+
+      var (success, x, y, zMatrix) = plotData.TryGetMesh(gl.XAxis.PhysicalVariantToNormal, gl.YAxis.PhysicalVariantToNormal, x => x);
+
+      if (success)
+      {
+        Paint(gfrx, gl, zMatrix, x, y);
+      }
+      else
+      {
+        // TODO use a bivariate Radial Spline interpolation to get a smooth image
+      }
+    }
+
+
+
+    /// <summary>
+    /// Paint the density image in the layer.
+    /// </summary>
+    /// <param name="gfrx">The graphics context painting in.</param>
+    /// <param name="gl">The layer painting in.</param>
+    /// <param name="plotObject">The data to plot.</param>
+    public void Paint(Graphics gfrx, IPlotArea gl, XYZMeshedColumnPlotData myPlotAssociation) // plots the curve with the choosen style
+    {
       myPlotAssociation.DataTableMatrix.GetWrappers(
         gl.XAxis.PhysicalVariantToNormal, // transformation function for row header values
         Precision.IsFinite,       // selection functiton for row header values
@@ -381,6 +438,12 @@ namespace Altaxo.Graph.Gdi.Plot.Styles
         out var logicalRowHeaderValues,
         out var logicalColumnHeaderValues
         );
+
+      Paint(gfrx, gl, matrix, logicalRowHeaderValues, logicalColumnHeaderValues);
+    }
+
+    public void Paint(Graphics gfrx, IPlotArea gl, IROMatrix<double> matrix, IReadOnlyList<double> logicalRowHeaderValues, IReadOnlyList<double> logicalColumnHeaderValues) // plots the curve with the choosen style
+    {
 
       int cols = matrix.ColumnCount;
       int rows = matrix.RowCount;
@@ -413,7 +476,7 @@ namespace Altaxo.Graph.Gdi.Plot.Styles
       // note that the image type can change during the call of BuildImage
       if (_imageType == CachedImageType.None || _cachedImage is null)
       {
-        BuildImage(gfrx, gl, myPlotAssociation, matrix, logicalRowHeaderValues, logicalColumnHeaderValues);
+        BuildImage(gfrx, gl, matrix, logicalRowHeaderValues, logicalColumnHeaderValues);
         switch (_imageType)
         {
           case CachedImageType.LinearEquidistant:
@@ -555,7 +618,7 @@ namespace Altaxo.Graph.Gdi.Plot.Styles
     }
 
     [MemberNotNull(nameof(_cachedImage))]
-    private void BuildImage(Graphics gfrx, IPlotArea gl, XYZMeshedColumnPlotData myPlotAssociation, IROMatrix<double> matrix, IReadOnlyList<double> logicalRowHeaderValues, IReadOnlyList<double> logicalColumnHeaderValues)
+    private void BuildImage(Graphics gfrx, IPlotArea gl, IROMatrix<double> matrix, IReadOnlyList<double> logicalRowHeaderValues, IReadOnlyList<double> logicalColumnHeaderValues)
     {
       // ---------------- prepare the color scaling -------------------------------------
 

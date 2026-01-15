@@ -580,10 +580,8 @@ namespace Altaxo.Worksheet.Commands
     /// <summary>
     /// Plots a density image of the selected columns.
     /// </summary>
-    /// <param name="dg"></param>
-    /// <param name="bLine"></param>
-    /// <param name="bScatter"></param>
-    public static void PlotDensityImage(IWorksheetController dg, bool bLine, bool bScatter)
+    /// <param name="dg">The worksheet controller.</param>
+    public static void PlotDensityImage(IWorksheetController dg)
     {
       var graph = Altaxo.Graph.Gdi.GraphTemplates.TemplateWithXYPlotLayerWithG2DCartesicCoordinateSystem.CreateGraph(dg.DataTable.GetPropertyContext(), null, dg.DataTable.Name, true);
       var xylayer = graph.RootLayer.Layers.OfType<XYPlotLayer>().First();
@@ -598,6 +596,38 @@ namespace Altaxo.Worksheet.Commands
         assoc.DataTableMatrix.ColumnHeaderColumn = new IndexerColumn();
 
       IGPlotItem pi = new DensityImagePlotItem(assoc, plotStyle);
+      xylayer.PlotItems.Add(pi);
+      Current.ProjectService.CreateNewGraph(graph);
+    }
+
+    /// <summary>
+    /// Plots a density image of the selected V-column. The X and Y columns are determined from the table.
+    /// </summary>
+    /// <param name="ctrl">The worksheet controller</param>
+    public static void PlotDensityImageFromXYZ(IWorksheetController ctrl)
+    {
+      var graph = Altaxo.Graph.Gdi.GraphTemplates.TemplateWithXYPlotLayerWithG2DCartesicCoordinateSystem.CreateGraph(ctrl.DataTable.GetPropertyContext(), null, ctrl.DataTable.Name, true);
+      var xylayer = graph.RootLayer.Layers.OfType<XYPlotLayer>().First();
+      var context = graph.GetPropertyContext();
+      var plotStyle = new DensityImagePlotStyle();
+
+      IReadableColumn? x = null, y = null;
+      DataColumn? z = null;
+      if (ctrl.SelectedDataColumns.Count == 1)
+      {
+        z = ctrl.DataTable[ctrl.SelectedDataColumns[0]];
+        x = (IReadableColumn?)ctrl.DataTable.DataColumns.FindXColumnOf(z) ?? new IndexerColumn();
+        y = (IReadableColumn?)ctrl.DataTable.DataColumns.FindYColumnOf(z) ?? new IndexerColumn();
+      }
+      else
+      {
+        Current.Gui.ErrorMessageBox("Please select exactly one data column for the Z values (color) of the density image plot. The corresponding x and y-columns should be marked as 'X' and 'Y' in the table.");
+        return;
+      }
+
+      var plotData = new XYZColumnPlotData(ctrl.DataTable, ctrl.DataTable.DataColumns.GetColumnGroup(z), x, y, z);
+
+      IGPlotItem pi = new XYZDensityImagePlotItem(plotData, plotStyle);
       xylayer.PlotItems.Add(pi);
       Current.ProjectService.CreateNewGraph(graph);
     }

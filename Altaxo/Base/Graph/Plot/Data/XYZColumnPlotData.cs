@@ -26,6 +26,8 @@
 using System;
 using System.Collections.Generic;
 using System.Diagnostics.CodeAnalysis;
+using System.Linq;
+using Altaxo.Calc.LinearAlgebra;
 using Altaxo.Data;
 using Altaxo.Data.Selections;
 using Altaxo.Geometry;
@@ -435,7 +437,7 @@ namespace Altaxo.Graph.Plot.Data
     /// </summary>
     /// <param name="val">The template boundary object.</param>
     [MemberNotNull(nameof(_xBoundaries))]
-    protected void SetXBoundsFromTemplate(IPhysicalBoundaries val)
+    public void SetXBoundsFromTemplate(IPhysicalBoundaries val)
     {
       if (_xBoundaries is null || val.GetType() != _xBoundaries.GetType())
       {
@@ -454,7 +456,7 @@ namespace Altaxo.Graph.Plot.Data
     /// </summary>
     /// <param name="val">The template boundary object.</param>
     [MemberNotNull(nameof(_yBoundaries))]
-    protected void SetYBoundsFromTemplate(IPhysicalBoundaries val)
+    public void SetYBoundsFromTemplate(IPhysicalBoundaries val)
     {
       if (_yBoundaries is null || val.GetType() != _yBoundaries.GetType())
       {
@@ -473,7 +475,7 @@ namespace Altaxo.Graph.Plot.Data
     /// </summary>
     /// <param name="val">The template boundary object.</param>
     [MemberNotNull(nameof(_zBoundaries))]
-    protected void SetZBoundsFromTemplate(IPhysicalBoundaries val)
+    public void SetZBoundsFromTemplate(IPhysicalBoundaries val)
     {
       if (_zBoundaries is null || val.GetType() != _zBoundaries.GetType())
       {
@@ -742,6 +744,63 @@ namespace Altaxo.Graph.Plot.Data
         suspendTokenY?.Resume();
         suspendTokenZ?.Resume();
       }
+    }
+
+    public IEnumerable<(AltaxoVariant x, AltaxoVariant y, AltaxoVariant z, int rowIndex)> GetDataPoints(bool ensureZIsNotEmpty)
+    {
+      var xColumn = XColumn;
+      var yColumn = YColumn;
+      var zColumn = ZColumn;
+      if (xColumn is null || yColumn is null || zColumn is null || DataTable is null)
+        yield break;
+
+      int maxRowIndex = GetMaximumRowIndexFromDataColumns();
+      foreach ((int start, int endExclusive) in _dataRowSelection.GetSelectedRowIndexSegmentsFromTo(0, maxRowIndex, DataTable.DataColumns, maxRowIndex))
+      {
+        for (int dataRowIdx = start; dataRowIdx < endExclusive; ++dataRowIdx)
+        {
+          if (xColumn.IsElementEmpty(dataRowIdx) || yColumn.IsElementEmpty(dataRowIdx) || (ensureZIsNotEmpty && zColumn.IsElementEmpty(dataRowIdx)))
+            continue;
+          yield return (xColumn[dataRowIdx], yColumn[dataRowIdx], zColumn[dataRowIdx], dataRowIdx);
+        }
+      }
+    }
+
+    public (bool success, double[] x, double[] y, Matrix<double> z) TryGetMesh(Func<AltaxoVariant, double> xTransformation, Func<AltaxoVariant, double> yTransformation, Func<AltaxoVariant, double> zTransformation)
+    {
+      // Find out if the plot data can be treated as meshed column data
+      var xHash = new HashSet<double>();
+      var yHash = new HashSet<double>();
+
+      int numberOfValidPoints = 0;
+      foreach (var (x, y, _, _) in GetDataPoints(ensureZIsNotEmpty: true))
+      {
+        xHash.Add(xTransformation(x));
+        yHash.Add(yTransformation(y));
+        ++numberOfValidPoints;
+      }
+      if (xHash.Count * yHash.Count != numberOfValidPoints)
+        return (false, null, null, null);
+
+      var xValues = xHash.ToArray();
+      Array.Sort(xValues);
+      var xDict = new Dictionary<double, int>(xValues.Select((v, i) => new KeyValuePair<double, int>(v, i)));
+      var yValues = yHash.ToArray();
+      Array.Sort(yValues);
+      var yDict = new Dictionary<double, int>(yValues.Select((v, i) => new KeyValuePair<double, int>(v, i)));
+
+      var zValues = CreateMatrix.Dense<double>(xValues.Length, yValues.Length);
+
+      foreach (var (x, y, z, _) in GetDataPoints(ensureZIsNotEmpty: true))
+      {
+        var xx = xTransformation(x);
+        var yy = yTransformation(y);
+
+        int ix = xDict[xx];
+        int iy = yDict[yy];
+        zValues[ix, iy] = zTransformation(z);
+      }
+      return (true, xValues, yValues, zValues);
     }
 
     private class MyPlotData

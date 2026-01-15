@@ -201,6 +201,24 @@ namespace Altaxo.Data
       _dependentVariables = [yCol];
     }
 
+    /// <summary>
+    /// Initializes a new instance of the <see cref="IndependentAndDependentColumns"/> class from given proxies of DataTable and columns.
+    /// This constructor is intended for internal use only, e.g. for creating copies of existing instances.
+    /// ATTENTION: The proxies are not cloned! 
+    /// </summary>
+    /// <param name="table">The table proxy.</param>
+    /// <param name="groupNumber">The group number of the x- and y-column.</param>
+    /// <param name="xCol">The proxy of the x-column.</param>
+    /// <param name="yCol">The proxy of the y-column.</param>
+    protected IndependentAndDependentColumns(DataTableProxy table, int groupNumber, IReadableColumnProxy xCol, IReadableColumnProxy yCol, IReadableColumnProxy zCol)
+    {
+      _rangeOfRows = new AllRows() { ParentObject = this };
+      _dataTable = table;
+      _groupNumber = groupNumber;
+      _independentVariables = [xCol, yCol];
+      _dependentVariables = [zCol];
+    }
+
 
     /// <summary>
     /// Creates a new object that is a copy of the current instance.
@@ -378,13 +396,19 @@ namespace Altaxo.Data
     /// <param name="i">Index.</param>
     /// <param name="col">Independent variable column to set.</param>
     /// <param name="actionAfterSet">A action that is carried out if the variable has been set.</param>
-    public void SetIndependentVariable(int i, IReadableColumn? col, Action? actionAfterSet = null)
+    /// <returns><c>true</c> if the variable was changed; <c>false</c> if the new value was identical to the old value.</returns>
+    public bool SetIndependentVariable(int i, IReadableColumn? col, Action? actionAfterSet = null)
     {
       if (!object.ReferenceEquals(_independentVariables[i]?.Document(), col))
       {
         ChildSetMember(ref _independentVariables[i], ReadableColumnProxyBase.FromColumn(col));
         actionAfterSet?.Invoke();
         EhSelfChanged(EventArgs.Empty);
+        return true;
+      }
+      else
+      {
+        return false;
       }
     }
 
@@ -436,13 +460,19 @@ namespace Altaxo.Data
     /// <param name="i">Index.</param>
     /// <param name="col">Dependent variable column to set.</param>
     /// <param name="actionAfterSet">A action that is carried out if the variable has been set.</param>
-    public virtual void SetDependentVariable(int i, IReadableColumn? col, Action? actionAfterSet = null)
+    /// <returns><c>true</c> if the variable was changed; <c>false</c> if the new value was identical to the old value.</returns>
+    public virtual bool SetDependentVariable(int i, IReadableColumn? col, Action? actionAfterSet = null)
     {
       if (!object.ReferenceEquals(_dependentVariables[i]?.Document(), col))
       {
         ChildSetMember(ref _dependentVariables[i], ReadableColumnProxyBase.FromColumn(col));
         actionAfterSet?.Invoke();
         EhSelfChanged(EventArgs.Empty);
+        return true;
+      }
+      else
+      {
+        return false;
       }
     }
 
