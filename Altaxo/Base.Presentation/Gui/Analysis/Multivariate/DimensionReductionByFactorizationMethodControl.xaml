@@ -12,13 +12,13 @@
         <Grid.ColumnDefinitions>
             <ColumnDefinition Width="Auto" />
             <ColumnDefinition Width="4" />
-            <ColumnDefinition Width="Auto" />
+            <ColumnDefinition Width="*" />
             <ColumnDefinition Width="4" />
         </Grid.ColumnDefinitions>
         <Grid.RowDefinitions>
             <RowDefinition Height="Auto" />
             <RowDefinition Height="4" />
-            <RowDefinition Height="*" />
+            <RowDefinition Height="Auto" />
             <RowDefinition Height="4" />
         </Grid.RowDefinitions>
         <Label Grid.Row="0"
@@ -27,7 +27,6 @@
 
         <ComboBox Grid.Row="0"
                   Grid.Column="2"
-                  Width="200"
                   ItemsSource="{Binding Method.Items}"
                   SelectedItem="{Binding Method.SelectedItem, Mode=TwoWay}"
                   />

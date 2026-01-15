@@ -204,12 +204,12 @@ namespace Altaxo.Calc.Regression.Multivariate
     /// <param name="scaleX">On return, contains the scaling factor for each spectral slot.</param>
     public static void PreprocessSpectraForAnalysis(
       ISingleSpectrumPreprocessor preprocessSingleSpectrum,
-      IEnsembleMeanScalePreprocessor preprocessEnsembleOfSpectra,
+      IEnsembleMeanScalePreprocessor? preprocessEnsembleOfSpectra,
       double[] xOfXRaw, IROMatrix<double> matrixXRaw,
       out int[] regionsPre, out double[] xOfXPre, out IMatrix<double> matrixXPre,
       out IVector<double> meanX, out IVector<double> scaleX)
     {
-      PreprocessSpectraFirstPart(preprocessSingleSpectrum, preprocessEnsembleOfSpectra, xOfXRaw, matrixXRaw,
+      PreprocessSpectraFirstPart(preprocessSingleSpectrum, null, xOfXRaw, matrixXRaw,
         out regionsPre, out xOfXPre, out matrixXPre);
 
       meanX = CreateVector.Dense<double>(xOfXPre.Length);

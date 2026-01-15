@@ -25,6 +25,7 @@
 using System.Collections.Generic;
 using Altaxo.Calc.LinearAlgebra;
 using Altaxo.Data;
+using Altaxo.Science.Spectroscopy.EnsembleProcessing;
 
 namespace Altaxo.Calc.Regression.Multivariate
 {
@@ -71,7 +72,7 @@ namespace Altaxo.Calc.Regression.Multivariate
 
 
     /// <inheritdoc/>
-    public void SaveResultToTable(DataTable sourceTable, DataTable destinationTable, int[] columnNumbersOfSpectraInSourceTable, double[] xValuesOfPreprocessedSpectra)
+    public void SaveResultToTable(DimensionReductionOutputOptions outputOptions, DataTable sourceTable, DataTable destinationTable, int[] columnNumbersOfSpectraInSourceTable, double[] xValuesOfPreprocessedSpectra, Matrix<double> preprocessedSpectra, IEnsembleProcessingAuxiliaryData auxiliaryData)
     {
       int numberOfSpectralPoints = Loadings.ColumnCount;
       int numberOfSpectra = Factors.RowCount;
@@ -92,6 +93,7 @@ namespace Altaxo.Calc.Regression.Multivariate
         for (int i = 0; i < numberOfSpectra; ++i)
           column[i] = sourceTable.PropertyColumns[idxPropColumn][columnNumbersOfSpectraInSourceTable[i]];
       }
+
       // and now the factors
       for (int idxFactor = 0; idxFactor < numberOfFactors; ++idxFactor)
       {
@@ -114,8 +116,47 @@ namespace Altaxo.Calc.Regression.Multivariate
         }
       }
 
+      if (outputOptions.IncludeEnsemblePreprocessingAuxiliaryData && auxiliaryData is not null)
+      {
+        SaveAuxiliarySpectralData(auxiliaryData, numberOfSpectralPoints, destinationTable, groupNumber);
+      }
 
+      // Save the preprocessed spectra, this should have the same group number as the loadings
+      if (outputOptions.IncludePreprocessedSpectra)
+      {
+        for (int idxSpectrum = 0; idxSpectrum < numberOfSpectra; idxSpectrum++)
+        {
+          var spectrumColumn = destinationTable.DataColumns.EnsureExistence($"PreprocessedData_{idxSpectrum}", typeof(DoubleColumn), ColumnKind.V, groupNumber);
+          for (int idxSpectralPoint = 0; idxSpectralPoint < numberOfSpectralPoints; idxSpectralPoint++)
+          {
+            spectrumColumn[idxSpectralPoint] = preprocessedSpectra[idxSpectrum, idxSpectralPoint];
+            var columnNumberOfSpectrumInDestinationTable = destinationTable.DataColumns.GetColumnNumber(spectrumColumn);
 
+            for (int idxPropColumn = 0; idxPropColumn < sourceTable.PropertyColumnCount; ++idxPropColumn)
+            {
+              var pcolumn = destinationTable.PropertyColumns.EnsureExistence(sourceTable.PropertyColumns.GetColumnName(idxPropColumn), sourceTable.PropertyColumns[idxPropColumn].GetType(), ColumnKind.V, 0);
+              pcolumn[columnNumberOfSpectrumInDestinationTable] = sourceTable.PropertyColumns[idxPropColumn][columnNumbersOfSpectraInSourceTable[idxSpectrum]];
+            }
+          }
+        }
+      }
+    }
+
+    void SaveAuxiliarySpectralData(IEnsembleProcessingAuxiliaryData data, int numberOfSpectralPoints, DataTable destinationTable, int groupNumber)
+    {
+      if (data is EnsembleAuxiliaryDataCompound compound)
+      {
+        foreach (var item in compound.Values)
+        {
+          SaveAuxiliarySpectralData(item, numberOfSpectralPoints, destinationTable, groupNumber);
+        }
+      }
+      else if (data is EnsembleAuxiliaryDataVector vector && vector.Value.Length == numberOfSpectralPoints)
+      {
+        // save the data)
+        var column = destinationTable.DataColumns.EnsureExistence(data.Name, typeof(DoubleColumn), ColumnKind.V, groupNumber);
+        column.Data = vector.Value;
+      }
     }
   }
 }

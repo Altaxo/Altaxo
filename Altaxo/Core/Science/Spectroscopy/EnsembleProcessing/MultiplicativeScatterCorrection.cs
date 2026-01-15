@@ -8,8 +8,11 @@ namespace Altaxo.Science.Spectroscopy.EnsembleProcessing
   /// <summary>
   /// This class processes the spectra for the influence of multiplicative scattering.
   /// </summary>
-  public record MultiplicativeScatterCorrection : IEnsembleMeanScalePreprocessor, Main.IImmutable
+  public record MultiplicativeScatterCorrection : IEnsembleMeanScalePreprocessor, IEnsemblePreprocessor, Main.IImmutable
   {
+    const string AuxiliaryDataName = "MultiplicativeScatterCorrection";
+    const string AuxiliaryDataMeanName = "EnsembleMean";
+    const string AuxiliaryDataScaleName = "EnsembleScale";
     /// <summary>
     /// Gets a value indicating whether the ensemble scale (for each spectral slot) should be calculated.
     /// </summary>
@@ -152,6 +155,57 @@ namespace Altaxo.Science.Spectroscopy.EnsembleProcessing
     public void Export(XmlWriter writer)
     {
       writer.WriteElementString("MultiplicativeScatterCorrection", string.Empty);
+    }
+
+    public (double[] x, Matrix<double> y, int[]? regions, IEnsembleProcessingAuxiliaryData? auxiliaryData) Execute(double[] x, Matrix<double> y, int[]? regions)
+    {
+      var newY = y.Clone();
+      var xMean = new double[newY.ColumnCount];
+      var xScale = new double[newY.ColumnCount];
+      Process(newY, regions, xMean.ToVector(), xScale.ToVector());
+
+      var auxData = new EnsembleAuxiliaryDataCompound
+      {
+        Name = AuxiliaryDataName,
+        Values = [
+          new EnsembleAuxiliaryDataVector { Name = AuxiliaryDataMeanName, Value = xMean },
+          new EnsembleAuxiliaryDataVector { Name = AuxiliaryDataScaleName, Value = xScale }
+          ]
+      };
+
+      return (x, newY, regions, auxData);
+    }
+
+    public (double[] x, Matrix<double> y, int[]? regions) ExecuteForPrediction(double[] x, Matrix<double> spectraMatrix, int[] regions, IEnsembleProcessingAuxiliaryData? auxillaryData)
+    {
+      if (auxillaryData is not EnsembleAuxiliaryDataCompound data || data.Name != AuxiliaryDataName)
+      {
+        throw new System.ArgumentException("Auxillary data is not of expected type EnsembleAuxiliaryDataCompound.", nameof(auxillaryData));
+      }
+      if (data.Values.Length != 2)
+      {
+        throw new System.ArgumentException("Auxillary data does not contain two elements.", nameof(auxillaryData));
+      }
+      if (data.Values[0] is not EnsembleAuxiliaryDataVector aux0 || aux0.Name != AuxiliaryDataMeanName)
+      {
+        throw new System.ArgumentException($"Auxillary data does not contain {AuxiliaryDataMeanName}.", nameof(auxillaryData));
+      }
+      if (data.Values[1] is not EnsembleAuxiliaryDataVector aux1 || aux1.Name != AuxiliaryDataScaleName)
+      {
+        throw new System.ArgumentException($"Auxillary data does not contain {AuxiliaryDataScaleName}.", nameof(auxillaryData));
+      }
+
+      var xMean = aux0.Value;
+      var xScale = aux1.Value;
+
+      var yNew = spectraMatrix.Clone();
+      ProcessForPrediction(yNew, regions, xMean, xScale);
+      return (x, yNew, regions);
+    }
+
+    public (double[] x, double[] y, int[]? regions) Execute(double[] x, double[] y, int[]? regions)
+    {
+      return (x, y, regions);
     }
   }
 }

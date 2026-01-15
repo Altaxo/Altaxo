@@ -60,7 +60,7 @@ namespace Altaxo.Science.Spectroscopy
     /// is the start index of a new spectral region.
     /// </param>
     /// <returns>X-values, y-values, and regions of the processed spectrum.</returns>
-    public (double[] x, Matrix<double> y, int[]? regions, IEnsembleProcessingAuxillaryData? auxillaryData) Execute(double[] x, Matrix<double> y, int[]? regions)
+    public (double[] x, Matrix<double> y, int[]? regions, IEnsembleProcessingAuxiliaryData? auxiliaryData) Execute(double[] x, Matrix<double> y, int[]? regions)
     {
       var (newX, newY, newRegions) = Execute(x, y.Row(0).ToArray(), regions);
       var yresult = Matrix<double>.Build.Dense(y.RowCount, newX.Length);

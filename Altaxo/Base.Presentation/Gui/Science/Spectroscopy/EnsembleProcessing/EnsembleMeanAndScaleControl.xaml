@@ -10,15 +10,9 @@
 <Grid.RowDefinitions>
         <RowDefinition Height="Auto"/>
       <RowDefinition Height="4" />
-      <RowDefinition Height="Auto" />
     </Grid.RowDefinitions>
 
-      <CheckBox Grid.Row="0"
-                Content="Ensemble mean"
-                IsChecked="{Binding EnsembleMean, Mode=TwoWay}" />
-
-
-    <CheckBox Grid.Row="2"
+    <CheckBox Grid.Row="0"
               Content="Ensemble scaling" 
               IsChecked="{Binding EnsembleScale, Mode=TwoWay}"/>
     </Grid>

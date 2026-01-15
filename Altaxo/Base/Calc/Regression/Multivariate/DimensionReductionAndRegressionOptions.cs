@@ -42,7 +42,7 @@ namespace Altaxo.Calc.Regression.Multivariate
     /// <summary>
     /// Gets the preprocessing applied to the ensemble of spectra (for example mean-centering and scaling).
     /// </summary>
-    public IEnsembleMeanScalePreprocessor MeanScaleProcessing { get; init; } = new Altaxo.Science.Spectroscopy.EnsembleProcessing.EnsembleMeanAndScaleCorrection();
+    public IEnsembleMeanScalePreprocessor MeanScaleProcessing { get; init; } = new Altaxo.Science.Spectroscopy.EnsembleMeanScale.EnsembleMeanAndScaleCorrection();
 
     /// <summary>
     /// Gets the analysis method.

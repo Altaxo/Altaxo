@@ -1,8 +1,9 @@
 ﻿using System.Collections.Generic;
 using System.Xml;
 using Altaxo.Calc.LinearAlgebra;
+using Altaxo.Science.Spectroscopy.EnsembleProcessing;
 
-namespace Altaxo.Science.Spectroscopy.EnsembleProcessing
+namespace Altaxo.Science.Spectroscopy.EnsembleMeanScale
 {
   /// <summary>
   /// Corrects the spectral ensemble by subtracting the spectra ensemble mean, and (optionally) scales the variance of each
@@ -15,11 +16,9 @@ namespace Altaxo.Science.Spectroscopy.EnsembleProcessing
     /// </summary>
     public bool EnsembleScale { get; init; }
 
-    public bool EnsembleMean { get; init; } = true;
-
     #region Serialization
 
-    [Altaxo.Serialization.Xml.XmlSerializationSurrogateFor("AltaxoCore", "Altaxo.Science.Spectroscopy.EnsembleMeanScale.EnsembleMeanAndScaleCorrection", 0)]
+    [Altaxo.Serialization.Xml.XmlSerializationSurrogateFor(typeof(EnsembleMeanAndScaleCorrection), 0)]
     public class SerializationSurrogate0 : Altaxo.Serialization.Xml.IXmlSerializationSurrogate
     {
       /// <inheritdoc/>
@@ -36,26 +35,6 @@ namespace Altaxo.Science.Spectroscopy.EnsembleProcessing
         return new EnsembleMeanAndScaleCorrection() { EnsembleScale = ensembleScale };
       }
     }
-
-    [Altaxo.Serialization.Xml.XmlSerializationSurrogateFor(typeof(EnsembleMeanAndScaleCorrection), 1)]
-    public class SerializationSurrogate1 : Altaxo.Serialization.Xml.IXmlSerializationSurrogate
-    {
-      /// <inheritdoc/>
-      public void Serialize(object obj, Altaxo.Serialization.Xml.IXmlSerializationInfo info)
-      {
-        var s = (EnsembleMeanAndScaleCorrection)obj;
-        info.AddValue("EnsembleMean", s.EnsembleMean);
-        info.AddValue("EnsembleScale", s.EnsembleScale);
-      }
-
-      /// <inheritdoc/>
-      public object Deserialize(object? o, Altaxo.Serialization.Xml.IXmlDeserializationInfo info, object? parent)
-      {
-        bool ensembleMean = info.GetBoolean("EnsembleMean");
-        bool ensembleScale = info.GetBoolean("EnsembleScale");
-        return new EnsembleMeanAndScaleCorrection() { EnsembleMean = ensembleMean, EnsembleScale = ensembleScale };
-      }
-    }
     #endregion
 
 
@@ -66,7 +45,7 @@ namespace Altaxo.Science.Spectroscopy.EnsembleProcessing
       {
         MatrixMath.ColumnsToZeroMeanAndUnitVariance(xMatrix, xMean, xScale);
       }
-      else if (EnsembleMean)
+      else
       {
         MatrixMath.ColumnsToZeroMean(xMatrix, xMean);
         for (int i = 0; i < xMatrix.ColumnCount; ++i)

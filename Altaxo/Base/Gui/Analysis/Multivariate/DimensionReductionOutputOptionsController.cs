@@ -23,20 +23,23 @@
 #endregion Copyright
 
 using System.Collections.Generic;
-using Altaxo.Science.Spectroscopy.EnsembleMeanScale;
+using Altaxo.Calc.Regression.Multivariate;
 
-namespace Altaxo.Gui.Science.Spectroscopy.EnsembleProcessing
+namespace Altaxo.Gui.Analysis.Multivariate
 {
-  // MultiplicativeScatterCorrection
 
-  public interface IEnsembleMeanAndScaleView : IDataContextAwareView
+  public interface IDimensionReductionOutputOptionsView : IDataContextAwareView
   {
   }
 
-  [UserControllerForObject(typeof(EnsembleMeanAndScaleCorrection))]
-  [ExpectedTypeOfView(typeof(IEnsembleMeanAndScaleView))]
-  public class EnsembleMeanAndScaleController : MVCANControllerEditImmutableDocBase<EnsembleMeanAndScaleCorrection, IEnsembleMeanAndScaleView>
+  /// <summary>
+  /// Controller for <see cref="DimensionReductionAndRegressionOptions"/>
+  /// </summary>
+  [ExpectedTypeOfView(typeof(IDimensionReductionOutputOptionsView))]
+  [UserControllerForObject(typeof(DimensionReductionOutputOptions))]
+  public class DimensionReductionOutputOptionsController : MVCANControllerEditImmutableDocBase<DimensionReductionOutputOptions, IDimensionReductionOutputOptionsView>
   {
+
     public override IEnumerable<ControllerAndSetNullMethod> GetSubControllers()
     {
       yield break;
@@ -44,7 +47,8 @@ namespace Altaxo.Gui.Science.Spectroscopy.EnsembleProcessing
 
     #region Bindings
 
-    public bool EnsembleScale
+
+    public bool IncludeEnsemblePreprocessingAuxiliaryData
     {
       get => field;
       set
@@ -52,10 +56,27 @@ namespace Altaxo.Gui.Science.Spectroscopy.EnsembleProcessing
         if (!(field == value))
         {
           field = value;
-          OnPropertyChanged(nameof(EnsembleScale));
+          OnPropertyChanged(nameof(IncludeEnsemblePreprocessingAuxiliaryData));
         }
       }
     }
+
+
+    public bool IncludePreprocessedSpectra
+    {
+      get => field;
+      set
+      {
+        if (!(field == value))
+        {
+          field = value;
+          OnPropertyChanged(nameof(IncludePreprocessedSpectra));
+        }
+      }
+    }
+
+
+
     #endregion
 
     protected override void Initialize(bool initData)
@@ -64,17 +85,27 @@ namespace Altaxo.Gui.Science.Spectroscopy.EnsembleProcessing
 
       if (initData)
       {
-        EnsembleScale = _doc.EnsembleScale;
+        IncludeEnsemblePreprocessingAuxiliaryData = _doc.IncludeEnsemblePreprocessingAuxiliaryData;
+        IncludePreprocessedSpectra = _doc.IncludePreprocessedSpectra;
       }
     }
 
+
+
     public override bool Apply(bool disposeController)
     {
+
+
+
       _doc = _doc with
       {
-        EnsembleScale = EnsembleScale
+        IncludeEnsemblePreprocessingAuxiliaryData = IncludeEnsemblePreprocessingAuxiliaryData,
+        IncludePreprocessedSpectra = IncludePreprocessedSpectra,
       };
+
+
       return ApplyEnd(true, disposeController);
     }
   }
 }
+

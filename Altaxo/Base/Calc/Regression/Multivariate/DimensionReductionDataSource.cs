@@ -39,11 +39,6 @@ namespace Altaxo.Calc.Regression.Multivariate
     private IDataSourceImportOptions _importOptions;
 
     /// <summary>
-    /// Result data that may be created when executing the data source.
-    /// </summary>
-    private DimensionReductionAndRegressionResult _processResult;
-
-    /// <summary>
     /// Backing field for the <see cref="DataSourceChanged"/> event.
     /// </summary>
     public Action<IAltaxoTableDataSource>? _dataSourceChanged;
@@ -66,10 +61,7 @@ namespace Altaxo.Calc.Regression.Multivariate
         info.AddValue("ProcessData", s._processData);
         info.AddValue("ProcessOptions", s._processOptions);
         info.AddValue("ImportOptions", s._importOptions);
-        info.AddValue("ProcessResult", s._processResult);
       }
-
-
 
       /// <inheritdoc/>
       public object Deserialize(object? o, Altaxo.Serialization.Xml.IXmlDeserializationInfo info, object? parent)
@@ -88,8 +80,6 @@ namespace Altaxo.Calc.Regression.Multivariate
       ChildSetMember(ref _processData, info.GetValue<DataTableMatrixProxy>("ProcessData", this));
       _processOptions = info.GetValue<DimensionReductionOptions>("ProcessOptions", this);
       ChildSetMember(ref _importOptions, (IDataSourceImportOptions)info.GetValue("ImportOptions", this));
-      _processResult = info.GetValue<DimensionReductionAndRegressionResult>("ProcessResult", this);
-
       ProcessData = _processData;
     }
 
@@ -170,8 +160,6 @@ namespace Altaxo.Calc.Regression.Multivariate
         ProcessOptions = dataSourceOptions;
         ImportOptions = importOptions;
         ProcessData = inputData;
-        ProcessResult = from._processResult;
-
       }
     }
 
@@ -207,10 +195,12 @@ namespace Altaxo.Calc.Regression.Multivariate
       destinationTable.DataColumns.RemoveColumnsAll();
 
       var (matrix, xOfXRaw, columnNumbers) = _processData.GetMatrixAndColumnNumbers(transposeMatrix: true);
-      MultivariateRegression.PreprocessSpectraForAnalysis(_processOptions.SinglePreprocessing, _processOptions.EnsemblePreprocessing, xOfXRaw, matrix, out var regions, out var xOfXPreprocessed, out var matrixXPreprocessed, out var meanX, out var scaleX);
+
+      var (xOfXPreprocessed, matrixXPreprocessed, region, auxiliaryData) = ProcessOptions.SinglePreprocessing.Execute(xOfXRaw, matrix, null);
+
       var result = _processOptions.DimensionReductionMethod.ExecuteDimensionReduction(matrixXPreprocessed);
 
-      result.SaveResultToTable(_processData.DataTable, destinationTable, columnNumbers, xOfXPreprocessed);
+      result.SaveResultToTable(_processOptions.OutputOptions, _processData.DataTable, destinationTable, columnNumbers, xOfXPreprocessed, matrixXPreprocessed, auxiliaryData);
     }
 
     /// <summary>
@@ -296,26 +286,6 @@ namespace Altaxo.Calc.Regression.Multivariate
         {
           _processOptions = value;
           EhChildChanged(_processOptions, EventArgs.Empty);
-        }
-      }
-    }
-
-    /// <summary>
-    /// Gets or sets process result data created when executing the data source.
-    /// </summary>
-    public DimensionReductionAndRegressionResult ProcessResult
-    {
-      get
-      {
-        return _processResult;
-      }
-      [MemberNotNull(nameof(_processResult))]
-      set
-      {
-        if (!object.ReferenceEquals(_processResult, value))
-        {
-          _processResult = value;
-          EhChildChanged(_processResult, EventArgs.Empty);
         }
       }
     }

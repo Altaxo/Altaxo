@@ -29,6 +29,7 @@ using System.Linq;
 using System.Text;
 using Altaxo.Calc.LinearAlgebra;
 using Altaxo.Main;
+using Altaxo.Science.Spectroscopy.EnsembleProcessing;
 
 namespace Altaxo.Science.Spectroscopy
 {
@@ -135,7 +136,7 @@ namespace Altaxo.Science.Spectroscopy
       }
     }
 
-    public (double[] x, Matrix<double> y, int[]? regions) Execute(double[] x, Matrix<double> y, int[]? regions)
+    public (double[] x, Matrix<double> y, int[]? regions, IEnsembleProcessingAuxiliaryData auxiliaryData) Execute(double[] x, Matrix<double> y, int[]? regions)
     {
       var yNew = y;
       if (regions is null || regions.Length == 0)
@@ -149,11 +150,23 @@ namespace Altaxo.Science.Spectroscopy
         }
       }
 
+      var listOfAuxiliaryData = new List<IEnsembleProcessingAuxiliaryData?>();
       foreach (var processor in InnerList)
       {
         (x, y, regions, var aux) = processor.Execute(x, y, regions);
+        if (aux is not null)
+        {
+          listOfAuxiliaryData.AddRange(aux);
+        }
       }
-      return (x, y, regions);
+
+      IEnsembleProcessingAuxiliaryData? totalAuxiliaryData = null;
+      if (listOfAuxiliaryData.Count > 0)
+      {
+        totalAuxiliaryData = new EnsembleAuxiliaryDataCompound { Name = "PipelineData", Values = listOfAuxiliaryData.Where(a => a is not null).ToArray()! };
+      }
+
+      return (x, y, regions, totalAuxiliaryData);
     }
   }
 }

@@ -436,7 +436,7 @@ namespace Altaxo.Data
     }
 
 
-    protected void InternalSetColumnHeaderColumn(IReadableColumnProxy proxy)
+    protected void InternalSetColumnHeaderColumn(IReadableColumnProxy? proxy)
     {
       InternalClearColumnHeaderColumns();
       InternalAddColumnHeaderColumnNoClone(proxy ?? ReadableColumnProxyBase.FromColumn(null));

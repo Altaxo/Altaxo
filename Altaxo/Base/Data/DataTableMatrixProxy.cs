@@ -53,7 +53,7 @@ namespace Altaxo.Data
         info.AddValueOrNull("Table", s._dataTable);
         info.AddValue("Group", s._groupNumber);
         info.AddValue("RowHeaderColumn", s._rowHeaderColumn);
-        info.AddValue("ColumnHeaderColumn", s._columnHeaderColumns?.Count > 0 ? s._columnHeaderColumns[0] : null);
+        info.AddValueOrNull("ColumnHeaderColumn", s._columnHeaderColumns?.Count > 0 ? s._columnHeaderColumns[0] : null);
         info.AddValue("UseAllAvailableColumnsOfGroup", s._useAllAvailableColumnsOfGroup);
         info.AddValue("UseAllAvailableDataRows", s._useAllAvailableDataRows);
 
@@ -80,7 +80,7 @@ namespace Altaxo.Data
         s.ChildSetMember(ref s._dataTable, info.GetValueOrNull<DataTableProxy>("Table", s));
         s._groupNumber = info.GetInt32("Group");
         s.InternalSetRowHeaderColumn((IReadableColumnProxy)info.GetValue("RowHeaderColumn", s));
-        s.InternalSetColumnHeaderColumn((IReadableColumnProxy)info.GetValue("ColumnHeaderColumn", s));
+        s.InternalSetColumnHeaderColumn((IReadableColumnProxy?)info.GetValueOrNull("ColumnHeaderColumn", s));
 
         s._useAllAvailableColumnsOfGroup = info.GetBoolean("UseAllAvailableColumnsOfGroup");
         s._useAllAvailableDataRows = info.GetBoolean("UseAllAvailableDataRows");

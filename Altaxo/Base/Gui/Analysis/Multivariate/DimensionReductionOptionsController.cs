@@ -64,26 +64,11 @@ namespace Altaxo.Gui.Analysis.Multivariate
     public override IEnumerable<ControllerAndSetNullMethod> GetSubControllers()
     {
       yield return new ControllerAndSetNullMethod(_singleSpectrumPreprocessorController, () => SingleSpectrumPreprocessorController = null!);
-      yield return new ControllerAndSetNullMethod(_ensembleMeanScalePreprocessorController, () => EnsembleMeanScalePreprocessorController = null!);
       yield return new ControllerAndSetNullMethod(MethodController, () => MethodController = null!);
+      yield return new ControllerAndSetNullMethod(OutputOptionsController, () => OutputOptionsController = null!);
     }
 
     #region Bindings
-
-    private ItemsController<Type> _singleSpectrumPreprocessor;
-
-    public ItemsController<Type> SingleSpectrumPreprocessor
-    {
-      get => _singleSpectrumPreprocessor;
-      set
-      {
-        if (!(_singleSpectrumPreprocessor == value))
-        {
-          _singleSpectrumPreprocessor = value;
-          OnPropertyChanged(nameof(SingleSpectrumPreprocessor));
-        }
-      }
-    }
 
     private IMVCANController _singleSpectrumPreprocessorController;
 
@@ -101,37 +86,6 @@ namespace Altaxo.Gui.Analysis.Multivariate
       }
     }
 
-
-    private ItemsController<Type> _EnsembleMeanScalePreprocessor;
-
-    public ItemsController<Type> EnsembleMeanScalePreprocessor
-    {
-      get => _EnsembleMeanScalePreprocessor;
-      set
-      {
-        if (!(_EnsembleMeanScalePreprocessor == value))
-        {
-          _ensembleMeanScalePreprocessorController?.Dispose();
-          _EnsembleMeanScalePreprocessor = value;
-          OnPropertyChanged(nameof(EnsembleMeanScalePreprocessor));
-        }
-      }
-    }
-
-    private IMVCANController _ensembleMeanScalePreprocessorController;
-
-    public IMVCANController EnsembleMeanScalePreprocessorController
-    {
-      get => _ensembleMeanScalePreprocessorController;
-      set
-      {
-        if (!(_ensembleMeanScalePreprocessorController == value))
-        {
-          _ensembleMeanScalePreprocessorController = value;
-          OnPropertyChanged(nameof(EnsembleMeanScalePreprocessorController));
-        }
-      }
-    }
 
     private ItemsController<Type> _analysisMethods;
 
@@ -164,6 +118,19 @@ namespace Altaxo.Gui.Analysis.Multivariate
     }
 
 
+    public IMVCANController OutputOptionsController
+    {
+      get => field;
+      set
+      {
+        if (!(field == value))
+        {
+          field = value;
+          OnPropertyChanged(nameof(OutputOptionsController));
+        }
+      }
+    }
+
     #endregion
 
     protected override void Initialize(bool initData)
@@ -173,107 +140,38 @@ namespace Altaxo.Gui.Analysis.Multivariate
       if (initData)
       {
         _knownSingleSpectrumPreprocessors[_doc.SinglePreprocessing.GetType()] = _doc.SinglePreprocessing;
-        _knownEnsembleMeanScalePreprocessors[_doc.EnsemblePreprocessing.GetType()] = _doc.EnsemblePreprocessing;
 
         InitializeSingleSpectrumPreprocessor();
-        InitializeEnsembleMeanScalePreprocessor();
         InitializeAnalysisMethods();
+
+        OutputOptionsController = (IMVCANController)Current.Gui.GetControllerAndControl(new object[] { _doc.OutputOptions }, typeof(IMVCANController));
       }
     }
 
     private void InitializeSingleSpectrumPreprocessor()
     {
-      var list = new SelectableListNodeList();
+      SpectralPreprocessingOptionsList instance;
 
-      var fixedTypes = new HashSet<Type>
+      if (_doc.SinglePreprocessing is null)
       {
-        typeof(NoopSpectrumPreprocessor),
-        typeof(Altaxo.Science.Spectroscopy.SpectralPreprocessingOptions),
-      };
-
-      list.Add(new SelectableListNode("None", typeof(NoopSpectrumPreprocessor), false));
-      list.Add(new SelectableListNode("Standard", typeof(Altaxo.Science.Spectroscopy.SpectralPreprocessingOptions), false));
-
-      SingleSpectrumPreprocessor = new ItemsController<Type>(list, EhSingleSpectrumPreprocessorChanged);
-      SingleSpectrumPreprocessor.SelectedValue = _doc.SinglePreprocessing.GetType();
-
-    }
-
-
-    private void EhSingleSpectrumPreprocessorChanged(Type newProcessorType)
-    {
-      if (newProcessorType is null)
-        return;
-
-      if (SingleSpectrumPreprocessorController is not null)
-      {
-        if (true == SingleSpectrumPreprocessorController.Apply(false))
-        {
-          var oldInstance = (ISingleSpectrumPreprocessor)SingleSpectrumPreprocessorController.ModelObject;
-          _knownSingleSpectrumPreprocessors[oldInstance.GetType()] = oldInstance;
-        }
+        instance = SpectralPreprocessingOptionsList.Empty;
       }
-
-      ISingleSpectrumPreprocessor instance;
-      if (!_knownSingleSpectrumPreprocessors.TryGetValue(newProcessorType, out instance))
+      else if (_doc.SinglePreprocessing is SpectralPreprocessingOptionsList listInstance)
       {
-        instance = (ISingleSpectrumPreprocessor)Activator.CreateInstance(newProcessorType);
-        _knownSingleSpectrumPreprocessors[newProcessorType] = instance;
+        instance = listInstance;
+      }
+      else if (_doc.SinglePreprocessing is Altaxo.Science.Spectroscopy.SpectralPreprocessingOptions optionsInstance)
+      {
+        instance = SpectralPreprocessingOptionsList.CreateWithoutNoneElements(optionsInstance);
+      }
+      else
+      {
+        instance = new SpectralPreprocessingOptionsList(new ISingleSpectrumPreprocessor[] { _doc.SinglePreprocessing });
       }
 
       SingleSpectrumPreprocessorController = (IMVCANController)Current.Gui.GetControllerAndControl(new object[] { instance }, typeof(IMVCANController));
     }
 
-    private void InitializeEnsembleMeanScalePreprocessor()
-    {
-      var list = new SelectableListNodeList();
-
-      var fixedTypes = new HashSet<Type>
-      {
-        typeof(Altaxo.Science.Spectroscopy.EnsembleProcessing.EnsembleMeanAndScaleCorrection),
-        typeof(Altaxo.Science.Spectroscopy.EnsembleProcessing.MultiplicativeScatterCorrection),
-      };
-
-      list.Add(new SelectableListNode("Standard", typeof(Altaxo.Science.Spectroscopy.EnsembleProcessing.EnsembleMeanAndScaleCorrection), false));
-      list.Add(new SelectableListNode("MultiplicativeScatter", typeof(Altaxo.Science.Spectroscopy.EnsembleProcessing.MultiplicativeScatterCorrection), false));
-
-      foreach (var t in Altaxo.Main.Services.ReflectionService.GetNonAbstractSubclassesOf(typeof(IEnsembleMeanScalePreprocessor)))
-      {
-        if (!fixedTypes.Contains(t))
-        {
-          list.Add(new SelectableListNode(t.Name, t, false));
-        }
-      }
-
-      EnsembleMeanScalePreprocessor = new ItemsController<Type>(list, EhEnsembleMeanScalePreprocessorChanged);
-      EnsembleMeanScalePreprocessor.SelectedValue = _doc.EnsemblePreprocessing.GetType();
-
-    }
-
-
-    private void EhEnsembleMeanScalePreprocessorChanged(Type newProcessorType)
-    {
-      if (newProcessorType is null)
-        return;
-
-      if (EnsembleMeanScalePreprocessorController is not null)
-      {
-        if (true == EnsembleMeanScalePreprocessorController.Apply(false))
-        {
-          var oldInstance = (IEnsembleMeanScalePreprocessor)EnsembleMeanScalePreprocessorController.ModelObject;
-          _knownEnsembleMeanScalePreprocessors[oldInstance.GetType()] = oldInstance;
-        }
-      }
-
-      IEnsembleMeanScalePreprocessor instance;
-      if (!_knownEnsembleMeanScalePreprocessors.TryGetValue(newProcessorType, out instance))
-      {
-        instance = (IEnsembleMeanScalePreprocessor)Activator.CreateInstance(newProcessorType);
-        _knownEnsembleMeanScalePreprocessors[newProcessorType] = instance;
-      }
-
-      EnsembleMeanScalePreprocessorController = (IMVCANController)Current.Gui.GetControllerAndControl(new object[] { instance }, typeof(IMVCANController));
-    }
 
     IDimensionReductionMethod _currentMethod;
 
@@ -325,11 +223,11 @@ namespace Altaxo.Gui.Analysis.Multivariate
         }
       }
 
-      if (EnsembleMeanScalePreprocessorController is { } ctrl2)
+      if (OutputOptionsController is { } ctrl2)
       {
         if (true == ctrl2.Apply(disposeController))
         {
-          _doc = _doc with { EnsemblePreprocessing = (IEnsembleMeanScalePreprocessor)ctrl2.ModelObject };
+          _doc = _doc with { OutputOptions = (DimensionReductionOutputOptions)ctrl2.ModelObject };
         }
         else
         {

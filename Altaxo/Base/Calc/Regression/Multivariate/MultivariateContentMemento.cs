@@ -409,7 +409,7 @@ namespace Altaxo.Calc.Regression.Multivariate
         singleProcessor = singleProcessor with { BaselineEstimation = new Altaxo.Science.Spectroscopy.BaselineEstimation.PolynomialDetrending { DetrendingOrder = options.DetrendingOrder } };
       }
 
-      ensembleProcessor ??= new Altaxo.Science.Spectroscopy.EnsembleProcessing.EnsembleMeanAndScaleCorrection { EnsembleScale = options.EnsembleScale };
+      ensembleProcessor ??= new Altaxo.Science.Spectroscopy.EnsembleMeanScale.EnsembleMeanAndScaleCorrection { EnsembleScale = options.EnsembleScale };
       return (singleProcessor, ensembleProcessor);
     }
 

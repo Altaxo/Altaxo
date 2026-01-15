@@ -244,11 +244,11 @@ namespace Altaxo.Gui.Analysis.Multivariate
 
       var fixedTypes = new HashSet<Type>
       {
-        typeof(Altaxo.Science.Spectroscopy.EnsembleProcessing.EnsembleMeanAndScaleCorrection),
+        typeof(Altaxo.Science.Spectroscopy.EnsembleMeanScale.EnsembleMeanAndScaleCorrection),
         typeof(Altaxo.Science.Spectroscopy.EnsembleProcessing.MultiplicativeScatterCorrection),
       };
 
-      list.Add(new SelectableListNode("Standard", typeof(Altaxo.Science.Spectroscopy.EnsembleProcessing.EnsembleMeanAndScaleCorrection), false));
+      list.Add(new SelectableListNode("Standard", typeof(Altaxo.Science.Spectroscopy.EnsembleMeanScale.EnsembleMeanAndScaleCorrection), false));
       list.Add(new SelectableListNode("MultiplicativeScatter", typeof(Altaxo.Science.Spectroscopy.EnsembleProcessing.MultiplicativeScatterCorrection), false));
 
       foreach (var t in Altaxo.Main.Services.ReflectionService.GetNonAbstractSubclassesOf(typeof(IEnsembleMeanScalePreprocessor)))

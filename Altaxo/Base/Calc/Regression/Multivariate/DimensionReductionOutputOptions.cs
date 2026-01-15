@@ -22,30 +22,19 @@
 
 #endregion Copyright
 
-using Altaxo.Science.Spectroscopy;
-using Altaxo.Science.Spectroscopy.EnsembleProcessing;
-
 namespace Altaxo.Calc.Regression.Multivariate
 {
   /// <summary>
   /// Process options for multivariate analyses that feature a dimension reduction.
   /// </summary>
-  public record DimensionReductionOptions : Main.IImmutable
+  public record DimensionReductionOutputOptions : Main.IImmutable
   {
-    /// <summary>
-    /// Gets the preprocessing applied to each individual spectrum prior to analysis.
-    /// </summary>
-    public ISingleSpectrumPreprocessor SinglePreprocessing { get; init; } = new EnsembleMeanScale();
 
-    /// <summary>
-    /// Gets the dimension reduction method.
-    /// </summary>
-    public IDimensionReductionMethod DimensionReductionMethod { get; init; } = new DimensionReductionByLowRankFactorization();
+    public bool IncludeEnsemblePreprocessingAuxiliaryData { get; init; } = true;
 
-    /// <summary>
-    /// Gets the output options to determine what results are to be stored in the destination table.
-    /// </summary>
-    public DimensionReductionOutputOptions OutputOptions { get; init; } = new DimensionReductionOutputOptions();
+    public bool IncludePreprocessedSpectra { get; init; } = false;
+
+
 
     #region Serialization
 
@@ -53,37 +42,30 @@ namespace Altaxo.Calc.Regression.Multivariate
     /// XML serialization surrogate (version 0).
     /// </summary>
     /// <remarks>V0: 2026-01-14.</remarks>
-    [Altaxo.Serialization.Xml.XmlSerializationSurrogateFor(typeof(DimensionReductionOptions), 0)]
+    [Altaxo.Serialization.Xml.XmlSerializationSurrogateFor(typeof(DimensionReductionOutputOptions), 0)]
     public class SerializationSurrogate0 : Altaxo.Serialization.Xml.IXmlSerializationSurrogate
     {
       /// <inheritdoc/>
       public void Serialize(object obj, Altaxo.Serialization.Xml.IXmlSerializationInfo info)
       {
-        var s = (DimensionReductionOptions)obj;
-        info.AddValue("SinglePreprocessing", s.SinglePreprocessing);
-        info.AddValue("Method", s.DimensionReductionMethod);
-        info.AddValue("Output", s.OutputOptions);
+        var s = (DimensionReductionOutputOptions)obj;
+        info.AddValue("IncludeAuxiliaryData", s.IncludeEnsemblePreprocessingAuxiliaryData);
+        info.AddValue("IncludePreprocessedSpectra", s.IncludePreprocessedSpectra);
       }
 
       /// <inheritdoc/>
       public object Deserialize(object? o, Altaxo.Serialization.Xml.IXmlDeserializationInfo info, object? parent)
       {
-        var singlePreprocessing = info.GetValue<ISingleSpectrumPreprocessor>("SinglePreprocessing", null);
-        var analysis = info.GetValue<IDimensionReductionMethod>("Method", null);
-        var output = info.GetValue<DimensionReductionOutputOptions>("Output", parent);
+        bool singlePreprocessing = info.GetBoolean("IncludePreprocessedSpectra");
+        bool ensemblePreprocessing = info.GetBoolean("IncludeAuxiliaryData");
 
-
-
-        return new DimensionReductionOptions()
+        return new DimensionReductionOutputOptions()
         {
-          SinglePreprocessing = singlePreprocessing,
-          DimensionReductionMethod = analysis,
-          OutputOptions = output,
+          IncludePreprocessedSpectra = singlePreprocessing,
+          IncludeEnsemblePreprocessingAuxiliaryData = ensemblePreprocessing
         };
       }
     }
     #endregion
   }
-
-
 }

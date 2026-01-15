@@ -22,32 +22,25 @@
             <RowDefinition Height="Auto" />
             <RowDefinition Height="4" />
         </Grid.RowDefinitions>
-        <GroupBox Grid.Row="0"
-                  Header="Analyis method:">
-            <StackPanel Orientation="Vertical" HorizontalAlignment="Stretch">
-                <ComboBox ItemsSource="{Binding AnalysisMethods.Items}"
-                          SelectedItem="{Binding AnalysisMethods.SelectedItem, Mode=TwoWay}" />
+        <GroupBox Grid.Row="0">
+            <GroupBox.Header>
+                <StackPanel Orientation="Horizontal">
+                    <Label Content="Analysis method: " />
+                    <ComboBox ItemsSource="{Binding AnalysisMethods.Items}"
+                              SelectedItem="{Binding AnalysisMethods.SelectedItem, Mode=TwoWay}" />
+                </StackPanel>
+            </GroupBox.Header>
                 <ContentControl Content="{Binding MethodController.ViewObject}" Margin="0,4,0,0" HorizontalAlignment="Stretch" />
-            </StackPanel>
         </GroupBox>
 
         <GroupBox Grid.Row="8" Header="Spectrum preprocessing:">
             <StackPanel Orientation="Vertical">
-                <ComboBox  
-                  ItemsSource="{Binding SingleSpectrumPreprocessor.Items}" 
-                  SelectedItem="{Binding SingleSpectrumPreprocessor.SelectedItem, Mode=TwoWay}" />
                 <ContentControl Content="{Binding SingleSpectrumPreprocessorController.ViewObject}"/>
             </StackPanel>
         </GroupBox>
 
-        <GroupBox Grid.Row="10" Header="Ensemble mean / scale:">
-            <StackPanel Orientation="Vertical">
-                <ComboBox  
-                  ItemsSource="{Binding EnsembleMeanScalePreprocessor.Items}" 
-                  SelectedItem="{Binding EnsembleMeanScalePreprocessor.SelectedItem, Mode=TwoWay}" />
-
-                <ContentControl Content="{Binding EnsembleMeanScalePreprocessorController.ViewObject}"/>
-            </StackPanel>
+        <GroupBox Grid.Row="10" Header="Output options:">
+            <ContentControl Content="{Binding OutputOptionsController.ViewObject}" />
         </GroupBox>
     </Grid>
 </UserControl>
