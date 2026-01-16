@@ -34,6 +34,10 @@ namespace Altaxo.Data
   {
     #region Serialization
 
+    protected XAndYColumn(IXmlDeserializationInfo info, int version) : base(info, version)
+    {
+    }
+
     /// <summary>
     /// 2023-05-15 initial version
     /// </summary>
@@ -49,8 +53,6 @@ namespace Altaxo.Data
           s = new XAndYColumn(info, 0);
         return s;
       }
-
-
     }
 
     #endregion
@@ -74,11 +76,7 @@ namespace Altaxo.Data
 
 
 
-    protected XAndYColumn(IXmlDeserializationInfo info, int version) : base(info, version)
-    {
-    }
-
-    protected XAndYColumn(DataTable table, int groupNumber, Altaxo.Data.IReadableColumn xColumn, Altaxo.Data.IReadableColumn yColumn)
+    public XAndYColumn(DataTable table, int groupNumber, Altaxo.Data.IReadableColumn xColumn, Altaxo.Data.IReadableColumn yColumn)
      : base(table, groupNumber, 1, 1)
     {
       XColumn = xColumn;
