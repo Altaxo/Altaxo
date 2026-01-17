@@ -37,16 +37,16 @@ namespace Altaxo.Calc.Optimization
   public interface IObjectiveFunctionEvaluation
   {
     /// <summary>Create a new unevaluated and independent copy of this objective function</summary>
-    IObjectiveFunction CreateNew();
+    public IObjectiveFunction CreateNew();
 
-    Vector<double> Point { get; }
-    double Value { get; }
+    public Vector<double> Point { get; }
+    public double Value { get; }
 
-    bool IsGradientSupported { get; }
-    Vector<double> Gradient { get; }
+    public bool IsGradientSupported { get; }
+    public Vector<double> Gradient { get; }
 
-    bool IsHessianSupported { get; }
-    Matrix<double> Hessian { get; }
+    public bool IsHessianSupported { get; }
+    public Matrix<double> Hessian { get; }
   }
 
   /// <summary>
@@ -54,24 +54,24 @@ namespace Altaxo.Calc.Optimization
   /// </summary>
   public interface IObjectiveFunction : IObjectiveFunctionEvaluation
   {
-    void EvaluateAt(Vector<double> point);
+    public void EvaluateAt(Vector<double> point);
 
     /// <summary>Create a new independent copy of this objective function, evaluated at the same point.</summary>
-    IObjectiveFunction Fork();
+    public IObjectiveFunction Fork();
   }
 
   public interface IScalarObjectiveFunctionEvaluation
   {
-    double Point { get; }
-    double Value { get; }
-    double Derivative { get; }
-    double SecondDerivative { get; }
+    public double Point { get; }
+    public double Value { get; }
+    public double Derivative { get; }
+    public double SecondDerivative { get; }
   }
 
   public interface IScalarObjectiveFunction
   {
-    bool IsDerivativeSupported { get; }
-    bool IsSecondDerivativeSupported { get; }
-    IScalarObjectiveFunctionEvaluation Evaluate(double point);
+    public bool IsDerivativeSupported { get; }
+    public bool IsSecondDerivativeSupported { get; }
+    public IScalarObjectiveFunctionEvaluation Evaluate(double point);
   }
 }

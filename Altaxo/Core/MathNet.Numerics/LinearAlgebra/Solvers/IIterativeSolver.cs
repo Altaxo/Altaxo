@@ -46,6 +46,6 @@ namespace Altaxo.Calc.LinearAlgebra.Solvers
     /// <param name="result">The result vector, <c>x</c></param>
     /// <param name="iterator">The iterator to use to control when to stop iterating.</param>
     /// <param name="preconditioner">The preconditioner to use for approximations.</param>
-    void Solve(Matrix<T> matrix, Vector<T> input, Vector<T> result, Iterator<T> iterator, IPreconditioner<T> preconditioner);
+    public void Solve(Matrix<T> matrix, Vector<T> input, Vector<T> result, Iterator<T> iterator, IPreconditioner<T> preconditioner);
   }
 }

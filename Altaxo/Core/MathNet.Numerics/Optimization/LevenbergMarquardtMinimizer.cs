@@ -19,13 +19,13 @@ namespace Altaxo.Calc.Optimization
     }
 
     public NonlinearMinimizationResult FindMinimum(IObjectiveModel objective, Vector<double> initialGuess,
-        Vector<double>? lowerBound = null, Vector<double>? upperBound = null, Vector<double>? scales = null, List<bool>? isFixed = null)
+        Vector<double> lowerBound = null, Vector<double> upperBound = null, Vector<double> scales = null, List<bool> isFixed = null)
     {
       return Minimum(objective, initialGuess, lowerBound, upperBound, scales, isFixed, InitialMu, GradientTolerance, StepTolerance, FunctionTolerance, MaximumIterations);
     }
 
     public NonlinearMinimizationResult FindMinimum(IObjectiveModel objective, double[] initialGuess,
-        double[]? lowerBound = null, double[]? upperBound = null, double[]? scales = null, bool[]? isFixed = null)
+        double[] lowerBound = null, double[] upperBound = null, double[] scales = null, bool[] isFixed = null)
     {
       if (objective == null)
         throw new ArgumentNullException(nameof(objective));
@@ -158,7 +158,7 @@ namespace Altaxo.Calc.Optimization
           Pstep = Hessian.Solve(-Gradient);
 
           // if ||ΔP|| <= xTol * (||P|| + xTol), found and stop
-          if (Pstep.L2Norm() <= stepTolerance * (stepTolerance + P.DotProduct(P)))
+          if (Pstep.L2Norm() <= stepTolerance * (P.L2Norm() + stepTolerance))
           {
             exitCondition = ExitCondition.RelativePoints;
             break;

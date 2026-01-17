@@ -33,6 +33,6 @@ namespace Altaxo.Calc.Optimization
 {
   public interface IUnconstrainedMinimizer
   {
-    MinimizationResult FindMinimum(IObjectiveFunction objective, Vector<double> initialGuess);
+    public MinimizationResult FindMinimum(IObjectiveFunction objective, Vector<double> initialGuess);
   }
 }

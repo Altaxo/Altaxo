@@ -4,9 +4,9 @@ namespace Altaxo.Calc.Optimization.TrustRegion
 {
   public interface ITrustRegionSubproblem
   {
-    Vector<double> Pstep { get; }
-    bool HitBoundary { get; }
+    public Vector<double> Pstep { get; }
+    public bool HitBoundary { get; }
 
-    void Solve(IObjectiveModel objective, double radius);
+    public void Solve(IObjectiveModel objective, double radius);
   }
 }

@@ -49,13 +49,13 @@ namespace Altaxo.Calc.LinearAlgebra.Solvers
     /// on the invocation of this method. Therefore this method should only be called if the
     /// calculation has moved forwards at least one step.
     /// </remarks>
-    IterationStatus DetermineStatus(int iterationNumber, Vector<T> solutionVector, Vector<T> sourceVector, Vector<T> residualVector);
+    public IterationStatus DetermineStatus(int iterationNumber, Vector<T> solutionVector, Vector<T> sourceVector, Vector<T> residualVector);
 
     /// <summary>
     /// Gets the current calculation status.
     /// </summary>
     /// <remarks><see langword="null" /> is not a legal value. Status should be set in <see cref="DetermineStatus"/> implementation.</remarks>
-    IterationStatus Status { get; }
+    public IterationStatus Status { get; }
 
     /// <summary>
     /// Resets the IIterationStopCriterion to the pre-calculation state.
@@ -63,8 +63,8 @@ namespace Altaxo.Calc.LinearAlgebra.Solvers
     /// <remarks>To implementers: Invoking this method should not clear the user defined
     /// property values, only the state that is used to track the progress of the
     /// calculation.</remarks>
-    void Reset();
+    public void Reset();
 
-    IIterationStopCriterion<T> Clone();
+    public IIterationStopCriterion<T> Clone();
   }
 }

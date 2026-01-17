@@ -15,52 +15,52 @@ namespace Altaxo.Calc.Optimization
     public IObjectiveModel CreateNew();
 
     /// <summary>
-    /// Gets the y-values of the observations.
+    /// Get the y-values of the observations.
     /// </summary>
     public Vector<double> ObservedY { get; }
 
     /// <summary>
-    /// Gets the values of the weights for the observations.
+    /// Get the values of the weights for the observations.
     /// </summary>
     public Matrix<double> Weights { get; }
 
     /// <summary>
-    /// Gets the y-values of the fitted model that correspond to the independent values.
+    /// Get the y-values of the fitted model that correspond to the independent values.
     /// </summary>
     public Vector<double> ModelValues { get; }
 
     /// <summary>
-    /// Gets the values of the parameters.
+    /// Get the values of the parameters.
     /// </summary>
     public Vector<double> Point { get; }
 
     /// <summary>
-    /// Gets the residual sum of squares.
+    /// Get the residual sum of squares.
     /// </summary>
     public double Value { get; }
 
     /// <summary>
-    /// Gets the gradient vector. <c>G = J'(y - f(x; p))</c>.
+    /// Get the Gradient vector. G = J'(y - f(x; p))
     /// </summary>
     public Vector<double> Gradient { get; }
 
     /// <summary>
-    /// Gets the approximated Hessian matrix. <c>H = J'J</c>.
+    /// Get the approximated Hessian matrix. H = J'J
     /// </summary>
     public Matrix<double> Hessian { get; }
 
     /// <summary>
-    /// Gets or sets the number of calls to the objective function.
+    /// Get the number of calls to function.
     /// </summary>
     public int FunctionEvaluations { get; set; }
 
     /// <summary>
-    /// Gets or sets the number of calls to the Jacobian.
+    /// Get the number of calls to jacobian.
     /// </summary>
     public int JacobianEvaluations { get; set; }
 
     /// <summary>
-    /// Gets the degrees of freedom.
+    /// Get the degree of freedom.
     /// </summary>
     public int DegreeOfFreedom { get; }
 

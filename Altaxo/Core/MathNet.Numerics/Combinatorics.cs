@@ -132,7 +132,7 @@ namespace Altaxo.Calc
     /// <returns>An array of length <c>N</c> that contains (in any order) the integers of the interval <c>[0, N)</c>.</returns>
     /// <param name="n">Number of (distinguishable) elements in the set.</param>
     /// <param name="randomSource">The random number generator to use. Optional; the default random source will be used if null.</param>
-    public static int[] GeneratePermutation(int n, System.Random? randomSource = null)
+    public static int[] GeneratePermutation(int n, System.Random randomSource = null)
     {
       if (n < 0) throw new ArgumentOutOfRangeException(nameof(n), "Value must not be negative (zero is ok).");
 
@@ -152,7 +152,7 @@ namespace Altaxo.Calc
     /// </summary>
     /// <param name="data">The data array to be reordered. The array will be modified by this routine.</param>
     /// <param name="randomSource">The random number generator to use. Optional; the default random source will be used if null.</param>
-    public static void SelectPermutationInplace<T>(T[] data, System.Random? randomSource = null)
+    public static void SelectPermutationInplace<T>(T[] data, System.Random randomSource = null)
     {
       var random = randomSource ?? SystemRandomSource.Default;
 
@@ -170,7 +170,7 @@ namespace Altaxo.Calc
     /// </summary>
     /// <param name="data">The data elements to be reordered.</param>
     /// <param name="randomSource">The random number generator to use. Optional; the default random source will be used if null.</param>
-    public static IEnumerable<T> SelectPermutation<T>(this IEnumerable<T> data, System.Random? randomSource = null)
+    public static IEnumerable<T> SelectPermutation<T>(this IEnumerable<T> data, System.Random randomSource = null)
     {
       var random = randomSource ?? SystemRandomSource.Default;
       T[] array = data.ToArray();
@@ -190,7 +190,7 @@ namespace Altaxo.Calc
     /// <param name="n">Number of elements in the set.</param>
     /// <param name="randomSource">The random number generator to use. Optional; the default random source will be used if null.</param>
     /// <returns>Boolean mask array of length <c>N</c>, for each item true if it is selected.</returns>
-    public static bool[] GenerateCombination(int n, System.Random? randomSource = null)
+    public static bool[] GenerateCombination(int n, System.Random randomSource = null)
     {
       if (n < 0) throw new ArgumentOutOfRangeException(nameof(n), "Value must not be negative (zero is ok).");
 
@@ -212,7 +212,7 @@ namespace Altaxo.Calc
     /// <param name="k">Number of elements to choose from the set. Each element is chosen at most once.</param>
     /// <param name="randomSource">The random number generator to use. Optional; the default random source will be used if null.</param>
     /// <returns>Boolean mask array of length <c>N</c>, for each item true if it is selected.</returns>
-    public static bool[] GenerateCombination(int n, int k, System.Random? randomSource = null)
+    public static bool[] GenerateCombination(int n, int k, System.Random randomSource = null)
     {
       if (n < 0) throw new ArgumentOutOfRangeException(nameof(n), "Value must not be negative (zero is ok).");
       if (k < 0) throw new ArgumentOutOfRangeException(nameof(k), "Value must not be negative (zero is ok).");
@@ -255,7 +255,7 @@ namespace Altaxo.Calc
     /// <param name="elementsToChoose">Number of elements (k) to choose from the data set. Each element is chosen at most once.</param>
     /// <param name="randomSource">The random number generator to use. Optional; the default random source will be used if null.</param>
     /// <returns>The chosen combination, in the original order.</returns>
-    public static IEnumerable<T> SelectCombination<T>(this IEnumerable<T> data, int elementsToChoose, System.Random? randomSource = null)
+    public static IEnumerable<T> SelectCombination<T>(this IEnumerable<T> data, int elementsToChoose, System.Random randomSource = null)
     {
       T[] array = data as T[] ?? data.ToArray();
 
@@ -280,7 +280,7 @@ namespace Altaxo.Calc
     /// <param name="k">Number of elements to choose from the set. Elements can be chosen more than once.</param>
     /// <param name="randomSource">The random number generator to use. Optional; the default random source will be used if null.</param>
     /// <returns>Integer mask array of length <c>N</c>, for each item the number of times it was selected.</returns>
-    public static int[] GenerateCombinationWithRepetition(int n, int k, System.Random? randomSource = null)
+    public static int[] GenerateCombinationWithRepetition(int n, int k, System.Random randomSource = null)
     {
       if (n < 0) throw new ArgumentOutOfRangeException(nameof(n), "Value must not be negative (zero is ok).");
       if (k < 0) throw new ArgumentOutOfRangeException(nameof(k), "Value must not be negative (zero is ok).");
@@ -303,7 +303,7 @@ namespace Altaxo.Calc
     /// <param name="elementsToChoose">Number of elements (k) to choose from the data set. Elements can be chosen more than once.</param>
     /// <param name="randomSource">The random number generator to use. Optional; the default random source will be used if null.</param>
     /// <returns>The chosen combination with repetition, in the original order.</returns>
-    public static IEnumerable<T> SelectCombinationWithRepetition<T>(this IEnumerable<T> data, int elementsToChoose, System.Random? randomSource = null)
+    public static IEnumerable<T> SelectCombinationWithRepetition<T>(this IEnumerable<T> data, int elementsToChoose, System.Random randomSource = null)
     {
       if (elementsToChoose < 0) throw new ArgumentOutOfRangeException(nameof(elementsToChoose), "Value must not be negative (zero is ok).");
 
@@ -327,7 +327,7 @@ namespace Altaxo.Calc
     /// <param name="k">Number of elements to choose from the set. Each element is chosen at most once.</param>
     /// <param name="randomSource">The random number generator to use. Optional; the default random source will be used if null.</param>
     /// <returns>An array of length <c>K</c> that contains the indices of the selections as integers of the interval <c>[0, N)</c>.</returns>
-    public static int[] GenerateVariation(int n, int k, System.Random? randomSource = null)
+    public static int[] GenerateVariation(int n, int k, System.Random randomSource = null)
     {
       if (n < 0) throw new ArgumentOutOfRangeException(nameof(n), "Value must not be negative (zero is ok).");
       if (k < 0) throw new ArgumentOutOfRangeException(nameof(k), "Value must not be negative (zero is ok).");
@@ -363,7 +363,7 @@ namespace Altaxo.Calc
     /// <param name="k">Number of elements to choose from the set. Each element is chosen at most once.</param>
     /// <param name="randomSource">The random number generator to use. Optional; the default random source will be used if null.</param>
     /// <returns>An array of length <c>K</c> that contains the indices of the selections as integers of the interval <c>[0, N)</c>.</returns>
-    public static BigInteger[] GenerateVariation(BigInteger n, int k, System.Random? randomSource = null)
+    public static BigInteger[] GenerateVariation(BigInteger n, int k, System.Random randomSource = null)
     {
       if (n < 0) throw new ArgumentOutOfRangeException(nameof(n), "Value must not be negative (zero is ok).");
       if (k < 0) throw new ArgumentOutOfRangeException(nameof(k), "Value must not be negative (zero is ok).");
@@ -411,7 +411,7 @@ namespace Altaxo.Calc
     /// <param name="elementsToChoose">Number of elements (k) to choose from the set. Each element is chosen at most once.</param>
     /// <param name="randomSource">The random number generator to use. Optional; the default random source will be used if null.</param>
     /// <returns>The chosen variation, in random order.</returns>
-    public static IEnumerable<T> SelectVariation<T>(this IEnumerable<T> data, int elementsToChoose, System.Random? randomSource = null)
+    public static IEnumerable<T> SelectVariation<T>(this IEnumerable<T> data, int elementsToChoose, System.Random randomSource = null)
     {
       var random = randomSource ?? SystemRandomSource.Default;
       T[] array = data.ToArray();
@@ -435,7 +435,7 @@ namespace Altaxo.Calc
     /// <param name="k">Number of elements to choose from the set. Elements can be chosen more than once.</param>
     /// <param name="randomSource">The random number generator to use. Optional; the default random source will be used if null.</param>
     /// <returns>An array of length <c>K</c> that contains the indices of the selections as integers of the interval <c>[0, N)</c>.</returns>
-    public static int[] GenerateVariationWithRepetition(int n, int k, System.Random? randomSource = null)
+    public static int[] GenerateVariationWithRepetition(int n, int k, System.Random randomSource = null)
     {
       if (n < 0) throw new ArgumentOutOfRangeException(nameof(n), "Value must not be negative (zero is ok).");
       if (k < 0) throw new ArgumentOutOfRangeException(nameof(k), "Value must not be negative (zero is ok).");
@@ -454,7 +454,7 @@ namespace Altaxo.Calc
     /// <param name="elementsToChoose">Number of elements (k) to choose from the data set. Elements can be chosen more than once.</param>
     /// <param name="randomSource">The random number generator to use. Optional; the default random source will be used if null.</param>
     /// <returns>The chosen variation with repetition, in random order.</returns>
-    public static IEnumerable<T> SelectVariationWithRepetition<T>(this IEnumerable<T> data, int elementsToChoose, System.Random? randomSource = null)
+    public static IEnumerable<T> SelectVariationWithRepetition<T>(this IEnumerable<T> data, int elementsToChoose, System.Random randomSource = null)
     {
       if (elementsToChoose < 0) throw new ArgumentOutOfRangeException(nameof(elementsToChoose), "Value must not be negative (zero is ok).");
 

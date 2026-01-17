@@ -31,6 +31,6 @@ namespace Altaxo.Calc.Providers
 {
   public interface IProviderCreator<T> where T : class
   {
-    T CreateProvider();
+    public T CreateProvider();
   }
 }

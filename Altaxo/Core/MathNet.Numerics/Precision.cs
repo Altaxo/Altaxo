@@ -45,7 +45,7 @@ namespace Altaxo.Calc
     /// close this value is to zero.
     /// </summary>
     /// <returns>A norm of this value.</returns>
-    double Norm();
+    public double Norm();
 
     /// <summary>
     /// Returns a Norm of the difference of two values of this type, which is
@@ -53,7 +53,7 @@ namespace Altaxo.Calc
     /// </summary>
     /// <param name="otherValue">The value to compare with.</param>
     /// <returns>A norm of the difference between this and the other value.</returns>
-    double NormOfDifference(T otherValue);
+    public double NormOfDifference(T otherValue);
   }
 
   /// <summary>

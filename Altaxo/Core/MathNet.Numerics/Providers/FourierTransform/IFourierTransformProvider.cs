@@ -45,32 +45,32 @@ namespace Altaxo.Calc.Providers.FourierTransform
     /// Try to find out whether the provider is available, at least in principle.
     /// Verification may still fail if available, but it will certainly fail if unavailable.
     /// </summary>
-    bool IsAvailable();
+    public bool IsAvailable();
 
     /// <summary>
     /// Initialize and verify that the provided is indeed available. If not, fall back to alternatives like the managed provider
     /// </summary>
-    void InitializeVerify();
+    public void InitializeVerify();
 
     /// <summary>
     /// Frees memory buffers, caches and handles allocated in or to the provider.
     /// Does not unload the provider itself, it is still usable afterwards.
     /// </summary>
-    void FreeResources();
+    public void FreeResources();
 
-    void Forward(Complex32[] samples, FourierTransformScaling scaling);
-    void Forward(Complex[] samples, FourierTransformScaling scaling);
-    void Backward(Complex32[] spectrum, FourierTransformScaling scaling);
-    void Backward(Complex[] spectrum, FourierTransformScaling scaling);
+    public void Forward(Complex32[] samples, FourierTransformScaling scaling);
+    public void Forward(Complex[] samples, FourierTransformScaling scaling);
+    public void Backward(Complex32[] spectrum, FourierTransformScaling scaling);
+    public void Backward(Complex[] spectrum, FourierTransformScaling scaling);
 
-    void ForwardReal(float[] samples, int n, FourierTransformScaling scaling);
-    void ForwardReal(double[] samples, int n, FourierTransformScaling scaling);
-    void BackwardReal(float[] spectrum, int n, FourierTransformScaling scaling);
-    void BackwardReal(double[] spectrum, int n, FourierTransformScaling scaling);
+    public void ForwardReal(float[] samples, int n, FourierTransformScaling scaling);
+    public void ForwardReal(double[] samples, int n, FourierTransformScaling scaling);
+    public void BackwardReal(float[] spectrum, int n, FourierTransformScaling scaling);
+    public void BackwardReal(double[] spectrum, int n, FourierTransformScaling scaling);
 
-    void ForwardMultidim(Complex32[] samples, int[] dimensions, FourierTransformScaling scaling);
-    void ForwardMultidim(Complex[] samples, int[] dimensions, FourierTransformScaling scaling);
-    void BackwardMultidim(Complex32[] spectrum, int[] dimensions, FourierTransformScaling scaling);
-    void BackwardMultidim(Complex[] spectrum, int[] dimensions, FourierTransformScaling scaling);
+    public void ForwardMultidim(Complex32[] samples, int[] dimensions, FourierTransformScaling scaling);
+    public void ForwardMultidim(Complex[] samples, int[] dimensions, FourierTransformScaling scaling);
+    public void BackwardMultidim(Complex32[] spectrum, int[] dimensions, FourierTransformScaling scaling);
+    public void BackwardMultidim(Complex[] spectrum, int[] dimensions, FourierTransformScaling scaling);
   }
 }

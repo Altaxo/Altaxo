@@ -93,18 +93,18 @@ namespace Altaxo.Calc.Providers.LinearAlgebra
     /// Try to find out whether the provider is available, at least in principle.
     /// Verification may still fail if available, but it will certainly fail if unavailable.
     /// </summary>
-    bool IsAvailable();
+    public bool IsAvailable();
 
     /// <summary>
     /// Initialize and verify that the provided is indeed available. If not, fall back to alternatives like the managed provider
     /// </summary>
-    void InitializeVerify();
+    public void InitializeVerify();
 
     /// <summary>
     /// Frees memory buffers, caches and handles allocated in or to the provider.
     /// Does not unload the provider itself, it is still usable afterwards.
     /// </summary>
-    void FreeResources();
+    public void FreeResources();
   }
 
   /// <summary>
@@ -131,7 +131,7 @@ namespace Altaxo.Calc.Providers.LinearAlgebra
     /// <param name="x">The vector to add to <paramref name="y"/>.</param>
     /// <param name="result">The result of the addition.</param>
     /// <remarks>This is similar to the AXPY BLAS routine.</remarks>
-    void AddVectorToScaledVector(T[] y, T alpha, T[] x, T[] result);
+    public void AddVectorToScaledVector(T[] y, T alpha, T[] x, T[] result);
 
     /// <summary>
     /// Scales an array. Can be used to scale a vector and a matrix.
@@ -140,14 +140,14 @@ namespace Altaxo.Calc.Providers.LinearAlgebra
     /// <param name="x">The values to scale.</param>
     /// <param name="result">This result of the scaling.</param>
     /// <remarks>This is similar to the SCAL BLAS routine.</remarks>
-    void ScaleArray(T alpha, T[] x, T[] result);
+    public void ScaleArray(T alpha, T[] x, T[] result);
 
     /// <summary>
     /// Conjugates an array. Can be used to conjugate a vector and a matrix.
     /// </summary>
     /// <param name="x">The values to conjugate.</param>
     /// <param name="result">This result of the conjugation.</param>
-    void ConjugateArray(T[] x, T[] result);
+    public void ConjugateArray(T[] x, T[] result);
 
     /// <summary>
     /// Computes the dot product of x and y.
@@ -156,7 +156,7 @@ namespace Altaxo.Calc.Providers.LinearAlgebra
     /// <param name="y">The vector y.</param>
     /// <returns>The dot product of x and y.</returns>
     /// <remarks>This is equivalent to the DOT BLAS routine.</remarks>
-    T DotProduct(T[] x, T[] y);
+    public T DotProduct(T[] x, T[] y);
 
     /// <summary>
     /// Does a point wise add of two arrays <c>z = x + y</c>. This can be used
@@ -168,7 +168,7 @@ namespace Altaxo.Calc.Providers.LinearAlgebra
     /// <remarks>There is no equivalent BLAS routine, but many libraries
     /// provide optimized (parallel and/or vectorized) versions of this
     /// routine.</remarks>
-    void AddArrays(T[] x, T[] y, T[] result);
+    public void AddArrays(T[] x, T[] y, T[] result);
 
     /// <summary>
     /// Does a point wise subtraction of two arrays <c>z = x - y</c>. This can be used
@@ -180,7 +180,7 @@ namespace Altaxo.Calc.Providers.LinearAlgebra
     /// <remarks>There is no equivalent BLAS routine, but many libraries
     /// provide optimized (parallel and/or vectorized) versions of this
     /// routine.</remarks>
-    void SubtractArrays(T[] x, T[] y, T[] result);
+    public void SubtractArrays(T[] x, T[] y, T[] result);
 
     /// <summary>
     /// Does a point wise multiplication of two arrays <c>z = x * y</c>. This can be used
@@ -192,7 +192,7 @@ namespace Altaxo.Calc.Providers.LinearAlgebra
     /// <remarks>There is no equivalent BLAS routine, but many libraries
     /// provide optimized (parallel and/or vectorized) versions of this
     /// routine.</remarks>
-    void PointWiseMultiplyArrays(T[] x, T[] y, T[] result);
+    public void PointWiseMultiplyArrays(T[] x, T[] y, T[] result);
 
     /// <summary>
     /// Does a point wise division of two arrays <c>z = x / y</c>. This can be used
@@ -204,7 +204,7 @@ namespace Altaxo.Calc.Providers.LinearAlgebra
     /// <remarks>There is no equivalent BLAS routine, but many libraries
     /// provide optimized (parallel and/or vectorized) versions of this
     /// routine.</remarks>
-    void PointWiseDivideArrays(T[] x, T[] y, T[] result);
+    public void PointWiseDivideArrays(T[] x, T[] y, T[] result);
 
     /// <summary>
     /// Does a point wise power of two arrays <c>z = x ^ y</c>. This can be used
@@ -216,7 +216,7 @@ namespace Altaxo.Calc.Providers.LinearAlgebra
     /// <remarks>There is no equivalent BLAS routine, but many libraries
     /// provide optimized (parallel and/or vectorized) versions of this
     /// routine.</remarks>
-    void PointWisePowerArrays(T[] x, T[] y, T[] result);
+    public void PointWisePowerArrays(T[] x, T[] y, T[] result);
 
     /// <summary>
     /// Computes the requested <see cref="Norm"/> of the matrix.
@@ -228,7 +228,7 @@ namespace Altaxo.Calc.Providers.LinearAlgebra
     /// <returns>
     /// The requested <see cref="Norm"/> of the matrix.
     /// </returns>
-    double MatrixNorm(Norm norm, int rows, int columns, T[] matrix);
+    public double MatrixNorm(Norm norm, int rows, int columns, T[] matrix);
 
     /// <summary>
     /// Multiples two matrices. <c>result = x * y</c>
@@ -242,7 +242,7 @@ namespace Altaxo.Calc.Providers.LinearAlgebra
     /// <param name="result">Where to store the result of the multiplication.</param>
     /// <remarks>This is a simplified version of the BLAS GEMM routine with alpha
     /// set to 1.0 and beta set to 0.0, and x and y are not transposed.</remarks>
-    void MatrixMultiply(T[] x, int rowsX, int columnsX, T[] y, int rowsY, int columnsY, T[] result);
+    public void MatrixMultiply(T[] x, int rowsX, int columnsX, T[] y, int rowsY, int columnsY, T[] result);
 
     /// <summary>
     /// Multiplies two matrices and updates another with the result. <c>c = alpha*op(a)*op(b) + beta*c</c>
@@ -258,7 +258,7 @@ namespace Altaxo.Calc.Providers.LinearAlgebra
     /// <param name="columnsB">The number of columns in the <paramref name="b"/> matrix.</param>
     /// <param name="beta">The value to scale the <paramref name="c"/> matrix.</param>
     /// <param name="c">The c matrix.</param>
-    void MatrixMultiplyWithUpdate(Transpose transposeA, Transpose transposeB, T alpha, T[] a, int rowsA, int columnsA, T[] b, int rowsB, int columnsB, T beta, T[] c);
+    public void MatrixMultiplyWithUpdate(Transpose transposeA, Transpose transposeB, T alpha, T[] a, int rowsA, int columnsA, T[] b, int rowsB, int columnsB, T beta, T[] c);
 
     /// <summary>
     /// Computes the LUP factorization of A. P*A = L*U.
@@ -269,7 +269,7 @@ namespace Altaxo.Calc.Providers.LinearAlgebra
     /// <param name="order">The order of the square matrix <paramref name="data"/>.</param>
     /// <param name="ipiv">On exit, it contains the pivot indices. The size of the array must be <paramref name="order"/>.</param>
     /// <remarks>This is equivalent to the GETRF LAPACK routine.</remarks>
-    void LUFactor(T[] data, int order, int[] ipiv);
+    public void LUFactor(T[] data, int order, int[] ipiv);
 
     /// <summary>
     /// Computes the inverse of matrix using LU factorization.
@@ -277,7 +277,7 @@ namespace Altaxo.Calc.Providers.LinearAlgebra
     /// <param name="a">The N by N matrix to invert. Contains the inverse On exit.</param>
     /// <param name="order">The order of the square matrix <paramref name="a"/>.</param>
     /// <remarks>This is equivalent to the GETRF and GETRI LAPACK routines.</remarks>
-    void LUInverse(T[] a, int order);
+    public void LUInverse(T[] a, int order);
 
     /// <summary>
     /// Computes the inverse of a previously factored matrix.
@@ -286,7 +286,7 @@ namespace Altaxo.Calc.Providers.LinearAlgebra
     /// <param name="order">The order of the square matrix <paramref name="a"/>.</param>
     /// <param name="ipiv">The pivot indices of <paramref name="a"/>.</param>
     /// <remarks>This is equivalent to the GETRI LAPACK routine.</remarks>
-    void LUInverseFactored(T[] a, int order, int[] ipiv);
+    public void LUInverseFactored(T[] a, int order, int[] ipiv);
 
     /// <summary>
     /// Solves A*X=B for X using LU factorization.
@@ -296,7 +296,7 @@ namespace Altaxo.Calc.Providers.LinearAlgebra
     /// <param name="order">The order of the square matrix <paramref name="a"/>.</param>
     /// <param name="b">On entry the B matrix; on exit the X matrix.</param>
     /// <remarks>This is equivalent to the GETRF and GETRS LAPACK routines.</remarks>
-    void LUSolve(int columnsOfB, T[] a, int order, T[] b);
+    public void LUSolve(int columnsOfB, T[] a, int order, T[] b);
 
     /// <summary>
     /// Solves A*X=B for X using a previously factored A matrix.
@@ -307,7 +307,7 @@ namespace Altaxo.Calc.Providers.LinearAlgebra
     /// <param name="ipiv">The pivot indices of <paramref name="a"/>.</param>
     /// <param name="b">On entry the B matrix; on exit the X matrix.</param>
     /// <remarks>This is equivalent to the GETRS LAPACK routine.</remarks>
-    void LUSolveFactored(int columnsOfB, T[] a, int order, int[] ipiv, T[] b);
+    public void LUSolveFactored(int columnsOfB, T[] a, int order, int[] ipiv, T[] b);
 
     /// <summary>
     /// Computes the Cholesky factorization of A.
@@ -316,7 +316,7 @@ namespace Altaxo.Calc.Providers.LinearAlgebra
     /// the Cholesky factorization.</param>
     /// <param name="order">The number of rows or columns in the matrix.</param>
     /// <remarks>This is equivalent to the POTRF LAPACK routine.</remarks>
-    void CholeskyFactor(T[] a, int order);
+    public void CholeskyFactor(T[] a, int order);
 
     /// <summary>
     /// Solves A*X=B for X using Cholesky factorization.
@@ -326,7 +326,7 @@ namespace Altaxo.Calc.Providers.LinearAlgebra
     /// <param name="b">On entry the B matrix; on exit the X matrix.</param>
     /// <param name="columnsB">The number of columns in the B matrix.</param>
     /// <remarks>This is equivalent to the POTRF add POTRS LAPACK routines.</remarks>
-    void CholeskySolve(T[] a, int orderA, T[] b, int columnsB);
+    public void CholeskySolve(T[] a, int orderA, T[] b, int columnsB);
 
     /// <summary>
     /// Solves A*X=B for X using a previously factored A matrix.
@@ -336,7 +336,7 @@ namespace Altaxo.Calc.Providers.LinearAlgebra
     /// <param name="b">On entry the B matrix; on exit the X matrix.</param>
     /// <param name="columnsB">The number of columns in the B matrix.</param>
     /// <remarks>This is equivalent to the POTRS LAPACK routine.</remarks>
-    void CholeskySolveFactored(T[] a, int orderA, T[] b, int columnsB);
+    public void CholeskySolveFactored(T[] a, int orderA, T[] b, int columnsB);
 
     /// <summary>
     /// Computes the full QR factorization of A.
@@ -350,7 +350,7 @@ namespace Altaxo.Calc.Providers.LinearAlgebra
     /// <param name="tau">A min(m,n) vector. On exit, contains additional information
     /// to be used by the QR solve routine.</param>
     /// <remarks>This is similar to the GEQRF and ORGQR LAPACK routines.</remarks>
-    void QRFactor(T[] a, int rowsA, int columnsA, T[] q, T[] tau);
+    public void QRFactor(T[] a, int rowsA, int columnsA, T[] q, T[] tau);
 
     /// <summary>
     /// Computes the thin QR factorization of A where M &gt; N.
@@ -364,7 +364,7 @@ namespace Altaxo.Calc.Providers.LinearAlgebra
     /// <param name="tau">A min(m,n) vector. On exit, contains additional information
     /// to be used by the QR solve routine.</param>
     /// <remarks>This is similar to the GEQRF and ORGQR LAPACK routines.</remarks>
-    void ThinQRFactor(T[] a, int rowsA, int columnsA, T[] r, T[] tau);
+    public void ThinQRFactor(T[] a, int rowsA, int columnsA, T[] r, T[] tau);
 
     /// <summary>
     /// Solves A*X=B for X using QR factorization of A.
@@ -377,7 +377,7 @@ namespace Altaxo.Calc.Providers.LinearAlgebra
     /// <param name="x">On exit, the solution matrix.</param>
     /// <param name="method">The type of QR factorization to perform. <seealso cref="QRMethod"/></param>
     /// <remarks>Rows must be greater or equal to columns.</remarks>
-    void QRSolve(T[] a, int rows, int columns, T[] b, int columnsB, T[] x, QRMethod method = QRMethod.Full);
+    public void QRSolve(T[] a, int rows, int columns, T[] b, int columnsB, T[] x, QRMethod method = QRMethod.Full);
 
     /// <summary>
     /// Solves A*X=B for X using a previously QR factored matrix.
@@ -394,7 +394,7 @@ namespace Altaxo.Calc.Providers.LinearAlgebra
     /// <param name="x">On exit, the solution matrix.</param>
     /// <remarks>Rows must be greater or equal to columns.</remarks>
     /// <param name="method">The type of QR factorization to perform. <seealso cref="QRMethod"/></param>
-    void QRSolveFactored(T[] q, T[] r, int rowsA, int columnsA, T[] tau, T[] b, int columnsB, T[] x, QRMethod method = QRMethod.Full);
+    public void QRSolveFactored(T[] q, T[] r, int rowsA, int columnsA, T[] tau, T[] b, int columnsB, T[] x, QRMethod method = QRMethod.Full);
 
     /// <summary>
     /// Computes the singular value decomposition of A.
@@ -409,7 +409,7 @@ namespace Altaxo.Calc.Providers.LinearAlgebra
     /// <param name="vt">If <paramref name="computeVectors"/> is <c>true</c>, on exit VT contains the transposed
     /// right singular vectors.</param>
     /// <remarks>This is equivalent to the GESVD LAPACK routine.</remarks>
-    void SingularValueDecomposition(bool computeVectors, T[] a, int rowsA, int columnsA, T[] s, T[] u, T[] vt);
+    public void SingularValueDecomposition(bool computeVectors, T[] a, int rowsA, int columnsA, T[] s, T[] u, T[] vt);
 
     /// <summary>
     /// Solves A*X=B for X using the singular value decomposition of A.
@@ -420,7 +420,7 @@ namespace Altaxo.Calc.Providers.LinearAlgebra
     /// <param name="b">The B matrix.</param>
     /// <param name="columnsB">The number of columns of B.</param>
     /// <param name="x">On exit, the solution matrix.</param>
-    void SvdSolve(T[] a, int rowsA, int columnsA, T[] b, int columnsB, T[] x);
+    public void SvdSolve(T[] a, int rowsA, int columnsA, T[] b, int columnsB, T[] x);
 
     /// <summary>
     /// Solves A*X=B for X using a previously SVD decomposed matrix.
@@ -433,7 +433,7 @@ namespace Altaxo.Calc.Providers.LinearAlgebra
     /// <param name="b">The B matrix</param>
     /// <param name="columnsB">The number of columns of B.</param>
     /// <param name="x">On exit, the solution matrix.</param>
-    void SvdSolveFactored(int rowsA, int columnsA, T[] s, T[] u, T[] vt, T[] b, int columnsB, T[] x);
+    public void SvdSolveFactored(int rowsA, int columnsA, T[] s, T[] u, T[] vt, T[] b, int columnsB, T[] x);
 
     /// <summary>
     /// Computes the eigenvalues and eigenvectors of a matrix.
@@ -444,6 +444,6 @@ namespace Altaxo.Calc.Providers.LinearAlgebra
     /// <param name="matrixEv">On output, the matrix contains the eigen vectors. The length of the array must be order * order.</param>
     /// <param name="vectorEv">On output, the eigen values (λ) of matrix in ascending value. The length of the array must <paramref name="order"/>.</param>
     /// <param name="matrixD">On output, the block diagonal eigenvalue matrix. The length of the array must be order * order.</param>
-    void EigenDecomp(bool isSymmetric, int order, T[] matrix, T[] matrixEv, Complex[] vectorEv, T[] matrixD);
+    public void EigenDecomp(bool isSymmetric, int order, T[] matrix, T[] matrixEv, Complex[] vectorEv, T[] matrixD);
   }
 }

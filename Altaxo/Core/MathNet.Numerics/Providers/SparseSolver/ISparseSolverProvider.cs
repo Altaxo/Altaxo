@@ -92,24 +92,24 @@ namespace Altaxo.Calc.Providers.SparseSolver
     /// Try to find out whether the provider is available, at least in principle.
     /// Verification may still fail if available, but it will certainly fail if unavailable.
     /// </summary>
-    bool IsAvailable();
+    public bool IsAvailable();
 
     /// <summary>
     /// Initialize and verify that the provided is indeed available. If not, fall back to alternatives like the managed provider
     /// </summary>
-    void InitializeVerify();
+    public void InitializeVerify();
 
     /// <summary>
     /// Frees memory buffers, caches and handles allocated in or to the provider.
     /// Does not unload the provider itself, it is still usable afterwards.
     /// </summary>
-    void FreeResources();
+    public void FreeResources();
   }
 
   public interface ISparseSolverProvider<T>
       where T : struct
   {
-    DssStatus Solve(DssMatrixStructure matrixStructure, DssMatrixType matrixType, DssSystemType systemType, int rows, int cols, int nnz, int[] rowIdx, int[] colPtr, T[] values, int nRhs, T[] rhs, T[] solution);
+    public DssStatus Solve(DssMatrixStructure matrixStructure, DssMatrixType matrixType, DssSystemType systemType, int rows, int cols, int nnz, int[] rowIdx, int[] colPtr, T[] values, int nRhs, T[] rhs, T[] solution);
   }
 }
 

@@ -39,6 +39,6 @@ namespace Altaxo.Calc.Distributions
     /// <summary>
     /// Gets or sets the random number generator which is used to draw random samples.
     /// </summary>
-    System.Random RandomSource { get; set; }
+    public System.Random RandomSource { get; set; }
   }
 }
