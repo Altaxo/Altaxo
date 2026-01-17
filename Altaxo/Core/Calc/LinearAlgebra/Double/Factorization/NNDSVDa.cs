@@ -22,8 +22,6 @@
 
 #endregion Copyright
 
-using System.Linq;
-
 namespace Altaxo.Calc.LinearAlgebra.Double.Factorization
 {
   public record NNDSVDa : NNDSVD
@@ -58,30 +56,31 @@ namespace Altaxo.Calc.LinearAlgebra.Double.Factorization
     /// </summary>
     /// <param name="X">The non-negative input matrix to be factorized.</param>
     /// <param name="r">The target factorization rank.</param>
-    /// <returns>A tuple <c>(W0, H0)</c> containing non-negative initial factors with zeros replaced by a small value.</returns>
+    /// <returns>A tuple <c>(W0, H0)</c> containing non-negative initial factors with zeros replaced by a reasonable value (see remarks!).</returns>
+    /// <remarks>In the paper Boutsidis & Gallopoulos, 2008, https://doi.org/10.1016/j.patcog.2007.09.010, section 2.3,
+    /// the zero elements are overwritten with the mean of matrix X.
+    /// I consider this as wrong, because W and H scale with the square root of X, not with X itself.
+    /// Therefore, e.g. if X is scaled with 1E20, W and H are scaled with 1E10, but the zeros would be then replaced with a scale of 1E20 again.
+    /// Thus I decided not to use X, but to overwrite the zeros with the average values of W and H, respectively.
+    /// This will also avoid peculiarities if the average of X is zero.</remarks>
     public override (Matrix<double> W, Matrix<double> H) GetInitialFactors(Matrix<double> X, int r)
     {
       // First, create the standard NNDSVD initialization
       var (W0, H0) = base.GetInitialFactors(X, r);
 
-      // Mean of the data matrix (positive values only)
-      double avg = X.Enumerate().Where(v => v > 0).DefaultIfEmpty(0.0).Average();
-      double eps = avg * 1e-4; // paper Boutsidis & Gallopoulos, 2008, https://doi.org/10.1016/j.patcog.2007.09.010
+      var avgW0 = MatrixMath.Average(W0);
+      var avgH0 = MatrixMath.Average(H0);
 
-      // If avg == 0 (extremely rare), fallback
-      if (eps == 0.0)
-        eps = 1e-4;
-
-      // Replace all zeros
+      // replace the zeros of the matrixes with the average value
       for (int i = 0; i < W0.RowCount; i++)
         for (int j = 0; j < W0.ColumnCount; j++)
-          if (W0[i, j] == 0.0)
-            W0[i, j] = eps;
+          if (W0[i, j] == 0)
+            W0[i, j] = avgW0;
 
       for (int i = 0; i < H0.RowCount; i++)
         for (int j = 0; j < H0.ColumnCount; j++)
-          if (H0[i, j] == 0.0)
-            H0[i, j] = eps;
+          if (H0[i, j] == 0)
+            H0[i, j] = avgH0;
 
       return (W0, H0);
     }

@@ -25,6 +25,7 @@
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Numerics;
 using System.Text;
 
 namespace Altaxo.Calc.LinearAlgebra
@@ -1230,6 +1231,53 @@ namespace Altaxo.Calc.LinearAlgebra
     }
 
     #endregion Submatrix
+
+    #region Statistics and Modifications
+
+    /// <summary>
+    /// Calculates the sum of all elements in the specified matrix.
+    /// </summary>
+    /// <typeparam name="T">The numeric type of the matrix elements. Must be a value type that implements <see cref="INumber{T}"/>.</typeparam>
+    /// <param name="matrix">The matrix whose elements are to be summed.</param>
+    /// <returns>The sum of all elements in <paramref name="matrix"/> as a value of type <typeparamref name="T"/>.</returns>
+    public static T Sum<T>(IROMatrix<T> matrix) where T : struct, INumber<T>
+    {
+      T sum = T.Zero;
+      for (int i = 0; i < matrix.RowCount; ++i)
+      {
+        for (int j = 0; j < matrix.ColumnCount; ++j)
+        {
+          sum += matrix[i, j];
+        }
+      }
+      return sum;
+    }
+
+    /// <summary>
+    /// Calculates the average value of all elements in the specified matrix.
+    /// </summary>
+    /// <remarks>If the matrix contains no elements, this method will throw a divide-by-zero exception. The
+    /// calculation uses checked arithmetic for the division.</remarks>
+    /// <typeparam name="T">The numeric type of the matrix elements. Must be a value type that implements <see cref="INumber{T}"/>.</typeparam>
+    /// <param name="matrix">The matrix whose elements are averaged. Must not be null.</param>
+    /// <returns>The average of all elements in the matrix, represented as type <typeparamref name="T"/>.</returns>
+    public static T Average<T>(IROMatrix<T> matrix) where T : struct, INumber<T>
+    {
+      T sum = T.Zero;
+      for (int i = 0; i < matrix.RowCount; ++i)
+      {
+        for (int j = 0; j < matrix.ColumnCount; ++j)
+        {
+          sum += matrix[i, j];
+        }
+      }
+      return sum / T.CreateChecked(matrix.RowCount * matrix.ColumnCount);
+    }
+
+
+
+
+    #endregion
 
     /// <summary>
     /// Replaces all matrix elements that are NaN (not a number) with the value of <paramref name="replacementValue"/>.

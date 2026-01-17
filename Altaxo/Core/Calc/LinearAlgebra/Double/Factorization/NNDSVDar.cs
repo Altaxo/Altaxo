@@ -22,11 +22,9 @@
 
 #endregion Copyright
 
-using System.Linq;
-
 namespace Altaxo.Calc.LinearAlgebra.Double.Factorization
 {
-  public record NNDSVDar : NNDSVDa
+  public record NNDSVDar : NNDSVD
   {
     #region Serialization
 
@@ -58,32 +56,34 @@ namespace Altaxo.Calc.LinearAlgebra.Double.Factorization
     /// <param name="X">The non-negative input matrix to be factorized.</param>
     /// <param name="r">The target factorization rank.</param>
     /// <returns>A tuple <c>(W0, H0)</c> containing non-negative initial factors with small random perturbations.</returns>
-    /// <remarks>
-    /// References: <see href="https://doi.org/10.1016/j.patcog.2007.09.010">Boutsidis, C., Gallopoulos, E., SVD based initialization: A head start for nonnegative matrix factorization, Pattern Recognition, Volume 41, Issue 4, April 2008, Pages 1350-1362</see>
-    /// </remarks>
+    /// <remarks>In the paper Boutsidis & Gallopoulos, 2008, https://doi.org/10.1016/j.patcog.2007.09.010, section 2.3,
+    /// the zero elements are overwritten with the mean of matrix X * 0.01 * Random.
+    /// I consider this as wrong, because W and H scale with the square root of X, not with X itself.
+    /// Therefore, e.g. if X is scaled with 1E20, W and H are scaled with 1E10, but the zeros would be then replaced with a scale of 1E20 again.
+    /// Thus I decided not to use X, but to overwrite the zeros with the average values of W and H * 0.01 * random,  respectively.
+    /// This will also avoid peculiarities if the average of X is zero.</remarks>
     public override (Matrix<double> W, Matrix<double> H) GetInitialFactors(Matrix<double> X, int r)
     {
-      // First, create NNDSVDa
+      // First, create the standard NNDSVD initialization
       var (W0, H0) = base.GetInitialFactors(X, r);
 
-      // Mean of the data matrix (positive values only)
-      double avg = X.Enumerate().Where(v => v > 0).DefaultIfEmpty(0.0).Average();
-      double eps = avg * 1e-4;
+      var avgW0 = MatrixMath.Average(W0);
+      var avgH0 = MatrixMath.Average(H0);
+      avgW0 *= 1E-2;
+      avgH0 *= 1E-2;
 
-      if (eps == 0.0)
-        eps = 1e-4;
+      var rand = System.Random.Shared;
 
-      // Random number generator
-      var rnd = System.Random.Shared;
-
-      // Add random noise
+      // replace the zeros of the matrixes with the 1E-2*average value*random number
       for (int i = 0; i < W0.RowCount; i++)
         for (int j = 0; j < W0.ColumnCount; j++)
-          W0[i, j] += rnd.NextDouble() * eps;
+          if (W0[i, j] == 0)
+            W0[i, j] = avgW0 * rand.NextDouble();
 
       for (int i = 0; i < H0.RowCount; i++)
         for (int j = 0; j < H0.ColumnCount; j++)
-          H0[i, j] += rnd.NextDouble() * eps;
+          if (H0[i, j] == 0)
+            H0[i, j] = avgH0 * rand.NextDouble();
 
       return (W0, H0);
     }
