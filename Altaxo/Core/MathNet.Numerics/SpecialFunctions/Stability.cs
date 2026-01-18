@@ -116,31 +116,25 @@ namespace Altaxo.Calc
     /// <returns>Returns <code>sqrt(a<sup>2</sup> + b<sup>2</sup>)</code> without underflow/overflow.</returns>
     public static double Hypotenuse(double a, double b)
     {
-      double x, y, min, max;
-      x = Math.Abs(a);
-      y = Math.Abs(b);
-      if (y > x)
+      var min = Math.Abs(a);
+      var max = Math.Abs(b);
+      if (min > max)
       {
-        min = x;
-        max = y;
-      }
-      else
-      {
-        min = y;
-        max = x;
+        (min, max) = (max, min);
       }
       if (min == 0)
       {
         return max;
       }
-      else if (double.IsInfinity(x + y))
+      else if (double.IsInfinity(min + max))
       {
         return double.PositiveInfinity;
       }
       else
       {
-        var u = min / max;
-        return max * Math.Sqrt(1 + u * u);
+        // NOTE (ruegg): not "!b.AlmostZero()" to avoid convergence issues (e.g. in SVD algorithm)
+        var r = min / max;
+        return max * Math.Sqrt(1 + r * r);
       }
     }
 
@@ -152,31 +146,25 @@ namespace Altaxo.Calc
     /// <returns>Returns <code>sqrt(a<sup>2</sup> + b<sup>2</sup>)</code> without underflow/overflow.</returns>
     public static float Hypotenuse(float a, float b)
     {
-      float x, y, min, max;
-      x = Math.Abs(a);
-      y = Math.Abs(b);
-      if (y > x)
+      var min = Math.Abs(a);
+      var max = Math.Abs(b);
+      if (min > max)
       {
-        min = x;
-        max = y;
-      }
-      else
-      {
-        min = y;
-        max = x;
+        (min, max) = (max, min);
       }
       if (min == 0)
       {
         return max;
       }
-      else if (float.IsInfinity(x + y))
+      else if (float.IsInfinity(min + max))
       {
         return float.PositiveInfinity;
       }
       else
       {
-        var u = min / max;
-        return max * (float)Math.Sqrt(1 + u * u);
+        // NOTE (ruegg): not "!b.AlmostZero()" to avoid convergence issues (e.g. in SVD algorithm)
+        var r = min / max;
+        return max * (float)Math.Sqrt(1 + r * r);
       }
     }
   }
