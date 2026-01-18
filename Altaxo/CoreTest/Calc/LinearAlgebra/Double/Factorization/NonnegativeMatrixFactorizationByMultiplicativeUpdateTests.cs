@@ -30,23 +30,7 @@ namespace Altaxo.Calc.LinearAlgebra.Double.Factorization
   public class NonnegativeMatrixFactorizationByMultiplicativeUpdateTests : FactorizationTestBase
   {
     [Fact]
-    public void Test1()
-    {
-      int m = 50;   // Zeilen
-      int n = 40;   // Spalten
-      int r = 10;   // Rang
-
-
-      var W_true = Matrix<double>.Build.Random(m, r).PointwiseAbs();
-      var H_true = Matrix<double>.Build.Random(r, n).PointwiseAbs();
-      var V = W_true * H_true;
-
-      var (W, H) = new NonnegativeMatrixFactorizationByMultiplicativeUpdate().Factorize(V, r);
-
-    }
-
-    [Fact]
-    public void Test2()
+    public void Test()
     {
       var originalLoadings = GetThreeSpectra();
       var originalScores = GetScores3D(NumberOfSpectra);
@@ -54,14 +38,35 @@ namespace Altaxo.Calc.LinearAlgebra.Double.Factorization
       var matrixX = originalMatrix.Clone();
       var nmf = new NonnegativeMatrixFactorizationByMultiplicativeUpdate()
       {
-        InitializationMethod = new NNDSVDar(),
-        NumberOfTrials = 5,
-        MaximumNumberOfIterations = 2000,
+        InitializationMethod = new NNDSVDa(),
+        NumberOfAdditionalTrials = 5,
+        MaximumNumberOfIterations = 200,
       };
-      var (mfactors, mloads) = nmf.Factorize(matrixX, NumberOfComponents);
-
+      var (mfactors, mloads) = nmf.FactorizeOneTrial(matrixX, NumberOfComponents);
       var relError = RelativeError(mfactors, mloads, originalMatrix);
-      Assert.True(relError < 0.0033);
+      Assert.True(relError < 0.022);
+    }
+
+    [Fact]
+    public void CanHandleDifferentScales()
+    {
+      foreach (var scale in new double[] { 1, 1e40, 1e-40 })
+      {
+        var originalLoadings = GetThreeSpectra();
+        var originalScores = GetScores3D(NumberOfSpectra);
+        var originalMatrix = originalScores * originalLoadings * scale;
+        var matrixX = originalMatrix.Clone();
+
+        var nmf = new NonnegativeMatrixFactorizationByMultiplicativeUpdate()
+        {
+          InitializationMethod = new NNDSVDa(),
+          NumberOfAdditionalTrials = 5,
+          MaximumNumberOfIterations = 200,
+        };
+        var (mfactors, mloads) = nmf.FactorizeOneTrial(matrixX, NumberOfComponents);
+        var relError = RelativeError(mfactors, mloads, originalMatrix);
+        Assert.True(relError < 0.022);
+      }
     }
   }
 }

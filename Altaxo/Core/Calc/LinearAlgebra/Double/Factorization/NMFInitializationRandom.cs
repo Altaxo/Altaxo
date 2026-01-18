@@ -22,6 +22,8 @@
 
 #endregion Copyright
 
+using System;
+
 namespace Altaxo.Calc.LinearAlgebra.Double.Factorization
 {
   public record NMFInitializationRandom : INonnegativeMatrixFactorizationInitializer, Main.IImmutable
@@ -54,12 +56,27 @@ namespace Altaxo.Calc.LinearAlgebra.Double.Factorization
       int m = X.RowCount;
       int n = X.ColumnCount;
 
-      var W = Matrix<double>.Build.Random(m, r);
-      var H = Matrix<double>.Build.Random(r, n);
+      var W = CreateMatrix.Dense<double>(m, r);
+      var H = CreateMatrix.Dense<double>(r, n);
 
-      // Ensure non-negativity
-      W = W.PointwiseMaximum(0);
-      H = H.PointwiseMaximum(0);
+      var rnd = System.Random.Shared;
+      var scale = Math.Sqrt(X.FrobeniusNorm() / ((double)X.RowCount * X.ColumnCount)); // scale the random values with the inverse sqrt of the average element magnitude
+
+      for (int i = 0; i < m; i++)
+      {
+        for (int j = 0; j < r; j++)
+        {
+          W[i, j] = scale * Math.Max(1E-6, rnd.NextDouble()); // ensure that never any element is zero
+        }
+      }
+
+      for (int i = 0; i < r; i++)
+      {
+        for (int j = 0; j < n; j++)
+        {
+          H[i, j] = scale * Math.Max(1E-6, rnd.NextDouble()); // ensure that never any element is zero
+        }
+      }
 
       return (W, H);
     }

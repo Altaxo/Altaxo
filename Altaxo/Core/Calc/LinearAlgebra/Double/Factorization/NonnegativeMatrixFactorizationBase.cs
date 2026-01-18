@@ -48,13 +48,13 @@ namespace Altaxo.Calc.LinearAlgebra.Double.Factorization
       }
     } = 1000;
 
-    public int NumberOfTrials
+    public int NumberOfAdditionalTrials
     {
       get => field;
       init
       {
-        if (value < 1)
-          throw new ArgumentOutOfRangeException(nameof(NumberOfTrials), "Number of trials must be at least 1.");
+        if (!(value >= 0))
+          throw new ArgumentOutOfRangeException(nameof(NumberOfAdditionalTrials), "Number of trials must be at least 0.");
         field = value;
       }
     }
@@ -94,7 +94,7 @@ namespace Altaxo.Calc.LinearAlgebra.Double.Factorization
     public (Matrix<double> W, Matrix<double> H) Factorize(Matrix<double> V, int rank)
     {
       var (W, H) = FactorizeOneTrial(V, rank);
-      if (NumberOfTrials <= 1)
+      if (NumberOfAdditionalTrials == 0)
       {
         return (W, H);
       }
@@ -105,7 +105,7 @@ namespace Altaxo.Calc.LinearAlgebra.Double.Factorization
         Matrix<double> bestW = W;
         Matrix<double> bestH = H;
 
-        for (int trial = 1; trial < NumberOfTrials; trial++)
+        for (int trial = 0; trial < NumberOfAdditionalTrials; trial++)
         {
           // Initialization is random for the other trials
           if (this.InitializationMethod is not NMFInitializationRandom)

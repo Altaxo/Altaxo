@@ -28,8 +28,8 @@ namespace Altaxo.Calc.LinearAlgebra.Double.Factorization
 {
   public class FactorizationTestBase
   {
-    protected const int SpectralPoints = 1600;
-    protected const int NumberOfSpectra = 100;
+    protected const int SpectralPoints = 80;
+    protected const int NumberOfSpectra = 20;
     protected const int NumberOfComponents = 3;
 
     protected static Matrix<double> GetThreeSpectra()
@@ -47,7 +47,7 @@ namespace Altaxo.Calc.LinearAlgebra.Double.Factorization
 
         for (var idxSpectralPoint = 0; idxSpectralPoint < SpectralPoints; idxSpectralPoint++)
         {
-          var arg = (idxSpectralPoint - xc) / 80d;
+          var arg = (idxSpectralPoint - xc) / ((double)SpectralPoints / 20);
           loadings[idxSpectrum, idxSpectralPoint] = Math.Exp(-0.5 * arg * arg);
         }
       }
@@ -63,11 +63,15 @@ namespace Altaxo.Calc.LinearAlgebra.Double.Factorization
         {
           switch (c)
           {
-            case 0: scores[r, c] = r / (double)numberOfSpectra; break;
-            case 1: scores[r, c] = 1.0 - (r / (double)numberOfSpectra); break;
+            case 0:
+              scores[r, c] = r / ((double)numberOfSpectra - 1);
+              break;
+            case 1:
+              scores[r, c] = 1.0 - r / ((double)numberOfSpectra - 1);
+              break;
             case 2:
               {
-                var angle = (r / (double)numberOfSpectra) * 4.0 * Math.PI;
+                var angle = (r / ((double)numberOfSpectra - 1)) * 4.0 * Math.PI;
                 scores[r, c] = 0.5 * (1.0 + Math.Sin(angle));
               }
               break;

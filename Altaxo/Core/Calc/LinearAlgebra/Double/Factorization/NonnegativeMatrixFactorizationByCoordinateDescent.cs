@@ -82,7 +82,7 @@ namespace Altaxo.Calc.LinearAlgebra.Double.Factorization
         var s = (NonnegativeMatrixFactorizationByCoordinateDescent)obj;
         info.AddValue("InitializationMethod", s.InitializationMethod);
         info.AddValue("MaximumNumberOfIterations", s.MaximumNumberOfIterations);
-        info.AddValue("NumberOfTrials", s.NumberOfTrials);
+        info.AddValue("NumberOfTrials", s.NumberOfAdditionalTrials);
         info.AddValue("Tolerance", s.Tolerance);
         info.AddValue("Damping", s.Damping);
         info.AddValue("LambdaW", s.LambdaW);
@@ -104,7 +104,7 @@ namespace Altaxo.Calc.LinearAlgebra.Double.Factorization
         {
           InitializationMethod = initializationMethod,
           MaximumNumberOfIterations = maximumNumberOfIterations,
-          NumberOfTrials = numberOfTrials,
+          NumberOfAdditionalTrials = numberOfTrials,
           Tolerance = tolerance,
           Damping = damping,
           LambdaW = lambdaW,
@@ -115,13 +115,7 @@ namespace Altaxo.Calc.LinearAlgebra.Double.Factorization
 
     #endregion Serialization
 
-    /// <summary>
-    /// Fits a factorization <c>V ≈ W * H</c> with non-negative factors.
-    /// </summary>
-    /// <param name="X">The input matrix to factorize.</param>
-    /// <returns>The final relative reconstruction error.</returns>
-    ///
-
+    /// <inheritdoc/>
     public override (Matrix<double> W, Matrix<double> H) FactorizeOneTrial(Matrix<double> X, int Rank)
     {
       int m = X.RowCount;

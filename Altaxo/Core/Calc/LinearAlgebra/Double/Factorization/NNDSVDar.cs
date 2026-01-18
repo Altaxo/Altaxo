@@ -22,6 +22,8 @@
 
 #endregion Copyright
 
+using System;
+
 namespace Altaxo.Calc.LinearAlgebra.Double.Factorization
 {
   public record NNDSVDar : NNDSVD
@@ -69,8 +71,6 @@ namespace Altaxo.Calc.LinearAlgebra.Double.Factorization
 
       var avgW0 = MatrixMath.Average(W0);
       var avgH0 = MatrixMath.Average(H0);
-      avgW0 *= 1E-2;
-      avgH0 *= 1E-2;
 
       var rand = System.Random.Shared;
 
@@ -78,12 +78,12 @@ namespace Altaxo.Calc.LinearAlgebra.Double.Factorization
       for (int i = 0; i < W0.RowCount; i++)
         for (int j = 0; j < W0.ColumnCount; j++)
           if (W0[i, j] == 0)
-            W0[i, j] = avgW0 * rand.NextDouble();
+            W0[i, j] = avgW0 * Math.Max(1E-3, rand.NextDouble());
 
       for (int i = 0; i < H0.RowCount; i++)
         for (int j = 0; j < H0.ColumnCount; j++)
           if (H0[i, j] == 0)
-            H0[i, j] = avgH0 * rand.NextDouble();
+            H0[i, j] = avgH0 * Math.Max(1E-3, rand.NextDouble());
 
       return (W0, H0);
     }

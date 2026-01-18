@@ -173,7 +173,7 @@ namespace Altaxo.Gui.Analysis.Multivariate
     }
 
 
-    IDimensionReductionMethod _currentMethod;
+    private IDimensionReductionMethod _currentMethod;
 
     private void InitializeAnalysisMethods()
     {
@@ -223,11 +223,11 @@ namespace Altaxo.Gui.Analysis.Multivariate
         }
       }
 
-      if (OutputOptionsController is { } ctrl2)
+      if (MethodController is { } ctrl2)
       {
         if (true == ctrl2.Apply(disposeController))
         {
-          _doc = _doc with { OutputOptions = (DimensionReductionOutputOptions)ctrl2.ModelObject };
+          _doc = _doc with { DimensionReductionMethod = (IDimensionReductionMethod)ctrl2.ModelObject };
         }
         else
         {
@@ -235,12 +235,17 @@ namespace Altaxo.Gui.Analysis.Multivariate
         }
       }
 
-
-      _doc = _doc with
+      if (OutputOptionsController is { } ctrl3)
       {
-        DimensionReductionMethod = (IDimensionReductionMethod)Activator.CreateInstance(AnalysisMethods.SelectedValue)
-      };
-
+        if (true == ctrl3.Apply(disposeController))
+        {
+          _doc = _doc with { OutputOptions = (DimensionReductionOutputOptions)ctrl3.ModelObject };
+        }
+        else
+        {
+          return ApplyEnd(false, disposeController);
+        }
+      }
 
       return ApplyEnd(true, disposeController);
     }

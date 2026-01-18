@@ -46,7 +46,7 @@ namespace Altaxo.Calc.LinearAlgebra.Double.Factorization
         var s = (NonnegativeMatrixFactorizationByMultiplicativeUpdate)obj;
         info.AddValue("InitializationMethod", s.InitializationMethod);
         info.AddValue("MaximumNumberOfIterations", s.MaximumNumberOfIterations);
-        info.AddValue("NumberOfTrials", s.NumberOfTrials);
+        info.AddValue("NumberOfTrials", s.NumberOfAdditionalTrials);
         info.AddValue("Tolerance", s.Tolerance);
       }
 
@@ -62,7 +62,7 @@ namespace Altaxo.Calc.LinearAlgebra.Double.Factorization
         {
           InitializationMethod = initializationMethod,
           MaximumNumberOfIterations = maximumNumberOfIterations,
-          NumberOfTrials = numberOfTrials,
+          NumberOfAdditionalTrials = numberOfTrials,
           Tolerance = tolerance,
         };
       }

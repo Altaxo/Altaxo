@@ -30,7 +30,6 @@
 #endregion Copyright
 
 using System;
-using System.Collections.Generic;
 
 namespace Altaxo.Calc.LinearAlgebra.Double.Factorization
 {
@@ -43,7 +42,7 @@ namespace Altaxo.Calc.LinearAlgebra.Double.Factorization
   /// </remarks>
   public record NonnegativeMatrixFactorizationByACLS : NonnegativeMatrixFactorizationBase
   {
-    double LambdaW
+    private double LambdaW
     {
       get => field;
       init
@@ -54,7 +53,7 @@ namespace Altaxo.Calc.LinearAlgebra.Double.Factorization
       }
     } = 0;
 
-    double LambdaH
+    private double LambdaH
     {
       get => field;
       init
@@ -64,7 +63,6 @@ namespace Altaxo.Calc.LinearAlgebra.Double.Factorization
         field = value;
       }
     } = 0;
-
 
     #region Serialization
 
@@ -81,7 +79,7 @@ namespace Altaxo.Calc.LinearAlgebra.Double.Factorization
         var s = (NonnegativeMatrixFactorizationByACLS)obj;
         info.AddValue("InitializationMethod", s.InitializationMethod);
         info.AddValue("MaximumNumberOfIterations", s.MaximumNumberOfIterations);
-        info.AddValue("NumberOfTrials", s.NumberOfTrials);
+        info.AddValue("NumberOfTrials", s.NumberOfAdditionalTrials);
         info.AddValue("Tolerance", s.Tolerance);
         info.AddValue("LambdaW", s.LambdaW);
         info.AddValue("LambdaH", s.LambdaH);
@@ -101,7 +99,7 @@ namespace Altaxo.Calc.LinearAlgebra.Double.Factorization
         {
           InitializationMethod = initializationMethod,
           MaximumNumberOfIterations = maximumNumberOfIterations,
-          NumberOfTrials = numberOfTrials,
+          NumberOfAdditionalTrials = numberOfTrials,
           Tolerance = tolerance,
           LambdaW = lambdaW,
           LambdaH = lambdaH
@@ -110,54 +108,6 @@ namespace Altaxo.Calc.LinearAlgebra.Double.Factorization
     }
 
     #endregion
-
-
-    /// <summary>
-    /// Computes an NMF factorization using an ACLS-like alternating constrained (non-negative) least-squares scheme.
-    /// </summary>
-    /// <param name="X">The (typically non-negative) input matrix to be factorized.</param>
-    /// <param name="r">The factorization rank.</param>
-    /// <param name="maxIter">The number of iterations to perform.</param>
-    /// <param name="lambda">The Tikhonov regularization parameter (&lambda;).</param>
-    /// <returns>A tuple containing (W, H) such that <c>X ≈ W * H</c> with non-negative factors.</returns>
-    public (Matrix<double> W, Matrix<double> H) ACLS(Matrix<double> X, int r, int maxIter = 1000, double lambda = 0.0)
-    {
-      // Use NNDSVDa initialization
-      var (W, H) = InitializationMethod.GetInitialFactors(X, r);
-
-      int m = X.RowCount;
-      int n = X.ColumnCount;
-
-      for (int iter = 0; iter < maxIter; iter++)
-      {
-        // === Update H ===
-        // Solve:  min_H ||X - W H||_F^2 + λ||H||_F^2  s.t. H >= 0
-        var WT = W.Transpose();
-        var A = WT * W + lambda * Matrix<double>.Build.DenseDiagonal(r, r, 1.0);
-        var B = WT * X;
-
-        for (int j = 0; j < n; j++)
-        {
-          var h = A.Solve(B.Column(j));
-          H.SetColumn(j, h.PointwiseMaximum(0.0));
-        }
-
-        // === Update W ===
-        // Solve:  min_W ||X - W H||_F^2 + λ||W||_F^2  s.t. W >= 0
-        var HT = H.Transpose();
-        A = H * HT + lambda * Matrix<double>.Build.DenseDiagonal(r, r, 1.0);
-        B = X * HT;
-
-        for (int i = 0; i < m; i++)
-        {
-          var w = A.Solve(B.Row(i).ToColumnMatrix()).Column(0);
-          W.SetRow(i, w.PointwiseMaximum(0.0));
-        }
-      }
-
-      return (W, H);
-    }
-
 
     /// <summary>
     /// Factorizes matrix <paramref name="X"/> into non-negative factors and non-negative base vectors.
@@ -176,8 +126,8 @@ namespace Altaxo.Calc.LinearAlgebra.Double.Factorization
 
       var m = X.RowCount;
       var n = X.ColumnCount;
-
-      var wt = Matrix<double>.Build.Dense(r, m); // instead of w in [1], we use w-transposed
+      (var w, _) = InitializationMethod.GetInitialFactors(X, r);
+      var wt = w.Transpose(); // instead of w in [1], we use w-transposed
       var h = Matrix<double>.Build.Dense(r, n);
 
       var wtw = Matrix<double>.Build.Dense(r, r);
@@ -188,9 +138,7 @@ namespace Altaxo.Calc.LinearAlgebra.Double.Factorization
 
       var abar = Matrix<double>.Build.Dense(m, n);
 
-      var listOfChi2 = new List<double>(r);
-
-      (var w, _) = InitializationMethod.GetInitialFactors(X, r);
+      var chi2History = new Chi2History(4);
 
       // Algorithm see [1], page 7, "Practical ACLS Algorithm for NMF"
       for (int iIteration = 0; iIteration < MaximumNumberOfIterations; iIteration++)
@@ -217,11 +165,109 @@ namespace Altaxo.Calc.LinearAlgebra.Double.Factorization
 
         // Evaluation of the quality
         wt.TransposeThisAndMultiply(h, abar);
-        listOfChi2.Add(SumOfSquaredDifferences(X, abar)); // TODO find a criterion for ending the loop prematurely
-      }
 
+        var (terminate, bestWt, bestH) = chi2History.Add(SumOfSquaredDifferences(X, abar), wt, h);
+        if (terminate)
+        {
+          return (bestWt!.Transpose(), bestH!);
+        }
+      }
       return (wt.Transpose(), h);
     }
+
+    /// <summary>
+    /// Stores the history of chi2 values to determine convergence.
+    /// For the ACLS algorithm, we stop if the chi2 value increases for a number of iterations.
+    /// </summary>
+    private class Chi2History
+    {
+      private int _count;
+      private (double chi2, Matrix<double>? wt, Matrix<double>? h)[] _listOfChi2;
+
+      /// <summary>
+      /// Creates a new instance Chi2History with the given depth.
+      /// </summary>
+      /// <param name="depth">The number of historical elements to store.</param>
+      public Chi2History(int depth)
+      {
+        _listOfChi2 = new (double chi2, Matrix<double>? wt, Matrix<double>? h)[depth];
+        _count = 0;
+      }
+
+      /// <summary>
+      /// Adds a new chi2 value to the history. 
+      /// </summary>
+      /// <param name="chi2">The new chi² value.</param>
+      /// <param name="w">The corresponding weight matrix. (it is cloned for storage).</param>
+      /// <param name="h">The corresponding load matrix (it is cloned for storage).</param>
+      /// <returns>A tuple (terminate, w and h). If terminate is true, the iteration can be terminated, and the w and h values returned here are the best values for factorzation. If terminate is false, then w and h are null.</returns>
+      public (bool terminate, Matrix<double>? w, Matrix<double>? h) Add(double chi2, Matrix<double> w, Matrix<double> h)
+      {
+        // if the history is full, check if the new chi2 is larger than the all others in history
+        // if this is the case, we can stop the iteration, and return the best w and h from history
+        if (_count == _listOfChi2.Length)
+        {
+          double maxChi2 = double.MinValue;
+          for (int i = 0; i < _listOfChi2.Length; ++i)
+          {
+            maxChi2 = Math.Max(maxChi2, _listOfChi2[i].chi2);
+          }
+          if (chi2 > maxChi2)
+          {
+            // if the new chi2 is larger than all others in history, terminate, and return the best w and h from history
+            double minChi2 = double.MaxValue;
+            int minIndex = -1;
+            for (int i = 0; i < _listOfChi2.Length; ++i)
+            {
+              if (_listOfChi2[i].chi2 < minChi2)
+              {
+                minChi2 = _listOfChi2[i].chi2;
+                minIndex = i;
+              }
+              maxChi2 = Math.Max(maxChi2, _listOfChi2[i].chi2);
+            }
+            return (true, _listOfChi2[minIndex].wt, _listOfChi2[minIndex].h);
+          }
+          else // if the actual chi2 is not the largest in history
+          {
+            // shift the values to the left
+            for (int i = 1; i < _count; ++i)
+            {
+              _listOfChi2[i - 1] = _listOfChi2[i];
+            }
+            // and store the new chi2
+            _listOfChi2[_count - 1] = (chi2, null, null); // just to have a valid entry
+          }
+        }
+        else
+        {
+          // still filling the history
+          _listOfChi2[_count++] = (chi2, null, null);
+        }
+
+        // determine the minimum chi2 overall in history (with exception of the actual value)
+        var minChi2Overall = double.MaxValue;
+        for (int i = 0; i < _count - 1; ++i)
+        {
+          minChi2Overall = Math.Min(minChi2Overall, _listOfChi2[i].chi2);
+        }
+
+        // if the actual chi2 is smaller than the minimum chi2 overall, we store w and h in the history
+        if (chi2 <= minChi2Overall)
+        {
+          _listOfChi2[_count - 1] = (chi2, w.Clone(), h.Clone());
+
+          // and we can free the other matrices
+          for (int i = 0; i < _count - 1; ++i)
+          {
+            _listOfChi2[i].wt = null;
+            _listOfChi2[i].h = null;
+          }
+        }
+        return (false, null, null);
+      }
+    }
+
 
     /// <summary>
     /// Replaces negative elements of the matrix with zero.
@@ -237,22 +283,6 @@ namespace Altaxo.Calc.LinearAlgebra.Double.Factorization
           {
             m[r, c] = 0;
           }
-        }
-      }
-    }
-
-    /// <summary>
-    /// Fills the matrix with random non-negative values.
-    /// </summary>
-    /// <param name="m">The matrix.</param>
-    private static void FillRandomNonnegative(Matrix<double> m)
-    {
-      var rnd = new System.Random();
-      for (int r = 0; r < m.RowCount; r++)
-      {
-        for (int c = 0; c < m.ColumnCount; ++c)
-        {
-          m[r, c] = rnd.NextDouble();
         }
       }
     }
