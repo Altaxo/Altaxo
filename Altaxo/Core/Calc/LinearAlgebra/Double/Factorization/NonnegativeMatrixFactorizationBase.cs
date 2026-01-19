@@ -54,7 +54,7 @@ namespace Altaxo.Calc.LinearAlgebra.Double.Factorization
       init
       {
         if (!(value >= 0))
-          throw new ArgumentOutOfRangeException(nameof(NumberOfAdditionalTrials), "Number of trials must be at least 0.");
+          throw new ArgumentOutOfRangeException(nameof(NumberOfAdditionalTrials), "Number of trials must be nonnegative.");
         field = value;
       }
     }
@@ -130,5 +130,34 @@ namespace Altaxo.Calc.LinearAlgebra.Double.Factorization
         return (bestW, bestH);
       }
     }
+  }
+
+  /// <summary>
+  /// Provides initialization helpers for non-negative matrix factorization (NMF),
+  /// specifically NNDSVD-based initializations.
+  /// </summary>
+  public abstract record NonnegativeMatrixFactorizationWithRegularizationBase : NonnegativeMatrixFactorizationBase
+  {
+    public double LambdaW
+    {
+      get => field;
+      init
+      {
+        if (!(value >= 0))
+          throw new ArgumentOutOfRangeException(nameof(LambdaW), "LambdaW must be non-negative.");
+        field = value;
+      }
+    } = 0;
+
+    public double LambdaH
+    {
+      get => field;
+      init
+      {
+        if (!(value >= 0))
+          throw new ArgumentOutOfRangeException(nameof(LambdaH), "LambdaH must be non-negative.");
+        field = value;
+      }
+    } = 0;
   }
 }

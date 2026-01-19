@@ -29,29 +29,9 @@ namespace Altaxo.Calc.LinearAlgebra.Double.Factorization
   /// <summary>
   /// Non-negative matrix factorization (NMF) using an alternating coordinate-descent style update with non-negativity enforcement.
   /// </summary>
-  public record NonnegativeMatrixFactorizationByCoordinateDescent : NonnegativeMatrixFactorizationBase
+  public record NonnegativeMatrixFactorizationByCoordinateDescent : NonnegativeMatrixFactorizationWithRegularizationBase
   {
-    public double LambdaW
-    {
-      get => field;
-      init
-      {
-        if (!(value >= 0))
-          throw new ArgumentOutOfRangeException(nameof(LambdaW), "LambdaW must be non-negative.");
-        field = value;
-      }
-    } = 0;
 
-    public double LambdaH
-    {
-      get => field;
-      init
-      {
-        if (!(value >= 0))
-          throw new ArgumentOutOfRangeException(nameof(LambdaH), "LambdaH must be non-negative.");
-        field = value;
-      }
-    } = 0;
 
     /// <summary>
     /// Gets the damping factor used when a proposed update increases the error.

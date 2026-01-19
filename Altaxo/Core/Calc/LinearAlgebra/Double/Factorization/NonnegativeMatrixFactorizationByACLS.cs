@@ -40,29 +40,9 @@ namespace Altaxo.Calc.LinearAlgebra.Double.Factorization
   /// <para>References:</para>
   /// <para>[1] Langville et al., "Algorithms, Initializations, and Convergence for the Nonnegative Matrix Factorization", https://arxiv.org/abs/1407.7299v1</para>
   /// </remarks>
-  public record NonnegativeMatrixFactorizationByACLS : NonnegativeMatrixFactorizationBase
+  public record NonnegativeMatrixFactorizationByACLS : NonnegativeMatrixFactorizationWithRegularizationBase
   {
-    private double LambdaW
-    {
-      get => field;
-      init
-      {
-        if (!(value >= 0))
-          throw new ArgumentOutOfRangeException(nameof(LambdaW), "LambdaW must be non-negative.");
-        field = value;
-      }
-    } = 0;
 
-    private double LambdaH
-    {
-      get => field;
-      init
-      {
-        if (!(value >= 0))
-          throw new ArgumentOutOfRangeException(nameof(LambdaH), "LambdaH must be non-negative.");
-        field = value;
-      }
-    } = 0;
 
     #region Serialization
 
