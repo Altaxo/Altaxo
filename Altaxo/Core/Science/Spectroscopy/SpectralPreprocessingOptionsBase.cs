@@ -146,8 +146,9 @@ namespace Altaxo.Science.Spectroscopy
         yNew = Matrix<double>.Build.Dense(y.RowCount, y.ColumnCount);
         for (int col = 0; col < y.ColumnCount; ++col)
         {
-          yNew.SetRow(col, y.Row(indices[col]));
+          yNew.SetColumn(col, y.Column(indices[col]));
         }
+        y = yNew;
       }
 
       var listOfAuxiliaryData = new List<IEnsembleProcessingAuxiliaryData?>();

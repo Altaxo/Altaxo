@@ -77,7 +77,7 @@ namespace Altaxo.Science.Spectroscopy
 
         yresult.SetRow(r, otherY);
       }
-      return (x, yresult, newRegions, null);
+      return (newX, yresult, newRegions, null);
     }
   }
 
