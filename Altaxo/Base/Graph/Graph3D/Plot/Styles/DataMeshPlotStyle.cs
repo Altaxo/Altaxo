@@ -2,7 +2,7 @@
 
 /////////////////////////////////////////////////////////////////////////////
 //    Altaxo:  a data processing and data plotting program
-//    Copyright (C) 2002-2015 Dr. Dirk Lellinger
+//    Copyright (C) 2002-2026 Dr. Dirk Lellinger
 //
 //    This program is free software; you can redistribute it and/or modify
 //    it under the terms of the GNU General Public License as published by
@@ -25,9 +25,7 @@
 #nullable enable
 using System;
 using System.Collections.Generic;
-using System.Drawing;
 using Altaxo.Calc.LinearAlgebra;
-using Altaxo.Data;
 using Altaxo.Geometry;
 using Altaxo.Graph.Scales;
 using Altaxo.Graph.Scales.Boundaries;
@@ -288,6 +286,29 @@ namespace Altaxo.Graph.Graph3D.Plot.Styles
     }
 
     /// <summary>
+    /// This routine ensures that the plot item updates all its cached data and send the appropriate
+    /// events if something has changed. Called before the layer paint routine paints the axes because
+    /// it must be ensured that the axes are scaled correctly before the plots are painted.
+    /// </summary>
+    /// <param name="layer">The plot layer.</param>
+    /// <param name="plotData">The plot data.</param>
+    public void PrepareScales(IPlotArea layer, XYZColumnPlotData plotData)
+    {
+      if (_colorScale is not null)
+      {
+        // in case we use our own scale for coloring, we need to calculate the data bounds
+        NumericalBoundaries pb = _colorScale.DataBounds;
+        plotData.SetZBoundsFromTemplate(pb); // ensure that the right v-boundary type is set
+        using (var suspendToken = pb.SuspendGetToken())
+        {
+          pb.Reset();
+          plotData.MergeZBoundsInto(pb);
+          suspendToken.Resume();
+        }
+      }
+    }
+
+    /// <summary>
     /// Paint the density image in the layer.
     /// </summary>
     /// <param name="gfrx">The graphics context painting in.</param>
@@ -295,19 +316,33 @@ namespace Altaxo.Graph.Graph3D.Plot.Styles
     /// <param name="plotObject">The data to plot.</param>
     public void Paint(IGraphicsContext3D gfrx, IPlotArea gl, object plotObject) // plots the curve with the choosen style
     {
-      if (!(plotObject is XYZMeshedColumnPlotData))
-        return; // we cannot plot any other than a TwoDimMeshDataAssociation now
+      if (plotObject is XYZMeshedColumnPlotData myPlotAssociation)
+      {
+        Paint(gfrx, gl, myPlotAssociation);
+      }
+      else if (plotObject is XYZColumnPlotData xyzColumnPlotData)
+      {
+        Paint(gfrx, gl, xyzColumnPlotData);
+      }
+    }
 
-      var myPlotAssociation = (XYZMeshedColumnPlotData)plotObject;
+    /// <summary>
+    /// Paint the density image in the layer.
+    /// </summary>
+    /// <param name="gfrx">The graphics context painting in.</param>
+    /// <param name="gl">The layer painting in.</param>
+    /// <param name="plotObject">The data to plot.</param>
+    public void Paint(IGraphicsContext3D gfrx, IPlotArea gl, XYZMeshedColumnPlotData myPlotAssociation) // plots the curve with the choosen style
+    {
       myPlotAssociation.DataTableMatrix.GetWrappers(
-          gl.XAxis.PhysicalVariantToNormal, // transformation function for row header values
-          Precision.IsFinite,       // selection functiton for row header values
-          gl.YAxis.PhysicalVariantToNormal, // transformation function for column header values
-          Precision.IsFinite,       // selection functiton for column header values
-          out var matrix,
-          out var logicalRowHeaderValues,
-          out var logicalColumnHeaderValues
-          );
+        gl.XAxis.PhysicalVariantToNormal, // transformation function for row header values
+        Precision.IsFinite,       // selection functiton for row header values
+        gl.YAxis.PhysicalVariantToNormal, // transformation function for column header values
+        Precision.IsFinite,       // selection functiton for column header values
+        out var matrix,
+        out var logicalRowHeaderValues,
+        out var logicalColumnHeaderValues
+        );
 
       int cols = matrix.ColumnCount;
       int rows = matrix.RowCount;
@@ -315,7 +350,28 @@ namespace Altaxo.Graph.Graph3D.Plot.Styles
       if (cols <= 1 || rows <= 1)
         return; // we cannot plot anything  if one length is zero or one
 
-      BuildImage(gfrx, gl, myPlotAssociation, matrix, logicalRowHeaderValues, logicalColumnHeaderValues);
+      BuildImage(gfrx, gl, matrix, logicalRowHeaderValues, logicalColumnHeaderValues);
+    }
+
+    /// <summary>
+    /// Paint the density image in the layer.
+    /// </summary>
+    /// <param name="gfrx">The graphics context painting in.</param>
+    /// <param name="gl">The layer painting in.</param>
+    /// <param name="plotData">The data to plot.</param>
+    public void Paint(IGraphicsContext3D gfrx, IPlotArea gl, XYZColumnPlotData plotData) // plots the curve with the choosen style
+    {
+      // Find out if the plot data can be treated as meshed column data
+      var (success, x, y, matrix) = plotData.TryGetMesh(gl.XAxis.PhysicalVariantToNormal, gl.YAxis.PhysicalVariantToNormal, x => x);
+
+      if (success)
+      {
+        BuildImage(gfrx, gl, matrix, x, y);
+      }
+      else
+      {
+        // TODO use a bivariate Radial Spline interpolation to get a smooth image
+      }
     }
 
     private static bool IsEquidistant(double[] x, Altaxo.Collections.IAscendingIntegerCollection indices, double relthreshold)
@@ -354,7 +410,7 @@ namespace Altaxo.Graph.Graph3D.Plot.Styles
       return true;
     }
 
-    private void BuildImage(IGraphicsContext3D gfrx, IPlotArea gl, XYZMeshedColumnPlotData myPlotAssociation, IROMatrix<double> matrix, IReadOnlyList<double> logicalRowHeaderValues, IReadOnlyList<double> logicalColumnHeaderValues)
+    private void BuildImage(IGraphicsContext3D gfrx, IPlotArea gl, IROMatrix<double> matrix, IReadOnlyList<double> logicalRowHeaderValues, IReadOnlyList<double> logicalColumnHeaderValues)
     {
       BuildImageWithUColor(gfrx, gl, logicalRowHeaderValues, logicalColumnHeaderValues, matrix); // affine, linear scales, and equidistant points
     }

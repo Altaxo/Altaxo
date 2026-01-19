@@ -2,7 +2,7 @@
 
 /////////////////////////////////////////////////////////////////////////////
 //    Altaxo:  a data processing and data plotting program
-//    Copyright (C) 2002-2018 Dr. Dirk Lellinger
+//    Copyright (C) 2002-2026 Dr. Dirk Lellinger
 //
 //    This program is free software; you can redistribute it and/or modify
 //    it under the terms of the GNU General Public License as published by
@@ -22,11 +22,7 @@
 
 #endregion Copyright
 
-using System;
-using System.Collections.Generic;
 using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace Altaxo.Worksheet.Commands
 {
@@ -105,6 +101,51 @@ namespace Altaxo.Worksheet.Commands
         assoc.DataTableMatrix.ColumnHeaderColumn = new IndexerColumn();
 
       var pi = new DataMeshPlotItem(assoc, plotStyle);
+      layer.PlotItems.Add(pi);
+    }
+  }
+
+  public class PlotSurfaceFromXYZ : AbstractWorksheetControllerCommand
+  {
+    public override void Run(Altaxo.Gui.Worksheet.Viewing.WorksheetController ctrl)
+    {
+      PresentationCoreLoader.EnsurePresentationCoreLoaded();
+      var table = ctrl.DataTable;
+      var graph = Altaxo.Graph.Graph3D.Templates.TemplateWithXYZPlotLayerWithG3DCartesicCoordinateSystem.CreateGraph(
+        table.GetPropertyContext(), null, table.Name, true);
+
+      AddSurfacePlotFromXYZ(ctrl, graph);
+
+      Current.ProjectService.OpenOrCreateViewContentForDocument(graph);
+    }
+
+    /// <summary>
+    /// Plots a density image of the selected columns.
+    /// </summary>
+    /// <param name="dg"></param>
+    public static void AddSurfacePlotFromXYZ(Altaxo.Gui.Worksheet.Viewing.IWorksheetController ctrl, GraphDocument graph)
+    {
+      var layer = graph.RootLayer.Layers.OfType<XYZPlotLayer>().First();
+      var context = graph.GetPropertyContext();
+
+      var plotStyle = new DataMeshPlotStyle();
+
+      IReadableColumn? x = null, y = null;
+      DataColumn? z = null;
+      if (ctrl.SelectedDataColumns.Count == 1)
+      {
+        z = ctrl.DataTable[ctrl.SelectedDataColumns[0]];
+        x = (IReadableColumn?)ctrl.DataTable.DataColumns.FindXColumnOf(z) ?? new IndexerColumn();
+        y = (IReadableColumn?)ctrl.DataTable.DataColumns.FindYColumnOf(z) ?? new IndexerColumn();
+      }
+      else
+      {
+        Current.Gui.ErrorMessageBox("Please select exactly one data column for the Z values (color) of the density image plot. The corresponding x and y-columns should be marked as 'X' and 'Y' in the table.");
+        return;
+      }
+
+      var plotData = new XYZColumnPlotData(ctrl.DataTable, ctrl.DataTable.DataColumns.GetColumnGroup(z), x, y, z);
+      var pi = new XYZSurfacePlotItem(plotData, plotStyle);
       layer.PlotItems.Add(pi);
     }
   }

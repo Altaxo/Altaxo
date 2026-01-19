@@ -2,7 +2,7 @@
 
 /////////////////////////////////////////////////////////////////////////////
 //    Altaxo:  a data processing and data plotting program
-//    Copyright (C) 2002-2011 Dr. Dirk Lellinger
+//    Copyright (C) 2002-2026 Dr. Dirk Lellinger
 //
 //    This program is free software; you can redistribute it and/or modify
 //    it under the terms of the GNU General Public License as published by
@@ -350,13 +350,16 @@ namespace Altaxo.Graph.Gdi.Plot.Styles
     /// <param name="plotData">The plot data which are here used to determine the bounds of the independent data column.</param>
     public void PrepareScales(IPlotArea layer, XYZMeshedColumnPlotData plotData)
     {
-      NumericalBoundaries pb = _scale.DataBounds;
-      plotData.SetVBoundsFromTemplate(pb); // ensure that the right v-boundary type is set
-      using (var suspendToken = pb.SuspendGetToken())
+      if (_scale is not null)
       {
-        pb.Reset();
-        plotData.MergeVBoundsInto(pb);
-        suspendToken.Resume();
+        NumericalBoundaries pb = _scale.DataBounds;
+        plotData.SetVBoundsFromTemplate(pb); // ensure that the right v-boundary type is set
+        using (var suspendToken = pb.SuspendGetToken())
+        {
+          pb.Reset();
+          plotData.MergeVBoundsInto(pb);
+          suspendToken.Resume();
+        }
       }
     }
 
@@ -369,13 +372,16 @@ namespace Altaxo.Graph.Gdi.Plot.Styles
     /// <param name="plotData">The plot data which are here used to determine the bounds of the independent data column.</param>
     public void PrepareScales(IPlotArea layer, XYZColumnPlotData plotData)
     {
-      NumericalBoundaries pb = _scale.DataBounds;
-      plotData.SetZBoundsFromTemplate(pb); // ensure that the right v-boundary type is set
-      using (var suspendToken = pb.SuspendGetToken())
+      if (_scale is not null)
       {
-        pb.Reset();
-        plotData.MergeZBoundsInto(pb);
-        suspendToken.Resume();
+        NumericalBoundaries pb = _scale.DataBounds;
+        plotData.SetZBoundsFromTemplate(pb); // ensure that the right v-boundary type is set
+        using (var suspendToken = pb.SuspendGetToken())
+        {
+          pb.Reset();
+          plotData.MergeZBoundsInto(pb);
+          suspendToken.Resume();
+        }
       }
     }
 
@@ -403,6 +409,27 @@ namespace Altaxo.Graph.Gdi.Plot.Styles
     /// <param name="gfrx">The graphics context painting in.</param>
     /// <param name="gl">The layer painting in.</param>
     /// <param name="plotObject">The data to plot.</param>
+    public void Paint(Graphics gfrx, IPlotArea gl, XYZMeshedColumnPlotData myPlotAssociation) // plots the curve with the choosen style
+    {
+      myPlotAssociation.DataTableMatrix.GetWrappers(
+        gl.XAxis.PhysicalVariantToNormal, // transformation function for row header values
+        Precision.IsFinite,       // selection functiton for row header values
+        gl.YAxis.PhysicalVariantToNormal, // transformation function for column header values
+        Precision.IsFinite,       // selection functiton for column header values
+        out var matrix,
+        out var logicalRowHeaderValues,
+        out var logicalColumnHeaderValues
+        );
+
+      Paint(gfrx, gl, matrix, logicalRowHeaderValues, logicalColumnHeaderValues);
+    }
+
+    /// <summary>
+    /// Paint the density image in the layer.
+    /// </summary>
+    /// <param name="gfrx">The graphics context painting in.</param>
+    /// <param name="gl">The layer painting in.</param>
+    /// <param name="plotData">The data to plot.</param>
     public void Paint(Graphics gfrx, IPlotArea gl, XYZColumnPlotData plotData) // plots the curve with the choosen style
     {
       // Find out if the plot data can be treated as meshed column data
@@ -421,26 +448,7 @@ namespace Altaxo.Graph.Gdi.Plot.Styles
 
 
 
-    /// <summary>
-    /// Paint the density image in the layer.
-    /// </summary>
-    /// <param name="gfrx">The graphics context painting in.</param>
-    /// <param name="gl">The layer painting in.</param>
-    /// <param name="plotObject">The data to plot.</param>
-    public void Paint(Graphics gfrx, IPlotArea gl, XYZMeshedColumnPlotData myPlotAssociation) // plots the curve with the choosen style
-    {
-      myPlotAssociation.DataTableMatrix.GetWrappers(
-        gl.XAxis.PhysicalVariantToNormal, // transformation function for row header values
-        Precision.IsFinite,       // selection functiton for row header values
-        gl.YAxis.PhysicalVariantToNormal, // transformation function for column header values
-        Precision.IsFinite,       // selection functiton for column header values
-        out var matrix,
-        out var logicalRowHeaderValues,
-        out var logicalColumnHeaderValues
-        );
 
-      Paint(gfrx, gl, matrix, logicalRowHeaderValues, logicalColumnHeaderValues);
-    }
 
     public void Paint(Graphics gfrx, IPlotArea gl, IROMatrix<double> matrix, IReadOnlyList<double> logicalRowHeaderValues, IReadOnlyList<double> logicalColumnHeaderValues) // plots the curve with the choosen style
     {

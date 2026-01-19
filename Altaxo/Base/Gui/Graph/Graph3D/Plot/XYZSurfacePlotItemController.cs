@@ -31,9 +31,9 @@ using Altaxo.Gui.Graph.Plot.Data;
 
 namespace Altaxo.Gui.Graph.Graph3D.Plot
 {
-  [UserControllerForObject(typeof(DataMeshPlotItem))]
+  [UserControllerForObject(typeof(XYZSurfacePlotItem))]
   [ExpectedTypeOfView(typeof(ITabbedElementViewDC))]
-  internal class DataMeshPlotItemController : MVCANControllerEditOriginalDocBase<DataMeshPlotItem, ITabbedElementViewDC>
+  internal class XYZSurfacePlotItemController : MVCANControllerEditOriginalDocBase<XYZSurfacePlotItem, ITabbedElementViewDC>
   {
     private IMVCANController _styleController;
 
@@ -117,7 +117,7 @@ namespace Altaxo.Gui.Graph.Graph3D.Plot
 
     private void InitializeDataView()
     {
-      _dataController = new XYZMeshedColumnPlotDataController { UseDocumentCopy = UseDocument.Directly };
+      _dataController = new XYZColumnPlotDataController { UseDocumentCopy = UseDocument.Directly };
       _dataController.InitializeDocument(_doc.Data);
       Current.Gui.FindAndAttachControlTo(_dataController);
       Tabs.Add(new SelectableListNodeWithController("Data", 1, false) { Controller = _dataController });
@@ -125,7 +125,7 @@ namespace Altaxo.Gui.Graph.Graph3D.Plot
 
     private void InitializeOptionView()
     {
-      _optionsController = new DataMeshPlotItemOptionController() { UseDocumentCopy = UseDocument.Directly };
+      _optionsController = new XYZSurfacePlotItemOptionController() { UseDocumentCopy = UseDocument.Directly };
       _optionsController.InitializeDocument(_doc);
       Current.Gui.FindAndAttachControlTo(_optionsController);
       Tabs.Add(new SelectableListNodeWithController("Options", 2, false) { Controller = _optionsController });

@@ -59,10 +59,12 @@
 		<Condition name = "WindowActive" activewindow="Altaxo.Gui.Worksheet.Viewing.WorksheetController" action="Exclude">
 			<Condition name ="SelectedDataColumns" selected="*" action="Disable">
 				<MenuItem id="Plot3DMenu" label="${res:XML.MainMenu.Plot3DMenu}"  type="Menu">
-					<MenuItem id="PlotSurface3D" label="Plot3DSurface" icon="Icons.16x16.PlotLine"
+					<MenuItem id="PlotSurface3D" label="Plot3DSurface (from matrix)" icon="Icons.16x16.PlotLine"
 						description="Plot3DDescription" class="Altaxo.Worksheet.Commands.PlotSurface3D" />
+          <MenuItem id="PlotSurfaceFromXYZ" label="Plot3DSurface (from X-Y-V)" icon="Icons.16x16.PlotLine"
+						description="Plot3DDescription" class="Altaxo.Worksheet.Commands.PlotSurfaceFromXYZ" />
 
-					<MenuItem id="Plot3DLine" label="${res:XML.MainMenu.PlotMenu.PlotLine}" icon="Icons.16x16.PlotLine"
+          <MenuItem id="Plot3DLine" label="${res:XML.MainMenu.PlotMenu.PlotLine}" icon="Icons.16x16.PlotLine"
 						description="${res:XML.MainMenu.PlotMenu.PlotLine.Description}" class="Altaxo.Worksheet.Commands.Plot3DLine" />
 
 					<MenuItem id="Plot3DScatter" label="${res:XML.MainMenu.PlotMenu.PlotScatter}" icon="Icons.16x16.PlotScatter"
