@@ -69,7 +69,7 @@ namespace Altaxo.Calc.LinearAlgebra.Double.Factorization
       public object Deserialize(object? o, Altaxo.Serialization.Xml.IXmlDeserializationInfo info, object? parent)
       {
         var initializationMethod = info.GetValue<INonnegativeMatrixFactorizationInitializer>("InitializationMethod", parent);
-        var maximumNumberOfIterations = info.GetValue<int>("MaximumNumberOfIterations", parent);
+        var maximumNumberOfIterations = info.GetInt32("MaximumNumberOfIterations");
         var numberOfTrials = info.GetInt32("NumberOfTrials");
         var tolerance = info.GetDouble("Tolerance");
         var lambdaW = info.GetDouble("LambdaW");
