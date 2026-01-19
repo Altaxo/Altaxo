@@ -168,10 +168,56 @@ namespace Altaxo.Graph.Gdi.Plot
         }
       }
     }
-
     public override string GetName(int level)
     {
-      return _plotData.ToString();
+      switch (level)
+      {
+        case 0:
+          return GetNameByStyle(0x0100);
+
+        case 1:
+          return GetNameByStyle(0x0200);
+
+        case 2:
+          return GetNameByStyle(0x0211);
+
+        default:
+          return GetNameByStyle(0x0222);
+      }
+    }
+
+    public virtual string GetNameByStyle(int style)
+    {
+      int st = style;
+      int sx = (st & 0x000F);
+      int sy = (st & 0x00F0) >> 4;
+      int sz = (st & 0x0F00) >> 8;
+
+      var stb = new System.Text.StringBuilder();
+      if (sx > 0)
+      {
+        stb.Append(_plotData.GetXName(sx - 1));
+        if (sx > 0 && sy > 0)
+          stb.Append("(X)");
+        if (sy > 0)
+          stb.Append(",");
+      }
+      if (sy > 0)
+      {
+        stb.Append(_plotData.GetYName(sy - 1));
+        if (sx > 0 && sy > 0)
+          stb.Append("(Y)");
+        if (sz > 0)
+          stb.Append(",");
+      }
+      if (sz > 0)
+      {
+        stb.Append(_plotData.GetZName(sz - 1));
+        if (sx > 0 && sy > 0 && sz > 0)
+          stb.Append("(Z)");
+      }
+
+      return stb.ToString();
     }
 
     public override string GetName(string style)

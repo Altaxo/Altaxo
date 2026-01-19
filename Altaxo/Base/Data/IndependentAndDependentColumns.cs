@@ -273,7 +273,7 @@ namespace Altaxo.Data
     /// <summary>
     /// The selection of data rows to be plotted.
     /// </summary>
-    public IRowSelection DataRowSelection
+    public virtual IRowSelection DataRowSelection
     {
       get
       {
