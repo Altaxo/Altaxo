@@ -25,6 +25,7 @@
 using System;
 using System.Collections.Generic;
 using System.Diagnostics.CodeAnalysis;
+using Altaxo.Calc.LinearAlgebra;
 using Altaxo.Data;
 
 namespace Altaxo.Calc.Regression.Multivariate
@@ -106,8 +107,6 @@ namespace Altaxo.Calc.Regression.Multivariate
     }
 
     #endregion Serialization
-
-
 
     /// <summary>
     /// Initializes a new instance of the <see cref="DimensionReductionDataSource"/> class.
@@ -193,6 +192,8 @@ namespace Altaxo.Calc.Regression.Multivariate
     public override void FillData_Unchecked(DataTable destinationTable, IProgressReporter reporter)
     {
       destinationTable.DataColumns.RemoveColumnsAll();
+
+      LinearAlgebraProviderSettings.ApplyAlgebraProviderSetting();
 
       var (matrix, xOfXRaw, columnNumbers) = _processData.GetMatrixAndColumnNumbers(transposeMatrix: true);
 
