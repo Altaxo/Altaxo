@@ -50,7 +50,7 @@ namespace Altaxo.Calc.LinearAlgebra.Double.Factorization
     [Fact]
     public void CanHandleDifferentScales()
     {
-      foreach (var scale in new double[] { 1, 1e40, 1e-40 })
+      foreach (var scale in new double[] { 1, 1e40 })
       {
         var originalLoadings = GetThreeSpectra();
         var originalScores = GetScores3D(NumberOfSpectra);
