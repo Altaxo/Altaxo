@@ -1,5 +1,10 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
+using System.Linq;
 using Altaxo.Calc.LinearAlgebra.Double.Factorization;
+using Altaxo.Collections;
+using Altaxo.Gui.Common;
+using Altaxo.Main.Services;
 
 namespace Altaxo.Gui.Analysis.Multivariate
 {
@@ -18,6 +23,22 @@ namespace Altaxo.Gui.Analysis.Multivariate
     }
 
     #region Bindings
+
+
+    public ItemsController<System.Type> InitializationMethod
+    {
+      get => field;
+      set
+      {
+        if (!(field == value))
+        {
+          field?.Dispose();
+          field = value;
+          OnPropertyChanged(nameof(InitializationMethod));
+        }
+      }
+    }
+
 
 
     public int MaximumNumberOfIterations
@@ -117,6 +138,14 @@ namespace Altaxo.Gui.Analysis.Multivariate
         NumberOfAdditionalTrials = _doc.NumberOfAdditionalTrials;
         Tolerance = _doc.Tolerance;
 
+        {
+          // initialization method
+          var initializationTypes = ReflectionService.GetNonAbstractSubclassesOf(typeof(INonnegativeMatrixFactorizationInitializer));
+          var list = new SelectableListNodeList(initializationTypes.Select(t => new SelectableListNode(t.Name, t, false)));
+          InitializationMethod = new ItemsController<System.Type>(list);
+          InitializationMethod.SelectedValue = _doc.InitializationMethod.GetType();
+        }
+
         if (_doc is NonnegativeMatrixFactorizationWithRegularizationBase withRegularization)
         {
           LambdaH = withRegularization.LambdaH;
@@ -128,8 +157,11 @@ namespace Altaxo.Gui.Analysis.Multivariate
 
     public override bool Apply(bool disposeController)
     {
+      var initializationMethod = (INonnegativeMatrixFactorizationInitializer)Activator.CreateInstance(InitializationMethod.SelectedValue);
+
       _doc = _doc with
       {
+        InitializationMethod = initializationMethod,
         MaximumNumberOfIterations = MaximumNumberOfIterations,
         NumberOfAdditionalTrials = NumberOfAdditionalTrials,
         Tolerance = Tolerance

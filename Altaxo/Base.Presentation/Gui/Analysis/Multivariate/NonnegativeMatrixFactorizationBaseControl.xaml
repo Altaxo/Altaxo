@@ -27,46 +27,57 @@
             <RowDefinition Height="4" />
             <RowDefinition Height="Auto" />
             <RowDefinition Height="4" />
+            <RowDefinition Height="Auto" />
+            <RowDefinition Height="4" />
         </Grid.RowDefinitions>
         <Label Grid.Row="0"
                Grid.Column="0"
+               Content="Initialization:" />
+        <ComboBox Grid.Row="0"
+                  Grid.Column="2"
+                  ItemsSource="{Binding InitializationMethod.Items}"
+                  SelectedItem="{Binding InitializationMethod.SelectedItem}"
+                  />
+
+            <Label Grid.Row="2"
+               Grid.Column="0"
                Content="Max. number of iterations:" />
-        <axogc:Int32UpDown Grid.Row="0"
+        <axogc:Int32UpDown Grid.Row="2"
                            Grid.Column="2"
                            Minimum="1"
                            Maximum="1000000"
                            Value="{Binding MaximumNumberOfIterations}" />
 
-        <Label Grid.Row="2"
+        <Label Grid.Row="4"
                Grid.Column="0"
                Content="No. of additional trials:" />
-        <axogc:Int32UpDown Grid.Row="2"
+        <axogc:Int32UpDown Grid.Row="4"
                            Grid.Column="2"
                            Minimum="0"
                            Value="{Binding NumberOfAdditionalTrials}" />
-        <Label Grid.Row="4"
+        <Label Grid.Row="6"
                Grid.Column="0"
                Content="Tolerance:" />
-        <axogc:NumericDoubleTextBox Grid.Row="4"
+        <axogc:NumericDoubleTextBox Grid.Row="6"
                                     Grid.Column="2"
                                     DisallowNegativeValues="True"
                                     SelectedValue="{Binding Tolerance}" />
 
-        <Label Grid.Row="6"
+        <Label Grid.Row="8"
                Grid.Column="0"
                Content="Lambda (factors):"
                Visibility="{Binding AreLambdasVisible, Converter={x:Static axogcc:FalseToVisibilityCollapsedConverter.Instance}}"/>
-        <axogc:NumericDoubleTextBox Grid.Row="6"
+        <axogc:NumericDoubleTextBox Grid.Row="8"
                                     Grid.Column="2"
                                     DisallowNegativeValues="True"
                                     SelectedValue="{Binding LambdaW}" 
                                     Visibility="{Binding AreLambdasVisible, Converter={x:Static axogcc:FalseToVisibilityCollapsedConverter.Instance}}"/>
 
-        <Label Grid.Row="8"
+        <Label Grid.Row="10"
                Grid.Column="0"
                Content="Lambda (loads):"
                Visibility="{Binding AreLambdasVisible, Converter={x:Static axogcc:FalseToVisibilityCollapsedConverter.Instance}}" />
-        <axogc:NumericDoubleTextBox Grid.Row="8"
+        <axogc:NumericDoubleTextBox Grid.Row="10"
                                     Grid.Column="2"
                                     DisallowNegativeValues="True"
                                     SelectedValue="{Binding LambdaH}"
