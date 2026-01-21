@@ -29,7 +29,6 @@ namespace Altaxo.Calc.LinearAlgebra.Double.Factorization
   /// </summary>
   public interface ILowRankMatrixFactorization
   {
-
     /// <summary>
     /// Factorizes the input matrix <paramref name="X"/> into a product of two matrices with the specified rank.
     /// </summary>

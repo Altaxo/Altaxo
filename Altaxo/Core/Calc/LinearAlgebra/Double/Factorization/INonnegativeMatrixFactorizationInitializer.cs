@@ -32,8 +32,8 @@ namespace Altaxo.Calc.LinearAlgebra.Double.Factorization
     /// <summary>
     /// Gets initial non-negative factor matrices for an NMF of the input matrix <paramref name="X"/>.
     /// </summary>
-    /// <param name="X">The input matrix to factorize.</param>
-    /// <param name="rank">The target rank of the factorization.</param>
+    /// <param name="X">The non-negative input matrix to factorize.</param>
+    /// <param name="rank">The target rank of the factorization (number of components).</param>
     /// <returns>
     /// A tuple of factor matrices <c>(W, H)</c> such that <c>X ≈ W * H</c>.
     /// </returns>

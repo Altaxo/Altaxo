@@ -70,14 +70,7 @@ namespace Altaxo.Calc.LinearAlgebra.Double.Factorization
 
     #endregion Serialization
 
-    /// <summary>
-    /// Factorizes a non-negative matrix <paramref name="V"/> into non-negative factors <c>W</c> and <c>H</c> using multiplicative updates.
-    /// </summary>
-    /// <param name="V">The input matrix to factorize.</param>
-    /// <param name="rank">The factorization rank.</param>
-    /// <returns>
-    /// A tuple containing the factors <c>W</c> and <c>H</c> and the final relative reconstruction error <c>relErr</c>.
-    /// </returns>
+    /// <inheritdoc/>
     public override (Matrix<double> W, Matrix<double> H) FactorizeOneTrial(Matrix<double> V, int rank)
     {
       //    Matrix<double> V, int r, int maxIter = 2000, double tol = 1e-5, int restarts = 3)

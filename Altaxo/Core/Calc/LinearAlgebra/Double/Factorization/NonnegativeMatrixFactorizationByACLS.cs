@@ -89,13 +89,7 @@ namespace Altaxo.Calc.LinearAlgebra.Double.Factorization
 
     #endregion
 
-    /// <summary>
-    /// Factorizes matrix <paramref name="X"/> into non-negative factors and non-negative base vectors.
-    /// </summary>
-    /// <param name="X">The matrix to factorize.</param>
-    /// <param name="r">The number of components (number of base vectors).</param>
-    /// <returns>Matrix of base vectors W (each base vector is a column of the matrix) and matrix of factors H.</returns>
-    /// <exception cref="System.ArgumentNullException">a</exception>
+    /// <inheritdoc/>
     /// <remarks>
     /// <para>The algorithm is described in [1], page 7.</para>
     /// <para>Please note that base vectors and factors are output in an arbitrary order.</para>
@@ -165,7 +159,7 @@ namespace Altaxo.Calc.LinearAlgebra.Double.Factorization
       private (double chi2, Matrix<double>? wt, Matrix<double>? h)[] _listOfChi2;
 
       /// <summary>
-      /// Creates a new instance Chi2History with the given depth.
+      /// Creates a new instance of <see cref="Chi2History"/> with the specified history depth.
       /// </summary>
       /// <param name="depth">The number of historical elements to store.</param>
       public Chi2History(int depth)
@@ -175,12 +169,12 @@ namespace Altaxo.Calc.LinearAlgebra.Double.Factorization
       }
 
       /// <summary>
-      /// Adds a new chi2 value to the history. 
+      /// Adds a new chi² value to the history.
       /// </summary>
       /// <param name="chi2">The new chi² value.</param>
-      /// <param name="w">The corresponding weight matrix. (it is cloned for storage).</param>
+      /// <param name="w">The corresponding weight matrix (it is cloned for storage).</param>
       /// <param name="h">The corresponding load matrix (it is cloned for storage).</param>
-      /// <returns>A tuple (terminate, w and h). If terminate is true, the iteration can be terminated, and the w and h values returned here are the best values for factorzation. If terminate is false, then w and h are null.</returns>
+      /// <returns>A tuple <c>(terminate, w, h)</c>. If <c>terminate</c> is <see langword="true"/>, the iteration can be terminated, and the returned <c>w</c> and <c>h</c> values are the best factors for the factorization. If <c>terminate</c> is <see langword="false"/>, then <c>w</c> and <c>h</c> are <see langword="null"/>.</returns>
       public (bool terminate, Matrix<double>? w, Matrix<double>? h) Add(double chi2, Matrix<double> w, Matrix<double> h)
       {
         // if the history is full, check if the new chi2 is larger than the all others in history

@@ -26,6 +26,13 @@ using System;
 
 namespace Altaxo.Calc.LinearAlgebra.Double.Factorization
 {
+  /// <summary>
+  /// Provides a random initialization for non-negative matrix factorization (NMF).
+  /// </summary>
+  /// <remarks>
+  /// The generated factors are scaled to match the average magnitude of <paramref name="X"/> and are constrained to be
+  /// strictly positive to avoid zero entries.
+  /// </remarks>
   public record NMFInitializationRandom : INonnegativeMatrixFactorizationInitializer, Main.IImmutable
   {
     #region Serialization
@@ -51,6 +58,7 @@ namespace Altaxo.Calc.LinearAlgebra.Double.Factorization
     }
 
     #endregion
+    /// <inheritdoc/>
     public (Matrix<double> W, Matrix<double> H) GetInitialFactors(Matrix<double> X, int r)
     {
       int m = X.RowCount;

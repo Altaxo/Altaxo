@@ -59,10 +59,10 @@ namespace Altaxo.Calc.LinearAlgebra.Double.Factorization
     /// <returns>A tuple <c>(W0, H0)</c> containing non-negative initial factors with zeros replaced by a reasonable value (see remarks!).</returns>
     /// <remarks>In the paper Boutsidis & Gallopoulos, 2008, https://doi.org/10.1016/j.patcog.2007.09.010, section 2.3,
     /// the zero elements are overwritten with the mean of matrix X.
-    /// I consider this as wrong, because W and H scale with the square root of X, not with X itself.
-    /// Therefore, e.g. if X is scaled with 1E20, W and H are scaled with 1E10, but the zeros would be then replaced with a scale of 1E20 again.
-    /// Thus I decided not to use X, but to overwrite the zeros with the average values of W and H, respectively.
-    /// This will also avoid peculiarities if the average of X is zero.</remarks>
+    /// I consider this wrong, because W and H scale with the square root of X, not with X itself.
+    /// Therefore, for example, if X is scaled with 1E20, W and H are scaled with 1E10, but the zeros would then be replaced with a scale of 1E20 again.
+    /// Thus, I decided not to use X, but to overwrite the zeros with the average values of W and H, respectively.
+    /// This also avoids peculiarities if the average of X is zero.</remarks>
     public override (Matrix<double> W, Matrix<double> H) GetInitialFactors(Matrix<double> X, int r)
     {
       // First, create the standard NNDSVD initialization

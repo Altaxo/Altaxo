@@ -32,6 +32,9 @@ namespace Altaxo.Calc.LinearAlgebra.Double.Factorization
   /// </summary>
   public record PrincipalComponentAnalysisByNIPALS : ILowRankMatrixFactorization
   {
+    /// <summary>
+    /// Gets the convergence accuracy used by the NIPALS algorithm.
+    /// </summary>
     public double Accuracy
     {
       get => field;
@@ -74,8 +77,7 @@ namespace Altaxo.Calc.LinearAlgebra.Double.Factorization
     #endregion
 
     /// <summary>
-    /// Calculates eigenvectors (loads) and the corresponding eigenvalues (scores)
-    /// by means of the NIPALS algorithm
+    /// Calculates eigenvectors (loadings) and the corresponding scores using the NIPALS algorithm.
     /// </summary>
     /// <param name="X">The matrix to which the decomposition is applied to. A row of the matrix is one spectrum (or a single measurement giving multiple resulting values). The different rows of the matrix represent
     /// measurements under different conditions.</param>
@@ -161,6 +163,7 @@ namespace Altaxo.Calc.LinearAlgebra.Double.Factorization
       } // for all factors
     } // end NIPALS
 
+    /// <inheritdoc/>
     public (Matrix<double> W, Matrix<double> H) Factorize(Matrix<double> A, int rank)
     {
       var factors = new MatrixMath.TopSpineJaggedArrayMatrix<double>(0, 0);

@@ -36,6 +36,9 @@ namespace Altaxo.Calc.LinearAlgebra.Double.Factorization
     /// <summary>
     /// Gets the damping factor used when a proposed update increases the error.
     /// </summary>
+    /// <remarks>
+    /// Values are expected to be in the interval <c>(0, 1)</c>. Smaller values lead to more conservative updates.
+    /// </remarks>
     public double Damping
     {
       get => field;

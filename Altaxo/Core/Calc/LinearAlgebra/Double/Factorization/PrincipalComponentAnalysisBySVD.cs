@@ -53,14 +53,7 @@ namespace Altaxo.Calc.LinearAlgebra.Double.Factorization
 
     #endregion
 
-    /// <summary>
-    /// Computes PCA factors and loadings by singular value decomposition (SVD).
-    /// </summary>
-    /// <param name="data">The data matrix (rows: observations/spectra; columns: variables/spectral points).</param>
-    /// <param name="numberOfComponents">The number of principal components to extract.</param>
-    /// <returns>
-    /// A tuple containing the matrix of factors (scores) and the matrix of loadings.
-    /// </returns>
+    /// <inheritdoc/>
     public (Matrix<double> W, Matrix<double> H) Factorize(Matrix<double> data, int numberOfComponents)
     {
       int numberOfSpectra = data.RowCount;

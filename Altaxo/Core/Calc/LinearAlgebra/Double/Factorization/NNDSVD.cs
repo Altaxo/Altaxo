@@ -63,7 +63,8 @@ namespace Altaxo.Calc.LinearAlgebra.Double.Factorization
     /// to handle zeros as needed (e.g. by adding small offsets).
     /// </returns>
     /// <remarks>
-    /// References: <see href="https://doi.org/10.1016/j.patcog.2007.09.010">Boutsidis, C., Gallopoulos, E., SVD based initialization: A head start for nonnegative matrix factorization, Pattern Recognition, Volume 41, Issue 4, April 2008, Pages 1350-1362</see>
+    /// Intentionally allows zeros in the result (algorithm for sparse matrices).
+    /// References: <see href="https://doi.org/10.1016/j.patcog.2007.09.010">Boutsidis, C., Gallopoulos, E., SVD-based initialization: A head start for nonnegative matrix factorization, Pattern Recognition, Volume 41, Issue 4, April 2008, Pages 1350-1362</see>.
     /// </remarks>
     public virtual (Matrix<double> W, Matrix<double> H) GetInitialFactors(Matrix<double> X, int r)
     {

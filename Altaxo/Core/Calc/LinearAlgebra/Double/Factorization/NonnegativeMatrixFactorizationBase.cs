@@ -35,8 +35,12 @@ namespace Altaxo.Calc.LinearAlgebra.Double.Factorization
   {
     /// <summary>
     /// Gets or sets the initialization method to be used for the factorization.
+    /// </summary>
     public INonnegativeMatrixFactorizationInitializer InitializationMethod { get; set; } = new NNDSVDar();
 
+    /// <summary>
+    /// Gets the maximum number of iterations for the factorization algorithm.
+    /// </summary>
     public int MaximumNumberOfIterations
     {
       get => field;
@@ -48,6 +52,9 @@ namespace Altaxo.Calc.LinearAlgebra.Double.Factorization
       }
     } = 1000;
 
+    /// <summary>
+    /// Gets the number of additional trials to perform with a random initialization.
+    /// </summary>
     public int NumberOfAdditionalTrials
     {
       get => field;
@@ -59,6 +66,9 @@ namespace Altaxo.Calc.LinearAlgebra.Double.Factorization
       }
     }
 
+    /// <summary>
+    /// Gets the convergence tolerance.
+    /// </summary>
     public double Tolerance
     {
       get => field;
@@ -83,14 +93,7 @@ namespace Altaxo.Calc.LinearAlgebra.Double.Factorization
     public abstract (Matrix<double> W, Matrix<double> H) FactorizeOneTrial(Matrix<double> X, int rank);
 
 
-    /// <summary>
-    /// Factorizes a non-negative matrix <paramref name="V"/> into non-negative factors <c>W</c> and <c>H</c> using multiplicative updates.
-    /// </summary>
-    /// <param name="V">The input matrix to factorize.</param>
-    /// <param name="r">The factorization rank.</param>
-    /// <returns>
-    /// A tuple containing the factors <c>W</c> and <c>H</c> and the final relative reconstruction error <c>relErr</c>.
-    /// </returns>
+    /// <inheritdoc/>
     public (Matrix<double> W, Matrix<double> H) Factorize(Matrix<double> V, int rank)
     {
       var (W, H) = FactorizeOneTrial(V, rank);
@@ -138,6 +141,9 @@ namespace Altaxo.Calc.LinearAlgebra.Double.Factorization
   /// </summary>
   public abstract record NonnegativeMatrixFactorizationWithRegularizationBase : NonnegativeMatrixFactorizationBase
   {
+    /// <summary>
+    /// Gets the regularization strength for <c>W</c>.
+    /// </summary>
     public double LambdaW
     {
       get => field;
@@ -149,6 +155,9 @@ namespace Altaxo.Calc.LinearAlgebra.Double.Factorization
       }
     } = 0;
 
+    /// <summary>
+    /// Gets the regularization strength for <c>H</c>.
+    /// </summary>
     public double LambdaH
     {
       get => field;
