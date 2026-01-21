@@ -39,7 +39,7 @@ namespace Altaxo.Calc.LinearAlgebra.Double.Factorization
       var nmf = new NonnegativeMatrixFactorizationByMultiplicativeUpdate()
       {
         InitializationMethod = new NNDSVDa(),
-        NumberOfAdditionalTrials = 5,
+        NumberOfAdditionalTrials = 0,
         MaximumNumberOfIterations = 200,
       };
       var (mfactors, mloads) = nmf.FactorizeOneTrial(matrixX, NumberOfComponents);
@@ -50,7 +50,7 @@ namespace Altaxo.Calc.LinearAlgebra.Double.Factorization
     [Fact]
     public void CanHandleDifferentScales()
     {
-      foreach (var scale in new double[] { 1, 1e40 })
+      foreach (var scale in new double[] { 1, 1e40, 1e-40 })
       {
         var originalLoadings = GetThreeSpectra();
         var originalScores = GetScores3D(NumberOfSpectra);

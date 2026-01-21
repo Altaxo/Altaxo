@@ -29,6 +29,9 @@ namespace Altaxo.Calc.LinearAlgebra.Double.Factorization
   /// <summary>
   /// Non-negative matrix factorization (NMF) using the classic multiplicative update rules.
   /// </summary>
+  /// <remarks>
+  /// References: Berry, M. W., Browne, M., Langville, A. N., Pauca, V. P., & Plemmons, R. J. (2007). Algorithms and applications for approximate nonnegative matrix factorization. Computational Statistics & Data Analysis, 52(1), 155–173. https://doi.org/10.1016/j.csda.2006.11.006
+  /// </remarks>
   public record NonnegativeMatrixFactorizationByMultiplicativeUpdate : NonnegativeMatrixFactorizationBase
   {
     #region Serialization
@@ -73,55 +76,104 @@ namespace Altaxo.Calc.LinearAlgebra.Double.Factorization
     /// <inheritdoc/>
     public override (Matrix<double> W, Matrix<double> H) FactorizeOneTrial(Matrix<double> V, int rank)
     {
-      //    Matrix<double> V, int r, int maxIter = 2000, double tol = 1e-5, int restarts = 3)
       int m = V.RowCount;
       int n = V.ColumnCount;
-      double eps = 1e-12;
 
-      var (W, H) = InitializationMethod.GetInitialFactors(V, rank);
+      var traceVᵀV = TraceOfTransposeAndMultiply(V, V);
+      double vNorm = V.FrobeniusNorm();
+      double epsilon = 1e-10 * vNorm * Math.Sqrt(vNorm); // in the reference this is 1E-9, but I take into account different scales of V
+
+      var (W, H) = InitializationMethod.GetInitialFactors(V, rank); // initialization so that Norm(W) and Norm(H) are in the same range
+      var WᵀV = Matrix<double>.Build.Dense(rank, n);
+      var WᵀW = Matrix<double>.Build.Dense(rank, rank);
+      var WᵀWH = Matrix<double>.Build.Dense(rank, n);
+      var VHᵀ = Matrix<double>.Build.Dense(m, rank);
+      var HHᵀ = Matrix<double>.Build.Dense(rank, rank);
+      var WHHᵀ = Matrix<double>.Build.Dense(m, rank);
+      var rowOfH = Vector<double>.Build.Dense(n);
+      var colOfW = Vector<double>.Build.Dense(m);
 
       double prevErr = double.PositiveInfinity;
-      double vNorm = V.FrobeniusNorm();
-
       for (int iter = 0; iter < MaximumNumberOfIterations; iter++)
       {
-        var WH = W * H;
-
         // Update H
-        var numeratorH = W.Transpose() * V;
-        var denominatorH = W.Transpose() * WH + eps;
-        H = H.PointwiseMultiply(numeratorH.PointwiseDivide(denominatorH));
+        W.TransposeThisAndMultiply(V, WᵀV); // nominator
+        W.TransposeThisAndMultiply(W, WᵀW);
+        WᵀW.Multiply(H, WᵀWH); // denominator
 
-        // Update W
-        WH = W * H;
-        var numeratorW = V * H.Transpose();
-        var denominatorW = WH * H.Transpose() + eps;
-        W = W.PointwiseMultiply(numeratorW.PointwiseDivide(denominatorW));
-
-        // Stabilization
-        W = W.PointwiseMaximum(eps);
-        H = H.PointwiseMaximum(eps);
-
-        // Optional: rescaling for conditioning
-        for (int k = 0; k < rank; k++)
-        {
-          double normWk = W.Column(k).L2Norm();
-          if (normWk > 0)
-          {
-            W.SetColumn(k, W.Column(k) / normWk);
-            H.SetRow(k, H.Row(k) * normWk);
-          }
-        }
-
-        // Monitoring
-        var Vhat = W * H;
-        double err = (V - Vhat).FrobeniusNorm() / vNorm;
-
+        // Convergence criterion
+        // see Berry et al. 2007 https://doi.org/10.1016/j.csda.2006.11.006 page 161
+        // instead of calculating ||V-WH|| directly,
+        // we use the relation ||V-WH||² = trace(VᵀV) - 2*trace(HᵀWᵀV) + trace(HᵀWᵀWH)
+        // the trace of the product of Hᵀ with the other two terms can be computed efficiently
+        // we have to compute it here because later on both W and H are modified, and neither WᵀV nor WᵀWH are valid anymore
+        var err = Math.Sqrt(Math.Max(0, traceVᵀV - 2 * TraceOfTransposeAndMultiply(H, WᵀV) + TraceOfTransposeAndMultiply(H, WᵀWH))) / vNorm;
         if (Math.Abs(prevErr - err) < Tolerance)
           break;
         prevErr = err;
+
+
+        // Update H by pointwise multiplication and division
+        // H.PointwiseMultiply(WᵀV.PointwiseDivide(WᵀWH), H);
+        for (int i = 0; i < rank; i++)
+        {
+          for (int j = 0; j < n; j++)
+          {
+            H[i, j] = H[i, j] * (WᵀV[i, j] / Math.Max(WᵀWH[i, j], epsilon));
+          }
+        }
+
+        // Update W
+        V.TransposeAndMultiply(H, VHᵀ); // nominator
+        H.TransposeAndMultiply(H, HHᵀ);
+        W.Multiply(HHᵀ, WHHᵀ);          // denominator
+
+        // Update W by pointwise multiplication and division
+        // W.PointwiseMultiply(VHᵀ.PointwiseDivide(WHHᵀ), W);
+        for (int i = 0; i < m; i++)
+        {
+          for (int j = 0; j < rank; j++)
+          {
+            W[i, j] = W[i, j] * (VHᵀ[i, j] / Math.Max(WHHᵀ[i, j], epsilon));
+          }
+        }
+
+        // Optional: rescaling for conditioning
+        // We try to keep the norms of the columns of W and the rows of H in a similar range
+        for (int k = 0; k < rank; k++)
+        {
+          W.Column(k, colOfW);
+          H.Row(k, rowOfH);
+          double normWk = Math.Sqrt(colOfW.L2Norm() / rowOfH.L2Norm());
+          if (normWk > 0)
+          {
+            colOfW.Multiply(1 / normWk, colOfW);
+            rowOfH.Multiply(normWk, rowOfH);
+            W.SetColumn(k, colOfW);
+            H.SetRow(k, rowOfH);
+          }
+        }
       }
       return (W, H);
+    }
+
+    /// <summary>
+    /// Calculates the trace of the product of the transposed matrix A with B: trace(AᵀB). 
+    /// </summary>
+    /// <param name="A">First matrix (not changed).</param>
+    /// <param name="B">Second matrix (not changed).</param>
+    /// <returns>The value of trace(AᵀB).</returns>
+    public static double TraceOfTransposeAndMultiply(Matrix<double> A, Matrix<double> B)
+    {
+      var n = B.RowCount;
+      var m = B.ColumnCount;
+
+      double sum = 0;
+      for (int i = 0; i < n; ++i)
+        for (int j = 0; j < m; ++j)
+          sum += A[i, j] * B[i, j];
+
+      return sum;
     }
   }
 }
