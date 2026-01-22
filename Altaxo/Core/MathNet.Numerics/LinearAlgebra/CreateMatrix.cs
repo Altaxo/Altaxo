@@ -259,6 +259,25 @@ namespace Altaxo.Calc.LinearAlgebra
     }
 
     /// <summary>
+    /// Create a new dense matrix as a copy of the given other read-only matrix.
+    /// This new matrix will be independent from the other matrix.
+    /// A new memory block will be allocated for storing the matrix.
+    /// </summary>
+    public static Matrix<T> DenseOfMatrix<T>(IROMatrix<T> matrix)
+        where T : struct, IEquatable<T>, IFormattable
+    {
+      var result = Matrix<T>.Build.Dense(matrix.RowCount, matrix.ColumnCount);
+      for (int i = 0; i < matrix.RowCount; i++)
+      {
+        for (int j = 0; j < matrix.ColumnCount; j++)
+        {
+          result[i, j] = matrix[i, j];
+        }
+      }
+      return result;
+    }
+
+    /// <summary>
     /// Create a new dense matrix as a copy of the given two-dimensional array.
     /// This new matrix will be independent from the provided array.
     /// A new memory block will be allocated for storing the matrix.

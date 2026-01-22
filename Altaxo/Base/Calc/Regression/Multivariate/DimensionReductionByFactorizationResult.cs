@@ -94,12 +94,19 @@ namespace Altaxo.Calc.Regression.Multivariate
           column[i] = sourceTable.PropertyColumns[idxPropColumn][columnNumbersOfSpectraInSourceTable[i]];
       }
 
+      var columnRelativeFactorizationError = destinationTable.PropertyColumns.EnsureExistence("Relative factorization error", typeof(DoubleColumn), ColumnKind.V, 0);
+      var relativeFactorizationErrors = CalculateResidualRelativeErrors(preprocessedSpectra, Factors, Loadings);
+
       // and now the factors
       for (int idxFactor = 0; idxFactor < numberOfFactors; ++idxFactor)
       {
         column = destinationTable.DataColumns.EnsureExistence($"Factor_{idxFactor}", typeof(DoubleColumn), ColumnKind.V, groupNumber);
+        columnRelativeFactorizationError[destinationTable.DataColumns.GetColumnNumber(column)] = relativeFactorizationErrors[idxFactor];
+
         for (int idxSpectrum = 0; idxSpectrum < numberOfSpectra; ++idxSpectrum)
+        {
           column[idxSpectrum] = Factors[idxSpectrum, idxFactor];
+        }
       }
 
       ++groupNumber;
@@ -109,10 +116,12 @@ namespace Altaxo.Calc.Regression.Multivariate
       column.Data = xValuesOfPreprocessedSpectra;
       for (int idxFactor = 0; idxFactor < numberOfFactors; idxFactor++)
       {
-        var scoreColumn = destinationTable.DataColumns.EnsureExistence($"Loading_{idxFactor}", typeof(DoubleColumn), ColumnKind.V, groupNumber);
+        column = destinationTable.DataColumns.EnsureExistence($"Loading_{idxFactor}", typeof(DoubleColumn), ColumnKind.V, groupNumber);
+        columnRelativeFactorizationError[destinationTable.DataColumns.GetColumnNumber(column)] = relativeFactorizationErrors[idxFactor];
+
         for (int idxSpectralPoint = 0; idxSpectralPoint < numberOfSpectralPoints; idxSpectralPoint++)
         {
-          scoreColumn[idxSpectralPoint] = Loadings[idxFactor, idxSpectralPoint];
+          column[idxSpectralPoint] = Loadings[idxFactor, idxSpectralPoint];
         }
       }
 
@@ -157,6 +166,33 @@ namespace Altaxo.Calc.Regression.Multivariate
         var column = destinationTable.DataColumns.EnsureExistence(data.Name, typeof(DoubleColumn), ColumnKind.V, groupNumber);
         column.Data = vector.Value;
       }
+    }
+
+    /// <summary>
+    /// Calculates the residual relative error.
+    /// </summary>
+    /// <param name="V">The full matrix to factorize.</param>
+    /// <param name="factors">The factors.</param>
+    /// <param name="loadings">The loadings.</param>
+    /// <returns>A vector, in which the first element is the relative factorization residual after applying the first factor. The second
+    /// element is the relative factorization residual when applying two factors, etc.</returns>
+    static Vector<double> CalculateResidualRelativeErrors(Matrix<double> V, IROMatrix<double> factors, IROMatrix<double> loadings)
+    {
+      var cfactors = CreateMatrix.DenseOfMatrix(factors);
+      var cloadings = CreateMatrix.DenseOfMatrix(loadings);
+      var result = CreateVector.Dense<double>(loadings.RowCount);
+
+      var normOfV = V.FrobeniusNorm();
+
+      result[^1] = (V - cfactors * cloadings).FrobeniusNorm() / normOfV;
+      for (int k = result.Count - 1; k > 0; --k)
+      {
+        cfactors.ClearColumn(k);
+        cloadings.ClearRow(k);
+        result[k - 1] = (V - cfactors * cloadings).FrobeniusNorm() / normOfV;
+      }
+
+      return result;
     }
   }
 }

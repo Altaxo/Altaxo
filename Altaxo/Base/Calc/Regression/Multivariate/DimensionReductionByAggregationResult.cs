@@ -87,6 +87,10 @@ namespace Altaxo.Calc.Regression.Multivariate
       if (outputOptions.IncludePreprocessedSpectra)
       {
         int numberOfSpectralPoints = preprocessedSpectra.ColumnCount;
+
+        column = destinationTable.DataColumns.EnsureExistence($"PreprocesedData_X", typeof(DoubleColumn), ColumnKind.X, groupNumber);
+        column.Data = xValuesOfPreprocessedSpectra;
+
         for (int idxSpectrum = 0; idxSpectrum < numberOfSpectra; idxSpectrum++)
         {
           var spectrumColumn = destinationTable.DataColumns.EnsureExistence($"PreprocessedData_{idxSpectrum}", typeof(DoubleColumn), ColumnKind.V, groupNumber);
