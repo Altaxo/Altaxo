@@ -29,7 +29,7 @@ namespace Altaxo.Calc.LinearAlgebra.Double.Factorization
   public class NonnegativeMatrixFactorizationByHALSTests : FactorizationTestBase
   {
     [Fact]
-    public void Test2()
+    public void Test()
     {
       var originalLoadings = GetThreeSpectra();
       var originalScores = GetScores3D(NumberOfSpectra);
@@ -43,5 +43,28 @@ namespace Altaxo.Calc.LinearAlgebra.Double.Factorization
       var relError = RelativeError(mfactors, mloads, originalMatrix);
       Assert.True(relError < 1E-6);
     }
+
+    [Fact]
+    public void CanHandleDifferentScales()
+    {
+      foreach (var scale in new double[] { 1, 1e40, 1e-40 })
+      {
+        var originalLoadings = GetThreeSpectra();
+        var originalScores = GetScores3D(NumberOfSpectra);
+        var originalMatrix = originalScores * originalLoadings * scale;
+        var matrixX = originalMatrix.Clone();
+
+        var nmf = new NonnegativeMatrixFactorizationByHALS()
+        {
+          InitializationMethod = new NNDSVDa(),
+          NumberOfAdditionalTrials = 5,
+          MaximumNumberOfIterations = 200,
+        };
+        var (mfactors, mloads) = nmf.FactorizeOneTrial(matrixX, NumberOfComponents);
+        var relError = RelativeError(mfactors, mloads, originalMatrix);
+        Assert.True(relError < 0.0002);
+      }
+    }
   }
 }
+

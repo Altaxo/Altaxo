@@ -89,13 +89,16 @@ namespace Altaxo.Calc.LinearAlgebra.Double.Factorization
 
       int m = V.RowCount;
       int n = V.ColumnCount;
-      double eps = 1e-12;
 
-      double xNorm = V.FrobeniusNorm();
-      if (xNorm == 0)
+      double vNorm = V.FrobeniusNorm();
+      if (vNorm == 0)
       {
         return (Matrix<double>.Build.Dense(m, rank), Matrix<double>.Build.Dense(rank, n));
       }
+      double epsilonForSqrtScale = 1e-12 * Math.Sqrt(vNorm); // Epsilon for W and H to avoid zero entries.
+      double epsilonForScale = 1e-12 * vNorm; // Epsilon for WᵀW and HHᵀ to avoid zero entries.
+
+
       // Used for efficient error computation: ||X - WH||_F^2 = ||X||_F^2 - 2*tr(H^T W^T X) + tr(W^T W * H H^T)
       double traceXtX = NonnegativeMatrixFactorizationBase.TraceOfTransposeAndMultiply(V, V);
 
@@ -104,15 +107,13 @@ namespace Altaxo.Calc.LinearAlgebra.Double.Factorization
       // Enforce strict positivity (avoids divisions by zero and degeneracy).
       for (int i = 0; i < m; i++)
         for (int k = 0; k < rank; k++)
-          if (W[i, k] < eps)
-            W[i, k] = eps;
+          if (W[i, k] < epsilonForSqrtScale)
+            W[i, k] = epsilonForSqrtScale;
 
       for (int k = 0; k < rank; k++)
         for (int j = 0; j < n; j++)
-          if (H[k, j] < eps)
-            H[k, j] = eps;
-
-
+          if (H[k, j] < epsilonForSqrtScale)
+            H[k, j] = epsilonForSqrtScale;
 
       // Pre-allocations
       var WᵀW = Matrix<double>.Build.Dense(rank, rank);
@@ -120,36 +121,45 @@ namespace Altaxo.Calc.LinearAlgebra.Double.Factorization
       var WᵀV = Matrix<double>.Build.Dense(rank, n);
       var VHᵀ = Matrix<double>.Build.Dense(m, rank);
 
-
-
       double previousError = double.PositiveInfinity;
-      for (int iter = 0; iter < MaximumNumberOfIterations; iter++)
+      for (int iIteration = 0; iIteration < MaximumNumberOfIterations; iIteration++)
       {
         // Keep shared products up-to-date.
         W.TransposeThisAndMultiply(W, WᵀW);
-        H.TransposeAndMultiply(H, HHᵀ);
         W.TransposeThisAndMultiply(V, WᵀV);
-        V.TransposeAndMultiply(H, VHᵀ);
+        H.TransposeAndMultiply(H, HHᵀ); // only needed for error computation
+
+        // Relative error (Frobenius) using trace identity.
+        double err = Math.Sqrt(Math.Max(0, traceXtX - 2 * TraceOfTransposeAndMultiply(H, WᵀV) + TraceOfTransposeAndMultiply(HHᵀ, WᵀW))) / vNorm;
+        if (Math.Abs(previousError - err) < Tolerance)
+          break;
+        previousError = err;
 
         // === Update H (row-wise / component-wise) ===
         for (int k = 0; k < rank; k++)
         {
-          double denom = WᵀW[k, k] + LambdaW;
-          if (denom <= 0)
-            denom = eps;
+          double denominator = WᵀW[k, k] + LambdaW;
+          if (denominator <= 0)
+          {
+            denominator = epsilonForScale;
+          }
 
           for (int j = 0; j < n; j++)
           {
-            double numer = WᵀV[k, j];
+            double numerator = WᵀV[k, j];
             for (int l = 0; l < rank; l++)
             {
               if (l != k)
-                numer -= WᵀW[k, l] * H[l, j];
+              {
+                numerator -= WᵀW[k, l] * H[l, j];
+              }
             }
 
-            double hNew = numer / denom;
-            if (hNew < eps)
-              hNew = eps;
+            double hNew = numerator / denominator;
+            if (hNew < epsilonForSqrtScale)
+            {
+              hNew = epsilonForSqrtScale;
+            }
             H[k, j] = hNew;
           }
         }
@@ -161,44 +171,32 @@ namespace Altaxo.Calc.LinearAlgebra.Double.Factorization
         // === Update W (column-wise / component-wise) ===
         for (int k = 0; k < rank; k++)
         {
-          double denom = HHᵀ[k, k] + LambdaH;
-          if (denom <= 0)
-            denom = eps;
+          double denominator = HHᵀ[k, k] + LambdaH;
+          if (denominator <= 0)
+          {
+            denominator = epsilonForScale;
+          }
 
           for (int i = 0; i < m; i++)
           {
-            double numer = VHᵀ[i, k];
+            double numerator = VHᵀ[i, k];
             for (int l = 0; l < rank; l++)
             {
               if (l != k)
-                numer -= W[i, l] * HHᵀ[l, k];
+              {
+                numerator -= W[i, l] * HHᵀ[l, k];
+              }
             }
 
-            double wNew = numer / denom;
-            if (wNew < eps)
-              wNew = eps;
+            double wNew = numerator / denominator;
+            if (wNew < epsilonForSqrtScale)
+            {
+              wNew = epsilonForSqrtScale;
+            }
             W[i, k] = wNew;
           }
         }
-
-        // Update shared products for convergence check.
-        W.TransposeThisAndMultiply(W, WᵀW);
-        H.TransposeAndMultiply(H, HHᵀ);
-        W.TransposeThisAndMultiply(V, WᵀV);
-
-        // Relative error (Frobenius) using trace identity.
-        double traceHtWtX = NonnegativeMatrixFactorizationBase.TraceOfTransposeAndMultiply(H, WᵀV);
-        double traceWtWHHt = 0;
-        for (int a = 0; a < rank; a++)
-          for (int b = 0; b < rank; b++)
-            traceWtWHHt += WᵀW[a, b] * HHᵀ[a, b];
-
-        double err = Math.Sqrt(Math.Max(0, traceXtX - 2 * traceHtWtX + traceWtWHHt)) / xNorm;
-        if (Math.Abs(previousError - err) < Tolerance)
-          break;
-        previousError = err;
       }
-
       return (W, H);
     }
   }

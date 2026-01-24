@@ -123,6 +123,7 @@ namespace Altaxo.Calc.LinearAlgebra.Double.Factorization
       {
         Wᵀ.TransposeAndMultiply(Wᵀ, WᵀW); // wtw = wᵀ w
         Wᵀ.Multiply(V, WᵀV);              // wta = wᵀ a
+        H.TransposeAndMultiply(H, HHᵀ); // here only needed for the tolerance check: hᵀ h
 
         // Convergence criterion
         // see Berry et al. 2007 https://doi.org/10.1016/j.csda.2006.11.006 page 161
@@ -130,8 +131,7 @@ namespace Altaxo.Calc.LinearAlgebra.Double.Factorization
         // we use the relation ||V-WH||² = trace(VᵀV) - 2*trace(HᵀWᵀV) + trace(HᵀWᵀWH)
         // the trace of the product of Hᵀ with the other two terms can be computed efficiently
         // we have to compute it here because later on both W and H are modified, and neither WᵀV nor WᵀWH are valid anymore
-        WᵀW.Multiply(H, WᵀWH);          // calculated only for the tolerance check: wᵀ a - (wᵀ w) h
-        var error = Math.Sqrt(Math.Max(0, traceVᵀV - 2 * TraceOfTransposeAndMultiply(H, WᵀV) + TraceOfTransposeAndMultiply(H, WᵀWH))) / vNorm;
+        var error = Math.Sqrt(Math.Max(0, traceVᵀV - 2 * TraceOfTransposeAndMultiply(H, WᵀV) + TraceOfTransposeAndMultiply(HHᵀ, WᵀW))) / vNorm;
         var (terminate, bestWt, bestH) = chi2History.Add(error, Wᵀ, H);
         if (terminate)
         {
