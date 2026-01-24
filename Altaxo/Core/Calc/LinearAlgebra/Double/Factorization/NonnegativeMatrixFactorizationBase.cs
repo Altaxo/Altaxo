@@ -133,40 +133,24 @@ namespace Altaxo.Calc.LinearAlgebra.Double.Factorization
         return (bestW, bestH);
       }
     }
-  }
-
-  /// <summary>
-  /// Provides initialization helpers for non-negative matrix factorization (NMF),
-  /// specifically NNDSVD-based initializations.
-  /// </summary>
-  public abstract record NonnegativeMatrixFactorizationWithRegularizationBase : NonnegativeMatrixFactorizationBase
-  {
-    /// <summary>
-    /// Gets the regularization strength for <c>W</c>.
-    /// </summary>
-    public double LambdaW
-    {
-      get => field;
-      init
-      {
-        if (!(value >= 0))
-          throw new ArgumentOutOfRangeException(nameof(LambdaW), "LambdaW must be non-negative.");
-        field = value;
-      }
-    } = 0;
 
     /// <summary>
-    /// Gets the regularization strength for <c>H</c>.
+    /// Calculates the trace of the product of the transposed matrix A with B: trace(AᵀB). 
     /// </summary>
-    public double LambdaH
+    /// <param name="A">First matrix (not changed).</param>
+    /// <param name="B">Second matrix (not changed).</param>
+    /// <returns>The value of trace(AᵀB).</returns>
+    public static double TraceOfTransposeAndMultiply(Matrix<double> A, Matrix<double> B)
     {
-      get => field;
-      init
-      {
-        if (!(value >= 0))
-          throw new ArgumentOutOfRangeException(nameof(LambdaH), "LambdaH must be non-negative.");
-        field = value;
-      }
-    } = 0;
+      var n = B.RowCount;
+      var m = B.ColumnCount;
+
+      double sum = 0;
+      for (int i = 0; i < n; ++i)
+        for (int j = 0; j < m; ++j)
+          sum += A[i, j] * B[i, j];
+
+      return sum;
+    }
   }
 }

@@ -23,6 +23,7 @@
 #endregion Copyright
 
 using System;
+using Xunit;
 
 namespace Altaxo.Calc.LinearAlgebra.Double.Factorization
 {
@@ -102,5 +103,69 @@ namespace Altaxo.Calc.LinearAlgebra.Double.Factorization
       var Vhat = scores * loadings;
       return (Vhat - originalMatrix).FrobeniusNorm() / originalMatrix.FrobeniusNorm();
     }
+
+
+
+    protected static void AssertAreNonnegative(Matrix<double> actual)
+    {
+      for (int i = 0; i < actual.RowCount; ++i)
+      {
+        for (int j = 0; j < actual.ColumnCount; ++j)
+        {
+          Assert.True(actual[i, j] >= 0);
+        }
+      }
+    }
+
+
+    protected static void AssertAreEqual(Matrix<double> expected, Matrix<double> actual, double absError, double relError)
+    {
+      Assert.Equal(expected.RowCount, actual.RowCount);
+      Assert.Equal(expected.ColumnCount, actual.ColumnCount);
+
+      for (int i = 0; i < expected.RowCount; ++i)
+      {
+        for (int j = 0; j < expected.ColumnCount; ++j)
+        {
+          AssertEx.AreEqual(expected[i, j], actual[i, j], absError, relError);
+        }
+      }
+    }
+
+    protected static void AssertAreEqualIfExpectedIsNonZero(Matrix<double> expected, Matrix<double> actual, double absError, double relError)
+    {
+      Assert.Equal(expected.RowCount, actual.RowCount);
+      Assert.Equal(expected.ColumnCount, actual.ColumnCount);
+
+      for (int i = 0; i < expected.RowCount; ++i)
+      {
+        for (int j = 0; j < expected.ColumnCount; ++j)
+        {
+          if (expected[i, j] != 0)
+          {
+            AssertEx.AreEqual(expected[i, j], actual[i, j], absError, relError);
+          }
+        }
+      }
+    }
+
+    protected static void AssertActualIsLessOrEqualIfPatternIsZero(Matrix<double> pattern, Matrix<double> expected, Matrix<double> actual)
+    {
+      Assert.Equal(expected.RowCount, actual.RowCount);
+      Assert.Equal(expected.ColumnCount, actual.ColumnCount);
+
+      for (int i = 0; i < expected.RowCount; ++i)
+      {
+        for (int j = 0; j < expected.ColumnCount; ++j)
+        {
+          if (pattern[i, j] == 0)
+          {
+            Assert.True(actual[i, j] < expected[i, j]);
+          }
+        }
+      }
+    }
+
+
   }
 }

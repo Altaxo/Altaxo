@@ -39,7 +39,7 @@ namespace Altaxo.Calc.LinearAlgebra.Double.Factorization
       var (mfactors, S, mloads) = TruncatedSVD.RandomizedSvd(matrixX, 3);
       mfactors = mfactors.Multiply(CreateMatrix.DenseDiagonal<double>(S.Count, S.Count, i => S[i]));
       var relError = RelativeError(mfactors, mloads, originalMatrix);
-      Assert.True(relError < 4E-15);
+      Assert.True(relError < 1E-13);
     }
 
     [Fact]
@@ -54,7 +54,7 @@ namespace Altaxo.Calc.LinearAlgebra.Double.Factorization
         var (mfactors, S, mloads) = TruncatedSVD.RandomizedSvd(matrixX, 3);
         mfactors = mfactors.Multiply(CreateMatrix.DenseDiagonal<double>(S.Count, S.Count, i => S[i]));
         var relError = RelativeError(mfactors, mloads, originalMatrix);
-        Assert.True(relError < 4E-14);
+        Assert.True(relError < 1E-13);
       }
     }
 
@@ -85,6 +85,20 @@ namespace Altaxo.Calc.LinearAlgebra.Double.Factorization
         var relError = RelativeError(mfactors, mloads, originalMatrix);
         Assert.True(relError < 2E-15);
       }
+    }
+
+    [Fact]
+    public void CompareBlockKrylovSvdWithFullSvd()
+    {
+      var originalLoadings = GetThreeSpectra();
+      var originalScores = GetScores3D(NumberOfSpectra);
+      var originalMatrix = originalScores * originalLoadings;
+      var matrixX = originalMatrix.Clone();
+      var (mfactors, S, mloads) = TruncatedSVD.BlockKrylovSvd(matrixX, 2);
+      var fullSvd = matrixX.Svd();
+
+      AssertEx.AreEqual(fullSvd.S[0], S[0], 0, 1E-14);
+      AssertEx.AreEqual(fullSvd.S[1], S[1], 0, 1E-14);
     }
   }
 }

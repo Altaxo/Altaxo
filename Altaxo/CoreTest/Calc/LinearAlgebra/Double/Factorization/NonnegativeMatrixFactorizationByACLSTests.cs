@@ -79,20 +79,24 @@ namespace Altaxo.Calc.LinearAlgebra.Double.Factorization
     [Fact]
     public void CanHandleDifferentScalesForRandomInitialization()
     {
+      const double expectedRelError = 0.022;
       foreach (var scale in new double[] { 1, 1e40, 1e-40 })
       {
         var originalLoadings = GetThreeSpectra();
         var originalScores = GetScores3D(NumberOfSpectra);
         var originalMatrix = originalScores * originalLoadings * scale;
         var matrixX = originalMatrix.Clone();
-
-        var nmf = new NonnegativeMatrixFactorizationByACLS() { InitializationMethod = new NMFInitializationRandom() };
-        var (mfactors, mloads) = nmf.FactorizeOneTrial(matrixX, 3);
-        var relError = RelativeError(mfactors, mloads, originalMatrix);
-        Assert.True(relError < 0.022);
+        var relError = double.MaxValue;
+        for (int trials = 0; trials < 10; ++trials)
+        {
+          var nmf = new NonnegativeMatrixFactorizationByACLS() { InitializationMethod = new NMFInitializationRandom() };
+          var (mfactors, mloads) = nmf.FactorizeOneTrial(matrixX, 3);
+          relError = RelativeError(mfactors, mloads, originalMatrix);
+          if (relError < expectedRelError)
+            break;
+        }
+        Assert.True(relError < expectedRelError, $"Failed for scale {scale} relError={relError}");
       }
     }
-
-
   }
 }

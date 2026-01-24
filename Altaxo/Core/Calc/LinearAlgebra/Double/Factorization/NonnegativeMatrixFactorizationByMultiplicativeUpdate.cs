@@ -2,7 +2,7 @@
 
 /////////////////////////////////////////////////////////////////////////////
 //    Altaxo:  a data processing and data plotting program
-//    Copyright (C) 2002-2025 Dr. Dirk Lellinger
+//    Copyright (C) 2002-2026 Dr. Dirk Lellinger
 //
 //    This program is free software; you can redistribute it and/or modify
 //    it under the terms of the GNU General Public License as published by
@@ -93,7 +93,7 @@ namespace Altaxo.Calc.LinearAlgebra.Double.Factorization
       var rowOfH = Vector<double>.Build.Dense(n);
       var colOfW = Vector<double>.Build.Dense(m);
 
-      double prevErr = double.PositiveInfinity;
+      double previousError = double.PositiveInfinity;
       for (int iter = 0; iter < MaximumNumberOfIterations; iter++)
       {
         // Update H
@@ -107,10 +107,10 @@ namespace Altaxo.Calc.LinearAlgebra.Double.Factorization
         // we use the relation ||V-WH||² = trace(VᵀV) - 2*trace(HᵀWᵀV) + trace(HᵀWᵀWH)
         // the trace of the product of Hᵀ with the other two terms can be computed efficiently
         // we have to compute it here because later on both W and H are modified, and neither WᵀV nor WᵀWH are valid anymore
-        var err = Math.Sqrt(Math.Max(0, traceVᵀV - 2 * TraceOfTransposeAndMultiply(H, WᵀV) + TraceOfTransposeAndMultiply(H, WᵀWH))) / vNorm;
-        if (Math.Abs(prevErr - err) < Tolerance)
+        var error = Math.Sqrt(Math.Max(0, traceVᵀV - 2 * TraceOfTransposeAndMultiply(H, WᵀV) + TraceOfTransposeAndMultiply(H, WᵀWH))) / vNorm;
+        if (Math.Abs(previousError - error) < Tolerance)
           break;
-        prevErr = err;
+        previousError = error;
 
 
         // Update H by pointwise multiplication and division
@@ -157,23 +157,6 @@ namespace Altaxo.Calc.LinearAlgebra.Double.Factorization
       return (W, H);
     }
 
-    /// <summary>
-    /// Calculates the trace of the product of the transposed matrix A with B: trace(AᵀB). 
-    /// </summary>
-    /// <param name="A">First matrix (not changed).</param>
-    /// <param name="B">Second matrix (not changed).</param>
-    /// <returns>The value of trace(AᵀB).</returns>
-    public static double TraceOfTransposeAndMultiply(Matrix<double> A, Matrix<double> B)
-    {
-      var n = B.RowCount;
-      var m = B.ColumnCount;
 
-      double sum = 0;
-      for (int i = 0; i < n; ++i)
-        for (int j = 0; j < m; ++j)
-          sum += A[i, j] * B[i, j];
-
-      return sum;
-    }
   }
 }

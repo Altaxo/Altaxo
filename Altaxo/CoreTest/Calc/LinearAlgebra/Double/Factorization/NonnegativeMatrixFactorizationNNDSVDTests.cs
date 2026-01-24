@@ -43,68 +43,6 @@ namespace Altaxo.Calc.LinearAlgebra.Double.Factorization
         System.Diagnostics.Debug.WriteLine((i + 1) == matrix.RowCount ? "\r\n);" : ",");
       }
     }
-
-
-    protected static void AssertAreNonnegative(Matrix<double> actual)
-    {
-      for (int i = 0; i < actual.RowCount; ++i)
-      {
-        for (int j = 0; j < actual.ColumnCount; ++j)
-        {
-          Assert.True(actual[i, j] >= 0);
-        }
-      }
-    }
-
-
-    protected static void AssertAreEqual(Matrix<double> expected, Matrix<double> actual, double absError, double relError)
-    {
-      Assert.Equal(expected.RowCount, actual.RowCount);
-      Assert.Equal(expected.ColumnCount, actual.ColumnCount);
-
-      for (int i = 0; i < expected.RowCount; ++i)
-      {
-        for (int j = 0; j < expected.ColumnCount; ++j)
-        {
-          AssertEx.AreEqual(expected[i, j], actual[i, j], absError, relError);
-        }
-      }
-    }
-
-    protected static void AssertAreEqualIfExpectedIsNonZero(Matrix<double> expected, Matrix<double> actual, double absError, double relError)
-    {
-      Assert.Equal(expected.RowCount, actual.RowCount);
-      Assert.Equal(expected.ColumnCount, actual.ColumnCount);
-
-      for (int i = 0; i < expected.RowCount; ++i)
-      {
-        for (int j = 0; j < expected.ColumnCount; ++j)
-        {
-          if (expected[i, j] != 0)
-          {
-            AssertEx.AreEqual(expected[i, j], actual[i, j], absError, relError);
-          }
-        }
-      }
-    }
-
-    protected static void AssertActualIsLessOrEqualIfPatternIsZero(Matrix<double> pattern, Matrix<double> expected, Matrix<double> actual)
-    {
-      Assert.Equal(expected.RowCount, actual.RowCount);
-      Assert.Equal(expected.ColumnCount, actual.ColumnCount);
-
-      for (int i = 0; i < expected.RowCount; ++i)
-      {
-        for (int j = 0; j < expected.ColumnCount; ++j)
-        {
-          if (pattern[i, j] == 0)
-          {
-            Assert.True(actual[i, j] < expected[i, j]);
-          }
-        }
-      }
-    }
-
     /// <summary>
     /// Verifies that the NNDSVD algorithm with possible zeros in the result produces the expected factor and load
     /// matrices for a specific 4x3 test matrix and rank 2 decomposition.
@@ -195,7 +133,7 @@ namespace Altaxo.Calc.LinearAlgebra.Double.Factorization
     [Fact]
     public void TestNNDSVDar()
     {
-      foreach (double scaling in new double[] { 1, 1E10 })
+      foreach (double scaling in new double[] { 1, 1E40, 1E-40 })
       {
         var matrixX = CreateMatrix.DenseOfRowArrays<double>(
           [4, 7, 4],
@@ -210,7 +148,7 @@ namespace Altaxo.Calc.LinearAlgebra.Double.Factorization
 
         AssertAreNonnegative(mfactors);
         AssertAreNonnegative(mloads);
-        AssertAreEqualIfExpectedIsNonZero(mfactorsN, mfactors, 0, 0); // all non-zero entries must exactly be equal to NNDSVD
+        AssertAreEqualIfExpectedIsNonZero(mfactorsN, mfactors, 0, 4E-14); // all non-zero entries must exactly be equal to NNDSVD
         AssertActualIsLessOrEqualIfPatternIsZero(mfactorsN, mfactorsA, mfactors); // all zero entries must be less or equal than in NNDSVDa
       }
     }

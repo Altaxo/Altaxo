@@ -42,8 +42,6 @@ namespace Altaxo.Calc.LinearAlgebra.Double.Factorization
   /// </remarks>
   public record NonnegativeMatrixFactorizationByACLS : NonnegativeMatrixFactorizationWithRegularizationBase
   {
-
-
     #region Serialization
 
     /// <summary>
@@ -94,59 +92,75 @@ namespace Altaxo.Calc.LinearAlgebra.Double.Factorization
     /// <para>The algorithm is described in [1], page 7.</para>
     /// <para>Please note that base vectors and factors are output in an arbitrary order.</para>
     /// </remarks>
-    public override (Matrix<double> W, Matrix<double> H) FactorizeOneTrial(Matrix<double> X, int r)
+    public override (Matrix<double> W, Matrix<double> H) FactorizeOneTrial(Matrix<double> V, int rank)
     {
-      ArgumentNullException.ThrowIfNull(X, nameof(X));
+      ArgumentNullException.ThrowIfNull(V, nameof(V));
 
-      var m = X.RowCount;
-      var n = X.ColumnCount;
-      (var w, _) = InitializationMethod.GetInitialFactors(X, r);
-      var wt = w.Transpose(); // instead of w in [1], we use w-transposed
-      var h = Matrix<double>.Build.Dense(r, n);
+      var m = V.RowCount;
+      var n = V.ColumnCount;
 
-      var wtw = Matrix<double>.Build.Dense(r, r);
-      var wta = Matrix<double>.Build.Dense(r, n);
+      var traceVᵀV = TraceOfTransposeAndMultiply(V, V);
+      double vNorm = V.FrobeniusNorm();
 
-      var hht = Matrix<double>.Build.Dense(r, r);
-      var hat = Matrix<double>.Build.Dense(r, m);
+      (var w, _) = InitializationMethod.GetInitialFactors(V, rank);
+      var Wᵀ = w.Transpose(); // instead of w in [1], we use w-transposed
+      var H = Matrix<double>.Build.Dense(rank, n);
+
+      var WᵀW = Matrix<double>.Build.Dense(rank, rank);
+      var WᵀV = Matrix<double>.Build.Dense(rank, n);
+
+      var HHᵀ = Matrix<double>.Build.Dense(rank, rank);
+      var HVᵀ = Matrix<double>.Build.Dense(rank, m);
+      var WᵀWH = Matrix<double>.Build.Dense(rank, n);
 
       var abar = Matrix<double>.Build.Dense(m, n);
 
       var chi2History = new Chi2History(4);
 
+      double previousError = double.PositiveInfinity;
       // Algorithm see [1], page 7, "Practical ACLS Algorithm for NMF"
       for (int iIteration = 0; iIteration < MaximumNumberOfIterations; iIteration++)
       {
-        wt.TransposeAndMultiply(wt, wtw); // wtw = wᵀ w
-        wt.Multiply(X, wta);              // wta = wᵀ a
-        for (int i = 0; i < r; ++i)       // Add lambdaH to the diagonal of wtw
-        {
-          wtw[i, i] += LambdaH;           // wᵀ w + lambdaH I   
-        }
-        wtw.Solve(wta, h);                // (wᵀ w + lambdaH I) h = wᵀ a
+        Wᵀ.TransposeAndMultiply(Wᵀ, WᵀW); // wtw = wᵀ w
+        Wᵀ.Multiply(V, WᵀV);              // wta = wᵀ a
 
-
-        ClearNonnegativeElements(h);      // set all negative elements of h to zero
-
-        h.TransposeAndMultiply(h, hht);   // hht = h hᵀ
-        h.TransposeAndMultiply(X, hat);   // hat = h aᵀ
-        for (int i = 0; i < r; ++i)       // Add lambdaW to the diagonal of hht
-        {
-          hht[i, i] += LambdaW;           // h hᵀ + lambdaW I 
-        }
-        hht.Solve(hat, wt);               // (h hᵀ + lambdaW I) wᵀ = h aᵀ
-        ClearNonnegativeElements(wt);     // set all negative elements of w to zero
-
-        // Evaluation of the quality
-        wt.TransposeThisAndMultiply(h, abar);
-
-        var (terminate, bestWt, bestH) = chi2History.Add(SumOfSquaredDifferences(X, abar), wt, h);
+        // Convergence criterion
+        // see Berry et al. 2007 https://doi.org/10.1016/j.csda.2006.11.006 page 161
+        // instead of calculating ||V-WH|| directly,
+        // we use the relation ||V-WH||² = trace(VᵀV) - 2*trace(HᵀWᵀV) + trace(HᵀWᵀWH)
+        // the trace of the product of Hᵀ with the other two terms can be computed efficiently
+        // we have to compute it here because later on both W and H are modified, and neither WᵀV nor WᵀWH are valid anymore
+        WᵀW.Multiply(H, WᵀWH);          // calculated only for the tolerance check: wᵀ a - (wᵀ w) h
+        var error = Math.Sqrt(Math.Max(0, traceVᵀV - 2 * TraceOfTransposeAndMultiply(H, WᵀV) + TraceOfTransposeAndMultiply(H, WᵀWH))) / vNorm;
+        var (terminate, bestWt, bestH) = chi2History.Add(error, Wᵀ, H);
         if (terminate)
         {
           return (bestWt!.Transpose(), bestH!);
         }
+        if (Math.Abs(previousError - error) < Tolerance)
+        {
+          break;
+        }
+        previousError = error;
+
+        for (int i = 0; i < rank; ++i)       // Add lambdaH to the diagonal of wtw
+        {
+          WᵀW[i, i] += LambdaH;           // wᵀ w + lambdaH I   
+        }
+        WᵀW.Solve(WᵀV, H);                // (wᵀ w + lambdaH I) h = wᵀ a
+
+        ClearNonnegativeElements(H);      // set all negative elements of h to zero
+
+        H.TransposeAndMultiply(H, HHᵀ);   // hht = h hᵀ
+        H.TransposeAndMultiply(V, HVᵀ);   // hat = h aᵀ
+        for (int i = 0; i < rank; ++i)       // Add lambdaW to the diagonal of hht
+        {
+          HHᵀ[i, i] += LambdaW;           // h hᵀ + lambdaW I 
+        }
+        HHᵀ.Solve(HVᵀ, Wᵀ);               // (h hᵀ + lambdaW I) wᵀ = h aᵀ
+        ClearNonnegativeElements(Wᵀ);     // set all negative elements of w to zero
       }
-      return (wt.Transpose(), h);
+      return (Wᵀ.Transpose(), H);
     }
 
     /// <summary>

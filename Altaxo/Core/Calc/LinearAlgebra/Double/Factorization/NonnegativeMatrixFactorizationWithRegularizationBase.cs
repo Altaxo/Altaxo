@@ -2,7 +2,7 @@
 
 /////////////////////////////////////////////////////////////////////////////
 //    Altaxo:  a data processing and data plotting program
-//    Copyright (C) 2002-2026 Dr. Dirk Lellinger
+//    Copyright (C) 2002-2025 Dr. Dirk Lellinger
 //
 //    This program is free software; you can redistribute it and/or modify
 //    it under the terms of the GNU General Public License as published by
@@ -22,26 +22,42 @@
 
 #endregion Copyright
 
-using Xunit;
+using System;
 
 namespace Altaxo.Calc.LinearAlgebra.Double.Factorization
 {
-  public class NonnegativeMatrixFactorizationByCoordinateDescentTests : FactorizationTestBase
+  /// <summary>
+  /// Provides initialization helpers for non-negative matrix factorization (NMF),
+  /// specifically NNDSVD-based initializations.
+  /// </summary>
+  public abstract record NonnegativeMatrixFactorizationWithRegularizationBase : NonnegativeMatrixFactorizationBase
   {
-    [Fact]
-    public void Test2()
+    /// <summary>
+    /// Gets the regularization strength for <c>W</c>.
+    /// </summary>
+    public double LambdaW
     {
-      var originalLoadings = GetThreeSpectra();
-      var originalScores = GetScores3D(NumberOfSpectra);
-      var originalMatrix = originalScores * originalLoadings;
-      var matrixX = originalMatrix.Clone();
+      get => field;
+      init
+      {
+        if (!(value >= 0))
+          throw new ArgumentOutOfRangeException(nameof(LambdaW), "LambdaW must be non-negative.");
+        field = value;
+      }
+    } = 0;
 
-      var nmf = new NonnegativeMatrixFactorizationByCoordinateDescent { MaximumNumberOfIterations = 5000 };
-      var (mfactors, mloads) = nmf.Factorize(matrixX, 3);
-
-
-      var relError = RelativeError(mfactors, mloads, originalMatrix);
-      Assert.True(relError < 0.022);
-    }
+    /// <summary>
+    /// Gets the regularization strength for <c>H</c>.
+    /// </summary>
+    public double LambdaH
+    {
+      get => field;
+      init
+      {
+        if (!(value >= 0))
+          throw new ArgumentOutOfRangeException(nameof(LambdaH), "LambdaH must be non-negative.");
+        field = value;
+      }
+    } = 0;
   }
 }

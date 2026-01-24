@@ -68,7 +68,7 @@ namespace Altaxo.Calc.LinearAlgebra.Double.Factorization
     /// </remarks>
     public virtual (Matrix<double> W, Matrix<double> H) GetInitialFactors(Matrix<double> X, int r)
     {
-      var svd = X.Svd(computeVectors: true); // TODO: replace by a partial SVD (psvd) of the first r factors,see e.g.https://scikit-learn.org/stable/modules/generated/sklearn.decomposition.TruncatedSVD.html# Math.NET Numerics Extended
+      var svd = TruncatedSVD.BlockKrylovSvd(X, r);
       var U = svd.U;          // m x m (or m x k)
       var S = svd.S;          // singular values as a Vector
       var Vt = svd.VT;        // n x n (or k x n)
