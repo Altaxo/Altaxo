@@ -99,8 +99,13 @@ namespace Altaxo.Calc.LinearAlgebra.Double.Factorization
       var m = V.RowCount;
       var n = V.ColumnCount;
 
-      var traceVᵀV = TraceOfTransposeAndMultiply(V, V);
       double vNorm = V.FrobeniusNorm();
+      if (vNorm == 0)
+      {
+        return (Matrix<double>.Build.Dense(m, rank), Matrix<double>.Build.Dense(rank, n));
+      }
+      // Used for efficient error computation: ||V - WH||_F^2 = ||V||_F^2 - 2*tr(Hᵀ Wᵀ V) + tr(Wᵀ W * H Hᵀ)
+      var traceVᵀV = vNorm * vNorm;
 
       (var w, _) = InitializationMethod.GetInitialFactors(V, rank);
       var Wᵀ = w.Transpose(); // instead of w in [1], we use w-transposed

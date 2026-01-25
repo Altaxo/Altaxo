@@ -59,7 +59,7 @@ namespace Altaxo.Calc.LinearAlgebra.Double.Factorization
       int numberOfSpectra = data.RowCount;
       int spectralPoints = data.ColumnCount;
 
-      var svd = data.Svd();
+      var svd = TruncatedSVD.BlockKrylovSvd(data, numberOfComponents);
 
       var mfactors = CreateMatrix.Dense<double>(numberOfSpectra, numberOfComponents);
       for (int i = 0; i < numberOfComponents; i++)

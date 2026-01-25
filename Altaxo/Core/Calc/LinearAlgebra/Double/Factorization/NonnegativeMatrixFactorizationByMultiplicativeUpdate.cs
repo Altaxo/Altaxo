@@ -79,8 +79,13 @@ namespace Altaxo.Calc.LinearAlgebra.Double.Factorization
       int m = V.RowCount;
       int n = V.ColumnCount;
 
-      var traceVᵀV = TraceOfTransposeAndMultiply(V, V);
       double vNorm = V.FrobeniusNorm();
+      if (vNorm == 0)
+      {
+        return (Matrix<double>.Build.Dense(m, rank), Matrix<double>.Build.Dense(rank, n));
+      }
+      // Used for efficient error computation: ||V - WH||_F^2 = ||V||_F^2 - 2*tr(Hᵀ Wᵀ V) + tr(Wᵀ W * H Hᵀ)
+      var traceVᵀV = vNorm * vNorm;
       double epsilon = 1e-10 * vNorm * Math.Sqrt(vNorm); // in the reference this is 1E-9, but I take into account different scales of V
 
       var (W, H) = InitializationMethod.GetInitialFactors(V, rank); // initialization so that Norm(W) and Norm(H) are in the same range

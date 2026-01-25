@@ -95,12 +95,11 @@ namespace Altaxo.Calc.LinearAlgebra.Double.Factorization
       {
         return (Matrix<double>.Build.Dense(m, rank), Matrix<double>.Build.Dense(rank, n));
       }
+      // Used for efficient error computation: ||V - WH||_F^2 = ||V||_F^2 - 2*tr(Hᵀ Wᵀ V) + tr(Wᵀ W * H Hᵀ)
+      double traceVᵀV = vNorm * vNorm;
+
       double epsilonForSqrtScale = 1e-12 * Math.Sqrt(vNorm); // Epsilon for W and H to avoid zero entries.
       double epsilonForScale = 1e-12 * vNorm; // Epsilon for WᵀW and HHᵀ to avoid zero entries.
-
-
-      // Used for efficient error computation: ||X - WH||_F^2 = ||X||_F^2 - 2*tr(H^T W^T X) + tr(W^T W * H H^T)
-      double traceXtX = NonnegativeMatrixFactorizationBase.TraceOfTransposeAndMultiply(V, V);
 
       var (W, H) = InitializationMethod.GetInitialFactors(V, rank);
 
@@ -130,8 +129,8 @@ namespace Altaxo.Calc.LinearAlgebra.Double.Factorization
         W.TransposeThisAndMultiply(V, WᵀV);
         H.TransposeAndMultiply(H, HHᵀ); // only needed for error computation
 
-        // Relative error (Frobenius) using trace identity.
-        double error = Math.Sqrt(Math.Max(0, traceXtX - 2 * TraceOfTransposeAndMultiply(H, WᵀV) + TraceOfTransposeAndMultiply(HHᵀ, WᵀW))) / vNorm;
+        // Relative error (Frobenius) using trace identity ||V - WH||_F^2 = ||V||_F^2 - 2*tr(Hᵀ Wᵀ V) + tr(Wᵀ W * H Hᵀ) (see above)
+        double error = Math.Sqrt(Math.Max(0, traceVᵀV - 2 * TraceOfTransposeAndMultiply(H, WᵀV) + TraceOfTransposeAndMultiply(HHᵀ, WᵀW))) / vNorm;
         var (terminate, bestW, bestH) = errorHistory.Add(error, W, H);
         if (terminate)
         {
