@@ -98,7 +98,7 @@ namespace Altaxo.Calc.LinearAlgebra.Double.Factorization
       var rowOfH = Vector<double>.Build.Dense(n);
       var colOfW = Vector<double>.Build.Dense(m);
 
-      var errorHistory = new Chi2History(4, Tolerance, MaximumNumberOfIterations);
+      var errorHistory = new ErrorHistory(4, Tolerance, MaximumNumberOfIterations);
       for (int iter = 0; iter < MaximumNumberOfIterations; iter++)
       {
         // Update H

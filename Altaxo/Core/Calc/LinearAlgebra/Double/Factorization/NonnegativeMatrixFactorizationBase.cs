@@ -71,7 +71,7 @@ namespace Altaxo.Calc.LinearAlgebra.Double.Factorization
     /// Gets the convergence tolerance.
     /// </summary>
     /// <remarks>The default value of 1E-2 means that the iterations are stopped
-    /// if the expected improvement of the relative error until the maximum number of iterations is less than 1E-2 times
+    /// if the expected improvement of the relative error when the maximum number of iterations is reached would be less than 1E-2 times
     /// the current relative error.</remarks>
     public double Tolerance
     {
@@ -87,14 +87,14 @@ namespace Altaxo.Calc.LinearAlgebra.Double.Factorization
 
 
     /// <summary>
-    /// Factorizes a non-negative matrix <paramref name="X"/> into non-negative factors <c>W</c> and <c>H</c>.
+    /// Factorizes a non-negative matrix <paramref name="V"/> into non-negative factors <c>W</c> and <c>H</c>.
     /// </summary>
-    /// <param name="X">The input matrix to factorize.</param>
+    /// <param name="V">The input matrix to factorize.</param>
     /// <param name="rank">The factorization rank.</param>
     /// <returns>
     /// A tuple containing the factors <c>W</c> and <c>H</c>.
     /// </returns>
-    public abstract (Matrix<double> W, Matrix<double> H) FactorizeOneTrial(Matrix<double> X, int rank);
+    public abstract (Matrix<double> W, Matrix<double> H) FactorizeOneTrial(Matrix<double> V, int rank);
 
 
     /// <inheritdoc/>
@@ -115,7 +115,7 @@ namespace Altaxo.Calc.LinearAlgebra.Double.Factorization
         for (int trial = 0; trial < NumberOfAdditionalTrials; trial++)
         {
           // Initialization is random for the other trials
-          if (this.InitializationMethod is not NMFInitializationRandom)
+          if (InitializationMethod is not NMFInitializationRandom)
           {
             var method = this with { InitializationMethod = new NMFInitializationRandom() };
             (W, H) = method.FactorizeOneTrial(V, rank);
@@ -158,56 +158,57 @@ namespace Altaxo.Calc.LinearAlgebra.Double.Factorization
     }
 
     /// <summary>
-    /// Stores the history of chi2 values to determine convergence.
-    /// For the ACLS algorithm, we stop if the chi2 value increases for a number of iterations.
+    /// Stores the history of (relative) error values to determine convergence.
+    /// For the ACLS algorithm, we stop if the error value increases for a number of iterations.
+    /// Furthermore, we stop if the expected gain in error (from now to the maximum number of iterations) is below a certain tolerance.
     /// </summary>
-    protected class Chi2History
+    protected class ErrorHistory
     {
       private readonly double _tolerance;
       private int _remainingIterations;
 
-      private Altaxo.Collections.RingBufferEnqueueableOnly<double> _chi2Values;
+      private RingBufferEnqueueableOnly<double> _errorValues;
 
       private Matrix<double>? _W;
       private Matrix<double>? _H;
       private double _minimalError;
 
       /// <summary>
-      /// Creates a new instance of <see cref="Chi2History"/> with the specified history depth.
+      /// Creates a new instance of <see cref="ErrorHistory"/> with the specified history depth.
       /// </summary>
       /// <param name="depth">The number of historical elements to store.</param>
-      public Chi2History(int depth, double tolerance, int iterations)
+      public ErrorHistory(int depth, double tolerance, int iterations)
       {
         _tolerance = tolerance;
         _remainingIterations = iterations;
-        _chi2Values = new(depth);
+        _errorValues = new(depth);
         _minimalError = double.PositiveInfinity;
       }
 
       /// <summary>
-      /// Adds a new chi² value to the history.
+      /// Adds a new error value to the history.
       /// </summary>
-      /// <param name="chi2">The new chi² value.</param>
+      /// <param name="error">The new error value.</param>
       /// <param name="w">The corresponding weight matrix (it is cloned for storage).</param>
       /// <param name="h">The corresponding load matrix (it is cloned for storage).</param>
       /// <returns>A tuple <c>(terminate, w, h)</c>. If <c>terminate</c> is <see langword="true"/>, the iteration can be terminated, and the returned <c>w</c> and <c>h</c> values are the best factors for the factorization. If <c>terminate</c> is <see langword="false"/>, then <c>w</c> and <c>h</c> are <see langword="null"/>.</returns>
-      public (bool terminate, Matrix<double>? w, Matrix<double>? h) Add(double chi2, Matrix<double> w, Matrix<double> h)
+      public (bool terminate, Matrix<double>? w, Matrix<double>? h) Add(double error, Matrix<double> w, Matrix<double> h)
       {
-        if (double.IsNaN(chi2) || double.IsInfinity(chi2))
+        if (double.IsNaN(error) || double.IsInfinity(error)) // 
         {
           if (_W is null || _H is null)
-            throw new ArgumentOutOfRangeException(nameof(chi2), "Chi² value must be a valid number.");
+            throw new ArgumentOutOfRangeException(nameof(error), "Chi² value must be a valid number.");
           else
             return (true, _W, _H);
         }
 
-        _chi2Values.Enqueue(chi2);
+        _errorValues.Enqueue(error);
         _remainingIterations--;
 
-        if (chi2 < _minimalError)
+        if (error < _minimalError)
         {
-          _minimalError = chi2;
-          if (_W is null || h is null)
+          _minimalError = error;
+          if (_W is null || _H is null)
           {
             _W = w.Clone();
             _H = h.Clone();
@@ -219,27 +220,27 @@ namespace Altaxo.Calc.LinearAlgebra.Double.Factorization
           }
 
           // try to guess what is the gain in error if we continue
-          var countM1 = _chi2Values.Count - 1;
+          var countM1 = _errorValues.Count - 1;
           if (countM1 >= 1)
           {
 
-            double errorSlope = (_chi2Values.OldestValue - _chi2Values.NewestValue) / (countM1);
+            double errorSlope = (_errorValues.OldestValue - _errorValues.NewestValue) / (countM1);
             double errorGain = errorSlope * _remainingIterations;
             if (errorGain < _tolerance * _minimalError)
             {
               // we can stop the iteration, and return the best w and h
-              return (true, _W, this._H);
+              return (true, _W, _H);
             }
           }
         }
         else // the error was larger than or equal to the minimal error
         {
-          var (minimum, maximum) = _chi2Values.MinMax();
+          var (minimum, maximum) = _errorValues.MinMax();
 
           if (minimum > _minimalError || minimum == maximum) // if all errors in the history are larger than the minimal error, we can stop
           {
             // we can stop the iteration, and return the best w and h
-            return (true, _W, this._H);
+            return (true, _W, _H);
           }
         }
         return (false, null, null);

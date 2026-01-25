@@ -120,7 +120,7 @@ namespace Altaxo.Calc.LinearAlgebra.Double.Factorization
       var WᵀV = Matrix<double>.Build.Dense(rank, n);
       var VHᵀ = Matrix<double>.Build.Dense(m, rank);
 
-      var errorHistory = new Chi2History(4, Tolerance, MaximumNumberOfIterations);
+      var errorHistory = new ErrorHistory(4, Tolerance, MaximumNumberOfIterations);
 
       for (int iIteration = 0; iIteration < MaximumNumberOfIterations; iIteration++)
       {

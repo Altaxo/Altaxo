@@ -116,11 +116,8 @@ namespace Altaxo.Calc.LinearAlgebra.Double.Factorization
 
       var HHᵀ = Matrix<double>.Build.Dense(rank, rank);
       var HVᵀ = Matrix<double>.Build.Dense(rank, m);
-      var WᵀWH = Matrix<double>.Build.Dense(rank, n);
 
-      var abar = Matrix<double>.Build.Dense(m, n);
-
-      var errorHistory = new Chi2History(4, Tolerance, MaximumNumberOfIterations);
+      var errorHistory = new ErrorHistory(4, Tolerance, MaximumNumberOfIterations);
 
       // Algorithm see [1], page 7, "Practical ACLS Algorithm for NMF"
       for (int iIteration = 0; iIteration < MaximumNumberOfIterations; iIteration++)
