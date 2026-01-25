@@ -115,9 +115,8 @@ namespace Altaxo.Calc.LinearAlgebra.Double.Factorization
 
       var abar = Matrix<double>.Build.Dense(m, n);
 
-      var chi2History = new Chi2History(4);
+      var errorHistory = new Chi2History(4, Tolerance, MaximumNumberOfIterations);
 
-      double previousError = double.PositiveInfinity;
       // Algorithm see [1], page 7, "Practical ACLS Algorithm for NMF"
       for (int iIteration = 0; iIteration < MaximumNumberOfIterations; iIteration++)
       {
@@ -132,16 +131,12 @@ namespace Altaxo.Calc.LinearAlgebra.Double.Factorization
         // the trace of the product of Hᵀ with the other two terms can be computed efficiently
         // we have to compute it here because later on both W and H are modified, and neither WᵀV nor WᵀWH are valid anymore
         var error = Math.Sqrt(Math.Max(0, traceVᵀV - 2 * TraceOfTransposeAndMultiply(H, WᵀV) + TraceOfTransposeAndMultiply(HHᵀ, WᵀW))) / vNorm;
-        var (terminate, bestWt, bestH) = chi2History.Add(error, Wᵀ, H);
+        var (terminate, bestWt, bestH) = errorHistory.Add(error, Wᵀ, H);
         if (terminate)
         {
           return (bestWt!.Transpose(), bestH!);
         }
-        if (Math.Abs(previousError - error) < Tolerance)
-        {
-          break;
-        }
-        previousError = error;
+
 
         for (int i = 0; i < rank; ++i)       // Add lambdaH to the diagonal of wtw
         {
@@ -163,98 +158,7 @@ namespace Altaxo.Calc.LinearAlgebra.Double.Factorization
       return (Wᵀ.Transpose(), H);
     }
 
-    /// <summary>
-    /// Stores the history of chi2 values to determine convergence.
-    /// For the ACLS algorithm, we stop if the chi2 value increases for a number of iterations.
-    /// </summary>
-    private class Chi2History
-    {
-      private int _count;
-      private (double chi2, Matrix<double>? wt, Matrix<double>? h)[] _listOfChi2;
 
-      /// <summary>
-      /// Creates a new instance of <see cref="Chi2History"/> with the specified history depth.
-      /// </summary>
-      /// <param name="depth">The number of historical elements to store.</param>
-      public Chi2History(int depth)
-      {
-        _listOfChi2 = new (double chi2, Matrix<double>? wt, Matrix<double>? h)[depth];
-        _count = 0;
-      }
-
-      /// <summary>
-      /// Adds a new chi² value to the history.
-      /// </summary>
-      /// <param name="chi2">The new chi² value.</param>
-      /// <param name="w">The corresponding weight matrix (it is cloned for storage).</param>
-      /// <param name="h">The corresponding load matrix (it is cloned for storage).</param>
-      /// <returns>A tuple <c>(terminate, w, h)</c>. If <c>terminate</c> is <see langword="true"/>, the iteration can be terminated, and the returned <c>w</c> and <c>h</c> values are the best factors for the factorization. If <c>terminate</c> is <see langword="false"/>, then <c>w</c> and <c>h</c> are <see langword="null"/>.</returns>
-      public (bool terminate, Matrix<double>? w, Matrix<double>? h) Add(double chi2, Matrix<double> w, Matrix<double> h)
-      {
-        // if the history is full, check if the new chi2 is larger than the all others in history
-        // if this is the case, we can stop the iteration, and return the best w and h from history
-        if (_count == _listOfChi2.Length)
-        {
-          double maxChi2 = double.MinValue;
-          for (int i = 0; i < _listOfChi2.Length; ++i)
-          {
-            maxChi2 = Math.Max(maxChi2, _listOfChi2[i].chi2);
-          }
-          if (chi2 > maxChi2)
-          {
-            // if the new chi2 is larger than all others in history, terminate, and return the best w and h from history
-            double minChi2 = double.MaxValue;
-            int minIndex = -1;
-            for (int i = 0; i < _listOfChi2.Length; ++i)
-            {
-              if (_listOfChi2[i].chi2 < minChi2)
-              {
-                minChi2 = _listOfChi2[i].chi2;
-                minIndex = i;
-              }
-              maxChi2 = Math.Max(maxChi2, _listOfChi2[i].chi2);
-            }
-            return (true, _listOfChi2[minIndex].wt, _listOfChi2[minIndex].h);
-          }
-          else // if the actual chi2 is not the largest in history
-          {
-            // shift the values to the left
-            for (int i = 1; i < _count; ++i)
-            {
-              _listOfChi2[i - 1] = _listOfChi2[i];
-            }
-            // and store the new chi2
-            _listOfChi2[_count - 1] = (chi2, null, null); // just to have a valid entry
-          }
-        }
-        else
-        {
-          // still filling the history
-          _listOfChi2[_count++] = (chi2, null, null);
-        }
-
-        // determine the minimum chi2 overall in history (with exception of the actual value)
-        var minChi2Overall = double.MaxValue;
-        for (int i = 0; i < _count - 1; ++i)
-        {
-          minChi2Overall = Math.Min(minChi2Overall, _listOfChi2[i].chi2);
-        }
-
-        // if the actual chi2 is smaller than the minimum chi2 overall, we store w and h in the history
-        if (chi2 <= minChi2Overall)
-        {
-          _listOfChi2[_count - 1] = (chi2, w.Clone(), h.Clone());
-
-          // and we can free the other matrices
-          for (int i = 0; i < _count - 1; ++i)
-          {
-            _listOfChi2[i].wt = null;
-            _listOfChi2[i].h = null;
-          }
-        }
-        return (false, null, null);
-      }
-    }
 
 
     /// <summary>

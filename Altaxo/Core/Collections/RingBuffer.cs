@@ -24,12 +24,14 @@
 
 using System;
 using System.Collections.Generic;
+using System.Diagnostics.CodeAnalysis;
 using System.Linq;
 
 namespace Altaxo.Collections
 {
   /// <summary>
   /// Represents a generic ring buffer. This class is <b>not</b> thread safe.
+  /// Note that there is no automatic overflow handling; adding an item to a full buffer throws an exception.
   /// </summary>
   /// <typeparam name="T">Type of elements to store in the ring buffer.</typeparam>
   public class RingBuffer<T>
@@ -42,6 +44,12 @@ namespace Altaxo.Collections
     /// The index for the next removal.
     /// </summary>
     private int _removalPoint;
+
+    /// <summary>
+    /// The number of elements in the buffer.
+    /// </summary>
+    private int _count;
+
     /// <summary>
     /// The underlying array storing buffer elements.
     /// </summary>
@@ -54,7 +62,7 @@ namespace Altaxo.Collections
     public RingBuffer(int capacity)
     {
       if (!(capacity > 1))
-        throw new ArgumentOutOfRangeException("Capacity must be greater than 1");
+        throw new ArgumentOutOfRangeException(nameof(capacity), "Capacity must be greater than 1");
 
       _array = new T[capacity];
     }
@@ -65,6 +73,7 @@ namespace Altaxo.Collections
     public void Clear()
     {
       _insertionPoint = _removalPoint = 0;
+      _count = 0;
     }
 
     /// <summary>
@@ -74,10 +83,7 @@ namespace Altaxo.Collections
     {
       get
       {
-        int diff = _insertionPoint - _removalPoint;
-        if (diff < 0)
-          diff += _array.Length;
-        return diff;
+        return _count;
       }
     }
 
@@ -88,7 +94,7 @@ namespace Altaxo.Collections
     {
       get
       {
-        return _insertionPoint == _removalPoint;
+        return _count == 0;
       }
     }
 
@@ -99,14 +105,15 @@ namespace Altaxo.Collections
     /// <exception cref="System.InvalidOperationException">Buffer overflow</exception>
     public void Add(T item)
     {
-      _array[_insertionPoint] = item;
-      int newInsertionPoint = _insertionPoint + 1;
-      if (newInsertionPoint >= _array.Length)
-        newInsertionPoint = 0;
-      if (newInsertionPoint == _removalPoint)
+      if (_count == _array.Length)
         throw new InvalidOperationException("Buffer overflow");
       else
-        _insertionPoint = newInsertionPoint;
+        _count++;
+
+      _array[_insertionPoint] = item;
+      ++_insertionPoint;
+      if (_insertionPoint == _array.Length)
+        _insertionPoint = 0;
     }
 
     /// <summary>
@@ -120,16 +127,12 @@ namespace Altaxo.Collections
     /// <returns>The number of items that were added to the ring buffer.</returns>
     public int Add(Func<T[], int, int, int> readFunc)
     {
-      int maxCountToRead;
-      if (_removalPoint > _insertionPoint)
-        maxCountToRead = _removalPoint - _insertionPoint - 1;
-      else
-        maxCountToRead = _array.Length - _insertionPoint;
-
+      var maxCountToRead = Math.Min(_array.Length - _count, _array.Length - _insertionPoint);
       int readCount = 0;
       if (maxCountToRead > 0)
       {
         readCount = readFunc(_array, _insertionPoint, maxCountToRead);
+        _count += readCount;
         _insertionPoint += readCount;
         if (_insertionPoint == _array.Length)
           _insertionPoint = 0;
@@ -143,11 +146,11 @@ namespace Altaxo.Collections
     /// </summary>
     /// <param name="item">If successful, the item.</param>
     /// <returns>True if there was an item in the buffer; false otherwise.</returns>
-    public bool TryPeek(out T item)
+    public bool TryPeek([MaybeNullWhen(false)] out T item)
     {
-      if (_insertionPoint == _removalPoint)
+      if (_count == 0)
       {
-        item = default(T);
+        item = default;
         return false;
       }
       else
@@ -165,47 +168,12 @@ namespace Altaxo.Collections
     /// <exception cref="System.IndexOutOfRangeException">index</exception>
     public T ItemAt(int index)
     {
-      if (index < 0 || index >= Count)
+      if (!(index >= 0 && index < _count))
         throw new IndexOutOfRangeException(nameof(index));
-      index += _insertionPoint;
+      index += _removalPoint;
       if (index >= _array.Length)
         index -= _array.Length;
       return _array[index];
-    }
-
-    /// <summary>
-    /// Enumerates one single item at a time.
-    /// </summary>
-    /// <param name="increment">The increment. An increment of 1 enumerates every item in the buffer, an increment of 2 every second item, etc.</param>
-    /// <returns>Enumeration of item and the corresponding index of the item.</returns>
-    /// <exception cref="System.ArgumentOutOfRangeException">increment</exception>
-    public IEnumerable<(T, int)> EnumerateOneItem(int increment)
-    {
-      if (increment <= 0)
-        throw new ArgumentOutOfRangeException(nameof(increment));
-
-      return EnumerateOneItem().SkipWhile(e => (e.Item2 % increment) != 0);
-    }
-
-    /// <summary>
-    /// Enumerates one single item at a time.
-    /// </summary>
-    /// <returns>Enumeration of item and the corresponding index of the item.</returns>
-    public IEnumerable<(T, int)> EnumerateOneItem()
-    {
-      int idx = 0;
-      if (_removalPoint <= _insertionPoint)
-      {
-        for (int i = _removalPoint; i < _insertionPoint; ++i)
-          yield return (_array[i], idx++);
-      }
-      else
-      {
-        for (int i = _removalPoint; i < _array.Length; ++i)
-          yield return (_array[i], idx++);
-        for (int i = 0; i < _insertionPoint; ++i)
-          yield return (_array[i], idx++);
-      }
     }
 
     /// <summary>
@@ -216,57 +184,19 @@ namespace Altaxo.Collections
     /// <exception cref="System.IndexOutOfRangeException">index</exception>
     public (T, T) TwoItemsAt(int index)
     {
-      if (!(index >= 0 && index < Count - 1))
+      if (!(index >= 0 && index < _count - 1))
         throw new IndexOutOfRangeException(nameof(index));
-      index += _insertionPoint;
+
+      index += _removalPoint;
       if (index >= _array.Length)
         index -= _array.Length;
       var item0 = _array[index];
       ++index;
-      if (index >= _array.Length)
-        index -= _array.Length;
+      if (index == _array.Length)
+        index = 0;
       var item1 = _array[index];
       return (item0, item1);
     }
-
-
-    /// <summary>
-    /// Enumerates two items at a time.
-    /// </summary>
-    /// <param name="increment">The increment. An increment of 1 steps forward by 1, an increment of 2 steps forward by 2, etc.</param>
-    /// <returns>Enumeration of 2 items and the corresponding index of the first returned item.</returns>
-    /// <exception cref="System.ArgumentOutOfRangeException">increment</exception>
-    public IEnumerable<(T, T, int)> EnumerateTwoItems(int increment)
-    {
-      if (increment <= 0)
-        throw new ArgumentOutOfRangeException(nameof(increment));
-
-      return EnumerateTwoItems().SkipWhile(e => (e.Item3 % increment) != 0);
-    }
-
-    /// <summary>
-    /// Enumerates two items at a time. The forward step is nevertheless 1, i.e. in the next yield the second item is now the first one.
-    /// </summary>
-    /// <returns>Enumeration of 2 items and the corresponding index of the first item.</returns>
-    public IEnumerable<(T, T, int)> EnumerateTwoItems()
-    {
-      int idx = 0;
-      if (_removalPoint <= _insertionPoint)
-      {
-        for (int i = _removalPoint + 1; i < _insertionPoint; ++i)
-          yield return (_array[i - 1], _array[i], idx++);
-      }
-      else
-      {
-        for (int i = _removalPoint + 1; i < _array.Length; ++i)
-          yield return (_array[i - 1], _array[i], idx++);
-        if (_insertionPoint > 0)
-          yield return (_array[^1], _array[0], idx++);
-        for (int i = 1; i < _insertionPoint; ++i)
-          yield return (_array[i - 1], _array[i], idx++);
-      }
-    }
-
 
     /// <summary>
     /// Gets the three items at index, index+1, and index+2.
@@ -276,64 +206,22 @@ namespace Altaxo.Collections
     /// <exception cref="System.IndexOutOfRangeException">index</exception>
     public (T, T, T) ThreeItemsAt(int index)
     {
-      if (!(index >= 0 && index < Count - 2))
+      if (!(index >= 0 && index < _count - 2))
         throw new IndexOutOfRangeException(nameof(index));
-      index += _insertionPoint;
+
+      index += _removalPoint;
       if (index >= _array.Length)
         index -= _array.Length;
       var item0 = _array[index];
       ++index;
-      if (index >= _array.Length)
-        index -= _array.Length;
+      if (index == _array.Length)
+        index = 0;
       var item1 = _array[index];
       ++index;
-      if (index >= _array.Length)
-        index -= _array.Length;
+      if (index == _array.Length)
+        index = 0;
       var item2 = _array[index];
       return (item0, item1, item2);
-    }
-
-    /// <summary>
-    /// Enumerates three items at a time.
-    /// </summary>
-    /// <param name="increment">The increment. An increment of 1 steps forward by 1, an increment of 2 steps forward by 2, etc.</param>
-    /// <returns>Enumeration of 3 items and the corresponding index of the first returned item.</returns>
-    /// <exception cref="System.ArgumentOutOfRangeException">increment</exception>
-    public IEnumerable<(T, T, T, int)> EnumerateThreeItems(int increment)
-    {
-      if (increment <= 0)
-        throw new ArgumentOutOfRangeException(nameof(increment));
-
-      foreach (var x in EnumerateThreeItems())
-      {
-        if (0 == (x.Item4 % increment))
-          yield return x;
-      }
-    }
-
-    /// <summary>
-    /// Enumerates three items at a time. The forward step is nevertheless 1, i.e. in the next yield the second item is now the first one.
-    /// </summary>
-    /// <returns>Enumeration of 3 items and the corresponding index of the first item.</returns>
-    public IEnumerable<(T, T, T, int)> EnumerateThreeItems()
-    {
-      int idx = 0;
-      if (_removalPoint <= _insertionPoint)
-      {
-        for (int i = _removalPoint + 2; i < _insertionPoint; ++i)
-          yield return (_array[i - 2], _array[i - 1], _array[i], idx++);
-      }
-      else
-      {
-        for (int i = _removalPoint + 2; i < _array.Length; ++i)
-          yield return (_array[i - 2], _array[i - 1], _array[i], idx++);
-        if (_insertionPoint > 0)
-          yield return (_array[^2], _array[^1], _array[0], idx++);
-        if (_insertionPoint > 1)
-          yield return (_array[^1], _array[0], _array[1], idx++);
-        for (int i = 2; i < _insertionPoint; ++i)
-          yield return (_array[i - 2], _array[i - 2], _array[i], idx++);
-      }
     }
 
     /// <summary>
@@ -344,27 +232,165 @@ namespace Altaxo.Collections
     /// <exception cref="System.IndexOutOfRangeException">index</exception>
     public (T, T, T, T) FourItemsAt(int index)
     {
-      if (!(index >= 0 && index < Count - 3))
+      if (!(index >= 0 && index < _count - 3))
         throw new IndexOutOfRangeException(nameof(index));
-      index += _insertionPoint;
+
+      index += _removalPoint;
       if (index >= _array.Length)
         index -= _array.Length;
       var item0 = _array[index];
       ++index;
-      if (index >= _array.Length)
-        index -= _array.Length;
+      if (index == _array.Length)
+        index = 0;
       var item1 = _array[index];
       ++index;
-      if (index >= _array.Length)
-        index -= _array.Length;
+      if (index == _array.Length)
+        index = 0;
       var item2 = _array[index];
       ++index;
-      if (index >= _array.Length)
-        index -= _array.Length;
+      if (index == _array.Length)
+        index = 0;
       var item3 = _array[index];
 
       return (item0, item1, item2, item3);
     }
+
+
+
+    /// <summary>
+    /// Enumerates one single item at a time.
+    /// </summary>
+    /// <returns>Enumeration of item and the corresponding index of the item.</returns>
+    public IEnumerable<(T, int)> EnumerateOneItem()
+    {
+      int len = _array.Length;
+      int count = _count;
+      for (int idx = 0, i = _removalPoint; idx < count; ++idx, ++i)
+      {
+        if (i == len)
+          i = 0;
+        yield return (_array[i], idx);
+      }
+    }
+
+    /// <summary>
+    /// Enumerates two items at a time. ATTENTION: The forward step is nevertheless 1, i.e. in the next yield the second item is now the first one.
+    /// </summary>
+    /// <returns>Enumeration of 2 items and the corresponding index of the first item.</returns>
+    public IEnumerable<(T, T, int)> EnumerateTwoItems()
+    {
+      var len = _array.Length;
+      var countMinus1 = _count - 1;
+      var previousItem = _array[_removalPoint];
+      var rp = _removalPoint + 1;
+
+      for (int idx = 0; idx < countMinus1; ++idx, ++rp)
+      {
+        if (rp == len)
+          rp = 0;
+
+        yield return (previousItem, _array[rp], idx);
+        previousItem = _array[rp];
+      }
+    }
+
+    /// <summary>
+    /// Enumerates three items at a time. The forward step is nevertheless 1, i.e. in the next yield the second item is now the first one.
+    /// </summary>
+    /// <returns>Enumeration of 3 items and the corresponding index of the first item.</returns>
+    public IEnumerable<(T, T, T, int)> EnumerateThreeItems()
+    {
+      var len = _array.Length;
+      var countMinus2 = _count - 2;
+      var prevPrevItem = _array[_removalPoint];
+      var rp = _removalPoint + 1;
+      if (rp == len)
+        rp = 0;
+      var prevItem = _array[rp];
+      ++rp;
+
+      for (int idx = 0; idx < countMinus2; ++idx, ++rp)
+      {
+        if (rp == len)
+          rp = 0;
+
+        yield return (prevPrevItem, prevItem, _array[rp], idx);
+        prevPrevItem = prevItem;
+        prevItem = _array[rp];
+      }
+    }
+
+    /// <summary>
+    /// Enumerates four items at a time. The forward step is nevertheless 1, i.e. in the next yield the second item is now the first one.
+    /// </summary>
+    /// <returns>Enumeration of 4 items and the corresponding index of the first item.</returns>
+    public IEnumerable<(T, T, T, T, int)> EnumerateFourItems()
+    {
+      var len = _array.Length;
+      var countMinus3 = _count - 3;
+      var prevPrevPrevItem = _array[_removalPoint];
+      var rp = _removalPoint + 1;
+      if (rp == len)
+        rp = 0;
+      var prevPrevItem = _array[rp];
+      ++rp;
+      if (rp == len)
+        rp = 0;
+      var prevItem = _array[rp];
+      ++rp;
+
+      for (int idx = 0; idx < countMinus3; ++idx, ++rp)
+      {
+        if (rp == len)
+          rp = 0;
+
+        yield return (prevPrevPrevItem, prevPrevItem, prevItem, _array[rp], idx);
+        prevPrevPrevItem = prevPrevItem;
+        prevPrevItem = prevItem;
+        prevItem = _array[rp];
+      }
+    }
+
+    /// <summary>
+    /// Enumerates one single item at a time.
+    /// </summary>
+    /// <param name="increment">The increment. An increment of 1 enumerates every item in the buffer, an increment of 2 every second item, etc.</param>
+    /// <returns>Enumeration of item and the corresponding index of the item.</returns>
+    /// <exception cref="System.ArgumentOutOfRangeException">increment</exception>
+    public IEnumerable<(T, int)> EnumerateOneItem(int increment)
+    {
+      ArgumentOutOfRangeException.ThrowIfNegativeOrZero(increment);
+
+      return EnumerateOneItem().SkipWhile(e => (e.Item2 % increment) != 0);
+    }
+
+    /// <summary>
+    /// Enumerates two items at a time.
+    /// </summary>
+    /// <param name="increment">The increment. An increment of 1 steps forward by 1, an increment of 2 steps forward by 2, etc.</param>
+    /// <returns>Enumeration of 2 items and the corresponding index of the first returned item.</returns>
+    /// <exception cref="System.ArgumentOutOfRangeException">increment</exception>
+    public IEnumerable<(T, T, int)> EnumerateTwoItems(int increment)
+    {
+      ArgumentOutOfRangeException.ThrowIfNegativeOrZero(increment);
+
+      return EnumerateTwoItems().SkipWhile(e => (e.Item3 % increment) != 0);
+    }
+
+
+    /// <summary>
+    /// Enumerates three items at a time.
+    /// </summary>
+    /// <param name="increment">The increment. An increment of 1 steps forward by 1, an increment of 2 steps forward by 2, etc.</param>
+    /// <returns>Enumeration of 3 items and the corresponding index of the first returned item.</returns>
+    /// <exception cref="System.ArgumentOutOfRangeException">increment</exception>
+    public IEnumerable<(T, T, T, int)> EnumerateThreeItems(int increment)
+    {
+      ArgumentOutOfRangeException.ThrowIfNegativeOrZero(increment);
+
+      return EnumerateThreeItems().SkipWhile(e => (e.Item4 % increment) != 0);
+    }
+
 
     /// <summary>
     /// Enumerates four items at a time.
@@ -374,38 +400,12 @@ namespace Altaxo.Collections
     /// <exception cref="System.ArgumentOutOfRangeException">increment</exception>
     public IEnumerable<(T, T, T, T, int)> EnumerateFourItems(int increment)
     {
-      if (increment <= 0)
-        throw new ArgumentOutOfRangeException(nameof(increment));
+      ArgumentOutOfRangeException.ThrowIfNegativeOrZero(increment);
 
       return EnumerateFourItems().SkipWhile(e => (e.Item5 % increment) != 0);
     }
 
-    /// <summary>
-    /// Enumerates four items at a time. The forward step is nevertheless 1, i.e. in the next yield the second item is now the first one.
-    /// </summary>
-    /// <returns>Enumeration of 4 items and the corresponding index of the first item.</returns>
-    public IEnumerable<(T, T, T, T, int)> EnumerateFourItems()
-    {
-      int idx = 0;
-      if (_removalPoint <= _insertionPoint)
-      {
-        for (int i = _removalPoint + 3; i < _insertionPoint; ++i)
-          yield return (_array[i - 3], _array[i - 2], _array[i - 1], _array[i], idx++);
-      }
-      else
-      {
-        for (int i = _removalPoint + 3; i < _array.Length; ++i)
-          yield return (_array[i - 3], _array[i - 2], _array[i - 1], _array[i], idx++);
-        if (_insertionPoint > 0)
-          yield return (_array[^3], _array[^2], _array[^1], _array[0], idx++);
-        if (_insertionPoint > 1)
-          yield return (_array[^2], _array[^1], _array[0], _array[1], idx++);
-        if (_insertionPoint > 2)
-          yield return (_array[^1], _array[0], _array[1], _array[2], idx++);
-        for (int i = 3; i < _insertionPoint; ++i)
-          yield return (_array[i - 3], _array[i - 2], _array[i - 2], _array[i], idx++);
-      }
-    }
+
 
     /// <summary>
     /// Removes the n oldest items from the buffer.
@@ -414,12 +414,13 @@ namespace Altaxo.Collections
     /// <exception cref="System.ArgumentOutOfRangeException">numberOfItems</exception>
     public void RemoveItems(int numberOfItems)
     {
-      if (numberOfItems < 0 || numberOfItems > Count)
+      if (!(numberOfItems >= 0 && numberOfItems <= _count))
         throw new ArgumentOutOfRangeException(nameof(numberOfItems));
 
       _removalPoint += numberOfItems;
       if (_removalPoint >= _array.Length)
         _removalPoint -= _array.Length;
+      _count -= numberOfItems;
     }
 
     /// <summary>
@@ -427,20 +428,20 @@ namespace Altaxo.Collections
     /// </summary>
     /// <param name="item">If successful, the item that was removed.</param>
     /// <returns>True if an item could be removed; otherwise, false.</returns>
-    public bool TryRemove(out T item)
+    public bool TryRemove([MaybeNullWhen(false)] out T item)
     {
-      if (_insertionPoint == _removalPoint)
+      if (_count == 0)
       {
-        item = default(T);
+        item = default;
         return false;
       }
       else
       {
         item = _array[_removalPoint];
-        int newRemoval = _removalPoint + 1;
-        if (newRemoval == _array.Length)
-          newRemoval = 0;
-        _removalPoint = newRemoval;
+        _count--;
+        _removalPoint++;
+        if (_removalPoint == _array.Length)
+          _removalPoint = 0;
         return true;
       }
     }

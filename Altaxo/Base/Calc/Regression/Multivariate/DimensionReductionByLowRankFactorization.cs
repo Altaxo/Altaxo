@@ -87,11 +87,11 @@ namespace Altaxo.Calc.Regression.Multivariate
       switch (t)
       {
         case Type _ when t == typeof(NonnegativeMatrixFactorizationByMultiplicativeUpdate):
-          return "Non-negative Matrix Factorization (NMF)";
+          return "Non-negative Matrix Factorization (NMF) by mult. update";
         case Type _ when t == typeof(NonnegativeMatrixFactorizationByACLS):
           return "Non-negative Matrix Factorization (NMF) by ACLS";
-        case Type _ when t == typeof(NonnegativeMatrixFactorizationByCoordinateDescent):
-          return "Non-negative Matrix Factorization (NMF) by Coordinate Descent";
+        case Type _ when t == typeof(NonnegativeMatrixFactorizationByHALS):
+          return "Non-negative Matrix Factorization (NMF) by HALS";
         case Type _ when t == typeof(PrincipalComponentAnalysisBySVD):
           return "Principal Component Analysis (PCA) by SVD";
         case Type _ when t == typeof(PrincipalComponentAnalysisByNIPALS):

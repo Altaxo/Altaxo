@@ -93,7 +93,7 @@ namespace Altaxo.Calc.LinearAlgebra.Double.Factorization
       var rowOfH = Vector<double>.Build.Dense(n);
       var colOfW = Vector<double>.Build.Dense(m);
 
-      double previousError = double.PositiveInfinity;
+      var errorHistory = new Chi2History(4, Tolerance, MaximumNumberOfIterations);
       for (int iter = 0; iter < MaximumNumberOfIterations; iter++)
       {
         // Update H
@@ -108,9 +108,11 @@ namespace Altaxo.Calc.LinearAlgebra.Double.Factorization
         // the trace of the product of Hᵀ with the other two terms can be computed efficiently
         // we have to compute it here because later on both W and H are modified, and neither WᵀV nor WᵀWH are valid anymore
         var error = Math.Sqrt(Math.Max(0, traceVᵀV - 2 * TraceOfTransposeAndMultiply(H, WᵀV) + TraceOfTransposeAndMultiply(H, WᵀWH))) / vNorm;
-        if (Math.Abs(previousError - error) < Tolerance)
-          break;
-        previousError = error;
+        var (terminate, bestW, bestH) = errorHistory.Add(error, W, H);
+        if (terminate)
+        {
+          return (bestW!, bestH!);
+        }
 
 
         // Update H by pointwise multiplication and division

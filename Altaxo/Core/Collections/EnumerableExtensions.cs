@@ -439,6 +439,36 @@ namespace Altaxo.Collections
     }
 
     /// <summary>
+    /// Evaluates the minimum and maximum of a enumeration of elements.
+    /// </summary>
+    /// <typeparam name="T">Type of element</typeparam>
+    /// <param name="seq">The enumeration.</param>
+    /// <returns>The tuple with the minimum and maximum of of all elements.</returns>
+    public static (T Min, T Max) MinMax<T>(this IEnumerable<T> seq) where T : IComparable<T>
+    {
+      using (var en = seq.GetEnumerator())
+      {
+        if (!en.MoveNext())
+          throw new InvalidOperationException("The sequence is empty.");
+
+        var min = en.Current;
+        var max = en.Current;
+        while (en.MoveNext())
+        {
+          if (min.CompareTo(en.Current) > 0)
+          {
+            min = en.Current;
+          }
+          if (max.CompareTo(en.Current) < 0)
+          {
+            max = en.Current;
+          }
+        }
+        return (min, max);
+      }
+    }
+
+    /// <summary>
     /// Evaluates the minimum of a enumeration of elements, or returns a default value if the series is empty.
     /// </summary>
     /// <typeparam name="T">Type of element</typeparam>

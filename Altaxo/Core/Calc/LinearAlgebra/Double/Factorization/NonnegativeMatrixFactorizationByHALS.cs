@@ -121,7 +121,8 @@ namespace Altaxo.Calc.LinearAlgebra.Double.Factorization
       var WᵀV = Matrix<double>.Build.Dense(rank, n);
       var VHᵀ = Matrix<double>.Build.Dense(m, rank);
 
-      double previousError = double.PositiveInfinity;
+      var errorHistory = new Chi2History(4, Tolerance, MaximumNumberOfIterations);
+
       for (int iIteration = 0; iIteration < MaximumNumberOfIterations; iIteration++)
       {
         // Keep shared products up-to-date.
@@ -130,10 +131,12 @@ namespace Altaxo.Calc.LinearAlgebra.Double.Factorization
         H.TransposeAndMultiply(H, HHᵀ); // only needed for error computation
 
         // Relative error (Frobenius) using trace identity.
-        double err = Math.Sqrt(Math.Max(0, traceXtX - 2 * TraceOfTransposeAndMultiply(H, WᵀV) + TraceOfTransposeAndMultiply(HHᵀ, WᵀW))) / vNorm;
-        if (Math.Abs(previousError - err) < Tolerance)
-          break;
-        previousError = err;
+        double error = Math.Sqrt(Math.Max(0, traceXtX - 2 * TraceOfTransposeAndMultiply(H, WᵀV) + TraceOfTransposeAndMultiply(HHᵀ, WᵀW))) / vNorm;
+        var (terminate, bestW, bestH) = errorHistory.Add(error, W, H);
+        if (terminate)
+        {
+          return (bestW!, bestH!);
+        }
 
         // === Update H (row-wise / component-wise) ===
         for (int k = 0; k < rank; k++)

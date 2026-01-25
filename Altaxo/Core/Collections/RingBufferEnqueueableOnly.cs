@@ -23,7 +23,6 @@
 #endregion Copyright
 
 using System;
-using System.Collections;
 using System.Collections.Generic;
 
 namespace Altaxo.Collections
@@ -208,7 +207,10 @@ namespace Altaxo.Collections
     /// <inheritdoc/>
     public IEnumerator<T> GetEnumerator()
     {
-      return (IEnumerator<T>)ToArray().GetEnumerator();
+      foreach (var item in ToArray())
+      {
+        yield return item;
+      }
     }
 
     /// <inheritdoc/>
