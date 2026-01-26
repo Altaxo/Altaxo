@@ -108,6 +108,9 @@
     <Compile Update="Gui\Science\Spectroscopy\EnsembleProcessing\EnsembleProcessingControl.xaml.cs">
       <SubType>Code</SubType>
     </Compile>
+    <Compile Update="Gui\Science\Spectroscopy\EnsembleProcessing\BlockScalingCorrection2DControl.xaml.cs">
+      <SubType>Code</SubType>
+    </Compile>
     <Compile Update="Gui\Science\Spectroscopy\Normalization\NormalizationMinMaxInRangeControl.xaml.cs">
       <SubType>Code</SubType>
     </Compile>
