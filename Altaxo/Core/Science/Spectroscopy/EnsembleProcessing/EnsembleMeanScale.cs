@@ -73,8 +73,8 @@ namespace Altaxo.Science.Spectroscopy.EnsembleProcessing
       {
         Name = AuxiliaryDataName,
         Values = [
-          new EnsembleAuxiliaryDataVector { Name = AuxiliaryDataMeanName, Value = ensembleMean },
-          new EnsembleAuxiliaryDataVector { Name = AuxiliaryDataScaleName, Value = ensembleScale }
+          new EnsembleAuxiliaryDataVector { Name = AuxiliaryDataMeanName, Value = ensembleMean, VectorType = EnsembleAuxiliaryDataVectorType.Spectrum },
+          new EnsembleAuxiliaryDataVector { Name = AuxiliaryDataScaleName, Value = ensembleScale, VectorType = EnsembleAuxiliaryDataVectorType.Spectrum }
           ]
       });
     }

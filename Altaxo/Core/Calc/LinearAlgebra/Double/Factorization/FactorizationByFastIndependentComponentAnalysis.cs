@@ -1,4 +1,28 @@
-﻿using System;
+﻿#region Copyright
+
+/////////////////////////////////////////////////////////////////////////////
+//    Altaxo:  a data processing and data plotting program
+//    Copyright (C) 2002-2026 Dr. Dirk Lellinger
+//
+//    This program is free software; you can redistribute it and/or modify
+//    it under the terms of the GNU General Public License as published by
+//    the Free Software Foundation; either version 2 of the License, or
+//    (at your option) any later version.
+//
+//    This program is distributed in the hope that it will be useful,
+//    but WITHOUT ANY WARRANTY; without even the implied warranty of
+//    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
+//    General Public License for more details.
+//
+//    You should have received a copy of the GNU General Public License
+//    along with this program; if not, write to the Free Software
+//    Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
+//
+/////////////////////////////////////////////////////////////////////////////
+
+#endregion Copyright
+
+using System;
 
 namespace Altaxo.Calc.LinearAlgebra.Double.Factorization
 {
@@ -12,7 +36,7 @@ namespace Altaxo.Calc.LinearAlgebra.Double.Factorization
   /// <para>Reference:</para>
   /// <para>[1] A. Hyvärinen and E. Oja, "A Fast Fixed-Point Algorithm for Independent Component Analysis," in Neural Computation, vol. 9, no. 7, pp. 1483-1492, 10 July 1997, doi:10.1162/neco.1997.9.7.1483.</para>
   /// </remarks>
-  public record FastIndependentComponentAnalysis : ILowRankMatrixFactorization
+  public record FactorizationByFastIndependentComponentAnalysis : ILowRankMatrixFactorization
   {
     /// <summary>
     /// Gets the maximum number of iterations for the factorization algorithm.
@@ -52,13 +76,13 @@ namespace Altaxo.Calc.LinearAlgebra.Double.Factorization
     /// XML serialization surrogate (version 0).
     /// </summary>
     /// <remarks>V0: 2026-01-26.</remarks>
-    [Altaxo.Serialization.Xml.XmlSerializationSurrogateFor(typeof(FastIndependentComponentAnalysis), 0)]
+    [Altaxo.Serialization.Xml.XmlSerializationSurrogateFor(typeof(FactorizationByFastIndependentComponentAnalysis), 0)]
     public class SerializationSurrogate0 : Altaxo.Serialization.Xml.IXmlSerializationSurrogate
     {
       /// <inheritdoc/>
       public void Serialize(object obj, Altaxo.Serialization.Xml.IXmlSerializationInfo info)
       {
-        var s = (FastIndependentComponentAnalysis)obj;
+        var s = (FactorizationByFastIndependentComponentAnalysis)obj;
         info.AddValue("MaximumNumberOfIterations", s.MaximumNumberOfIterations);
         info.AddValue("Tolerance", s.Tolerance);
       }
@@ -69,7 +93,7 @@ namespace Altaxo.Calc.LinearAlgebra.Double.Factorization
         var maximumNumberOfIterations = info.GetInt32("MaximumNumberOfIterations");
         var tolerance = info.GetDouble("Tolerance");
 
-        return ((o as FastIndependentComponentAnalysis) ?? new FastIndependentComponentAnalysis()) with
+        return ((o as FactorizationByFastIndependentComponentAnalysis) ?? new FactorizationByFastIndependentComponentAnalysis()) with
         {
           MaximumNumberOfIterations = maximumNumberOfIterations,
           Tolerance = tolerance,

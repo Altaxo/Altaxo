@@ -10,9 +10,21 @@ namespace Altaxo.Science.Spectroscopy.EnsembleProcessing
   /// </summary>
   public record MultiplicativeScatterCorrection : IEnsembleMeanScalePreprocessor, IEnsemblePreprocessor, Main.IImmutable
   {
+    /// <summary>
+    /// Name of the auxiliary data compound produced by this preprocessor.
+    /// </summary>
     const string AuxiliaryDataName = "MultiplicativeScatterCorrection";
+
+    /// <summary>
+    /// Name of the auxiliary data vector that contains the ensemble mean spectrum.
+    /// </summary>
     const string AuxiliaryDataMeanName = "EnsembleMean";
+
+    /// <summary>
+    /// Name of the auxiliary data vector that contains the ensemble scale spectrum.
+    /// </summary>
     const string AuxiliaryDataScaleName = "EnsembleScale";
+
     /// <summary>
     /// Gets a value indicating whether the ensemble scale (for each spectral slot) should be calculated.
     /// </summary>
@@ -157,6 +169,7 @@ namespace Altaxo.Science.Spectroscopy.EnsembleProcessing
       writer.WriteElementString("MultiplicativeScatterCorrection", string.Empty);
     }
 
+    /// <inheritdoc/>
     public (double[] x, Matrix<double> y, int[]? regions, IEnsembleProcessingAuxiliaryData? auxiliaryData) Execute(double[] x, Matrix<double> y, int[]? regions)
     {
       var newY = y.Clone();
@@ -168,14 +181,15 @@ namespace Altaxo.Science.Spectroscopy.EnsembleProcessing
       {
         Name = AuxiliaryDataName,
         Values = [
-          new EnsembleAuxiliaryDataVector { Name = AuxiliaryDataMeanName, Value = xMean },
-          new EnsembleAuxiliaryDataVector { Name = AuxiliaryDataScaleName, Value = xScale }
+          new EnsembleAuxiliaryDataVector { Name = AuxiliaryDataMeanName, Value = xMean, VectorType = EnsembleAuxiliaryDataVectorType.Spectrum },
+          new EnsembleAuxiliaryDataVector { Name = AuxiliaryDataScaleName, Value = xScale, VectorType = EnsembleAuxiliaryDataVectorType.Spectrum }
           ]
       };
 
       return (x, newY, regions, auxData);
     }
 
+    /// <inheritdoc/>
     public (double[] x, Matrix<double> y, int[]? regions) ExecuteForPrediction(double[] x, Matrix<double> spectraMatrix, int[] regions, IEnsembleProcessingAuxiliaryData? auxillaryData)
     {
       if (auxillaryData is not EnsembleAuxiliaryDataCompound data || data.Name != AuxiliaryDataName)
@@ -203,6 +217,7 @@ namespace Altaxo.Science.Spectroscopy.EnsembleProcessing
       return (x, yNew, regions);
     }
 
+    /// <inheritdoc/>
     public (double[] x, double[] y, int[]? regions) Execute(double[] x, double[] y, int[]? regions)
     {
       return (x, y, regions);

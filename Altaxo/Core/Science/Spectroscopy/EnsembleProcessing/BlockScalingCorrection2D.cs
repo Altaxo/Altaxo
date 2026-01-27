@@ -117,7 +117,8 @@ namespace Altaxo.Science.Spectroscopy.EnsembleProcessing
       }
 
       var yy = y.Clone();
-      var blockMean = new double[y.RowCount];
+      var blockScale = new double[y.RowCount];
+      blockScale.FillWith(1);
       for (int blockIndex = 0; blockIndex < numberOfBlocks; blockIndex++)
       {
         // compute the mean spectrum for the block
@@ -133,20 +134,20 @@ namespace Altaxo.Science.Spectroscopy.EnsembleProcessing
             count++;
           }
         }
-        var mean = sum / count;
+        var scale = (count == 0 || sum == 0) ? 1 : count / sum;
         for (int idxS = 0; idxS < numberOfSpectraPerBlock; idxS++)
         {
           int rowIndex = IndexOfDimensionToAverage == 0 ? idxS * numberOfBlocks + blockIndex : blockIndex * numberOfSpectraPerBlock + idxS;
-          blockMean[rowIndex] = mean;
+          blockScale[rowIndex] = scale;
 
           for (int j = 0; j < y.ColumnCount; j++)
           {
-            yy[rowIndex, j] = y[rowIndex, j] / mean;
+            yy[rowIndex, j] = y[rowIndex, j] * scale;
           }
         }
       }
 
-      return (x, yy, regions, new EnsembleAuxiliaryDataVector() { Name = "BlockMean", Value = blockMean });
+      return (x, yy, regions, new EnsembleAuxiliaryDataVector() { Name = "BlockScale", Value = blockScale, VectorType = EnsembleAuxiliaryDataVectorType.Samples });
     }
 
     /// <summary>

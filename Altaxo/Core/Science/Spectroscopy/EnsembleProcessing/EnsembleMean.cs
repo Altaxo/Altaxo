@@ -66,7 +66,7 @@ namespace Altaxo.Science.Spectroscopy.EnsembleProcessing
       var yNew = y.Clone();
       var ensembleMean = new double[y.ColumnCount];
       MatrixMath.ColumnsToZeroMean(yNew, ensembleMean.ToVector());
-      return (x, yNew, regions, new EnsembleAuxiliaryDataVector { Name = AuxillaryDataName, Value = ensembleMean });
+      return (x, yNew, regions, new EnsembleAuxiliaryDataVector { Name = AuxillaryDataName, Value = ensembleMean, VectorType = EnsembleAuxiliaryDataVectorType.Spectrum });
     }
 
     /// <inheritdoc/>

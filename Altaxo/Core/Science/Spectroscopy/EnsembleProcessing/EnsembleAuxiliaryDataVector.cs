@@ -35,9 +35,34 @@ namespace Altaxo.Science.Spectroscopy.EnsembleProcessing
     /// <summary>
     /// Gets the vector values.
     /// </summary>
-    public double[] Value { get; init; }
+    public required double[] Value { get; init; }
+
+    /// <summary>
+    /// Gets the type of the vector.
+    /// </summary>
+    public required EnsembleAuxiliaryDataVectorType VectorType { get; init; }
   }
 
+  /// <summary>
+  /// Represents the type of an auxiliary data vector.
+  /// </summary>
+  public enum EnsembleAuxiliaryDataVectorType
+  {
+    /// <summary>
+    /// Represents an auxiliary data vector with a length equal to the number of spectral points in the ensemble.
+    /// </summary>
+    Spectrum = 0,
+
+    /// <summary>
+    /// Represents an auxiliary data vector with a length equal to the number of samples in the ensemble.
+    /// </summary>
+    Samples = 1,
+
+    /// <summary>
+    /// Represents an auxiliary data vector of other length or type.
+    /// </summary>
+    Other = 2
+  }
 
 
 }

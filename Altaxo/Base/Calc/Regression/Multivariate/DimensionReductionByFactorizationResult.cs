@@ -109,6 +109,11 @@ namespace Altaxo.Calc.Regression.Multivariate
         }
       }
 
+      if (outputOptions.IncludeEnsemblePreprocessingAuxiliaryData && auxiliaryData is not null)
+      {
+        SaveAuxiliarySampleData(auxiliaryData, destinationTable, groupNumber);
+      }
+
       ++groupNumber;
 
       // Save the loadings
@@ -127,7 +132,7 @@ namespace Altaxo.Calc.Regression.Multivariate
 
       if (outputOptions.IncludeEnsemblePreprocessingAuxiliaryData && auxiliaryData is not null)
       {
-        SaveAuxiliarySpectralData(auxiliaryData, numberOfSpectralPoints, destinationTable, groupNumber);
+        SaveAuxiliarySpectralData(auxiliaryData, destinationTable, groupNumber);
       }
 
       // Save the preprocessed spectra, this should have the same group number as the loadings
@@ -151,16 +156,45 @@ namespace Altaxo.Calc.Regression.Multivariate
       }
     }
 
-    void SaveAuxiliarySpectralData(IEnsembleProcessingAuxiliaryData data, int numberOfSpectralPoints, DataTable destinationTable, int groupNumber)
+    /// <summary>
+    /// Saves auxiliary data that is associated with samples.
+    /// </summary>
+    /// <param name="data">The auxiliary data to save.</param>
+    /// <param name="destinationTable">The destination table.</param>
+    /// <param name="groupNumber">The destination group number.</param>
+    void SaveAuxiliarySampleData(IEnsembleProcessingAuxiliaryData data, DataTable destinationTable, int groupNumber)
     {
       if (data is EnsembleAuxiliaryDataCompound compound)
       {
         foreach (var item in compound.Values)
         {
-          SaveAuxiliarySpectralData(item, numberOfSpectralPoints, destinationTable, groupNumber);
+          SaveAuxiliarySampleData(item, destinationTable, groupNumber);
         }
       }
-      else if (data is EnsembleAuxiliaryDataVector vector && vector.Value.Length == numberOfSpectralPoints)
+      else if (data is EnsembleAuxiliaryDataVector vector && vector.VectorType == EnsembleAuxiliaryDataVectorType.Samples)
+      {
+        // save the data)
+        var column = destinationTable.DataColumns.EnsureExistence(data.Name, typeof(DoubleColumn), ColumnKind.V, groupNumber);
+        column.Data = vector.Value;
+      }
+    }
+
+    /// <summary>
+    /// Saves auxiliary data that is associated with spectral points.
+    /// </summary>
+    /// <param name="data">The auxiliary data to save.</param>
+    /// <param name="destinationTable">The destination table.</param>
+    /// <param name="groupNumber">The destination group number.</param>
+    void SaveAuxiliarySpectralData(IEnsembleProcessingAuxiliaryData data, DataTable destinationTable, int groupNumber)
+    {
+      if (data is EnsembleAuxiliaryDataCompound compound)
+      {
+        foreach (var item in compound.Values)
+        {
+          SaveAuxiliarySpectralData(item, destinationTable, groupNumber);
+        }
+      }
+      else if (data is EnsembleAuxiliaryDataVector vector && vector.VectorType == EnsembleAuxiliaryDataVectorType.Spectrum)
       {
         // save the data)
         var column = destinationTable.DataColumns.EnsureExistence(data.Name, typeof(DoubleColumn), ColumnKind.V, groupNumber);
