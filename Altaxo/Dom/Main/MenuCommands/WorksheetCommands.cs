@@ -36,7 +36,7 @@ using Altaxo.Serialization.BrukerOpus;
 using Altaxo.Serialization.Galactic;
 using Altaxo.Serialization.HDF5.Nexus;
 using Altaxo.Serialization.Jcamp;
-using Altaxo.Serialization.NicoletSPA;
+using Altaxo.Serialization.Omnic;
 using Altaxo.Serialization.Origin;
 using Altaxo.Serialization.PrincetonInstruments;
 using Altaxo.Serialization.WITec;
@@ -143,7 +143,7 @@ namespace Altaxo.Worksheet.Commands
   }
 
 
-  public class ImportNicoletSPA : ImportDataFileCommandBase<NicoletSPAImporter>
+  public class ImportNicoletSPA : ImportDataFileCommandBase<OmnicSPAImporter>
   {
   }
 

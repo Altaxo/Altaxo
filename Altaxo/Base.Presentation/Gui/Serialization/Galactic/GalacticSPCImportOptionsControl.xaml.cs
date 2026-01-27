@@ -25,7 +25,7 @@
 using System.Windows.Controls;
 using Altaxo.Gui.Serialization.BrukerOpus;
 using Altaxo.Gui.Serialization.Jcamp;
-using Altaxo.Gui.Serialization.NicoletSPA;
+using Altaxo.Gui.Serialization.Omnic;
 using Altaxo.Gui.Serialization.Renishaw;
 
 namespace Altaxo.Gui.Serialization.Galactic
@@ -37,7 +37,7 @@ namespace Altaxo.Gui.Serialization.Galactic
     IGalacticSPCImportOptionsView,
     IRenishawImportOptionsView,
     IJcampImportOptionsView,
-    INicoletSPAImportOptionsView,
+    IOmnicSPAImportOptionsView,
     IBrukerOpusImportOptionsView
   {
     public GalacticSPCImportOptionsControl()

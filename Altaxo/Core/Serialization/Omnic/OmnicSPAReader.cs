@@ -25,13 +25,13 @@
 using System;
 using System.IO;
 
-namespace Altaxo.Serialization.NicoletSPA
+namespace Altaxo.Serialization.Omnic
 {
   /// <summary>
   /// Reads data from a Nicolet SPA formatted stream and exposes the
   /// x and y arrays together with metadata.
   /// </summary>
-  public class NicoletSPAReader
+  public class OmnicSPAReader
   {
     /// <summary>
     /// The first x value (minimum wavenumber) read from the file.
@@ -89,7 +89,7 @@ namespace Altaxo.Serialization.NicoletSPA
 
 
     /// <summary>
-    /// Initializes a new instance of <see cref="NicoletSPAReader"/> and
+    /// Initializes a new instance of <see cref="OmnicSPAReader"/> and
     /// reads the data from the provided <paramref name="stream"/>.
     /// </summary>
     /// <param name="stream">A seekable <see cref="System.IO.Stream"/>
@@ -103,7 +103,7 @@ namespace Altaxo.Serialization.NicoletSPA
     /// inline comments in the implementation document the exact offsets
     /// and markers used.
     /// </remarks>
-    public NicoletSPAReader(Stream stream)
+    public OmnicSPAReader(Stream stream)
     {
       const int Pos_BeginComment = 0x1E; // 30 dez, position where the comment starts
       const int Pos_EndComment = 0x100; // 255 dez, position where the comment ends (exclusive)

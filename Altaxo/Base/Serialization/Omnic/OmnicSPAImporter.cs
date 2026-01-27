@@ -28,10 +28,10 @@ using System.IO;
 using System.Linq;
 using Altaxo.Data;
 
-namespace Altaxo.Serialization.NicoletSPA
+namespace Altaxo.Serialization.Omnic
 {
   /// <summary>
-  /// Imports Nicolet SPA spectra.
+  /// Imports Omnic SPA spectra.
   /// </summary>
   /// <remarks>
   /// See
@@ -42,7 +42,7 @@ namespace Altaxo.Serialization.NicoletSPA
   /// <para>The comment is at position 30:255. It is UTF8 coded.</para>
   /// <para>At position 564, there is an integer designating the offset to the data. (little endian)</para>
   /// </remarks>
-  public record NicoletSPAImporter : DataFileImporterBase, Main.IImmutable
+  public record OmnicSPAImporter : DataFileImporterBase, Main.IImmutable
   {
 
     /// <inheritdoc/>
@@ -54,7 +54,7 @@ namespace Altaxo.Serialization.NicoletSPA
     /// <inheritdoc/>
     public override object CheckOrCreateImportOptions(object? importOptions)
     {
-      return (importOptions as NicoletSPAImportOptions) ?? new NicoletSPAImportOptions();
+      return (importOptions as OmnicSPAImportOptions) ?? new OmnicSPAImportOptions();
     }
 
     /// <inheritdoc/>
@@ -70,7 +70,7 @@ namespace Altaxo.Serialization.NicoletSPA
       try
       {
         using var stream = new FileStream(fileName, FileMode.Open, FileAccess.Read, FileShare.Read);
-        var result = new NicoletSPAReader(stream);
+        var result = new OmnicSPAReader(stream);
         if (result.NumberOfPoints > 0 && string.IsNullOrEmpty(result.ErrorMessages))
         {
           p += 0.5;
@@ -88,7 +88,7 @@ namespace Altaxo.Serialization.NicoletSPA
     /// <inheritdoc/>
     public override IAltaxoTableDataSource? CreateTableDataSource(IReadOnlyList<string> fileNames, object importOptions)
     {
-      return new NicoletSPAImportDataSource(fileNames, (NicoletSPAImportOptions)importOptions);
+      return new OmnicSPAImportDataSource(fileNames, (OmnicSPAImportOptions)importOptions);
     }
 
     /// <summary>
@@ -97,7 +97,7 @@ namespace Altaxo.Serialization.NicoletSPA
     /// <param name="table">The table.</param>
     public string? Import(Stream stream, DataTable table)
     {
-      var result = new NicoletSPAReader(stream);
+      var result = new OmnicSPAReader(stream);
 
       var xCol = new DoubleColumn();
       var yCol = new DoubleColumn();
@@ -152,7 +152,7 @@ namespace Altaxo.Serialization.NicoletSPA
     /// <returns>Null if no error occurs, or an error description.</returns>
     public override string? Import(IReadOnlyList<string> filenames, Altaxo.Data.DataTable table, object importOptionsObj, bool attachDataSource = true)
     {
-      var importOptions = (NicoletSPAImportOptions)importOptionsObj;
+      var importOptions = (OmnicSPAImportOptions)importOptionsObj;
       DoubleColumn? xcol = null;
       DoubleColumn xvalues, yvalues;
       var errorList = new System.Text.StringBuilder();

@@ -47,6 +47,7 @@ namespace Altaxo.Serialization.PrincetonInstruments
     public void Test_AllFilesReadable()
     {
       var speFiles = new DirectoryInfo(TestFilePath).GetFiles("*.spe");
+      Assert.NotEmpty(speFiles);
       foreach (var file in speFiles)
       {
         using var str = new FileStream(file.FullName, FileMode.Open, FileAccess.Read, FileShare.Read);

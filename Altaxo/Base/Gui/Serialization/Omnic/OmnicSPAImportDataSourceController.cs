@@ -25,18 +25,18 @@
 using Altaxo.Gui.Common;
 using Altaxo.Gui.Data;
 using Altaxo.Serialization;
-using Altaxo.Serialization.NicoletSPA;
+using Altaxo.Serialization.Omnic;
 
 
-namespace Altaxo.Gui.Serialization.NicoletSPA
+namespace Altaxo.Gui.Serialization.Omnic
 {
-  [UserControllerForObject(typeof(NicoletSPAImportDataSource))]
-  public class NicoletSPAImportDataSourceController : DataSourceControllerBase<NicoletSPAImportDataSource>
+  [UserControllerForObject(typeof(OmnicSPAImportDataSource))]
+  public class OmnicSPAImportDataSourceController : DataSourceControllerBase<OmnicSPAImportDataSource>
   {
     protected override IMVCANController GetProcessDataController()
     {
       var processDataController = new MultipleFilesController();
-      processDataController.FileFilters = [FileIOHelper.GetFilterDescriptionForExtensions(new NicoletSPAImporter().GetFileExtensions())];
+      processDataController.FileFilters = [FileIOHelper.GetFilterDescriptionForExtensions(new OmnicSPAImporter().GetFileExtensions())];
       processDataController.InitializeDocument(_doc.SourceFileNames);
       Current.Gui.FindAndAttachControlTo(processDataController);
       return processDataController;

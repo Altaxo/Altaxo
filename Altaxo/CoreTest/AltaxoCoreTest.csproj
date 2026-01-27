@@ -25,6 +25,11 @@
     <Content Include="Serialization\Renishaw\TestFiles\*">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </Content>
+ 
+    <None Remove="Serialization\Omnic\TestFiles\*" />
+      <Content Include="Serialization\Omnic\TestFiles\PET.SPG">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
   </ItemGroup>
   
   <ItemGroup>

@@ -2,7 +2,7 @@
 
 /////////////////////////////////////////////////////////////////////////////
 //    Altaxo:  a data processing and data plotting program
-//    Copyright (C) 2002-2024 Dr. Dirk Lellinger
+//    Copyright (C) 2002-2026 Dr. Dirk Lellinger
 //
 //    This program is free software; you can redistribute it and/or modify
 //    it under the terms of the GNU General Public License as published by
@@ -22,19 +22,31 @@
 
 #endregion Copyright
 
-using System.Windows.Controls;
+using System;
+using System.IO;
+using Xunit;
 
-namespace Altaxo.Gui.Serialization.Bitmaps
+namespace Altaxo.Serialization.Omnic
 {
-  /// <summary>
-  /// Interaction logic for GalacticSPCImportOptionsControl.xaml
-  /// </summary>
-  public partial class BitmapImportOptionsControl : UserControl,
-    IBitmapImportOptionsView
+  public class OmnicSPGReaderTests
   {
-    public BitmapImportOptionsControl()
+    public string TestFilePath => Path.Combine(AppDomain.CurrentDomain.BaseDirectory, "Serialization\\Omnic\\TestFiles");
+
+    public FileStream GetFileStream(string fileName)
     {
-      InitializeComponent();
+      return new FileStream(Path.Combine(TestFilePath, fileName), FileMode.Open, FileAccess.Read, FileShare.Read);
+    }
+
+    [Fact]
+    public void Test_AllFilesReadable()
+    {
+      var testFiles = new DirectoryInfo(TestFilePath).GetFiles("*.spg");
+      Assert.NotEmpty(testFiles);
+      foreach (var file in testFiles)
+      {
+        using var str = GetFileStream(file.FullName);
+        var reader = new OmnicSPGReader(str);
+      }
     }
   }
 }

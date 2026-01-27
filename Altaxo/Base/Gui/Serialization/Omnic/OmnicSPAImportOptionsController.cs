@@ -23,15 +23,15 @@
 #endregion Copyright
 
 using System.Collections.Generic;
-using Altaxo.Serialization.NicoletSPA;
+using Altaxo.Serialization.Omnic;
 
-namespace Altaxo.Gui.Serialization.NicoletSPA
+namespace Altaxo.Gui.Serialization.Omnic
 {
-  public interface INicoletSPAImportOptionsView : IDataContextAwareView { }
+  public interface IOmnicSPAImportOptionsView : IDataContextAwareView { }
 
-  [ExpectedTypeOfView(typeof(INicoletSPAImportOptionsView))]
-  [UserControllerForObject(typeof(NicoletSPAImportOptions))]
-  public class NicoletSPAImportOptionsController : MVCANControllerEditImmutableDocBase<NicoletSPAImportOptions, INicoletSPAImportOptionsView>
+  [ExpectedTypeOfView(typeof(IOmnicSPAImportOptionsView))]
+  [UserControllerForObject(typeof(OmnicSPAImportOptions))]
+  public class OmnicSPAImportOptionsController : MVCANControllerEditImmutableDocBase<OmnicSPAImportOptions, IOmnicSPAImportOptionsView>
   {
     public override IEnumerable<ControllerAndSetNullMethod> GetSubControllers()
     {

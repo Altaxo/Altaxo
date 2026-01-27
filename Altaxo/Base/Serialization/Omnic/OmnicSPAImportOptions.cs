@@ -23,12 +23,12 @@
 #endregion Copyright
 
 
-namespace Altaxo.Serialization.NicoletSPA
+namespace Altaxo.Serialization.Omnic
 {
   /// <summary>
   /// Import options for importing Galactic SPC files.
   /// </summary>
-  public record NicoletSPAImportOptions : Main.IImmutable
+  public record OmnicSPAImportOptions : Main.IImmutable
   {
     /// <summary>
     /// If true, the column name of the imported y-columns is set to a neutral, constant value.
@@ -50,13 +50,15 @@ namespace Altaxo.Serialization.NicoletSPA
 
     /// <summary>
     /// V0: 2024-09-14 Initial version
+    /// V1: 2026-01-27 Renamed NicoletSPAImportOptions to OmnicSPAImportOptions and NicoletSPA namespace to Omnic
     /// </summary>
-    [Altaxo.Serialization.Xml.XmlSerializationSurrogateFor(typeof(NicoletSPAImportOptions), 0)]
+    [Altaxo.Serialization.Xml.XmlSerializationSurrogateFor("AltaxoBase", "Altaxo.Serialization.NicoletSPA.NicoletSPAImportOptions", 0)]
+    [Altaxo.Serialization.Xml.XmlSerializationSurrogateFor(typeof(OmnicSPAImportOptions), 1)]
     public class SerializationSurrogate0 : Altaxo.Serialization.Xml.IXmlSerializationSurrogate
     {
       public void Serialize(object obj, Altaxo.Serialization.Xml.IXmlSerializationInfo info)
       {
-        var s = (NicoletSPAImportOptions)obj;
+        var s = (OmnicSPAImportOptions)obj;
         info.AddValue("UseNeutralColumnName", s.UseNeutralColumnName);
         info.AddValue("NeutralColumnName", s.NeutralColumnName);
         info.AddValue("IncludeFilePathAsProperty", s.IncludeFilePathAsProperty);
@@ -68,13 +70,13 @@ namespace Altaxo.Serialization.NicoletSPA
         var neutralColumnName = info.GetString("NeutralColumnName");
         var includeFilePathAsProperty = info.GetBoolean("IncludeFilePathAsProperty");
 
-        return o is null ? new NicoletSPAImportOptions
+        return o is null ? new OmnicSPAImportOptions
         {
           UseNeutralColumnName = useNeutralColumnName,
           NeutralColumnName = neutralColumnName,
           IncludeFilePathAsProperty = includeFilePathAsProperty,
         } :
-          ((NicoletSPAImportOptions)o) with
+          ((OmnicSPAImportOptions)o) with
           {
             UseNeutralColumnName = useNeutralColumnName,
             NeutralColumnName = neutralColumnName,

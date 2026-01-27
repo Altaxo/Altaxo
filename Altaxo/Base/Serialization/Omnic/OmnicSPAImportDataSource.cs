@@ -30,13 +30,13 @@ using System.Linq;
 using System.Text;
 using Altaxo.Data;
 
-namespace Altaxo.Serialization.NicoletSPA
+namespace Altaxo.Serialization.Omnic
 {
-  public class NicoletSPAImportDataSource : TableDataSourceBase, Altaxo.Data.IAltaxoTableDataSource
+  public class OmnicSPAImportDataSource : TableDataSourceBase, Altaxo.Data.IAltaxoTableDataSource
   {
     private IDataSourceImportOptions _importOptions;
 
-    private NicoletSPAImportOptions _processOptions;
+    private OmnicSPAImportOptions _processOptions;
 
     private List<AbsoluteAndRelativeFileName> _asciiFiles = new List<AbsoluteAndRelativeFileName>();
 
@@ -58,13 +58,15 @@ namespace Altaxo.Serialization.NicoletSPA
 
     /// <summary>
     /// 2024-09-14 initial version.
+    /// 2026-01-27 Renamed from NicoletSPAImportDataSource to OmnicSPAImportDataSource, and namespace from NicoletSPA to Omnic.
     /// </summary>
-    [Altaxo.Serialization.Xml.XmlSerializationSurrogateFor(typeof(NicoletSPAImportDataSource), 0)]
+    [Altaxo.Serialization.Xml.XmlSerializationSurrogateFor("AltaxoBase", "Altaxo.Serialization.NicoletSPA.NicoletSPAImportDataSource", 0)]
+    [Altaxo.Serialization.Xml.XmlSerializationSurrogateFor(typeof(OmnicSPAImportDataSource), 1)]
     private class XmlSerializationSurrogate0 : Altaxo.Serialization.Xml.IXmlSerializationSurrogate
     {
       public virtual void Serialize(object obj, Altaxo.Serialization.Xml.IXmlSerializationInfo info)
       {
-        var s = (NicoletSPAImportDataSource)obj;
+        var s = (OmnicSPAImportDataSource)obj;
 
         info.AddValue("ImportOptions", s._importOptions);
         info.AddValue("ProcessOptions", s._processOptions);
@@ -73,10 +75,10 @@ namespace Altaxo.Serialization.NicoletSPA
 
       public object Deserialize(object? o, Altaxo.Serialization.Xml.IXmlDeserializationInfo info, object? parent)
       {
-        if (o is NicoletSPAImportDataSource s)
+        if (o is OmnicSPAImportDataSource s)
           s.DeserializeSurrogate0(info);
         else
-          s = new NicoletSPAImportDataSource(info, 0);
+          s = new OmnicSPAImportDataSource(info, 0);
         return s;
       }
     }
@@ -86,7 +88,7 @@ namespace Altaxo.Serialization.NicoletSPA
     {
       _isDeserializationInProgress = true;
       ChildSetMember(ref _importOptions, (IDataSourceImportOptions)info.GetValue("ImportOptions", this));
-      _processOptions = (NicoletSPAImportOptions)info.GetValue("ProcessOptions", this);
+      _processOptions = (OmnicSPAImportOptions)info.GetValue("ProcessOptions", this);
       var count = info.OpenArray("ProcessData");
       for (int i = 0; i < count; ++i)
         _asciiFiles.Add((AbsoluteAndRelativeFileName)info.GetValue("e", this));
@@ -100,7 +102,7 @@ namespace Altaxo.Serialization.NicoletSPA
     /// <summary>
     /// Deserialization constructor
     /// </summary>
-    protected NicoletSPAImportDataSource(Altaxo.Serialization.Xml.IXmlDeserializationInfo info, int version)
+    protected OmnicSPAImportDataSource(Altaxo.Serialization.Xml.IXmlDeserializationInfo info, int version)
     {
       switch (version)
       {
@@ -117,7 +119,7 @@ namespace Altaxo.Serialization.NicoletSPA
     #region Construction
 
     [MemberNotNull(nameof(_asciiFiles), nameof(_importOptions), nameof(_processOptions))]
-    private void CopyFrom(NicoletSPAImportDataSource from)
+    private void CopyFrom(OmnicSPAImportDataSource from)
     {
       using (var token = SuspendGetToken())
       {
@@ -134,7 +136,7 @@ namespace Altaxo.Serialization.NicoletSPA
       if (ReferenceEquals(this, obj))
         return true;
 
-      var from = obj as NicoletSPAImportDataSource;
+      var from = obj as OmnicSPAImportDataSource;
       if (from is not null)
       {
         CopyFrom(from);
@@ -146,12 +148,12 @@ namespace Altaxo.Serialization.NicoletSPA
 
 
 
-    public NicoletSPAImportDataSource(string fileName, NicoletSPAImportOptions options)
+    public OmnicSPAImportDataSource(string fileName, OmnicSPAImportOptions options)
       : this(new string[] { fileName }, options)
     {
     }
 
-    public NicoletSPAImportDataSource(IEnumerable<string> fileNames, NicoletSPAImportOptions options)
+    public OmnicSPAImportDataSource(IEnumerable<string> fileNames, OmnicSPAImportOptions options)
     {
       _asciiFiles = new List<AbsoluteAndRelativeFileName>();
       foreach (var fileName in fileNames)
@@ -162,14 +164,14 @@ namespace Altaxo.Serialization.NicoletSPA
       _importOptions = new DataSourceImportOptions() { ParentObject = this };
     }
 
-    public NicoletSPAImportDataSource(NicoletSPAImportDataSource from)
+    public OmnicSPAImportDataSource(OmnicSPAImportDataSource from)
     {
       CopyFrom(from);
     }
 
     public object Clone()
     {
-      return new NicoletSPAImportDataSource(this);
+      return new OmnicSPAImportDataSource(this);
     }
 
     protected override IEnumerable<Main.DocumentNodeAndName> GetDocumentNodeChildrenWithName()
@@ -198,7 +200,7 @@ namespace Altaxo.Serialization.NicoletSPA
       {
         destinationTable.DataColumns.RemoveColumnsAll();
         destinationTable.PropCols.RemoveColumnsAll();
-        new NicoletSPAImporter().Import(validFileNames, destinationTable, _processOptions, attachDataSource: false);
+        new OmnicSPAImporter().Import(validFileNames, destinationTable, _processOptions, attachDataSource: false);
       }
 
       var invalidFileNames = _asciiFiles.Where(x => string.IsNullOrEmpty(x.GetResolvedFileNameOrNull())).ToArray();
@@ -289,7 +291,7 @@ namespace Altaxo.Serialization.NicoletSPA
       }
     }
 
-    public NicoletSPAImportOptions ProcessOptions
+    public OmnicSPAImportOptions ProcessOptions
     {
       get
       {
@@ -304,7 +306,7 @@ namespace Altaxo.Serialization.NicoletSPA
     object IAltaxoTableDataSource.ProcessOptionsObject
     {
       get => _processOptions;
-      set => ProcessOptions = (NicoletSPAImportOptions)value;
+      set => ProcessOptions = (OmnicSPAImportOptions)value;
     }
 
     object IAltaxoTableDataSource.ProcessDataObject
@@ -459,7 +461,7 @@ namespace Altaxo.Serialization.NicoletSPA
 
     public (IReadOnlyList<string> FileExtensions, string Explanation) GetFileExtensions()
     {
-      return new NicoletSPAImporter().GetFileExtensions();
+      return new OmnicSPAImporter().GetFileExtensions();
     }
   }
 }
