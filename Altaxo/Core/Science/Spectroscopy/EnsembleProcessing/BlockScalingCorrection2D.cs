@@ -126,7 +126,7 @@ namespace Altaxo.Science.Spectroscopy.EnsembleProcessing
         long count = 0;
         for (int idxS = 0; idxS < numberOfSpectraPerBlock; idxS++)
         {
-          int rowIndex = IndexOfDimensionToAverage == 0 ? idxS * numberOfBlocks + blockIndex : blockIndex * numberOfSpectraPerBlock + idxS;
+          int rowIndex = IndexOfDimensionToAverage == 0 ? blockIndex * numberOfSpectraPerBlock + idxS : blockIndex + idxS * numberOfBlocks;
 
           for (int j = firstSpectrumIndex; j <= lastSpectrumIndex; j++)
           {
