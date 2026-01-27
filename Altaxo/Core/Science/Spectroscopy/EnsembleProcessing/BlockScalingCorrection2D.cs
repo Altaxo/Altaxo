@@ -137,7 +137,7 @@ namespace Altaxo.Science.Spectroscopy.EnsembleProcessing
         var scale = (count == 0 || sum == 0) ? 1 : count / sum;
         for (int idxS = 0; idxS < numberOfSpectraPerBlock; idxS++)
         {
-          int rowIndex = IndexOfDimensionToAverage == 0 ? idxS * numberOfBlocks + blockIndex : blockIndex * numberOfSpectraPerBlock + idxS;
+          int rowIndex = IndexOfDimensionToAverage == 0 ? blockIndex * numberOfSpectraPerBlock + idxS : blockIndex + idxS * numberOfBlocks;
           blockScale[rowIndex] = scale;
 
           for (int j = 0; j < y.ColumnCount; j++)
