@@ -273,9 +273,12 @@
               <MenuItem id="WorksheetImportNexus" label="Nexus format .NX .HDF5 files"
                             icon="Icons.16x16.NewDocumentIcon" description="Imports one or multiple Nexus formatted files (HDF5)."
                             class="Altaxo.Worksheet.Commands.ImportNexus" />
-              <MenuItem id="WorksheetImportNicoletSPA" label="Nicolet .SPA files"
-                            icon="Icons.16x16.NewDocumentIcon" description="Imports one or multiple .SPA spectra files (Nicolet)."
-                            class="Altaxo.Worksheet.Commands.ImportNicoletSPA" />
+              <MenuItem id="WorksheetImportOmnicSPA" label="Omnic .SPA files"
+                            icon="Icons.16x16.NewDocumentIcon" description="Imports one or multiple .SPA spectra files (Omnic)."
+                            class="Altaxo.Worksheet.Commands.ImportOmnicSPA" />
+              <MenuItem id="WorksheetImportOmnicSPG" label="Omnic .SPG files"
+                            icon="Icons.16x16.NewDocumentIcon" description="Imports one or multiple .SPG spectra files (Omnic)."
+                            class="Altaxo.Worksheet.Commands.ImportOmnicSPG" />
               <MenuItem id="WorksheetImportOrigin" label="Origin .OPJ files"
                             icon="Icons.16x16.NewDocumentIcon" description="Imports one or multiple Origin project files (.OPJ Format)."
                             class="Altaxo.Worksheet.Commands.ImportOrigin" />
