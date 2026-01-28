@@ -30,12 +30,19 @@ using Altaxo.Serialization.Omnic;
 
 namespace Altaxo.Gui.Serialization.Omnic
 {
+  /// <summary>
+  /// View interface for <see cref="OmnicSPGImportOptionsController"/>.
+  /// </summary>
   public interface IOmnicSPGImportOptionsView : IDataContextAwareView { }
 
   [ExpectedTypeOfView(typeof(IOmnicSPGImportOptionsView))]
   [UserControllerForObject(typeof(OmnicSPGImportOptions))]
+  /// <summary>
+  /// Controller for editing <see cref="OmnicSPGImportOptions"/>.
+  /// </summary>
   public class OmnicSPGImportOptionsController : MVCANControllerEditImmutableDocBase<OmnicSPGImportOptions, IOmnicSPGImportOptionsView>
   {
+    /// <inheritdoc/>
     public override IEnumerable<ControllerAndSetNullMethod> GetSubControllers()
     {
       yield break;
@@ -43,6 +50,9 @@ namespace Altaxo.Gui.Serialization.Omnic
 
     #region Bindings
 
+    /// <summary>
+    /// Gets or sets a value indicating whether the imported y-column names should be neutral (constant).
+    /// </summary>
     public bool UseNeutralColumnName
     {
       get => field;
@@ -56,6 +66,9 @@ namespace Altaxo.Gui.Serialization.Omnic
       }
     }
 
+    /// <summary>
+    /// Gets or sets the neutral base name for imported y-columns.
+    /// </summary>
     public string NeutralColumnName
     {
       get => field;
@@ -70,6 +83,9 @@ namespace Altaxo.Gui.Serialization.Omnic
     }
 
 
+    /// <summary>
+    /// Gets or sets a value indicating whether the imported file path should be stored as a column property.
+    /// </summary>
     public bool IncludeFilePathAsProperty
     {
       get => field;
@@ -83,11 +99,20 @@ namespace Altaxo.Gui.Serialization.Omnic
       }
     }
 
+    /// <summary>
+    /// Model class used for binding a single spectrum index in the UI.
+    /// </summary>
     public class IndexClass
     {
+      /// <summary>
+      /// Gets or sets the spectrum index.
+      /// </summary>
       public int Index { get; set; }
     }
 
+    /// <summary>
+    /// Gets or sets the collection of spectrum indices to import.
+    /// </summary>
     public ObservableCollection<IndexClass> IndicesOfImportedSpectra
     {
       get => field;
@@ -104,6 +129,7 @@ namespace Altaxo.Gui.Serialization.Omnic
 
     #endregion
 
+    /// <inheritdoc/>
     protected override void Initialize(bool initData)
     {
       base.Initialize(initData);
@@ -118,6 +144,7 @@ namespace Altaxo.Gui.Serialization.Omnic
       }
     }
 
+    /// <inheritdoc/>
     public override bool Apply(bool disposeController)
     {
       _doc = _doc with

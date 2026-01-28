@@ -27,11 +27,14 @@ using System.Windows.Controls;
 namespace Altaxo.Gui.Serialization.Omnic
 {
   /// <summary>
-  /// Interaction logic for PrincetonInstrumentsSPEImportOptionsControl.xaml
+  /// Interaction logic for <c>OmnicSPGImportOptionsControl.xaml</c>.
   /// </summary>
   public partial class OmnicSPGImportOptionsControl : UserControl,
     IOmnicSPGImportOptionsView
   {
+    /// <summary>
+    /// Initializes a new instance of the <see cref="OmnicSPGImportOptionsControl"/> class.
+    /// </summary>
     public OmnicSPGImportOptionsControl()
     {
       InitializeComponent();

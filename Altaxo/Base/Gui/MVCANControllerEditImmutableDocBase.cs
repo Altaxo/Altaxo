@@ -72,12 +72,10 @@ namespace Altaxo.Gui
     public abstract IEnumerable<ControllerAndSetNullMethod> GetSubControllers();
 
     /// <summary>
-    /// Initializes the controller with the document. If successful, the function returns <see langword="true"/>.
+    /// <inheritdoc/>
     /// </summary>
     /// <param name="args">The arguments necessary to create the controller. Normally, the first argument is the document, the second can be the parent of the document, and so on.</param>
-    /// <returns>
-    /// Returns <see langword="true" /> if successful; otherwise <see langword="false" />.
-    /// </returns>
+    /// <returns>Returns <see langword="true"/> if successful; otherwise <see langword="false"/>.</returns>
     public virtual bool InitializeDocument(params object[] args)
     {
       if (IsDisposed)
@@ -201,17 +199,20 @@ namespace Altaxo.Gui
     }
 
     /// <summary>
-    /// Sets whether or not a copy of the document is used. If set to <c>true</c>, a copy of the document is used, so if the controller is not applied,
-    /// all changes can be reverted. If set to <c>false</c>, no copy is made. The document is directly changed by the controller, and changes can not be reverted.
-    /// Use the last option if a controller up in the hierarchy has already made a copy of the document.
+    /// <inheritdoc/>
     /// </summary>
+    /// <remarks>
+    /// If set to <see cref="UseDocument.Copy"/>, a copy of the document is used. If the controller is not applied, all changes can be reverted.
+    /// If set to <see cref="UseDocument.Directly"/>, no copy is made. The document is changed directly by the controller, and changes cannot be reverted.
+    /// Use <see cref="UseDocument.Directly"/> if a controller higher in the hierarchy has already made a copy of the document.
+    /// </remarks>
     public UseDocument UseDocumentCopy
     {
       set { _useDocumentCopy = value == UseDocument.Copy; }
     }
 
     /// <summary>
-    /// Gets or sets the GUI element that shows the model to the user.
+    /// <inheritdoc/>
     /// </summary>
     public virtual object? ViewObject
     {
@@ -241,7 +242,7 @@ namespace Altaxo.Gui
     }
 
     /// <summary>
-    /// Gets the document that this controller has edited. The state of the document changes only after calling <see cref="Apply(bool)"/>.
+    /// <inheritdoc/>
     /// </summary>
     public virtual object ModelObject
     {

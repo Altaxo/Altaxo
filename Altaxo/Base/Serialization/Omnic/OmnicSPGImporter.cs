@@ -26,6 +26,7 @@ using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
+using System.Text;
 using Altaxo.Data;
 using Altaxo.Serialization.PrincetonInstruments;
 
@@ -190,7 +191,7 @@ namespace Altaxo.Serialization.Omnic
 
           string columnName = importOptions.UseNeutralColumnName ?
               $"{(string.IsNullOrEmpty(importOptions.NeutralColumnName) ? "Y" : importOptions.NeutralColumnName)}{idxYColumn}" :
-              System.IO.Path.GetFileNameWithoutExtension(filename);
+              reader.SpectrumTitles[idxSpectrum];
           columnName = table.DataColumns.FindUniqueColumnName(columnName);
           var ycol = table.DataColumns.EnsureExistence(columnName, typeof(DoubleColumn), ColumnKind.V, lastColumnGroup);
           ++idxYColumn;
@@ -211,7 +212,7 @@ namespace Altaxo.Serialization.Omnic
 
             // set the other property columns
             var pcol = table.PropCols.EnsureExistence("Label", typeof(Altaxo.Data.TextColumn), ColumnKind.V, 0);
-            pcol[yColumnNumber] = reader.YLabel[idxSpectrum];
+            pcol[yColumnNumber] = reader.YLabel;
             pcol = table.PropCols.EnsureExistence("Unit", typeof(Altaxo.Data.TextColumn), ColumnKind.V, 0);
             pcol[yColumnNumber] = reader.YUnit;
             pcol = table.PropCols.EnsureExistence("Title", typeof(Altaxo.Data.TextColumn), ColumnKind.V, 0);
@@ -237,6 +238,87 @@ namespace Altaxo.Serialization.Omnic
       }
 
       return errorList.Length == 0 ? null : errorList.ToString();
+    }
+
+    public override string? Import(IReadOnlyList<string> fileNames, ImportOptionsInitial initialOptions)
+    {
+      var stb = new StringBuilder();
+      var importOptions = (OmnicSPGImportOptions)initialOptions.ImportOptions;
+      if (initialOptions.DistributeFilesToSeparateTables)
+      {
+        foreach (var fileName in fileNames)
+        {
+          if (initialOptions.DistributeDataPerFileToSeparateTables)
+          {
+            // Here: we not only distribute each frame into a separate table, but also each region
+
+            OmnicSPGReader reader;
+            using (var stream = new FileStream(fileName, FileMode.Open, FileAccess.Read, FileShare.Read))
+            {
+              reader = new OmnicSPGReader(stream);
+            }
+
+            for (int idxSpectrum = 0; idxSpectrum < reader.NumberOfSpectra; idxSpectrum++)
+            {
+              var dataTable = new DataTable();
+              string title = string.Empty;
+
+              if (initialOptions.UseMetaDataNameAsTableName)
+              {
+                title = Path.GetFileNameWithoutExtension(fileName);
+              }
+
+              if (reader.NumberOfSpectra > 1)
+              {
+                title = $"{title} Spectrum#{idxSpectrum}";
+              }
+
+              if (!string.IsNullOrEmpty(title))
+              {
+                dataTable.Name = title;
+              }
+
+              var localImportOptions = importOptions with { IndicesOfImportedSpectra = [idxSpectrum], };
+
+              var result = Import([fileName], dataTable, localImportOptions);
+              if (result is not null)
+              {
+                stb.AppendLine(result);
+              }
+              Current.Project.AddItemWithThisOrModifiedName(dataTable);
+              Current.ProjectService.CreateNewWorksheet(dataTable);
+              dataTable.DataSource = CreateTableDataSource(fileNames, localImportOptions);
+            }
+
+          }
+          else
+          {
+            var dataTable = new DataTable();
+            var result = Import([fileName], dataTable, importOptions);
+            if (result is not null)
+            {
+              stb.AppendLine(result);
+            }
+            Current.Project.AddItemWithThisOrModifiedName(dataTable);
+            Current.ProjectService.CreateNewWorksheet(dataTable);
+            dataTable.DataSource = CreateTableDataSource(fileNames, importOptions);
+          }
+        }
+      }
+      else // all files into one table
+      {
+        var dataTable = new DataTable();
+        var result = Import(fileNames, dataTable, importOptions);
+        if (result is not null)
+        {
+          stb.AppendLine(result);
+        }
+        Current.Project.AddItemWithThisOrModifiedName(dataTable);
+        Current.ProjectService.CreateNewWorksheet(dataTable);
+        dataTable.DataSource = CreateTableDataSource(fileNames, importOptions);
+      }
+
+      return stb.Length == 0 ? null : stb.ToString();
     }
   }
 }

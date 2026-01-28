@@ -28,30 +28,38 @@ using System.Collections.Generic;
 namespace Altaxo.Serialization.Omnic
 {
   /// <summary>
-  /// Import options for importing Galactic SPC files.
+  /// Import options for importing Omnic SPG (spectrum group) files.
   /// </summary>
   public record OmnicSPGImportOptions : Main.IImmutable
   {
     /// <summary>
-    /// If true, the column name of the imported y-columns is set to a neutral, constant value.
-    /// If false, the column name of the imported y-columns is derived from the file name of the imported file.
+    /// Gets a value indicating whether the column name of imported y-columns is set to a neutral, constant value.
     /// </summary>
+    /// <remarks>
+    /// If <see langword="true"/>, the column name of imported y-columns is set to a neutral, constant value.
+    /// If <see langword="false"/>, the column name of imported y-columns is derived from the file name of the imported file.
+    /// </remarks>
     public bool UseNeutralColumnName { get; init; } = true;
 
     /// <summary>
-    /// Gets the neutral column name (base). The name is at request extended, e.g. by a number at the end.
+    /// Gets the base neutral column name.
     /// </summary>
+    /// <remarks>
+    /// The name may be extended as needed, for example by appending a number.
+    /// </remarks>
     public string NeutralColumnName { get; init; } = "Y";
 
     /// <summary>
-    /// If true, the file name of the imported file is included as a column property.
+    /// Gets a value indicating whether the file path of the imported file is included as a column property.
     /// </summary>
     public bool IncludeFilePathAsProperty { get; init; } = true;
 
     /// <summary>
-    /// Gets the indices of imported graphs.
-    /// If the collection is empty, all graphs are imported.
+    /// Gets the indices of imported spectra.
     /// </summary>
+    /// <remarks>
+    /// If the collection is empty, all spectra are imported.
+    /// </remarks>
     public IReadOnlyList<int> IndicesOfImportedSpectra { get; init; } = [];
 
     #region Serialization
@@ -62,6 +70,7 @@ namespace Altaxo.Serialization.Omnic
     [Altaxo.Serialization.Xml.XmlSerializationSurrogateFor(typeof(OmnicSPGImportOptions), 1)]
     public class SerializationSurrogate0 : Altaxo.Serialization.Xml.IXmlSerializationSurrogate
     {
+      /// <inheritdoc/>
       public void Serialize(object obj, Altaxo.Serialization.Xml.IXmlSerializationInfo info)
       {
         var s = (OmnicSPGImportOptions)obj;
@@ -72,6 +81,7 @@ namespace Altaxo.Serialization.Omnic
 
       }
 
+      /// <inheritdoc/>
       public object Deserialize(object? o, Altaxo.Serialization.Xml.IXmlDeserializationInfo info, object? parent)
       {
         var useNeutralColumnName = info.GetBoolean("UseNeutralColumnName");

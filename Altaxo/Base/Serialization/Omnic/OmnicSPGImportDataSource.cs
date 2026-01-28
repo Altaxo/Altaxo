@@ -32,6 +32,9 @@ using Altaxo.Data;
 
 namespace Altaxo.Serialization.Omnic
 {
+  /// <summary>
+  /// Table data source for importing Omnic SPG (spectrum group) files.
+  /// </summary>
   public class OmnicSPGImportDataSource : TableDataSourceBase, Altaxo.Data.IAltaxoTableDataSource
   {
     private IDataSourceImportOptions _importOptions;
@@ -62,6 +65,7 @@ namespace Altaxo.Serialization.Omnic
     [Altaxo.Serialization.Xml.XmlSerializationSurrogateFor(typeof(OmnicSPGImportDataSource), 1)]
     private class XmlSerializationSurrogate0 : Altaxo.Serialization.Xml.IXmlSerializationSurrogate
     {
+      /// <inheritdoc/>
       public virtual void Serialize(object obj, Altaxo.Serialization.Xml.IXmlSerializationInfo info)
       {
         var s = (OmnicSPGImportDataSource)obj;
@@ -71,6 +75,7 @@ namespace Altaxo.Serialization.Omnic
         info.AddArray("ProcessData", s._asciiFiles.ToArray(), s._asciiFiles.Count);
       }
 
+      /// <inheritdoc/>
       public object Deserialize(object? o, Altaxo.Serialization.Xml.IXmlDeserializationInfo info, object? parent)
       {
         if (o is OmnicSPGImportDataSource s)
@@ -98,7 +103,7 @@ namespace Altaxo.Serialization.Omnic
     #endregion Version 0
 
     /// <summary>
-    /// Deserialization constructor
+    /// Deserialization constructor.
     /// </summary>
     protected OmnicSPGImportDataSource(Altaxo.Serialization.Xml.IXmlDeserializationInfo info, int version)
     {
@@ -129,6 +134,7 @@ namespace Altaxo.Serialization.Omnic
       }
     }
 
+    /// <inheritdoc/>
     public bool CopyFrom(object obj)
     {
       if (ReferenceEquals(this, obj))
@@ -146,11 +152,21 @@ namespace Altaxo.Serialization.Omnic
 
 
 
+    /// <summary>
+    /// Initializes a new instance of the <see cref="OmnicSPGImportDataSource"/> class for a single file.
+    /// </summary>
+    /// <param name="fileName">The file name of the SPG file.</param>
+    /// <param name="options">The import options.</param>
     public OmnicSPGImportDataSource(string fileName, OmnicSPGImportOptions options)
       : this(new string[] { fileName }, options)
     {
     }
 
+    /// <summary>
+    /// Initializes a new instance of the <see cref="OmnicSPGImportDataSource"/> class for multiple files.
+    /// </summary>
+    /// <param name="fileNames">The file names of the SPG files.</param>
+    /// <param name="options">The import options.</param>
     public OmnicSPGImportDataSource(IEnumerable<string> fileNames, OmnicSPGImportOptions options)
     {
       _asciiFiles = new List<AbsoluteAndRelativeFileName>();
@@ -167,11 +183,13 @@ namespace Altaxo.Serialization.Omnic
       CopyFrom(from);
     }
 
+    /// <inheritdoc/>
     public object Clone()
     {
       return new OmnicSPGImportDataSource(this);
     }
 
+    /// <inheritdoc/>
     protected override IEnumerable<Main.DocumentNodeAndName> GetDocumentNodeChildrenWithName()
     {
       if (_importOptions is not null)
@@ -180,6 +198,7 @@ namespace Altaxo.Serialization.Omnic
 
     #endregion Construction
 
+    /// <inheritdoc/>
     protected override void OnResume(int eventCount)
     {
       base.OnResume(eventCount);
@@ -190,6 +209,7 @@ namespace Altaxo.Serialization.Omnic
         UpdateWatching(); // Compromise - we update only if the watch is off
     }
 
+    /// <inheritdoc/>
     public override void FillData_Unchecked(DataTable destinationTable, IProgressReporter reporter)
     {
       var validFileNames = _asciiFiles.Select(x => x.GetResolvedFileNameOrNull()).OfType<string>().Where(x => !string.IsNullOrEmpty(x)).ToArray();
@@ -218,6 +238,10 @@ namespace Altaxo.Serialization.Omnic
 
     #region Properties
 
+    /// <summary>
+    /// Gets or sets the (single) source file name.
+    /// </summary>
+    /// <exception cref="InvalidOperationException">Thrown if the number of source file names is not exactly one.</exception>
     public string SourceFileName
     {
       get
@@ -243,6 +267,9 @@ namespace Altaxo.Serialization.Omnic
       }
     }
 
+    /// <summary>
+    /// Gets or sets the source file names.
+    /// </summary>
     public IEnumerable<string> SourceFileNames
     {
       get
@@ -259,6 +286,9 @@ namespace Altaxo.Serialization.Omnic
       }
     }
 
+    /// <summary>
+    /// Gets the number of source file names.
+    /// </summary>
     public int SourceFileNameCount
     {
       get
@@ -267,6 +297,7 @@ namespace Altaxo.Serialization.Omnic
       }
     }
 
+    /// <inheritdoc/>
     public override IDataSourceImportOptions ImportOptions
     {
       get
@@ -289,6 +320,9 @@ namespace Altaxo.Serialization.Omnic
       }
     }
 
+    /// <summary>
+    /// Gets or sets the strongly typed process (import) options.
+    /// </summary>
     public OmnicSPGImportOptions ProcessOptions
     {
       get
@@ -301,12 +335,14 @@ namespace Altaxo.Serialization.Omnic
       }
     }
 
+    /// <inheritdoc/>
     object IAltaxoTableDataSource.ProcessOptionsObject
     {
       get => _processOptions;
       set => ProcessOptions = (OmnicSPGImportOptions)value;
     }
 
+    /// <inheritdoc/>
     object IAltaxoTableDataSource.ProcessDataObject
     {
       get => SourceFileNames;
@@ -330,15 +366,20 @@ namespace Altaxo.Serialization.Omnic
       }
     }
 
+    /// <inheritdoc/>
     public void OnAfterDeserialization()
     {
-      // Note: it is not neccessary to call UpdateWatching here; UpdateWatching is called when the table connects to this data source via subscription to the DataSourceChanged event
+      // Note: it is not necessary to call UpdateWatching here; UpdateWatching is called when the table connects to this data source via subscription to the DataSourceChanged event
     }
 
+    /// <inheritdoc/>
     public void VisitDocumentReferences(Main.DocNodeProxyReporter ReportProxies)
     {
     }
 
+    /// <summary>
+    /// Starts or updates file system watching according to the current import options.
+    /// </summary>
     public void UpdateWatching()
     {
       SwitchOffWatching();
@@ -449,6 +490,7 @@ namespace Altaxo.Serialization.Omnic
       UpdateWatching();
     }
 
+    /// <inheritdoc/>
     protected override void Dispose(bool disposing)
     {
       if (!IsDisposed)
@@ -457,6 +499,7 @@ namespace Altaxo.Serialization.Omnic
       base.Dispose(disposing);
     }
 
+    /// <inheritdoc/>
     public (IReadOnlyList<string> FileExtensions, string Explanation) GetFileExtensions()
     {
       return new OmnicSPGImporter().GetFileExtensions();

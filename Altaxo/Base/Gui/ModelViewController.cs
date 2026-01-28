@@ -34,12 +34,12 @@ namespace Altaxo.Gui
   public interface IMVCController : IDisposable
   {
     /// <summary>
-    /// Returns the Gui element that shows the model to the user.
+    /// Gets or sets the GUI element that shows the model to the user.
     /// </summary>
     object? ViewObject { get; set; }
 
     /// <summary>
-    /// Returns the model (document) that this controller manages.
+    /// Gets the model (document) that this controller manages.
     /// </summary>
     object ModelObject { get; }
   }
@@ -52,7 +52,7 @@ namespace Altaxo.Gui
   }
 
   /// <summary>
-  /// Enumerates wheter or not a document controlled by a controller is directly changed or not.
+  /// Specifies whether a document controlled by a controller is changed directly or via a copy.
   /// </summary>
   public enum UseDocument
   {
@@ -70,7 +70,7 @@ namespace Altaxo.Gui
   public interface IMVCANController : IMVCAController
   {
     /// <summary>
-    /// Initialize the controller with the document. If successfull, the function has to return true.
+    /// Initializes the controller with the document.
     /// </summary>
     /// <param name="args">The arguments neccessary to create the controller. Normally, the first argument is the document, the second can be the parent of the document and so on.</param>
     /// <returns>Returns <see langword="true"/> if successfull; otherwise <see langword="false"/>.</returns>
@@ -81,6 +81,11 @@ namespace Altaxo.Gui
     /// all changes can be reverted. If set to false, no copy must be made. The document is directly changed by the controller, and changes can not be reverted.
     /// Use the last option if a controller up in the hierarchie has already made a copy of the document.
     /// </summary>
+    /// <remarks>
+    /// If set to <see cref="UseDocument.Copy"/>, a copy of the document is used. If the controller is not applied, all changes can be reverted.
+    /// If set to <see cref="UseDocument.Directly"/>, no copy is made. The document is changed directly by the controller, and changes cannot be reverted.
+    /// Use <see cref="UseDocument.Directly"/> if a controller higher in the hierarchy has already made a copy of the document.
+    /// </remarks>
     UseDocument UseDocumentCopy { set; }
   }
 
@@ -103,39 +108,59 @@ namespace Altaxo.Gui
   public interface IMVCSupportsApplyCallback
   {
     /// <summary>
-    /// Occurs when the controller has sucessfully executed the apply function.
+    /// Occurs when the controller has successfully executed the apply function.
     /// </summary>
     event Action? SuccessfullyApplied;
   }
 
+  /// <summary>
+  /// Holds a controller instance together with an action that can be used to clear the member that references the controller.
+  /// </summary>
   public struct ControllerAndSetNullMethod
   {
     private IMVCAController? _doc;
     private Action? _setMemberToNullAction;
 
+    /// <summary>
+    /// Initializes a new instance of the <see cref="ControllerAndSetNullMethod"/> struct.
+    /// </summary>
+    /// <param name="doc">The controller instance.</param>
+    /// <param name="setMemberToNullAction">An action that sets the member referencing <paramref name="doc"/> to <see langword="null"/>.</param>
     public ControllerAndSetNullMethod(IMVCAController? doc, Action setMemberToNullAction)
     {
       _doc = doc;
       _setMemberToNullAction = setMemberToNullAction;
     }
 
+    /// <summary>
+    /// Gets the controller instance.
+    /// </summary>
     public IMVCAController? Controller { get { return _doc; } }
 
+    /// <summary>
+    /// Gets the action that sets the member referencing the controller to <see langword="null"/>.
+    /// </summary>
     public Action? SetMemberToNullAction { get { return _setMemberToNullAction; } }
 
+    /// <summary>
+    /// Gets a value indicating whether this instance is empty.
+    /// </summary>
     public bool IsEmpty { get { return _doc is null; } }
   }
 
   /// <summary>
-  /// Interface to a view that utilize a data context.
+  /// Interface to a view that uses a data context.
   /// </summary>
   public interface IDataContextAwareView
   {
+    /// <summary>
+    /// Sets the data context of the view.
+    /// </summary>
     object? DataContext { set; }
   }
 
   /// <summary>
-  /// Must be implemented by views that require a special shell window (other then the standard dialog window with OK, Cancel, Apply).
+  /// Must be implemented by views that require a special shell window (other than the standard dialog window with OK, Cancel, Apply).
   /// </summary>
   public interface IViewRequiresSpecialShellWindow
   {

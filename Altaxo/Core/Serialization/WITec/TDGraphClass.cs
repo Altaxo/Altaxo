@@ -256,6 +256,22 @@ namespace Altaxo.Serialization.WITec
 
       switch (dataType)
       {
+        case 2: // unsigned byte array
+          {
+            int ptr = 0;
+            for (int i = 0; i < dim1; ++i)
+            {
+              for (int j = 0; j < dim2; ++j)
+              {
+                for (int k = 0; k < spectralDimension; ++k)
+                {
+                  yArrays[i, j][k] = data[ptr];
+                  ptr += sizeof(byte);
+                }
+              }
+            }
+          }
+          break;
         case 6: // ushort array
           {
             int ptr = 0;
@@ -266,7 +282,7 @@ namespace Altaxo.Serialization.WITec
                 for (int k = 0; k < spectralDimension; ++k)
                 {
                   yArrays[i, j][k] = BitConverter.ToUInt16(data, ptr);
-                  ptr += sizeof(short);
+                  ptr += sizeof(ushort);
                 }
               }
             }

@@ -45,7 +45,7 @@ namespace Altaxo.Data
     /// Exceptions are caught and will be written to the Notes of the destination data table.
     /// </summary>
     /// <param name="destinationTable">The destination table.</param>
-    /// <param name="reporter">The progress reporter (can be null).</param>
+    /// <param name="reporter">The progress reporter (can be <see langword="null"/>).</param>
     /// <returns>Null if no exception was caught during processing; otherwise an error message.</returns>
     string? FillData(Altaxo.Data.DataTable destinationTable, IProgressReporter reporter);
 
@@ -57,7 +57,7 @@ namespace Altaxo.Data
     /// The data source is represented by this instance; the destination table is provided in the argument <paramref name="destinationTable"/>.
     /// </summary>
     /// <param name="destinationTable">The destination table.</param>
-    /// <param name="reporter">The progress reporter (can be null).</param>
+    /// <param name="reporter">The progress reporter (can be <see langword="null"/>).</param>
     void FillData_Unchecked(Altaxo.Data.DataTable destinationTable, IProgressReporter reporter);
 
     /// <summary>
@@ -110,6 +110,9 @@ namespace Altaxo.Data
     /// <summary>
     /// Gets an empty instance of <see cref="TableDataSourceChangedEventArgs"/>.
     /// </summary>
+    /// <remarks>
+    /// This member hides <see cref="EventArgs.Empty"/>.
+    /// </remarks>
     public static new readonly TableDataSourceChangedEventArgs Empty = new TableDataSourceChangedEventArgs();
   }
 }

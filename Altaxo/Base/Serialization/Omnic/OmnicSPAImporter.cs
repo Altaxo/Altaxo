@@ -274,7 +274,5 @@ namespace Altaxo.Serialization.Omnic
 
       return errorList.Length == 0 ? null : errorList.ToString();
     }
-
-
   }
 }

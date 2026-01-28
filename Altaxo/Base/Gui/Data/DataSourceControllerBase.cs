@@ -39,9 +39,7 @@ namespace Altaxo.Gui.Data
     private IMVCANController _processOptionsController;
     private IMVCANController _processDataController;
 
-    /// <summary>
-    /// Occurs when the apply operation has completed successfully.
-    /// </summary>
+    /// <inheritdoc/>
     public event Action SuccessfullyApplied;
 
     /// <summary>
@@ -185,8 +183,12 @@ namespace Altaxo.Gui.Data
     }
 
     /// <summary>
-    /// If <see langword="true"/>, the process data view is shown before (on top of) the process options view. If <see langword="false"/> (default), the process options view is shown on top of the process data view.
+    /// Gets a value indicating whether the process data view is shown before (on top of) the process options view.
     /// </summary>
+    /// <remarks>
+    /// If <see langword="true"/>, the process data view is shown before (on top of) the process options view.
+    /// If <see langword="false"/> (default), the process options view is shown above the process data view.
+    /// </remarks>
     public virtual bool ShowProcessDataBeforeProcessOptions
     {
       get => false;
