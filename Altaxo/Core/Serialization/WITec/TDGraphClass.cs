@@ -256,7 +256,7 @@ namespace Altaxo.Serialization.WITec
 
       switch (dataType)
       {
-        case 6: // short array
+        case 6: // ushort array
           {
             int ptr = 0;
             for (int i = 0; i < dim1; ++i)
@@ -265,7 +265,7 @@ namespace Altaxo.Serialization.WITec
               {
                 for (int k = 0; k < spectralDimension; ++k)
                 {
-                  yArrays[i, j][k] = BitConverter.ToInt16(data, ptr);
+                  yArrays[i, j][k] = BitConverter.ToUInt16(data, ptr);
                   ptr += sizeof(short);
                 }
               }
