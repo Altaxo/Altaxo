@@ -30,7 +30,6 @@ using System.Diagnostics.CodeAnalysis;
 using Altaxo.Collections;
 using Altaxo.Geometry;
 using Altaxo.Gui.Workbench;
-using Altaxo.Main;
 using Altaxo.Worksheet;
 using Altaxo.Worksheet.Commands;
 
@@ -265,6 +264,16 @@ namespace Altaxo.Gui.Worksheet.Viewing
       SelectedPropertyColumns.Clear();
       SelectedPropertyRows.Clear();
 
+      TriggerRedrawing();
+    }
+
+    /// <summary>
+    /// Forces the view to redraw its table area, updating the display to reflect any recent changes.
+    /// </summary>
+    /// <remarks>Call this method when changes to the underlying data or view state require the table area to
+    /// be refreshed. This method has no effect if the view is not initialized.</remarks>
+    public void TriggerRedrawing()
+    {
       _view?.TableArea_TriggerRedrawing();
     }
 

@@ -38,7 +38,7 @@ namespace Altaxo.Gui.Common
     public string Description { get; set; } = string.Empty;
 
     /// <summary>List of items. Has to be filled before showing the control.</summary>
-    public SelectableListNodeList List { get; protected set; }
+    public SelectableListNodeList List { get; init; }
 
     /// <summary>List of column names. The number of names must match the number of subitems in the list items.</summary>
     public List<string> ColumnNameList { get { return _columnNames; } }
@@ -70,19 +70,19 @@ namespace Altaxo.Gui.Common
   {
     /// <summary>Initialize the description text.</summary>
     /// <param name="value">Description text.</param>
-    void InitializeDescription(string value);
+    public void InitializeDescription(string value);
 
     /// <summary>
     /// Initialize the column names.
     /// </summary>
     /// <param name="colNames">Column names.</param>
-    void InitializeColumnNames(string[] colNames);
+    public void InitializeColumnNames(string[] colNames);
 
     /// <summary>
     /// Initializes the list.
     /// </summary>
     /// <param name="list">List of items shown.</param>
-    void InitializeList(SelectableListNodeList list);
+    public void InitializeList(SelectableListNodeList list);
   }
 
   /// <summary>

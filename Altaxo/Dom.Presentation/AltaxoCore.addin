@@ -1277,6 +1277,8 @@
       <Condition name="SelectedDataColumns" selected="one" action="Disable">
         <MenuItem	id="SetColumnValues" label="${res:XML.MainMenu.ColumnMenu.SetColumnValues}"	description="${res:XML.MainMenu.ColumnMenu.SetColumnValues.Description}"
                   class="Altaxo.Worksheet.Commands.SetColumnValues"	/>
+        <MenuItem	id="SelectColumns" label="${res:XML.MainMenu.ColumnMenu.SelectColumns}"	description="${res:XML.MainMenu.ColumnMenu.SelectColumns.Description}"
+                 class="Altaxo.Worksheet.Commands.SelectColumns"	/>
       </Condition>
 
     </Path>

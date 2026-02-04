@@ -679,7 +679,7 @@
     <value>Set column as Y</value>
   </data>
   <data name="XML.MainMenu.ColumnMenu.SetColumnAsX" xml:space="preserve">
-    <value>Set column As &amp;X</value>
+    <value>Set column as &amp;X</value>
   </data>
   <data name="XML.MainMenu.GraphMenu.Tools.EditGrid.Description" xml:space="preserve">
     <value>Edits the grid of the current layer, or, if the current layer has no child layers, edits the grid of the parent layer of the current layer.</value>
@@ -967,7 +967,7 @@
     <value>Set column as &amp;Error</value>
   </data>
   <data name="XML.MainMenu.ColumnMenu.SetColumnAsValue" xml:space="preserve">
-    <value>Set column As &amp;Value</value>
+    <value>Set column as &amp;Value</value>
   </data>
   <data name="XML.MainMenu.NewLayerMenu.LinkedTopXRightY.Description" xml:space="preserve">
     <value>Adds a linked layer with top X axis and right Y axis (but no axes links)</value>
@@ -1896,5 +1896,11 @@
   </data>
   <data name="XML.MainMenu.PlotMenu.PlotDensityImageFromXYZ.Description" xml:space="preserve">
     <value>Creates a linear density image of the selected V column. The X- and Y-column must be marked as 'X' and 'Y'.</value>
+  </data>
+  <data name="XML.MainMenu.ColumnMenu.SelectColumns" xml:space="preserve">
+    <value>Select columns with the same ...</value>
+  </data>
+  <data name="XML.MainMenu.ColumnMenu.SelectColumns.Description" xml:space="preserve">
+    <value>Select similar columns by their properties.</value>
   </data>
 </root>

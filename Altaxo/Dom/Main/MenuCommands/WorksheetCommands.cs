@@ -24,9 +24,12 @@
 
 #nullable disable warnings
 using System;
+using System.Collections.Generic;
+using Altaxo.Collections;
 using Altaxo.Data;
 using Altaxo.Data.Selections;
 using Altaxo.Gui;
+using Altaxo.Gui.Common;
 using Altaxo.Gui.Data.Sorting;
 using Altaxo.Gui.Scripting;
 using Altaxo.Gui.Workbench;
@@ -719,6 +722,90 @@ namespace Altaxo.Worksheet.Commands
         new OpenDataColumnScriptDialog().Run(ctrl); // Altaxo.Worksheet.Commands.ColumnCommands.SetColumnValues(ctrl);
       else
         new OpenPropertyColumnScriptDialog().Run(ctrl);
+    }
+  }
+
+  public class SelectColumns : AbstractWorksheetControllerCommand
+  {
+    public override void Run(Altaxo.Gui.Worksheet.Viewing.WorksheetController ctrl)
+    {
+      if (ctrl.SelectedDataColumns.Count != 1)
+        Current.Gui.ErrorMessageBox("Please select exactly one data column or one property column to select by.", "Selection not appropriate");
+      else
+      {
+        var dataTable = ctrl.DataTable;
+        var dataColumns = dataTable.DataColumns;
+        var selectedColumnNumber = ctrl.SelectedDataColumns[0];
+        var selectedColumn = ctrl.DataTable.DataColumns[selectedColumnNumber];
+        var selectedColumnKind = ctrl.DataTable.DataColumns.GetColumnKind(selectedColumn);
+        var selectedColumnGroupNumber = ctrl.DataTable.DataColumns.GetColumnGroup(selectedColumn);
+        var availableProperties = new List<string>();
+        for (int i = 0; i < ctrl.DataTable.PropertyColumns.ColumnCount; i++)
+        {
+          if (!ctrl.DataTable.PropertyColumns[i].IsElementEmpty(selectedColumnNumber))
+            availableProperties.Add(ctrl.DataTable.PropertyColumns.GetColumnName(i));
+        }
+
+        var document = new MultiChoiceList()
+        {
+          Description = "Select columns having the same:",
+          ColumnNames = new string[] { "Description" },
+          List = new SelectableListNodeList()
+          {
+            new SelectableListNode("Group number", 0, true),
+            new SelectableListNode("Column kind", 1, true),
+          },
+        };
+        document.List.AddRange(availableProperties.ConvertAll(p => new SelectableListNode(p, p, false)));
+
+        if (Current.Gui.ShowDialog(ref document, "Select Columns", false))
+        {
+          bool isSameGroup = document.List[0].IsSelected;
+          bool isSameKind = document.List[1].IsSelected;
+          var listOfProperties = new List<string>();
+          for (int i = 2; i < document.List.Count; i++)
+          {
+            if (document.List[i].IsSelected)
+              listOfProperties.Add((string)document.List[i].Tag);
+          }
+
+          // now scan all columns and select those matching the criteria
+          for (int idxColumn = 0; idxColumn < dataColumns.ColumnCount; ++idxColumn)
+          {
+            if (idxColumn == selectedColumnNumber)
+              continue;
+
+            var col = dataColumns[idxColumn];
+            bool select = true;
+            if (isSameGroup)
+            {
+              var groupNumber = dataColumns.GetColumnGroup(col);
+              if (groupNumber != selectedColumnGroupNumber)
+                select = false;
+            }
+            if (isSameKind)
+            {
+              var kind = dataColumns.GetColumnKind(col);
+              if (kind != selectedColumnKind)
+                select = false;
+            }
+            foreach (var propName in listOfProperties)
+            {
+              var propCol = dataTable.PropertyColumns[propName];
+              if (propCol[idxColumn] != propCol[selectedColumnNumber])
+              {
+                select = false;
+                break;
+              }
+            }
+            if (select)
+            {
+              ctrl.SelectedDataColumns.Add(idxColumn);
+            }
+          }
+          ctrl.TriggerRedrawing();
+        }
+      }
     }
   }
 
