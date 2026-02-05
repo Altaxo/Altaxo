@@ -238,6 +238,31 @@ namespace Altaxo.Calc
         return (1 - fraction) * leftValue + fraction * rightValue;
     }
 
+    /// <summary>
+    /// Searches for x in the array and returns the first index where x is found.
+    /// If x is not found, but is inbetween two consecutive elements of the array, a fractional index is returned, which is calculated by linear interpolation between the two indices.
+    /// </summary>
+    /// <param name="xArray">The x array.</param>
+    /// <param name="x">The searched x value.</param>
+    /// <returns>The fractional index of x in the array. If x is outside the elements of the array, null is returned.</returns>
+    /// <remarks>
+    /// The array does not need to be sorted. The cost is O(n).
+    /// </remarks>
+    public static double? GetFirstFractionalIndexOfXInUnorderedArray(ReadOnlySpan<double> xArray, double x)
+    {
+      for (int i = 1; i < xArray.Length; i++)
+      {
+        var x0 = xArray[i - 1];
+        var x1 = xArray[i];
+
+        if ((x0 <= x1 && x0 <= x && x <= x1) || (x1 < x0 && x1 <= x && x <= x0))
+        {
+          return i - 1 + (x - x0) / (x1 - x0);
+        }
+      }
+      return null;
+    }
+
 
     /// <summary>
     /// Interpolates values of an array.
@@ -247,7 +272,7 @@ namespace Altaxo.Calc
     /// <param name="extendToSides">If true and the value of index is out of range, the values of the array
     /// at the left side or the right side will be returned; otherwise, if the index is out of range, an exception will be thrown.</param>
     /// <returns>The interpolated value at the fractional index.</returns>
-    public static double InterpolateLinear(double index, double[] array, bool extendToSides = false)
+    public static double InterpolateLinear(double index, ReadOnlySpan<double> array, bool extendToSides = false)
     {
       if (!(index >= 0))
       {
@@ -259,17 +284,37 @@ namespace Altaxo.Calc
       else if (!(index <= array.Length - 1))
       {
         if (extendToSides)
-          return array[array.Length - 1];
+          return array[^1];
         else
           throw new ArgumentOutOfRangeException(nameof(index));
       }
       else if (index == array.Length - 1)
       {
-        return array[array.Length - 1];
+        return array[^1];
       }
 
       int idx = (int)index;
       return InterpolateLinear(index - idx, array[idx], array[idx + 1]);
+    }
+
+    /// <summary>
+    /// Gets the linearly interpolated y value of a given x value in an unordered array of x values and corresponding y values.
+    /// </summary>
+    /// <param name="xArray">The x array.</param>
+    /// <param name="x">The x value for which the y value should be calculated.</param>
+    /// <param name="y">The y array, which must have the same length as the x array.</param>
+    /// <returns>The linearly interpolated y value of the given x value. If x is outside the elements of the x array, null is returned.</returns>
+    public static double GetLinearlyInterpolatedYOfXInUnorderedArray(ReadOnlySpan<double> xArray, double x, ReadOnlySpan<double> y, bool extendToSides = false)
+    {
+      var fractionalIndex = GetFirstFractionalIndexOfXInUnorderedArray(xArray, x);
+      if (fractionalIndex.HasValue)
+      {
+        return InterpolateLinear(fractionalIndex.Value, y, extendToSides);
+      }
+      else
+      {
+        throw new ArgumentOutOfRangeException(nameof(x), "The value of x is outside the range of the x array.");
+      }
     }
 
     /// <summary>
