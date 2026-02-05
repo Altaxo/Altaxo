@@ -336,10 +336,10 @@ namespace Altaxo.Worksheet.Commands.Analysis
 
       // Create a matrix of appropriate dimensions and fill it
 
-      MatrixMath.LeftSpineJaggedArrayMatrix<double> matrixX;
+      Matrix<double> matrixX;
       if (bHorizontalOrientedSpectrum)
       {
-        matrixX = new MatrixMath.LeftSpineJaggedArrayMatrix<double>(numrows, numcols);
+        matrixX = CreateMatrix.Dense<double>(numrows, numcols);
         int ccol = 0; // current column in the matrix
         for (int i = 0; i < prenumcols; i++)
         {
@@ -358,7 +358,7 @@ namespace Altaxo.Worksheet.Commands.Analysis
       } // end if it was a horizontal oriented spectrum
       else // if it is a vertical oriented spectrum
       {
-        matrixX = new MatrixMath.LeftSpineJaggedArrayMatrix<double>(numcols, numrows);
+        matrixX = matrixX = CreateMatrix.Dense<double>(numcols, numrows);
         int ccol = 0; // current column in the matrix
         for (int i = 0; i < prenumcols; i++)
         {
@@ -377,13 +377,11 @@ namespace Altaxo.Worksheet.Commands.Analysis
       } // if it was a vertical oriented spectrum
 
       // now do PCA with the matrix
-      var factors = new MatrixMath.TopSpineJaggedArrayMatrix<double>(0, 0);
-      var loads = new MatrixMath.LeftSpineJaggedArrayMatrix<double>(0, 0);
-      var residualVariances = new MatrixMath.LeftSpineJaggedArrayMatrix<double>(0, 0);
+
       var meanX = new MatrixMath.MatrixWithOneRow<double>(matrixX.ColumnCount);
       // first, center the matrix
       MatrixMath.ColumnsToZeroMean(matrixX, meanX);
-      Altaxo.Calc.LinearAlgebra.Double.Factorization.PrincipalComponentAnalysisByNIPALS.NIPALS_HO(matrixX, maxNumberOfFactors, 1E-9, factors, loads, residualVariances);
+      var (factors, loads, residualVariances) = Altaxo.Calc.LinearAlgebra.Double.Factorization.PrincipalComponentAnalysisByNIPALS.NIPALS_HO(matrixX, maxNumberOfFactors, 1E-9);
 
       // now we have to create a new table where to place the calculated factors and loads
       // we will do that in a vertical oriented manner, i.e. even if the loads are
@@ -438,8 +436,8 @@ namespace Altaxo.Worksheet.Commands.Analysis
         {
           var col = new Altaxo.Data.DoubleColumn();
 
-          for (int i = 0; i < residualVariances.RowCount; i++)
-            col[i] = residualVariances[i, 0];
+          for (int i = 0; i < residualVariances.Count; i++)
+            col[i] = residualVariances[i];
           table.DataColumns.Add(col, "ResidualVariance", Altaxo.Data.ColumnKind.V, 4);
         }
 

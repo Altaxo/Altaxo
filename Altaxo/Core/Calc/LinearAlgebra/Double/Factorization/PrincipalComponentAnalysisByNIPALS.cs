@@ -23,7 +23,6 @@
 #endregion Copyright
 
 using System;
-using static Altaxo.Calc.LinearAlgebra.MatrixMath;
 
 namespace Altaxo.Calc.LinearAlgebra.Double.Factorization
 {
@@ -83,30 +82,35 @@ namespace Altaxo.Calc.LinearAlgebra.Double.Factorization
     /// measurements under different conditions.</param>
     /// <param name="numFactors">The number of factors to be calculated. If 0 is provided, factors are calculated until the provided accuracy is reached. </param>
     /// <param name="accuracy">The relative residual variance that should be reached.</param>
-    /// <param name="factors">Resulting matrix of factors. You have to provide a extensible matrix of dimension(0,0) as the vertical score vectors are appended to the matrix.</param>
-    /// <param name="loads">Resulting matrix consiting of horizontal load vectors (eigenspectra). You have to provide a extensible matrix of dimension(0,0) here.</param>
-    /// <param name="residualVarianceVector">Residual variance. Element[0] is the original variance, element[1] the residual variance after the first factor subtracted and so on. You can provide null if you don't need this result.</param>
-    public static void NIPALS_HO(
-      IMatrix<double> X,
+    /// <returns>
+    /// A tuple containing: the factor (scores) matrix (columns are score vectors), the loadings matrix (rows are load vectors),
+    /// and a residual variance vector (element[0] is the original variance; element[1] is the residual variance after subtracting the first factor; and so on).
+    /// </returns>
+    public static (Matrix<double> factors, Matrix<double> loads, Vector<double> residualVarianceVector) NIPALS_HO(
+      Matrix<double> X,
       int numFactors,
-      double accuracy,
-      IRightExtensibleMatrix<double> factors,
-      IBottomExtensibleMatrix<double> loads,
-      IBottomExtensibleMatrix<double> residualVarianceVector)
+      double accuracy)
     {
       // first center the matrix
       //MatrixMath.ColumnsToZeroMean(X, null);
 
-      double originalVariance = Math.Sqrt(MatrixMath.SumOfSquares(X));
-
-      if (residualVarianceVector is not null)
-        residualVarianceVector.AppendBottom(new MatrixMath.ScalarAsMatrix<double>(originalVariance));
-
-      IMatrix<double> l = new MatrixWithOneRow<double>(X.ColumnCount);
-      IMatrix<double>? t_prev = null;
-      IMatrix<double> t = new MatrixWithOneColumn<double>(X.RowCount);
+      var originalVariance = X.FrobeniusNorm();
 
       int maxFactors = numFactors <= 0 ? X.ColumnCount : Math.Min(numFactors, X.ColumnCount);
+      int estimatedFactors = maxFactors;
+
+      var factorsList = new Vector<double>[estimatedFactors];
+      var loadsList = new Vector<double>[estimatedFactors];
+
+      var residuals = new double[estimatedFactors + 1];
+      int residualCount = 0;
+      residuals[residualCount++] = originalVariance;
+
+      var loading = CreateVector.Dense<double>(X.ColumnCount);
+      Vector<double>? scoresPrev = null;
+      var scores = CreateVector.Dense<double>(X.RowCount);
+      const double scoresConvergenceTolerance = 1E-9;
+      var scoresConvergenceToleranceSquared = scoresConvergenceTolerance * scoresConvergenceTolerance;
 
       for (int nFactor = 0; nFactor < maxFactors; nFactor++)
       {
@@ -115,66 +119,89 @@ namespace Altaxo.Calc.LinearAlgebra.Double.Factorization
         int rowoffset = 0;
         do
         {
-          Submatrix(X, l, rowoffset, 0);     // l is now a horizontal vector
+          X.Row(rowoffset, loading); // loading is now a horizontal vector
           rowoffset++;
-        } while (IsZeroMatrix(l) && rowoffset < X.RowCount);
+        } while (loading.L2Norm() == 0 && rowoffset < X.RowCount);
 
         for (int iter = 0; iter < 500; iter++)
         {
           // 2. Calculate the new vector t for the factor values
-          MultiplySecondTransposed(X, l, t); // t = X*l_t (t is  a vertical vector)
+          X.Multiply(loading, scores); // scores = X*loading (scores is a vertical vector)
 
           // Compare this with the previous one
-          if (t_prev is not null && IsEqual(t_prev, t, 1E-9))
-            break;
+          if (scoresPrev is not null)
+          {
+            double squaredDistance = 0;
+            for (int i = 0; i < scores.Count; i++)
+            {
+              var d = scores[i] - scoresPrev[i];
+              squaredDistance += d * d;
+            }
+            if (squaredDistance <= scoresConvergenceToleranceSquared)
+              break;
+          }
 
           // 3. Calculate the new loads
-          MultiplyFirstTransposed(t, X, l); // l = t_tr*X  (gives a horizontal vector of load (= eigenvalue spectrum)
+          X.TransposeThisAndMultiply(scores, loading); // loading = X^T * scores
 
           // normalize the (one) row
-          NormalizeRows(l); // normalize the eigenvector spectrum
+          var loadingNorm = loading.L2Norm();
+          if (loadingNorm != 0)
+            loading.Divide(loadingNorm, loading);
 
           // 4. Goto step 2 or break after a number of iterations
-          if (t_prev is null)
-            t_prev = new MatrixWithOneColumn<double>(X.RowCount);
-          Copy(t, t_prev); // stores the content of t in t_prev
+          scoresPrev ??= CreateVector.Dense<double>(X.RowCount);
+          scores.CopyTo(scoresPrev); // stores the content of scores in scoresPrev
         }
 
         // Store factor and loads
-        factors.AppendRight(t);
-        loads.AppendBottom(l);
+        factorsList[nFactor] = scores.Clone();
+        loadsList[nFactor] = loading.Clone();
 
         // 5. Calculate the residual matrix X = X - t*l
-        SubtractProductFromSelf(t, l, X); // X is now the residual matrix
+        // (outer product)
+        X.Subtract(scores.OuterProduct(loading), X); // X is now the residual matrix
 
         // if the number of factors to calculate is not provided,
         // calculate the norm of the residual matrix and compare with the original
         // one
-        if (numFactors <= 0 && !(residualVarianceVector is null))
+        if (numFactors <= 0)
         {
-          double residualVariance = Math.Sqrt(MatrixMath.SumOfSquares(X));
-          residualVarianceVector.AppendBottom(new MatrixMath.ScalarAsMatrix<double>(residualVariance));
+          double residualVariance = X.FrobeniusNorm();
+          residuals[residualCount++] = residualVariance;
 
           if (residualVariance <= accuracy * originalVariance)
           {
+            estimatedFactors = nFactor + 1;
             break;
           }
         }
       } // for all factors
+
+      if (numFactors > 0)
+        estimatedFactors = maxFactors;
+
+      var factors = CreateMatrix.Dense<double>(X.RowCount, estimatedFactors);
+      var loads = CreateMatrix.Dense<double>(estimatedFactors, X.ColumnCount);
+      for (int i = 0; i < estimatedFactors; i++)
+      {
+        factors.SetColumn(i, factorsList[i]);
+        loads.SetRow(i, loadsList[i]);
+      }
+
+      var residualVarianceVector = CreateVector.Dense<double>(residualCount);
+      for (int i = 0; i < residualCount; i++)
+        residualVarianceVector[i] = residuals[i];
+
+      return (factors, loads, residualVarianceVector);
     } // end NIPALS
 
     /// <inheritdoc/>
     public (Matrix<double> W, Matrix<double> H) Factorize(Matrix<double> A, int rank)
     {
-      var factors = new MatrixMath.TopSpineJaggedArrayMatrix<double>(0, 0);
-      var loads = new MatrixMath.LeftSpineJaggedArrayMatrix<double>(0, 0);
-      var residualVariances = new MatrixMath.LeftSpineJaggedArrayMatrix<double>(0, 0);
-      NIPALS_HO(A, rank, 1E-9, factors, loads, residualVariances);
-      var W = CreateMatrix.Dense<double>(A.RowCount, rank);
-      var H = CreateMatrix.Dense<double>(rank, A.ColumnCount);
-      MatrixMath.Copy(factors, W);
-      MatrixMath.Copy(loads, H);
-      return (W, H);
+      var x = A.Clone();
+      var (factors, loads, _) = NIPALS_HO(x, rank, 1E-9);
+      return (factors, loads);
     }
   }
 }

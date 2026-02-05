@@ -36,21 +36,17 @@ namespace Altaxo.Calc.LinearAlgebra.Double.Factorization
       var originalMatrix = originalScores * originalLoadings;
       var matrixX = originalMatrix.Clone();
 
-      var factors = new MatrixMath.TopSpineJaggedArrayMatrix<double>(0, 0);
-      var loads = new MatrixMath.LeftSpineJaggedArrayMatrix<double>(0, 0);
-      var residualVariances = new MatrixMath.LeftSpineJaggedArrayMatrix<double>(0, 0);
+
       var meanX = new MatrixMath.MatrixWithOneRow<double>(matrixX.ColumnCount);
       // first, center the matrix
       MatrixMath.ColumnsToZeroMean(matrixX, meanX);
 
       var originalMatrix2 = matrixX.Clone();
 
-      PrincipalComponentAnalysisByNIPALS.NIPALS_HO(matrixX, 3, 1E-9, factors, loads, residualVariances);
+      var (factors, loads, residualVariances) = PrincipalComponentAnalysisByNIPALS.NIPALS_HO(matrixX, 3, 1E-9);
 
-      var mfactors = CreateMatrix.Dense<double>(factors.RowCount, factors.ColumnCount);
-      var mloads = CreateMatrix.Dense<double>(loads.RowCount, loads.ColumnCount);
-      MatrixMath.Copy(factors, mfactors);
-      MatrixMath.Copy(loads, mloads);
+      var mfactors = factors;
+      var mloads = loads;
 
       var relError = RelativeError(mfactors, mloads, originalMatrix2);
       Assert.True(relError < 1E-15);
