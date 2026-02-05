@@ -145,25 +145,36 @@ namespace Altaxo.Calc.LinearAlgebra.Double.Factorization
       // 3. ICA - symmetric FastICA
       var W = Matrix<double>.Build.Random(components, components);
 
+      // preallocate matrices for the iteration loop
+      var WX = Matrix<double>.Build.Dense(components, n);
+      var G = Matrix<double>.Build.Dense(components, n);
+      var Gp = Matrix<double>.Build.Dense(components, n);
+      var GXwhite = Matrix<double>.Build.Dense(components, m);
+      var GpRowSumsW = Matrix<double>.Build.Dense(components, m);
+      var Wnew = Matrix<double>.Build.Dense(components, components);
+
       for (int iter = 0; iter < maxIter; iter++)
       {
-        var WX = W * Xwhite.Transpose();
+        W.TransposeAndMultiply(Xwhite, WX);
 
         // g(u) = tanh(u)
-        var G = WX.Map(Math.Tanh);
-        var Gp = WX.Map(u => 1 - Math.Pow(Math.Tanh(u), 2));
+        WX.Map(Math.Tanh, G);
+        WX.Map(u => 1 - Math.Pow(Math.Tanh(u), 2), Gp);
 
-        var Wnew = (G * Xwhite) / n -
-                   Matrix<double>.Build.DiagonalOfDiagonalVector(Gp.RowSums() / n) * W;
+
+        //var Wnew = (G * Xwhite) - Matrix<double>.Build.DiagonalOfDiagonalVector(Gp.RowSums()) * W;
+        G.Multiply(Xwhite, GXwhite);
+        Matrix<double>.Build.DiagonalOfDiagonalVector(Gp.RowSums()).Multiply(W, GpRowSumsW);
+        GXwhite.Subtract(GpRowSumsW, Wnew);
 
         // Orthogonalize
         var svd = Wnew.Svd();
-        Wnew = svd.U * svd.VT;
+        svd.U.Multiply(svd.VT, Wnew);
 
         if ((Wnew - W).L2Norm() < tol)
           break;
 
-        W = Wnew;
+        (W, Wnew) = (Wnew, W);
       }
 
       // 4. Independent components
