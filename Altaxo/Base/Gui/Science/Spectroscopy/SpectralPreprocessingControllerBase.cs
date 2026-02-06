@@ -170,8 +170,11 @@ namespace Altaxo.Gui.Science.Spectroscopy
         var controllers = new SelectableListNodeList();
         AddControllers(controllers);
         TabControllers = new ItemsController<IMVCANController>(controllers, EhSelectedTabChanged);
-        _selectedController = (IMVCANController)controllers[0].Tag;
-        TabControllers.SelectedValue = _selectedController;
+        if (controllers.Count > 0)
+        {
+          _selectedController = (IMVCANController)controllers[0].Tag;
+          TabControllers.SelectedValue = _selectedController;
+        }
 
         var types = new (string Caption, Type DefaultType, Func<IMVCANController> CreateController)[]
         {
