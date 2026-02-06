@@ -273,6 +273,7 @@ namespace Altaxo.Calc.LinearAlgebra.Double.Factorization
         double tol = 1e-6)
     {
       int n = X.RowCount;
+      int m = X.ColumnCount;
 
       // 1. Center
       var mean = X.ColumnSums() / n;
@@ -285,21 +286,30 @@ namespace Altaxo.Calc.LinearAlgebra.Double.Factorization
       int k = components;
       var W = Matrix<double>.Build.Random(k, k);
 
+      // preallocate matrices for the iteration loop
+      var WX = Matrix<double>.Build.Dense(components, n);
+      var G = Matrix<double>.Build.Dense(components, n);
+      var Gp = Matrix<double>.Build.Dense(components, n);
+      var GXwhite = Matrix<double>.Build.Dense(components, m);
+      var GpRowSumsW = Matrix<double>.Build.Dense(components, m);
+      var Wnew = Matrix<double>.Build.Dense(components, components);
+
       for (int iter = 0; iter < maxIter; iter++)
       {
-        var WX = W * Xwhite.Transpose(); // k x n
+        W.TransposeAndMultiply(Xwhite, WX); // var WX = W * Xwhite.Transpose(); // k x n
 
-        var G = WX.Map(Math.Tanh);
-        var Gp = WX.Map(u => 1.0 - Math.Pow(Math.Tanh(u), 2.0));
+        WX.Map(Math.Tanh, G); // var G = WX.Map(Math.Tanh);
+        WX.Map(u => 1.0 - Math.Pow(Math.Tanh(u), 2.0), Gp); // var Gp = WX.Map(u => 1.0 - Math.Pow(Math.Tanh(u), 2.0));
 
-        var Wnew = (G * Xwhite) / n;
+        G.Multiply(Xwhite, Wnew); // var Wnew = (G * Xwhite) / n;
 
-        var gpMean = Gp.RowSums() / n;
+        var gpMean = Gp.RowSums(); //  var gpMean = Gp.RowSums() / n;
         var Dgp = Matrix<double>.Build.DiagonalOfDiagonalVector(gpMean);
-        Wnew -= Dgp * W;
+        Dgp.Multiply(W, GpRowSumsW);
+        Wnew.Subtract(GpRowSumsW, Wnew); // Wnew -= Dgp * W;
 
         var svdW = Wnew.Svd(computeVectors: true);
-        Wnew = svdW.U * svdW.VT;
+        svdW.U.Multiply(svdW.VT, Wnew); //  Wnew = svdW.U * svdW.VT;
 
         if ((Wnew - W).L2Norm() < tol)
         {
@@ -307,7 +317,7 @@ namespace Altaxo.Calc.LinearAlgebra.Double.Factorization
           break;
         }
 
-        W = Wnew;
+        (W, Wnew) = (Wnew, W);
       }
 
       var S_ic = W * Xwhite.Transpose();
@@ -345,21 +355,31 @@ namespace Altaxo.Calc.LinearAlgebra.Double.Factorization
 
       // 3. ICA on whitened data
       var Wica = Matrix<double>.Build.Random(rank, rank);
+
+      // preallocate matrices for the iteration loop
+      var WX = Matrix<double>.Build.Dense(rank, n);
+      var G = Matrix<double>.Build.Dense(rank, n);
+      var Gp = Matrix<double>.Build.Dense(rank, n);
+      var GXwhite = Matrix<double>.Build.Dense(rank, m);
+      var GpRowSumsW = Matrix<double>.Build.Dense(rank, m);
+      var Wnew = Matrix<double>.Build.Dense(rank, rank);
+
       for (int iter = 0; iter < MaximumNumberOfIterations; iter++)
       {
-        var WX = Wica * Xwhite.Transpose(); // rank x n
+        Wica.TransposeAndMultiply(Xwhite, WX); // var WX = Wica * Xwhite.Transpose(); // rank x n
 
-        var G = WX.Map(Math.Tanh);
-        var Gp = WX.Map(u => 1.0 - Math.Pow(Math.Tanh(u), 2.0));
+        WX.Map(Math.Tanh, G); // var G = WX.Map(Math.Tanh);
+        WX.Map(u => 1.0 - Math.Pow(Math.Tanh(u), 2.0), Gp);  //var Gp = WX.Map(u => 1.0 - Math.Pow(Math.Tanh(u), 2.0));
 
-        var Wnew = (G * Xwhite) / n;
+        G.Multiply(Xwhite, Wnew); // var Wnew = (G * Xwhite) / n;
 
-        var gpMean = Gp.RowSums() / n;
+        var gpMean = Gp.RowSums(); // var gpMean = Gp.RowSums() / n;
         var Dgp = Matrix<double>.Build.DiagonalOfDiagonalVector(gpMean);
-        Wnew -= Dgp * Wica;
+        Dgp.Multiply(Wica, GpRowSumsW);
+        Wnew.Subtract(GpRowSumsW, Wnew); // Wnew -= Dgp * Wica;
 
         var svdW = Wnew.Svd(computeVectors: true);
-        Wnew = svdW.U * svdW.VT;
+        svdW.U.Multiply(svdW.VT, Wnew); // Wnew = svdW.U * svdW.VT;
 
         if ((Wnew - Wica).L2Norm() < Tolerance)
         {
@@ -367,7 +387,7 @@ namespace Altaxo.Calc.LinearAlgebra.Double.Factorization
           break;
         }
 
-        Wica = Wnew;
+        (Wica, Wnew) = (Wnew, Wica);
       }
 
       // 4. Convert ICA result into a low-rank factorization of the (centered) original data.
