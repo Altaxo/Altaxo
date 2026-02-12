@@ -271,7 +271,10 @@ namespace Altaxo.Gui.Graph.Gdi.Viewing.GraphControllerMouseHandlers
     protected virtual void OnPlotItemSet(XYColumnPlotItem plotItem, DataTable existingDestinationTable)
     {
       _destinationTableName = existingDestinationTable.Name;
-      OnPlotItemSet(plotItem);
+      _layer = Altaxo.Main.AbsoluteDocumentPath.GetRootNodeImplementing<XYPlotLayer>(plotItem);
+      PlotItem = plotItem;
+      PlotItemNumber = GetPlotItemNumber(_layer, PlotItem);
+      _grac.CurrentPlotNumber = PlotItemNumber;
     }
 
     /// <summary>

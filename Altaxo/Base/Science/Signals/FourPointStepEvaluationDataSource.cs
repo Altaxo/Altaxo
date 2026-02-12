@@ -51,6 +51,7 @@ namespace Altaxo.Science.Signals
     public const string ParameterNameMiddleY = "StepMiddleY";
     public const string ParameterNameStepMiddleSlope = "StepMiddleSlope";
     public const string ParameterNameStepHeight = "StepHeight";
+    public const string ParameterNameStepSignificance = "StepSignificance";
     public const string ParameterNameStepWidth = "StepWidth";
     public const string ParameterNameStepLeftX = "StepLeftX";
     public const string ParameterNameStepLeftY = "StepLeftY";
@@ -67,6 +68,7 @@ namespace Altaxo.Science.Signals
         yield return ParameterNameMiddleY;
         yield return ParameterNameStepMiddleSlope;
         yield return ParameterNameStepHeight;
+        yield return ParameterNameStepSignificance;
         yield return ParameterNameStepWidth;
         yield return ParameterNameStepLeftX;
         yield return ParameterNameStepLeftY;
@@ -226,6 +228,10 @@ namespace Altaxo.Science.Signals
       destinationTable[ColumnNameParameterName][idxPara] = ParameterNameStepHeight;
       destinationTable[ColumnNameParameterValue][idxPara] = stepEvaluation.StepHeight;
       destinationTable.PropertyBagNotNull.SetValue(ParameterNameStepHeight, stepEvaluation.StepHeight);
+      ++idxPara;
+      destinationTable[ColumnNameParameterName][idxPara] = ParameterNameStepSignificance;
+      destinationTable[ColumnNameParameterValue][idxPara] = stepEvaluation.StepSignificance;
+      destinationTable.PropertyBagNotNull.SetValue(ParameterNameStepSignificance, stepEvaluation.StepSignificance);
       ++idxPara;
       destinationTable[ColumnNameParameterName][idxPara] = ParameterNameStepWidth;
       destinationTable[ColumnNameParameterValue][idxPara] = stepEvaluation.StepWidth;

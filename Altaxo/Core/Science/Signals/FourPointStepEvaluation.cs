@@ -132,6 +132,11 @@ namespace Altaxo.Science.Signals
     public double StepHeight { get; private set; } = double.NaN;
 
     /// <summary>
+    /// The step significance is defined as the step height divided by the sum of the standard deviations of the left and right regression line.
+    /// </summary>
+    public double StepSignificance { get; private set; } = double.NaN;
+
+    /// <summary>
     /// Gets the width of the step.
     /// </summary>
     /// <value>
@@ -328,8 +333,15 @@ namespace Altaxo.Science.Signals
       StepHeight = Math.Abs(leftRegression.GetYOfX(MiddlePointX) - rightRegression.GetYOfX(MiddlePointX));
       StepWidth = Math.Abs(IntersectionPointLeftMiddle.X - IntersectionPointRightMiddle.X);
       StepSlope = MiddleRegression.GetA1();
-    }
 
+      var denominator = Math.Sqrt(LeftRegression.SigmaSquared()) + Math.Sqrt(RightRegression.SigmaSquared());
+      StepSignificance = denominator switch
+      {
+        > 0 and < double.MaxValue => StepHeight / denominator,
+        0 => StepHeight / denominator,
+        _ => double.NaN,
+      };
+    }
 
     /// <summary>
     /// Gets the regression for the left or the right line.

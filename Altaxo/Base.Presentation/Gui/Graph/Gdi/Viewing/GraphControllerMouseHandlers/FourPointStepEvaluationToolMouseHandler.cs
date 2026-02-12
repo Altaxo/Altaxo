@@ -65,7 +65,7 @@ namespace Altaxo.Gui.Graph.Gdi.Viewing.GraphControllerMouseHandlers
 
     private QuickLinearRegression? _leftReg, _rightReg, _middleReg;
 
-    
+
     private bool _isEvaluationSaved;
 
     /// <summary>
@@ -509,12 +509,7 @@ namespace Altaxo.Gui.Graph.Gdi.Viewing.GraphControllerMouseHandlers
         Current.Project.DataTableCollection.TryGetValue(_destinationTableName, out newTable);
       }
 
-      if (newTable is null)
-      {
-        var newTableName = sourceTable.Name + $"_StepEvaluation_{yname}_Vs_{xname}";
-        newTableName = Current.Project.DataTableCollection.FindNewItemName(newTableName);
-        newTable = Current.Project.DataTableCollection.EnsureExistence(newTableName);
-      }
+      var oldDataSource = newTable?.DataSource as FourPointStepEvaluationDataSource;
 
       var dataSourceOptions = new FourPointStepEvaluationOptions()
       {
@@ -522,10 +517,17 @@ namespace Altaxo.Gui.Graph.Gdi.Viewing.GraphControllerMouseHandlers
         IndexLeftInner = _handle[1].PlotIndex,
         IndexRightInner = _handle[2].PlotIndex,
         IndexRightOuter = _handle[3].PlotIndex,
-        UseRegressionForLeftAndRightLine = _options.UseRegressionForLeftAndRightLine,
-        MiddleRegressionLevels = _options.MiddleRegressionLevels,
-        MiddleLineOverlap = _options.MiddleLineOverlap,
+        UseRegressionForLeftAndRightLine = oldDataSource?.ProcessOptions?.UseRegressionForLeftAndRightLine ?? _options.UseRegressionForLeftAndRightLine,
+        MiddleRegressionLevels = oldDataSource?.ProcessOptions?.MiddleRegressionLevels ?? _options.MiddleRegressionLevels,
+        MiddleLineOverlap = oldDataSource?.ProcessOptions?.MiddleLineOverlap ?? _options.MiddleLineOverlap,
       };
+
+      if (newTable is null)
+      {
+        var newTableName = sourceTable.Name + $"_StepEvaluation_{yname}_Vs_{xname}";
+        newTableName = Current.Project.DataTableCollection.FindNewItemName(newTableName);
+        newTable = Current.Project.DataTableCollection.EnsureExistence(newTableName);
+      }
 
       newTable.DataSource = new FourPointStepEvaluationDataSource(new XAndYColumn(PlotItem.Data), dataSourceOptions, new DataSourceImportOptions());
 
