@@ -192,6 +192,7 @@ namespace Altaxo.Calc.Regression.Multivariate
     public override void FillData_Unchecked(DataTable destinationTable, IProgressReporter reporter)
     {
       destinationTable.DataColumns.RemoveColumnsAll();
+      destinationTable.PropCols.RemoveColumnsAll();
 
       LinearAlgebraProviderSettings.ApplyAlgebraProviderSetting();
 
