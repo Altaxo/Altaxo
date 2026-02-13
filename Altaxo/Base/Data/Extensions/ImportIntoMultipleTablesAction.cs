@@ -25,6 +25,7 @@
 #nullable enable
 using System;
 using System.Collections.Generic;
+using System.IO;
 using System.Text;
 using Altaxo.Gui.Common.MultiRename;
 using Altaxo.Main.Commands;
@@ -61,7 +62,7 @@ namespace Altaxo.Data
 
       mrData.RegisterListColumn("FullName", MultiRenameDocuments.GetFullNameWithAugmentingProjectFolderItems);
       mrData.RegisterListColumn("File name", (obj, newName) => newName);
-      mrData.RegisterListColumn("File state", GetFileState);
+      mrData.RegisterListColumn("File state", (o, fileName) => GetFileState(o, fileName).Message);
 
 
       mrData.DefaultPatternString = "[SN][E]";
@@ -72,22 +73,38 @@ namespace Altaxo.Data
       Current.Gui.ShowDialog(mrController, "Import into multiple existing tables");
     }
 
-    private static string GetFileState(object o, string fileName)
+    private static (string Message, FileInfo? File) GetFileState(object o, string fileName)
     {
       try
       {
         if (!System.IO.Path.IsPathRooted(fileName))
-          return "Path not rooted!";
+          return ("Path not rooted!", null);
+        if (fileName.Contains('*') || fileName.Contains('?'))
+        {
+          var dir = new System.IO.DirectoryInfo(System.IO.Path.GetDirectoryName(fileName) ?? string.Empty);
+          if (!dir.Exists)
+          {
+            return ($"Directory '{dir.FullName}' does not exist!", null);
+          }
+          var files = dir.GetFiles(System.IO.Path.GetFileName(fileName));
+          if (files.Length == 0)
+            return ("No file matches the pattern!", null);
+          else if (files.Length > 1)
+            return ("Multiple files match the pattern!", null);
+          else return ("OK", files[0]);
+        }
         else if (!System.IO.File.Exists(fileName))
-          return "File does not exist!";
+          return ("File does not exist!", null);
         else
-          return "OK";
+          return ("OK", new FileInfo(fileName));
       }
       catch (Exception ex)
       {
-        return ex.Message;
+        return (ex.Message, null);
       }
     }
+
+
 
     private static List<object> DoImportFiles(MultiRenameData mrData)
     {
@@ -101,6 +118,7 @@ namespace Altaxo.Data
       for (int i = 0; i < mrData.ObjectsToRenameCount; ++i)
       {
         var fileName = mrData.GetNewNameForObject(i);
+
         if (!System.IO.Path.IsPathRooted(fileName))
         {
           errors.AppendFormat($"File name {fileName}: Path is not a rooted path!\n");
@@ -123,13 +141,15 @@ namespace Altaxo.Data
 
         try
         {
-          if (System.IO.File.Exists(fileName))
+          var (message, fileInfo) = GetFileState(mrData.GetObjectToRename(i), fileName);
+
+          if (fileInfo is not null)
           {
-            DoImportIntoTable(doc, fileName);
+            DoImportIntoTable(doc, fileInfo.FullName);
           }
           else
           {
-            errors.AppendFormat($"Table {doc.Name} -> file name {fileName}: File does not exist!\n");
+            errors.AppendFormat($"Table {doc.Name} -> file name {fileName}: {message}\n");
           }
         }
         catch (Exception ex)
