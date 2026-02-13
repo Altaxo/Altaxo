@@ -478,9 +478,10 @@ namespace Altaxo.Data
       var listOfKeys = allAggregationResults.Values.SelectMany(dict => dict.Keys).Distinct().ToList();
       listOfKeys.Sort();
 
-      int idxRow = 0;
+      int idxRow = -1;
       foreach (var aggregationKey in listOfKeys)
       {
+        ++idxRow;
         foreach (var (columnName, aggregationResults) in allAggregationResults)
         {
           if (!aggregationResults.TryGetValue(aggregationKey, out var aggregation))
@@ -597,7 +598,6 @@ namespace Altaxo.Data
                 throw new NotImplementedException($"The aggregation kind {aggregationKind} is not implemented!");
             }
           }
-          ++idxRow;
         }
       }
     }
