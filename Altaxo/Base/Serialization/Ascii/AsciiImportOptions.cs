@@ -23,7 +23,6 @@
 #endregion Copyright
 
 #nullable enable
-using System;
 using System.Linq;
 using System.Text;
 
@@ -53,10 +52,7 @@ namespace Altaxo.Serialization.Ascii
   /// <summary>
   /// Denotes options about how to import data from an ascii text file.
   /// </summary>
-  public class AsciiImportOptions
-    :
-    Main.SuspendableDocumentLeafNodeWithEventArgs,
-    Main.ICopyFrom
+  public record AsciiImportOptions : Main.IImmutable
   {
     /// <summary>
     /// Initializes a new instance of the <see cref="AsciiImportOptions"/> class with default properties.
@@ -67,50 +63,15 @@ namespace Altaxo.Serialization.Ascii
     }
 
     /// <summary>
-    /// Gets or sets a value indicating whether the import of multiple streams in one table should be horizontally oriented (in more columns) or vertically oriented (in more rows).
-    /// </summary>
-    /// <value>
-    /// <c>true</c> if multiple streams should be imported vertically oriented, otherwise <c>false</c>.
-    /// </value>
-    protected bool _importMultipleStreamsVertically;
-
-    /// <summary>If true, rename the columns if 1st line contain  the column names. This option must be set programmatically or by user interaction.</summary>
-    protected bool _renameColumns;
-
-    /// <summary>If true, rename the worksheet to the data file name.  This option must be set programmatically or by user interaction.</summary>
-    protected bool _renameWorksheet;
-
-    /// <summary>Designates the destination of main header lines. This option must be set programmatically or by user interaction.</summary>
-    protected AsciiHeaderLinesDestination _headerLinesDestination;
-
-    /// <summary>Number of lines to skip (the main header).</summary>
-    protected int? _numberOfMainHeaderLines;
-
-    /// <summary>Index of the line, where we can extract the column names from.</summary>
-    protected int? _indexOfCaptionLine;
-
-    /// <summary>Method to separate the tokens in each line of ascii text.</summary>
-    protected IAsciiSeparationStrategy? _separationStrategy;
-
-    /// <summary>Gets or sets the culture that formats numbers.</summary>
-    protected System.Globalization.CultureInfo? _numberFormatCulture;
-
-    /// <summary>Gets or sets the culture that formats date/time values.</summary>
-    protected System.Globalization.CultureInfo? _dateTimeFormatCulture;
-
-    /// <summary>Structur of the main part of the file (which data type is placed in which column).</summary>
-    protected AsciiLineComposition? _recognizedStructure;
-
-    /// <summary>
     /// If true, the encoding is detected from the byte order marks (BOM). If no BOM is present, the encoding according to the <see cref="CodePage"/> property is used,
     /// or, if also not available, the standard encoding.
     /// </summary>
-    public bool DetectEncodingFromByteOrderMarks { get; set; } = true;
+    public bool DetectEncodingFromByteOrderMarks { get; init; } = true;
 
     /// <summary>
     /// Gets or sets the code page that is used to recognize the Ascii data. To use the system default code page, set this property to 0.
     /// </summary>
-    public int CodePage { get; set; }
+    public int CodePage { get; init; }
 
     /// <summary>
     /// Gets the encoding. You can set the Encoding setting the CodePage (see <see cref="CodePage"/>).
@@ -162,21 +123,32 @@ namespace Altaxo.Serialization.Ascii
 
       protected virtual AsciiImportOptions SDeserialize(object? o, Altaxo.Serialization.Xml.IXmlDeserializationInfo info, object? parent)
       {
-        var s = (o is null ? new AsciiImportOptions() : (AsciiImportOptions)o);
-
-        s.RenameWorksheet = info.GetBoolean("RenameWorksheet");
-        s.RenameColumns = info.GetBoolean("RenameColumns");
-        s.IndexOfCaptionLine = info.GetNullableInt32("IndexOfCaptionLine");
-        s.NumberOfMainHeaderLines = info.GetNullableInt32("NumberOfMainHeaderLines");
-        s.HeaderLinesDestination = (AsciiHeaderLinesDestination)info.GetEnum("HeaderLinesDestination", typeof(AsciiHeaderLinesDestination));
-        s.SeparationStrategy = (IAsciiSeparationStrategy?)info.GetValueOrNull("SeparationStrategy", s);
+        var renameWorksheet = info.GetBoolean("RenameWorksheet");
+        var renameColumns = info.GetBoolean("RenameColumns");
+        var indexOfCaptionLine = info.GetNullableInt32("IndexOfCaptionLine");
+        var numberOfMainHeaderLines = info.GetNullableInt32("NumberOfMainHeaderLines");
+        var headerLinesDestination = (AsciiHeaderLinesDestination)info.GetEnum("HeaderLinesDestination", typeof(AsciiHeaderLinesDestination));
+        var separationStrategy = (IAsciiSeparationStrategy?)info.GetValueOrNull("SeparationStrategy", null);
         var numberLCID = info.GetInt32("NumberFormatCultureLCID");
-        s.NumberFormatCulture = -1 == numberLCID ? null : System.Globalization.CultureInfo.GetCultureInfo(numberLCID);
+        var numberFormatCulture = -1 == numberLCID ? null : System.Globalization.CultureInfo.GetCultureInfo(numberLCID);
         var dateLCID = info.GetInt32("DateTimeFormatCultureLCID");
-        s.DateTimeFormatCulture = -1 == dateLCID ? null : System.Globalization.CultureInfo.GetCultureInfo(dateLCID);
-        s.RecognizedStructure = (AsciiLineComposition?)info.GetValueOrNull("AsciiLineStructure", s);
-        s.ImportMultipleStreamsVertically = info.GetBoolean("ImportMultipleStreamsVertically");
-        return s;
+        var dateTimeFormatCulture = -1 == dateLCID ? null : System.Globalization.CultureInfo.GetCultureInfo(dateLCID);
+        var recognizedStructure = (AsciiLineComposition?)info.GetValueOrNull("AsciiLineStructure", null);
+        var importMultipleStreamsVertically = info.GetBoolean("ImportMultipleStreamsVertically");
+
+        return (o as AsciiImportOptions ?? new AsciiImportOptions()) with
+        {
+          RenameWorksheet = renameWorksheet,
+          RenameColumns = renameColumns,
+          IndexOfCaptionLine = indexOfCaptionLine,
+          NumberOfMainHeaderLines = numberOfMainHeaderLines,
+          HeaderLinesDestination = headerLinesDestination,
+          SeparationStrategy = separationStrategy,
+          NumberFormatCulture = numberFormatCulture,
+          DateTimeFormatCulture = dateTimeFormatCulture,
+          RecognizedStructure = recognizedStructure,
+          ImportMultipleStreamsVertically = importMultipleStreamsVertically
+        };
       }
 
       public object Deserialize(object? o, Altaxo.Serialization.Xml.IXmlDeserializationInfo info, object? parent)
@@ -218,20 +190,37 @@ namespace Altaxo.Serialization.Ascii
       {
         var s = (o is null ? new AsciiImportOptions() : (AsciiImportOptions)o);
 
-        s.RenameWorksheet = info.GetBoolean("RenameWorksheet");
-        s.RenameColumns = info.GetBoolean("RenameColumns");
-        s.IndexOfCaptionLine = info.GetNullableInt32("IndexOfCaptionLine");
-        s.NumberOfMainHeaderLines = info.GetNullableInt32("NumberOfMainHeaderLines");
-        s.HeaderLinesDestination = (AsciiHeaderLinesDestination)info.GetEnum("HeaderLinesDestination", typeof(AsciiHeaderLinesDestination));
-        s.SeparationStrategy = (IAsciiSeparationStrategy?)info.GetValueOrNull("SeparationStrategy", s);
+        var renameWorksheet = info.GetBoolean("RenameWorksheet");
+        var renameColumns = info.GetBoolean("RenameColumns");
+        var indexOfCaptionLine = info.GetNullableInt32("IndexOfCaptionLine");
+        var numberOfMainHeaderLines = info.GetNullableInt32("NumberOfMainHeaderLines");
+        var headerLinesDestination = (AsciiHeaderLinesDestination)info.GetEnum("HeaderLinesDestination", typeof(AsciiHeaderLinesDestination));
+        var separationStrategy = (IAsciiSeparationStrategy?)info.GetValueOrNull("SeparationStrategy", s);
         var numberLCID = info.GetInt32("NumberFormatCultureLCID");
-        s.NumberFormatCulture = -1 == numberLCID ? null : System.Globalization.CultureInfo.GetCultureInfo(numberLCID);
+        var numberFormatCulture = -1 == numberLCID ? null : System.Globalization.CultureInfo.GetCultureInfo(numberLCID);
         var dateLCID = info.GetInt32("DateTimeFormatCultureLCID");
-        s.DateTimeFormatCulture = -1 == dateLCID ? null : System.Globalization.CultureInfo.GetCultureInfo(dateLCID);
-        s.RecognizedStructure = (AsciiLineComposition?)info.GetValueOrNull("AsciiLineStructure", s);
-        s.ImportMultipleStreamsVertically = info.GetBoolean("ImportMultipleStreamsVertically");
-        s.DetectEncodingFromByteOrderMarks = info.GetBoolean("DetectEncodingFromByteOrderMarks");
-        s.CodePage = info.GetInt32("CodePage");
+        var dateTimeFormatCulture = -1 == dateLCID ? null : System.Globalization.CultureInfo.GetCultureInfo(dateLCID);
+        var recognizedStructure = (AsciiLineComposition?)info.GetValueOrNull("AsciiLineStructure", s);
+        var importMultipleStreamsVertically = info.GetBoolean("ImportMultipleStreamsVertically");
+        var detectEncodingFromByteOrderMarks = info.GetBoolean("DetectEncodingFromByteOrderMarks");
+        var codePage = info.GetInt32("CodePage");
+
+        return (o as AsciiImportOptions ?? new AsciiImportOptions()) with
+        {
+          RenameWorksheet = renameWorksheet,
+          RenameColumns = renameColumns,
+          IndexOfCaptionLine = indexOfCaptionLine,
+          NumberOfMainHeaderLines = numberOfMainHeaderLines,
+          HeaderLinesDestination = headerLinesDestination,
+          SeparationStrategy = separationStrategy,
+          NumberFormatCulture = numberFormatCulture,
+          DateTimeFormatCulture = dateTimeFormatCulture,
+          RecognizedStructure = recognizedStructure,
+          ImportMultipleStreamsVertically = importMultipleStreamsVertically,
+          DetectEncodingFromByteOrderMarks = detectEncodingFromByteOrderMarks,
+          CodePage = codePage
+        };
+
         return s;
       }
 
@@ -255,41 +244,34 @@ namespace Altaxo.Serialization.Ascii
     /// <value>
     /// <c>true</c> if multiple streams should be imported vertically oriented, otherwise <c>false</c>.
     /// </value>
-    public bool ImportMultipleStreamsVertically { get { return _importMultipleStreamsVertically; } set { SetMemberAndRaiseSelfChanged(ref _importMultipleStreamsVertically, value); } }
+    public bool ImportMultipleStreamsVertically { get; init; }
 
     /// <summary>If true, rename the columns if 1st line contain  the column names. This option must be set programmatically or by user interaction.</summary>
-    public bool RenameColumns { get { return _renameColumns; } set { SetMemberAndRaiseSelfChanged(ref _renameColumns, value); } }
+    public bool RenameColumns { get; init; }
 
     /// <summary>If true, rename the worksheet to the data file name.  This option must be set programmatically or by user interaction.</summary>
-    public bool RenameWorksheet { get { return _renameWorksheet; } set { SetMemberAndRaiseSelfChanged(ref _renameWorksheet, value); } }
+    public bool RenameWorksheet { get; init; }
 
     /// <summary>Designates the destination of main header lines. This option must be set programmatically or by user interaction.</summary>
-    public AsciiHeaderLinesDestination HeaderLinesDestination { get { return _headerLinesDestination; } set { SetMemberEnumAndRaiseSelfChanged(ref _headerLinesDestination, value); } }
+    public AsciiHeaderLinesDestination HeaderLinesDestination { get; init; }
 
     /// <summary>Number of lines to skip (the main header).</summary>
-    public int? NumberOfMainHeaderLines { get { return _numberOfMainHeaderLines; } set { SetMemberAndRaiseSelfChanged(ref _numberOfMainHeaderLines, value); } }
+    public int? NumberOfMainHeaderLines { get; init; }
 
     /// <summary>Index of the line, where we can extract the column names from.</summary>
-    public int? IndexOfCaptionLine { get { return _indexOfCaptionLine; } set { SetMemberAndRaiseSelfChanged(ref _indexOfCaptionLine, value); } }
+    public int? IndexOfCaptionLine { get; init; }
 
     /// <summary>Method to separate the tokens in each line of ascii text.</summary>
-    public IAsciiSeparationStrategy? SeparationStrategy { get { return _separationStrategy; } set { if (!object.ReferenceEquals(_separationStrategy, value)) { _separationStrategy = value; EhSelfChanged(); } } }
+    public IAsciiSeparationStrategy? SeparationStrategy { get; init; }
 
     /// <summary>Gets or sets the culture that formats numbers.</summary>
-    public System.Globalization.CultureInfo? NumberFormatCulture
-    {
-      get
-      {
-        return _numberFormatCulture;
-      }
-      set { if (!object.ReferenceEquals(_numberFormatCulture, value)) { _numberFormatCulture = value; EhSelfChanged(); } }
-    }
+    public System.Globalization.CultureInfo? NumberFormatCulture { get; init; }
 
     /// <summary>Gets or sets the culture that formats date/time values.</summary>
-    public System.Globalization.CultureInfo? DateTimeFormatCulture { get { return _dateTimeFormatCulture; } set { if (!object.ReferenceEquals(_dateTimeFormatCulture, value)) { _dateTimeFormatCulture = value; EhSelfChanged(); } } }
+    public System.Globalization.CultureInfo? DateTimeFormatCulture { get; init; }
 
     /// <summary>Structur of the main part of the file (which data type is placed in which column).</summary>
-    public AsciiLineComposition? RecognizedStructure { get { return _recognizedStructure; } set { if (!object.ReferenceEquals(_recognizedStructure, value)) { _recognizedStructure = value; EhSelfChanged(); } } }
+    public AsciiLineComposition? RecognizedStructure { get; init; }
 
     #endregion Properties
 
@@ -302,66 +284,15 @@ namespace Altaxo.Serialization.Ascii
       get
       {
         return
-          _numberOfMainHeaderLines is not null &&
-          _indexOfCaptionLine is not null &&
-          _separationStrategy is not null &&
-          _recognizedStructure is not null &&
-          _numberFormatCulture is not null &&
-          _dateTimeFormatCulture is not null;
+          NumberOfMainHeaderLines is not null &&
+          IndexOfCaptionLine is not null &&
+          SeparationStrategy is not null &&
+          RecognizedStructure is not null &&
+          NumberFormatCulture is not null &&
+          DateTimeFormatCulture is not null;
       }
     }
 
-    public bool CopyFrom(object obj)
-    {
-      if (ReferenceEquals(this, obj))
-        return true;
 
-      var from = obj as AsciiImportOptions;
-      if (from is not null)
-      {
-        using (var suspendToken = SuspendGetToken())
-        {
-          DetectEncodingFromByteOrderMarks = from.DetectEncodingFromByteOrderMarks;
-          CodePage = from.CodePage;
-
-          RenameColumns = from.RenameColumns;
-          RenameWorksheet = from.RenameWorksheet;
-          HeaderLinesDestination = from.HeaderLinesDestination;
-
-          NumberOfMainHeaderLines = from.NumberOfMainHeaderLines;
-
-          IndexOfCaptionLine = from.IndexOfCaptionLine;
-
-          SeparationStrategy = from.SeparationStrategy;
-
-          NumberFormatCulture = from.NumberFormatCulture is null ? null : (System.Globalization.CultureInfo)from.NumberFormatCulture.Clone();
-
-          DateTimeFormatCulture = from.DateTimeFormatCulture is null ? null : (System.Globalization.CultureInfo)from.DateTimeFormatCulture.Clone();
-
-          RecognizedStructure = from.RecognizedStructure is null ? null : from.RecognizedStructure;
-
-          ImportMultipleStreamsVertically = from.ImportMultipleStreamsVertically;
-
-          suspendToken.Resume();
-        }
-
-        return true;
-      }
-      return false;
-    }
-
-    object ICloneable.Clone()
-    {
-      var result = new AsciiImportOptions();
-      result.CopyFrom(this);
-      return result;
-    }
-
-    public AsciiImportOptions Clone()
-    {
-      var result = new AsciiImportOptions();
-      result.CopyFrom(this);
-      return result;
-    }
   }
 }

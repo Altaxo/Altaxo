@@ -27,7 +27,6 @@ using System.Collections.Generic;
 using System.Diagnostics.CodeAnalysis;
 using System.Linq;
 using System.Threading;
-using System.Transactions;
 using Altaxo.Data;
 using Altaxo.Serialization.Xml;
 
@@ -100,7 +99,7 @@ namespace Altaxo.Science.Spectroscopy
             _dataSource = null!;
           }
         }
-        
+
         if (!_isResolved && isFinalCall)
         {
           _dataSource.ChildSetMember(ref _dataSource._processData, new ListOfXAndYColumn());
@@ -153,7 +152,7 @@ namespace Altaxo.Science.Spectroscopy
       }
 
       ProcessOptions = (PeakSearchingAndFittingOptions)info.GetValue("ProcessOptions", this);
-      ChildSetMember(ref _importOptions, (IDataSourceImportOptions)info.GetValue("ImportOptions", this));
+      _importOptions = (IDataSourceImportOptions)info.GetValue("ImportOptions", this);
     }
 
     #endregion Version 0
@@ -200,7 +199,7 @@ namespace Altaxo.Science.Spectroscopy
       }
 
       ChildSetMember(ref _processOptions, (PeakSearchingAndFittingOptionsDocNode)info.GetValue("ProcessOptions", this));
-      ChildSetMember(ref _importOptions, (IDataSourceImportOptions)info.GetValue("ImportOptions", this));
+      _importOptions = (IDataSourceImportOptions)info.GetValue("ImportOptions", this);
     }
 
     #endregion Version 1
@@ -239,7 +238,7 @@ namespace Altaxo.Science.Spectroscopy
     {
       ChildSetMember(ref _processData, (ListOfXAndYColumn)info.GetValue("ProcessData", this));
       ChildSetMember(ref _processOptions, (PeakSearchingAndFittingOptionsDocNode)info.GetValue("ProcessOptions", this));
-      ChildSetMember(ref _importOptions, (IDataSourceImportOptions)info.GetValue("ImportOptions", this));
+      _importOptions = (IDataSourceImportOptions)info.GetValue("ImportOptions", this);
     }
 
     #endregion Version 2
@@ -288,7 +287,7 @@ namespace Altaxo.Science.Spectroscopy
 
       ChildSetMember(ref _processOptions, new PeakSearchingAndFittingOptionsDocNode(dataSourceOptions));
       ChildSetMember(ref _processData, inputData);
-      ChildSetMember(ref _importOptions, importOptions);
+      _importOptions = importOptions;
 
     }
 
@@ -314,7 +313,7 @@ namespace Altaxo.Science.Spectroscopy
         ListOfXAndYColumn? processData = null;
         IDataSourceImportOptions? importOptions = null;
 
-        CopyHelper.Copy(ref importOptions, from._importOptions);
+        _importOptions = from._importOptions;
         CopyHelper.Copy(ref processData, from._processData);
 
         ProcessOptions = from.ProcessOptions;
@@ -431,8 +430,9 @@ namespace Altaxo.Science.Spectroscopy
       [MemberNotNull(nameof(_importOptions))]
       set
       {
-        if (ChildSetMember(ref _importOptions, value ?? throw new ArgumentNullException(nameof(value))))
+        if (!object.Equals(_importOptions, value ?? throw new ArgumentNullException(nameof(value))))
         {
+          _importOptions = value;
           EhChildChanged(_importOptions, EventArgs.Empty);
         }
       }
@@ -506,9 +506,6 @@ namespace Altaxo.Science.Spectroscopy
 
       if (_processData is not null)
         yield return new Main.DocumentNodeAndName(_processData, "ProcessData");
-
-      if (_importOptions is not null)
-        yield return new Main.DocumentNodeAndName(_importOptions, "ImportOptions");
     }
 
     #endregion Document Node functions

@@ -143,7 +143,7 @@ namespace Altaxo.Worksheet.Commands.Analysis
     [MemberNotNull(nameof(_importOptions), nameof(_processOptions), nameof(_processData))]
     protected void CopyFrom(FourierTransformation2DDataSource from)
     {
-      ChildCopyToMember(ref _importOptions, from._importOptions);
+      _importOptions = from._importOptions;
       ChildCopyToMember(ref _processOptions, from._processOptions);
       ChildCopyToMember(ref _processData, from._processData);
     }
@@ -179,9 +179,6 @@ namespace Altaxo.Worksheet.Commands.Analysis
 
       if (_processOptions is not null)
         yield return new Main.DocumentNodeAndName(_processOptions, () => _processOptions = null!, "TransformationOptions");
-
-      if (_importOptions is not null)
-        yield return new Main.DocumentNodeAndName(_importOptions, () => _importOptions = null!, "ImportOptions");
     }
 
     /// <summary>
@@ -273,10 +270,15 @@ namespace Altaxo.Worksheet.Commands.Analysis
         if (value is null)
           throw new ArgumentNullException(nameof(ImportOptions));
 
-        if (ChildSetMember(ref _importOptions, value))
+        if (_importOptions != value)
+        {
+          _importOptions = value;
           EhSelfChanged(EventArgs.Empty);
+        }
       }
     }
+
+
 
     /// <summary>
     /// Gets or sets the options for the 2D Fourier transformation.

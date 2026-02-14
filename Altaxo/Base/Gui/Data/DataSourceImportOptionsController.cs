@@ -23,10 +23,7 @@
 #endregion Copyright
 
 #nullable disable
-using System;
 using System.Collections.Generic;
-using System.Linq;
-using System.Text;
 using Altaxo.Data;
 using Altaxo.Gui.Common;
 using Altaxo.Units;
@@ -39,7 +36,7 @@ namespace Altaxo.Gui.Data
 
   [ExpectedTypeOfView(typeof(IDataSourceImportOptionsView))]
   [UserControllerForObject(typeof(IDataSourceImportOptions))]
-  public class DataSourceImportOptionsController : MVCANControllerEditOriginalDocBase<DataSourceImportOptions, IDataSourceImportOptionsView>
+  public class DataSourceImportOptionsController : MVCANControllerEditImmutableDocBase<DataSourceImportOptions, IDataSourceImportOptionsView>
   {
     public override IEnumerable<ControllerAndSetNullMethod> GetSubControllers()
     {
@@ -181,7 +178,7 @@ namespace Altaxo.Gui.Data
       if (initData)
       {
         TriggerSource = new ItemsController<ImportTriggerSource>(new Collections.SelectableListNodeList(_doc.ImportTriggerSource));
-     
+
         DoNotSaveTableData = _doc.DoNotSaveCachedTableData;
         ExecuteScriptAfterImport = _doc.ExecuteTableScriptAfterImport;
         MinimumWaitingTimeAfterUpdate = new DimensionfulQuantity(_doc.MinimumWaitingTimeAfterUpdateInSeconds, Altaxo.Units.Time.Second.Instance).AsQuantityIn(TimeEnvironment.DefaultUnit);
@@ -194,14 +191,11 @@ namespace Altaxo.Gui.Data
 
     public override bool Apply(bool disposeController)
     {
-      _doc.DoNotSaveCachedTableData = DoNotSaveTableData;
-      _doc.ExecuteTableScriptAfterImport = ExecuteScriptAfterImport;
-      _doc.ImportTriggerSource = TriggerSource.SelectedValue;
 
       var minUpdate = MinimumWaitingTimeAfterUpdate.AsValueIn(Altaxo.Units.Time.Second.Instance);
       var maxUpdate = MaximumWaitingTimeAfterUpdate.AsValueIn(Altaxo.Units.Time.Second.Instance);
       var minFirstTrig = MinimumWaitingTimeAfterFirstTrigger.AsValueIn(Altaxo.Units.Time.Second.Instance);
-      var maxFirstTrig =MaximumWaitingTimeAfterFirstTrigger.AsValueIn(Altaxo.Units.Time.Second.Instance);
+      var maxFirstTrig = MaximumWaitingTimeAfterFirstTrigger.AsValueIn(Altaxo.Units.Time.Second.Instance);
       var minLastTrig = MinimumWaitingTimeAfterLastTrigger.AsValueIn(Altaxo.Units.Time.Second.Instance);
 
       if (!(maxUpdate > 0))
@@ -245,11 +239,19 @@ namespace Altaxo.Gui.Data
         return ApplyEnd(false, disposeController);
       }
 
-      _doc.MinimumWaitingTimeAfterUpdateInSeconds = minUpdate;
-      _doc.MaximumWaitingTimeAfterUpdateInSeconds = maxUpdate;
-      _doc.MinimumWaitingTimeAfterFirstTriggerInSeconds = minFirstTrig;
-      _doc.MinimumWaitingTimeAfterLastTriggerInSeconds = minLastTrig;
-      _doc.MaximumWaitingTimeAfterFirstTriggerInSeconds = maxFirstTrig;
+      _doc = _doc with
+      {
+        DoNotSaveCachedTableData = DoNotSaveTableData,
+        ExecuteTableScriptAfterImport = ExecuteScriptAfterImport,
+        ImportTriggerSource = TriggerSource.SelectedValue,
+        MinimumWaitingTimeAfterUpdateInSeconds = minUpdate,
+        MaximumWaitingTimeAfterUpdateInSeconds = maxUpdate,
+        MinimumWaitingTimeAfterFirstTriggerInSeconds = minFirstTrig,
+        MinimumWaitingTimeAfterLastTriggerInSeconds = minLastTrig,
+        MaximumWaitingTimeAfterFirstTriggerInSeconds = maxFirstTrig,
+      };
+
+
 
       return ApplyEnd(true, disposeController);
     }

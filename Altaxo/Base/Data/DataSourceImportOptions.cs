@@ -27,7 +27,7 @@ using System;
 
 namespace Altaxo.Data
 {
-  public interface IDataSourceImportOptions : ICloneable, Altaxo.Main.IDocumentLeafNode
+  public interface IDataSourceImportOptions : Main.IImmutable
   {
     /// <summary>
     /// Gets a value indicating whether the data that are cached in the Altaxo table should be saved within the Altaxo project.
@@ -88,46 +88,8 @@ namespace Altaxo.Data
     double MinimumWaitingTimeAfterLastTriggerInSeconds { get; }
   }
 
-  public class DataSourceImportOptions
-    :
-    Main.SuspendableDocumentLeafNodeWithEventArgs,
-    IDataSourceImportOptions,
-    Main.ICopyFrom
+  public record DataSourceImportOptions : IDataSourceImportOptions, Main.IImmutable
   {
-    protected ImportTriggerSource _importTriggerSource;
-    protected bool _doNotSaveCachedTableData;
-    protected bool _executeTableScriptAfterImport;
-    protected double _minimumWaitingTimeAfterUpdate = 60;
-    protected double _maximumWaitingTimeAfterUpdate = 60;
-
-    protected double _minimumWaitingTimeAfterFirstTrigger = 0;
-    protected double _maximumWaitingTimeAfterFirstTrigger = double.PositiveInfinity;
-    protected double _minimumWaitingTimeAfterLastTrigger = 0;
-
-    public virtual bool CopyFrom(object obj)
-    {
-      if (ReferenceEquals(this, obj))
-        return true;
-
-      if (obj is DataSourceImportOptions from)
-      {
-        _importTriggerSource = from._importTriggerSource;
-        _doNotSaveCachedTableData = from._doNotSaveCachedTableData;
-        _executeTableScriptAfterImport = from._executeTableScriptAfterImport;
-        _minimumWaitingTimeAfterUpdate = from._minimumWaitingTimeAfterUpdate;
-        _maximumWaitingTimeAfterUpdate = from._maximumWaitingTimeAfterUpdate;
-        _minimumWaitingTimeAfterFirstTrigger = from._minimumWaitingTimeAfterFirstTrigger;
-        _maximumWaitingTimeAfterFirstTrigger = from._maximumWaitingTimeAfterFirstTrigger;
-        _minimumWaitingTimeAfterLastTrigger = from._minimumWaitingTimeAfterLastTrigger;
-
-        EhSelfChanged(EventArgs.Empty);
-
-        return true;
-      }
-
-      return false;
-    }
-
     #region Serialization
 
     #region Version 0
@@ -142,23 +104,29 @@ namespace Altaxo.Data
       {
         var s = (DataSourceImportOptions)obj;
 
-        info.AddEnum("ImportTriggerSource", s._importTriggerSource);
-        info.AddValue("ExecuteTableScriptAfterImport", s._executeTableScriptAfterImport);
-        info.AddValue("DoNotSaveCachedTableData", s._doNotSaveCachedTableData);
-        info.AddValue("MinimumTimeIntervalBetweenUpdatesInSeconds", s._minimumWaitingTimeAfterUpdate);
-        info.AddValue("PollTimeIntervalInSeconds", s._maximumWaitingTimeAfterUpdate);
+        info.AddEnum("ImportTriggerSource", s.ImportTriggerSource);
+        info.AddValue("ExecuteTableScriptAfterImport", s.ExecuteTableScriptAfterImport);
+        info.AddValue("DoNotSaveCachedTableData", s.DoNotSaveCachedTableData);
+        info.AddValue("MinimumTimeIntervalBetweenUpdatesInSeconds", s.MinimumWaitingTimeAfterUpdateInSeconds);
+        info.AddValue("PollTimeIntervalInSeconds", s.MaximumWaitingTimeAfterUpdateInSeconds);
       }
 
       protected virtual DataSourceImportOptions SDeserialize(object? o, Altaxo.Serialization.Xml.IXmlDeserializationInfo info, object? parent)
       {
-        var s = (o is null ? new DataSourceImportOptions() : (DataSourceImportOptions)o);
+        var importTriggerSource = info.GetEnum<Data.ImportTriggerSource>("ImportTriggerSource");
+        var executeTableScriptAfterImport = info.GetBoolean("ExecuteTableScriptAfterImport");
+        var doNotSaveCachedTableData = info.GetBoolean("DoNotSaveCachedTableData");
+        var minimumWaitingTimeAfterUpdate = info.GetDouble("MinimumTimeIntervalBetweenUpdatesInSeconds");
+        var maximumWaitingTimeAfterUpdate = info.GetDouble("PollTimeIntervalInSeconds");
 
-        s._importTriggerSource = (Data.ImportTriggerSource)info.GetEnum("ImportTriggerSource", s._importTriggerSource.GetType());
-        s._executeTableScriptAfterImport = info.GetBoolean("ExecuteTableScriptAfterImport");
-        s._doNotSaveCachedTableData = info.GetBoolean("DoNotSaveCachedTableData");
-        s._minimumWaitingTimeAfterUpdate = info.GetDouble("MinimumTimeIntervalBetweenUpdatesInSeconds");
-        s._maximumWaitingTimeAfterUpdate = info.GetDouble("PollTimeIntervalInSeconds");
-        return s;
+        return (o as DataSourceImportOptions ?? new DataSourceImportOptions()) with
+        {
+          ImportTriggerSource = importTriggerSource,
+          ExecuteTableScriptAfterImport = executeTableScriptAfterImport,
+          DoNotSaveCachedTableData = doNotSaveCachedTableData,
+          MinimumWaitingTimeAfterUpdateInSeconds = minimumWaitingTimeAfterUpdate,
+          MaximumWaitingTimeAfterUpdateInSeconds = maximumWaitingTimeAfterUpdate
+        };
       }
 
       public object Deserialize(object? o, Altaxo.Serialization.Xml.IXmlDeserializationInfo info, object? parent)
@@ -182,30 +150,39 @@ namespace Altaxo.Data
       {
         var s = (DataSourceImportOptions)obj;
 
-        info.AddEnum("ImportTriggerSource", s._importTriggerSource);
-        info.AddValue("ExecuteTableScriptAfterImport", s._executeTableScriptAfterImport);
-        info.AddValue("DoNotSaveCachedTableData", s._doNotSaveCachedTableData);
-        info.AddValue("MinimumWaitingTimeAfterUpdate", s._minimumWaitingTimeAfterUpdate);
-        info.AddValue("MaximumWaitingTimeAfterUpdate", s._maximumWaitingTimeAfterUpdate);
-        info.AddValue("MinimumWaitingTimeAfterFirstTrigger", s._minimumWaitingTimeAfterFirstTrigger);
-        info.AddValue("MaximumWaitingTimeAfterFirstTrigger", s._maximumWaitingTimeAfterFirstTrigger);
-        info.AddValue("MinimumWaitingTimeAfterLastTrigger", s._minimumWaitingTimeAfterLastTrigger);
+        info.AddEnum("ImportTriggerSource", s.ImportTriggerSource);
+        info.AddValue("ExecuteTableScriptAfterImport", s.ExecuteTableScriptAfterImport);
+        info.AddValue("DoNotSaveCachedTableData", s.DoNotSaveCachedTableData);
+        info.AddValue("MinimumWaitingTimeAfterUpdate", s.MinimumWaitingTimeAfterUpdateInSeconds);
+        info.AddValue("MaximumWaitingTimeAfterUpdate", s.MaximumWaitingTimeAfterUpdateInSeconds);
+        info.AddValue("MinimumWaitingTimeAfterFirstTrigger", s.MinimumWaitingTimeAfterFirstTriggerInSeconds);
+        info.AddValue("MaximumWaitingTimeAfterFirstTrigger", s.MaximumWaitingTimeAfterFirstTriggerInSeconds);
+        info.AddValue("MinimumWaitingTimeAfterLastTrigger", s.MinimumWaitingTimeAfterLastTriggerInSeconds);
       }
 
       protected virtual DataSourceImportOptions SDeserialize(object? o, Altaxo.Serialization.Xml.IXmlDeserializationInfo info, object? parent)
       {
-        var s = (DataSourceImportOptions?)o ?? new DataSourceImportOptions();
 
-        s._importTriggerSource = (Data.ImportTriggerSource)info.GetEnum("ImportTriggerSource", s._importTriggerSource.GetType());
-        s._executeTableScriptAfterImport = info.GetBoolean("ExecuteTableScriptAfterImport");
-        s._doNotSaveCachedTableData = info.GetBoolean("DoNotSaveCachedTableData");
-        s._minimumWaitingTimeAfterUpdate = info.GetDouble("MinimumWaitingTimeAfterUpdate");
-        s._maximumWaitingTimeAfterUpdate = info.GetDouble("MaximumWaitingTimeAfterUpdate");
-        s._minimumWaitingTimeAfterFirstTrigger = info.GetDouble("MinimumWaitingTimeAfterFirstTrigger");
-        s._maximumWaitingTimeAfterFirstTrigger = info.GetDouble("MaximumWaitingTimeAfterFirstTrigger");
-        s._minimumWaitingTimeAfterLastTrigger = info.GetDouble("MinimumWaitingTimeAfterLastTrigger");
+        var importTriggerSource = info.GetEnum<Data.ImportTriggerSource>("ImportTriggerSource");
+        var executeTableScriptAfterImport = info.GetBoolean("ExecuteTableScriptAfterImport");
+        var doNotSaveCachedTableData = info.GetBoolean("DoNotSaveCachedTableData");
+        var minimumWaitingTimeAfterUpdate = info.GetDouble("MinimumWaitingTimeAfterUpdate");
+        var maximumWaitingTimeAfterUpdate = info.GetDouble("MaximumWaitingTimeAfterUpdate");
+        var minimumWaitingTimeAfterFirstTrigger = info.GetDouble("MinimumWaitingTimeAfterFirstTrigger");
+        var maximumWaitingTimeAfterFirstTrigger = info.GetDouble("MaximumWaitingTimeAfterFirstTrigger");
+        var minimumWaitingTimeAfterLastTrigger = info.GetDouble("MinimumWaitingTimeAfterLastTrigger");
 
-        return s;
+        return (o as DataSourceImportOptions ?? new DataSourceImportOptions()) with
+        {
+          ImportTriggerSource = importTriggerSource,
+          ExecuteTableScriptAfterImport = executeTableScriptAfterImport,
+          DoNotSaveCachedTableData = doNotSaveCachedTableData,
+          MinimumWaitingTimeAfterUpdateInSeconds = minimumWaitingTimeAfterUpdate,
+          MaximumWaitingTimeAfterUpdateInSeconds = maximumWaitingTimeAfterUpdate,
+          MinimumWaitingTimeAfterFirstTriggerInSeconds = minimumWaitingTimeAfterFirstTrigger,
+          MaximumWaitingTimeAfterFirstTriggerInSeconds = maximumWaitingTimeAfterFirstTrigger,
+          MinimumWaitingTimeAfterLastTriggerInSeconds = minimumWaitingTimeAfterLastTrigger
+        };
       }
 
       public object Deserialize(object? o, Altaxo.Serialization.Xml.IXmlDeserializationInfo info, object? parent)
@@ -219,15 +196,7 @@ namespace Altaxo.Data
 
     #endregion Serialization
 
-    /// <summary>
-    /// Clones this instance.
-    /// </summary>
-    /// <returns>A clone of this instance.</returns>
-    public object Clone()
-    {
-      var result = MemberwiseClone();
-      return result;
-    }
+
 
     /// <summary>
     /// Gets a value indicating whether the data that are cached in the Altaxo table should be saved within the Altaxo project.
@@ -235,11 +204,7 @@ namespace Altaxo.Data
     /// <value>
     /// If <c>True</c>, the data of the table attached to this data source are not stored in the Altaxo project file.
     /// </value>
-    public bool DoNotSaveCachedTableData
-    {
-      get { return _doNotSaveCachedTableData; }
-      set { SetMemberAndRaiseSelfChanged(ref _doNotSaveCachedTableData, value); }
-    }
+    public bool DoNotSaveCachedTableData { get; init; }
 
     /// <summary>
     /// Gets the cause of a reread of the data source.
@@ -247,11 +212,8 @@ namespace Altaxo.Data
     /// <value>
     /// The cause of a reread of the data source.
     /// </value>
-    public Data.ImportTriggerSource ImportTriggerSource
-    {
-      get { return _importTriggerSource; }
-      set { SetMemberEnumAndRaiseSelfChanged(ref _importTriggerSource, value); }
-    }
+    public Data.ImportTriggerSource ImportTriggerSource { get; init; }
+
 
     /// <summary>
     /// Gets a value indicating whether the table script is executed after importing data from this data source.
@@ -259,11 +221,8 @@ namespace Altaxo.Data
     /// <value>
     /// <c>true</c> if [execute table script after import]; otherwise, <c>false</c>.
     /// </value>
-    public bool ExecuteTableScriptAfterImport
-    {
-      get { return _executeTableScriptAfterImport; }
-      set { SetMemberAndRaiseSelfChanged(ref _executeTableScriptAfterImport, value); }
-    }
+    public bool ExecuteTableScriptAfterImport { get; init; }
+
 
     /// <summary>
     /// Gets the minimum time interval between updates in seconds. This value is especially important if update notifications from the data source
@@ -275,15 +234,15 @@ namespace Altaxo.Data
     /// <exception cref="System.ArgumentOutOfRangeException">MinimumTimeIntervalBetweenUpdatesInSeconds must be a value >= 0</exception>
     public double MinimumWaitingTimeAfterUpdateInSeconds
     {
-      get { return _minimumWaitingTimeAfterUpdate; }
-      set
+      get { return field; }
+      init
       {
         if (!(value >= 0))
           throw new ArgumentOutOfRangeException("MinimumTimeIntervalBetweenUpdatesInSeconds must be a value >= 0");
 
-        SetMemberAndRaiseSelfChanged(ref _minimumWaitingTimeAfterUpdate, value);
+        field = value;
       }
-    }
+    } = 60;
 
     /// <summary>
     /// Gets the poll time interval in seconds. This value is needed if the data source does not support update notifications. In this case the table is automatically refreshed when the
@@ -297,16 +256,16 @@ namespace Altaxo.Data
     {
       get
       {
-        return _maximumWaitingTimeAfterUpdate;
+        return field;
       }
-      set
+      init
       {
         if (!(value >= 0))
           throw new ArgumentOutOfRangeException("MaximumWaitingTimeAfterUpdateInSeconds must be a value >= 0");
 
-        SetMemberAndRaiseSelfChanged(ref _maximumWaitingTimeAfterUpdate, value);
+        field = value;
       }
-    }
+    } = 60;
 
     /// <summary>
     /// MinimumWaitingTimeAfterFirstTrigger (default: Zero): designates the minimum time interval that should at least be waited after the first trigger (after an update) and the next update operation.
@@ -316,14 +275,14 @@ namespace Altaxo.Data
     {
       get
       {
-        return _minimumWaitingTimeAfterFirstTrigger;
+        return field;
       }
-      set
+      init
       {
         if (!(value >= 0))
           throw new ArgumentOutOfRangeException("MinimumWaitingTimeAfterFirstTrigger must not be negative!");
 
-        SetMemberAndRaiseSelfChanged(ref _minimumWaitingTimeAfterFirstTrigger, value);
+        field = value;
       }
     }
 
@@ -335,16 +294,16 @@ namespace Altaxo.Data
     {
       get
       {
-        return _maximumWaitingTimeAfterFirstTrigger;
+        return field;
       }
-      set
+      init
       {
         if (!(value >= 0))
           throw new ArgumentOutOfRangeException("MaximumWaitingTimeAfterFirstTrigger must not be negative!");
 
-        SetMemberAndRaiseSelfChanged(ref _maximumWaitingTimeAfterFirstTrigger, value);
+        field = value;
       }
-    }
+    } = double.PositiveInfinity;
 
     /// <summary>
     /// MinimumWaitingTimeAfterLastTrigger (default: Zero): designates the time interval that at least should be waited between the latest occured trigger (after an update) and the next update operation.
@@ -354,14 +313,14 @@ namespace Altaxo.Data
     {
       get
       {
-        return _minimumWaitingTimeAfterLastTrigger;
+        return field;
       }
-      set
+      init
       {
         if (!(value >= 0))
           throw new ArgumentOutOfRangeException("MinimumWaitingTimeAfterLastTrigger must not be negative!");
 
-        SetMemberAndRaiseSelfChanged(ref _minimumWaitingTimeAfterLastTrigger, value);
+        field = value;
       }
     }
   }

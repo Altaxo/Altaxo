@@ -45,7 +45,7 @@ namespace Altaxo.DataConnection
 
     public AltaxoOleDbDataSource(string selectionStatement, AltaxoOleDbConnectionString connectionString)
     {
-      _importOptions = new Data.DataSourceImportOptions() { ParentObject = this };
+      _importOptions = new Data.DataSourceImportOptions();
       _dataQuery = new OleDbDataQuery(selectionStatement, connectionString);
     }
 
@@ -68,7 +68,7 @@ namespace Altaxo.DataConnection
         return;
 #pragma warning restore CS8774 // Member must have a non-null value when exiting.
 
-      ChildCopyToMember(ref _importOptions, from._importOptions);
+      _importOptions = from._importOptions;
       CopyHelper.CopyImmutable<OleDbDataQuery>(ref _dataQuery, from._dataQuery);
     }
 
@@ -97,8 +97,7 @@ namespace Altaxo.DataConnection
 
     protected override IEnumerable<Main.DocumentNodeAndName> GetDocumentNodeChildrenWithName()
     {
-      if (_importOptions is not null)
-        yield return new Main.DocumentNodeAndName(_importOptions, () => _importOptions = null!, "ImportOptions");
+      yield break;
     }
 
     #endregion Construction
@@ -127,7 +126,7 @@ namespace Altaxo.DataConnection
 
         s._isDeserializationInProgress = true;
         s._dataQuery = (OleDbDataQuery)info.GetValue("DataQuery", s);
-        s.ChildSetMember(ref s._importOptions, (Data.DataSourceImportOptions)info.GetValue("ImportOptions", s));
+        s._importOptions = info.GetValue<DataSourceImportOptions>("ImportOptions", this);
 
         info.AfterDeserializationHasCompletelyFinished += s.EhAfterDeserializationHasCompletelyFinished;
         return s;

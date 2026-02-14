@@ -74,7 +74,7 @@ namespace Altaxo.Data
     {
       ChildSetMember(ref _processData, (ProcessSourceTablesScriptData)info.GetValue("ProcessData", this));
       ChildSetMember(ref _processOptions, info.GetValue<ProcessSourceTablesScript>("ProcessOptions", this));
-      ChildSetMember(ref _importOptions, (IDataSourceImportOptions)info.GetValue("ImportOptions", this));
+      _importOptions = info.GetValue<DataSourceImportOptions>("ImportOptions", this);
     }
 
     #endregion Version 0
@@ -119,7 +119,7 @@ namespace Altaxo.Data
 
 
       ChildSetMember(ref _processOptions, dataSourceOptions);
-      ChildSetMember(ref _importOptions, importOptions);
+      _importOptions = importOptions;
       ChildSetMember(ref _processData, inputData);
 
     }
@@ -142,7 +142,7 @@ namespace Altaxo.Data
         ProcessSourceTablesScript? processOptions = null;
         IDataSourceImportOptions? importOptions = null;
 
-        CopyHelper.Copy(ref importOptions, from._importOptions);
+        _importOptions = from._importOptions;
         CopyHelper.Copy(ref processOptions, from._processOptions);
         CopyHelper.Copy(ref inputData, from._processData);
 
@@ -258,8 +258,9 @@ namespace Altaxo.Data
       [MemberNotNull(nameof(_importOptions))]
       set
       {
-        if (ChildSetMember(ref _importOptions, value ?? throw new ArgumentNullException(nameof(value))))
+        if (!object.Equals(_importOptions, value ?? throw new ArgumentNullException(nameof(value))))
         {
+          _importOptions = value;
           EhChildChanged(_importOptions, EventArgs.Empty);
         }
       }
@@ -330,9 +331,6 @@ namespace Altaxo.Data
         yield return new Main.DocumentNodeAndName(_processData, "ProcessData");
       if (_processOptions is not null)
         yield return new Main.DocumentNodeAndName(_processOptions, "ProcessOptions");
-      if (_importOptions is not null)
-        yield return new Main.DocumentNodeAndName(_importOptions, "ImportOptions");
-
     }
 
     #endregion Document Node functions

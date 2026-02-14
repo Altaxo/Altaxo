@@ -368,6 +368,17 @@ namespace Altaxo.Serialization
         Current.Gui.ErrorMessageBox($"Some errors have occured during import:\r\n\r\n{errors}", "Import errors");
       }
     }
+
+    public static void ImportFromFile(DataTable table, string fileName)
+    {
+      var importers = Altaxo.Main.Services.ReflectionService.GetNonAbstractSubclassesOf(typeof(IDataFileImporter))
+                   .Select(x => (IDataFileImporter)Activator.CreateInstance(x))
+                   .ToList();
+
+      var importer = GetDataFileImporterForFile(fileName, importers);
+
+      importer.Import([fileName], table, importer.CheckOrCreateImportOptions(null), attachDataSource: true);
+    }
   }
 }
 

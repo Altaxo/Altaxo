@@ -119,7 +119,7 @@ namespace Altaxo.Science.Spectroscopy.Raman
     [MemberNotNull(nameof(_importOptions))]
     private void DeserializeSurrogate0(Serialization.Xml.IXmlDeserializationInfo info)
     {
-      ChildSetMember(ref _importOptions, (IDataSourceImportOptions)info.GetValue("ImportOptions", this));
+      _importOptions = (IDataSourceImportOptions)info.GetValue("ImportOptions", this);
 
       ChildSetMember(ref _neonCalibrationData1, info.GetValueOrNull<DataTableXYColumnProxy>("NeonData1", this));
       _neonCalibrationOptions1 = info.GetValueOrNull<NeonCalibrationOptions>("NeonOptions1", this);
@@ -163,7 +163,7 @@ namespace Altaxo.Science.Spectroscopy.Raman
       if (importOptions is null)
         throw new ArgumentNullException(nameof(importOptions));
 
-      ChildSetMember(ref _importOptions, importOptions);
+      _importOptions = importOptions;
     }
 
     /// <summary>
@@ -172,9 +172,7 @@ namespace Altaxo.Science.Spectroscopy.Raman
     /// <param name="from">Another instance to copy from.</param>
     public RamanCalibrationDataSource(RamanCalibrationDataSource from)
     {
-      IDataSourceImportOptions importOptions = null;
-      CopyHelper.Copy(ref importOptions, from._importOptions);
-      ChildSetMember(ref _importOptions, importOptions);
+      _importOptions = from._importOptions;
 
       DataTableXYColumnProxy neon1 = null, neon2 = null, silicon = null;
       CopyHelper.Copy(ref neon1, from._neonCalibrationData1);
@@ -200,8 +198,7 @@ namespace Altaxo.Science.Spectroscopy.Raman
         CopyHelper.Copy(ref neon1, from._neonCalibrationData1);
         CopyHelper.Copy(ref neon2, from._neonCalibrationData2);
         CopyHelper.Copy(ref silicon, from._siliconCalibrationData);
-        CopyHelper.Copy(ref importOptions, from._importOptions);
-        ImportOptions = importOptions;
+        _importOptions = from._importOptions;
 
         if (from._neonCalibrationOptions1 is not null && from._neonCalibrationData1 is not null)
         {
@@ -748,8 +745,9 @@ namespace Altaxo.Science.Spectroscopy.Raman
       [MemberNotNull(nameof(_importOptions))]
       set
       {
-        if (ChildSetMember(ref _importOptions, value ?? throw new ArgumentNullException(nameof(value))))
+        if (!object.Equals(_importOptions, value ?? throw new ArgumentNullException(nameof(value))))
         {
+          _importOptions = value;
           EhChildChanged(_importOptions, EventArgs.Empty);
         }
       }
@@ -800,8 +798,6 @@ namespace Altaxo.Science.Spectroscopy.Raman
         yield return new Main.DocumentNodeAndName(_neonCalibrationData2, "NeonCalibrationData2");
       if (_siliconCalibrationData is not null)
         yield return new Main.DocumentNodeAndName(_siliconCalibrationData, "SiliconCalibrationData");
-      if (_importOptions is not null)
-        yield return new Main.DocumentNodeAndName(_importOptions, "ImportOptions");
 
     }
 

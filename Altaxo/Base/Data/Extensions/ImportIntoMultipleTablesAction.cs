@@ -30,7 +30,6 @@ using System.Text;
 using Altaxo.Gui.Common.MultiRename;
 using Altaxo.Main.Commands;
 using Altaxo.Main.Services;
-using Altaxo.Serialization.Ascii;
 using Altaxo.Worksheet.Commands;
 
 #nullable enable
@@ -187,19 +186,14 @@ namespace Altaxo.Data
       // if the table has an import data source, then
       // this source is used, changing the filename
 
-      if (doc.DataSource is Serialization.Ascii.AsciiImportDataSource aids)
+      if (doc.DataSource is Altaxo.Serialization.FileImportTableDataSourceBase aids)
       {
         aids.SourceFileName = fileName;
         DataSourceCommands.ExecuteDataSourceOfTable(doc, DummyProgressReporter.Instance);
       }
-      else if (doc.DataSource is FileImportScriptDataSource fisds)
-      {
-        fisds.SourceFileName = fileName;
-        DataSourceCommands.ExecuteDataSourceOfTable(doc, DummyProgressReporter.Instance);
-      }
       else
       {
-        AsciiImporter.ImportFromAsciiFile(doc, fileName);
+        Altaxo.Serialization.DataFileImporterBase.ImportFromFile(doc, fileName);
       }
     }
   }

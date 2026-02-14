@@ -70,7 +70,7 @@ namespace Altaxo.Data
 
       ChildSetMember(ref _processData, processData);
       ProcessOptions = processOptions;
-      ChildSetMember(ref _importOptions, importOptions);
+      _importOptions = importOptions;
     }
 
     #endregion
@@ -100,7 +100,7 @@ namespace Altaxo.Data
 
       _processOptions = dataSourceOptions;
       ChildSetMember(ref _processData, inputData);
-      ChildSetMember(ref _importOptions, importOptions);
+      _importOptions = importOptions;
     }
 
     /// <summary>
@@ -125,7 +125,7 @@ namespace Altaxo.Data
         TData? processData = default;
         IDataSourceImportOptions? importOptions = null;
 
-        CopyHelper.Copy(ref importOptions, from._importOptions);
+        _importOptions = from._importOptions;
         CopyHelper.Copy(ref processData, from._processData);
 
         ProcessOptions = from.ProcessOptions;
@@ -231,8 +231,9 @@ namespace Altaxo.Data
       [MemberNotNull(nameof(_importOptions))]
       set
       {
-        if (ChildSetMember(ref _importOptions, value ?? throw new ArgumentNullException(nameof(value))))
+        if (!object.Equals(_importOptions, value ?? throw new ArgumentNullException(nameof(value))))
         {
+          _importOptions = value;
           EhChildChanged(_importOptions, EventArgs.Empty);
         }
       }
@@ -307,9 +308,6 @@ namespace Altaxo.Data
 
       if (_processData is not null)
         yield return new Main.DocumentNodeAndName(_processData, "ProcessData");
-
-      if (_importOptions is not null)
-        yield return new Main.DocumentNodeAndName(_importOptions, "ImportOptions");
     }
 
     #endregion Document Node functions

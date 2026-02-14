@@ -154,7 +154,7 @@ namespace Altaxo.Data
     {
       ChildSetMember(ref _processData, (DataTablesAggregationProcessData)info.GetValue("ProcessData", this));
       _processOptions = (DataTablesAggregationOptions)info.GetValue("ProcessOptions", this);
-      ChildSetMember(ref _importOptions, (IDataSourceImportOptions)info.GetValue("ImportOptions", this));
+      _importOptions = info.GetValue<IDataSourceImportOptions>("ImportOptions", this);
 
     }
 
@@ -228,7 +228,7 @@ namespace Altaxo.Data
         DataTablesAggregationProcessData? inputData = null;
         IDataSourceImportOptions? importOptions = null;
 
-        CopyHelper.Copy(ref importOptions, from._importOptions);
+        _importOptions = from._importOptions;
         dataSourceOptions = from._processOptions; // immutable
         CopyHelper.Copy(ref inputData, from._processData);
 
@@ -724,8 +724,9 @@ namespace Altaxo.Data
       [MemberNotNull(nameof(_importOptions))]
       set
       {
-        if (ChildSetMember(ref _importOptions, value ?? throw new ArgumentNullException(nameof(value))))
+        if (!object.Equals(_importOptions, value ?? throw new ArgumentNullException(nameof(value))))
         {
+          _importOptions = value;
           EhChildChanged(_importOptions, EventArgs.Empty);
         }
       }
@@ -801,8 +802,6 @@ namespace Altaxo.Data
         yield return new Main.DocumentNodeAndName(_processData, "ProcessData");
       // if (null != _processOptions)
       //   yield return new Main.DocumentNodeAndName(_processOptions, "ProcessOptions");
-      if (_importOptions is not null)
-        yield return new Main.DocumentNodeAndName(_importOptions, "ImportOptions");
     }
 
     #endregion Document Node functions

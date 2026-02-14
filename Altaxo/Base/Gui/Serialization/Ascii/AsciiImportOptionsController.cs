@@ -87,7 +87,7 @@ namespace Altaxo.Gui.Serialization.Ascii
 
   [ExpectedTypeOfView(typeof(IAsciiImportOptionsView))]
   [UserControllerForObject(typeof(AsciiImportOptions))]
-  public class AsciiImportOptionsController : MVCANControllerEditOriginalDocBase<AsciiImportOptions, IAsciiImportOptionsView>
+  public class AsciiImportOptionsController : MVCANControllerEditImmutableDocBase<AsciiImportOptions, IAsciiImportOptionsView>
   {
     private System.IO.Stream _asciiStreamData;
     private IAsciiImportOptionsAnalysisDataProvider _asciiStreamDataProvider;
@@ -236,61 +236,30 @@ namespace Altaxo.Gui.Serialization.Ascii
 
     private bool ApplyWithoutClosing()
     {
-      _doc.DetectEncodingFromByteOrderMarks = DetectEncodingFromByteOrderMarks;
-      _doc.CodePage = CodePage.SelectedValue;
-
+      IAsciiSeparationStrategy? newSeparationStrategy = null;
       if (_separationStrategyInstanceController is not null)
         if (_separationStrategyInstanceController.Apply(false))
-          _doc.SeparationStrategy = (IAsciiSeparationStrategy)_separationStrategyInstanceController.ModelObject;
+          newSeparationStrategy = (IAsciiSeparationStrategy)_separationStrategyInstanceController.ModelObject;
         else
           return false;
 
-      _doc.NumberOfMainHeaderLines = _view.NumberOfMainHeaderLines;
-      _doc.IndexOfCaptionLine = _view.IndexOfCaptionLine;
+      var recognizedStructure = new AsciiLineComposition(_tableStructure.Select(x => x.Value), _tableStructure.Count);
 
-      _doc.RenameColumns = _view.RenameColumnsWithHeaderNames;
-      _doc.RenameWorksheet = _view.RenameWorksheetWithFileName;
-      _doc.ImportMultipleStreamsVertically = _view.ImportMultipleAsciiVertically;
-
-      if (_view.NumberFormatCultureIsKnowm)
+      _doc = _doc with
       {
-        _doc.NumberFormatCulture = (CultureInfo)_numberFormatList.FirstSelectedNode.Tag;
-      }
-      else
-      {
-        _doc.NumberFormatCulture = null;
-      }
-
-      if (_view.DateTimeFormatCultureIsKnown)
-      {
-        _doc.DateTimeFormatCulture = (CultureInfo)_dateTimeFormatList.FirstSelectedNode.Tag;
-      }
-      else
-      {
-        _doc.DateTimeFormatCulture = null;
-      }
-
-      if (_view.GuiSeparationStrategyIsKnown)
-      {
-        // this case was already handled above
-      }
-      else
-      {
-        _doc.SeparationStrategy = null;
-      }
-
-      if (_view.TableStructureIsKnown)
-      {
-        _doc.RecognizedStructure = new AsciiLineComposition(_tableStructure.Select(x => x.Value), _tableStructure.Count);
-        if (_doc.RecognizedStructure.Count == 0)
-          _doc.RecognizedStructure = null;
-      }
-      else
-      {
-        _doc.RecognizedStructure = null;
-      }
-
-      _doc.HeaderLinesDestination = (AsciiHeaderLinesDestination)_headerLinesDestination.FirstSelectedNode.Tag;
+        DetectEncodingFromByteOrderMarks = DetectEncodingFromByteOrderMarks,
+        CodePage = CodePage.SelectedValue,
+        NumberOfMainHeaderLines = null,
+        IndexOfCaptionLine = null,
+        RenameColumns = _view.RenameColumnsWithHeaderNames,
+        RenameWorksheet = _view.RenameWorksheetWithFileName,
+        ImportMultipleStreamsVertically = _view.ImportMultipleAsciiVertically,
+        NumberFormatCulture = _view.NumberFormatCultureIsKnowm ? (CultureInfo)_numberFormatList.FirstSelectedNode.Tag : null,
+        DateTimeFormatCulture = _view.DateTimeFormatCultureIsKnown ? (CultureInfo)_dateTimeFormatList.FirstSelectedNode.Tag : null,
+        SeparationStrategy = newSeparationStrategy,
+        RecognizedStructure = _view.TableStructureIsKnown ? (recognizedStructure.Count == 0 ? null : recognizedStructure) : null,
+        HeaderLinesDestination = (AsciiHeaderLinesDestination)_headerLinesDestination.FirstSelectedNode.Tag,
+      };
 
       return true;
     }
@@ -427,7 +396,7 @@ namespace Altaxo.Gui.Serialization.Ascii
         _separationStrategyInstances.Add(sep.GetType(), sep);
       }
 
-      _doc.SeparationStrategy = sep;
+      _doc = _doc with { SeparationStrategy = sep };
 
       _separationStrategyInstanceController = (IMVCANController)Current.Gui.GetController(new object[] { sep }, typeof(IMVCANController));
       object view = null;

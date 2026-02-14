@@ -94,7 +94,7 @@ namespace Altaxo.Science.Spectroscopy.Calibration
     {
       ChildSetMember(ref _processData, (DataTableXYColumnProxy)info.GetValue("ProcessData", this));
       ChildSetMember(ref _processOptions, info.GetValue<YCalibrationOptionsDocNode>("ProcessOptions", this));
-      ChildSetMember(ref _importOptions, (IDataSourceImportOptions)info.GetValue("ImportOptions", this));
+      _importOptions = (IDataSourceImportOptions)info.GetValue("ImportOptions", this);
     }
 
     #endregion Version 0
@@ -130,7 +130,7 @@ namespace Altaxo.Science.Spectroscopy.Calibration
       if (importOptions is null)
         throw new ArgumentNullException(nameof(importOptions));
 
-      ChildSetMember(ref _importOptions, importOptions);
+      _importOptions = importOptions;
     }
 
     public YCalibrationDataSource(DataTableXYColumnProxy? inputData, YCalibrationOptions dataSourceOptions, IDataSourceImportOptions importOptions)
@@ -144,7 +144,7 @@ namespace Altaxo.Science.Spectroscopy.Calibration
 
       ChildSetMember(ref _processOptions, new YCalibrationOptionsDocNode(dataSourceOptions));
       ChildSetMember(ref _processData, inputData);
-      ChildSetMember(ref _importOptions, importOptions);
+      _importOptions = importOptions;
     }
 
     /// <summary>
@@ -169,7 +169,7 @@ namespace Altaxo.Science.Spectroscopy.Calibration
         DataTableXYColumnProxy? processData = null;
         IDataSourceImportOptions? importOptions = null;
 
-        CopyHelper.Copy(ref importOptions, from._importOptions);
+        _importOptions = from._importOptions;
         CopyHelper.Copy(ref processData, from._processData);
 
         ProcessOptions = from.ProcessOptions;
@@ -402,8 +402,9 @@ namespace Altaxo.Science.Spectroscopy.Calibration
       [MemberNotNull(nameof(_importOptions))]
       set
       {
-        if (ChildSetMember(ref _importOptions, value ?? throw new ArgumentNullException(nameof(value))))
+        if (!object.Equals(_importOptions, value ?? throw new ArgumentNullException(nameof(value))))
         {
+          _importOptions = value;
           EhChildChanged(_importOptions, EventArgs.Empty);
         }
       }
@@ -477,9 +478,6 @@ namespace Altaxo.Science.Spectroscopy.Calibration
 
       if (_processData is not null)
         yield return new Main.DocumentNodeAndName(_processData, "ProcessData");
-
-      if (_importOptions is not null)
-        yield return new Main.DocumentNodeAndName(_importOptions, "ImportOptions");
     }
 
     #endregion Document Node functions

@@ -73,7 +73,7 @@ namespace Altaxo.Science.Thermorheology.MasterCurves
     {
       ChildSetMember(ref _processData, info.GetValue<MasterCurveData>("ProcessData", this));
       _processOptions = info.GetValue<MasterCurveCreationOptions>("ProcessOptions", this);
-      ChildSetMember(ref _importOptions, info.GetValue<IDataSourceImportOptions>("ImportOptions", this));
+      _importOptions = info.GetValue<IDataSourceImportOptions>("ImportOptions", this);
 
       ProcessData = _processData;
     }
@@ -142,7 +142,7 @@ namespace Altaxo.Science.Thermorheology.MasterCurves
         MasterCurveData? inputData = null;
         IDataSourceImportOptions? importOptions = null;
 
-        CopyHelper.Copy(ref importOptions, from._importOptions);
+        _importOptions = from._importOptions;
         dataSourceOptions = from._processOptions;
         CopyHelper.Copy(ref inputData, from._processData);
 
@@ -257,8 +257,9 @@ namespace Altaxo.Science.Thermorheology.MasterCurves
       [MemberNotNull(nameof(_importOptions))]
       set
       {
-        if (ChildSetMember(ref _importOptions, value ?? throw new ArgumentNullException(nameof(value))))
+        if (!object.Equals(_importOptions, value ?? throw new ArgumentNullException(nameof(value))))
         {
+          _importOptions = value;
           EhChildChanged(_importOptions, EventArgs.Empty);
         }
       }
@@ -329,9 +330,6 @@ namespace Altaxo.Science.Thermorheology.MasterCurves
     {
       if (_processData is not null)
         yield return new Main.DocumentNodeAndName(_processData, "ProcessData");
-      if (_importOptions is not null)
-        yield return new Main.DocumentNodeAndName(_importOptions, "ImportOptions");
-
     }
 
     #endregion Document Node functions

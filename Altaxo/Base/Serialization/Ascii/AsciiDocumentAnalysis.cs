@@ -81,7 +81,7 @@ namespace Altaxo.Serialization.Ascii
         throw new ArgumentNullException(nameof(analysisOptions));
 
       importOptions ??= new AsciiImportOptions();
-      InternalAnalyze(importOptions, stream, analysisOptions);
+      importOptions = InternalAnalyze(importOptions, stream, analysisOptions);
     }
 
     /// <summary>
@@ -104,18 +104,19 @@ namespace Altaxo.Serialization.Ascii
 
       var analysis = new AsciiDocumentAnalysis();
 
-      analysis.InternalAnalyze(importOptions, stream, analysisOptions);
+      importOptions = analysis.InternalAnalyze(importOptions, stream, analysisOptions);
       return importOptions;
     }
 
     /// <summary>
-    /// Analyzes the first <code>nLines</code> of the ascii stream.
+    /// Analyzes the first <c>nLines</c> of the ascii stream.
     /// </summary>
     /// <param name="importOptions">The import options. This can already contain known values. On return, this instance should be ready to be used to import ascii data, i.e. all fields should contain values unequal to <c>null</c>.</param>
     /// <param name="stream">The ascii stream to analyze.</param>
     /// <param name="analysisOptions">Options that specify how many lines are analyzed, and what number formats and date/time formats will be tested.</param>
+    /// <returns>Import options that can be used in a following step to read in the ascii stream. If the stream contains no data, the returned import options will be not fully specified.</returns>  
     [MemberNotNull(nameof(_headerLines), nameof(_bodyLines))]
-    public void InternalAnalyze(AsciiImportOptions importOptions, System.IO.Stream stream, AsciiDocumentAnalysisOptions analysisOptions)
+    public AsciiImportOptions InternalAnalyze(AsciiImportOptions importOptions, System.IO.Stream stream, AsciiDocumentAnalysisOptions analysisOptions)
     {
       if (stream is null)
         throw new ArgumentNullException(nameof(stream));
@@ -128,7 +129,7 @@ namespace Altaxo.Serialization.Ascii
       ReadLinesToAnalyze(stream, analysisOptions.NumberOfLinesToAnalyze, importOptions.NumberOfMainHeaderLines, importOptions.Encoding, importOptions.DetectEncodingFromByteOrderMarks);
 
       if (_bodyLines.Count == 0)
-        return; // there is nothing to analyze
+        return importOptions; // there is nothing to analyze
 
       // Analyze the whitespace structure of the body lines, find out if there is a fixed column width
       _globalStructure = new AsciiGlobalStructureAnalysis(_bodyLines);
@@ -162,14 +163,17 @@ namespace Altaxo.Serialization.Ascii
       else
         _indexOfCaptionLine = importOptions.IndexOfCaptionLine.Value;
 
-      importOptions.NumberOfMainHeaderLines = _numberOfMainHeaderLines;
-      importOptions.IndexOfCaptionLine = _indexOfCaptionLine;
+      importOptions = importOptions with
+      {
+        NumberOfMainHeaderLines = _numberOfMainHeaderLines,
+        IndexOfCaptionLine = _indexOfCaptionLine,
+        SeparationStrategy = _highestScoredLineAnalysisOption.SeparationStrategy,
+        NumberFormatCulture = _highestScoredLineAnalysisOption.NumberFormat,
+        DateTimeFormatCulture = _highestScoredLineAnalysisOption.DateTimeFormat,
+        RecognizedStructure = _lineAnalysisOptionsScoring[_highestScoredLineAnalysisOption].LineStructure
+      };
 
-      importOptions.SeparationStrategy = _highestScoredLineAnalysisOption.SeparationStrategy;
-      importOptions.NumberFormatCulture = _highestScoredLineAnalysisOption.NumberFormat;
-      importOptions.DateTimeFormatCulture = _highestScoredLineAnalysisOption.DateTimeFormat;
-
-      importOptions.RecognizedStructure = _lineAnalysisOptionsScoring[_highestScoredLineAnalysisOption].LineStructure;
+      return importOptions;
     }
 
     [MemberNotNull(nameof(_headerLines), nameof(_bodyLines))]

@@ -80,7 +80,7 @@ namespace Altaxo.Calc.Regression.Multivariate
     {
       ChildSetMember(ref _processData, info.GetValue<DataTableMatrixProxy>("ProcessData", this));
       _processOptions = info.GetValue<DimensionReductionOptions>("ProcessOptions", this);
-      ChildSetMember(ref _importOptions, (IDataSourceImportOptions)info.GetValue("ImportOptions", this));
+      _importOptions = info.GetValue<IDataSourceImportOptions>("ImportOptions", this);
       ProcessData = _processData;
     }
 
@@ -152,7 +152,7 @@ namespace Altaxo.Calc.Regression.Multivariate
         DataTableMatrixProxy? inputData = null;
         IDataSourceImportOptions? importOptions = null;
 
-        CopyHelper.Copy(ref importOptions, from._importOptions);
+        _importOptions = from._importOptions;
         CopyHelper.CopyI(ref dataSourceOptions, from._processOptions);
         CopyHelper.Copy(ref inputData, from._processData);
 
@@ -262,8 +262,9 @@ namespace Altaxo.Calc.Regression.Multivariate
       [MemberNotNull(nameof(_importOptions))]
       set
       {
-        if (ChildSetMember(ref _importOptions, value ?? throw new ArgumentNullException(nameof(value))))
+        if (!object.Equals(_importOptions, value ?? throw new ArgumentNullException(nameof(value))))
         {
+          _importOptions = value;
           EhChildChanged(_importOptions, EventArgs.Empty);
         }
       }
@@ -335,10 +336,6 @@ namespace Altaxo.Calc.Regression.Multivariate
     {
       if (_processData is not null)
         yield return new Main.DocumentNodeAndName(_processData, "ProcessData");
-
-      if (_importOptions is not null)
-        yield return new Main.DocumentNodeAndName(_importOptions, "ImportOptions");
-
     }
 
     #endregion Document Node functions

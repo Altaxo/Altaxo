@@ -660,7 +660,7 @@ namespace Altaxo.Serialization.Ascii
         TransferTemporaryTable(temporaryTable, dataTable);
 
         // finally set or change the data source of the table
-        importOptions.ImportMultipleStreamsVertically = false;
+        importOptions = importOptions with { ImportMultipleStreamsVertically = false };
         AddOrUpdateAsciiImportDataSource(dataTable, fileNames, importOptions);
         return true;
       }
@@ -807,7 +807,7 @@ namespace Altaxo.Serialization.Ascii
         TransferTemporaryTable(temporaryTable, dataTable);
 
         // finally set or change the data source of the table
-        importOptions.ImportMultipleStreamsVertically = true;
+        importOptions = importOptions with { ImportMultipleStreamsVertically = true };
         AddOrUpdateAsciiImportDataSource(dataTable, fileNames, importOptions);
         return true;
       }

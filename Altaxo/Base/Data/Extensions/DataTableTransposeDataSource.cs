@@ -73,7 +73,7 @@ namespace Altaxo.Data
     {
       ChildSetMember(ref _processData, (DataTableProxy)info.GetValue("ProcessData", this));
       _processOptions = (DataTableTransposeOptions)info.GetValue("ProcessOptions", this);
-      ChildSetMember(ref _importOptions, (IDataSourceImportOptions)info.GetValue("ImportOptions", this));
+      _importOptions = info.GetValue<IDataSourceImportOptions>("ImportOptions", this);
 
     }
 
@@ -145,7 +145,7 @@ namespace Altaxo.Data
         DataTableProxy? inputData = null;
         IDataSourceImportOptions? importOptions = null;
 
-        CopyHelper.Copy(ref importOptions, from._importOptions);
+        _importOptions = from._importOptions;
         CopyHelper.Copy(ref dataSourceOptions, from._processOptions);
         CopyHelper.Copy(ref inputData, from._processData);
 
@@ -261,8 +261,9 @@ namespace Altaxo.Data
       [MemberNotNull(nameof(_importOptions))]
       set
       {
-        if (ChildSetMember(ref _importOptions, value ?? throw new ArgumentNullException(nameof(value))))
+        if (!object.Equals(_importOptions, value ?? throw new ArgumentNullException(nameof(value))))
         {
+          _importOptions = value;
           EhChildChanged(_importOptions, EventArgs.Empty);
         }
       }
@@ -332,10 +333,6 @@ namespace Altaxo.Data
     {
       if (_processData is not null)
         yield return new Main.DocumentNodeAndName(_processData, "ProcessData");
-      // if (null != _processOptions)
-      //   yield return new Main.DocumentNodeAndName(_processOptions, "ProcessOptions");
-      if (_importOptions is not null)
-        yield return new Main.DocumentNodeAndName(_importOptions, "ImportOptions");
     }
 
     #endregion Document Node functions
