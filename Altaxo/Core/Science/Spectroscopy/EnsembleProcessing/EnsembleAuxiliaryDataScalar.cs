@@ -35,7 +35,36 @@ namespace Altaxo.Science.Spectroscopy.EnsembleProcessing
     /// <summary>
     /// Gets the scalar value.
     /// </summary>
-    public double Value { get; init; }
+    public required double Value { get; init; }
+
+    #region Serialization
+
+    /// <summary>
+    /// V0: 2026-02-16
+    /// </summary>
+    [Altaxo.Serialization.Xml.XmlSerializationSurrogateFor(typeof(EnsembleAuxiliaryDataScalar), 0)]
+    private class XmlSerializationSurrogate0 : Altaxo.Serialization.Xml.IXmlSerializationSurrogate
+    {
+      /// <inheritdoc/>
+      public virtual void Serialize(object obj, Altaxo.Serialization.Xml.IXmlSerializationInfo info)
+      {
+        var s = (EnsembleAuxiliaryDataScalar)obj;
+
+        info.AddValue("Name", s.Name);
+        info.AddValue("Value", s.Value);
+      }
+
+      /// <inheritdoc/>
+      public object Deserialize(object? o, Altaxo.Serialization.Xml.IXmlDeserializationInfo info, object? parent)
+      {
+        var name = info.GetString("Name");
+        var value = info.GetDouble("Value");
+        return new EnsembleAuxiliaryDataScalar { Name = name, Value = value };
+      }
+    }
+
+    #endregion Serialization
+
   }
 
 

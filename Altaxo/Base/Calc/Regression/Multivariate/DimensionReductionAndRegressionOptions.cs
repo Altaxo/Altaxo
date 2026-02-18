@@ -24,7 +24,9 @@
 
 using System.Collections.Generic;
 using System.Collections.Immutable;
+using System.Linq;
 using Altaxo.Science.Spectroscopy;
+using Altaxo.Science.Spectroscopy.EnsembleMeanScale;
 using Altaxo.Science.Spectroscopy.EnsembleProcessing;
 
 namespace Altaxo.Calc.Regression.Multivariate
@@ -35,14 +37,9 @@ namespace Altaxo.Calc.Regression.Multivariate
   public record DimensionReductionAndRegressionOptions : Main.IImmutable
   {
     /// <summary>
-    /// Gets the preprocessing applied to each individual spectrum prior to analysis.
+    /// Gets the preprocessing applied to each individual spectrum or to the entire ensemble prior to analysis.
     /// </summary>
-    public ISingleSpectrumPreprocessor Preprocessing { get; init; } = new NoopSpectrumPreprocessor();
-
-    /// <summary>
-    /// Gets the preprocessing applied to the ensemble of spectra (for example mean-centering and scaling).
-    /// </summary>
-    public IEnsembleMeanScalePreprocessor MeanScaleProcessing { get; init; } = new Altaxo.Science.Spectroscopy.EnsembleMeanScale.EnsembleMeanAndScaleCorrection();
+    public ISingleSpectrumPreprocessor Preprocessing { get; init; } = new EnsembleMean();
 
     /// <summary>
     /// Gets the analysis method.
@@ -75,12 +72,14 @@ namespace Altaxo.Calc.Regression.Multivariate
     /// <summary>
     /// XML serialization surrogate (version 0).
     /// </summary>
-    [Altaxo.Serialization.Xml.XmlSerializationSurrogateFor(typeof(DimensionReductionAndRegressionOptions), 0)]
+    [Altaxo.Serialization.Xml.XmlSerializationSurrogateFor("AltaxoBase", "Altaxo.Calc.Regression.Multivariate.DimensionReductionAndRegressionOptions", 0)]
     public class SerializationSurrogate0 : Altaxo.Serialization.Xml.IXmlSerializationSurrogate
     {
       /// <inheritdoc/>
       public void Serialize(object obj, Altaxo.Serialization.Xml.IXmlSerializationInfo info)
       {
+        throw new System.InvalidOperationException("Serialization of old version");
+        /*
         var s = (DimensionReductionAndRegressionOptions)obj;
         info.AddValue("SinglePreprocessing", s.Preprocessing);
         info.AddValue("EnsemblePreprocessing", s.MeanScaleProcessing);
@@ -107,6 +106,7 @@ namespace Altaxo.Calc.Regression.Multivariate
         }
 
         info.CommitArray(); // ColumnsToCalculate
+        */
       }
 
       /// <inheritdoc/>
@@ -147,11 +147,121 @@ namespace Altaxo.Calc.Regression.Multivariate
         }
         info.CloseArray(countColumnsToCalculate);
 
+        // integrate the meanScaleProcessing into the single spectrum preprocessing pipeline (as of 2026-02-14)
+        if (ensemblePreprocessing is not null)
+        {
+          IEnsemblePreprocessor convertedEnsemblePreprocessor;
+          if (ensemblePreprocessing is EnsembleMeanAndScaleCorrection msc)
+            convertedEnsemblePreprocessor = msc.EnsembleScale ? new EnsembleMeanScale() : new EnsembleMean();
+          else if (ensemblePreprocessing is IEnsemblePreprocessor ep)
+            convertedEnsemblePreprocessor = ep;
+          else
+            throw new System.InvalidOperationException("Unknown ensemble preprocessing type in old version.");
+
+          var list = singlePreprocessing as SpectralPreprocessingOptionsList;
+          if (list is null && singlePreprocessing is Altaxo.Science.Spectroscopy.SpectralPreprocessingOptions so)
+          {
+            list = new SpectralPreprocessingOptionsList(so.ToList());
+          }
+          if (list is null)
+          {
+            list = new SpectralPreprocessingOptionsList(singlePreprocessing);
+          }
+          list = list.WithAdded(convertedEnsemblePreprocessor);
+          singlePreprocessing = SpectralPreprocessingOptionsList.CreateWithoutNoneElements(list);
+        }
 
         return new DimensionReductionAndRegressionOptions()
         {
           Preprocessing = singlePreprocessing,
-          MeanScaleProcessing = ensemblePreprocessing,
+          WorksheetAnalysis = analysis,
+          MaximumNumberOfFactors = maxNumberOfFactors,
+          CrossValidationGroupingStrategy = crossValidationStrategy,
+          ColumnsToCalculate = dict.ToImmutableDictionary(),
+        };
+      }
+    }
+
+    /// <summary>
+    /// XML serialization surrogate (version 1).
+    /// </summary>
+    /// <remarks>
+    /// V1: 2026-02-14 MeanScaleProcessing is now integrated into the preprocessing pipeline.
+    /// </remarks>
+    [Altaxo.Serialization.Xml.XmlSerializationSurrogateFor(typeof(DimensionReductionAndRegressionOptions), 1)]
+    public class SerializationSurrogate1 : Altaxo.Serialization.Xml.IXmlSerializationSurrogate
+    {
+      /// <inheritdoc/>
+      public void Serialize(object obj, Altaxo.Serialization.Xml.IXmlSerializationInfo info)
+      {
+        var s = (DimensionReductionAndRegressionOptions)obj;
+        info.AddValue("SinglePreprocessing", s.Preprocessing);
+        info.AddValue("Analysis", s.WorksheetAnalysis);
+        info.AddValue("MaximumNumberOfFactors", s.MaximumNumberOfFactors);
+        info.AddValue("CrossValidationGroupingStrategy", s.CrossValidationGroupingStrategy);
+
+        info.CreateArray("ColumnsToCalculate", s.ColumnsToCalculate.Count);
+        foreach (var dictEntry in s.ColumnsToCalculate)
+        {
+          info.CreateElement("e");
+          info.AddValue("ColumnName", dictEntry.Key);
+          info.CreateArray("Indices", dictEntry.Value.Count);
+          foreach (var pair in dictEntry.Value)
+          {
+            info.CreateElement("e");
+            info.AddValue("NF", pair.Item1);
+            info.AddValue("WY", pair.Item2);
+
+            info.CommitElement();
+          }
+          info.CommitArray(); // Indices
+          info.CommitElement(); // e
+        }
+
+        info.CommitArray(); // ColumnsToCalculate
+      }
+
+      /// <inheritdoc/>
+      public object Deserialize(object? o, Altaxo.Serialization.Xml.IXmlDeserializationInfo info, object? parent)
+      {
+        var singlePreprocessing = info.GetValue<ISingleSpectrumPreprocessor>("SinglePreprocessing", null);
+        var analysis = info.GetValue<WorksheetAnalysis>("Analysis", null);
+        var maxNumberOfFactors = info.GetInt32("MaximumNumberOfFactors");
+        var crossValidationStrategy = info.GetValue<ICrossValidationGroupingStrategy>("CrossValidationGroupingStrategy", null);
+
+        var dict = new Dictionary<string, ImmutableHashSet<(int, int?)>>();
+        var countColumnsToCalculate = info.OpenArray("ColumnsToCalculate");
+        {
+          for (int i = 0; i < countColumnsToCalculate; i++)
+          {
+            info.OpenElement();
+            var name = info.GetString("ColumnName");
+            var countIndices = info.OpenArray("Indices");
+            {
+              var hashSet = new HashSet<(int, int?)>();
+              for (int j = 0; j < countIndices; j++)
+              {
+                info.OpenElement();
+                {
+                  var first = info.GetInt32("NF");
+                  var second = info.GetNullableInt32("WY");
+                  hashSet.Add((first, second));
+                }
+                info.CloseElement();
+
+              }
+              dict.Add(name, hashSet.ToImmutableHashSet());
+            }
+            info.CloseArray(countIndices);
+            info.CloseElement();
+          }
+        }
+        info.CloseArray(countColumnsToCalculate);
+
+
+        return new DimensionReductionAndRegressionOptions()
+        {
+          Preprocessing = singlePreprocessing,
           WorksheetAnalysis = analysis,
           MaximumNumberOfFactors = maxNumberOfFactors,
           CrossValidationGroupingStrategy = crossValidationStrategy,

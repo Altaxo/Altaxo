@@ -28,7 +28,6 @@ using Altaxo.Calc.Regression.Multivariate;
 using Altaxo.Collections;
 using Altaxo.Gui.Common;
 using Altaxo.Science.Spectroscopy;
-using Altaxo.Science.Spectroscopy.EnsembleProcessing;
 
 namespace Altaxo.Gui.Analysis.Multivariate
 {
@@ -45,7 +44,6 @@ namespace Altaxo.Gui.Analysis.Multivariate
   public class DimensionReductionOptionsController : MVCANControllerEditImmutableDocBase<DimensionReductionOptions, IDimensionReductionOptionsView>
   {
     private Dictionary<Type, ISingleSpectrumPreprocessor> _knownSingleSpectrumPreprocessors = new();
-    private Dictionary<Type, IEnsembleMeanScalePreprocessor> _knownEnsembleMeanScalePreprocessors = new();
 
     public DimensionReductionOptionsController()
     {
@@ -139,7 +137,7 @@ namespace Altaxo.Gui.Analysis.Multivariate
 
       if (initData)
       {
-        _knownSingleSpectrumPreprocessors[_doc.SinglePreprocessing.GetType()] = _doc.SinglePreprocessing;
+        _knownSingleSpectrumPreprocessors[_doc.Preprocessing.GetType()] = _doc.Preprocessing;
 
         InitializeSingleSpectrumPreprocessor();
         InitializeAnalysisMethods();
@@ -152,21 +150,21 @@ namespace Altaxo.Gui.Analysis.Multivariate
     {
       SpectralPreprocessingOptionsList instance;
 
-      if (_doc.SinglePreprocessing is null)
+      if (_doc.Preprocessing is null)
       {
         instance = SpectralPreprocessingOptionsList.Empty;
       }
-      else if (_doc.SinglePreprocessing is SpectralPreprocessingOptionsList listInstance)
+      else if (_doc.Preprocessing is SpectralPreprocessingOptionsList listInstance)
       {
         instance = listInstance;
       }
-      else if (_doc.SinglePreprocessing is Altaxo.Science.Spectroscopy.SpectralPreprocessingOptions optionsInstance)
+      else if (_doc.Preprocessing is Altaxo.Science.Spectroscopy.SpectralPreprocessingOptions optionsInstance)
       {
         instance = SpectralPreprocessingOptionsList.CreateWithoutNoneElements(optionsInstance);
       }
       else
       {
-        instance = new SpectralPreprocessingOptionsList(new ISingleSpectrumPreprocessor[] { _doc.SinglePreprocessing });
+        instance = new SpectralPreprocessingOptionsList(new ISingleSpectrumPreprocessor[] { _doc.Preprocessing });
       }
 
       SingleSpectrumPreprocessorController = (IMVCANController)Current.Gui.GetControllerAndControl(new object[] { instance }, typeof(IMVCANController));
@@ -215,7 +213,7 @@ namespace Altaxo.Gui.Analysis.Multivariate
       {
         if (true == ctrl1.Apply(disposeController))
         {
-          _doc = _doc with { SinglePreprocessing = (ISingleSpectrumPreprocessor)ctrl1.ModelObject };
+          _doc = _doc with { Preprocessing = (ISingleSpectrumPreprocessor)ctrl1.ModelObject };
         }
         else
         {

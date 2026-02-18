@@ -148,82 +148,9 @@ namespace Altaxo.Calc.Regression.Multivariate
     #region Preprocessing helper functions
 
     /// <summary>
-    /// Preprocesses the spectra. This is the common first part, without ensemble processing.
-    /// </summary>
-    /// <param name="preprocessSingleSpectrum">Information on how to preprocess the data (each spectrum separately).</param>
-    /// <param name="preprocessEnsembleOfSpectra">Information on how to preprocess the data (all spectra as an ensemble).</param>
-    /// <param name="xOfXRaw">The x-values (wavelength, frequency, etc.) of the spectra (needed for preprocessing).</param>
-    /// <param name="matrixXRaw">Matrix of raw spectra (number of observations, number of wavelengths).</param>
-    /// <param name="regionsPre">On return, contains the detected regions.</param>
-    /// <param name="xOfXPre">On return, contains the x-values of the preprocessed spectra.</param>
-    /// <param name="matrixXPre">On return, contains the matrix of preprocessed spectra (each spectrum is a row in the matrix).</param>
-    private static void PreprocessSpectraFirstPart(
-      ISingleSpectrumPreprocessor preprocessSingleSpectrum,
-      IEnsembleMeanScalePreprocessor preprocessEnsembleOfSpectra,
-      double[] xOfXRaw, IROMatrix<double> matrixXRaw,
-      out int[] regionsPre, out double[] xOfXPre, out IMatrix<double> matrixXPre)
-    {
-      var srcSpectrum = new double[matrixXRaw.ColumnCount];
-      double[] yResult;
-
-      matrixXPre = null!;
-      regionsPre = null!;
-      xOfXPre = null!;
-
-      // Preprocess the spectra, that first each spectrum separately
-      for (int r = 0; r < matrixXRaw.RowCount; ++r)
-      {
-        MatrixMath.CopyRow(matrixXRaw, r, srcSpectrum);
-        (xOfXPre, yResult, regionsPre) = preprocessSingleSpectrum.Execute(xOfXRaw, srcSpectrum, null);
-
-        if (r == 0) // after the first spectrum is processed, allocate the new result matrices with the appropriate dimensions
-        {
-          matrixXPre = CreateMatrix.Dense<double>(matrixXRaw.RowCount, xOfXPre.Length);
-        }
-        else
-        {
-          if (matrixXPre.ColumnCount != yResult.Length)
-            throw new InvalidProgramException("The single spectrum preprocessor outputs different length when processing different spectra. This is a programming error.");
-        }
-
-        MatrixMath.SetRow(matrixXPre, r, yResult);
-      }
-    }
-
-    /// <summary>
-    /// Preprocesses the spectra, both as single spectra, and after that as the ensemble. 
-    /// </summary>
-    /// <param name="preprocessSingleSpectrum">Information how to preprocess the spectra, here: how to process each spectrum separately.</param>
-    /// <param name="preprocessEnsembleOfSpectra">Information how to preprocess the spectra, here: how to process the spectra ensemble.</param>
-    /// <param name="xOfXRaw">The x-values (wavelength, frequency, etc.) of the spectra (needed for preprocessing).</param>
-    /// <param name="matrixXRaw">Matrix of preprocessed spectra (number of observations, number of wavelengths).</param>
-    /// <param name="regionsPre">On return, contains the regions (detected).</param>
-    /// <param name="xOfXPre">On return, contains the x-values of the preprocessed spectra.</param>
-    /// <param name="matrixXPre">On return, contains the matrix of preprocessed spectra (each spectrum is a row in the matrix).</param>
-    /// <param name="meanX">On return, contains the mean spectrum (mean of all specta).</param>
-    /// <param name="scaleX">On return, contains the scaling factor for each spectral slot.</param>
-    public static void PreprocessSpectraForAnalysis(
-      ISingleSpectrumPreprocessor preprocessSingleSpectrum,
-      IEnsembleMeanScalePreprocessor? preprocessEnsembleOfSpectra,
-      double[] xOfXRaw, IROMatrix<double> matrixXRaw,
-      out int[] regionsPre, out double[] xOfXPre, out IMatrix<double> matrixXPre,
-      out IVector<double> meanX, out IVector<double> scaleX)
-    {
-      PreprocessSpectraFirstPart(preprocessSingleSpectrum, null, xOfXRaw, matrixXRaw,
-        out regionsPre, out xOfXPre, out matrixXPre);
-
-      meanX = CreateVector.Dense<double>(xOfXPre.Length);
-      scaleX = CreateVector.Dense<double>(xOfXPre.Length);
-
-      // Preprocess spectra, now preprocess them as ensemble, and calculate the mean spectrum and (optionally) a scaling vector
-      preprocessEnsembleOfSpectra.Process(matrixXPre, regionsPre, meanX, scaleX);
-    }
-
-    /// <summary>
     /// Preprocesses the x and y matrices before usage in multivariate calibrations.
     /// </summary>
     /// <param name="preprocessSingleSpectrum">Information how to preprocess the spectra, here: how to process each spectrum separately.</param>
-    /// <param name="preprocessEnsembleOfSpectra">Information how to preprocess the spectra, here: how to process the spectra ensemble.</param>
     /// <param name="xOfXRaw">The x-values (wavelength, frequency, etc.) of the spectra (needed for preprocessing).</param>
     /// <param name="matrixXRaw">Matrix of preprocessed spectra (number of observations, number of wavelengths).</param>
     /// <param name="meanX">Contains the mean spectrum, calculated during the analysis stage.</param>
@@ -232,17 +159,11 @@ namespace Altaxo.Calc.Regression.Multivariate
     /// <param name="matrixXPre">On return, contains the matrix of preprocessed spectra (each spectrum is a row in the matrix).</param>
     public static void PreprocessSpectraForPrediction(
       ISingleSpectrumPreprocessor preprocessSingleSpectrum,
-      IEnsembleMeanScalePreprocessor preprocessEnsembleOfSpectra,
-      double[] xOfXRaw, IROMatrix<double> matrixXRaw,
-      IReadOnlyList<double> meanX, IReadOnlyList<double> scaleX,
+      double[] xOfXRaw, Matrix<double> matrixXRaw,
+      IEnsembleProcessingAuxiliaryData auxiliaryDataX,
       out double[] xOfXPre, out IMatrix<double> matrixXPre)
     {
-      PreprocessSpectraFirstPart(preprocessSingleSpectrum, preprocessEnsembleOfSpectra, xOfXRaw, matrixXRaw,
-        out var resultRegions, out xOfXPre, out matrixXPre);
-
-      // Ensemble preprocessing for prediction
-      // Here the meanX and scaleX that were calculated in the analysis step are used.
-      preprocessEnsembleOfSpectra.ProcessForPrediction(matrixXPre, resultRegions, meanX, scaleX);
+      (xOfXPre, matrixXPre, _) = preprocessSingleSpectrum.ExecuteForPrediction(xOfXRaw, matrixXRaw, null, auxiliaryDataX);
     }
 
     /// <summary>
@@ -256,14 +177,10 @@ namespace Altaxo.Calc.Regression.Multivariate
     public static void PreprocessSpectraForPrediction(
       IMultivariateCalibrationModel calibrationModel,
       double[] xOfXRaw,
-      IROMatrix<double> matrixXRaw,
-      out double[] xOfXPre, out IMatrix<double> matrixXPre)
+      Matrix<double> matrixXRaw,
+      out double[] xOfXPre, out Matrix<double> matrixXPre)
     {
-      PreprocessSpectraForPrediction(
-        calibrationModel.PreprocessingModel.PreprocessSingleSpectrum,
-        calibrationModel.PreprocessingModel.PreprocessEnsembleOfSpectra,
-        xOfXRaw, matrixXRaw, calibrationModel.PreprocessingModel.XMean, calibrationModel.PreprocessingModel.XScale,
-        out xOfXPre, out matrixXPre);
+      (xOfXPre, matrixXPre, _) = calibrationModel.PreprocessingModel.PreprocessSingleSpectrum.ExecuteForPrediction(xOfXRaw, matrixXRaw, null, calibrationModel.PreprocessingModel.AuxiliaryDataX);
     }
 
     /// <summary>
@@ -274,13 +191,12 @@ namespace Altaxo.Calc.Regression.Multivariate
     /// <param name="meanY">On return, contains the mean value of the target variables (mean of all measurements).</param>
     /// <param name="scaleY">On return, contains the scaling factor for the target variables.</param>
     public static void PreprocessTargetVariablesForAnalysis(
-      IROMatrix<double> matrixYRaw,
-      out IMatrix<double> matrixYPre,
-      out IVector<double> meanY, out IVector<double> scaleY)
+      Matrix<double> matrixYRaw,
+      out Matrix<double> matrixYPre,
+      out Vector<double> meanY, out Vector<double> scaleY)
     {
       // Preprocess the target variables
-      matrixYPre = CreateMatrix.Dense<double>(matrixYRaw.RowCount, matrixYRaw.ColumnCount);
-      MatrixMath.Copy(matrixYRaw, matrixYPre);
+      matrixYPre = CreateMatrix.DenseOfMatrix(matrixYRaw);
       PreprocessTargetVariablesForAnalysisInline(matrixYPre, out meanY, out scaleY);
     }
 
@@ -294,12 +210,12 @@ namespace Altaxo.Calc.Regression.Multivariate
     /// <param name="meanY">On return, contains the mean y value(s).</param>
     /// <param name="scaleY">On return, contains the scale value(s).</param>
     public static void PreprocessTargetVariablesForAnalysisInline(
-      IMatrix<double> matrixYRaw_Pre,
-      out IVector<double> meanY,
-      out IVector<double> scaleY)
+      Matrix<double> matrixYRaw_Pre,
+      out Vector<double> meanY,
+      out Vector<double> scaleY)
     {
-      meanY = new MatrixMath.MatrixWithOneRow<double>(matrixYRaw_Pre.ColumnCount);
-      scaleY = new MatrixMath.MatrixWithOneRow<double>(matrixYRaw_Pre.ColumnCount);
+      meanY = CreateVector.Dense<double>(matrixYRaw_Pre.ColumnCount, 1);
+      scaleY = CreateVector.Dense<double>(matrixYRaw_Pre.ColumnCount);
       VectorMath.FillWith(scaleY, 1);
       MatrixMath.ColumnsToZeroMean(matrixYRaw_Pre, meanY);
     }
@@ -311,8 +227,7 @@ namespace Altaxo.Calc.Regression.Multivariate
     /// <param name="preprocessEnsembleOfSpectra">Information how to preprocess the spectra, here: how to process the spectra ensemble.</param>
     /// <param name="xOfXRaw">The x-values (wavelength, frequency, etc.) of the spectra (needed for preprocessing).</param>
     /// <param name="matrixXRaw">Matrix of preprocessed spectra (number of observations, number of wavelengths).</param>
-    /// <param name="meanX">Contains the mean spectrum, calculated during the analysis stage.</param>
-    /// <param name="scaleX">Contains the scaling factor for each spectral slot, calculated during the analysis stage.</param>
+    /// <param name="auxDataX">Contains data from the ensemble preprocessing that is needed later on for preprocessing spectra for prediction.</param>
     /// <param name="xOfXPre">On return, contains the x-values of the preprocessed spectra.</param>
     /// <param name="matrixXPre">On return, contains the matrix of preprocessed spectra (each spectrum is a row in the matrix).</param>
     /// <param name="matrixYRaw">Matrix of target variables. Each measurement (belonging to a spectrum) represents one row.</param>
@@ -321,17 +236,16 @@ namespace Altaxo.Calc.Regression.Multivariate
     /// <param name="scaleY">On return, contains the scaling factor for the target variables.</param>
     public static void PreprocessForAnalysis(
       ISingleSpectrumPreprocessor preprocessSingleSpectrum,
-      IEnsembleMeanScalePreprocessor preprocessEnsembleOfSpectra,
-      double[] xOfXRaw, IROMatrix<double> matrixXRaw, IROMatrix<double> matrixYRaw,
-      out double[] xOfXPre, out IMatrix<double> matrixXPre, out IMatrix<double> matrixYPre,
-      out IVector<double> meanX, out IVector<double> scaleX,
-      out IVector<double> meanY, out IVector<double> scaleY)
+      double[] xOfXRaw,
+      Matrix<double> matrixXRaw,
+      Matrix<double> matrixYRaw,
+      out double[] xOfXPre,
+      out Matrix<double> matrixXPre,
+      out IEnsembleProcessingAuxiliaryData auxDataX,
+      out Matrix<double> matrixYPre,
+      out Vector<double> meanY, out Vector<double> scaleY)
     {
-      PreprocessSpectraForAnalysis(
-        preprocessSingleSpectrum, preprocessEnsembleOfSpectra,
-        xOfXRaw, matrixXRaw,
-        out var _, out xOfXPre, out matrixXPre,
-        out meanX, out scaleX);
+      (xOfXPre, matrixXPre, _, auxDataX) = preprocessSingleSpectrum.Execute(xOfXRaw, matrixXRaw, regions: null);
 
       PreprocessTargetVariablesForAnalysis(
         matrixYRaw, out matrixYPre,
@@ -484,9 +398,9 @@ namespace Altaxo.Calc.Regression.Multivariate
     /// </param>
     public void PredictYFromRaw(
       double[] xOfXRaw,
-      IMatrix<double> XURaw, // unknown spectrum or spectra,  horizontal oriented
+      Matrix<double> XURaw, // unknown spectrum or spectra,  horizontal oriented
       int numberOfFactors, // number of factors to use for prediction
-      IMatrix<double> predictedYRaw // Matrix of predicted y-values, must be same number of rows as spectra
+      Matrix<double> predictedYRaw // Matrix of predicted y-values, must be same number of rows as spectra
       )
     {
       PreprocessSpectraForPrediction(InternalCalibrationModel, xOfXRaw, XURaw, out var _, out var resultMatrixXU);
@@ -505,7 +419,7 @@ namespace Altaxo.Calc.Regression.Multivariate
     /// </returns>
     public virtual IROMatrix<double> GetXLeverageFromRaw(
       double[] xOfXRaw,
-      IMatrix<double> matrixXRaw, int numberOfFactors)
+      Matrix<double> matrixXRaw, int numberOfFactors)
     {
       PreprocessSpectraForPrediction(
         InternalCalibrationModel,
@@ -529,7 +443,7 @@ namespace Altaxo.Calc.Regression.Multivariate
     /// <param name="YYRaw">Corresponding remaining concentration data (unpreprocessed).</param>
     /// <param name="XURaw">Spectra used for prediction (unpreprocessed).</param>
     /// <param name="YURaw">Corresponding concentration data (unpreprocessed).</param>
-    public delegate void CrossValidationIterationFunction(int[] group, IMatrix<double> XXRaw, IMatrix<double> YYRaw, IMatrix<double> XURaw, IMatrix<double> YURaw);
+    public delegate void CrossValidationIterationFunction(int[] group, Matrix<double> XXRaw, Matrix<double> YYRaw, Matrix<double> XURaw, Matrix<double> YURaw);
 
     /// <summary>
     /// Separates the spectra into a group of spectra used for calibration and the remaining spectra
@@ -550,10 +464,10 @@ namespace Altaxo.Calc.Regression.Multivariate
       //      int[][] groups = bExcludeGroups ? new ExcludeGroupsGroupingStrategy().Group(Y) : new ExcludeSingleMeasurementsGroupingStrategy().Group(Y);
       int[][] groups = groupingStrategy.Group(matrixYRaw);
 
-      IMatrix<double>? XX = null;
-      IMatrix<double>? YY = null;
-      IMatrix<double>? XU = null;
-      IMatrix<double>? YU = null;
+      Matrix<double>? XX = null;
+      Matrix<double>? YY = null;
+      Matrix<double>? XU = null;
+      Matrix<double>? YU = null;
 
       for (int nGroup = 0, prevNumExcludedSpectra = int.MinValue; nGroup < groups.Length; nGroup++)
       {
@@ -562,10 +476,10 @@ namespace Altaxo.Calc.Regression.Multivariate
 
         if (prevNumExcludedSpectra != numberOfExcludedSpectraOfGroup)
         {
-          XX = new MatrixMath.LeftSpineJaggedArrayMatrix<double>(matrixXRaw.RowCount - numberOfExcludedSpectraOfGroup, matrixXRaw.ColumnCount);
-          YY = new MatrixMath.LeftSpineJaggedArrayMatrix<double>(matrixYRaw.RowCount - numberOfExcludedSpectraOfGroup, matrixYRaw.ColumnCount);
-          XU = new MatrixMath.LeftSpineJaggedArrayMatrix<double>(numberOfExcludedSpectraOfGroup, matrixXRaw.ColumnCount);
-          YU = new MatrixMath.LeftSpineJaggedArrayMatrix<double>(numberOfExcludedSpectraOfGroup, matrixYRaw.ColumnCount);
+          XX = CreateMatrix.Dense<double>(matrixXRaw.RowCount - numberOfExcludedSpectraOfGroup, matrixXRaw.ColumnCount);
+          YY = CreateMatrix.Dense<double>(matrixYRaw.RowCount - numberOfExcludedSpectraOfGroup, matrixYRaw.ColumnCount);
+          XU = CreateMatrix.Dense<double>(numberOfExcludedSpectraOfGroup, matrixXRaw.ColumnCount);
+          YU = CreateMatrix.Dense<double>(numberOfExcludedSpectraOfGroup, matrixYRaw.ColumnCount);
           prevNumExcludedSpectra = numberOfExcludedSpectraOfGroup;
         }
 
@@ -611,8 +525,7 @@ namespace Altaxo.Calc.Regression.Multivariate
     /// <param name="matrixYRaw">Matrix of unpreprocessed target variables (e.g. concentrations).</param>
     /// <param name="maximalNumberOfFactors">Maximum number of factors to calculate the cross PRESS for.</param>
     /// <param name="groupingStrategy">The strategy how to group the spectra for cross prediction.</param>
-    /// <param name="preprocessSingleSpectrum">Information how to preprocess the spectra, here: how to process each spectrum separately.</param>
-    /// <param name="preprocessEnsembleOfSpectra">Information how to preprocess the spectra, here: how to process the spectra ensemble.</param>
+    /// <param name="spectralPreprocessing">Information how to preprocess the spectra, here: how to process each spectrum separately.</param>
     /// <param name="regressionMethod">The type of regression (e.g. PCR, PLS1, PLS2) provided as an empty regression object.</param>
     /// <param name="crossPRESS">
     /// On return, the vector of cross PRESS values. Note that this vector has the length maximalNumberOfFactors + 1.
@@ -620,17 +533,16 @@ namespace Altaxo.Calc.Regression.Multivariate
     /// <returns>The mean number of spectra used for prediction.</returns>
     public static double GetCrossPRESS(
       double[] xOfXRaw,
-      IROMatrix<double> matrixXRaw, // matrix of spectra (a spectra is a row of this matrix)
-      IROMatrix<double> matrixYRaw, // matrix of concentrations (a mixture is a row of this matrix)
+      Matrix<double> matrixXRaw, // matrix of spectra (a spectra is a row of this matrix)
+      Matrix<double> matrixYRaw, // matrix of concentrations (a mixture is a row of this matrix)
       int maximalNumberOfFactors,
       ICrossValidationGroupingStrategy groupingStrategy,
-      ISingleSpectrumPreprocessor preprocessSingleSpectrum,
-      IEnsembleMeanScalePreprocessor preprocessEnsembleOfSpectra,
+      ISingleSpectrumPreprocessor spectralPreprocessing,
       MultivariateRegression regressionMethod,
       out IReadOnlyList<double> crossPRESS // vertical value of PRESS values for the cross validation
       )
     {
-      var worker = new CrossPRESSEvaluator(xOfXRaw, maximalNumberOfFactors, groupingStrategy, preprocessSingleSpectrum, preprocessEnsembleOfSpectra, regressionMethod);
+      var worker = new CrossPRESSEvaluator(xOfXRaw, maximalNumberOfFactors, groupingStrategy, spectralPreprocessing, regressionMethod);
       double result = CrossValidationIteration(matrixXRaw, matrixYRaw, groupingStrategy, new CrossValidationIterationFunction(worker.EhCrossPRESS));
 
       crossPRESS = VectorMath.ToROVector(worker.CrossPRESS, worker.NumberOfFactors + 1);
@@ -653,18 +565,17 @@ namespace Altaxo.Calc.Regression.Multivariate
     /// <returns>Mean number of spectra used for cross prediction.</returns>
     public static double GetCrossYPredicted(
       double[] xOfXRaw,
-      IROMatrix<double> matrixXRaw, // matrix of spectra (a spectra is a row of this matrix)
-      IROMatrix<double> matrixYRaw, // matrix of concentrations (a mixture is a row of this matrix)
+      Matrix<double> matrixXRaw, // matrix of spectra (a spectra is a row of this matrix)
+      Matrix<double> matrixYRaw, // matrix of concentrations (a mixture is a row of this matrix)
       int numberOfFactors,
       ICrossValidationGroupingStrategy groupingStrategy,
       ISingleSpectrumPreprocessor preprocessSingleSpectrum,
-      IEnsembleMeanScalePreprocessor preprocessEnsembleOfSpectra,
       MultivariateRegression regressionMethod,
 
       IMatrix<double> yCrossPredicted // vertical value of PRESS values for the cross validation
       )
     {
-      var worker = new CrossPredictedYEvaluator(xOfXRaw, numberOfFactors, groupingStrategy, preprocessSingleSpectrum, preprocessEnsembleOfSpectra, regressionMethod, yCrossPredicted);
+      var worker = new CrossPredictedYEvaluator(xOfXRaw, numberOfFactors, groupingStrategy, preprocessSingleSpectrum, regressionMethod, yCrossPredicted);
       double result = CrossValidationIteration(matrixXRaw, matrixYRaw, groupingStrategy, new CrossValidationIterationFunction(worker.EhYCrossPredicted));
 
       return result;
@@ -685,18 +596,17 @@ namespace Altaxo.Calc.Regression.Multivariate
     /// <returns>Mean number of spectra used for prediction.</returns>
     public static double GetCrossXResiduals(
       double[] xOfXRaw,
-      IROMatrix<double> matrixXRaw, // matrix of spectra (a spectra is a row of this matrix)
-      IROMatrix<double> matrixYRaw, // matrix of concentrations (a mixture is a row of this matrix)
+      Matrix<double> matrixXRaw, // matrix of spectra (a spectra is a row of this matrix)
+      Matrix<double> matrixYRaw, // matrix of concentrations (a mixture is a row of this matrix)
       int numFactors,
       ICrossValidationGroupingStrategy groupingStrategy,
       ISingleSpectrumPreprocessor preprocessSingleSpectrum,
-      IEnsembleMeanScalePreprocessor preprocessEnsembleOfSpectra,
       MultivariateRegression regress,
 
       out IROMatrix<double> crossXResiduals
       )
     {
-      var worker = new CrossPredictedXResidualsEvaluator(matrixXRaw.RowCount, xOfXRaw, numFactors, groupingStrategy, preprocessSingleSpectrum, preprocessEnsembleOfSpectra, regress);
+      var worker = new CrossPredictedXResidualsEvaluator(matrixXRaw.RowCount, xOfXRaw, numFactors, groupingStrategy, preprocessSingleSpectrum, regress);
       double result = CrossValidationIteration(matrixXRaw, matrixYRaw, groupingStrategy, new CrossValidationIterationFunction(worker.EhCrossValidationWorker));
       crossXResiduals = worker.XCrossResiduals;
       return result;

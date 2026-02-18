@@ -36,7 +36,7 @@ namespace Altaxo.Calc.Regression.Multivariate
     /// <summary>
     /// Gets the spectral regions used in preprocessing.
     /// </summary>
-    int[] SpectralRegions
+    public int[] SpectralRegions
     {
       get;
     }
@@ -44,31 +44,22 @@ namespace Altaxo.Calc.Regression.Multivariate
     /// <summary>
     /// Gets the <c>X</c> axis values corresponding to the columns of the (unprocessed) spectral matrix.
     /// </summary>
-    System.Collections.Generic.IReadOnlyList<double> XOfX
+    public System.Collections.Generic.IReadOnlyList<double> XOfX
     {
       get;
     }
 
     /// <summary>
-    /// Gets the mean values of <c>X</c> used for centering during preprocessing.
+    /// Gets the auxiliary data associated with the ensemble processing.
     /// </summary>
-    IReadOnlyList<double> XMean
-    {
-      get;
-    }
-
-    /// <summary>
-    /// Gets the scaling factors of <c>X</c> used during preprocessing.
-    /// </summary>
-    IReadOnlyList<double> XScale
-    {
-      get;
-    }
+    /// <remarks>This property may return null if no auxiliary data is available. It is intended for use in
+    /// scenarios where additional context or metadata is required for processing.</remarks>
+    public IEnsembleProcessingAuxiliaryData? AuxiliaryDataX { get; }
 
     /// <summary>
     /// Gets the mean values of <c>Y</c> used for centering during preprocessing.
     /// </summary>
-    IReadOnlyList<double> YMean
+    public IReadOnlyList<double> YMean
     {
       get;
     }
@@ -76,7 +67,7 @@ namespace Altaxo.Calc.Regression.Multivariate
     /// <summary>
     /// Gets the scaling factors of <c>Y</c> used during preprocessing.
     /// </summary>
-    IReadOnlyList<double> YScale
+    public IReadOnlyList<double> YScale
     {
       get;
     }
@@ -84,15 +75,10 @@ namespace Altaxo.Calc.Regression.Multivariate
     /// <summary>
     /// Gets the preprocessing operation applied to a single spectrum.
     /// </summary>
-    ISingleSpectrumPreprocessor PreprocessSingleSpectrum
+    public ISingleSpectrumPreprocessor PreprocessSingleSpectrum
     {
       get;
     }
-
-    /// <summary>
-    /// Gets the preprocessing operation applied to an ensemble of spectra (mean/scale preprocessing).
-    /// </summary>
-    IEnsembleMeanScalePreprocessor PreprocessEnsembleOfSpectra { get; }
   }
 
   /// <summary>
@@ -104,17 +90,10 @@ namespace Altaxo.Calc.Regression.Multivariate
     /// <summary>
     /// Backing field for <see cref="PreprocessSingleSpectrum"/>.
     /// </summary>
-    ISingleSpectrumPreprocessor _preprocessSingleSpectrum;
-
-    /// <summary>
-    /// Backing field for <see cref="PreprocessEnsembleOfSpectra"/>.
-    /// </summary>
-    IEnsembleMeanScalePreprocessor _preprocessEnsembleOfSpectra;
+    private ISingleSpectrumPreprocessor _preprocessSingleSpectrum;
 
     private int[] _spectralRegions;
     private System.Collections.Generic.IReadOnlyList<double> _xOfX;
-    private IReadOnlyList<double> _xMean;
-    private IReadOnlyList<double> _xScale;
     private IReadOnlyList<double> _yMean;
     private IReadOnlyList<double> _yScale;
 #nullable enable
@@ -124,13 +103,6 @@ namespace Altaxo.Calc.Regression.Multivariate
     {
       get { return _preprocessSingleSpectrum; }
       set { _preprocessSingleSpectrum = value; }
-    }
-
-    /// <inheritdoc/>
-    public IEnsembleMeanScalePreprocessor PreprocessEnsembleOfSpectra
-    {
-      get { return _preprocessEnsembleOfSpectra; }
-      set { _preprocessEnsembleOfSpectra = value; }
     }
 
     /// <inheritdoc/>
@@ -148,18 +120,7 @@ namespace Altaxo.Calc.Regression.Multivariate
     }
 
     /// <inheritdoc/>
-    public IReadOnlyList<double> XMean
-    {
-      get { return _xMean; }
-      set { _xMean = value; }
-    }
-
-    /// <inheritdoc/>
-    public IReadOnlyList<double> XScale
-    {
-      get { return _xScale; }
-      set { _xScale = value; }
-    }
+    public IEnsembleProcessingAuxiliaryData AuxiliaryDataX { get; set; }
 
     /// <inheritdoc/>
     public IReadOnlyList<double> YMean

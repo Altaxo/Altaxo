@@ -23,9 +23,9 @@
 #endregion Copyright
 
 #nullable enable
-using System;
 using Altaxo.Calc.LinearAlgebra;
 using Altaxo.Data;
+using Altaxo.Science.Spectroscopy.EnsembleProcessing;
 
 namespace Altaxo.Calc.Regression.Multivariate
 {
@@ -196,7 +196,6 @@ namespace Altaxo.Calc.Regression.Multivariate
       if (IsDimensionReductionAndRegressionModel(table, out var dataSource))
       {
         preprocessSet.PreprocessSingleSpectrum = dataSource.ProcessOptions.Preprocessing;
-        preprocessSet.PreprocessEnsembleOfSpectra = dataSource.ProcessOptions.MeanScaleProcessing;
       }
 
       var sel = new Altaxo.Collections.AscendingIntegerCollection();
@@ -207,15 +206,31 @@ namespace Altaxo.Calc.Regression.Multivariate
         NotFound(GetXOfX_ColumnName());
       preprocessSet.XOfX = Altaxo.Calc.LinearAlgebra.DataColumnWrapper.ToROVector((INumericColumn)col, numberOfX);
 
-      col = table.DataColumns.TryGetColumn(GetXMean_ColumnName());
-      if (col is null)
-        NotFound(GetXMean_ColumnName());
-      preprocessSet.XMean = Altaxo.Calc.LinearAlgebra.DataColumnWrapper.ToROVector(col, numberOfX);
+      if (table.DataColumns.Contains(GetXMean_ColumnName()) && table.DataColumns.Contains(GetXScale_ColumnName()))
+      {
+        // the table is an old style table (before 2026-02-16), in which the ensembly mean and ensemble scale were stored as columns. We need to convert this to the new style, where the ensemble mean and scale are stored as auxiliary data of the preprocessor
+        var colM = (DoubleColumn)table.DataColumns.TryGetColumn(GetXMean_ColumnName());
+        var colS = (DoubleColumn)table.DataColumns.TryGetColumn(GetXMean_ColumnName());
 
-      col = table.DataColumns.TryGetColumn(GetXScale_ColumnName());
-      if (col is null)
-        NotFound(GetXScale_ColumnName());
-      preprocessSet.XScale = Altaxo.Calc.LinearAlgebra.DataColumnWrapper.ToROVector(col, numberOfX);
+
+        preprocessSet.AuxiliaryDataX = new EnsembleAuxiliaryDataCompound
+        {
+          Name = EnsembleMeanScale.AuxiliaryDataName,
+          Values = [
+            new EnsembleAuxiliaryDataVector() { Name = EnsembleMeanScale.AuxiliaryDataMeanName, VectorType = EnsembleAuxiliaryDataVectorType.Spectrum, Value = (double[])colM.Array.Clone() },
+            new EnsembleAuxiliaryDataVector() { Name = EnsembleMeanScale.AuxiliaryDataMeanName, VectorType = EnsembleAuxiliaryDataVectorType.Spectrum, Value = (double[])colS.Array.Clone() },
+                  ],
+        };
+      }
+      else if (table.DataSource is DimensionReductionAndRegressionDataSource ds)
+      {
+        // the table is a new style table (after 2026-02-16), in which the ensemble preprocessing auxiliary data is stored in the data source
+        preprocessSet.AuxiliaryDataX = ds.ProcessResult.AuxiliaryData;
+      }
+      else
+      {
+        NotFound(GetXMean_ColumnName());
+      }
 
       sel.Clear();
       col = table.DataColumns.TryGetColumn(GetYMean_ColumnName());

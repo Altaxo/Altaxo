@@ -23,6 +23,8 @@
 #endregion Copyright
 
 
+using Altaxo.Science.Spectroscopy.EnsembleProcessing;
+
 namespace Altaxo.Calc.Regression.Multivariate
 {
   /// <summary>
@@ -45,22 +47,22 @@ namespace Altaxo.Calc.Regression.Multivariate
     /// </summary>
     public int PreferredNumberOfFactors { get; init; }
 
-
-
     /// <summary>
     /// Gets the mean number of measurements included in the Cross-PRESS calculation (used to calculate the F-ratio).
     /// </summary>
     public double MeanNumberOfMeasurementsInCrossPRESSCalculation { get; init; }
 
-
-
+    /// <summary>
+    /// Gets the auxiliary data that are a secondary result in ensemble processing, for instance the ensemble mean.
+    /// </summary>
+    public IEnsembleProcessingAuxiliaryData? AuxiliaryData { get; init; }
 
     #region Serialization
 
     /// <summary>
     /// XML serialization surrogate (version 0).
     /// </summary>
-    [Altaxo.Serialization.Xml.XmlSerializationSurrogateFor(typeof(DimensionReductionAndRegressionResult), 0)]
+    [Altaxo.Serialization.Xml.XmlSerializationSurrogateFor("AltaxoBase", "Altaxo.Calc.Regression.Multivariate.DimensionReductionAndRegressionResult", 0)]
     public class SerializationSurrogate0 : Altaxo.Serialization.Xml.IXmlSerializationSurrogate
     {
       /// <inheritdoc/>
@@ -87,6 +89,45 @@ namespace Altaxo.Calc.Regression.Multivariate
           CalculatedNumberOfFactors = calculatedNumberOfFactors,
           PreferredNumberOfFactors = preferredNumberOfFactors,
           MeanNumberOfMeasurementsInCrossPRESSCalculation = meanNumberOfMeasurementsInCrossPRESSCalculation
+        };
+      }
+    }
+
+    /// <summary>
+    /// XML serialization surrogate (version 1).
+    /// </summary>
+    /// <remarks>
+    /// V1: 2026-02-16 add AuxiliaryData from ensemble preprocessing</remarks>
+    [Altaxo.Serialization.Xml.XmlSerializationSurrogateFor(typeof(DimensionReductionAndRegressionResult), 1)]
+    public class SerializationSurrogate1 : Altaxo.Serialization.Xml.IXmlSerializationSurrogate
+    {
+      /// <inheritdoc/>
+      public void Serialize(object obj, Altaxo.Serialization.Xml.IXmlSerializationInfo info)
+      {
+        var s = (DimensionReductionAndRegressionResult)obj;
+        info.AddValue("NumberOfMeasurements", s.NumberOfMeasurements);
+        info.AddValue("CalculatedNumberOfFactors", s.CalculatedNumberOfFactors);
+        info.AddValue("PreferredNumberOfFactors", s.PreferredNumberOfFactors);
+        info.AddValue("MeanNumberOfMeasurementsInCrossPRESSCalculation", s.MeanNumberOfMeasurementsInCrossPRESSCalculation);
+        info.AddValue("AuxiliaryData", s.AuxiliaryData);
+      }
+
+      /// <inheritdoc/>
+      public object Deserialize(object? o, Altaxo.Serialization.Xml.IXmlDeserializationInfo info, object? parent)
+      {
+        var numberOfMeasurements = info.GetInt32("NumberOfMeasurements");
+        var calculatedNumberOfFactors = info.GetInt32("CalculatedNumberOfFactors");
+        var preferredNumberOfFactors = info.GetInt32("PreferredNumberOfFactors");
+        var meanNumberOfMeasurementsInCrossPRESSCalculation = info.GetDouble("MeanNumberOfMeasurementsInCrossPRESSCalculation");
+        var auxiliaryData = info.GetValueOrNull<IEnsembleProcessingAuxiliaryData>("AuxiliaryData", parent);
+
+        return new DimensionReductionAndRegressionResult()
+        {
+          NumberOfMeasurements = numberOfMeasurements,
+          CalculatedNumberOfFactors = calculatedNumberOfFactors,
+          PreferredNumberOfFactors = preferredNumberOfFactors,
+          MeanNumberOfMeasurementsInCrossPRESSCalculation = meanNumberOfMeasurementsInCrossPRESSCalculation,
+          AuxiliaryData = auxiliaryData
         };
       }
     }

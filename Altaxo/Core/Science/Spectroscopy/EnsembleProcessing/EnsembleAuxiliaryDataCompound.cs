@@ -27,7 +27,7 @@ namespace Altaxo.Science.Spectroscopy.EnsembleProcessing
   /// <summary>
   /// Represents a named compound auxiliary value consisting of multiple auxiliary data items.
   /// </summary>
-  public record EnsembleAuxiliaryDataCompound : IEnsembleProcessingAuxiliaryData
+  public record EnsembleAuxiliaryDataCompound : IEnsembleProcessingAuxiliaryData, Main.IImmutable
   {
     /// <inheritdoc/>
     public required string Name { get; init; }
@@ -35,7 +35,35 @@ namespace Altaxo.Science.Spectroscopy.EnsembleProcessing
     /// <summary>
     /// Gets the contained auxiliary data items.
     /// </summary>
-    public IEnsembleProcessingAuxiliaryData[] Values { get; init; }
+    public required IEnsembleProcessingAuxiliaryData[] Values { get; init; }
+
+    #region Serialization
+
+    /// <summary>
+    /// V0: 2026-02-16
+    /// </summary>
+    [Altaxo.Serialization.Xml.XmlSerializationSurrogateFor(typeof(EnsembleAuxiliaryDataCompound), 0)]
+    private class XmlSerializationSurrogate0 : Altaxo.Serialization.Xml.IXmlSerializationSurrogate
+    {
+      /// <inheritdoc/>
+      public virtual void Serialize(object obj, Altaxo.Serialization.Xml.IXmlSerializationInfo info)
+      {
+        var s = (EnsembleAuxiliaryDataCompound)obj;
+
+        info.AddValue("Name", s.Name);
+        info.AddArray("Values", s.Values, s.Values.Length);
+      }
+
+      /// <inheritdoc/>
+      public object Deserialize(object? o, Altaxo.Serialization.Xml.IXmlDeserializationInfo info, object? parent)
+      {
+        var name = info.GetString("Name");
+        var values = info.GetArrayOfValues<IEnsembleProcessingAuxiliaryData>("Values", parent);
+        return new EnsembleAuxiliaryDataCompound { Name = name, Values = values };
+      }
+    }
+
+    #endregion Serialization
   }
 
 

@@ -93,6 +93,8 @@ namespace Altaxo.Gui.Science.Spectroscopy
           case IEnsemblePreprocessor ensemble:
             yield return ("Ensemble", ensemble, () => new EnsembleProcessing.EnsembleProcessingController());
             break;
+          case NoopSpectrumPreprocessor:
+            break;
           default:
             throw new NotImplementedException($"Processor type {processor?.GetType()} is not implemented");
         }

@@ -28,7 +28,7 @@ namespace Altaxo.Science.Spectroscopy.EnsembleProcessing
   /// Interface for auxiliary data that are a secondary result in ensemble processing, for instance the ensemble mean.
   /// These data are not part of the main result set, but are necessary for processing spectra for prediction (PLS, PCR).
   /// </summary>
-  public interface IEnsembleProcessingAuxiliaryData
+  public interface IEnsembleProcessingAuxiliaryData : Main.IImmutable
   {
     /// <summary>
     /// Gets the name of the data, for instance "Ensemble Mean".

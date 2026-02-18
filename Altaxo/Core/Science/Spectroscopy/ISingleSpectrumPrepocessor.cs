@@ -47,7 +47,7 @@ namespace Altaxo.Science.Spectroscopy
     /// is the start index of a new spectral region.
     /// </param>
     /// <returns>X-values, y-values, and regions of the processed spectrum.</returns>
-    (double[] x, double[] y, int[]? regions) Execute(double[] x, double[] y, int[]? regions);
+    public (double[] x, double[] y, int[]? regions) Execute(double[] x, double[] y, int[]? regions);
 
 
     /// <summary>
@@ -79,6 +79,24 @@ namespace Altaxo.Science.Spectroscopy
       }
       return (newX, yresult, newRegions, null);
     }
+
+    /// <summary>
+    /// Executes the prediction algorithm using the specified input features and target values, returning the predicted
+    /// results for the given regions.
+    /// </summary>
+    /// <param name="x">An array of doubles that represents the input features to be used for prediction. Cannot be null.</param>
+    /// <param name="y">A matrix containing the target values associated with the input features. Cannot be null.</param>
+    /// <param name="regions">An optional array of integers specifying the regions for which predictions should be made. If null, predictions
+    /// are performed for all available regions.</param>
+    /// <param name="auxiliaryData">Optional auxiliary data that may be used to assist in the prediction process. May be null.</param>
+    /// <returns>A tuple containing an array of predicted values and a matrix of results corresponding to the input data.</returns>
+    /// <exception cref="NotImplementedException">Thrown in all cases, as this method is not yet implemented.</exception>
+    public (double[] x, Matrix<double> y, int[]? regions) ExecuteForPrediction(double[] x, Matrix<double> y, int[]? regions, IEnsembleProcessingAuxiliaryData? auxiliaryData)
+    {
+      // the default implementation of this method simply calls the Execute method, ignoring the auxiliary data. This is a placeholder for future implementations that may utilize the auxiliary data for prediction purposes.
+      var (newX, newY, newRegions, _) = Execute(x, y, regions);
+      return (newX, newY, newRegions);
+    }
   }
 
   /// <summary>
@@ -90,14 +108,14 @@ namespace Altaxo.Science.Spectroscopy
     /// <summary>
     /// Gets the name of the referenced table.
     /// </summary>
-    string? TableName { get; init; }
+    public string? TableName { get; init; }
 
     /// <summary>
     /// Returns a new instance in which <see cref="TableName"/> is set to the provided value.
     /// </summary>
     /// <param name="tableName">The name of the table.</param>
     /// <returns>A new instance in which <see cref="TableName"/> is set to the provided value.</returns>
-    IReferencingTable WithTableName(string tableName);
+    public IReferencingTable WithTableName(string tableName);
   }
 
   /// <summary>
@@ -112,25 +130,25 @@ namespace Altaxo.Science.Spectroscopy
     /// <value>
     /// The name of the table, the group number, and the names of the x and y columns, or <see langword="null"/>.
     /// </value>
-    (string TableName, int GroupNumber, string XColumnName, string YColumnName)? XYDataOrigin { get; init; }
+    public (string TableName, int GroupNumber, string XColumnName, string YColumnName)? XYDataOrigin { get; init; }
 
     /// <summary>
     /// Returns a new instance in which <see cref="XYDataOrigin"/> is set to the provided value.
     /// </summary>
     /// <param name="xyDataOrigin">The name of the table, the group number, and the names of the x and y columns.</param>
     /// <returns>A new instance in which <see cref="XYDataOrigin"/> is set to the provided value.</returns>
-    IReferencingXYColumns WithXYDataOrigin((string TableName, int GroupNumber, string XColumnName, string YColumnName) xyDataOrigin);
+    public IReferencingXYColumns WithXYDataOrigin((string TableName, int GroupNumber, string XColumnName, string YColumnName) xyDataOrigin);
 
     /// <summary>
     /// Stores the data of the curve, consisting of x-y pairs.
     /// </summary>
-    ImmutableArray<(double x, double y)> XYCurve { get; init; }
+    public ImmutableArray<(double x, double y)> XYCurve { get; init; }
 
     /// <summary>
     /// Returns a new instance in which <see cref="XYCurve"/> is set to the provided value.
     /// </summary>
     /// <param name="xyCurve">The x-y curve.</param>
     /// <returns>A new instance with the provided value set.</returns>
-    IReferencingXYColumns WithXYCurve(ImmutableArray<(double x, double y)> xyCurve);
+    public IReferencingXYColumns WithXYCurve(ImmutableArray<(double x, double y)> xyCurve);
   }
 }

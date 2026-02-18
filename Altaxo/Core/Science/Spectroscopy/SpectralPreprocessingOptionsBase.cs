@@ -138,16 +138,19 @@ namespace Altaxo.Science.Spectroscopy
 
     public (double[] x, Matrix<double> y, int[]? regions, IEnsembleProcessingAuxiliaryData auxiliaryData) Execute(double[] x, Matrix<double> y, int[]? regions)
     {
+      var xNew = x;
       var yNew = y;
       if (regions is null || regions.Length == 0)
       {
         var indices = Enumerable.Range(0, x.Length).ToArray();
-        System.Array.Sort(x, indices);
+        xNew = (double[])x.Clone();
         yNew = Matrix<double>.Build.Dense(y.RowCount, y.ColumnCount);
+        System.Array.Sort(xNew, indices);
         for (int col = 0; col < y.ColumnCount; ++col)
         {
           yNew.SetColumn(col, y.Column(indices[col]));
         }
+        x = xNew;
         y = yNew;
       }
 
@@ -168,6 +171,54 @@ namespace Altaxo.Science.Spectroscopy
       }
 
       return (x, y, regions, totalAuxiliaryData);
+    }
+
+    public (double[] x, Matrix<double> y, int[]? regions) ExecuteForPrediction(double[] x, Matrix<double> y, int[]? regions, IEnsembleProcessingAuxiliaryData auxiliaryData)
+    {
+      var auxiliaryDataCompound = auxiliaryData as EnsembleAuxiliaryDataCompound;
+      if (auxiliaryData is not null && auxiliaryDataCompound is null)
+      {
+        throw new System.ArgumentException("The auxiliary data passed to ExecuteForPrediction should be of type EnsembleAuxiliaryDataCompound, but it is of type " + auxiliaryData.GetType().FullName, nameof(auxiliaryData));
+      }
+
+      var xNew = x;
+      var yNew = y;
+      if (regions is null || regions.Length == 0)
+      {
+        var indices = Enumerable.Range(0, x.Length).ToArray();
+        xNew = (double[])x.Clone();
+        yNew = Matrix<double>.Build.Dense(y.RowCount, y.ColumnCount);
+        System.Array.Sort(xNew, indices);
+        for (int col = 0; col < y.ColumnCount; ++col)
+        {
+          yNew.SetColumn(col, y.Column(indices[col]));
+        }
+        x = xNew;
+        y = yNew;
+      }
+
+      int idxAuxiliaryData = 0;
+      foreach (var processor in InnerList)
+      {
+        IEnsembleProcessingAuxiliaryData? auxData = null;
+        if (processor is IEnsemblePreprocessor)
+        {
+          if (auxiliaryDataCompound is null)
+          {
+            throw new System.ArgumentException("The auxiliary data passed to ExecuteForPrediction was null, but the pipeline contains ensemble preprocessing steps.", nameof(auxiliaryData));
+          }
+          if (auxiliaryDataCompound.Values.Length <= idxAuxiliaryData)
+          {
+            throw new System.ArgumentException($"The auxiliary data passed to ExecuteForPrediction does not contain enough elements for the pipeline. The pipeline contains at least {idxAuxiliaryData + 1} ensemble preprocessing steps, but the auxiliary data only contains {auxiliaryDataCompound.Values.Length} elements.", nameof(auxiliaryData));
+          }
+
+          auxData = auxiliaryDataCompound.Values[idxAuxiliaryData];
+          idxAuxiliaryData++;
+        }
+
+        (x, y, regions) = processor.ExecuteForPrediction(x, y, regions, auxData);
+      }
+      return (x, y, regions);
     }
   }
 }

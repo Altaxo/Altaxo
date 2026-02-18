@@ -162,7 +162,7 @@ namespace Altaxo.Science.Spectroscopy
     {
       var result = new SpectralPreprocessingOptionsList
       {
-        InnerList = elements.Where(e => e is not null && !e.GetType().Name.Contains("None")).ToImmutableList()
+        InnerList = elements.Where(e => e is not null && !(e.GetType().Name.Contains("None") || e.GetType().Name.Contains("Noop"))).ToImmutableList()
       };
 
       return result;

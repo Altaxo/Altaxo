@@ -27,6 +27,7 @@ using System;
 using System.Collections.Generic;
 using System.Collections.Immutable;
 using System.Diagnostics.CodeAnalysis;
+using System.Linq;
 using Altaxo.Calc.LinearAlgebra;
 using Altaxo.Collections;
 using Altaxo.Data;
@@ -443,8 +444,8 @@ namespace Altaxo.Calc.Regression.Multivariate
     /// <param name="destinationTable">Table to store the results.</param>
     public virtual void CalculateCrossPRESS(
       double[] xOfXRaw,
-      IMatrix<double> matrixXRaw,
-      IMatrix<double> matrixYRaw,
+      Matrix<double> matrixXRaw,
+      Matrix<double> matrixYRaw,
       DimensionReductionAndRegressionOptions plsOptions,
       ref DimensionReductionAndRegressionResult plsContent,
       DataTable destinationTable
@@ -463,7 +464,6 @@ namespace Altaxo.Calc.Regression.Multivariate
           plsOptions.MaximumNumberOfFactors,
           plsOptions.CrossValidationGroupingStrategy,
           plsOptions.Preprocessing,
-          plsOptions.MeanScaleProcessing,
           CreateNewRegressionObject(),
           out var crossPRESSMatrix);
 
@@ -495,18 +495,17 @@ namespace Altaxo.Calc.Regression.Multivariate
       IMultivariateCalibrationModel mcalib,
       ICrossValidationGroupingStrategy groupingStrategy,
        ISingleSpectrumPreprocessor preprocessSingleSpectrum,
-      IEnsembleMeanScalePreprocessor preprocessEnsembleOfSpectra,
       double[] xOfXRaw,
-      IMatrix<double> matrixXRaw,
-      IMatrix<double> matrixYRaw,
+      Matrix<double> matrixXRaw,
+      Matrix<double> matrixYRaw,
       int numberOfFactors,
-      IMatrix<double> predictedY,
-      IMatrix<double> spectralResiduals)
+      Matrix<double> predictedY,
+      Matrix<double> spectralResiduals)
     {
       MultivariateRegression.GetCrossYPredicted(
         xOfXRaw, matrixXRaw, matrixYRaw,
         numberOfFactors, groupingStrategy,
-        preprocessSingleSpectrum, preprocessEnsembleOfSpectra,
+        preprocessSingleSpectrum,
         CreateNewRegressionObject(),
         predictedY);
     }
@@ -633,10 +632,10 @@ namespace Altaxo.Calc.Regression.Multivariate
     public virtual void CalculatePredictedY(
       IMultivariateCalibrationModel mcalib,
       double[] xOfXRaw,
-      IMatrix<double> matrixXRaw,
+      Matrix<double> matrixXRaw,
       int numberOfFactors,
-      MatrixMath.LeftSpineJaggedArrayMatrix<double> predictedY,
-      IMatrix<double>? spectralResiduals)
+      Matrix<double> predictedY,
+      Matrix<double>? spectralResiduals)
     {
       MultivariateRegression.PreprocessSpectraForPrediction(mcalib, xOfXRaw, matrixXRaw, out var xOfXPre, out var matrixXPre);
 
@@ -754,15 +753,15 @@ namespace Altaxo.Calc.Regression.Multivariate
     public static void GetXYMatricesOfSpectralColumns(
       DataTableMatrixProxyWithMultipleColumnHeaderColumns data,
       out double[] xOfXRaw,
-      out IMatrix<double>? matrixXRaw,
-      out IMatrix<double>? matrixYRaw)
+      out Matrix<double>? matrixXRaw,
+      out Matrix<double>? matrixYRaw)
     {
       int numberOfSpectra = data.ColumnCount;
       int pointsPerSpectra = data.RowCount;
       int numberOfTargetVariables = data.ColumnHeaderColumnsCount;
 
-      matrixXRaw = new MatrixMath.LeftSpineJaggedArrayMatrix<double>(numberOfSpectra, pointsPerSpectra);
-      matrixYRaw = new MatrixMath.LeftSpineJaggedArrayMatrix<double>(numberOfSpectra, numberOfTargetVariables);
+      matrixXRaw = CreateMatrix.Dense<double>(numberOfSpectra, pointsPerSpectra);
+      matrixYRaw = CreateMatrix.Dense<double>(numberOfSpectra, numberOfTargetVariables);
       xOfXRaw = new double[pointsPerSpectra];
 
       var concentrationIndices = new AscendingIntegerCollection();
@@ -955,25 +954,70 @@ namespace Altaxo.Calc.Regression.Multivariate
 
     #region Storing results
 
+    /// <summary>
+    /// Saves auxiliary data that is associated with samples.
+    /// </summary>
+    /// <param name="data">The auxiliary data to save.</param>
+    /// <param name="destinationTable">The destination table.</param>
+    /// <param name="groupNumber">The destination group number.</param>
+    /// <param name="level">The level of the data in the hierarchy of the auxiliary data. This is used to create unique column names for each data item. When starting the recursion, provide an empty array.</param>
+    protected static void SaveAuxiliaryDataToTable(IEnsembleProcessingAuxiliaryData data, DataTable destinationTable, int groupNumber, int continuousNumber, int[] level, IEnsembleProcessingAuxiliaryData[] hier)
+    {
+      if (data is EnsembleAuxiliaryDataCompound compound)
+      {
+        int idx = -1;
+        foreach (var item in compound.Values)
+        {
+          ++idx;
+          SaveAuxiliaryDataToTable(item, destinationTable, groupNumber, continuousNumber, [.. level, idx], [.. hier, item]);
+          ++continuousNumber;
+        }
+      }
+      else if (data is not null)
+      {
+        var pcolName = destinationTable.PropCols.EnsureExistence("AuxiliaryDataXName", typeof(TextColumn), ColumnKind.V, groupNumber);
+        var pcolType = destinationTable.PropCols.EnsureExistence("AuxiliaryDataXType", typeof(TextColumn), ColumnKind.V, groupNumber);
+        var pcolHierarchy = destinationTable.PropCols.EnsureExistence("AuxiliaryDataXHierarchy", typeof(TextColumn), ColumnKind.V, groupNumber);
+        var column = destinationTable.DataColumns.EnsureExistence($"AuxiliaryDataX_{continuousNumber}", typeof(DoubleColumn), ColumnKind.V, groupNumber);
+        var columnNumber = destinationTable.DataColumns.GetColumnNumber(column);
+        pcolName[columnNumber] = string.Join(" ", hier.Select(x => x.Name));
+        pcolHierarchy[columnNumber] = string.Join(" ", level);
+        pcolType[columnNumber] = data switch
+        {
+          EnsembleAuxiliaryDataVector => "Vector",
+          EnsembleAuxiliaryDataScalar => "Scalar",
+          _ => throw new NotImplementedException()
+        };
+
+        switch (data)
+        {
+          case EnsembleAuxiliaryDataVector v:
+            pcolType[columnNumber] = "Vector";
+            column.Data = v.Value;
+            break;
+          case EnsembleAuxiliaryDataScalar s:
+            pcolType[columnNumber] = "Scalar";
+            column[0] = s.Value;
+            break;
+          default:
+            throw new NotImplementedException();
+        }
+      }
+    }
+
+
+
     public virtual void StorePreprocessedData(
-      System.Collections.Generic.IReadOnlyList<double> meanX,
-      System.Collections.Generic.IReadOnlyList<double> scaleX,
-      System.Collections.Generic.IReadOnlyList<double> meanY,
-      System.Collections.Generic.IReadOnlyList<double> scaleY,
+      IEnsembleProcessingAuxiliaryData auxiliaryDataX,
+      IReadOnlyList<double> meanY,
+      IReadOnlyList<double> scaleY,
       DataTable table)
     {
+
+
+
       // Store X-Mean and X-Scale
-      var colXMean = new Altaxo.Data.DoubleColumn();
-      var colXScale = new Altaxo.Data.DoubleColumn();
-
-      for (int i = 0; i < meanX.Count; i++)
-      {
-        colXMean[i] = meanX[i];
-        colXScale[i] = scaleX[i];
-      }
-
-      table.DataColumns.Add(colXMean, _XMean_ColumnName, Altaxo.Data.ColumnKind.V, 0);
-      table.DataColumns.Add(colXScale, _XScale_ColumnName, Altaxo.Data.ColumnKind.V, 0);
+      SaveAuxiliaryDataToTable(auxiliaryDataX, table, 0, 0, [], []);
 
       // store the y-mean and y-scale
       var colYMean = new Altaxo.Data.DoubleColumn();
@@ -1089,8 +1133,6 @@ namespace Altaxo.Calc.Regression.Multivariate
       )
     {
       IMatrix<double> matrixY = GetOriginalY(regressionData);
-      IMultivariateCalibrationModel calib = GetCalibrationModel(table);
-
       {
         // add a label column for the measurement number
         var measurementLabel = new Altaxo.Data.DoubleColumn();
@@ -1166,13 +1208,12 @@ namespace Altaxo.Calc.Regression.Multivariate
 
       GetXYMatricesOfSpectralColumns(ddrs.ProcessData, out var xOfXRaw, out var matrixXRaw, out var matrixYRaw);
 
-      var predictedY = new MatrixMath.LeftSpineJaggedArrayMatrix<double>(matrixXRaw.RowCount, calib.NumberOfY);
-      var spectralResiduals = new MatrixMath.LeftSpineJaggedArrayMatrix<double>(matrixXRaw.RowCount, 1);
+      var predictedY = CreateMatrix.Dense<double>(matrixXRaw.RowCount, calib.NumberOfY);
+      var spectralResiduals = CreateMatrix.Dense<double>(matrixXRaw.RowCount, 1);
       CalculateCrossPredictedY(
         calib,
         ddrs.ProcessOptions.CrossValidationGroupingStrategy,
         ddrs.ProcessOptions.Preprocessing,
-        ddrs.ProcessOptions.MeanScaleProcessing,
         xOfXRaw,
         matrixXRaw,
         matrixYRaw,
@@ -1247,8 +1288,8 @@ namespace Altaxo.Calc.Regression.Multivariate
 
       GetXYMatricesOfSpectralColumns(dataSource.ProcessData, out var xOfX, out var matrixX, out var matrixY);
 
-      var predictedY = new MatrixMath.LeftSpineJaggedArrayMatrix<double>(matrixX.RowCount, calib.NumberOfY);
-      var spectralResiduals = new MatrixMath.LeftSpineJaggedArrayMatrix<double>(matrixX.RowCount, 1);
+      var predictedY = CreateMatrix.Dense<double>(matrixX.RowCount, calib.NumberOfY);
+      var spectralResiduals = CreateMatrix.Dense<double>(matrixX.RowCount, 1);
       CalculatePredictedY(calib, xOfX, matrixX, numberOfFactors, predictedY, spectralResiduals);
 
       if (saveYPredicted)
@@ -1374,7 +1415,7 @@ namespace Altaxo.Calc.Regression.Multivariate
       // Fill matrixX with spectra
       GetXYMatricesOfSpectralColumns(proxy, out var xOfXRaw, out var matrixXRaw, out _);
 
-      var predictedY = new MatrixMath.LeftSpineJaggedArrayMatrix<double>(matrixXRaw.RowCount, calibModel.NumberOfY);
+      var predictedY = CreateMatrix.Dense<double>(matrixXRaw.RowCount, calibModel.NumberOfY);
       CalculatePredictedY(calibModel, xOfXRaw, matrixXRaw, numberOfFactors, predictedY, null);
 
       // now save the predicted y in the destination table
@@ -1588,8 +1629,8 @@ namespace Altaxo.Calc.Regression.Multivariate
     public virtual string? ExecuteAnalysis(
       Altaxo.AltaxoDocument mainDocument,
       DataTableMatrixProxyWithMultipleColumnHeaderColumns srcData,
-      IMatrix<double> matrixXRaw,
-      IMatrix<double> matrixYRaw,
+      Matrix<double> matrixXRaw,
+      Matrix<double> matrixYRaw,
       double[] xOfXRaw,
       DimensionReductionAndRegressionOptions options,
       DataTable destinationTable,
@@ -1602,15 +1643,14 @@ namespace Altaxo.Calc.Regression.Multivariate
         // Preprocess
         MultivariateRegression.PreprocessForAnalysis(
           options.Preprocessing,
-          options.MeanScaleProcessing,
           xOfXRaw, matrixXRaw, matrixYRaw,
-          out var xOfXPre, out var matrixXPre, out var matrixYPre,
-          out var meanX, out var scaleX, out var meanY, out var scaleY);
+          out var xOfXPre, out var matrixXPre, out var auxiliaryDataX, out var matrixYPre,
+          out var meanY, out var scaleY);
 
         StoreXOfX(xOfXPre, destinationTable);
 
 
-        StorePreprocessedData(meanX, scaleX, meanY, scaleY, destinationTable);
+        StorePreprocessedData(auxiliaryDataX, meanY, scaleY, destinationTable);
 
         // Analyze and Store
 
@@ -1621,7 +1661,12 @@ namespace Altaxo.Calc.Regression.Multivariate
           destinationTable, out var press);
 
 
-        regressionResult = regressionResult with { NumberOfMeasurements = matrixXRaw.RowCount, CalculatedNumberOfFactors = press.Count - 1 };
+        regressionResult = regressionResult with
+        {
+          AuxiliaryData = auxiliaryDataX,
+          NumberOfMeasurements = matrixXRaw.RowCount,
+          CalculatedNumberOfFactors = press.Count - 1
+        };
 
         StorePRESSData(press, destinationTable);
 

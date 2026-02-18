@@ -37,24 +37,13 @@
                 SelectedItem="{Binding CROSSPressCalculationTypes.SelectedItem, Mode=TwoWay}"
                 Orientation="Vertical"/>
         </GroupBox>
-        
-        <GroupBox Grid.Row="8" Header="Spectrum preprocessing">
+
+        <GroupBox Grid.Row="8"
+                  Header="Spectrum preprocessing:">
             <StackPanel Orientation="Vertical">
-                <ComboBox  
-                  ItemsSource="{Binding SingleSpectrumPreprocessor.Items}" 
-                  SelectedItem="{Binding SingleSpectrumPreprocessor.SelectedItem, Mode=TwoWay}" />
-                <ContentControl Content="{Binding SingleSpectrumPreprocessorController.ViewObject}"/>
+                <ContentControl Content="{Binding SingleSpectrumPreprocessorController.ViewObject}" />
             </StackPanel>
         </GroupBox>
 
-        <GroupBox Grid.Row="10" Header="Ensemble mean / scale">
-            <StackPanel Orientation="Vertical">
-                <ComboBox  
-                  ItemsSource="{Binding EnsembleMeanScalePreprocessor.Items}" 
-                  SelectedItem="{Binding EnsembleMeanScalePreprocessor.SelectedItem, Mode=TwoWay}" />
-
-                <ContentControl Content="{Binding EnsembleMeanScalePreprocessorController.ViewObject}"/>
-            </StackPanel>
-        </GroupBox>
     </Grid>
 </UserControl>

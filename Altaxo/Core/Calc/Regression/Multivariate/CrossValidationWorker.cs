@@ -25,7 +25,6 @@
 using System;
 using Altaxo.Calc.LinearAlgebra;
 using Altaxo.Science.Spectroscopy;
-using Altaxo.Science.Spectroscopy.EnsembleProcessing;
 
 namespace Altaxo.Calc.Regression.Multivariate
 {
@@ -59,7 +58,7 @@ namespace Altaxo.Calc.Regression.Multivariate
     /// <summary>
     /// Preprocessor applied to an ensemble of spectra (mean/scale preprocessing).
     /// </summary>
-    protected IEnsembleMeanScalePreprocessor _ensembleOfSpectraPreprocessor;
+    //protected IEnsembleMeanScalePreprocessor _ensembleOfSpectraPreprocessor;
 
     /// <summary>
     /// The multivariate regression analysis implementation.
@@ -78,14 +77,12 @@ namespace Altaxo.Calc.Regression.Multivariate
     /// <param name="numFactors">The initial number of factors to use.</param>
     /// <param name="groupingStrategy">The grouping strategy used for cross validation.</param>
     /// <param name="preprocessSingleSpectrum">The preprocessor applied to each single spectrum.</param>
-    /// <param name="preprocessEnsembleOfSpectra">The preprocessor applied to an ensemble of spectra.</param>
     /// <param name="analysis">The analysis instance used to build the model and perform predictions.</param>
     public CrossValidationWorker(
       double[] xOfX,
       int numFactors,
       ICrossValidationGroupingStrategy groupingStrategy,
       ISingleSpectrumPreprocessor preprocessSingleSpectrum,
-      IEnsembleMeanScalePreprocessor preprocessEnsembleOfSpectra,
       MultivariateRegression analysis
       )
     {
@@ -93,7 +90,6 @@ namespace Altaxo.Calc.Regression.Multivariate
       _numFactors = numFactors;
       _groupingStrategy = groupingStrategy;
       _singleSpectrumPreprocessor = preprocessSingleSpectrum;
-      _ensembleOfSpectraPreprocessor = preprocessEnsembleOfSpectra;
       _analysis = analysis;
     }
   }
@@ -124,17 +120,15 @@ namespace Altaxo.Calc.Regression.Multivariate
     /// <param name="numFactors">The initial number of factors to use.</param>
     /// <param name="groupingStrategy">The grouping strategy used for cross validation.</param>
     /// <param name="preprocessSingleSpectrum">The preprocessor applied to each single spectrum.</param>
-    /// <param name="preprocessEnsembleOfSpectra">The preprocessor applied to an ensemble of spectra.</param>
     /// <param name="analysis">The analysis instance used to build the model and perform predictions.</param>
     public CrossPRESSEvaluator(
       double[] xOfX,
       int numFactors,
       ICrossValidationGroupingStrategy groupingStrategy,
       ISingleSpectrumPreprocessor preprocessSingleSpectrum,
-      IEnsembleMeanScalePreprocessor preprocessEnsembleOfSpectra,
       MultivariateRegression analysis
       )
-      : base(xOfX, numFactors, groupingStrategy, preprocessSingleSpectrum, preprocessEnsembleOfSpectra, analysis)
+      : base(xOfX, numFactors, groupingStrategy, preprocessSingleSpectrum, analysis)
     {
     }
 
@@ -146,28 +140,24 @@ namespace Altaxo.Calc.Regression.Multivariate
     /// <param name="analysisMatrixYRaw">The matrix of unpreprocessed target variables used for analysis.</param>
     /// <param name="predictionMatrixXRaw">The matrix of unpreprocessed spectra used for prediction.</param>
     /// <param name="predictionMatrixYRaw">The matrix of unpreprocessed target variables corresponding to the spectra used for prediction (for comparison with the predicted values).</param>
-    public void EhCrossPRESS(int[] group, IMatrix<double> analysisMatrixXRaw, IMatrix<double> analysisMatrixYRaw, IMatrix<double> predictionMatrixXRaw, IMatrix<double> predictionMatrixYRaw)
+    public void EhCrossPRESS(int[] group, Matrix<double> analysisMatrixXRaw, Matrix<double> analysisMatrixYRaw, Matrix<double> predictionMatrixXRaw, Matrix<double> predictionMatrixYRaw)
     {
       if (_predictedY is null || _predictedY.RowCount != predictionMatrixYRaw.RowCount || _predictedY.ColumnCount != predictionMatrixYRaw.ColumnCount)
         _predictedY = new MatrixMath.LeftSpineJaggedArrayMatrix<double>(predictionMatrixYRaw.RowCount, predictionMatrixYRaw.ColumnCount);
 
       MultivariateRegression.PreprocessForAnalysis(
         _singleSpectrumPreprocessor,
-        _ensembleOfSpectraPreprocessor,
         _xOfX,
         analysisMatrixXRaw,
         analysisMatrixYRaw,
-        out var xOfXPre, out var analysisMatrixXPre, out var analysisMatrixYPre,
-        out var meanX, out var scaleX, out var meanY, out var scaleY);
+        out var xOfXPre, out var analysisMatrixXPre, out var auxiliaryDataX,
+        out var analysisMatrixYPre,
+        out var meanY, out var scaleY);
+
       _analysis.AnalyzeFromPreprocessed(analysisMatrixXPre, analysisMatrixYPre, _numFactors);
       _numFactors = Math.Min(_numFactors, _analysis.NumberOfFactors);
 
-      MultivariateRegression.PreprocessSpectraForPrediction(
-         _singleSpectrumPreprocessor,
-        _ensembleOfSpectraPreprocessor,
-        _xOfX,
-        predictionMatrixXRaw, meanX, scaleX,
-        out var _, out var predictionMatrixXPre);
+      var (xPre, predictionMatrixXPre, _) = _singleSpectrumPreprocessor.ExecuteForPrediction(_xOfX, predictionMatrixXRaw, null, auxiliaryDataX);
 
       // allocate the crossPRESS vector here, since now we know about the number of factors a bit more
       _crossPRESS ??= new double[_numFactors + 1]; // one more since we want to have the value at factors=0 (i.e. the variance of the y-matrix)
@@ -222,11 +212,10 @@ namespace Altaxo.Calc.Regression.Multivariate
       int numFactors,
       ICrossValidationGroupingStrategy groupingStrategy,
       ISingleSpectrumPreprocessor preprocessSingleSpectrum,
-      IEnsembleMeanScalePreprocessor preprocessEnsembleOfSpectra,
       MultivariateRegression analysis,
       IMatrix<double> YCrossValidationPrediction
       )
-      : base(xOfX, numFactors, groupingStrategy, preprocessSingleSpectrum, preprocessEnsembleOfSpectra, analysis)
+      : base(xOfX, numFactors, groupingStrategy, preprocessSingleSpectrum, analysis)
     {
       _YCrossValidationPrediction = YCrossValidationPrediction;
     }
@@ -241,28 +230,23 @@ namespace Altaxo.Calc.Regression.Multivariate
     /// <param name="XU">Unprocessed spectra used for prediction.</param>
     /// <param name="YU">Unprocessed target variables corresponding to <paramref name="XU"/>.</param>
     public void EhYCrossPredicted(int[] group,
-      IMatrix<double> XX, IMatrix<double> YY,
-      IMatrix<double> XU, IMatrix<double> YU)
+      Matrix<double> XX, Matrix<double> YY,
+      Matrix<double> XU, IMatrix<double> YU)
     {
       if (_predictedY is null || _predictedY.RowCount != YU.RowCount || _predictedY.ColumnCount != YU.ColumnCount)
         _predictedY = new MatrixMath.LeftSpineJaggedArrayMatrix<double>(YU.RowCount, YU.ColumnCount);
 
       MultivariateRegression.PreprocessForAnalysis(
-        _singleSpectrumPreprocessor, _ensembleOfSpectraPreprocessor,
+        _singleSpectrumPreprocessor,
         _xOfX,
         XX, YY,
-        out var resultXOfX, out var resultXX, out var resultYY,
-        out var meanX, out var scaleX, out var meanY, out var scaleY);
+        out var resultXOfX, out var resultXX, out var auxiliaryDataX, out var resultYY,
+        out var meanY, out var scaleY);
 
       _analysis.AnalyzeFromPreprocessed(resultXX, resultYY, _numFactors);
       _numFactors = Math.Min(_numFactors, _analysis.NumberOfFactors);
 
-      MultivariateRegression.PreprocessSpectraForPrediction(
-        _singleSpectrumPreprocessor,
-        _ensembleOfSpectraPreprocessor,
-        _xOfX,
-        XU, meanX, scaleX, out var _, out var resultXU);
-
+      var (_, resultXU, _) = _singleSpectrumPreprocessor.ExecuteForPrediction(_xOfX, XU, null, auxiliaryDataX);
       _analysis.PredictYFromPreprocessed(resultXU, _numFactors, _predictedY);
       MultivariateRegression.PostprocessTargetVariablesInline(_predictedY, meanY, scaleY);
 
@@ -306,10 +290,9 @@ namespace Altaxo.Calc.Regression.Multivariate
       int numFactors,
       ICrossValidationGroupingStrategy groupingStrategy,
       ISingleSpectrumPreprocessor preprocessSingleSpectrum,
-      IEnsembleMeanScalePreprocessor preprocessEnsembleOfSpectra,
       MultivariateRegression analysis
       )
-      : base(xOfX, numFactors, groupingStrategy, preprocessSingleSpectrum, preprocessEnsembleOfSpectra, analysis)
+      : base(xOfX, numFactors, groupingStrategy, preprocessSingleSpectrum, analysis)
     {
       _numberOfPoints = numberOfPoints;
     }
@@ -323,25 +306,20 @@ namespace Altaxo.Calc.Regression.Multivariate
     /// <param name="XU">Unprocessed spectra used for prediction.</param>
     /// <param name="YU">Unprocessed target variables corresponding to <paramref name="XU"/>.</param>
     public void EhCrossValidationWorker(int[] group,
-      IMatrix<double> XX, IMatrix<double> YY,
-      IMatrix<double> XU, IMatrix<double> YU)
+      Matrix<double> XX, Matrix<double> YY,
+      Matrix<double> XU, IMatrix<double> YU)
     {
       MultivariateRegression.PreprocessForAnalysis(
         _singleSpectrumPreprocessor,
-        _ensembleOfSpectraPreprocessor,
         _xOfX,
         XX, YY,
-        out var resultXOfX, out var resultXX, out var resultYY,
-        out var meanX, out var scaleX, out var meanY, out var scaleY);
+        out var resultXOfX, out var resultXX, out var auxiliaryDataX,
+        out var resultYY, out var meanY, out var scaleY);
 
       _analysis.AnalyzeFromPreprocessed(resultXX, resultYY, _numFactors);
       _numFactors = Math.Min(_numFactors, _analysis.NumberOfFactors);
 
-      MultivariateRegression.PreprocessSpectraForPrediction(
-         _singleSpectrumPreprocessor,
-        _ensembleOfSpectraPreprocessor,
-        _xOfX,
-        XU, meanX, scaleX, out var _, out var resultXU);
+      var (_, resultXU, _) = _singleSpectrumPreprocessor.ExecuteForPrediction(_xOfX, XU, null, auxiliaryDataX);
       IROMatrix<double> xResidual = _analysis.SpectralResidualsFromPreprocessed(resultXU, _numFactors);
 
       if (_XCrossResiduals is null)
@@ -380,7 +358,6 @@ namespace Altaxo.Calc.Regression.Multivariate
     /// <param name="numFactors">The initial number of factors to use.</param>
     /// <param name="groupingStrategy">The grouping strategy used for cross validation.</param>
     /// <param name="preprocessSingleSpectrum">The preprocessor applied to each single spectrum.</param>
-    /// <param name="preprocessEnsembleOfSpectra">The preprocessor applied to an ensemble of spectra.</param>
     /// <param name="analysis">The analysis instance used to build the model and perform predictions.</param>
     /// <param name="result">The result instance to fill.</param>
     public CrossValidationResultEvaluator(
@@ -389,11 +366,10 @@ namespace Altaxo.Calc.Regression.Multivariate
       int numFactors,
       ICrossValidationGroupingStrategy groupingStrategy,
       ISingleSpectrumPreprocessor preprocessSingleSpectrum,
-      IEnsembleMeanScalePreprocessor preprocessEnsembleOfSpectra,
       MultivariateRegression analysis,
       CrossValidationResult result
       )
-      : base(xOfX, numFactors, groupingStrategy, preprocessSingleSpectrum, preprocessEnsembleOfSpectra, analysis)
+      : base(xOfX, numFactors, groupingStrategy, preprocessSingleSpectrum, analysis)
     {
       _result = result;
     }
@@ -407,24 +383,18 @@ namespace Altaxo.Calc.Regression.Multivariate
     /// <param name="YY">Unprocessed target variables used for analysis.</param>
     /// <param name="XU">Unprocessed spectra used for prediction.</param>
     /// <param name="YU">Unprocessed target variables corresponding to <paramref name="XU"/>.</param>
-    public void EhCrossValidationWorker(int[] group, IMatrix<double> XX, IMatrix<double> YY, IMatrix<double> XU, IMatrix<double> YU)
+    public void EhCrossValidationWorker(int[] group, Matrix<double> XX, Matrix<double> YY, Matrix<double> XU, Matrix<double> YU)
     {
       MultivariateRegression.PreprocessForAnalysis(
         _singleSpectrumPreprocessor,
-        _ensembleOfSpectraPreprocessor,
         _xOfX, XX, YY,
-        out var resultXOfX, out var resultXX, out var resultYY,
-        out var meanX, out var scaleX, out var meanY, out var scaleY);
+        out var resultXOfX, out var resultXX, out var auxiliaryDataX,
+        out var resultYY, out var meanY, out var scaleY);
 
       _analysis.AnalyzeFromPreprocessed(resultXX, resultYY, _numFactors);
       _numFactors = Math.Min(_numFactors, _analysis.NumberOfFactors);
 
-      MultivariateRegression.PreprocessSpectraForPrediction(
-        _singleSpectrumPreprocessor,
-        _ensembleOfSpectraPreprocessor,
-        _xOfX,
-         XU, meanX, scaleX,
-         out var _, out var resultXU);
+      var (_, resultXU, _) = _singleSpectrumPreprocessor.ExecuteForPrediction(_xOfX, XU, null, auxiliaryDataX);
 
       if (_predictedY is null || _predictedY.RowCount != YU.RowCount || _predictedY.ColumnCount != YU.ColumnCount)
         _predictedY = new MatrixMath.LeftSpineJaggedArrayMatrix<double>(YU.RowCount, YU.ColumnCount);

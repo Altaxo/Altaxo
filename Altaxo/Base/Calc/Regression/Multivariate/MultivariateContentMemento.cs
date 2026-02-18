@@ -438,7 +438,6 @@ namespace Altaxo.Calc.Regression.Multivariate
           MaximumNumberOfFactors = plsMemo._CalculatedNumberOfFactors,
           WorksheetAnalysis = plsMemo.Analysis,
           Preprocessing = singlePreprocessor,
-          MeanScaleProcessing = ensemblePreprocessor,
           CrossValidationGroupingStrategy = plsMemo.CrossValidationGroupingStrategy
         };
 

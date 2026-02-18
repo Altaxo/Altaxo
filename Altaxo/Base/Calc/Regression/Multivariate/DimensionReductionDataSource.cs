@@ -197,7 +197,7 @@ namespace Altaxo.Calc.Regression.Multivariate
 
       var (matrix, xOfXRaw, columnNumbers) = _processData.GetMatrixAndColumnNumbers(transposeMatrix: true);
 
-      var (xOfXPreprocessed, matrixXPreprocessed, region, auxiliaryData) = ProcessOptions.SinglePreprocessing.Execute(xOfXRaw, matrix, null);
+      var (xOfXPreprocessed, matrixXPreprocessed, region, auxiliaryData) = ProcessOptions.Preprocessing.Execute(xOfXRaw, matrix, null);
 
       var result = _processOptions.DimensionReductionMethod.ExecuteDimensionReduction(matrixXPreprocessed);
 

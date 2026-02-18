@@ -41,6 +41,37 @@ namespace Altaxo.Science.Spectroscopy.EnsembleProcessing
     /// Gets the type of the vector.
     /// </summary>
     public required EnsembleAuxiliaryDataVectorType VectorType { get; init; }
+
+    #region Serialization
+
+    /// <summary>
+    /// V0: 2026-02-16
+    /// </summary>
+    [Altaxo.Serialization.Xml.XmlSerializationSurrogateFor(typeof(EnsembleAuxiliaryDataVector), 0)]
+    private class XmlSerializationSurrogate0 : Altaxo.Serialization.Xml.IXmlSerializationSurrogate
+    {
+      /// <inheritdoc/>
+      public virtual void Serialize(object obj, Altaxo.Serialization.Xml.IXmlSerializationInfo info)
+      {
+        var s = (EnsembleAuxiliaryDataVector)obj;
+
+        info.AddValue("Name", s.Name);
+        info.AddEnum("VectorType", s.VectorType);
+        info.AddArray("Value", s.Value, s.Value.Length);
+      }
+
+      /// <inheritdoc/>
+      public object Deserialize(object? o, Altaxo.Serialization.Xml.IXmlDeserializationInfo info, object? parent)
+      {
+        var name = info.GetString("Name");
+        var vectorType = info.GetEnum<EnsembleAuxiliaryDataVectorType>("VectorType");
+        info.GetArray("Value", out double[] values);
+        return new EnsembleAuxiliaryDataVector { Name = name, VectorType = vectorType, Value = values };
+      }
+    }
+
+    #endregion Serialization
+
   }
 
   /// <summary>

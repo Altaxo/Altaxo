@@ -29,7 +29,6 @@
     <PackageReference Include="System.Configuration.ConfigurationManager" Version="10.0.3" />
     <PackageReference Include="Microsoft.CodeAnalysis.CSharp.Scripting" Version="4.14.0-3.25412.6" />
     <PackageReference Include="System.Resources.Extensions" Version="10.0.3" />
-    <PackageReference Include="Microsoft.Win32.Registry" Version="5.0.0" />
     <PackageReference Include="Microsoft.Win32.SystemEvents" Version="10.0.3" />
   </ItemGroup>
   

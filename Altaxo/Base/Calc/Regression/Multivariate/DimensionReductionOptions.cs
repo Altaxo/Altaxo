@@ -33,9 +33,9 @@ namespace Altaxo.Calc.Regression.Multivariate
   public record DimensionReductionOptions : Main.IImmutable
   {
     /// <summary>
-    /// Gets the preprocessing applied to each individual spectrum prior to analysis.
+    /// Gets the preprocessing applied to each individual spectrum or to the entire ensemble prior to analysis.
     /// </summary>
-    public ISingleSpectrumPreprocessor SinglePreprocessing { get; init; } = new EnsembleMeanScale();
+    public ISingleSpectrumPreprocessor Preprocessing { get; init; } = new EnsembleMeanScale();
 
     /// <summary>
     /// Gets the dimension reduction method.
@@ -60,7 +60,7 @@ namespace Altaxo.Calc.Regression.Multivariate
       public void Serialize(object obj, Altaxo.Serialization.Xml.IXmlSerializationInfo info)
       {
         var s = (DimensionReductionOptions)obj;
-        info.AddValue("SinglePreprocessing", s.SinglePreprocessing);
+        info.AddValue("SinglePreprocessing", s.Preprocessing);
         info.AddValue("Method", s.DimensionReductionMethod);
         info.AddValue("Output", s.OutputOptions);
       }
@@ -76,7 +76,7 @@ namespace Altaxo.Calc.Regression.Multivariate
 
         return new DimensionReductionOptions()
         {
-          SinglePreprocessing = singlePreprocessing,
+          Preprocessing = singlePreprocessing,
           DimensionReductionMethod = analysis,
           OutputOptions = output,
         };

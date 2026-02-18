@@ -40,7 +40,7 @@ namespace Altaxo.Calc.Regression.Multivariate
 #nullable enable
 
     /// <summary>
-    /// Gets the predicted error sum of squares (PRESS) values accumulated during analysis.
+    /// Gets the predicted residual error sum of squares (PRESS) values accumulated during analysis.
     /// </summary>
     public IReadOnlyList<double> PRESS { get { return _PRESS; } }
 

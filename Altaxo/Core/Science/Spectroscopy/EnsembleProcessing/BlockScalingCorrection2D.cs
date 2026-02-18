@@ -166,7 +166,7 @@ namespace Altaxo.Science.Spectroscopy.EnsembleProcessing
     }
 
     /// <inheritdoc/>
-    public (double[] x, Matrix<double> y, int[]? regions) ExecuteForPrediction(double[] x, Matrix<double> spectraMatrix, int[] regions, IEnsembleProcessingAuxiliaryData? auxillaryData)
+    public (double[] x, Matrix<double> y, int[]? regions) ExecuteForPrediction(double[] x, Matrix<double> spectraMatrix, int[]? regions, IEnsembleProcessingAuxiliaryData? auxillaryData)
     {
       throw new InvalidOperationException($"The {this.GetType().Name} preprocessor is not suitable for prediction. You have to remove it from the training process.");
     }

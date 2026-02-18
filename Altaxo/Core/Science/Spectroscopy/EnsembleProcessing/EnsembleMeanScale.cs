@@ -31,14 +31,14 @@ namespace Altaxo.Science.Spectroscopy.EnsembleProcessing
   /// </summary>
   public record EnsembleMeanScale : IEnsemblePreprocessor
   {
-    const string AuxiliaryDataName = "EnsembleMeanScale";
-    const string AuxiliaryDataMeanName = "EnsembleMean";
-    const string AuxiliaryDataScaleName = "EnsembleScale";
+    public const string AuxiliaryDataName = "EnsembleMeanScale";
+    public const string AuxiliaryDataMeanName = "EnsembleMean";
+    public const string AuxiliaryDataScaleName = "EnsembleScale";
 
     /// <summary>
     /// Singleton instance.
     /// </summary>
-    public static readonly EnsembleMean Instance = new EnsembleMean();
+    public static readonly EnsembleMeanScale Instance = new EnsembleMeanScale();
 
     #region Serialization
 
