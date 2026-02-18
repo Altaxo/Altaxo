@@ -137,14 +137,13 @@ namespace Altaxo.Data
       {
         DecomposeByColumnContentOptions? dataSourceOptions = null;
         DataTableMultipleColumnProxy? inputData = null;
-        IDataSourceImportOptions? importOptions = null;
 
         _importOptions = from._importOptions;
         CopyHelper.Copy(ref dataSourceOptions, from._processOptions);
         CopyHelper.Copy(ref inputData, from._processData);
 
         ProcessOptions = dataSourceOptions;
-        ImportOptions = importOptions;
+        ImportOptions = _importOptions;
         ProcessData = inputData;
       }
     }

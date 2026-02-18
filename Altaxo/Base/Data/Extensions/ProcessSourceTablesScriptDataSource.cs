@@ -140,13 +140,12 @@ namespace Altaxo.Data
       {
         ProcessSourceTablesScriptData? inputData = null;
         ProcessSourceTablesScript? processOptions = null;
-        IDataSourceImportOptions? importOptions = null;
 
         _importOptions = from._importOptions;
         CopyHelper.Copy(ref processOptions, from._processOptions);
         CopyHelper.Copy(ref inputData, from._processData);
 
-        ImportOptions = importOptions;
+        ImportOptions = _importOptions;
         ProcessData = inputData;
         ProcessOptions = processOptions;
 

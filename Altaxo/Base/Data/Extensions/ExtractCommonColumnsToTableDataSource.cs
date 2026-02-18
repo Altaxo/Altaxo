@@ -139,13 +139,12 @@ namespace Altaxo.Data
       using (var token = SuspendGetToken())
       {
         ExtractCommonColumnsToTableData? inputData = null;
-        IDataSourceImportOptions? importOptions = null;
 
         _importOptions = from._importOptions;
         _processOptions = from._processOptions;
         CopyHelper.Copy(ref inputData, from._processData);
 
-        ImportOptions = importOptions;
+        ImportOptions = _importOptions;
         ProcessData = inputData;
 
       }

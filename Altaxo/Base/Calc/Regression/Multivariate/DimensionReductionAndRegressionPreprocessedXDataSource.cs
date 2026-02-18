@@ -146,12 +146,11 @@ namespace Altaxo.Calc.Regression.Multivariate
       using (var token = SuspendGetToken())
       {
         DataTableProxy? inputData = null;
-        IDataSourceImportOptions? importOptions = null;
 
         _importOptions = from._importOptions;
         CopyHelper.Copy(ref inputData, from._processData);
 
-        ImportOptions = importOptions;
+        ImportOptions = _importOptions;
         ProcessData = inputData;
 
       }

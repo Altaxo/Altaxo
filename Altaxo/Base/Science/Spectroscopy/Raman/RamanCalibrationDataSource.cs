@@ -193,7 +193,6 @@ namespace Altaxo.Science.Spectroscopy.Raman
       using (var token = SuspendGetToken())
       {
         DataTableXYColumnProxy neon1 = null, neon2 = null, silicon = null;
-        IDataSourceImportOptions importOptions = null;
 
         CopyHelper.Copy(ref neon1, from._neonCalibrationData1);
         CopyHelper.Copy(ref neon2, from._neonCalibrationData2);

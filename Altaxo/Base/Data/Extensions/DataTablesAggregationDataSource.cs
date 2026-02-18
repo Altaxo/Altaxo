@@ -226,14 +226,13 @@ namespace Altaxo.Data
       {
         DataTablesAggregationOptions? dataSourceOptions = null;
         DataTablesAggregationProcessData? inputData = null;
-        IDataSourceImportOptions? importOptions = null;
 
         _importOptions = from._importOptions;
         dataSourceOptions = from._processOptions; // immutable
         CopyHelper.Copy(ref inputData, from._processData);
 
         ProcessOptions = dataSourceOptions;
-        ImportOptions = importOptions;
+        ImportOptions = _importOptions;
         ProcessData = inputData;
       }
     }

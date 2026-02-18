@@ -98,36 +98,6 @@ namespace Altaxo.Serialization.HDF5.Nexus
 
     #region Construction
 
-    [MemberNotNull(nameof(_files), nameof(_importOptions), nameof(_processOptions))]
-    private void CopyFrom(NexusImportDataSource from)
-    {
-      using (var token = SuspendGetToken())
-      {
-        _files = new List<AbsoluteAndRelativeFileName>(CopyHelper.GetEnumerationMembersNotNullCloned(from._files));
-        _importOptions = from._importOptions;
-        _processOptions = from._processOptions;
-        EhSelfChanged(EventArgs.Empty);
-        token.Resume();
-      }
-    }
-
-    public bool CopyFrom(object obj)
-    {
-      if (ReferenceEquals(this, obj))
-        return true;
-
-      var from = obj as NexusImportDataSource;
-      if (from is not null)
-      {
-        CopyFrom(from);
-        return true;
-      }
-      return false;
-    }
-
-
-
-
     public NexusImportDataSource(string fileName, NexusImportOptions options)
       : this(new string[] { fileName }, options)
     {

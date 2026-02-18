@@ -123,13 +123,12 @@ namespace Altaxo.Data
       using (var token = SuspendGetToken())
       {
         TData? processData = default;
-        IDataSourceImportOptions? importOptions = null;
 
         _importOptions = from._importOptions;
         CopyHelper.Copy(ref processData, from._processData);
 
         ProcessOptions = from.ProcessOptions;
-        ImportOptions = importOptions;
+        ImportOptions = _importOptions;
         ProcessData = processData;
       }
     }

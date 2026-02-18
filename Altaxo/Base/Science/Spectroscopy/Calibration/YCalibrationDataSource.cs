@@ -167,13 +167,12 @@ namespace Altaxo.Science.Spectroscopy.Calibration
       using (var token = SuspendGetToken())
       {
         DataTableXYColumnProxy? processData = null;
-        IDataSourceImportOptions? importOptions = null;
 
         _importOptions = from._importOptions;
         CopyHelper.Copy(ref processData, from._processData);
 
         ProcessOptions = from.ProcessOptions;
-        ImportOptions = importOptions;
+        ImportOptions = _importOptions;
         ProcessData = processData;
       }
     }

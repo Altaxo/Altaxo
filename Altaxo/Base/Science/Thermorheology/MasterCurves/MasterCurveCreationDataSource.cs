@@ -140,14 +140,13 @@ namespace Altaxo.Science.Thermorheology.MasterCurves
       {
         MasterCurveCreationOptions? dataSourceOptions = null;
         MasterCurveData? inputData = null;
-        IDataSourceImportOptions? importOptions = null;
 
         _importOptions = from._importOptions;
         dataSourceOptions = from._processOptions;
         CopyHelper.Copy(ref inputData, from._processData);
 
         ProcessOptions = dataSourceOptions;
-        ImportOptions = importOptions;
+        ImportOptions = _importOptions;
         ProcessData = inputData;
 
       }

@@ -150,14 +150,13 @@ namespace Altaxo.Calc.Regression.Multivariate
       {
         DimensionReductionOptions? dataSourceOptions = null;
         DataTableMatrixProxy? inputData = null;
-        IDataSourceImportOptions? importOptions = null;
 
         _importOptions = from._importOptions;
         CopyHelper.CopyI(ref dataSourceOptions, from._processOptions);
         CopyHelper.Copy(ref inputData, from._processData);
 
         ProcessOptions = dataSourceOptions;
-        ImportOptions = importOptions;
+        ImportOptions = _importOptions;
         ProcessData = inputData;
       }
     }
