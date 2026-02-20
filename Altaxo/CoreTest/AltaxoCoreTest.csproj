@@ -27,6 +27,24 @@
     </Content>
  
     <None Remove="Serialization\Omnic\TestFiles\*" />
+ 
+    <None Remove="Serialization\Matlab\TestFiles\all_supported_types.mat" />
+ 
+    <None Remove="Serialization\Matlab\TestFiles\corn.mat" />
+ 
+    <None Remove="Serialization\Matlab\TestFiles\gasoline_octane_nir_data.mat" />
+ 
+    <Content Include="Serialization\Matlab\TestFiles\all_supported_types.mat">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+ 
+    <Content Include="Serialization\Matlab\TestFiles\corn.mat">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+ 
+    <Content Include="Serialization\Matlab\TestFiles\gasoline_octane_nir_data.mat">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
       <Content Include="Serialization\Omnic\TestFiles\PET.SPG">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </Content>
