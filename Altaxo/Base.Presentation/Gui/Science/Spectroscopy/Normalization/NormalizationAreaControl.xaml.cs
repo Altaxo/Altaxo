@@ -2,7 +2,7 @@
 
 /////////////////////////////////////////////////////////////////////////////
 //    Altaxo:  a data processing and data plotting program
-//    Copyright (C) 2002-2022 Dr. Dirk Lellinger
+//    Copyright (C) 2002-2026 Dr. Dirk Lellinger
 //
 //    This program is free software; you can redistribute it and/or modify
 //    it under the terms of the GNU General Public License as published by
@@ -29,9 +29,9 @@ namespace Altaxo.Gui.Science.Spectroscopy.Normalization
   /// <summary>
   /// Interaction logic for NormalizationMinMaxInRangeControl.xaml
   /// </summary>
-  public partial class NormalizationMinMaxInRangeControl : UserControl, INormalizationMinMaxInRangeView
+  public partial class NormalizationAreaControl : UserControl, INormalizationAreaView
   {
-    public NormalizationMinMaxInRangeControl()
+    public NormalizationAreaControl()
     {
       InitializeComponent();
     }

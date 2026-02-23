@@ -2,7 +2,7 @@
 
 /////////////////////////////////////////////////////////////////////////////
 //    Altaxo:  a data processing and data plotting program
-//    Copyright (C) 2002-2022 Dr. Dirk Lellinger
+//    Copyright (C) 2002-2026 Dr. Dirk Lellinger
 //
 //    This program is free software; you can redistribute it and/or modify
 //    it under the terms of the GNU General Public License as published by
@@ -27,13 +27,9 @@ using Altaxo.Science.Spectroscopy.Normalization;
 
 namespace Altaxo.Gui.Science.Spectroscopy.Normalization
 {
-  public interface INormalizationMinMaxInRangeView : IDataContextAwareView
-  {
-  }
-
-  [UserControllerForObject(typeof(NormalizationMinMaxInRange))]
-  [ExpectedTypeOfView(typeof(INormalizationMinMaxInRangeView))]
-  public class NormalizationMinMaxInRangeController : MVCANControllerEditImmutableDocBase<NormalizationMinMaxInRange, INormalizationMinMaxInRangeView>
+  [UserControllerForObject(typeof(NormalizationMax))]
+  [ExpectedTypeOfView(typeof(INormalizationAreaView))]
+  public class NormalizationMaxController : MVCANControllerEditImmutableDocBase<NormalizationMax, INormalizationAreaView>
   {
     public override IEnumerable<ControllerAndSetNullMethod> GetSubControllers()
     {
@@ -42,35 +38,50 @@ namespace Altaxo.Gui.Science.Spectroscopy.Normalization
 
     #region Bindings
 
-    private double _minimalValue;
 
-    public double MinimalValue
+    public double MinimumXValue
     {
-      get => _minimalValue;
+      get => field;
       set
       {
-        if (!(_minimalValue == value))
+        if (!(field == value))
         {
-          _minimalValue = value;
-          OnPropertyChanged(nameof(MinimalValue));
+          field = value;
+          OnPropertyChanged(nameof(MinimumXValue));
         }
       }
     }
 
-    private double _maximalValue;
 
-    public double MaximalValue
+    public double MaximumXValue
     {
-      get => _maximalValue;
+      get => field;
       set
       {
-        if (!(_maximalValue == value))
+        if (!(field == value))
         {
-          _maximalValue = value;
-          OnPropertyChanged(nameof(MaximalValue));
+          field = value;
+          OnPropertyChanged(nameof(MaximumXValue));
         }
       }
     }
+
+
+    public bool BasedOnMinimumYValue
+    {
+      get => field;
+      set
+      {
+        if (!(field == value))
+        {
+          field = value;
+          OnPropertyChanged(nameof(BasedOnMinimumYValue));
+        }
+      }
+    }
+
+    public bool IsBasedOnMinimumYValueEnabled => true;
+
 
     #endregion
 
@@ -80,14 +91,20 @@ namespace Altaxo.Gui.Science.Spectroscopy.Normalization
 
       if (initData)
       {
-        MinimalValue = _doc.MinimalValue;
-        MaximalValue = _doc.MaximalValue;
+        MinimumXValue = _doc.MinimumXValue;
+        MaximumXValue = _doc.MaximumXValue;
+        BasedOnMinimumYValue = _doc.BasedOnMinimumYValue;
       }
     }
 
     public override bool Apply(bool disposeController)
     {
-      _doc = _doc with { MinimalValue = MinimalValue, MaximalValue = MaximalValue };
+      _doc = _doc with
+      {
+        MinimumXValue = MinimumXValue,
+        MaximumXValue = MaximumXValue,
+        BasedOnMinimumYValue = BasedOnMinimumYValue
+      };
 
       return ApplyEnd(true, disposeController);
     }

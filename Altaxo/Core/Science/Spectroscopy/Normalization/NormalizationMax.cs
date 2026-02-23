@@ -23,6 +23,7 @@
 #endregion Copyright
 
 using System;
+using Altaxo.Calc;
 
 namespace Altaxo.Science.Spectroscopy.Normalization
 {
@@ -30,17 +31,31 @@ namespace Altaxo.Science.Spectroscopy.Normalization
   /// Executes max normalization : y' = y/max, in which max is the maximum of the values of the array.
   /// </summary>
   /// <seealso cref="Altaxo.Science.Spectroscopy.Normalization.INormalization" />
-  public record NormalizationMax
-
-    : INormalization
+  public record NormalizationMax : INormalization
   {
+    /// <summary>
+    /// Gets the minimum x-value (inclusive) of the spectrum range used to determine the minimum and maximum y-values for normalization.
+    /// </summary>
+    public double MinimumXValue { get; init; } = double.NegativeInfinity;
+
+    /// <summary>
+    /// Gets the maximum x-value (inclusive) of the spectrum range used to determine the minimum and maximum y-values for normalization.
+    /// </summary>
+    public double MaximumXValue { get; init; } = double.PositiveInfinity;
+
+    /// <summary>
+    /// Gets a value indicating whether the normalization should be based on the minimum value of the spectrum (if <c>true</c>) or on zero (if <c>false</c>).
+    /// </summary>
+    public bool BasedOnMinimumYValue { get; init; } = true;
+
+
     #region Serialization
 
     /// <summary>
     /// 2023-11-20 V0
     /// </summary>
     /// <seealso cref="Altaxo.Serialization.Xml.IXmlSerializationSurrogate" />
-    [Altaxo.Serialization.Xml.XmlSerializationSurrogateFor(typeof(NormalizationMax), 0)]
+    [Altaxo.Serialization.Xml.XmlSerializationSurrogateFor("AltaxoCore", "Altaxo.Science.Spectroscopy.Normalization.NormalizationMax", 0)]
     public class SerializationSurrogate0 : Altaxo.Serialization.Xml.IXmlSerializationSurrogate
     {
       /// <inheritdoc/>
@@ -54,6 +69,81 @@ namespace Altaxo.Science.Spectroscopy.Normalization
         return new NormalizationMax();
       }
     }
+
+    /// XML serialization surrogate for <see cref="NormalizationMax"/>.
+    /// </summary>
+    /// <remarks>
+    /// V1: 2026-02-23 Added MinimumXValue, MaximumXValue and BaseOnMinimumValue properties.
+    /// </remarks>
+    [Altaxo.Serialization.Xml.XmlSerializationSurrogateFor(typeof(NormalizationMax), 1)]
+    public class SerializationSurrogate1 : Altaxo.Serialization.Xml.IXmlSerializationSurrogate
+    {
+      /// <inheritdoc/>
+      public void Serialize(object obj, Altaxo.Serialization.Xml.IXmlSerializationInfo info)
+      {
+        var s = (NormalizationMax)obj;
+        info.AddValue("MinimumXValue", s.MinimumXValue);
+        info.AddValue("MaximumXValue", s.MaximumXValue);
+        info.AddValue("BasedOnMinimumYValue", s.BasedOnMinimumYValue);
+      }
+
+      /// <inheritdoc/>
+      public object Deserialize(object? o, Altaxo.Serialization.Xml.IXmlDeserializationInfo info, object? parent)
+      {
+        var minimumXValue = info.GetDouble("MinimumXValue");
+        var maximumXValue = info.GetDouble("MaximumXValue");
+        var basedOnMinimumYValue = info.GetBoolean("BasedOnMinimumYValue");
+
+        return ((o as NormalizationMax) ?? new NormalizationMax()) with
+        {
+          MinimumXValue = minimumXValue,
+          MaximumXValue = maximumXValue,
+          BasedOnMinimumYValue = basedOnMinimumYValue
+        };
+      }
+    }
+
+    /// <summary>
+    /// XML serialization surrogate for obsolete <see cref="NormalizationMinMax"/>.
+    /// </summary>
+    [Altaxo.Serialization.Xml.XmlSerializationSurrogateFor("AltaxoCore", "Altaxo.Science.Spectroscopy.Normalization.NormalizationMinMax", 0)]
+    public class SerializationSurrogateMinMax0 : Altaxo.Serialization.Xml.IXmlSerializationSurrogate
+    {
+      /// <inheritdoc/>
+      public void Serialize(object obj, Altaxo.Serialization.Xml.IXmlSerializationInfo info)
+      {
+        throw new InvalidOperationException("Serialization of old version");
+      }
+
+      /// <inheritdoc/>
+      public object Deserialize(object? o, Altaxo.Serialization.Xml.IXmlDeserializationInfo info, object? parent)
+      {
+        return new NormalizationMax() { BasedOnMinimumYValue = true };
+      }
+    }
+
+    /// <summary>
+    /// XML serialization surrogate for obsolete <see cref="NormalizationMinMax"/>.
+    /// </summary>
+    [Altaxo.Serialization.Xml.XmlSerializationSurrogateFor("AltaxoCore", "Altaxo.Science.Spectroscopy.Normalization.NormalizationMinMaxInRange", 0)]
+    public class SerializationSurrogateMinMaxInRange0 : Altaxo.Serialization.Xml.IXmlSerializationSurrogate
+    {
+      /// <inheritdoc/>
+      public void Serialize(object obj, Altaxo.Serialization.Xml.IXmlSerializationInfo info)
+      {
+        throw new InvalidOperationException("Serialization of old version");
+      }
+
+      /// <inheritdoc/>
+      public object Deserialize(object? o, Altaxo.Serialization.Xml.IXmlDeserializationInfo info, object? parent)
+      {
+        var minimalValue = info.GetDouble("MinimalValue");
+        var maximalValue = info.GetDouble("MaximalValue");
+
+        return new NormalizationMax() { MinimumXValue = minimalValue, MaximumXValue = maximalValue, BasedOnMinimumYValue = true };
+      }
+    }
+
     #endregion
 
     /// <inheritdoc/>
@@ -63,15 +153,24 @@ namespace Altaxo.Science.Spectroscopy.Normalization
 
       foreach (var (start, end) in RegionHelper.GetRegionRanges(regions, x.Length))
       {
+        double min = double.PositiveInfinity;
         double max = double.NegativeInfinity;
         for (int i = start; i < end; ++i)
         {
-          max = Math.Max(max, y[i]);
+          if (RMath.IsInIntervalCC(x[i], MinimumXValue, MaximumXValue))
+          {
+            min = Math.Min(min, y[i]);
+            max = Math.Max(max, y[i]);
+          }
         }
 
-        for (int i = start; i < end; ++i)
+        if (max > min)
         {
-          yy[i] = y[i] / max;
+          var ybase = BasedOnMinimumYValue ? min : 0.0;
+          for (int i = start; i < end; ++i)
+          {
+            yy[i] = (y[i] - ybase) / (max - ybase);
+          }
         }
       }
       return (x, yy, regions);

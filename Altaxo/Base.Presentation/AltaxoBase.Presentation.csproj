@@ -111,7 +111,7 @@
     <Compile Update="Gui\Science\Spectroscopy\EnsembleProcessing\BlockScalingCorrection2DControl.xaml.cs">
       <SubType>Code</SubType>
     </Compile>
-    <Compile Update="Gui\Science\Spectroscopy\Normalization\NormalizationMinMaxInRangeControl.xaml.cs">
+    <Compile Update="Gui\Science\Spectroscopy\Normalization\NormalizationAreaControl.xaml.cs">
       <SubType>Code</SubType>
     </Compile>
     <Compile Update="Gui\Science\Spectroscopy\Normalization\NormalizationControl.xaml.cs">
@@ -243,10 +243,6 @@
     </Page>
     <Page Update="Gui\Science\Spectroscopy\DarkSubtraction\DarkSubtractionControl.xaml">
       <XamlRuntime>$(DefaultXamlRuntime)</XamlRuntime>
-    </Page>
-    <Page Update="Gui\Science\Spectroscopy\Normalization\NormalizationMinMaxInRangeControl.xaml">
-      <XamlRuntime>$(DefaultXamlRuntime)</XamlRuntime>
-      <SubType>Designer</SubType>
     </Page>
     <Page Update="Gui\Science\Spectroscopy\PeakEnhancement\PeakEnhancement2ndDerivativeOfSmoothingSplineControl.xaml">
       <XamlRuntime>$(DefaultXamlRuntime)</XamlRuntime>

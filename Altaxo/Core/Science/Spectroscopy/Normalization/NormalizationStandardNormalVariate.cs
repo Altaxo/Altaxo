@@ -22,6 +22,9 @@
 
 #endregion Copyright
 
+using System;
+using Altaxo.Calc;
+
 namespace Altaxo.Science.Spectroscopy.Normalization
 {
   /// <summary>
@@ -30,23 +33,63 @@ namespace Altaxo.Science.Spectroscopy.Normalization
   /// <seealso cref="Altaxo.Science.Spectroscopy.Normalization.INormalization" />
   public record NormalizationStandardNormalVariate : INormalization
   {
+    /// <summary>
+    /// Gets the minimum x-value (inclusive) of the spectrum range used to determine the minimum and maximum y-values for normalization.
+    /// </summary>
+    public double MinimumXValue { get; init; } = double.NegativeInfinity;
+
+    /// <summary>
+    /// Gets the maximum x-value (inclusive) of the spectrum range used to determine the minimum and maximum y-values for normalization.
+    /// </summary>
+    public double MaximumXValue { get; init; } = double.PositiveInfinity;
+
     #region Serialization
 
     /// <summary>
     /// XML serialization surrogate for <see cref="NormalizationStandardNormalVariate"/>.
     /// </summary>
-    [Altaxo.Serialization.Xml.XmlSerializationSurrogateFor(typeof(NormalizationStandardNormalVariate), 0)]
+    [Altaxo.Serialization.Xml.XmlSerializationSurrogateFor("AltaxoCore", "Altaxo.Science.Spectroscopy.Normalization.NormalizationStandardNormalVariate", 0)]
     public class SerializationSurrogate0 : Altaxo.Serialization.Xml.IXmlSerializationSurrogate
     {
       /// <inheritdoc/>
       public void Serialize(object obj, Altaxo.Serialization.Xml.IXmlSerializationInfo info)
       {
+        throw new InvalidOperationException("Serialization of old version");
       }
 
       /// <inheritdoc/>
       public object Deserialize(object? o, Altaxo.Serialization.Xml.IXmlDeserializationInfo info, object? parent)
       {
         return new NormalizationStandardNormalVariate();
+      }
+    }
+
+    /// <summary>
+    /// XML serialization surrogate for <see cref="NormalizationStandardNormalVariate"/>.
+    /// </summary>
+    [Altaxo.Serialization.Xml.XmlSerializationSurrogateFor(typeof(NormalizationStandardNormalVariate), 1)]
+    public class SerializationSurrogate1 : Altaxo.Serialization.Xml.IXmlSerializationSurrogate
+    {
+      /// <inheritdoc/>
+      public void Serialize(object obj, Altaxo.Serialization.Xml.IXmlSerializationInfo info)
+      {
+        var s = (NormalizationStandardNormalVariate)obj;
+        info.AddValue("MinimumXValue", s.MinimumXValue);
+        info.AddValue("MaximumXValue", s.MaximumXValue);
+      }
+
+      /// <inheritdoc/>
+      public object Deserialize(object? o, Altaxo.Serialization.Xml.IXmlDeserializationInfo info, object? parent)
+      {
+        var minimumXValue = info.GetDouble("MinimumXValue");
+        var maximumXValue = info.GetDouble("MaximumXValue");
+        var basedOnMinimumYValue = info.GetBoolean("BasedOnMinimumYValue");
+
+        return ((o as NormalizationStandardNormalVariate) ?? new NormalizationStandardNormalVariate()) with
+        {
+          MinimumXValue = minimumXValue,
+          MaximumXValue = maximumXValue,
+        };
       }
     }
     #endregion
@@ -59,16 +102,21 @@ namespace Altaxo.Science.Spectroscopy.Normalization
       foreach (var (start, end) in RegionHelper.GetRegionRanges(regions, x.Length))
       {
         q.Clear();
-        for (int i = start; i < end; ++i)
-        {
-          q.Add(x[i]);
-        }
-        var min = q.Mean;
-        var delta = q.StandardDeviation;
+
 
         for (int i = start; i < end; ++i)
         {
-          yy[i] = (y[i] - min) / delta;
+          if (RMath.IsInIntervalCC(x[i], MinimumXValue, MaximumXValue))
+          {
+            q.Add(x[i]);
+          }
+        }
+
+        var (mean, delta) = q.N >= 2 ? (q.Mean, q.StandardDeviation) : (0, 1);
+
+        for (int i = start; i < end; ++i)
+        {
+          yy[i] = (y[i] - mean) / delta;
         }
       }
       return (x, yy, regions);

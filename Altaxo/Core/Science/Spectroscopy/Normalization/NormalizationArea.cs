@@ -22,6 +22,9 @@
 
 #endregion Copyright
 
+using System;
+using Altaxo.Calc;
+
 namespace Altaxo.Science.Spectroscopy.Normalization
 {
   /// <summary>
@@ -30,12 +33,28 @@ namespace Altaxo.Science.Spectroscopy.Normalization
   /// <seealso cref="Altaxo.Science.Spectroscopy.Normalization.INormalization" />
   public record NormalizationArea : INormalization
   {
+    /// <summary>
+    /// Gets the minimum x-value (inclusive) of the spectrum range used to determine the minimum and maximum y-values for normalization.
+    /// </summary>
+    public double MinimumXValue { get; init; } = double.NegativeInfinity;
+
+    /// <summary>
+    /// Gets the maximum x-value (inclusive) of the spectrum range used to determine the minimum and maximum y-values for normalization.
+    /// </summary>
+    public double MaximumXValue { get; init; } = double.PositiveInfinity;
+
+    /// <summary>
+    /// Gets a value indicating whether the normalization should be based on the minimum value of the spectrum (if <c>true</c>) or on zero (if <c>false</c>).
+    /// </summary>
+    public bool BasedOnMinimumYValue { get; init; } = true;
+
+
     #region Serialization
 
     /// <summary>
     /// XML serialization surrogate for <see cref="NormalizationArea"/>.
     /// </summary>
-    [Altaxo.Serialization.Xml.XmlSerializationSurrogateFor(typeof(NormalizationArea), 0)]
+    [Altaxo.Serialization.Xml.XmlSerializationSurrogateFor("AltaxoCore", "Altaxo.Science.Spectroscopy.Normalization.NormalizationArea", 0)]
     public class SerializationSurrogate0 : Altaxo.Serialization.Xml.IXmlSerializationSurrogate
     {
       /// <inheritdoc/>
@@ -49,6 +68,40 @@ namespace Altaxo.Science.Spectroscopy.Normalization
         return new NormalizationArea();
       }
     }
+
+    /// <summary>
+    /// XML serialization surrogate for <see cref="NormalizationArea"/>.
+    /// </summary>
+    /// <remarks>
+    /// V1: 2026-02-23 Added MinimumXValue, MaximumXValue and BaseOnMinimumValue properties.
+    /// </remarks>
+    [Altaxo.Serialization.Xml.XmlSerializationSurrogateFor(typeof(NormalizationArea), 1)]
+    public class SerializationSurrogate1 : Altaxo.Serialization.Xml.IXmlSerializationSurrogate
+    {
+      /// <inheritdoc/>
+      public void Serialize(object obj, Altaxo.Serialization.Xml.IXmlSerializationInfo info)
+      {
+        var s = (NormalizationArea)obj;
+        info.AddValue("MinimumXValue", s.MinimumXValue);
+        info.AddValue("MaximumXValue", s.MaximumXValue);
+        info.AddValue("BasedOnMinimumYValue", s.BasedOnMinimumYValue);
+      }
+
+      /// <inheritdoc/>
+      public object Deserialize(object? o, Altaxo.Serialization.Xml.IXmlDeserializationInfo info, object? parent)
+      {
+        var minimumXValue = info.GetDouble("MinimumXValue");
+        var maximumXValue = info.GetDouble("MaximumXValue");
+        var basedOnMinimumYValue = info.GetBoolean("BasedOnMinimumYValue");
+
+        return ((o as NormalizationArea) ?? new NormalizationArea()) with
+        {
+          MinimumXValue = minimumXValue,
+          MaximumXValue = maximumXValue,
+          BasedOnMinimumYValue = basedOnMinimumYValue
+        };
+      }
+    }
     #endregion
 
     /// <inheritdoc/>
@@ -58,20 +111,54 @@ namespace Altaxo.Science.Spectroscopy.Normalization
       var yy = new double[y.Length];
       foreach (var (start, end) in RegionHelper.GetRegionRanges(regions, x.Length))
       {
-        q.Clear();
-        for (int i = start; i < end; ++i)
+        double ybase = 0;
+        if (BasedOnMinimumYValue)
         {
-          q.Add(x[i]);
+          ybase = double.PositiveInfinity;
+          for (int i = start; i < end; ++i)
+          {
+            if (RMath.IsInIntervalCC(x[i], MinimumXValue, MaximumXValue))
+              ybase = Math.Min(ybase, y[i]);
+          }
         }
-        var min = q.Min;
-        var delta = q.Mean;
+
+        double area = 0;
+        (double x, double y)? previous = null;
+
+        for (int i = start + 1; i < end; ++i)
+        {
+          if (previous is null && RMath.IsInIntervalCC(MinimumXValue, x[i], x[i - 1]))
+          {
+            previous = (MinimumXValue, RMath.InterpolateLinear((MinimumXValue - x[i - 1]) / (x[i] - x[i - 1]), y[i - 1], y[i]));
+          }
+          else if (previous is null && RMath.IsInIntervalCC(x[i - 1], MinimumXValue, MaximumXValue))
+          {
+            previous = (x[i - 1], y[i - 1]);
+          }
+
+          var xi = x[i];
+          var yi = y[i];
+
+          if (previous is not null && RMath.IsInIntervalCC(MaximumXValue, x[i], x[i - 1]))
+          {
+            xi = MaximumXValue;
+            yi = RMath.InterpolateLinear((MaximumXValue - x[i]) / (x[i] - x[i - 1]), y[i], y[i - 1]);
+          }
+
+          if (previous is not null && RMath.IsInIntervalCC(xi, MinimumXValue, MaximumXValue))
+          {
+            area += 0.5 * ((yi - ybase) + (previous.Value.y - ybase)) * (xi - previous.Value.x);
+          }
+        }
 
         for (int i = start; i < end; ++i)
         {
-          yy[i] = (y[i] - min) / delta;
+          yy[i] = (y[i] - ybase) / area;
         }
       }
       return (x, yy, regions);
+
     }
   }
 }
+
