@@ -109,7 +109,7 @@ namespace Altaxo.Calc.Regression.Multivariate
         info.AddValue("CalculatedNumberOfFactors", s.CalculatedNumberOfFactors);
         info.AddValue("PreferredNumberOfFactors", s.PreferredNumberOfFactors);
         info.AddValue("MeanNumberOfMeasurementsInCrossPRESSCalculation", s.MeanNumberOfMeasurementsInCrossPRESSCalculation);
-        info.AddValue("AuxiliaryData", s.AuxiliaryData);
+        info.AddValueOrNull("AuxiliaryData", s.AuxiliaryData);
       }
 
       /// <inheritdoc/>
