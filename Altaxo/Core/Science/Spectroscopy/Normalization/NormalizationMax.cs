@@ -164,12 +164,19 @@ namespace Altaxo.Science.Spectroscopy.Normalization
           }
         }
 
-        if (max > min)
+        var ybase = BasedOnMinimumYValue ? min : 0.0;
+        if (max != ybase)
         {
-          var ybase = BasedOnMinimumYValue ? min : 0.0;
           for (int i = start; i < end; ++i)
           {
             yy[i] = (y[i] - ybase) / (max - ybase);
+          }
+        }
+        else
+        {
+          for (int i = start; i < end; ++i)
+          {
+            yy[i] = y[i];
           }
         }
       }

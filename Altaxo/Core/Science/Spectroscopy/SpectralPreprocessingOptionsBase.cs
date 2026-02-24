@@ -22,6 +22,7 @@
 
 #endregion Copyright
 
+using System;
 using System.Collections;
 using System.Collections.Generic;
 using System.Collections.Immutable;
@@ -58,7 +59,14 @@ namespace Altaxo.Science.Spectroscopy
     {
       if (regions is null || regions.Length == 0)
       {
-        System.Array.Sort(x, y);
+        var len = Math.Min(x.Length, y.Length);
+        var xx = new double[len];
+        var yy = new double[len];
+        Array.Copy(x, xx, len);
+        Array.Copy(y, yy, len);
+        System.Array.Sort(xx, yy);
+        x = xx;
+        y = yy;
       }
 
       foreach (var processor in InnerList)

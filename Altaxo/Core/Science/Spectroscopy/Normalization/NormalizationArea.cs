@@ -34,7 +34,7 @@ namespace Altaxo.Science.Spectroscopy.Normalization
   public record NormalizationArea : INormalization
   {
     /// <summary>
-    /// Gets the minimum x-value (inclusive) of the spectrum range used to determine the minimum and maximum y-values for normalization.
+    /// Gets the minimum x-value (inclusive) of the spectrum range used to determine the minimum aDnd maximum y-values for normalization.
     /// </summary>
     public double MinimumXValue { get; init; } = double.NegativeInfinity;
 
@@ -151,9 +151,19 @@ namespace Altaxo.Science.Spectroscopy.Normalization
           }
         }
 
-        for (int i = start; i < end; ++i)
+        if (area != 0)
         {
-          yy[i] = (y[i] - ybase) / area;
+          for (int i = start; i < end; ++i)
+          {
+            yy[i] = (y[i] - ybase) / area;
+          }
+        }
+        else
+        {
+          for (int i = start; i < end; ++i)
+          {
+            yy[i] = y[i];
+          }
         }
       }
       return (x, yy, regions);
