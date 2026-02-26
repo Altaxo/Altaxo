@@ -54,6 +54,8 @@ namespace Altaxo.Calc.FitFunctions.Peaks
     /// </summary>
     public int GroupNumberOfParticipatingColumns { get; init; }
 
+    public bool PropertyIsPeakWidth { get; init; }
+
 
     #region Serialization
 
@@ -75,7 +77,8 @@ namespace Altaxo.Calc.FitFunctions.Peaks
         info.AddValue("OrderOfBackgroundPolynomial", s.OrderOfBaselinePolynomial);
         info.AddValue("TableName", s.TableName);
         info.AddValue("GroupNumberOfParticipatingColumns", s.GroupNumberOfParticipatingColumns);
-        info.AddValue("NameOfPropertyForPeakPosition", s.NameOfPropertyForPeakPosition);
+        info.AddValue("NameOfProperty", s.NameOfPropertyForPeakPosition);
+        info.AddValue("PropertyIsPeakWidth", s.PropertyIsPeakWidth);
       }
 
       /// <inheritdoc/>
@@ -85,9 +88,10 @@ namespace Altaxo.Calc.FitFunctions.Peaks
         var orderOfBackgroundPolynomial = info.GetInt32("OrderOfBackgroundPolynomial");
         var tableName = info.GetString("TableName");
         var groupNumberOfParticipatingColumns = info.GetInt32("GroupNumberOfParticipatingColumns");
-        var nameOfPropertyForPeakPosition = info.GetString("NameOfPropertyForPeakPosition");
+        var nameOfProperty = info.GetString("NameOfProperty");
+        var propertyIsPeakWidth = info.GetBoolean("PropertyIsPeakWidth");
 
-        return new InterpolatedPeakFunctionFrom2DTable(numberOfTerms, orderOfBackgroundPolynomial, tableName, groupNumberOfParticipatingColumns, nameOfPropertyForPeakPosition);
+        return new InterpolatedPeakFunctionFrom2DTable(numberOfTerms, orderOfBackgroundPolynomial, tableName, groupNumberOfParticipatingColumns, nameOfProperty, propertyIsPeakWidth);
       }
     }
 
@@ -97,7 +101,7 @@ namespace Altaxo.Calc.FitFunctions.Peaks
     /// Initializes a new default instance of the <see cref="InterpolatedPeakFunctionFrom2DTable"/> class.
     /// </summary>
     public InterpolatedPeakFunctionFrom2DTable()
-      : this(1, -1, string.Empty, 0, string.Empty)
+      : this(1, -1, string.Empty, 0, string.Empty, false)
     {
     }
 
@@ -113,20 +117,24 @@ namespace Altaxo.Calc.FitFunctions.Peaks
     /// <param name="groupNumberOfParticipatingColumns">
     /// The column group number used to select the participating columns.
     /// </param>
-    /// <param name="nameOfPropertyForPeakPosition">
-    /// The name of the property column that stores the peak position values for each participating column.
+    /// <param name="nameOfPropertyForPositionOrWidth">
+    /// The name of the property column that stores the peak position values or width values for each participating column.
+    /// </param>
+    /// <param name="propertyIsPeakWidth">
+    /// Indicates whether the property column stores peak width values (true) or peak position values (false).
     /// </param>
     /// <exception cref="ArgumentException">
     /// Thrown if no participating columns are found, if no x column can be determined, or if the x column is not a
     /// <see cref="DoubleColumn" />.
     /// </exception>
     public InterpolatedPeakFunctionFrom2DTable(int numberOfTerms,
-                                                   int orderOfBaselinePolynomial, DataTable table, int groupNumberOfParticipatingColumns, string nameOfPropertyForPeakPosition)
+                                                   int orderOfBaselinePolynomial, DataTable table, int groupNumberOfParticipatingColumns, string nameOfPropertyForPositionOrWidth, bool propertyIsPeakWidth)
       : base(numberOfTerms, orderOfBaselinePolynomial)
     {
       TableName = string.Empty;
       NameOfPropertyForPeakPosition = string.Empty;
       GroupNumberOfParticipatingColumns = 0;
+      PropertyIsPeakWidth = propertyIsPeakWidth;
     }
 
     /// <summary>
@@ -140,8 +148,11 @@ namespace Altaxo.Calc.FitFunctions.Peaks
     /// <param name="groupNumberOfParticipatingColumns">
     /// The column group number used to select the participating columns.
     /// </param>
-    /// <param name="nameOfPropertyForPeakPosition">
-    /// The name of the property column that stores the peak position values for each participating column.
+    /// <param name="nameOfPropertyForPositionOrWidth">
+    /// The name of the property column that stores the peak position values or width values for each participating column.
+    /// </param>
+    /// <param name="propertyIsPeakWidth">
+    /// Indicates whether the property column stores peak width values (true) or peak position values (false).  
     /// </param>
     /// <exception cref="ArgumentException">
     /// Thrown if no participating columns are found, if no x column can be determined, or if the x column is not a
@@ -152,12 +163,14 @@ namespace Altaxo.Calc.FitFunctions.Peaks
       int orderOfBaselinePolynomial,
       string tableName,
       int groupNumberOfParticipatingColumns,
-      string nameOfPropertyForPeakPosition)
+      string nameOfPropertyForPositionOrWidth,
+      bool propertyIsPeakWidth)
       : base(numberOfTerms, orderOfBaselinePolynomial)
     {
       TableName = tableName;
       GroupNumberOfParticipatingColumns = groupNumberOfParticipatingColumns;
-      NameOfPropertyForPeakPosition = nameOfPropertyForPeakPosition;
+      NameOfPropertyForPeakPosition = nameOfPropertyForPositionOrWidth;
+      PropertyIsPeakWidth = propertyIsPeakWidth;
     }
 
 
