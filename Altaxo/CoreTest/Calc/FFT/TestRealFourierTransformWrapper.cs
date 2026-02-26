@@ -94,7 +94,7 @@ namespace AltaxoTest.Calc.Fourier
           double expected = Math.Atan2(im[i], re[i]);
           double actual = phasepart[i];
           if (Math.Abs(Math.Sin(expected) - Math.Sin(actual)) > tol2 || Math.Abs(Math.Cos(expected) - Math.Cos(actual)) > tol2)
-            Assert.True(false, string.Format("Testing phase (len={0}, i={1}, Expected={2}, Actual={3})", arr.Length, i, expected, actual));
+            Assert.Fail(string.Format("Testing phase (len={0}, i={1}, Expected={2}, Actual={3})", arr.Length, i, expected, actual));
         }
       }
 

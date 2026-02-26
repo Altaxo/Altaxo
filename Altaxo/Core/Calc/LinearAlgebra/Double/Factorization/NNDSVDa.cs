@@ -57,7 +57,7 @@ namespace Altaxo.Calc.LinearAlgebra.Double.Factorization
     /// <param name="X">The non-negative input matrix to be factorized.</param>
     /// <param name="r">The target factorization rank.</param>
     /// <returns>A tuple <c>(W0, H0)</c> containing non-negative initial factors with zeros replaced by a reasonable value (see remarks!).</returns>
-    /// <remarks>In the paper Boutsidis & Gallopoulos, 2008, https://doi.org/10.1016/j.patcog.2007.09.010, section 2.3,
+    /// <remarks>In the paper Boutsidis and Gallopoulos, 2008, https://doi.org/10.1016/j.patcog.2007.09.010, section 2.3,
     /// the zero elements are overwritten with the mean of matrix X.
     /// I consider this wrong, because W and H scale with the square root of X, not with X itself.
     /// Therefore, for example, if X is scaled with 1E20, W and H are scaled with 1E10, but the zeros would then be replaced with a scale of 1E20 again.

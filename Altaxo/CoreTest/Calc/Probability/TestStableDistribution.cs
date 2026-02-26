@@ -797,7 +797,7 @@ new double[]{2,1,10,0.0000600054567345840717}
         }
         catch (Exception ex)
         {
-          Assert.True(false, string.Format("Exception at i={0}, alpha={1}, beta={2}, x={3}: {4}", i, alpha, beta, x, ex.Message));
+          Assert.Fail(string.Format("Exception at i={0}, alpha={1}, beta={2}, x={3}: {4}", i, alpha, beta, x, ex.Message));
         }
         double maxdelta = Math.Abs(expectedy / 1E7);
         maxdelta = Math.Max(maxdelta, 1e-25);
@@ -1028,7 +1028,7 @@ new double[]{2,1,10,0.999965714364872786},
         }
         catch (Exception ex)
         {
-          Assert.True(false, string.Format("Exception at i={0}, alpha={1}, beta={2}, x={3}: {4}", i, alpha, beta, x, ex.Message));
+          Assert.Fail(string.Format("Exception at i={0}, alpha={1}, beta={2}, x={3}: {4}", i, alpha, beta, x, ex.Message));
         }
         double maxdelta = Math.Abs(expectedy / 1E7);
         maxdelta = Math.Max(maxdelta, 1e-25);

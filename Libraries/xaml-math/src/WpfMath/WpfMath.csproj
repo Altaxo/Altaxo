@@ -21,10 +21,6 @@
     </ItemGroup>
 
     <ItemGroup>
-        <PackageReference Include="Nullable" Version="*" PrivateAssets="All" />
-    </ItemGroup>
-
-    <ItemGroup>
         <ProjectReference Include="..\XamlMath.Shared\XamlMath.Shared.csproj" />
     </ItemGroup>
 
