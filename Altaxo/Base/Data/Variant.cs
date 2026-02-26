@@ -722,9 +722,12 @@ namespace Altaxo.Data
 
     public static implicit operator string?(AltaxoVariant f)
     {
-      if (f._typeOfContent == Content.VString)
-        return (string?)f._object;
-      throw new ApplicationException("Variant contains " + f._typeOfContent.ToString() + ", but expecting type string");
+      return f._typeOfContent switch
+      {
+        Content.VString => (string?)f._object,
+        Content.VNull => null,
+        _ => throw new ApplicationException($"Variant contains {f._typeOfContent}, but expecting type string (or null).")
+      };
     }
 
     public static implicit operator AltaxoVariant(string? f)
