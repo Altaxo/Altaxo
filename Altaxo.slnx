@@ -19,10 +19,6 @@
      <BuildDependency Project="Libraries/UpdateDownloader/AutoUpdateDownloader.csproj" />
      <BuildDependency Project="Libraries/UpdateInstaller/AutoUpdateInstaller.csproj" />
   </Project>
-  <Folder Name="/Analyzer/">
-    <Project Path="Analyzer/NullComparisonAnalyzer/NullComparisonAnalyzer.csproj">
-    </Project>
-  </Folder>
   <Folder Name="/Libraries/">
     <Project Path="Libraries/AvalonDock/AvalonDock.Themes.Aero/AvalonDock.Themes.Aero.csproj">
     </Project>

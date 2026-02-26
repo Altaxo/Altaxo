@@ -14,10 +14,7 @@
   <ItemGroup>
     <Compile Remove="Properties\AssemblyInfo.cs" Visible="true" />
   </ItemGroup>
-  <ItemGroup><!--
-    <ProjectReference Include="..\..\Analyzer\NullComparisonAnalyzer\NullComparisonAnalyzer.csproj" PrivateAssets="all" ReferenceOutputAssembly="false" OutputItemType="Analyzer" />
-    -->
-
+  <ItemGroup>
     <InternalsVisibleTo Include="..\..\CoreTest\Altaxo.CoreTest.csproj" />
     <InternalsVisibleTo Include="..\..\BaseTest\Altaxo.BaseTest.csproj" />
   </ItemGroup>
