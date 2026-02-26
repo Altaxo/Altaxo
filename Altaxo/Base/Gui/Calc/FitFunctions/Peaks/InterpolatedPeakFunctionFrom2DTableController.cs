@@ -104,7 +104,7 @@ namespace Altaxo.Gui.Calc.FitFunctions.Peaks
 
 
 
-    public ItemsController<string> NameOfPropertiesForPeakPosition
+    public ItemsController<string> NameOfProperties
     {
       get => field;
       set
@@ -113,10 +113,40 @@ namespace Altaxo.Gui.Calc.FitFunctions.Peaks
         {
           field?.Dispose();
           field = value;
-          OnPropertyChanged(nameof(NameOfPropertiesForPeakPosition));
+          OnPropertyChanged(nameof(NameOfProperties));
         }
       }
     }
+
+
+    bool _propertyIsWidth;
+    public bool PropertyIsWidth
+    {
+      get => _propertyIsWidth;
+      set
+      {
+        if (!(_propertyIsWidth == value))
+        {
+          _propertyIsWidth = value;
+          OnPropertyChanged(nameof(PropertyIsWidth));
+          OnPropertyChanged(nameof(PropertyIsPosition));
+        }
+      }
+    }
+    public bool PropertyIsPosition
+    {
+      get => !_propertyIsWidth;
+      set
+      {
+        if (!(!_propertyIsWidth == !value))
+        {
+          _propertyIsWidth = !value;
+          OnPropertyChanged(nameof(PropertyIsWidth));
+          OnPropertyChanged(nameof(PropertyIsPosition));
+        }
+      }
+    }
+
 
     #endregion
 
@@ -149,14 +179,14 @@ namespace Altaxo.Gui.Calc.FitFunctions.Peaks
       {
         var columnNames = new List<string>(table.PropCols.GetColumnNames());
         columnNames.Sort();
-        NameOfPropertiesForPeakPosition = new ItemsController<string>(new Collections.SelectableListNodeList(columnNames.Select(n => new Collections.SelectableListNode(n, n, false))));
-        if (table.PropCols.TryGetColumn(_doc.NameOfPropertyForPeakPosition) is not null)
+        NameOfProperties = new ItemsController<string>(new Collections.SelectableListNodeList(columnNames.Select(n => new Collections.SelectableListNode(n, n, false))));
+        if (table.PropCols.TryGetColumn(_doc.NameOfPropertyForPeakPositionOrWidth) is not null)
         {
-          NameOfPropertiesForPeakPosition.SelectedValue = _doc.NameOfPropertyForPeakPosition;
+          NameOfProperties.SelectedValue = _doc.NameOfPropertyForPeakPositionOrWidth;
         }
         else if (columnNames.Count > 0)
         {
-          NameOfPropertiesForPeakPosition.SelectedValue = columnNames[0];
+          NameOfProperties.SelectedValue = columnNames[0];
         }
       }
 
@@ -182,8 +212,9 @@ namespace Altaxo.Gui.Calc.FitFunctions.Peaks
         NumberOfTerms = NumberOfTerms,
         OrderOfBaselinePolynomial = OrderOfBaselinePolynominal,
         TableName = TableNames.SelectedValue,
-        NameOfPropertyForPeakPosition = NameOfPropertiesForPeakPosition.SelectedValue,
-        GroupNumberOfParticipatingColumns = GroupNumberOfParticipatingColumns.SelectedValue
+        GroupNumberOfParticipatingColumns = GroupNumberOfParticipatingColumns.SelectedValue,
+        PropertyIsPeakWidth = PropertyIsWidth,
+        NameOfPropertyForPeakPositionOrWidth = NameOfProperties.SelectedValue,
       };
 
       return ApplyEnd(true, disposeController);

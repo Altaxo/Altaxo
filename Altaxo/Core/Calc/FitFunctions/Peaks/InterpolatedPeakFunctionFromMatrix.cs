@@ -42,96 +42,7 @@ namespace Altaxo.Calc.FitFunctions.Peaks
   {
     private const string ParameterBaseName0 = "a";
     private const string ParameterBaseName1 = "xc";
-    private const int NumberOfParametersPerPeak = 2;
-
-
-    /// <summary>
-    /// Initializes a new instance of the <see cref="InterpolatedPeakFunctionFromMatrix"/> class.
-    /// </summary>
-    /// <param name="numberOfTerms">The number of peak terms.</param>
-    /// <param name="orderOfBaselinePolynomial">
-    /// The order of the baseline polynomial, or <c>-1</c> to disable the baseline.
-    /// </param>
-    /// <param name="peakPositionValues">The peak positions of the curves.</param>
-    /// <param name="peakCurveXValues">The x values of the peak curves.</param>
-    /// <param name="peakCurvesYValues">The y values of the peak curves. Each curve is represented by one row of the matrix.</param>
-    /// <exception cref="ArgumentOutOfRangeException">
-    /// Thrown if <paramref name="numberOfTerms"/> is negative or if <paramref name="orderOfBaselinePolynomial"/> is less than <c>-1</c>.
-    /// </exception>
-    public InterpolatedPeakFunctionFromMatrix(int numberOfTerms,
-                                                   int orderOfBaselinePolynomial,
-                                                   IReadOnlyList<double> peakPositionValues,
-                                                   IReadOnlyList<double> peakCurveXValues,
-                                                   IROMatrix<double> peakCurvesYValues)
-     : this(numberOfTerms, orderOfBaselinePolynomial)
-    {
-      InitializeSpline(peakPositionValues, peakCurveXValues, peakCurvesYValues);
-    }
-
-    /// <summary>
-    /// Initializes a new instance of the <see cref="InterpolatedPeakFunctionFromMatrix"/> class.
-    /// </summary>
-    /// <param name="numberOfTerms">The number of peak terms.</param>
-    /// <param name="orderOfBaselinePolynomial">
-    /// The order of the baseline polynomial, or <c>-1</c> to disable the baseline.
-    /// </param>
-    /// <exception cref="ArgumentOutOfRangeException">
-    /// Thrown if <paramref name="numberOfTerms"/> is negative or if <paramref name="orderOfBaselinePolynomial"/> is less than <c>-1</c>.
-    /// </exception>
-    protected InterpolatedPeakFunctionFromMatrix(int numberOfTerms,
-                                                   int orderOfBaselinePolynomial)
-    {
-      if (numberOfTerms < 0)
-        throw new ArgumentOutOfRangeException(nameof(numberOfTerms), $"{nameof(numberOfTerms)} must be greater than or equal to 0");
-      if (orderOfBaselinePolynomial < -1)
-        throw new ArgumentOutOfRangeException(nameof(orderOfBaselinePolynomial), $"{nameof(orderOfBaselinePolynomial)} must be greater than or equal to 0, or -1 in order to deactivate it.");
-      NumberOfTerms = numberOfTerms;
-      OrderOfBaselinePolynomial = orderOfBaselinePolynomial;
-    }
-
-    /// <summary>
-    /// Initializes the spline from a matrix representation of peak curves.
-    /// </summary>
-    /// <param name="peakPositionValues">The peak positions of the curves.</param>
-    /// <param name="peakCurveXValues">The x values of the peak curves.</param>
-    /// <param name="peakCurvesYValues">The y values of the peak curves. Each curve is represented by one row of the matrix.</param>
-    protected void InitializeSpline(IReadOnlyList<double> peakPositionValues, IReadOnlyList<double> peakCurveXValues, IROMatrix<double> peakCurvesYValues)
-    {
-      Spline = new BivariateAkimaSpline(peakPositionValues, peakCurveXValues, peakCurvesYValues, copyDataLocally: true);
-      MinimalPosition = peakPositionValues[0];
-      MaximalPosition = peakPositionValues[^1];
-      MinimalX = peakCurveXValues[0];
-      MaximalX = peakCurveXValues[^1];
-
-      if (!(MinimalX < 0))
-        throw new ArgumentException($"The minimal x value of the table must be less than 0, but {MinimalX} was given.", nameof(peakCurveXValues));
-      if (!(MaximalX > 0))
-        throw new ArgumentException($"The maximal x value of the table must be greater than 0, but {MaximalX} was given.", nameof(peakCurveXValues));
-
-      // now evaluate the FWHM for each position
-
-      var fwhms = new double[peakPositionValues.Count];
-      for (int i = 0; i < peakPositionValues.Count; ++i)
-      {
-        var peakValue = Spline.Interpolate(peakPositionValues[i], 0);
-        var halfValue = peakValue / 2;
-
-        var rootPos = Altaxo.Calc.RootFinding.QuickRootFinding.ByBrentsAlgorithm(x => Spline.Interpolate(peakPositionValues[i], x) - halfValue, 0, MaximalX);
-        var rootNeg = Altaxo.Calc.RootFinding.QuickRootFinding.ByBrentsAlgorithm(x => Spline.Interpolate(peakPositionValues[i], x) - halfValue, MinimalX, 0);
-        fwhms[i] = rootPos - rootNeg;
-      }
-
-      FwhmSpline = new AkimaCubicSplineOptions().Interpolate(peakPositionValues, fwhms);
-    }
-
-    /// <summary>
-    /// Initializes the component, setting up necessary resources and configurations.
-    /// </summary>
-    /// <remarks>This method must be implemented by derived classes to define specific initialization logic.
-    /// It is called if any of the methods that needs <see cref="Spline"/> is called, and <see cref="Spline"/> is <c>null</c>.
-    /// Thus, after calling the method, <see cref="Spline"/> should be valid.</remarks>
-    public abstract void Initialize();
-
+    private const string ParameterBaseName2 = "w";
 
     /// <summary>
     /// Gets the spline used to interpolate the lookup table.
@@ -141,12 +52,12 @@ namespace Altaxo.Calc.FitFunctions.Peaks
     /// <summary>
     /// Gets the minimal peak position that can be evaluated.
     /// </summary>
-    protected double MinimalPosition { get; private set; }
+    protected double MinimalPositionOrWidth { get; private set; }
 
     /// <summary>
     /// Gets the maximal peak position that can be evaluated.
     /// </summary>
-    protected double MaximalPosition { get; private set; }
+    protected double MaximalPositionOrWidth { get; private set; }
 
     /// <summary>
     /// Gets the minimal x value that can be evaluated.
@@ -159,15 +70,132 @@ namespace Altaxo.Calc.FitFunctions.Peaks
     protected double MaximalX { get; private set; }
 
     /// <summary>
+    /// Gets the number of parameters per peak.
+    /// </summary>
+    protected int NumberOfParametersPerPeak => PropertyIsPeakWidth ? 3 : 2;
+
+
+    /// <summary>
+    /// Initializes a new instance of the <see cref="InterpolatedPeakFunctionFromMatrix"/> class.
+    /// </summary>
+    /// <param name="numberOfTerms">The number of peak terms.</param>
+    /// <param name="orderOfBaselinePolynomial">
+    /// The order of the baseline polynomial, or <c>-1</c> to disable the baseline.
+    /// </param>
+    /// <param name="propertyValues">The peak positions (if <paramref name="propertyValuesArePeakWidth"/> is <c>false</c>) or peak widths (if <paramref name="propertyValuesArePeakWidth"/> is <c>true</c>) of the curves.</param>
+    /// <param name="propertyValuesArePeakWidth">If <c>false</c>, the property values are interpreted as peak positions; otherwise, they are interpreted as peak widths.</param>
+    /// <param name="peakCurveXValues">The x values of the peak curves.</param>
+    /// <param name="peakCurvesYValues">The y values of the peak curves. Each curve is represented by one row of the matrix.</param>
+    /// <exception cref="ArgumentOutOfRangeException">
+    /// Thrown if <paramref name="numberOfTerms"/> is negative or if <paramref name="orderOfBaselinePolynomial"/> is less than <c>-1</c>.
+    /// </exception>
+    public InterpolatedPeakFunctionFromMatrix(int numberOfTerms,
+                                                   int orderOfBaselinePolynomial,
+                                                   IReadOnlyList<double> propertyValues,
+                                                   bool propertyValuesArePeakWidth,
+                                                   IReadOnlyList<double> peakCurveXValues,
+                                                   IROMatrix<double> peakCurvesYValues)
+     : this(numberOfTerms, orderOfBaselinePolynomial, propertyValuesArePeakWidth)
+    {
+      InitializeSpline(propertyValues, peakCurveXValues, peakCurvesYValues);
+    }
+
+    /// <summary>
+    /// Initializes a new instance of the <see cref="InterpolatedPeakFunctionFromMatrix"/> class.
+    /// </summary>
+    /// <param name="numberOfTerms">The number of peak terms.</param>
+    /// <param name="orderOfBaselinePolynomial">
+    /// The order of the baseline polynomial, or <c>-1</c> to disable the baseline.
+    /// </param>
+    /// <param name="propertyValuesArePeakWidth">If <c>false</c>, the property values are interpreted as peak positions; otherwise, they are interpreted as peak widths.</param>
+    /// <exception cref="ArgumentOutOfRangeException">
+    /// Thrown if <paramref name="numberOfTerms"/> is negative or if <paramref name="orderOfBaselinePolynomial"/> is less than <c>-1</c>.
+    /// </exception>
+    protected InterpolatedPeakFunctionFromMatrix(int numberOfTerms, int orderOfBaselinePolynomial, bool propertyValuesArePeakWidth)
+    {
+      if (numberOfTerms < 0)
+        throw new ArgumentOutOfRangeException(nameof(numberOfTerms), $"{nameof(numberOfTerms)} must be greater than or equal to 0");
+      if (orderOfBaselinePolynomial < -1)
+        throw new ArgumentOutOfRangeException(nameof(orderOfBaselinePolynomial), $"{nameof(orderOfBaselinePolynomial)} must be greater than or equal to 0, or -1 in order to deactivate it.");
+      NumberOfTerms = numberOfTerms;
+      OrderOfBaselinePolynomial = orderOfBaselinePolynomial;
+      PropertyIsPeakWidth = propertyValuesArePeakWidth;
+    }
+
+    /// <summary>
+    /// Initializes the spline from a matrix representation of peak curves.
+    /// </summary>
+    /// <param name="peakPositionOrWidthValues">The peak positions of the curves.</param>
+    /// <param name="peakCurveXValues">The x values of the peak curves.</param>
+    /// <param name="peakCurvesYValues">The y values of the peak curves. Each curve is represented by one row of the matrix.</param>
+    protected void InitializeSpline(IReadOnlyList<double> peakPositionOrWidthValues, IReadOnlyList<double> peakCurveXValues, IROMatrix<double> peakCurvesYValues)
+    {
+      Spline = new BivariateAkimaSpline(peakPositionOrWidthValues, peakCurveXValues, peakCurvesYValues, copyDataLocally: true);
+      MinimalPositionOrWidth = peakPositionOrWidthValues[0];
+      MaximalPositionOrWidth = peakPositionOrWidthValues[^1];
+      MinimalX = peakCurveXValues[0];
+      MaximalX = peakCurveXValues[^1];
+
+      if (!(MinimalX < 0))
+        throw new ArgumentException($"The minimal x value of the table must be less than 0, but {MinimalX} was given.", nameof(peakCurveXValues));
+      if (!(MaximalX > 0))
+        throw new ArgumentException($"The maximal x value of the table must be greater than 0, but {MaximalX} was given.", nameof(peakCurveXValues));
+
+      // now evaluate the FWHM for each position
+      var fwhms = new double[peakPositionOrWidthValues.Count];
+      for (int i = 0; i < peakPositionOrWidthValues.Count; ++i)
+      {
+        var peakValue = Spline.Interpolate(peakPositionOrWidthValues[i], 0);
+        var halfValue = peakValue / 2;
+
+        var rootPos = Altaxo.Calc.RootFinding.QuickRootFinding.ByBrentsAlgorithm(x => Spline.Interpolate(peakPositionOrWidthValues[i], x) - halfValue, 0, MaximalX);
+        var rootNeg = Altaxo.Calc.RootFinding.QuickRootFinding.ByBrentsAlgorithm(x => Spline.Interpolate(peakPositionOrWidthValues[i], x) - halfValue, MinimalX, 0);
+        fwhms[i] = rootPos - rootNeg;
+      }
+      FwhmSpline = new AkimaCubicSplineOptions().Interpolate(peakPositionOrWidthValues, fwhms);
+
+      // now evaluate the area for each position
+      var areas = new double[peakPositionOrWidthValues.Count];
+      for (int i = 0; i < peakPositionOrWidthValues.Count; ++i)
+      {
+        double area = 0;
+        for (int j = 1; j < peakCurveXValues.Count; ++j)
+        {
+          area += 0.5 * (peakCurvesYValues[i, j] + peakCurvesYValues[i, j - 1]) * (peakCurveXValues[j] - peakCurveXValues[j - 1]);
+        }
+        areas[i] = area;
+      }
+      AreaSpline = new AkimaCubicSplineOptions().Interpolate(peakPositionOrWidthValues, areas);
+
+    }
+
+    /// <summary>
+    /// Initializes the component, setting up necessary resources and configurations.
+    /// </summary>
+    /// <remarks>This method must be implemented by derived classes to define specific initialization logic.
+    /// It is called if any of the methods that needs <see cref="Spline"/> is called, and <see cref="Spline"/> is <c>null</c>.
+    /// Thus, after calling the method, <see cref="Spline"/> should be valid.</remarks>
+    public abstract void Initialize();
+
+    /// <summary>
     /// Gets the interpolation function used to calculate full width at half maximum (FWHM) values.
     /// </summary>
     /// <remarks>This property provides access to the underlying interpolation function for FWHM calculations.
     /// It is initialized internally and cannot be set from outside the class.</remarks>
     protected IInterpolationFunction FwhmSpline { get; private set; }
 
+    /// <summary>
+    /// Gets the interpolation function used to calculate area values.
+    /// </summary>
+    /// <remarks>This property provides access to the underlying interpolation function for FWHM calculations.
+    /// It is initialized internally and cannot be set from outside the class.</remarks>
+    protected IInterpolationFunction AreaSpline { get; private set; }
+
+    public bool PropertyIsPeakWidth { get; init; }
+
 
     /// <inheritdoc/>
-    public string[] ParameterNamesForOnePeak => [ParameterBaseName0, ParameterBaseName1];
+    public string[] ParameterNamesForOnePeak => PropertyIsPeakWidth ? [ParameterBaseName0, ParameterBaseName1, ParameterBaseName2] : [ParameterBaseName0, ParameterBaseName1];
 
     /// <summary>
     /// Gets the order of the baseline polynomial.
@@ -223,17 +251,55 @@ namespace Altaxo.Calc.FitFunctions.Peaks
     /// <inheritdoc/>
     public event EventHandler? Changed;
 
+    /// <inheritdoc/>
+    public string ParameterName(int i)
+    {
+      int k = i - NumberOfParametersPerPeak * NumberOfTerms;
+      if (k < 0)
+      {
+        int j = i / NumberOfParametersPerPeak;
+        return (i % NumberOfParametersPerPeak) switch
+        {
+          0 => FormattableString.Invariant($"{ParameterBaseName0}{j}"),
+          1 => FormattableString.Invariant($"{ParameterBaseName1}{j}"),
+          2 => FormattableString.Invariant($"{ParameterBaseName2}{j}"),
+          _ => throw new InvalidProgramException()
+        };
+      }
+      else if (k <= OrderOfBaselinePolynomial)
+      {
+        return FormattableString.Invariant($"b{k}");
+      }
+      else
+      {
+        throw new ArgumentOutOfRangeException(nameof(i), $"Parameter index {i} is out of range.");
+      }
+    }
 
     /// <inheritdoc/>
     public double DefaultParameterValue(int i)
     {
-      return i switch
+      int k = i - NumberOfParametersPerPeak * NumberOfTerms;
+      if (k < 0)
       {
-        0 => 1, // a
-        1 => 0, // xc
-        _ => throw new ArgumentOutOfRangeException(nameof(i), $"There are only {NumberOfParameters} parameters, but {i} was requested.")
-      };
+        return (i % NumberOfParametersPerPeak) switch
+        {
+          0 => 1, // amplitude
+          1 => 0, // position
+          2 => 1, // width
+          _ => throw new InvalidProgramException(),
+        };
+      }
+      else if (k <= OrderOfBaselinePolynomial)
+      {
+        return 0; // no baseline
+      }
+      else
+      {
+        throw new ArgumentOutOfRangeException(nameof(i), $"Parameter index {i} is out of range.");
+      }
     }
+
 
     /// <inheritdoc/>
     public IVarianceScaling? DefaultVarianceScaling(int i)
@@ -253,11 +319,7 @@ namespace Altaxo.Calc.FitFunctions.Peaks
       return "y";
     }
 
-    /// <inheritdoc/>
-    public string ParameterName(int i)
-    {
-      throw new NotImplementedException();
-    }
+
 
     #endregion
 
@@ -269,14 +331,30 @@ namespace Altaxo.Calc.FitFunctions.Peaks
     /// <param name="a">The amplitude factor.</param>
     /// <param name="xc">The table x-coordinate (center/position) used for interpolation.</param>
     /// <returns>The term value.</returns>
-    protected double GetYOfOneTerm(double x, double a, double xc)
+    protected double GetYOfOneTerm_PropertyIsPosition(double x, double a, double xc)
     {
       var arg = x - xc;
-
       if (!RMath.IsInIntervalCC(arg, MinimalX, MaximalX))
         return 0; // outside of the x range of the table, so we assume the peak function is zero there
       else
         return a * Spline.Interpolate(xc, arg);
+    }
+
+    /// <summary>
+    /// Evaluates one peak term from the table interpolation.
+    /// </summary>
+    /// <param name="x">The independent variable value.</param>
+    /// <param name="a">The amplitude factor.</param>
+    /// <param name="xc">The position of the peak.</param>
+    /// <param name="w">The width of the peak.</param>
+    /// <returns>The term value.</returns>
+    protected double GetYOfOneTerm_PropertyIsWidth(double x, double a, double xc, double w)
+    {
+      var arg = x - xc;
+      if (!RMath.IsInIntervalCC(arg, MinimalX, MaximalX))
+        return 0; // outside of the x range of the table, so we assume the peak function is zero there
+      else
+        return a * Spline.Interpolate(w, arg);
     }
 
 
@@ -288,9 +366,20 @@ namespace Altaxo.Calc.FitFunctions.Peaks
 
       // evaluation of gaussian terms
       double sumTerms = 0, sumPolynomial = 0;
-      for (int i = 0, j = 0; i < NumberOfTerms; ++i, j += NumberOfParametersPerPeak)
+
+      if (PropertyIsPeakWidth)
       {
-        sumTerms += GetYOfOneTerm(X[0], P[j], P[j + 1]);
+        for (int i = 0, j = 0; i < NumberOfTerms; ++i, j += NumberOfParametersPerPeak)
+        {
+          sumTerms += GetYOfOneTerm_PropertyIsWidth(X[0], P[j], P[j + 1], P[j + 2]);
+        }
+      }
+      else
+      {
+        for (int i = 0, j = 0; i < NumberOfTerms; ++i, j += NumberOfParametersPerPeak)
+        {
+          sumTerms += GetYOfOneTerm_PropertyIsPosition(X[0], P[j], P[j + 1]);
+        }
       }
 
       if (OrderOfBaselinePolynomial >= 0)
@@ -319,9 +408,19 @@ namespace Altaxo.Calc.FitFunctions.Peaks
         var x = independent[r, 0];
         // evaluation of gaussian terms
         double sumTerms = 0, sumPolynomial = 0;
-        for (int i = 0, j = 0; i < NumberOfTerms; ++i, j += NumberOfParametersPerPeak)
+        if (PropertyIsPeakWidth)
         {
-          sumTerms += GetYOfOneTerm(x, P[j], P[j + 1]);
+          for (int i = 0, j = 0; i < NumberOfTerms; ++i, j += NumberOfParametersPerPeak)
+          {
+            sumTerms += GetYOfOneTerm_PropertyIsWidth(x, P[j], P[j + 1], P[j + 2]);
+          }
+        }
+        else
+        {
+          for (int i = 0, j = 0; i < NumberOfTerms; ++i, j += NumberOfParametersPerPeak)
+          {
+            sumTerms += GetYOfOneTerm_PropertyIsPosition(x, P[j], P[j + 1]);
+          }
         }
 
         if (OrderOfBaselinePolynomial >= 0)
@@ -342,7 +441,10 @@ namespace Altaxo.Calc.FitFunctions.Peaks
     /// <inheritdoc/>
     public double[] GetInitialParametersFromHeightPositionAndWidthAtRelativeHeight(double height, double position, double width, double relativeHeight)
     {
-      return new[] { height, position };
+      if (PropertyIsPeakWidth)
+        return [height, position, width];
+      else
+        return [height, position];
     }
 
     /// <inheritdoc/>
@@ -354,13 +456,27 @@ namespace Altaxo.Calc.FitFunctions.Peaks
       var lowerBounds = new double?[NumberOfParameters];
       var upperBounds = new double?[NumberOfParameters];
 
-      for (int i = 0, j = 0; i < NumberOfTerms; ++i, j += NumberOfParametersPerPeak)
+      if (PropertyIsPeakWidth)
       {
-        lowerBounds[j + 0] = 0; // minimal amplitude is 0
-        upperBounds[j + 0] = null; // maximal amplitude is not limited
+        for (int i = 0, j = 0; i < NumberOfTerms; ++i, j += NumberOfParametersPerPeak)
+        {
+          lowerBounds[j + 0] = 0; // minimal amplitude is 0
+          upperBounds[j + 0] = null; // maximal amplitude is not limited
 
-        lowerBounds[j + 1] = minimalPosition.HasValue ? Math.Max(minimalPosition.Value, MinimalPosition) : MinimalPosition;
-        upperBounds[j + 1] = maximalPosition.HasValue ? Math.Min(maximalPosition.Value, MaximalPosition) : MaximalPosition;
+          lowerBounds[j + 2] = minimalFWHM.HasValue ? Math.Max(minimalFWHM.Value, MinimalPositionOrWidth) : MinimalPositionOrWidth;
+          upperBounds[j + 2] = maximalFWHM.HasValue ? Math.Min(maximalFWHM.Value, MaximalPositionOrWidth) : MaximalPositionOrWidth;
+        }
+      }
+      else
+      {
+        for (int i = 0, j = 0; i < NumberOfTerms; ++i, j += NumberOfParametersPerPeak)
+        {
+          lowerBounds[j + 0] = 0; // minimal amplitude is 0
+          upperBounds[j + 0] = null; // maximal amplitude is not limited
+
+          lowerBounds[j + 1] = minimalPosition.HasValue ? Math.Max(minimalPosition.Value, MinimalPositionOrWidth) : MinimalPositionOrWidth;
+          upperBounds[j + 1] = maximalPosition.HasValue ? Math.Min(maximalPosition.Value, MaximalPositionOrWidth) : MaximalPositionOrWidth;
+        }
       }
 
       return (lowerBounds, upperBounds);
@@ -374,11 +490,21 @@ namespace Altaxo.Calc.FitFunctions.Peaks
 
       var lowerBounds = new double?[NumberOfParameters];
       var upperBounds = new double?[NumberOfParameters];
-
-      for (int i = 0, j = 0; i < NumberOfTerms; ++i, j += NumberOfParametersPerPeak)
+      if (PropertyIsPeakWidth)
       {
-        lowerBounds[j + 1] = MinimalPosition;
-        upperBounds[j + 1] = MaximalPosition;
+        for (int i = 0, j = 0; i < NumberOfTerms; ++i, j += NumberOfParametersPerPeak)
+        {
+          lowerBounds[j + 2] = MinimalPositionOrWidth;
+          upperBounds[j + 2] = MaximalPositionOrWidth;
+        }
+      }
+      else
+      {
+        for (int i = 0, j = 0; i < NumberOfTerms; ++i, j += NumberOfParametersPerPeak)
+        {
+          lowerBounds[j + 1] = MinimalPositionOrWidth;
+          upperBounds[j + 1] = MaximalPositionOrWidth;
+        }
       }
 
       return (lowerBounds, upperBounds);
@@ -396,7 +522,18 @@ namespace Altaxo.Calc.FitFunctions.Peaks
       if (Spline is null)
         Initialize();
 
-      return (Position: parameters[1], Area: parameters[0], Height: parameters[0], FWHM: FwhmSpline.GetYOfX(parameters[1]));
+      var height = parameters[0];
+      var position = parameters[1];
+
+      if (PropertyIsPeakWidth)
+      {
+        var width = parameters[2];
+        return (position, height * AreaSpline.GetYOfX(width), height, FwhmSpline.GetYOfX(width));
+      }
+      else
+      {
+        return (position, height * AreaSpline.GetYOfX(position), height, FwhmSpline.GetYOfX(position));
+      }
     }
 
     /// <inheritdoc/>
@@ -405,11 +542,30 @@ namespace Altaxo.Calc.FitFunctions.Peaks
       if (Spline is null)
         Initialize();
 
-      var h = parameters[0];
-      var xc = parameters[1];
-      var hStdDev = cv is null ? 0 : SafeSqrt(cv[0, 0]);
-      var xcStdDev = cv is null ? 0 : SafeSqrt(cv[1, 1]);
-      return (h, hStdDev, xc, xcStdDev, h, hStdDev, FwhmSpline.GetYOfX(xc), Math.Abs(FwhmSpline.GetYOfX(xc + xcStdDev) - FwhmSpline.GetYOfX(xc - xcStdDev)));
+      var height = parameters[0];
+      var position = parameters[1];
+      var heightErr = cv is null ? 0 : SafeSqrt(cv[0, 0]);
+      var positionErr = cv is null ? 0 : SafeSqrt(cv[1, 1]);
+
+      if (PropertyIsPeakWidth)
+      {
+        var width = parameters[2];
+        var widthErr = cv is null ? 0 : SafeSqrt(cv[2, 2]);
+        return (
+          position, positionErr,
+          height * AreaSpline.GetYOfX(width), height * Math.Abs(AreaSpline.GetYOfX(width + widthErr) - AreaSpline.GetYOfX(width - widthErr)) + heightErr * AreaSpline.GetYOfX(width),
+          height, heightErr,
+          FwhmSpline.GetYOfX(width), Math.Abs(FwhmSpline.GetYOfX(width + widthErr) - FwhmSpline.GetYOfX(width - widthErr))
+          );
+      }
+      else
+      {
+        return (
+          position, positionErr,
+          AreaSpline.GetYOfX(position), Math.Abs(AreaSpline.GetYOfX(position + positionErr) - AreaSpline.GetYOfX(position - positionErr)) + heightErr * AreaSpline.GetYOfX(position),
+          height, heightErr,
+          FwhmSpline.GetYOfX(position), Math.Abs(FwhmSpline.GetYOfX(position + positionErr) - FwhmSpline.GetYOfX(position - positionErr)));
+      }
     }
 
     private static double SafeSqrt(double x) => Math.Sqrt(Math.Max(0, x));

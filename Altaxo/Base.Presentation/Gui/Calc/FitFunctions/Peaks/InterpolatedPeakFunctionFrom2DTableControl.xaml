@@ -30,7 +30,9 @@
       <RowDefinition Height="4" />
       <RowDefinition Height="Auto" />
       <RowDefinition Height="4" />
-    </Grid.RowDefinitions>
+            <RowDefinition Height="Auto" />
+            <RowDefinition Height="4" />
+        </Grid.RowDefinitions>
 
         <Label Grid.Row="0"
                Grid.Column="0"
@@ -63,13 +65,31 @@
               ItemsSource="{Binding GroupNumberOfParticipatingColumns.Items}"
               SelectedItem="{Binding GroupNumberOfParticipatingColumns.SelectedItem, Mode=TwoWay}" />
 
-    <Label Grid.Row="10"
+        <GroupBox Grid.Row="10"
+                  Grid.Column="0"
+                  Grid.ColumnSpan="3"
+                  Header="Meaning of the property column: ">
+            <StackPanel Orientation="Horizontal" Margin="0,6,0,6">
+                <RadioButton Content="Peak positions"
+                             IsChecked="{Binding PropertyIsPosition, Mode=TwoWay}" 
+                             ToolTip="Check this if the property column designates different peak positions. Then the peak shape is determined by the peak position; a separate peak width parameter is not needed."
+                             />
+                <RadioButton Content="Peak widths"
+                             IsChecked="{Binding PropertyIsWidth, Mode=TwoWay}" 
+                             Margin="6,0,0,0"
+                             ToolTip="Check this if the property column designates different peak widths. Then the shape is independent on the peak position, but is determined by a third parameter 'peak width'."
+                             />
+            </StackPanel>
+                        
+        </GroupBox>
+
+        <Label Grid.Row="12"
            Grid.Column="0"
-           Content="Name of the property column containing peak positions:" />
-    <ComboBox Grid.Row="10"
+           Content="Name of the property column:" />
+    <ComboBox Grid.Row="12"
               Grid.Column="2"
-              ItemsSource="{Binding NameOfPropertiesForPeakPosition.Items}"
-              SelectedItem="{Binding NameOfPropertiesForPeakPosition.SelectedItem, Mode=TwoWay}" />
+              ItemsSource="{Binding NameOfProperties.Items}"
+              SelectedItem="{Binding NameOfProperties.SelectedItem, Mode=TwoWay}" />
 
 
 

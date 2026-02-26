@@ -45,16 +45,17 @@ namespace Altaxo.Calc.FitFunctions.Peaks
     public string TableName { get; init; }
 
     /// <summary>
-    /// Gets the name of the property column that stores the peak position values for each participating column.
+    /// Gets the name of the property column that stores the peak position values or peak width value for each participating column.
+    /// The exact meaning depends on the value of <see cref="InterpolatedPeakFunctionFromMatrix.PropertyIsPeakWidth"/>: if <c>true</c>, the property column is expected to store peak width values; if <c>false</c>, the property column is expected to store peak position values.
     /// </summary>
-    public string NameOfPropertyForPeakPosition { get; init; }
+    public string NameOfPropertyForPeakPositionOrWidth { get; init; }
 
     /// <summary>
     /// Gets the column group number used to select the participating columns within the table.
     /// </summary>
     public int GroupNumberOfParticipatingColumns { get; init; }
 
-    public bool PropertyIsPeakWidth { get; init; }
+
 
 
     #region Serialization
@@ -77,7 +78,7 @@ namespace Altaxo.Calc.FitFunctions.Peaks
         info.AddValue("OrderOfBackgroundPolynomial", s.OrderOfBaselinePolynomial);
         info.AddValue("TableName", s.TableName);
         info.AddValue("GroupNumberOfParticipatingColumns", s.GroupNumberOfParticipatingColumns);
-        info.AddValue("NameOfProperty", s.NameOfPropertyForPeakPosition);
+        info.AddValue("NameOfProperty", s.NameOfPropertyForPeakPositionOrWidth);
         info.AddValue("PropertyIsPeakWidth", s.PropertyIsPeakWidth);
       }
 
@@ -128,11 +129,15 @@ namespace Altaxo.Calc.FitFunctions.Peaks
     /// <see cref="DoubleColumn" />.
     /// </exception>
     public InterpolatedPeakFunctionFrom2DTable(int numberOfTerms,
-                                                   int orderOfBaselinePolynomial, DataTable table, int groupNumberOfParticipatingColumns, string nameOfPropertyForPositionOrWidth, bool propertyIsPeakWidth)
-      : base(numberOfTerms, orderOfBaselinePolynomial)
+                                                   int orderOfBaselinePolynomial,
+                                                   DataTable table,
+                                                   int groupNumberOfParticipatingColumns,
+                                                   string nameOfPropertyForPositionOrWidth,
+                                                   bool propertyIsPeakWidth)
+      : base(numberOfTerms, orderOfBaselinePolynomial, propertyIsPeakWidth)
     {
       TableName = string.Empty;
-      NameOfPropertyForPeakPosition = string.Empty;
+      NameOfPropertyForPeakPositionOrWidth = string.Empty;
       GroupNumberOfParticipatingColumns = 0;
       PropertyIsPeakWidth = propertyIsPeakWidth;
     }
@@ -165,11 +170,11 @@ namespace Altaxo.Calc.FitFunctions.Peaks
       int groupNumberOfParticipatingColumns,
       string nameOfPropertyForPositionOrWidth,
       bool propertyIsPeakWidth)
-      : base(numberOfTerms, orderOfBaselinePolynomial)
+      : base(numberOfTerms, orderOfBaselinePolynomial, propertyIsPeakWidth)
     {
       TableName = tableName;
       GroupNumberOfParticipatingColumns = groupNumberOfParticipatingColumns;
-      NameOfPropertyForPeakPosition = nameOfPropertyForPositionOrWidth;
+      NameOfPropertyForPeakPositionOrWidth = nameOfPropertyForPositionOrWidth;
       PropertyIsPeakWidth = propertyIsPeakWidth;
     }
 
@@ -177,7 +182,7 @@ namespace Altaxo.Calc.FitFunctions.Peaks
     /// <inheritdoc/>
     public override void Initialize()
     {
-      if (string.IsNullOrEmpty(TableName) || string.IsNullOrEmpty(NameOfPropertyForPeakPosition))
+      if (string.IsNullOrEmpty(TableName) || string.IsNullOrEmpty(NameOfPropertyForPeakPositionOrWidth))
         throw new ArgumentException($"This instance of {this.GetType()} is not yet configured.");
 
       var project = Current.Project ?? throw new InvalidOperationException("No project is currently loaded.");
@@ -185,7 +190,7 @@ namespace Altaxo.Calc.FitFunctions.Peaks
       if (!project.DataTableCollection.TryGetValue(TableName, out var table))
         throw new ArgumentException($"The project does not contain a data table with the name '{TableName}'.");
 
-      var pcol = table.PropCols.TryGetColumn(NameOfPropertyForPeakPosition) ?? throw new ArgumentException($"The table '{TableName}' does not contain a property column with the name '{NameOfPropertyForPeakPosition}'.");
+      var pcol = table.PropCols.TryGetColumn(NameOfPropertyForPeakPositionOrWidth) ?? throw new ArgumentException($"The table '{TableName}' does not contain a property column with the name '{NameOfPropertyForPeakPositionOrWidth}'.");
 
       var listParticipatingColumns = new List<int>();
       for (int i = 0; i < table.DataColumnCount; ++i)
