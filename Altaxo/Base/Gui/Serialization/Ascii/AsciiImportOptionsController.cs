@@ -249,8 +249,8 @@ namespace Altaxo.Gui.Serialization.Ascii
       {
         DetectEncodingFromByteOrderMarks = DetectEncodingFromByteOrderMarks,
         CodePage = CodePage.SelectedValue,
-        NumberOfMainHeaderLines = null,
-        IndexOfCaptionLine = null,
+        NumberOfMainHeaderLines = _view.NumberOfMainHeaderLines,
+        IndexOfCaptionLine = _view.IndexOfCaptionLine,
         RenameColumns = _view.RenameColumnsWithHeaderNames,
         RenameWorksheet = _view.RenameWorksheetWithFileName,
         ImportMultipleStreamsVertically = _view.ImportMultipleAsciiVertically,
