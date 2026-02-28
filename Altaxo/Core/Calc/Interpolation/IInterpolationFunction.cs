@@ -44,6 +44,37 @@ namespace Altaxo.Calc.Interpolation
     /// Implementations are expected to have been initialized by calling
     /// <see cref="IInterpolationCurve.Interpolate(System.Collections.Generic.IReadOnlyList{double}, System.Collections.Generic.IReadOnlyList{double})"/> before use.
     /// </remarks>
-    double GetYOfX(double x);
+    public double GetYOfX(double x);
+  }
+
+  public interface IBivariateInterpolationFunction
+  {
+    /// <summary>
+    /// Returns the y value in dependence of given x and z values.
+    /// </summary>
+    /// <param name="x">The x value (value of the first independent variable).</param>
+    /// <param name="y">The y value (value of the second independent variable).</param>
+    /// <returns>The value at the given x and y values.</returns>
+    public double GetValueOfXY(double x, double y);
+  }
+
+  /// <summary>
+  /// Defines a bivariate interpolation function that provides both the interpolated value and its partial derivatives
+  /// with respect to the x and y coordinates at a specified point.
+  /// </summary>
+  /// <remarks>This interface extends IBivariateInterpolationFunction by adding the ability to retrieve the rate
+  /// of change of the interpolated function along each axis. This is useful in scenarios such as optimization,
+  /// sensitivity analysis, or when gradient information is required for further calculations.</remarks>
+  public interface IBivariateInterpolationFunctionWithDerivatives : IBivariateInterpolationFunction
+  {
+    /// <summary>
+    /// Calculates the value of the function and its partial derivatives with respect to x and y at the specified
+    /// coordinates.
+    /// </summary>
+    /// <param name="x">The x-coordinate at which to evaluate the function and its derivatives. Must be a finite number.</param>
+    /// <param name="y">The y-coordinate at which to evaluate the function and its derivatives. Must be a finite number.</param>
+    /// <returns>A tuple containing the function value at (x, y), the partial derivative with respect to x, and the partial
+    /// derivative with respect to y.</returns>
+    public (double z, double dzdx, double dzdy) GetValueAndDerivativesOfXY(double x, double y);
   }
 }

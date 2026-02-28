@@ -130,7 +130,7 @@ namespace Altaxo.Calc.FitFunctions.Peaks
     /// <param name="peakCurvesYValues">The y values of the peak curves. Each curve is represented by one row of the matrix.</param>
     protected void InitializeSpline(IReadOnlyList<double> peakPositionOrWidthValues, IReadOnlyList<double> peakCurveXValues, IROMatrix<double> peakCurvesYValues)
     {
-      Spline = new BivariateAkimaSpline(peakPositionOrWidthValues, peakCurveXValues, peakCurvesYValues, copyDataLocally: true);
+      Spline = new BivariateAkimaSpline(peakPositionOrWidthValues, peakCurveXValues, peakCurvesYValues, precomputePatches: true);
       MinimalPositionOrWidth = peakPositionOrWidthValues[0];
       MaximalPositionOrWidth = peakPositionOrWidthValues[^1];
       MinimalX = peakCurveXValues[0];
@@ -145,11 +145,11 @@ namespace Altaxo.Calc.FitFunctions.Peaks
       var fwhms = new double[peakPositionOrWidthValues.Count];
       for (int i = 0; i < peakPositionOrWidthValues.Count; ++i)
       {
-        var peakValue = Spline.Interpolate(peakPositionOrWidthValues[i], 0);
+        var peakValue = Spline.GetValueOfXY(peakPositionOrWidthValues[i], 0);
         var halfValue = peakValue / 2;
 
-        var rootPos = Altaxo.Calc.RootFinding.QuickRootFinding.ByBrentsAlgorithm(x => Spline.Interpolate(peakPositionOrWidthValues[i], x) - halfValue, 0, MaximalX);
-        var rootNeg = Altaxo.Calc.RootFinding.QuickRootFinding.ByBrentsAlgorithm(x => Spline.Interpolate(peakPositionOrWidthValues[i], x) - halfValue, MinimalX, 0);
+        var rootPos = Altaxo.Calc.RootFinding.QuickRootFinding.ByBrentsAlgorithm(x => Spline.GetValueOfXY(peakPositionOrWidthValues[i], x) - halfValue, 0, MaximalX);
+        var rootNeg = Altaxo.Calc.RootFinding.QuickRootFinding.ByBrentsAlgorithm(x => Spline.GetValueOfXY(peakPositionOrWidthValues[i], x) - halfValue, MinimalX, 0);
         fwhms[i] = rootPos - rootNeg;
       }
       FwhmSpline = new AkimaCubicSplineOptions().Interpolate(peakPositionOrWidthValues, fwhms);
@@ -337,7 +337,7 @@ namespace Altaxo.Calc.FitFunctions.Peaks
       if (!RMath.IsInIntervalCC(arg, MinimalX, MaximalX))
         return 0; // outside of the x range of the table, so we assume the peak function is zero there
       else
-        return a * Spline.Interpolate(xc, arg);
+        return a * Spline.GetValueOfXY(xc, arg);
     }
 
     /// <summary>
@@ -354,7 +354,7 @@ namespace Altaxo.Calc.FitFunctions.Peaks
       if (!RMath.IsInIntervalCC(arg, MinimalX, MaximalX))
         return 0; // outside of the x range of the table, so we assume the peak function is zero there
       else
-        return a * Spline.Interpolate(w, arg);
+        return a * Spline.GetValueOfXY(w, arg);
     }
 
 

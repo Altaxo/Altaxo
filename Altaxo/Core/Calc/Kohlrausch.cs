@@ -23,14 +23,14 @@
 #endregion Copyright
 
 using System;
-using System.Threading;
 using System.Numerics;
+using System.Threading;
 using Altaxo.Calc.LinearAlgebra;
 
 
 namespace Altaxo.Calc
 {
- 
+
 
   /// <summary>
   /// The Kohlrausch function in the frequency domain.
@@ -529,7 +529,7 @@ namespace Altaxo.Calc
       }
       else
       {
-        double log_OneMinusRe = _respline.Value!.Interpolate(beta, y);
+        double log_OneMinusRe = _respline.Value!.GetValueOfXY(beta, y);
         return 1 - Math.Exp(log_OneMinusRe);
       }
     }
@@ -556,7 +556,7 @@ namespace Altaxo.Calc
         return -Im1(beta, w);
       else
       {
-        double log_ar = _imspline.Value!.Interpolate(beta, y);
+        double log_ar = _imspline.Value!.GetValueOfXY(beta, y);
         return -beta * Math.Exp(log_ar);
       }
     }
@@ -629,15 +629,15 @@ namespace Altaxo.Calc
 
     #region Interpolation
 
-    private static readonly ThreadLocal<Interpolation.BivariateAkimaSpline> _imspline = new ThreadLocal<Interpolation.BivariateAkimaSpline>(CreateImaginaryPartSpline);
-    private static readonly ThreadLocal<Interpolation.BivariateAkimaSpline> _respline = new ThreadLocal<Interpolation.BivariateAkimaSpline>(CreateRealPartSpline);
+    private static readonly ThreadLocal<Interpolation.BivariateAkimaSpline> _imspline = new(CreateImaginaryPartSpline);
+    private static readonly ThreadLocal<Interpolation.BivariateAkimaSpline> _respline = new(CreateRealPartSpline);
 
     private static Interpolation.BivariateAkimaSpline CreateImaginaryPartSpline()
     {
       var x = VectorMath.CreateEquidistantSequenceByStartStepLength(0, 1.0 / 32, 34); // beta ranging from 0 to 1+1/32
       var y = VectorMath.CreateEquidistantSequenceByStartStepLength(-5, 1.0 / 64, 353); // y ranging from -5 to 0.5
       var z = MatrixMath.ToROMatrixFromLeftSpineJaggedArray(_imdata);
-      return new Interpolation.BivariateAkimaSpline(x, y, z, false);
+      return new Interpolation.BivariateAkimaSpline(x, y, z, precomputePatches: false);
     }
 
     private static Interpolation.BivariateAkimaSpline CreateRealPartSpline()
@@ -645,7 +645,7 @@ namespace Altaxo.Calc
       var x = VectorMath.CreateEquidistantSequenceByStartStepLength(0, 1.0 / 32, 34); // beta ranging from 0 to 1+1/32
       var y = VectorMath.CreateEquidistantSequenceByStartStepLength(-5, 1.0 / 64, 353); // y ranging from -5 to 0.5
       var z = MatrixMath.ToROMatrixFromLeftSpineJaggedArray(_redata);
-      return new Interpolation.BivariateAkimaSpline(x, y, z, false);
+      return new Interpolation.BivariateAkimaSpline(x, y, z, precomputePatches: false);
     }
 
     #endregion Interpolation
