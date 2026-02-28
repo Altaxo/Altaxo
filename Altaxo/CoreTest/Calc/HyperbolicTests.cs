@@ -23,15 +23,11 @@
 #endregion Copyright
 
 using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 using Xunit;
 
 namespace Altaxo.Calc
 {
-  public class TestHyperbolic
+  public class HyperbolicTests
   {
     private (double X, double Y)[] SinhTestVector = new (double X, double Y)[]
     {

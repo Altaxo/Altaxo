@@ -25,10 +25,9 @@
 using System;
 using System.Collections.Generic;
 using System.Linq;
-using Altaxo.Calc.Probability;
 using Xunit;
 
-namespace AltaxoTest.Calc.Probability
+namespace Altaxo.Calc.Probability
 {
   public delegate ContinuousDistribution ContDistCreator(double a, double b);
 

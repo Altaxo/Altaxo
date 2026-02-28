@@ -23,13 +23,10 @@
 #endregion Copyright
 
 
-using System;
-using Altaxo.Calc;
-using Altaxo.Calc.LinearAlgebra;
-using Complex64T = System.Numerics.Complex;
 using Complex32T = Altaxo.Calc.Complex32;
+using Complex64T = System.Numerics.Complex;
 
-namespace AltaxoTest.Calc.LinearAlgebra
+namespace Altaxo.Calc.LinearAlgebra
 {
   internal sealed class Comparer
   {

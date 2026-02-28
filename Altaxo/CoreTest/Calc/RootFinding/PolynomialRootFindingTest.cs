@@ -22,14 +22,11 @@
 
 #endregion Copyright
 
-using System;
 using System.Collections.Generic;
-using Altaxo.Calc;
-using Altaxo.Calc.RootFinding;
 using Xunit;
 using Complex64T = System.Numerics.Complex;
 
-namespace Calc.RootFinding
+namespace Altaxo.Calc.RootFinding
 {
 
   public class PolynomialRootFindingTest

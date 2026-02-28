@@ -22,13 +22,11 @@
 
 #endregion Copyright
 
-using System;
-using Altaxo.Calc.Optimization;
 using Xunit;
 
-namespace AltaxoTest.Calc.Optimization
+namespace Altaxo.Calc.Optimization
 {
-  
+
   public class EndCriteriaTest
   {
     //Test Method Iteration Counter and associated Functionality

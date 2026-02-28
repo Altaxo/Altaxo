@@ -23,11 +23,9 @@
 #endregion Copyright
 
 using System;
-using Altaxo.Calc;
-using Altaxo.Calc.Integration;
 using Xunit;
 
-namespace AltaxoTest.Calc.Integration
+namespace Altaxo.Calc.Integration
 {
 
   public class QAWCTests

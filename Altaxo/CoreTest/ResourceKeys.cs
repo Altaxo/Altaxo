@@ -23,11 +23,9 @@
 #endregion Copyright
 
 using System;
-using System.Collections.Generic;
-using Altaxo;
 using Xunit;
 
-namespace AltaxoTest
+namespace Altaxo
 {
 
   public class ResourceKeys

@@ -23,12 +23,9 @@
 #endregion Copyright
 
 using System;
-using System.Collections.Generic;
-using System.Linq;
-using Altaxo.Collections;
 using Xunit;
 
-namespace AltaxoTest.Collections
+namespace Altaxo.Collections
 {
 
   public class Test_ContiguousIntegerRange

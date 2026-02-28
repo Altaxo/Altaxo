@@ -2,7 +2,7 @@
 
 /////////////////////////////////////////////////////////////////////////////
 //    Altaxo:  a data processing and data plotting program
-//    Copyright (C) 2002-2014 Dr. Dirk Lellinger
+//    Copyright (C) 2002-2011 Dr. Dirk Lellinger
 //
 //    This program is free software; you can redistribute it and/or modify
 //    it under the terms of the GNU General Public License as published by
@@ -24,33 +24,21 @@
 
 using Xunit;
 
-namespace Altaxo.Collections
+namespace Altaxo.Calc
 {
 
-  public class TestPriorityQueue_Key
+  public class BesselRelatedTests
   {
     [Fact]
-    public void TestOrder()
+    public void TestBesselK1()
     {
-      const int numberOfElements = 10000;
-      var rnd = new System.Random();
+      AssertEx.Equal(0.6019072301972345747375400, BesselRelated.BesselK1(1), 1E-14);
+    }
 
-      var queue = new PriorityQueue<int>();
-
-      for (int i = 0; i < numberOfElements; ++i)
-        queue.Enqueue(100 + rnd.Next(numberOfElements));
-
-      Assert.Equal(numberOfElements, queue.Count);
-
-      int previous = int.MinValue;
-      for (int i = 0; i < numberOfElements; ++i)
-      {
-        int curr = queue.Dequeue();
-        AssertEx.GreaterOrEqual(curr, previous);
-        previous = curr;
-      }
-
-      Assert.Equal(0, queue.Count);
+    [Fact]
+    public void TestBesselExpK1()
+    {
+      AssertEx.Equal(1.636153486263258246513311, BesselRelated.BesselExpK1(1), 1E-14);
     }
   }
 }

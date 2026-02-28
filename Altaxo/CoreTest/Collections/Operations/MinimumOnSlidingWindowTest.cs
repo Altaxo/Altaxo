@@ -25,7 +25,7 @@
 using System;
 using Xunit;
 
-namespace AltaxoTest.Collections.Operations
+namespace Altaxo.Collections.Operations
 {
 
   public class TestMinimumOnSlidingWindow

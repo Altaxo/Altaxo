@@ -22,12 +22,9 @@
 
 #endregion Copyright
 
-using System;
-using Altaxo.Calc;
-using Altaxo.Calc.LinearAlgebra;
 using Xunit;
 
-namespace AltaxoTest.Calc.LinearAlgebra
+namespace Altaxo.Calc.LinearAlgebra
 {
   /// <summary>
   /// Summary description for MatrixMathTests.
@@ -44,7 +41,8 @@ namespace AltaxoTest.Calc.LinearAlgebra
         ma[0, 1] = 1;
         ma[1, 0] = 2;
         ma[1, 1] = 1;
-      };
+      }
+      ;
 
       IMatrix<double> mb = MatrixMath.PseudoInverse(ma);
 
@@ -64,7 +62,9 @@ namespace AltaxoTest.Calc.LinearAlgebra
         ma[1, 0] = 2;
         ma[1, 1] = 1;
         ma[2, 0] = 1;
-        ma[2, 1] = 2;      };
+        ma[2, 1] = 2;
+      }
+      ;
 
       IMatrix<double> mb = MatrixMath.PseudoInverse(ma);
 
@@ -89,7 +89,9 @@ namespace AltaxoTest.Calc.LinearAlgebra
         ma[0, 2] = 4;
         ma[1, 0] = 1;
         ma[1, 1] = 2;
-        ma[1, 2] = 4;      };
+        ma[1, 2] = 4;
+      }
+      ;
 
       IMatrix<double> mb = MatrixMath.PseudoInverse(ma);
 
@@ -117,7 +119,9 @@ namespace AltaxoTest.Calc.LinearAlgebra
         ma[1, 2] = 2;
         ma[2, 0] = 4;
         ma[2, 1] = 1;
-        ma[2, 2] = 2;      };
+        ma[2, 2] = 2;
+      }
+      ;
 
       IMatrix<double> mb = MatrixMath.PseudoInverse(ma);
 
@@ -149,7 +153,8 @@ namespace AltaxoTest.Calc.LinearAlgebra
         ma[2, 0] = 1;
         ma[2, 1] = 2;
         ma[2, 2] = 4;
-      };
+      }
+      ;
 
       IMatrix<double> mb = MatrixMath.PseudoInverse(ma);
 
@@ -181,7 +186,8 @@ namespace AltaxoTest.Calc.LinearAlgebra
         ma[2, 0] = 1;
         ma[2, 1] = 2;
         ma[2, 2] = 4;
-      };
+      }
+      ;
 
       IMatrix<double> mb = MatrixMath.PseudoInverse(ma);
 
@@ -213,7 +219,8 @@ namespace AltaxoTest.Calc.LinearAlgebra
         ma[2, 0] = 1;
         ma[2, 1] = 2;
         ma[2, 2] = 4;
-      };
+      }
+      ;
 
       IMatrix<double> mb = MatrixMath.PseudoInverse(ma);
 

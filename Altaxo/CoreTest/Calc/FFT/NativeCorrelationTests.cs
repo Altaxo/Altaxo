@@ -22,14 +22,12 @@
 
 #endregion Copyright
 
-using System;
-using Altaxo.Calc.Fourier;
 using Xunit;
 
-namespace AltaxoTest.Calc.Fourier
+namespace Altaxo.Calc.Fourier
 {
-  
-  public class TestNativeSplittedComplexCorrelation
+
+  public class NativeSplittedComplexCorrelationTests
   {
     private const int nLowerLimit = 5;
     private const int nUpperLimit = 100;
@@ -94,8 +92,8 @@ namespace AltaxoTest.Calc.Fourier
     }
   }
 
-  
-  public class TestNativeRealCorrelation
+
+  public class NativeRealCorrelationTests
   {
     private const int nLowerLimit = 5;
     private const int nUpperLimit = 100;

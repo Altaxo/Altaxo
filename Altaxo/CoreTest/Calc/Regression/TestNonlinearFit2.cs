@@ -25,7 +25,7 @@
 using System;
 using Xunit;
 
-namespace AltaxoTest.Calc.Regression
+namespace Altaxo.Calc.Regression
 {
 
   public class TestNonlinearFit2

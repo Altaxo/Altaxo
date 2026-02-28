@@ -25,7 +25,7 @@
 using Xunit;
 using Complex32T = Altaxo.Calc.Complex32;
 
-namespace AltaxoTest.Calc.LinearAlgebra
+namespace Altaxo.Calc.LinearAlgebra
 {
 
   public class ComplexFloatTest

@@ -2,7 +2,7 @@
 
 /////////////////////////////////////////////////////////////////////////////
 //    Altaxo:  a data processing and data plotting program
-//    Copyright (C) 2002-2014 Dr. Dirk Lellinger
+//    Copyright (C) 2002-2011 Dr. Dirk Lellinger
 //
 //    This program is free software; you can redistribute it and/or modify
 //    it under the terms of the GNU General Public License as published by
@@ -22,35 +22,51 @@
 
 #endregion Copyright
 
+using System;
 using Xunit;
 
-namespace Altaxo.Collections
+namespace Altaxo.Calc
 {
 
-  public class TestPriorityQueue_Key
+  public class KohlrauschTests
   {
     [Fact]
-    public void TestOrder()
+    public void TestIm1()
     {
-      const int numberOfElements = 10000;
-      var rnd = new System.Random();
+      double result = Kohlrausch.Im1(1.0 + 4 / 32.0, 1);
+    }
 
-      var queue = new PriorityQueue<int>();
+    [Fact]
+    public void TestIm2()
+    {
+      double beta = 63 / 32.0;
+      double result = Kohlrausch.Im2(beta, Math.Exp(2.65625 / beta));
+    }
 
-      for (int i = 0; i < numberOfElements; ++i)
-        queue.Enqueue(100 + rnd.Next(numberOfElements));
+    [Fact]
+    public void TestIm()
+    {
+      double beta = 1 / 32.0;
+      double result = Kohlrausch.Im(beta, Math.Exp(-5 / beta));
+    }
 
-      Assert.Equal(numberOfElements, queue.Count);
+    [Fact]
+    public void TestIm2SmallBeta()
+    {
+      double beta = 1 / 32.0;
+      double result = Kohlrausch.Im2SmallBeta(beta, Math.Exp(-5 / beta));
+    }
 
-      int previous = int.MinValue;
-      for (int i = 0; i < numberOfElements; ++i)
-      {
-        int curr = queue.Dequeue();
-        AssertEx.GreaterOrEqual(curr, previous);
-        previous = curr;
-      }
+    [Fact]
+    public void TestRe1()
+    {
+      double result = Kohlrausch.Re1(0.5, 1024);
+    }
 
-      Assert.Equal(0, queue.Count);
+    [Fact]
+    public void TestRe2()
+    {
+      double result = Kohlrausch.Re(0.03125, Math.Exp(-5 / 0.03125));
     }
   }
 }

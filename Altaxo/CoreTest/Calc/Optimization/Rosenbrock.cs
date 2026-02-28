@@ -28,11 +28,9 @@
  * Copyright (c) 2004, dnAnalytics Project. All rights reserved.
 */
 
-using System;
 using Altaxo.Calc.LinearAlgebra;
-using Altaxo.Calc.Optimization;
 
-namespace AltaxoTest.Calc.Optimization
+namespace Altaxo.Calc.Optimization
 {
   ///<summary>Rosenbrock Function</summary>
   ///<remarks>The Rosenbrock Function is typically used to test optimization algorithms.  It has a
@@ -55,7 +53,8 @@ namespace AltaxoTest.Calc.Optimization
       {
         retvalue[0] = -400 * x[0] * (x[1] - System.Math.Pow(x[0], 2)) - 2 * (1 - x[0]);
         retvalue[x.Count - 1] = 200 * (x[x.Count - 1] - System.Math.Pow(x[x.Count - 2], 2));
-      };
+      }
+      ;
 
       if (x.Count > 2)
       {

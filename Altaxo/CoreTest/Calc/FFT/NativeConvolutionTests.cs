@@ -22,14 +22,12 @@
 
 #endregion Copyright
 
-using System;
-using Altaxo.Calc.Fourier;
 using Xunit;
 
-namespace AltaxoTest.Calc.Fourier
+namespace Altaxo.Calc.Fourier
 {
-  
-  public class TestNativeSplittedComplexConvolution
+
+  public class NativeSplittedComplexConvolutionTests
   {
     private const int nLowerLimit = 5;
     private const int nUpperLimit = 100;

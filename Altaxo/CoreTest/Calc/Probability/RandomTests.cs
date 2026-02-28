@@ -23,10 +23,9 @@
 #endregion Copyright
 
 using System;
-using Altaxo.Calc.Probability;
 using Xunit;
 
-namespace AltaxoTest.Calc.Probability
+namespace Altaxo.Calc.Probability
 {
 
   public class RandomnessTests

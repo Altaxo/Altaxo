@@ -23,10 +23,9 @@
 #endregion Copyright
 
 using System;
-using Altaxo.Calc.LinearAlgebra;
 using Xunit;
 
-namespace AltaxoTest.Calc.LinearAlgebra
+namespace Altaxo.Calc.LinearAlgebra
 {
 
   public class TestSingularValueDecomposition

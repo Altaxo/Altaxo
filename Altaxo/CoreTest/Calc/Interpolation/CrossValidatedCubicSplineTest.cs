@@ -23,11 +23,10 @@
 #endregion Copyright
 
 using System;
-using Altaxo.Calc.Interpolation;
 using Altaxo.Calc.LinearAlgebra;
 using Xunit;
 
-namespace AltaxoTest.Calc.Interpolation
+namespace Altaxo.Calc.Interpolation
 {
   /// <summary>
   /// Test for the cross validated cubic spline.
@@ -49,18 +48,18 @@ namespace AltaxoTest.Calc.Interpolation
       /// <summary>
       /// The variance used to generate the data
       /// </summary>
-      double _variance { get; }
+      public double _variance { get; }
 
 
       /// <summary>
       /// original x, original f, c0, se, c1, c2, c3
       /// </summary>
-      double[][] _testdata { get; }
+      public double[][] _testdata { get; }
 
       /// <summary>
       /// SmoothingParameter; DegreesOfFreedom; GeneralizedCrossValidation, MeanSquareResidual, EstimateOfTrueMeanSquareError, EstimateOfErrorVariance, MeanSquareValueOfDfi, Variance
       /// </summary>
-      double[] _teststat { get; }
+      public double[] _teststat { get; }
     }
 
     private class DataForVarianceNegative : ITestData
@@ -561,7 +560,7 @@ new double[]{  0.99295634E+00,  -0.12715313E+01,  -0.71666212E+00,   0.28007023E
           AreEqual(data._testdata[i][1], f[i], 1E-7, 0, $"F[{i}]");
         }
 
-        spline.Interpolate(VectorMath.ToROVector(x), VectorMath.ToROVector(f), data._variance < 0 ? -1 :  Math.Sqrt(data._variance));
+        spline.Interpolate(VectorMath.ToROVector(x), VectorMath.ToROVector(f), data._variance < 0 ? -1 : Math.Sqrt(data._variance));
 
         for (int i = 0; i < N; ++i)
         {
@@ -641,7 +640,7 @@ new double[]{  0.99295634E+00,  -0.12715313E+01,  -0.71666212E+00,   0.28007023E
             AreEqual(data._testdata[i][1] * yscaling, f[i], 1E-7, 0, $"F[{i}]");
           }
 
-          spline.Interpolate(VectorMath.ToROVector(x), VectorMath.ToROVector(f), (data._variance < 0 ? -1: Math.Sqrt(data._variance * (yscaling * yscaling))));
+          spline.Interpolate(VectorMath.ToROVector(x), VectorMath.ToROVector(f), (data._variance < 0 ? -1 : Math.Sqrt(data._variance * (yscaling * yscaling))));
 
           for (int i = 0; i < N; ++i)
           {
@@ -724,7 +723,7 @@ new double[]{  0.99295634E+00,  -0.12715313E+01,  -0.71666212E+00,   0.28007023E
           }
 
 
-          spline.Interpolate(VectorMath.ToROVector(x), VectorMath.ToROVector(f), data._variance<0 ? -1 : Math.Sqrt(data._variance));
+          spline.Interpolate(VectorMath.ToROVector(x), VectorMath.ToROVector(f), data._variance < 0 ? -1 : Math.Sqrt(data._variance));
 
           for (int i = 0; i < N; ++i)
           {

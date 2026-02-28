@@ -2,7 +2,7 @@
 
 /////////////////////////////////////////////////////////////////////////////
 //    Altaxo:  a data processing and data plotting program
-//    Copyright (C) 2002-2014 Dr. Dirk Lellinger
+//    Copyright (C) 2002-2011 Dr. Dirk Lellinger
 //
 //    This program is free software; you can redistribute it and/or modify
 //    it under the terms of the GNU General Public License as published by
@@ -23,34 +23,36 @@
 #endregion Copyright
 
 using Xunit;
+using Complex64T = System.Numerics.Complex;
 
-namespace Altaxo.Collections
+namespace Altaxo.Calc
 {
 
-  public class TestPriorityQueue_Key
+  public class ComplexMathTests
   {
     [Fact]
-    public void TestOrder()
+    public void TestExp()
     {
-      const int numberOfElements = 10000;
-      var rnd = new System.Random();
+      Complex64T result;
 
-      var queue = new PriorityQueue<int>();
+      result = ComplexMath.Exp(new Complex64T(0.5, 0.5));
+      AssertEx.Equal(1.446889036584169158051583, result.Real, 1e-15);
+      AssertEx.Equal(0.7904390832136149118432626, result.Imaginary, 1e-15);
+    }
 
-      for (int i = 0; i < numberOfElements; ++i)
-        queue.Enqueue(100 + rnd.Next(numberOfElements));
+    [Fact]
+    public void TestLog()
+    {
+      Complex64T arg;
+      Complex64T result;
 
-      Assert.Equal(numberOfElements, queue.Count);
+      arg = new Complex64T(1 / 2.0, 1 / 3.0);
 
-      int previous = int.MinValue;
-      for (int i = 0; i < numberOfElements; ++i)
-      {
-        int curr = queue.Dequeue();
-        AssertEx.GreaterOrEqual(curr, previous);
-        previous = curr;
-      }
+      AssertEx.Equal(0.6009252125773315488532035, arg.Magnitude, 1e-15);
 
-      Assert.Equal(0, queue.Count);
+      result = ComplexMath.Log(arg);
+      AssertEx.Equal(-0.5092847904972866327857336, result.Real, 1e-15);
+      AssertEx.Equal(0.5880026035475675512456111, result.Imaginary, 1e-15);
     }
   }
 }

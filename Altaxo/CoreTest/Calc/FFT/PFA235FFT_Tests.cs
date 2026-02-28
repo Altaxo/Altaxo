@@ -23,18 +23,17 @@
 #endregion Copyright
 
 using System;
-using Altaxo.Calc.Fourier;
 using Xunit;
 
-namespace AltaxoTest.Calc.Fourier
+namespace Altaxo.Calc.Fourier
 {
 
-  public class TestPFA235FFT_1D
+  public class PFA235FFT_1DTests
   {
     private SplittedComplexFFTTests _test;
     private int[] _testLengths = { 2, 3, 2 * 2, 5, 2 * 3, 2 * 2 * 2, 3 * 3, 2 * 3 * 5, 3 * 5 * 5, 2 * 2 * 3 * 3 * 5 * 5 };
 
-    public TestPFA235FFT_1D()
+    public PFA235FFT_1DTests()
     {
       _test = new SplittedComplexFFTTests(new SplittedComplexFFTTests.FFTRoutine(MyFFT));
     }
@@ -96,7 +95,7 @@ namespace AltaxoTest.Calc.Fourier
   }
 
 
-  public class TestPFA235FFT_2D_Inverse
+  public class PFA235FFT_2D_InverseTests
   {
     private System.Random rnd = new System.Random();
 
@@ -352,7 +351,7 @@ namespace AltaxoTest.Calc.Fourier
   }
 
 
-  public class TestPfa235FFTRealFFT
+  public class Pfa235FFTRealFFTTests
   {
     private const int nLowerLimit = 5;
     private const int nUpperLimit = 100;
@@ -363,7 +362,7 @@ namespace AltaxoTest.Calc.Fourier
     private RealFFTTests _test;
     private RealFFTTests _test2;
 
-    public TestPfa235FFTRealFFT()
+    public Pfa235FFTRealFFTTests()
     {
       _test = new RealFFTTests(new RealFFTTests.FFTRoutine(MyRoutine1));
       _test2 = new RealFFTTests(new RealFFTTests.FFTRoutine(MyRoutine2));

@@ -24,11 +24,9 @@
 
 using System;
 using System.Threading;
-using Altaxo.Calc;
-using Altaxo.Calc.Regression;
 using Xunit;
 
-namespace AltaxoTest.Calc.Regression
+namespace Altaxo.Calc.Regression
 {
 
   public class Test_enorm

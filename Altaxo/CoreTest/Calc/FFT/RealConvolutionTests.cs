@@ -22,11 +22,9 @@
 
 #endregion Copyright
 
-using System;
-using Altaxo.Calc.Fourier;
 using Xunit;
 
-namespace AltaxoTest.Calc.Fourier
+namespace Altaxo.Calc.Fourier
 {
   /// <summary>
   /// Serves as template class for Tests of Convolution.

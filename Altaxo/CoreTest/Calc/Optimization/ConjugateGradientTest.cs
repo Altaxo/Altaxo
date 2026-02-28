@@ -22,12 +22,10 @@
 
 #endregion Copyright
 
-using System;
 using Altaxo.Calc.LinearAlgebra;
-using Altaxo.Calc.Optimization;
 using Xunit;
 
-namespace AltaxoTest.Calc.Optimization
+namespace Altaxo.Calc.Optimization
 {
 
   public class ConjugateGradientTest

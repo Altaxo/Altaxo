@@ -22,14 +22,12 @@
 
 #endregion Copyright
 
-using System;
-using Altaxo.Calc.Fourier;
 using Xunit;
 
-namespace AltaxoTest.Calc.Fourier
+namespace Altaxo.Calc.Fourier
 {
-  
-  public class TestPFA235ConvolutionReal1D
+
+  public class PFA235ConvolutionReal1DTests
   {
     private const int nLowerLimit = 4;
     private const int nUpperLimit = 128;
@@ -38,7 +36,7 @@ namespace AltaxoTest.Calc.Fourier
 
     private int[] _testLengths = { 2, 3, 2 * 2, 5, 2 * 2 * 2, 3 * 3, 2 * 5, 2 * 2 * 3, 2 * 3 * 5, 2 * 2 * 2 * 2 * 5, 2 * 2 * 3 * 3 * 5 };
 
-    public TestPFA235ConvolutionReal1D()
+    public PFA235ConvolutionReal1DTests()
     {
       _test = new RealConvolutionTests(new RealConvolutionTests.ConvolutionRoutine(MyConvolution));
     }
@@ -92,8 +90,8 @@ namespace AltaxoTest.Calc.Fourier
     }
   }
 
-  
-  public class TestPFA235ConvolutionSplittedComplex1D
+
+  public class PFA235ConvolutionSplittedComplex1DTests
   {
     private const int nLowerLimit = 4;
     private const int nUpperLimit = 128;
@@ -101,7 +99,7 @@ namespace AltaxoTest.Calc.Fourier
     private SplittedComplexConvolutionTests _test;
     private int[] _testLengths = { 2, 3, 2 * 2, 5, 2 * 2 * 2, 3 * 3, 2 * 5, 2 * 2 * 3, 2 * 3 * 5, 2 * 2 * 2 * 2 * 5, 2 * 2 * 3 * 3 * 5 };
 
-    public TestPFA235ConvolutionSplittedComplex1D()
+    public PFA235ConvolutionSplittedComplex1DTests()
     {
       _test = new SplittedComplexConvolutionTests(new SplittedComplexConvolutionTests.ConvolutionRoutine(MyConvolution));
     }

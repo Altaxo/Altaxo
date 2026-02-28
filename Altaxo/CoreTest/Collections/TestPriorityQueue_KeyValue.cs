@@ -25,12 +25,10 @@
 using System;
 using System.Collections.Concurrent;
 using System.Collections.Generic;
-using System.Linq;
 using System.Threading.Tasks;
-using Altaxo.Collections;
 using Xunit;
 
-namespace AltaxoTest.Collections
+namespace Altaxo.Collections
 {
 
   public class TestPriorityQueue_KeyValue
