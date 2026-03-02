@@ -23,8 +23,6 @@
 #endregion Copyright
 
 using System;
-using System.Collections.Generic;
-using System.Text;
 
 namespace Altaxo.Calc.RootFinding
 {
@@ -392,7 +390,7 @@ brent_iterate(ref brent_state_t state, Func<double, double> f, out double root, 
     /// <returns>The estimated root, or <see cref="double.NaN"/> if the method fails.</returns>
     public static double ByBrentsAlgorithm(Func<double, double> f, double x0, double x1)
     {
-      return ByBrentsAlgorithm(f, x0, x1, 0, DoubleConstants.DBL_EPSILON);
+      return ByBrentsAlgorithm(f, x0, x1, double.Epsilon, DoubleConstants.DBL_EPSILON);
     }
 
     /// <summary>
