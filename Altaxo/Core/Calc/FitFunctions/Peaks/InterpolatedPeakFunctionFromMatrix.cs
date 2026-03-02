@@ -38,7 +38,7 @@ namespace Altaxo.Calc.FitFunctions.Peaks
   /// The lookup table is interpreted as a function <c>z = z(x, y)</c> given on a regular grid.
   /// Interpolation is performed using <see cref="BivariateAkimaSpline" />.
   /// </remarks>
-  public abstract record InterpolatedPeakFunctionFromMatrix : IFitFunctionPeak, Main.IImmutable
+  public record InterpolatedPeakFunctionFromMatrix : IFitFunctionWithDerivative, IFitFunctionPeak, Main.IImmutable
   {
     private const string ParameterBaseName0 = "a";
     private const string ParameterBaseName1 = "xc";
@@ -175,7 +175,9 @@ namespace Altaxo.Calc.FitFunctions.Peaks
     /// <remarks>This method must be implemented by derived classes to define specific initialization logic.
     /// It is called if any of the methods that needs <see cref="Spline"/> is called, and <see cref="Spline"/> is <c>null</c>.
     /// Thus, after calling the method, <see cref="Spline"/> should be valid.</remarks>
-    public abstract void Initialize();
+    public virtual void Initialize()
+    {
+    }
 
     /// <summary>
     /// Gets the interpolation function used to calculate full width at half maximum (FWHM) values.
@@ -439,6 +441,78 @@ namespace Altaxo.Calc.FitFunctions.Peaks
     }
 
     /// <inheritdoc/>
+    public void EvaluateDerivative(IROMatrix<double> X, IReadOnlyList<double> P, IReadOnlyList<bool>? isParameterFixed, IMatrix<double> DY, IReadOnlyList<bool>? dependentVariableChoice)
+    {
+      var rowCount = X.RowCount;
+      for (int r = 0; r < rowCount; ++r)
+      {
+        var x = X[r, 0];
+
+        // at first, the peak terms
+        for (int i = 0, j = 0; i < NumberOfTerms; ++i, j += NumberOfParametersPerPeak)
+        {
+          var height = P[j];
+          var position = P[j + 1];
+
+          if (PropertyIsPeakWidth)
+          {
+            if (isParameterFixed is not null && isParameterFixed[j] && isParameterFixed[j + 1] && isParameterFixed[j + 2])
+            {
+              continue;
+            }
+            var arg = x - position;
+            if (!RMath.IsInIntervalCC(arg, MinimalX, MaximalX))  // outside of the x range of the table, so we assume the peak function is zero there
+            {
+              DY[r, j + 0] = 0; // derivative with respect to height is zero, because the function value is zero
+              DY[r, j + 1] = 0; // derivative with respect to position is zero, because the function value is zero
+              DY[r, j + 2] = 0; // derivative with respect to width is zero, because the function value is zero
+            }
+            else
+            {
+              var width = P[j + 2];
+              var (z, dzdx, dzdy) = Spline.GetValueAndDerivativesOfXY(width, arg);
+
+              DY[r, j + 0] = z; // derivative with respect to height
+              DY[r, j + 1] = -height * dzdy; // derivative w.r.t. position
+              DY[r, j + 2] = height * dzdx; // derivative w.r.t. width
+            }
+          }
+          else // property is position
+          {
+            if (isParameterFixed is not null && isParameterFixed[j] && isParameterFixed[j + 1])
+            {
+              continue;
+            }
+            var arg = x - position;
+            if (!RMath.IsInIntervalCC(arg, MinimalX, MaximalX))  // outside of the x range of the table, so we assume the peak function is zero there
+            {
+              DY[r, j + 0] = 0; // derivative with respect to height is zero, because the function value is zero
+              DY[r, j + 1] = 0; // derivative with respect to position is zero, because the function value is zero
+            }
+            else
+            {
+              var (z, dzdx, dzdy) = Spline.GetValueAndDerivativesOfXY(position, arg);
+
+              DY[r, j + 0] = z; // derivative with respect to height
+              DY[r, j + 1] = height * (dzdx - dzdy); // derivative w.r.t. position
+            }
+          }
+        }
+
+        // then, the baseline
+        if (OrderOfBaselinePolynomial >= 0)
+        {
+          double xn = 1;
+          for (int i = 0, j = NumberOfParametersPerPeak * NumberOfTerms; i <= OrderOfBaselinePolynomial; ++i, ++j)
+          {
+            DY[r, j] = xn;
+            xn *= x;
+          }
+        }
+      }
+    }
+
+    /// <inheritdoc/>
     public double[] GetInitialParametersFromHeightPositionAndWidthAtRelativeHeight(double height, double position, double width, double relativeHeight)
     {
       if (PropertyIsPeakWidth)
@@ -569,5 +643,7 @@ namespace Altaxo.Calc.FitFunctions.Peaks
     }
 
     private static double SafeSqrt(double x) => Math.Sqrt(Math.Max(0, x));
+
+
   }
 }
