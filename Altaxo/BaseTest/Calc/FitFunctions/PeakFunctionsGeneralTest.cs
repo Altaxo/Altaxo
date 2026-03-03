@@ -24,6 +24,7 @@
 
 using System;
 using System.Collections.Generic;
+using System.Linq;
 using Xunit;
 
 namespace Altaxo.Calc.FitFunctions.Peaks
@@ -34,7 +35,7 @@ namespace Altaxo.Calc.FitFunctions.Peaks
     public void TestParameterNamesAndDefaultValues()
     {
       var types = Altaxo.Main.Services.ReflectionService.GetNonAbstractSubclassesOf(typeof(Altaxo.Calc.FitFunctions.Peaks.IFitFunctionPeak));
-      foreach (var type in types)
+      foreach (var type in types.Where(t => Main.Services.ReflectionService.HasParameterlessPublicConstructor(t)))
       {
         var ff = (IFitFunctionPeak)Activator.CreateInstance(type);
         ff = ff.WithNumberOfTerms(3).WithOrderOfBaselinePolynomial(5);
@@ -69,7 +70,7 @@ namespace Altaxo.Calc.FitFunctions.Peaks
     public void TestNumberOfParametersForInitialGuess()
     {
       var types = Altaxo.Main.Services.ReflectionService.GetNonAbstractSubclassesOf(typeof(Altaxo.Calc.FitFunctions.Peaks.IFitFunctionPeak));
-      foreach (var type in types)
+      foreach (var type in types.Where(t => Main.Services.ReflectionService.HasParameterlessPublicConstructor(t)))
       {
         var ff = (IFitFunctionPeak)Activator.CreateInstance(type);
         ff = ff.WithNumberOfTerms(1).WithOrderOfBaselinePolynomial(-1);

@@ -528,7 +528,7 @@ namespace Altaxo.Main.Services
 
     public interface IAttributeForClassList : IEnumerable<KeyValuePair<Attribute, Type>>
     {
-      IEnumerable<Type> Types { get; }
+      public IEnumerable<Type> Types { get; }
     }
 
     private class AttributeDictEntryComparer : IComparer<KeyValuePair<Attribute, Type>>
@@ -1146,5 +1146,22 @@ namespace Altaxo.Main.Services
     }
 
     #endregion Property key search
+
+    #region Static helper functions
+
+    /// <summary>
+    /// Determines whether the specified type defines a public parameterless constructor.
+    /// </summary>
+    /// <remarks>This method is useful when creating instances of types dynamically, such as during
+    /// reflection-based object creation. Only public parameterless constructors are considered; non-public constructors
+    /// are ignored.</remarks>
+    /// <param name="type">The type to inspect for a public constructor that takes no parameters. Cannot be null.</param>
+    /// <returns>true if the type has a public parameterless constructor; otherwise, false.</returns>
+    public static bool HasParameterlessPublicConstructor(Type type)
+    {
+      return type.GetConstructor(Type.EmptyTypes) is not null;
+    }
+
+    #endregion
   }
 }

@@ -284,13 +284,25 @@ namespace Altaxo.Calc.FitFunctions.Peaks
       int k = i - NumberOfParametersPerPeak * NumberOfTerms;
       if (k < 0)
       {
-        return (i % NumberOfParametersPerPeak) switch
+        if (PropertyIsPeakWidth)
         {
-          0 => 1, // amplitude
-          1 => 0, // position
-          2 => 1, // width
-          _ => throw new InvalidProgramException(),
-        };
+          return (i % NumberOfParametersPerPeak) switch
+          {
+            0 => 1, // amplitude
+            1 => 0, // position
+            2 => 0.5 * (MinimalPositionOrWidth + MaximalPositionOrWidth), // width
+            _ => throw new InvalidProgramException(),
+          };
+        }
+        else
+        {
+          return (i % NumberOfParametersPerPeak) switch
+          {
+            0 => 1, // amplitude
+            1 => 0.5 * (MinimalPositionOrWidth + MaximalPositionOrWidth), // position
+            _ => throw new InvalidProgramException(),
+          };
+        }
       }
       else if (k <= OrderOfBaselinePolynomial)
       {

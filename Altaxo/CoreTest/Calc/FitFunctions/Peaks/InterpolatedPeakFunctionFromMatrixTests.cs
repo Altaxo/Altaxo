@@ -22,19 +22,17 @@
 
 #endregion Copyright
 
+using System;
 using Altaxo.Calc.LinearAlgebra;
+using Altaxo.Calc.Regression.Nonlinear;
 using Xunit;
 
 namespace Altaxo.Calc.FitFunctions.Peaks
 {
   public class InterpolatedPeakFunctionFromMatrixTests
   {
-    /// <summary>
-    /// Tests the InterpolatedPeakFunctionFromMatrix with 3 arguments (height, position and width).
-    /// The test function is choosen such that the order of the width dependence is 2 at max, so that the interpolation should be exact.
-    /// </summary>
-    [Fact]
-    public void Test_WidthDependent()
+    public static (IFitFunctionWithDerivative fitFunction, Func<double, double, double, double, (double z, double dzdheight, double dzdposition, double dzdwidth)> expectedFunction, double[] x, double[] widths, Matrix<double> z)
+      GetFitFunctionAndExpected_WidthDependent()
     {
       const int NumberOfSpectralPoints = 100;
       const int NumberOfWidths = 90;
@@ -52,28 +50,43 @@ namespace Altaxo.Calc.FitFunctions.Peaks
 
       var x = new double[NumberOfSpectralPoints];
       var widths = new double[NumberOfWidths];
-
       for (int i = 0; i < NumberOfSpectralPoints; i++)
       {
         x[i] = i - NumberOfSpectralPoints / 2;
       }
-
       for (int i = 0; i < NumberOfWidths; i++)
       {
         widths[i] = 1 / 16d + (1 / 8d) * (i / 128d);
       }
-
       var matrix = CreateMatrix.Dense<double>(NumberOfWidths, NumberOfSpectralPoints);
       for (int i = 0; i < NumberOfWidths; i++)
       {
         for (int j = 0; j < NumberOfSpectralPoints; j++)
         {
-          matrix[i, j] = ExpectedFunction(x[j], 1.0, 0, widths[i]).z;
+          matrix[i, j] = 1 - RMath.Pow2((x[j]) * widths[i]);
         }
       }
-
       var interpolatedPeakFunction = new InterpolatedPeakFunctionFromMatrix(1, -1, widths, propertyValuesArePeakWidth: true, x, matrix);
-      var expectedPeakFunction = new GaussAmplitude(1, -1);
+
+      return (interpolatedPeakFunction, ExpectedFunction, x, widths, matrix);
+    }
+
+    public static IFitFunctionWithDerivative GetFitFunctionOnly_WidthDependent()
+    {
+      return GetFitFunctionAndExpected_WidthDependent().fitFunction;
+    }
+
+
+    /// <summary>
+    /// Tests the InterpolatedPeakFunctionFromMatrix with 3 arguments (height, position and width).
+    /// The test function is choosen such that the order of the width dependence is 2 at max, so that the interpolation should be exact.
+    /// </summary>
+    [Fact]
+    public void Test_WidthDependent()
+    {
+      var (interpolatedPeakFunction, ExpectedFunction, x, widths, matrix) = GetFitFunctionAndExpected_WidthDependent();
+      var NumberOfSpectralPoints = x.Length;
+      var NumberOfWidths = widths.Length;
 
       var X = new double[1];
       var FVactual = new double[1];

@@ -55,9 +55,6 @@ namespace Altaxo.Calc.FitFunctions.Peaks
     /// </summary>
     public int GroupNumberOfParticipatingColumns { get; init; }
 
-
-
-
     #region Serialization
 
     /// <summary>
@@ -136,10 +133,11 @@ namespace Altaxo.Calc.FitFunctions.Peaks
                                                    bool propertyIsPeakWidth)
       : base(numberOfTerms, orderOfBaselinePolynomial, propertyIsPeakWidth)
     {
-      TableName = string.Empty;
-      NameOfPropertyForPeakPositionOrWidth = string.Empty;
-      GroupNumberOfParticipatingColumns = 0;
+      TableName = table.Name;
+      NameOfPropertyForPeakPositionOrWidth = nameOfPropertyForPositionOrWidth;
+      GroupNumberOfParticipatingColumns = groupNumberOfParticipatingColumns;
       PropertyIsPeakWidth = propertyIsPeakWidth;
+      Initialize(table);
     }
 
     /// <summary>
@@ -189,7 +187,17 @@ namespace Altaxo.Calc.FitFunctions.Peaks
 
       if (!project.DataTableCollection.TryGetValue(TableName, out var table))
         throw new ArgumentException($"The project does not contain a data table with the name '{TableName}'.");
+      Initialize(table);
+    }
 
+    /// <summary>
+    /// Initializes the internal state using data from the specified table, extracting relevant columns and preparing
+    /// data for spline processing.
+    /// </summary>
+    /// <param name="table">The data table containing the columns and data required for initialization. Must include a property column named
+    /// as specified by 'NameOfPropertyForPeakPositionOrWidth'.</param>
+    protected void Initialize(DataTable table)
+    {
       var pcol = table.PropCols.TryGetColumn(NameOfPropertyForPeakPositionOrWidth) ?? throw new ArgumentException($"The table '{TableName}' does not contain a property column with the name '{NameOfPropertyForPeakPositionOrWidth}'.");
 
       var listParticipatingColumns = new List<int>();
