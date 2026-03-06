@@ -83,6 +83,9 @@ namespace Altaxo.Drawing
     {
       Current.AddService<IProjectService>(new ProjectServiceDummyImpl());
       Current.AddService<IPropertyService>(new PropertyServiceFallbackImplementation());
+
+      Assert.NotNull(Current.GetService<IProjectService>());
+      Assert.NotNull(Current.GetService<IPropertyService>());
       foreach (var entry in TestGenerator())
       {
         Tester(entry.pen1, entry.pen2, entry.comment);
@@ -94,6 +97,9 @@ namespace Altaxo.Drawing
     {
       Current.AddService<IProjectService>(new ProjectServiceDummyImpl());
       Current.AddService<IPropertyService>(new PropertyServiceFallbackImplementation());
+
+      Assert.NotNull(Current.GetService<IProjectService>());
+      Assert.NotNull(Current.GetService<IPropertyService>());
       foreach (var entry in TestGenerator())
       {
         var env1 = new PenXEnv(entry.pen1, new Geometry.RectangleD2D(0, 0, 1000, 2000), 96);
