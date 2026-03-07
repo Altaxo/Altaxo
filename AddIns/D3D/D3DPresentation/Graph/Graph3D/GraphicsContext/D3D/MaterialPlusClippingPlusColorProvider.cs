@@ -33,12 +33,18 @@ using Altaxo.Geometry;
 namespace Altaxo.Graph.Graph3D.GraphicsContext.D3D
 {
   /// <summary>
-  /// Combines a material with one or more clip planes.
+  /// Combines a material, optional clip planes and a color provider.
   /// </summary>
   public class MaterialPlusClippingPlusColorProviderKey : MaterialPlusClippingKey
   {
+    /// <summary>
+    /// Gets the color provider associated with this key.
+    /// </summary>
     public Gdi.Plot.IColorProvider ColorProvider { get; private set; }
 
+    /// <summary>
+    /// Initializes a new instance of the <see cref="MaterialPlusClippingPlusColorProviderKey"/> class.
+    /// </summary>
     public MaterialPlusClippingPlusColorProviderKey(IMaterial material, PlaneD3D[]? clipPlanes, Gdi.Plot.IColorProvider colorProvider)
       : base(material, clipPlanes)
     {
@@ -48,12 +54,18 @@ namespace Altaxo.Graph.Graph3D.GraphicsContext.D3D
       ColorProvider = colorProvider;
     }
 
+    /// <summary>
+    /// Determines equality with another object.
+    /// </summary>
     public override bool Equals(object? obj)
     {
       return obj is MaterialPlusClippingPlusColorProviderKey from
              && base.Equals(from) && ColorProvider.Equals(from.ColorProvider);
     }
 
+    /// <summary>
+    /// Returns the hash code.
+    /// </summary>
     public override int GetHashCode()
     {
       return base.GetHashCode() + 73 * ColorProvider.GetHashCode();

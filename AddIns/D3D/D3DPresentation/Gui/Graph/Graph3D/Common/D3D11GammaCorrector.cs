@@ -34,12 +34,30 @@ namespace Altaxo.Gui.Graph.Graph3D.Common
 
   public class D3D11GammaCorrector : IDisposable
   {
+    /// <summary>
+    /// Tracks disposal state.
+    /// </summary>
     private bool _isDisposed;
+    /// <summary>
+    /// Input layout for fullscreen quad vertices.
+    /// </summary>
     private ID3D11InputLayout _vertexLayout;
+    /// <summary>
+    /// Vertex buffer containing fullscreen quad data.
+    /// </summary>
     private Buffer _vertices;
+    /// <summary>
+    /// Vertex shader for gamma correction pass.
+    /// </summary>
     private ID3D11VertexShader _vertexShader;
+    /// <summary>
+    /// Pixel shader for gamma correction pass.
+    /// </summary>
     private ID3D11PixelShader _pixelShader;
 
+    /// <summary>
+    /// Creates a vertex shader from embedded compiled shader bytecode.
+    /// </summary>
     private ID3D11VertexShader CreateVertexShader(ID3D11Device device, string entryPoint, out byte[] vertexShaderBytes)
     {
       var resourceName = $"Altaxo.CompiledShaders.GammaCorrector_{entryPoint}.cso";
@@ -54,6 +72,9 @@ namespace Altaxo.Gui.Graph.Graph3D.Common
       }
     }
 
+    /// <summary>
+    /// Creates a pixel shader from embedded compiled shader bytecode.
+    /// </summary>
     private ID3D11PixelShader CreatePixelShader(ID3D11Device device, string entryPoint, out byte[] pixelShaderBytes)
     {
       var resourceName = $"Altaxo.CompiledShaders.GammaCorrector_{entryPoint}.cso";
@@ -69,6 +90,9 @@ namespace Altaxo.Gui.Graph.Graph3D.Common
     }
 
 
+    /// <summary>
+    /// Attaches gamma-correction resources to the specified device.
+    /// </summary>
     public void Attach(Device device)
     {
       if (device is null)
@@ -110,6 +134,9 @@ namespace Altaxo.Gui.Graph.Graph3D.Common
         );
     }
 
+    /// <summary>
+    /// Detaches and releases gamma-correction resources from the specified device.
+    /// </summary>
     public void Detach(Device device)
     {
       if (device is null)
@@ -122,11 +149,18 @@ namespace Altaxo.Gui.Graph.Graph3D.Common
     }
     #region IDisposable Support
 
+    /// <summary>
+    /// Finalizes an instance of the <see cref="D3D11GammaCorrector"/> class.
+    /// </summary>
     ~D3D11GammaCorrector()
     {
       Dispose(false);
     }
 
+    /// <summary>
+    /// Releases unmanaged and optionally managed resources.
+    /// </summary>
+    /// <param name="disposing">If <see langword="true"/>, dispose managed resources too.</param>
     protected virtual void Dispose(bool disposing)
     {
       if (!_isDisposed)
@@ -140,6 +174,9 @@ namespace Altaxo.Gui.Graph.Graph3D.Common
       }
     }
 
+    /// <summary>
+    /// Disposes this instance.
+    /// </summary>
     public void Dispose()
     {
       Dispose(true);
@@ -147,6 +184,9 @@ namespace Altaxo.Gui.Graph.Graph3D.Common
     }
 
     #endregion IDisposable Support
+    /// <summary>
+    /// Executes the gamma-correction render pass.
+    /// </summary>
     public void Render(Device device, ID3D11ShaderResourceView textureView)
     {
       if (device?.ImmediateContext is { } context)

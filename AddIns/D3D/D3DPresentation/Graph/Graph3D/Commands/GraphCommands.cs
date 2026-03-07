@@ -24,20 +24,13 @@
 
 using System;
 using System.Collections.Generic;
-using System.Drawing;
 using System.Drawing.Imaging;
 using System.IO;
 using Altaxo.Collections;
-using Altaxo.Graph.Graph3D;
-using Altaxo.Graph.Plot.Data;
 using Altaxo.Gui;
-using Altaxo.Gui.AddInItems;
-using Altaxo.Gui.Graph;
+using Altaxo.Gui.Graph.Graph3D.Common;
 using Altaxo.Gui.Graph.Graph3D.Viewing;
-using Altaxo.Gui.Scripting;
 using Altaxo.Gui.Workbench;
-using Altaxo.Main;
-using Altaxo.Scripting;
 
 namespace Altaxo.Graph.Graph3D.Commands
 {
@@ -67,6 +60,9 @@ namespace Altaxo.Graph.Graph3D.Commands
 
   #region Arrange commands
 
+  /// <summary>
+  /// Groups selected graph objects.
+  /// </summary>
   public class GroupSelectedObjects : AbstractGraph3DControllerCommand
   {
     public override void Run(Graph3DController ctrl)
@@ -75,6 +71,9 @@ namespace Altaxo.Graph.Graph3D.Commands
     }
   }
 
+  /// <summary>
+  /// Ungroups selected graph objects.
+  /// </summary>
   public class UngroupSelectedObjects : AbstractGraph3DControllerCommand
   {
     public override void Run(Graph3DController ctrl)
@@ -83,6 +82,9 @@ namespace Altaxo.Graph.Graph3D.Commands
     }
   }
 
+  /// <summary>
+  /// Aligns selected objects to the top.
+  /// </summary>
   public class ArrangeTop : AbstractGraph3DControllerCommand
   {
     public override void Run(Graph3DController ctrl)
@@ -91,6 +93,9 @@ namespace Altaxo.Graph.Graph3D.Commands
     }
   }
 
+  /// <summary>
+  /// Aligns selected objects to the bottom.
+  /// </summary>
   public class ArrangeBottom : AbstractGraph3DControllerCommand
   {
     public override void Run(Graph3DController ctrl)
@@ -99,6 +104,9 @@ namespace Altaxo.Graph.Graph3D.Commands
     }
   }
 
+  /// <summary>
+  /// Aligns object tops to object bottoms.
+  /// </summary>
   public class ArrangeTopToBottom : AbstractGraph3DControllerCommand
   {
     public override void Run(Graph3DController ctrl)
@@ -107,6 +115,9 @@ namespace Altaxo.Graph.Graph3D.Commands
     }
   }
 
+  /// <summary>
+  /// Aligns object bottoms to object tops.
+  /// </summary>
   public class ArrangeBottomToTop : AbstractGraph3DControllerCommand
   {
     public override void Run(Graph3DController ctrl)
@@ -115,6 +126,9 @@ namespace Altaxo.Graph.Graph3D.Commands
     }
   }
 
+  /// <summary>
+  /// Aligns selected objects to the left.
+  /// </summary>
   public class ArrangeLeft : AbstractGraph3DControllerCommand
   {
     public override void Run(Graph3DController ctrl)
@@ -123,6 +137,9 @@ namespace Altaxo.Graph.Graph3D.Commands
     }
   }
 
+  /// <summary>
+  /// Aligns selected objects to the right.
+  /// </summary>
   public class ArrangeRight : AbstractGraph3DControllerCommand
   {
     public override void Run(Graph3DController ctrl)
@@ -131,6 +148,9 @@ namespace Altaxo.Graph.Graph3D.Commands
     }
   }
 
+  /// <summary>
+  /// Aligns object left edges to right edges.
+  /// </summary>
   public class ArrangeLeftToRight : AbstractGraph3DControllerCommand
   {
     public override void Run(Graph3DController ctrl)
@@ -139,6 +159,9 @@ namespace Altaxo.Graph.Graph3D.Commands
     }
   }
 
+  /// <summary>
+  /// Aligns object right edges to left edges.
+  /// </summary>
   public class ArrangeRightToLeft : AbstractGraph3DControllerCommand
   {
     public override void Run(Graph3DController ctrl)
@@ -147,6 +170,9 @@ namespace Altaxo.Graph.Graph3D.Commands
     }
   }
 
+  /// <summary>
+  /// Distributes selected objects horizontally.
+  /// </summary>
   public class ArrangeHorizontal : AbstractGraph3DControllerCommand
   {
     public override void Run(Graph3DController ctrl)
@@ -155,6 +181,9 @@ namespace Altaxo.Graph.Graph3D.Commands
     }
   }
 
+  /// <summary>
+  /// Distributes selected objects vertically.
+  /// </summary>
   public class ArrangeVertical : AbstractGraph3DControllerCommand
   {
     public override void Run(Graph3DController ctrl)
@@ -163,6 +192,9 @@ namespace Altaxo.Graph.Graph3D.Commands
     }
   }
 
+  /// <summary>
+  /// Arranges selected objects in a horizontal table layout.
+  /// </summary>
   public class ArrangeHorizontalTable : AbstractGraph3DControllerCommand
   {
     public override void Run(Graph3DController ctrl)
@@ -171,6 +203,9 @@ namespace Altaxo.Graph.Graph3D.Commands
     }
   }
 
+  /// <summary>
+  /// Arranges selected objects in a vertical table layout.
+  /// </summary>
   public class ArrangeVerticalTable : AbstractGraph3DControllerCommand
   {
     public override void Run(Graph3DController ctrl)
@@ -179,6 +214,9 @@ namespace Altaxo.Graph.Graph3D.Commands
     }
   }
 
+  /// <summary>
+  /// Sets selected objects to equal width.
+  /// </summary>
   public class ArrangeSameHorizontalSize : AbstractGraph3DControllerCommand
   {
     public override void Run(Graph3DController ctrl)
@@ -187,6 +225,9 @@ namespace Altaxo.Graph.Graph3D.Commands
     }
   }
 
+  /// <summary>
+  /// Sets selected objects to equal height.
+  /// </summary>
   public class ArrangeSameVerticalSize : AbstractGraph3DControllerCommand
   {
     public override void Run(Graph3DController ctrl)
@@ -197,6 +238,9 @@ namespace Altaxo.Graph.Graph3D.Commands
 
   #endregion Arrange commands
 
+  /// <summary>
+  /// Sets front camera view.
+  /// </summary>
   public class ViewFront : AbstractGraph3DControllerCommand
   {
     public override void Run(Graph3DController ctrl)
@@ -205,6 +249,9 @@ namespace Altaxo.Graph.Graph3D.Commands
     }
   }
 
+  /// <summary>
+  /// Sets right camera view.
+  /// </summary>
   public class ViewRight : AbstractGraph3DControllerCommand
   {
     public override void Run(Graph3DController ctrl)
@@ -213,6 +260,9 @@ namespace Altaxo.Graph.Graph3D.Commands
     }
   }
 
+  /// <summary>
+  /// Sets back camera view.
+  /// </summary>
   public class ViewBack : AbstractGraph3DControllerCommand
   {
     public override void Run(Graph3DController ctrl)
@@ -221,6 +271,9 @@ namespace Altaxo.Graph.Graph3D.Commands
     }
   }
 
+  /// <summary>
+  /// Sets left camera view.
+  /// </summary>
   public class ViewLeft : AbstractGraph3DControllerCommand
   {
     public override void Run(Graph3DController ctrl)
@@ -229,6 +282,9 @@ namespace Altaxo.Graph.Graph3D.Commands
     }
   }
 
+  /// <summary>
+  /// Sets top camera view.
+  /// </summary>
   public class ViewTop : AbstractGraph3DControllerCommand
   {
     public override void Run(Graph3DController ctrl)
@@ -237,6 +293,9 @@ namespace Altaxo.Graph.Graph3D.Commands
     }
   }
 
+  /// <summary>
+  /// Sets bottom camera view.
+  /// </summary>
   public class ViewBottom : AbstractGraph3DControllerCommand
   {
     public override void Run(Graph3DController ctrl)
@@ -245,6 +304,9 @@ namespace Altaxo.Graph.Graph3D.Commands
     }
   }
 
+  /// <summary>
+  /// Sets standard isometric camera view.
+  /// </summary>
   public class ViewIsometricStandard : AbstractGraph3DControllerCommand
   {
     public override void Run(Graph3DController ctrl)
@@ -253,6 +315,9 @@ namespace Altaxo.Graph.Graph3D.Commands
     }
   }
 
+  /// <summary>
+  /// Sets left-top isometric camera view.
+  /// </summary>
   public class ViewIsometricLeftTop : AbstractGraph3DControllerCommand
   {
     public override void Run(Graph3DController ctrl)
@@ -261,6 +326,9 @@ namespace Altaxo.Graph.Graph3D.Commands
     }
   }
 
+  /// <summary>
+  /// Opens options for copy-page settings.
+  /// </summary>
   public class SetCopyPageOptions : SimpleCommand
   {
     public override void Execute(object? parameter)
@@ -273,8 +341,14 @@ namespace Altaxo.Graph.Graph3D.Commands
     }
   }
 
+  /// <summary>
+  /// Exports a 3D graph to an image file.
+  /// </summary>
   public class Export3D : AbstractGraph3DControllerCommand
   {
+    /// <summary>
+    /// Cached export options for file export.
+    /// </summary>
     private static Altaxo.Graph.Gdi.GraphExportOptions _graphExportOptionsToFile = new Graph.Gdi.GraphExportOptions();
 
     public override void Run(Graph3DController ctrl)
@@ -282,6 +356,9 @@ namespace Altaxo.Graph.Graph3D.Commands
       ShowFileExportSpecificDialog(ctrl.Doc);
     }
 
+    /// <summary>
+    /// Shows export options specific for file export.
+    /// </summary>
     public static void ShowFileExportSpecificDialog(GraphDocument doc)
     {
       object resopt = _graphExportOptionsToFile;
@@ -296,6 +373,9 @@ namespace Altaxo.Graph.Graph3D.Commands
       ShowFileExportDialog(doc, _graphExportOptionsToFile);
     }
 
+    /// <summary>
+    /// Shows file export dialog and writes the exported image.
+    /// </summary>
     public static void ShowFileExportDialog(GraphDocument doc, Altaxo.Graph.Gdi.GraphExportOptions graphExportOptions)
     {
       var saveOptions = new Altaxo.Gui.SaveFileOptions();
@@ -309,12 +389,19 @@ namespace Altaxo.Graph.Graph3D.Commands
       {
         using (Stream myStream = new FileStream(saveOptions.FileName, FileMode.Create, FileAccess.Write, FileShare.Read))
         {
-          new Gui.Graph.Graph3D.Common.D3D11BitmapExporter().ExportAsImageToStream(doc, graphExportOptions, myStream);
+          if (DirectXVersionAvailability.IsDirectX12Available)
+            new Gui.Graph.Graph3D.Common.D3D12BitmapExporter().ExportAsImageToStream(doc, graphExportOptions, myStream);
+          else
+            new Gui.Graph.Graph3D.Common.D3D11BitmapExporter().ExportAsImageToStream(doc, graphExportOptions, myStream);
+
           myStream.Close();
         } // end openfile ok
       } // end dlgresult ok
     }
 
+    /// <summary>
+    /// Gets the file filter list for the selected image format.
+    /// </summary>
     private static IList<KeyValuePair<string, string>> GetFileFilterString(ImageFormat fmt)
     {
       var filter = new List<KeyValuePair<string, string>>();
@@ -347,6 +434,9 @@ namespace Altaxo.Graph.Graph3D.Commands
     }
   }
 
+  /// <summary>
+  /// Saves a graph as template file.
+  /// </summary>
   public class SaveGraphAsTemplate : AbstractGraph3DControllerCommand
   {
     public override void Run(Graph3DController ctrl)
@@ -373,6 +463,9 @@ namespace Altaxo.Graph.Graph3D.Commands
     }
   }
 
+  /// <summary>
+  /// Renames the current graph.
+  /// </summary>
   public class GraphRename : AbstractGraph3DControllerCommand
   {
     public override void Run(Graph3DController ctrl)
@@ -381,6 +474,9 @@ namespace Altaxo.Graph.Graph3D.Commands
     }
   }
 
+  /// <summary>
+  /// Moves the current graph to another project folder.
+  /// </summary>
   public class GraphMoveToFolder : AbstractGraph3DControllerCommand
   {
     public override void Run(Graph3DController ctrl)
@@ -404,6 +500,9 @@ namespace Altaxo.Graph.Graph3D.Commands
     }
   }
 
+  /// <summary>
+  /// Shows graph properties dialog.
+  /// </summary>
   public class GraphShowProperties : AbstractGraph3DControllerCommand
   {
     public override void Run(Graph3DController ctrl)
@@ -435,6 +534,9 @@ namespace Altaxo.Graph.Graph3D.Commands
   /// </summary>
   public abstract class AbstractCheckableGraphControllerCommand : SimpleCheckableCommand, System.ComponentModel.INotifyPropertyChanged
   {
+    /// <summary>
+    /// Gets the active graph controller.
+    /// </summary>
     public Graph3DController? Controller
     {
       get
@@ -451,6 +553,9 @@ namespace Altaxo.Graph.Graph3D.Commands
       base.Execute(parameter);
     }
 
+    /// <summary>
+    /// Gets or sets the checked state.
+    /// </summary>
     public override bool IsChecked
     {
       get
@@ -467,8 +572,14 @@ namespace Altaxo.Graph.Graph3D.Commands
       }
     }
 
+    /// <summary>
+    /// Raised when a property value changes.
+    /// </summary>
     public event System.ComponentModel.PropertyChangedEventHandler? PropertyChanged;
 
+    /// <summary>
+    /// Raises the <see cref="PropertyChanged"/> event.
+    /// </summary>
     protected virtual void OnPropertyChanged(string propertyName)
     {
       if (PropertyChanged is not null)
@@ -482,9 +593,18 @@ namespace Altaxo.Graph.Graph3D.Commands
   /// </summary>
   public abstract class AbstractCameraCommand : AbstractCheckableGraphControllerCommand
   {
+    /// <summary>
+    /// Cached graph controller currently observed for camera changes.
+    /// </summary>
     protected Graph3DController? _currentGraphController;
+    /// <summary>
+    /// Camera type represented by this command.
+    /// </summary>
     protected Type _cameraTypeForThisCommand;
 
+    /// <summary>
+    /// Initializes a new instance of the <see cref="AbstractCameraCommand"/> class.
+    /// </summary>
     protected AbstractCameraCommand(Type cameraTypeForThisCommand)
     {
       _cameraTypeForThisCommand = cameraTypeForThisCommand;
@@ -495,6 +615,9 @@ namespace Altaxo.Graph.Graph3D.Commands
       }
     }
 
+    /// <summary>
+    /// Handles active-view-content changes.
+    /// </summary>
     protected void EhWorkbenchContentChanged(object? o, System.EventArgs e)
     {
       if (!object.ReferenceEquals(Controller, _currentGraphController))
@@ -519,14 +642,23 @@ namespace Altaxo.Graph.Graph3D.Commands
       }
     }
 
+    /// <summary>
+    /// Handles document camera-change notifications.
+    /// </summary>
     protected void EhDocumentChanged(object? o, EventArgs e)
     {
       if (e is Altaxo.Graph.Graph3D.Camera.CameraChangedEventArgs)
         OnPropertyChanged(nameof(IsChecked));
     }
 
+    /// <summary>
+    /// Installs the camera represented by this command.
+    /// </summary>
     protected abstract void InstallCamera();
 
+    /// <summary>
+    /// Gets or sets whether this camera command is checked.
+    /// </summary>
     public override bool IsChecked
     {
       get
@@ -544,13 +676,22 @@ namespace Altaxo.Graph.Graph3D.Commands
     }
   }
 
+  /// <summary>
+  /// Selects orthographic camera mode.
+  /// </summary>
   public class CameraOrtho : AbstractCameraCommand
   {
+    /// <summary>
+    /// Initializes a new instance of the <see cref="CameraOrtho"/> class.
+    /// </summary>
     public CameraOrtho()
         : base(typeof(Altaxo.Graph.Graph3D.Camera.OrthographicCamera))
     {
     }
 
+    /// <summary>
+    /// Installs orthographic camera settings.
+    /// </summary>
     protected override void InstallCamera()
     {
       if (_currentGraphController is not null)
@@ -564,13 +705,22 @@ namespace Altaxo.Graph.Graph3D.Commands
     }
   }
 
+  /// <summary>
+  /// Selects perspective camera mode.
+  /// </summary>
   public class CameraPerspective : AbstractCameraCommand
   {
+    /// <summary>
+    /// Initializes a new instance of the <see cref="CameraPerspective"/> class.
+    /// </summary>
     public CameraPerspective()
         : base(typeof(Altaxo.Graph.Graph3D.Camera.PerspectiveCamera))
     {
     }
 
+    /// <summary>
+    /// Installs perspective camera settings.
+    /// </summary>
     protected override void InstallCamera()
     {
       if (_currentGraphController is not null)

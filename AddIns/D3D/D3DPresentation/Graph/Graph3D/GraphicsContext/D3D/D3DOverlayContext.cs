@@ -34,22 +34,43 @@ namespace Altaxo.Graph.Graph3D.GraphicsContext.D3D
   using Altaxo.Graph.Graph3D.GraphicsContext;
   using Drawing.D3D;
 
+  /// <summary>
+  /// Graphics context for marker and overlay primitives in 3D scenes.
+  /// </summary>
   public class D3DOverlayContext : GraphicsContextD3DPrimitivesBase, IOverlayContext3D, IDisposable
   {
+    /// <summary>
+    /// Triangle buffer for position/color primitives.
+    /// </summary>
     protected PositionColorIndexedTriangleBuffer _positionColorIndexedTriangleBuffer;
+    /// <summary>
+    /// Optional line-list buffer for position/color primitives.
+    /// </summary>
     protected PositionColorLineListBuffer? _positionColorLineListBuffer;
 
+    /// <summary>
+    /// Current transformation matrix.
+    /// </summary>
     private Matrix4x3 _transformation = Matrix4x3.Identity;
 
+    /// <summary>
+    /// Initializes a new instance of the <see cref="D3DOverlayContext"/> class.
+    /// </summary>
     public D3DOverlayContext()
     {
       _positionColorIndexedTriangleBuffer = new PositionColorIndexedTriangleBuffer(this);
     }
 
+    /// <summary>
+    /// Disposes this instance.
+    /// </summary>
     public void Dispose()
     {
     }
 
+    /// <summary>
+    /// Gets the position/color indexed triangle buffer.
+    /// </summary>
     public IPositionColorIndexedTriangleBuffer PositionColorIndexedTriangleBuffers
     {
       get
@@ -58,6 +79,9 @@ namespace Altaxo.Graph.Graph3D.GraphicsContext.D3D
       }
     }
 
+    /// <summary>
+    /// Gets the position/color line-list buffer.
+    /// </summary>
     public IPositionColorLineListBuffer PositionColorLineListBuffer
     {
       get
@@ -71,6 +95,9 @@ namespace Altaxo.Graph.Graph3D.GraphicsContext.D3D
 
     #region Transformation
 
+    /// <summary>
+    /// Gets the current transformation.
+    /// </summary>
     public Matrix4x3 Transformation
     {
       get
@@ -79,6 +106,9 @@ namespace Altaxo.Graph.Graph3D.GraphicsContext.D3D
       }
     }
 
+    /// <summary>
+    /// Gets the transposed inverse transformation.
+    /// </summary>
     public Matrix3x3 TransposedInverseTransformation
     {
       get
@@ -87,11 +117,17 @@ namespace Altaxo.Graph.Graph3D.GraphicsContext.D3D
       }
     }
 
+    /// <summary>
+    /// Saves the current graphics state.
+    /// </summary>
     public object SaveGraphicsState()
     {
       return new GraphicState { Transformation = _transformation };
     }
 
+    /// <summary>
+    /// Restores a previously saved graphics state.
+    /// </summary>
     public void RestoreGraphicsState(object graphicsState)
     {
       var gs = graphicsState as GraphicState;
@@ -103,18 +139,30 @@ namespace Altaxo.Graph.Graph3D.GraphicsContext.D3D
         throw new ArgumentException(nameof(graphicsState) + " is not a valid graphic state!");
     }
 
+    /// <summary>
+    /// Prepends a transformation matrix.
+    /// </summary>
     public void PrependTransform(Matrix4x3 m)
     {
       _transformation.PrependTransform(m);
     }
 
+    /// <summary>
+    /// Prepends a translation transform.
+    /// </summary>
     public void TranslateTransform(double x, double y, double z)
     {
       _transformation.TranslatePrepend(x, y, z);
     }
 
+    /// <summary>
+    /// Stores graphics state snapshot values.
+    /// </summary>
     private class GraphicState
     {
+      /// <summary>
+      /// Transformation matrix value.
+      /// </summary>
       internal Matrix4x3 Transformation;
     }
 

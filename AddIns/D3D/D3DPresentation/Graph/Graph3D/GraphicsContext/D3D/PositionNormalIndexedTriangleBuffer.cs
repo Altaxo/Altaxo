@@ -31,15 +31,27 @@ using Altaxo.Geometry;
 
 namespace Altaxo.Graph.Graph3D.GraphicsContext.D3D
 {
+  /// <summary>
+  /// Indexed triangle buffer storing transformed position and normal per vertex.
+  /// </summary>
   public class PositionNormalIndexedTriangleBuffer : IndexedTriangleBuffer, IPositionNormalIndexedTriangleBuffer
   {
+    /// <summary>
+    /// Initializes a new instance of the <see cref="PositionNormalIndexedTriangleBuffer"/> class.
+    /// </summary>
     public PositionNormalIndexedTriangleBuffer(ITransformationContext parent)
       : base(parent)
     {
     }
 
+    /// <summary>
+    /// Gets the number of bytes per vertex.
+    /// </summary>
     protected override int BytesPerVertex { get { return 8 * 4; } }
 
+    /// <summary>
+    /// Adds a transformed position/normal vertex to the stream.
+    /// </summary>
     public void AddTriangleVertex(double x, double y, double z, double nx, double ny, double nz)
     {
       var pt = _parent.Transformation.Transform(new PointD3D(x, y, z));

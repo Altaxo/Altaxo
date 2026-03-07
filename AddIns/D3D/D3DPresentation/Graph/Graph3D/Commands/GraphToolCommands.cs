@@ -44,9 +44,18 @@ namespace Altaxo.Graph.Graph3D.Commands
   /// </summary>
   public abstract class AbstractGraphToolsCommand : AbstractCheckableGraphControllerCommand
   {
+    /// <summary>
+    /// Cached controller currently observed for graph tool changes.
+    /// </summary>
     private Graph3DController? _myCurrentGraphController;
+    /// <summary>
+    /// Tool type represented by this command.
+    /// </summary>
     private GraphToolType _graphToolType;
 
+    /// <summary>
+    /// Initializes a new instance of the <see cref="AbstractGraphToolsCommand"/> class.
+    /// </summary>
     protected AbstractGraphToolsCommand(GraphToolType toolType)
     {
       _graphToolType = toolType;
@@ -57,6 +66,9 @@ namespace Altaxo.Graph.Graph3D.Commands
       }
     }
 
+    /// <summary>
+    /// Handles active-workbench-content changes.
+    /// </summary>
     protected void EhWorkbenchContentChanged(object? o, System.EventArgs e)
     {
       if (!object.ReferenceEquals(Controller, _myCurrentGraphController))
@@ -81,11 +93,17 @@ namespace Altaxo.Graph.Graph3D.Commands
       }
     }
 
+    /// <summary>
+    /// Handles graph-tool changes in the observed controller.
+    /// </summary>
     protected void EhGraphToolChanged(object? o, EventArgs e)
     {
       OnPropertyChanged("IsChecked");
     }
 
+    /// <summary>
+    /// Gets or sets whether this tool command is checked.
+    /// </summary>
     public override bool IsChecked
     {
       get
@@ -108,6 +126,9 @@ namespace Altaxo.Graph.Graph3D.Commands
   /// </summary>
   public class SelectPointerTool : AbstractGraphToolsCommand
   {
+    /// <summary>
+    /// Initializes a new instance of the <see cref="SelectPointerTool"/> class.
+    /// </summary>
     public SelectPointerTool()
       : base(GraphToolType.ObjectPointer)
     {
@@ -119,6 +140,9 @@ namespace Altaxo.Graph.Graph3D.Commands
   /// </summary>
   public class SelectTextTool : AbstractGraphToolsCommand
   {
+    /// <summary>
+    /// Initializes a new instance of the <see cref="SelectTextTool"/> class.
+    /// </summary>
     public SelectTextTool()
       : base(GraphToolType.TextDrawing)
     {
@@ -130,6 +154,9 @@ namespace Altaxo.Graph.Graph3D.Commands
   /// </summary>
   public class EllipseDrawingTool : AbstractGraphToolsCommand
   {
+    /// <summary>
+    /// Initializes a new instance of the <see cref="EllipseDrawingTool"/> class.
+    /// </summary>
     public EllipseDrawingTool()
       : base(GraphToolType.EllipseDrawing)
     {
@@ -141,6 +168,9 @@ namespace Altaxo.Graph.Graph3D.Commands
   /// </summary>
   public class SingleLineDrawingTool : AbstractGraphToolsCommand
   {
+    /// <summary>
+    /// Initializes a new instance of the <see cref="SingleLineDrawingTool"/> class.
+    /// </summary>
     public SingleLineDrawingTool()
       : base(GraphToolType.SingleLineDrawing)
     {

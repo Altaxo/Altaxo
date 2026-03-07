@@ -31,21 +31,45 @@ using Altaxo.Geometry;
 
 namespace Altaxo.Graph.Graph3D.GraphicsContext.D3D
 {
+  /// <summary>
+  /// Indexed triangle buffer storing transformed position/normal and scalar U value per vertex.
+  /// </summary>
   public class PositionNormalUIndexedTriangleBuffer : IndexedTriangleBuffer, IPositionNormalUIndexedTriangleBuffer
   {
+    /// <summary>
+    /// Number of float values per vertex.
+    /// </summary>
     protected const int FloatsPerVertex = 8;
 
+    /// <summary>
+    /// Normalized U range span used for regular colors.
+    /// </summary>
     protected const double UOfColorRegular = 1000.0 / 1024;
+    /// <summary>
+    /// Normalized U location for "below" color.
+    /// </summary>
     protected const double UOfColorBelow = 12.0 / 1024;
+    /// <summary>
+    /// Normalized U location for "above" color.
+    /// </summary>
     protected const double UOfColorAbove = 1012.0 / 1024;
 
+    /// <summary>
+    /// Initializes a new instance of the <see cref="PositionNormalUIndexedTriangleBuffer"/> class.
+    /// </summary>
     public PositionNormalUIndexedTriangleBuffer(ITransformationContext parent)
       : base(parent)
     {
     }
 
+    /// <summary>
+    /// Gets the number of bytes per vertex.
+    /// </summary>
     protected override int BytesPerVertex { get { return FloatsPerVertex * 4; } }
 
+    /// <summary>
+    /// Adds a transformed position/normal/U vertex to the stream.
+    /// </summary>
     public void AddTriangleVertex(double x, double y, double z, double nx, double ny, double nz, double u)
     {
       var pt = _parent.Transformation.Transform(new PointD3D(x, y, z));
@@ -69,6 +93,9 @@ namespace Altaxo.Graph.Graph3D.GraphicsContext.D3D
       ++_numberOfVertices;
     }
 
+    /// <summary>
+    /// Builds a 1D RGBA color lookup table for a given color provider.
+    /// </summary>
     public float[] GetColorArrayForColorProvider(Gdi.Plot.IColorProvider colorProvider)
     {
       int numberOfColors = 1024;

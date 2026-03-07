@@ -2,7 +2,7 @@
 
 /////////////////////////////////////////////////////////////////////////////
 //    Altaxo:  a data processing and data plotting program
-//    Copyright (C) 2002-2015 Dr. Dirk Lellinger
+//    Copyright (C) 2002-2026 Dr. Dirk Lellinger
 //
 //    This program is free software; you can redistribute it and/or modify
 //    it under the terms of the GNU General Public License as published by
@@ -22,38 +22,17 @@
 
 #endregion Copyright
 
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-using Altaxo.Gui.Graph.Graph3D.Viewing;
-
-namespace Altaxo.Graph.Graph3D.Commands
+namespace Altaxo.Gui.Graph.Graph3D.Common
 {
   /// <summary>
-  /// Copies the active graph document as COM data object to clipboard.
+  /// Scene.
   /// </summary>
-  public class CopyDocumentAsComObjectToClipboard : AbstractGraph3DControllerCommand
+  public interface ID3D12Scene : IScene
   {
     /// <summary>
-    /// Executes the command on the active graph controller.
+    /// Attaches the scene to the specified scene host.
     /// </summary>
-    public override void Run(Graph3DController ctrl)
-    {
-
-      if (Current.ComManager is not null)
-      {
-        var doc = ctrl.Doc;
-        var dataObject = Current.ComManager.GetDocumentsDataObjectForDocument(doc);
-
-        if (dataObject is not null)
-          System.Windows.Clipboard.SetDataObject(dataObject);
-      }
-      else
-      {
-        Current.Gui.ErrorMessageBox("Sorry, but the Com manager is not available", "Command not available");
-      }
-    }
+    /// <param name="hostDevice">The scene host render context.</param>
+    public void Attach(ID3D12RenderContext hostDevice);
   }
 }

@@ -58,11 +58,23 @@ namespace Altaxo.Gui.Graph.Graph3D.Common
   /// <seealso cref="System.IDisposable" />
   public class D3D11ImageSource : D3DImage, IDisposable
   {
+    /// <summary>
+    /// Retrieves the desktop window handle.
+    /// </summary>
     [DllImport("user32.dll", SetLastError = false)]
     private static extern IntPtr GetDesktopWindow();
 
+    /// <summary>
+    /// Number of active D3D image-source clients.
+    /// </summary>
     private static int _numberOfActiveClients;
+    /// <summary>
+    /// Shared D3D9Ex context used for WPF interop.
+    /// </summary>
     private static IDirect3D9Ex _d3DContext;
+    /// <summary>
+    /// Shared D3D9Ex device used for WPF interop.
+    /// </summary>
     private static IDirect3DDevice9Ex _d3DDevice;
 
     /// <summary>

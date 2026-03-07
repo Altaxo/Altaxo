@@ -17,34 +17,20 @@
 // LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
 // OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
 // THE SOFTWARE.
-using System;
-
 namespace Altaxo.Gui.Graph.Graph3D.Common
 {
+  using Altaxo.Geometry;
+  using Vortice.Direct3D11;
+
   /// <summary>
-  /// Provides helper methods for safely disposing objects.
+  /// Scene.
   /// </summary>
-  public static class Disposer
+  public interface ID3D11Scene : IScene
   {
     /// <summary>
-    /// Dispose an object instance and set the reference to null
+    /// Attaches the scene to the specified scene host.
     /// </summary>
-    /// <typeparam name="TypeName">The type of object to dispose</typeparam>
-    /// <param name="resource">A reference to the instance for disposal</param>
-    /// <remarks>This method hides any thrown exceptions that might occur during disposal of the object (by design)</remarks>
-    public static void RemoveAndDispose<TypeName>(ref TypeName? resource) where TypeName : class
-    {
-      if (resource is IDisposable disposable)
-      {
-        try
-        {
-          disposable.Dispose();
-        }
-        catch
-        {
-        }
-      }
-      resource = null;
-    }
+    /// <param name="host">The scene host.</param>
+    void Attach(ID3D11Device hostDevice, PointD2D hostSize);
   }
 }

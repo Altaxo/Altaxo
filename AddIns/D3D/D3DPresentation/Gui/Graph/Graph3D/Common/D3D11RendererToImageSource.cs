@@ -37,33 +37,84 @@ namespace Altaxo.Gui.Graph.Graph3D.Common
   /// Supports rendering of a scene (<see cref="IScene"/>) to an <see cref="D3D10ImageSource"/>.
   /// </summary>
   /// <seealso cref="System.IDisposable" />
-  public class D3D11RendererToImageSource : IDisposable
+  public class D3D11RendererToImageSource : IDisposable, ID3D11Renderer
   {
+    /// <summary>
+    /// D3D11 device used for rendering.
+    /// </summary>
     private Device? _device;
 
+    /// <summary>
+    /// Depth-stencil texture.
+    /// </summary>
     private ID3D11Texture2D? _depthStencil;
+    /// <summary>
+    /// Depth-stencil view.
+    /// </summary>
     private ID3D11DepthStencilView? _depthStencilView;
 
+    /// <summary>
+    /// Final render target texture.
+    /// </summary>
     private ID3D11Texture2D? _renderTarget;
+    /// <summary>
+    /// Render target view for <see cref="_renderTarget"/>.
+    /// </summary>
     private ID3D11RenderTargetView? _renderTargetView;
 
+    /// <summary>
+    /// Intermediate render target texture used before gamma correction.
+    /// </summary>
     private ID3D11Texture2D? _renderTargetIntermediate;
+    /// <summary>
+    /// Render target view for <see cref="_renderTargetIntermediate"/>.
+    /// </summary>
     private ID3D11RenderTargetView? _renderTargetIntermediateView;
+    /// <summary>
+    /// Shader resource view for <see cref="_renderTargetIntermediate"/>.
+    /// </summary>
     private ID3D11ShaderResourceView? _renderTargetIntermediateShaderResourceView;
 
+    /// <summary>
+    /// WPF image source receiving rendered content.
+    /// </summary>
     private D3D11ImageSource _d3dImageSource;
 
+    /// <summary>
+    /// Scene currently rendered by this renderer.
+    /// </summary>
     private IScene? _renderScene;
+    /// <summary>
+    /// Indicates whether scene attachment was completed.
+    /// </summary>
     private bool _isRenderSceneAttached;
+    /// <summary>
+    /// Gamma-correction helper pass.
+    /// </summary>
     private D3D11GammaCorrector? _gammaCorrector;
 
+    /// <summary>
+    /// Default clear color used when no scene background color is set.
+    /// </summary>
     public Color4 _renderTargetClearColor = Vortice.Mathematics.Colors.White;
 
+    /// <summary>
+    /// Tracks disposal state.
+    /// </summary>
     private bool _isDisposed;
 
+    /// <summary>
+    /// Gets the instance identifier.
+    /// </summary>
     public int InstanceID { get; private set; }
+    /// <summary>
+    /// Global instance counter.
+    /// </summary>
     private static int _instanceCounter;
 
+    /// <summary>
+    /// Gets the logical renderer name.
+    /// </summary>
     public string Name { get; private set; }
 
     /// <summary>
@@ -82,17 +133,27 @@ namespace Altaxo.Gui.Graph.Graph3D.Common
       _d3dImageSource.IsFrontBufferAvailableChanged += EhIsFrontBufferAvailableChanged;
     }
 
+    /// <summary>
+    /// Finalizes an instance of the <see cref="D3D11RendererToImageSource"/> class.
+    /// </summary>
     ~D3D11RendererToImageSource()
     {
       Dispose(false);
     }
 
+    /// <summary>
+    /// Disposes this renderer.
+    /// </summary>
     public void Dispose()
     {
       Dispose(true);
       GC.SuppressFinalize(this);
     }
 
+    /// <summary>
+    /// Releases unmanaged and optionally managed resources.
+    /// </summary>
+    /// <param name="disposing">If <see langword="true"/>, dispose managed resources too.</param>
     protected virtual void Dispose(bool disposing)
     {
       if (!_isDisposed)
@@ -145,6 +206,9 @@ namespace Altaxo.Gui.Graph.Graph3D.Common
       // System.Diagnostics.Debug.WriteLine("D3DImageSource after rendering, ImgSize:{0}x{1}", _d3dImageSource.Width, _d3dImageSource.Height);
     }
 
+    /// <summary>
+    /// Releases D3D resources and returns borrowed device to the factory.
+    /// </summary>
     private void EndD3D()
     {
       if (_renderScene is not null)
@@ -158,6 +222,9 @@ namespace Altaxo.Gui.Graph.Graph3D.Common
       D3D11DeviceFactory.Instance.PassbackDevice(ref _device);
     }
 
+    /// <summary>
+    /// Recreates render targets and binds them to the image source.
+    /// </summary>
     private void CreateAndBindTargets(uint sizeX, uint sizeY)
     {
       _d3dImageSource.SetRenderTargetDX11(null);
@@ -239,6 +306,9 @@ namespace Altaxo.Gui.Graph.Graph3D.Common
       }
     }
 
+    /// <summary>
+    /// Renders one frame into the current render targets.
+    /// </summary>
     private void Render()
     {
       bool useGammaCorrection = true;
@@ -295,6 +365,9 @@ namespace Altaxo.Gui.Graph.Graph3D.Common
       }
     }
 
+    /// <summary>
+    /// Handles front-buffer availability changes from WPF.
+    /// </summary>
     private void EhIsFrontBufferAvailableChanged(object sender, DependencyPropertyChangedEventArgs e)
     {
       // this fires when the screensaver kicks in, the machine goes into sleep or hibernate

@@ -38,12 +38,18 @@ namespace Altaxo.Gui.Graph.Graph3D.Viewing.GraphControllerMouseHandlers
     /// <summary>The graph controller this mouse handler belongs to.</summary>
     private Graph3DController _grac;
 
+    /// <summary>
+    /// Initializes a new instance of the <see cref="EllipseDrawingMouseHandler"/> class.
+    /// </summary>
     public EllipseDrawingMouseHandler(Graph3DController grac)
     {
       _grac = grac;
       _grac.View?.SetPanelCursor(Cursors.IBeam);
     }
 
+    /// <summary>
+    /// Gets the graph tool type represented by this handler.
+    /// </summary>
     public override GraphToolType GraphToolType
     {
       get { return GraphToolType.EllipseDrawing; }

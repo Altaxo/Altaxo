@@ -56,18 +56,45 @@ namespace Altaxo.Main
       return new Graph3DDisplayBindingDescriptor(args.Codon, typeof(Altaxo.Graph.Graph3D.GraphDocument), typeof(Gui.Graph.Graph3D.Viewing.Graph3DController));
     }
 
+    /// <summary>
+    /// Descriptor for graph-display bindings.
+    /// </summary>
     private class Graph3DDisplayBindingDescriptor : IProjectItemDisplayBindingDescriptor
     {
+      /// <summary>
+      /// Bound project-item type.
+      /// </summary>
       private Type _projectItemType;
+      /// <summary>
+      /// View-content type handling display.
+      /// </summary>
       private Type _viewContentType;
+      /// <summary>
+      /// Gets the bound project-item type.
+      /// </summary>
       public Type ProjectItemType { get { return _projectItemType; } }
+      /// <summary>
+      /// Gets the bound view-content type.
+      /// </summary>
       public Type ViewContentType { get { return _viewContentType; } }
 
+      /// <summary>
+      /// Backing codon.
+      /// </summary>
       private Codon _codon;
 
+      /// <summary>
+      /// Gets or sets the binding identifier.
+      /// </summary>
       public string Id { get; set; }
+      /// <summary>
+      /// Gets or sets the display title.
+      /// </summary>
       public string Title { get; set; }
 
+      /// <summary>
+      /// Initializes a new instance of the <see cref="Graph3DDisplayBindingDescriptor"/> class.
+      /// </summary>
       public Graph3DDisplayBindingDescriptor(Codon codon, Type projectItemType, Type viewContentType)
       {
         if (codon is null)
@@ -86,6 +113,9 @@ namespace Altaxo.Main
         _viewContentType = viewContentType;
       }
 
+      /// <summary>
+      /// Returns a diagnostic string for this descriptor.
+      /// </summary>
       public override string ToString()
       {
         return string.Format("[Graph3DDisplayBindingDescriptor ItemClass={0} ControllerClass={1}]", ProjectItemType, ViewContentType);

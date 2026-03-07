@@ -26,9 +26,9 @@ namespace Altaxo.Gui.Graph.Graph3D.Viewing
 {
   using System;
   using Altaxo.Gui.Graph.Graph3D.Common;
-  using Buffer = Vortice.Direct3D11.ID3D11Buffer;
+  using Buffer = Vortice.Direct3D12.ID3D12Resource;
 
-  public partial class D3D11Scene
+  public partial class D3D12Scene
   {
     /// <summary>
     /// Device-side triangle buffer container without material but with optional U-color payload.

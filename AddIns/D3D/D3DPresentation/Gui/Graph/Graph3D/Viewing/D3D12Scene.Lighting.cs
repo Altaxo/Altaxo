@@ -30,11 +30,10 @@ namespace Altaxo.Gui.Graph.Graph3D.Viewing
   using Altaxo.Graph.Graph3D;
   using Altaxo.Graph.Graph3D.Camera;
   using Altaxo.Graph.Graph3D.Lighting;
-  using Altaxo.Gui.Graph.Graph3D.Common;
   using Altaxo.Shaders;
   using Vortice.Mathematics;
-  
-  public partial class D3D11Scene : ID3D11Scene
+
+  public partial class D3D12Scene
   {
     /// <summary>
     /// Encapsulates scene lighting calculations and constant-buffer packing.
@@ -44,15 +43,15 @@ namespace Altaxo.Gui.Graph.Graph3D.Viewing
       /// <summary>
       /// Direction from lower hemisphere to upper hemisphere for ambient lighting.
       /// </summary>
-      Vector4 HemisphericLightBelowToAboveVector;
+      private Vector4 HemisphericLightBelowToAboveVector;
       /// <summary>
       /// Ambient color for lower hemisphere.
       /// </summary>
-      Color4 HemisphericLightColorBelow;
+      private Color4 HemisphericLightColorBelow;
       /// <summary>
       /// Ambient color for upper hemisphere.
       /// </summary>
-      Color4 HemisphericLightColorAbove;
+      private Color4 HemisphericLightColorAbove;
 
       /// <summary>
       /// Internal representation of one discrete light source.
@@ -142,6 +141,8 @@ namespace Altaxo.Gui.Graph.Graph3D.Viewing
       /// <summary>
       /// Applies lighting from document settings and camera state.
       /// </summary>
+      /// <param name="lightSettings">Document light settings.</param>
+      /// <param name="camera">Current camera.</param>
       public void SetLighting(LightSettings lightSettings, CameraBase camera)
       {
         var cameraM = new Altaxo.Geometry.Matrix4x3(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0, 0);

@@ -31,10 +31,19 @@ using Altaxo.Geometry;
 
 namespace Altaxo.Graph.Graph3D.GraphicsContext.D3D
 {
+  /// <summary>
+  /// Position-normal-color triangle buffer variant carrying clip planes.
+  /// </summary>
   public class PositionNormalColorIndexedTriangleBufferWithClipping : PositionNormalColorIndexedTriangleBuffer
   {
+    /// <summary>
+    /// Gets the clip planes associated with this buffer.
+    /// </summary>
     public PlaneD3D[] ClipPlanes { get; private set; }
 
+    /// <summary>
+    /// Initializes a new instance of the <see cref="PositionNormalColorIndexedTriangleBufferWithClipping"/> class.
+    /// </summary>
     public PositionNormalColorIndexedTriangleBufferWithClipping(D3DGraphicsContext parent, PlaneD3D[] clipPlanes)
         : base(parent)
     {

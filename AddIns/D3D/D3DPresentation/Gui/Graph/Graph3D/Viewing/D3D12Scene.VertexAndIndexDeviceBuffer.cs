@@ -28,9 +28,9 @@ namespace Altaxo.Gui.Graph.Graph3D.Viewing
   using System.Numerics;
   using Altaxo.Drawing.D3D;
   using Altaxo.Gui.Graph.Graph3D.Common;
-  using Buffer = Vortice.Direct3D11.ID3D11Buffer;
+  using Buffer = Vortice.Direct3D12.ID3D12Resource;
 
-  public partial class D3D11Scene
+  public partial class D3D12Scene
   {
     /// <summary>
     /// Device-side triangle buffer container including material and optional clip/color data.
@@ -103,6 +103,13 @@ namespace Altaxo.Gui.Graph.Graph3D.Viewing
       /// <summary>
       /// Initializes a new instance of the <see cref="VertexAndIndexDeviceBuffer"/> class.
       /// </summary>
+      /// <param name="material">Material for this geometry.</param>
+      /// <param name="vertexBuffer">Vertex buffer resource.</param>
+      /// <param name="vertexCount">Vertex count.</param>
+      /// <param name="indexBuffer">Index buffer resource.</param>
+      /// <param name="indexCount">Index count.</param>
+      /// <param name="clipPlanes">Optional clip planes.</param>
+      /// <param name="uColors">Optional U-color payload.</param>
       public VertexAndIndexDeviceBuffer(
         IMaterial material,
         Buffer vertexBuffer,

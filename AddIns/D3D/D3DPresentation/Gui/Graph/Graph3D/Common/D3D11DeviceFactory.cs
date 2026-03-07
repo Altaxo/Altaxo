@@ -48,6 +48,9 @@ namespace Altaxo.Gui.Graph.Graph3D.Common
     /// </summary>
     private ConcurrentBag<Device> _devices = new ConcurrentBag<Device>();
 
+      /// <summary>
+      /// Prevents direct instantiation.
+      /// </summary>
     private D3D11DeviceFactory() { }
 
 

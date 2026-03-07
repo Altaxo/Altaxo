@@ -31,31 +31,67 @@ using Altaxo.Geometry;
 
 namespace Altaxo.Graph.Graph3D.GraphicsContext.D3D
 {
+  /// <summary>
+  /// Line-list buffer storing transformed positions and colors.
+  /// </summary>
   public class PositionColorLineListBuffer : IPositionColorLineListBuffer
   {
+    /// <summary>
+    /// Number of float values per line.
+    /// </summary>
     private const int FloatsPerLine = 16;
+    /// <summary>
+    /// Number of bytes per line.
+    /// </summary>
     private const int BytesPerLine = FloatsPerLine * 4;
+    /// <summary>
+    /// Transformation context used for geometry input.
+    /// </summary>
     protected ITransformationContext _parent;
+    /// <summary>
+    /// Vertex stream backing array.
+    /// </summary>
     protected float[] _vertexStream;
+    /// <summary>
+    /// Number of currently stored lines.
+    /// </summary>
     protected int _numberOfLines;
 
+    /// <summary>
+    /// Initializes a new instance of the <see cref="PositionColorLineListBuffer"/> class.
+    /// </summary>
     public PositionColorLineListBuffer(ITransformationContext parent)
     {
       _parent = parent;
       _vertexStream = new float[8 + 32 * FloatsPerLine];
     }
 
+    /// <summary>
+    /// Gets the number of lines.
+    /// </summary>
     public int NumberOfLines { get { return _numberOfLines; } }
 
+    /// <summary>
+    /// Gets the used length of the vertex stream in bytes.
+    /// </summary>
     public int VertexStreamLength { get { return _numberOfLines * BytesPerLine; } }
 
+    /// <summary>
+    /// Gets the vertex count.
+    /// </summary>
     public int VertexCount { get { return _numberOfLines * 2; } }
 
+    /// <summary>
+    /// Gets the vertex stream backing array.
+    /// </summary>
     public float[] VertexStream
     {
       get { return _vertexStream; }
     }
 
+    /// <summary>
+    /// Adds one transformed colored line to the stream.
+    /// </summary>
     public void AddLine(double x0, double y0, double z0, double x1, double y1, double z1, float r, float g, float b, float a)
     {
       var pt0 = _parent.Transformation.Transform(new PointD3D(x0, y0, z0));

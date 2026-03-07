@@ -53,11 +53,26 @@ namespace Altaxo.Gui.Graph.Graph3D.Viewing
     /// </summary>
     private List<VertexAndIndexDeviceBuffer>?[] _thisTriangleDeviceBuffers = new List<VertexAndIndexDeviceBuffer>?[7];
 
+    /// <summary>
+    /// The _next triangle buffers. These buffers are prepared asynchronously and swapped into rendering.
+    /// </summary>
     private List<VertexAndIndexDeviceBuffer>?[] _nextTriangleDeviceBuffers = new List<VertexAndIndexDeviceBuffer>?[7];
 
+    /// <summary>
+    /// Marker triangles uploaded to the device.
+    /// </summary>
     private VertexAndIndexDeviceBufferNoMaterial? _markerGeometryTriangleDeviceBuffer;
+    /// <summary>
+    /// Marker line list uploaded to the device.
+    /// </summary>
     private VertexBufferNoMaterial? _markerGeometryLineListBuffer;
+    /// <summary>
+    /// Overlay triangles uploaded to the device.
+    /// </summary>
     private VertexAndIndexDeviceBufferNoMaterial? _overlayGeometryTriangleDeviceBuffer;
+    /// <summary>
+    /// Overlay line list uploaded to the device.
+    /// </summary>
     private VertexBufferNoMaterial? _overlayGeometryLineListBuffer;
 
 
@@ -67,33 +82,71 @@ namespace Altaxo.Gui.Graph.Graph3D.Viewing
     /// </summary>
     private Device? _cachedDevice;
 
+    /// <summary>
+    /// Cached host size.
+    /// </summary>
     private PointD2D _hostSize;
 
+    /// <summary>
+    /// Frame counter used for simple time-based animation.
+    /// </summary>
     private int _renderCounter;
 
-    // Meaning: P = PointCoordinates, C = Color, T = TextureCoordinates, N = Normal
+    /// <summary>
+    /// Meaning: P = PointCoordinates, C = Color, T = TextureCoordinates, N = Normal.
+    /// </summary>
     private string[] _layoutNames = new string[7] { "P", "PC", "PT", "PN", "PNC", "PNT", "PNT1" };
 
+    /// <summary>
+    /// Input layouts used for each vertex format.
+    /// </summary>
     private ID3D11InputLayout[] _renderLayouts = new ID3D11InputLayout[7];
 
     // Effect variables
 
     // Transformation variables
+    /// <summary>
+    /// Shader and scene transform matrix.
+    /// </summary>
     private System.Numerics.Matrix4x4 _worldViewProj = System.Numerics.Matrix4x4.Identity;
+    /// <summary>
+    /// Constant buffer for <see cref="_worldViewProj"/>.
+    /// </summary>
     private Buffer? _bufWorldViewProj;
 
     // Eye Position
+    /// <summary>
+    /// Eye position in world space.
+    /// </summary>
     private System.Numerics.Vector4 _eyePosition;
+    /// <summary>
+    /// Constant buffer for <see cref="_eyePosition"/>.
+    /// </summary>
     private Buffer? _bufEyePosition;
 
 
     // Texture for color providers to colorize a mesh by its height
+    /// <summary>
+    /// Description for the 1D color-provider texture.
+    /// </summary>
     private Texture1DDescription _descriptionTextureFor1DColorProvider;
+    /// <summary>
+    /// 1D texture for color provider gradients.
+    /// </summary>
     private ID3D11Texture1D? _textureFor1DColorProvider;
+    /// <summary>
+    /// Shader resource view for <see cref="_textureFor1DColorProvider"/>.
+    /// </summary>
     private ID3D11ShaderResourceView? _textureFor1DColorProviderView;
 
     // Materials
+    /// <summary>
+    /// Current material constants.
+    /// </summary>
     private LightingHlsl.CbMaterial _material = new();
+    /// <summary>
+    /// Constant buffer for <see cref="_material"/>.
+    /// </summary>
     private Buffer? _bufMaterial;
 
     // ----------------- Lighting ----------------------------------
@@ -108,19 +161,55 @@ namespace Altaxo.Gui.Graph.Graph3D.Viewing
     private Lighting? _lighting;
 
     // ---------------- Clip planes ---------------------------------
+    /// <summary>
+    /// Clip planes constants.
+    /// </summary>
     private LightingHlsl.CbClipPlanes _clipPlanes = new();
+    /// <summary>
+    /// Constant buffer for <see cref="_clipPlanes"/>.
+    /// </summary>
     private Buffer? _bufClipPlanes;
 
+    /// <summary>
+    /// Vertex shader for position-only input.
+    /// </summary>
     private ID3D11VertexShader _vertexShader_P;
+    /// <summary>
+    /// Vertex shader for overlay position/color input.
+    /// </summary>
     private ID3D11VertexShader _vertexShader_OVERLAY_PC;
+    /// <summary>
+    /// Vertex shader for position/texture input.
+    /// </summary>
     private ID3D11VertexShader _vertexShader_PT;
+    /// <summary>
+    /// Vertex shader for position/normal input.
+    /// </summary>
     private ID3D11VertexShader _vertexShader_PN;
+    /// <summary>
+    /// Vertex shader for position/normal/color input.
+    /// </summary>
     private ID3D11VertexShader _vertexShader_PNC;
+    /// <summary>
+    /// Vertex shader for position/normal/texture input.
+    /// </summary>
     private ID3D11VertexShader _vertexShader_PNT;
+    /// <summary>
+    /// Vertex shader for position/normal/U input.
+    /// </summary>
     private ID3D11VertexShader _vertexShader_PNT1;
 
+    /// <summary>
+    /// Default lighting pixel shader.
+    /// </summary>
     private ID3D11PixelShader _pixelShader;
+    /// <summary>
+    /// Overlay pixel shader.
+    /// </summary>
     private ID3D11PixelShader _pixelShader_OVERLAY;
+    /// <summary>
+    /// Pixel shader for U-color gradient rendering.
+    /// </summary>
     private ID3D11PixelShader _pixelShader_T1;
 
 
@@ -128,6 +217,9 @@ namespace Altaxo.Gui.Graph.Graph3D.Viewing
     #region Members that do not utilize unmanaged resources, and thus are not associated with a 3D device
     // --------------------------------------------------------------------------------------------------
 
+    /// <summary>
+    /// Optional background color for the scene.
+    /// </summary>
     private AxoColor? _sceneBackgroundColor;
 
     /// <summary>
@@ -155,6 +247,9 @@ namespace Altaxo.Gui.Graph.Graph3D.Viewing
 
     #endregion
 
+    /// <summary>
+    /// Creates a vertex shader from embedded compiled shader bytecode.
+    /// </summary>
     private ID3D11VertexShader CreateVertexShader(ID3D11Device device, string entryPoint, out byte[] vertexShaderBytes)
     {
       var resourceName = $"Altaxo.CompiledShaders.Lighting_{entryPoint}.cso";
@@ -169,6 +264,9 @@ namespace Altaxo.Gui.Graph.Graph3D.Viewing
       }
     }
 
+    /// <summary>
+    /// Creates a pixel shader from embedded compiled shader bytecode.
+    /// </summary>
     private ID3D11PixelShader CreatePixelShader(ID3D11Device device, string entryPoint, out byte[] pixelShaderBytes)
     {
       var resourceName = $"Altaxo.CompiledShaders.Lighting_{entryPoint}.cso";
@@ -183,6 +281,9 @@ namespace Altaxo.Gui.Graph.Graph3D.Viewing
       }
     }
 
+    /// <summary>
+    /// Attaches the scene to a generic COM host device.
+    /// </summary>
     public void Attach(SharpGen.Runtime.ComObject hostDevice, PointD2D hostSize)
     {
       Attach((Device)hostDevice, hostSize);
@@ -463,7 +564,7 @@ namespace Altaxo.Gui.Graph.Graph3D.Viewing
       }
     }
 
-    internal void SetMarkerGeometry(D3DOverlayContext markerGeometry)
+    public void SetMarkerGeometry(D3DOverlayContext markerGeometry)
     {
       _altaxoMarkerGeometry = markerGeometry;
       BringMarkerGeometryIntoDeviceBuffers(markerGeometry);

@@ -23,8 +23,8 @@
 #endregion Copyright
 
 using System;
-using System.Collections;
 using Altaxo.AddInItems;
+using Altaxo.Gui.Graph.Graph3D.Common;
 
 namespace Altaxo.Main
 {
@@ -53,21 +53,51 @@ namespace Altaxo.Main
     /// </summary>
     public object BuildItem(BuildItemArgs args)
     {
-      return new Graph3DExportBindingDescriptor(args.Codon, typeof(Altaxo.Graph.Graph3D.GraphDocument), typeof(Altaxo.Gui.Graph.Graph3D.Common.D3D11BitmapExporter));
+      if (DirectXVersionAvailability.IsDirectX12Available)
+        return new Graph3DExportBindingDescriptor(args.Codon, typeof(Altaxo.Graph.Graph3D.GraphDocument), typeof(Altaxo.Gui.Graph.Graph3D.Common.D3D12BitmapExporter));
+      else
+        return new Graph3DExportBindingDescriptor(args.Codon, typeof(Altaxo.Graph.Graph3D.GraphDocument), typeof(Altaxo.Gui.Graph.Graph3D.Common.D3D11BitmapExporter));
     }
 
+    /// <summary>
+    /// Descriptor for graph-export bindings.
+    /// </summary>
     private class Graph3DExportBindingDescriptor : IProjectItemExportBindingDescriptor
     {
+      /// <summary>
+      /// Bound project-item type.
+      /// </summary>
       private Type _projectItemType;
+      /// <summary>
+      /// Exporter type used for image export.
+      /// </summary>
       private Type _graphicalExporterType;
+      /// <summary>
+      /// Gets the bound project-item type.
+      /// </summary>
       public Type ProjectItemType { get { return _projectItemType; } }
+      /// <summary>
+      /// Gets the exporter type.
+      /// </summary>
       public Type GraphicalExporterType { get { return _graphicalExporterType; } }
 
+      /// <summary>
+      /// Backing codon.
+      /// </summary>
       private Codon _codon;
 
+      /// <summary>
+      /// Gets or sets the binding identifier.
+      /// </summary>
       public string Id { get; set; }
+      /// <summary>
+      /// Gets or sets the display title.
+      /// </summary>
       public string Title { get; set; }
 
+      /// <summary>
+      /// Initializes a new instance of the <see cref="Graph3DExportBindingDescriptor"/> class.
+      /// </summary>
       public Graph3DExportBindingDescriptor(Codon codon, Type projectItemType, Type graphicalExporterType)
       {
         if (codon is null)
@@ -89,6 +119,9 @@ namespace Altaxo.Main
         _graphicalExporterType = graphicalExporterType;
       }
 
+      /// <summary>
+      /// Returns a diagnostic string for this descriptor.
+      /// </summary>
       public override string ToString()
       {
         return string.Format("[Graph3DExportBindingDescriptor ItemClass={0} ExporterClass={1}]", _projectItemType, _graphicalExporterType);

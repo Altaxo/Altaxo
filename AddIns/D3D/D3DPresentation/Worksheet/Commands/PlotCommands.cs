@@ -54,8 +54,14 @@ namespace Altaxo.Worksheet.Commands
     }
   }
 
+  /// <summary>
+  /// Creates a default 3D plot from worksheet data.
+  /// </summary>
   public class Plot3D : AbstractWorksheetControllerCommand
   {
+    /// <summary>
+    /// Executes the command.
+    /// </summary>
     public override void Run(Altaxo.Gui.Worksheet.Viewing.WorksheetController ctrl)
     {
       PresentationCoreLoader.EnsurePresentationCoreLoaded();
@@ -67,8 +73,14 @@ namespace Altaxo.Worksheet.Commands
     }
   }
 
+  /// <summary>
+  /// Creates a 3D surface plot from matrix-like worksheet data.
+  /// </summary>
   public class PlotSurface3D : AbstractWorksheetControllerCommand
   {
+    /// <summary>
+    /// Executes the command.
+    /// </summary>
     public override void Run(Altaxo.Gui.Worksheet.Viewing.WorksheetController ctrl)
     {
       PresentationCoreLoader.EnsurePresentationCoreLoaded();
@@ -87,6 +99,9 @@ namespace Altaxo.Worksheet.Commands
     /// Plots a density image of the selected columns.
     /// </summary>
     /// <param name="dg"></param>
+    /// <summary>
+    /// Adds a surface plot item to the graph.
+    /// </summary>
     public static void AddSurfacePlot(Altaxo.Gui.Worksheet.Viewing.IWorksheetController dg, GraphDocument graph)
     {
       var layer = graph.RootLayer.Layers.OfType<XYZPlotLayer>().First();
@@ -105,8 +120,14 @@ namespace Altaxo.Worksheet.Commands
     }
   }
 
+  /// <summary>
+  /// Creates a 3D surface plot from explicit XYZ worksheet columns.
+  /// </summary>
   public class PlotSurfaceFromXYZ : AbstractWorksheetControllerCommand
   {
+    /// <summary>
+    /// Executes the command.
+    /// </summary>
     public override void Run(Altaxo.Gui.Worksheet.Viewing.WorksheetController ctrl)
     {
       PresentationCoreLoader.EnsurePresentationCoreLoaded();
@@ -123,6 +144,9 @@ namespace Altaxo.Worksheet.Commands
     /// Plots a density image of the selected columns.
     /// </summary>
     /// <param name="dg"></param>
+    /// <summary>
+    /// Adds a surface plot item based on XYZ columns.
+    /// </summary>
     public static void AddSurfacePlotFromXYZ(Altaxo.Gui.Worksheet.Viewing.IWorksheetController ctrl, GraphDocument graph)
     {
       var layer = graph.RootLayer.Layers.OfType<XYZPlotLayer>().First();

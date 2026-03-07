@@ -161,6 +161,9 @@ namespace Altaxo.Graph.Graph3D.Commands
   /// </summary>
   public class LayerItemsBuilder : IMenuItemBuilder
   {
+    /// <summary>
+    /// Builds menu items representing plot items of the active layer.
+    /// </summary>
     public IEnumerable<object> BuildItems(Codon codon, object owner)
     {
       if (Current.Workbench.ActiveViewContent is Graph3DController ctrl)
@@ -187,6 +190,9 @@ namespace Altaxo.Graph.Graph3D.Commands
       return Enumerable.Empty<object>();
     }
 
+    /// <summary>
+    /// Handles click events on dynamically created plot-item menu entries.
+    /// </summary>
     private void EhWpfMenuItem_Clicked(object sender, System.Windows.RoutedEventArgs e)
     {
       var dmi = (System.Windows.Controls.MenuItem)sender;

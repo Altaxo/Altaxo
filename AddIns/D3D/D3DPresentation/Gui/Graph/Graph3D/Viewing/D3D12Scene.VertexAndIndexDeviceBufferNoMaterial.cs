@@ -26,14 +26,14 @@ namespace Altaxo.Gui.Graph.Graph3D.Viewing
 {
   using System;
   using Altaxo.Gui.Graph.Graph3D.Common;
-  using Buffer = Vortice.Direct3D11.ID3D11Buffer;
+  using Buffer = Vortice.Direct3D12.ID3D12Resource;
 
-  public partial class D3D11Scene
+  public partial class D3D12Scene
   {
     /// <summary>
-    /// Device-side vertex buffer container without material data.
+    /// Device-side triangle buffer container without material data.
     /// </summary>
-    internal class VertexBufferNoMaterial : IDisposable
+    internal class VertexAndIndexDeviceBufferNoMaterial : IDisposable
     {
       /// <summary>
       /// Vertex buffer resource.
@@ -43,25 +43,46 @@ namespace Altaxo.Gui.Graph.Graph3D.Viewing
       /// Number of vertices in <see cref="_vertexBuffer"/>.
       /// </summary>
       private int _vertexCount;
+      /// <summary>
+      /// Index buffer resource.
+      /// </summary>
+      private Buffer _indexBuffer;
+      /// <summary>
+      /// Number of indices in <see cref="_indexBuffer"/>.
+      /// </summary>
+      private int _indexCount;
 
       /// <summary>
       /// Gets the vertex buffer resource.
       /// </summary>
       public Buffer VertexBuffer => _vertexBuffer;
       /// <summary>
+      /// Gets the index buffer resource.
+      /// </summary>
+      public Buffer IndexBuffer => _indexBuffer;
+      /// <summary>
       /// Gets the vertex count.
       /// </summary>
       public int VertexCount => _vertexCount;
+      /// <summary>
+      /// Gets the index count.
+      /// </summary>
+      public int IndexCount => _indexCount;
 
       /// <summary>
-      /// Initializes a new instance of the <see cref="VertexBufferNoMaterial"/> class.
+      /// Initializes a new instance of the <see cref="VertexAndIndexDeviceBufferNoMaterial"/> class.
       /// </summary>
-      public VertexBufferNoMaterial(Buffer vertexBuffer, int vertexCount)
+      /// <param name="vertexBuffer">Vertex buffer resource.</param>
+      /// <param name="vertexCount">Vertex count.</param>
+      /// <param name="indexBuffer">Index buffer resource.</param>
+      /// <param name="indexCount">Index count.</param>
+      public VertexAndIndexDeviceBufferNoMaterial(Buffer vertexBuffer, int vertexCount, Buffer indexBuffer, int indexCount)
       {
         _vertexBuffer = vertexBuffer;
         _vertexCount = vertexCount;
+        _indexBuffer = indexBuffer;
+        _indexCount = indexCount;
       }
-
 
       #region IDisposable Support
 
@@ -69,16 +90,6 @@ namespace Altaxo.Gui.Graph.Graph3D.Viewing
       /// Tracks whether this instance has been disposed.
       /// </summary>
       private bool _isDisposed = false; // To detect redundant calls
-
-
-      /// <summary>
-      /// Finalizes an instance of the <see cref="VertexBufferNoMaterial"/> class.
-      /// </summary>
-      ~VertexBufferNoMaterial()
-      {
-        // Do not change this code. Put cleanup code in Dispose(bool disposing) above.
-        Dispose(false);
-      }
 
       /// <summary>
       /// Releases unmanaged and optionally managed resources.
@@ -89,10 +100,21 @@ namespace Altaxo.Gui.Graph.Graph3D.Viewing
         if (!_isDisposed)
         {
           Disposer.RemoveAndDispose(ref _vertexBuffer!);
+          Disposer.RemoveAndDispose(ref _indexBuffer!);
           _vertexCount = 0;
+          _indexCount = 0;
 
           _isDisposed = true;
         }
+      }
+
+      /// <summary>
+      /// Finalizes an instance of the <see cref="VertexAndIndexDeviceBufferNoMaterial"/> class.
+      /// </summary>
+      ~VertexAndIndexDeviceBufferNoMaterial()
+      {
+        // Do not change this code. Put cleanup code in Dispose(bool disposing) above.
+        Dispose(false);
       }
 
       /// <summary>

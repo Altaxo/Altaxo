@@ -37,16 +37,34 @@ namespace Altaxo.Gui.Graph.Graph3D.Viewing.GraphControllerMouseHandlers
   {
     #region Member variables
 
+    /// <summary>
+    /// Graph controller associated with this handler.
+    /// </summary>
     protected Graph3DController _grac;
 
+    /// <summary>
+    /// Graph tool selected after drawing finishes.
+    /// </summary>
     protected GraphToolType NextMouseHandlerType = GraphToolType.ObjectPointer;
 
+    /// <summary>
+    /// Collected line endpoints.
+    /// </summary>
     protected PointD3D[] _Points = new PointD3D[2];
+    /// <summary>
+    /// Number of currently defined points.
+    /// </summary>
     protected int _currentPoint;
+    /// <summary>
+    /// Current mouse position in active-layer coordinates.
+    /// </summary>
     protected PointD3D _positionCurrentMouseInActiveLayerCoordinates;
 
     #endregion Member variables
 
+    /// <summary>
+    /// Initializes a new instance of the <see cref="SingleLineDrawingMouseHandler"/> class.
+    /// </summary>
     public SingleLineDrawingMouseHandler(Graph3DController grac)
     {
       _grac = grac;
@@ -54,6 +72,9 @@ namespace Altaxo.Gui.Graph.Graph3D.Viewing.GraphControllerMouseHandlers
       _grac.View?.SetPanelCursor(Cursors.Pen);
     }
 
+    /// <summary>
+    /// Gets the graph tool type represented by this handler.
+    /// </summary>
     public override GraphToolType GraphToolType
     {
       get { return GraphToolType.SingleLineDrawing; }
@@ -88,6 +109,9 @@ namespace Altaxo.Gui.Graph.Graph3D.Viewing.GraphControllerMouseHandlers
       }
     }
 
+    /// <summary>
+    /// Handles mouse-move updates during line drawing.
+    /// </summary>
     public override void OnMouseMove(PointD3D position, MouseEventArgs e)
     {
       base.OnMouseMove(position, e);
@@ -102,6 +126,9 @@ namespace Altaxo.Gui.Graph.Graph3D.Viewing.GraphControllerMouseHandlers
       }
     }
 
+    /// <summary>
+    /// Adjusts the current mouse position according to modifier constraints.
+    /// </summary>
     protected virtual void ModifyCurrentMousePrintAreaCoordinate()
     {
       /*
@@ -160,6 +187,9 @@ namespace Altaxo.Gui.Graph.Graph3D.Viewing.GraphControllerMouseHandlers
       }
     }
 
+    /// <summary>
+    /// Finalizes line creation and adds the shape to the active layer.
+    /// </summary>
     protected virtual void FinishDrawing()
     {
       var go = new LineShape(_Points[0], _Points[1], _grac.Doc.GetPropertyContext());

@@ -48,20 +48,32 @@ namespace Altaxo.Gui.Graph.Graph3D.Viewing.GraphControllerMouseHandlers
       /// <summary>List of all collected grips.</summary>
       private List<IGripManipulationHandle> GripList;
 
+      /// <summary>
+      /// Hit-test objects corresponding to <see cref="GripList"/>.
+      /// </summary>
       private List<IHitTestObject> HittedList;
 
+      /// <summary>
+      /// Initializes a new instance of the <see cref="SuperGrip"/> class.
+      /// </summary>
       public SuperGrip()
       {
         GripList = new List<IGripManipulationHandle>();
         HittedList = new List<IHitTestObject>();
       }
 
+      /// <summary>
+      /// Adds a grip and its corresponding hit-test object.
+      /// </summary>
       public void Add(IGripManipulationHandle gripHandle, IHitTestObject hitTestObject)
       {
         GripList.Add(gripHandle);
         HittedList.Add(hitTestObject);
       }
 
+      /// <summary>
+      /// Removes a grip and its corresponding hit-test object.
+      /// </summary>
       public void Remove(IGripManipulationHandle gripHandle)
       {
         for (int i = GripList.Count - 1; i >= 0; i--)
@@ -89,6 +101,9 @@ namespace Altaxo.Gui.Graph.Graph3D.Viewing.GraphControllerMouseHandlers
           ele.Activate(initialPosition, isActivatedUponCreation);
       }
 
+      /// <summary>
+      /// Deactivates all collected grips.
+      /// </summary>
       public bool Deactivate()
       {
         foreach (var ele in GripList)
@@ -97,6 +112,9 @@ namespace Altaxo.Gui.Graph.Graph3D.Viewing.GraphControllerMouseHandlers
         return false;
       }
 
+      /// <summary>
+      /// Moves all collected grips.
+      /// </summary>
       public void MoveGrip(HitTestPointData newPosition)
       {
         foreach (var ele in GripList)
@@ -112,6 +130,9 @@ namespace Altaxo.Gui.Graph.Graph3D.Viewing.GraphControllerMouseHandlers
           ele.Show(g);
       }
 
+      /// <summary>
+      /// Determines whether any collected grip is hit.
+      /// </summary>
       public bool IsGripHit(HitTestPointData point)
       {
         foreach (var ele in GripList)
@@ -120,6 +141,9 @@ namespace Altaxo.Gui.Graph.Graph3D.Viewing.GraphControllerMouseHandlers
         return false;
       }
 
+      /// <summary>
+      /// Gets the specific grip and object hit by the test point.
+      /// </summary>
       public bool GetHittedElement(HitTestPointData point, [MaybeNullWhen(false)] out IGripManipulationHandle gripHandle, [MaybeNullWhen(false)] out IHitTestObject hitObject)
       {
         for (int i = GripList.Count - 1; i >= 0; i--)
@@ -165,6 +189,9 @@ namespace Altaxo.Gui.Graph.Graph3D.Viewing.GraphControllerMouseHandlers
     /// <summary>Locker to suppress changed events during moving of objects.</summary>
     private Altaxo.Main.ISuspendToken? _graphDocumentChangedSuppressor;
 
+    /// <summary>
+    /// Initializes a new instance of the <see cref="ObjectPointerMouseHandler"/> class.
+    /// </summary>
     public ObjectPointerMouseHandler(Graph3DController grac)
     {
       _grac = grac;
@@ -172,6 +199,9 @@ namespace Altaxo.Gui.Graph.Graph3D.Viewing.GraphControllerMouseHandlers
       _selectedObjects = new List<IHitTestObject>();
     }
 
+    /// <summary>
+    /// Gets the graph tool type represented by this handler.
+    /// </summary>
     public override GraphToolType GraphToolType
     {
       get
@@ -180,6 +210,9 @@ namespace Altaxo.Gui.Graph.Graph3D.Viewing.GraphControllerMouseHandlers
       }
     }
 
+    /// <summary>
+    /// Gets the currently selected objects.
+    /// </summary>
     public IList<IHitTestObject> SelectedObjects { get { return _selectedObjects; } }
 
     /// <summary>
@@ -358,6 +391,9 @@ namespace Altaxo.Gui.Graph.Graph3D.Viewing.GraphControllerMouseHandlers
       }
     }
 
+    /// <summary>
+    /// Handles key commands while object-pointer tool is active.
+    /// </summary>
     public override bool ProcessCmdKey(KeyEventArgs e)
     {
       // Note: a return value of true indicates that the key was processed, thus the key will not trigger further actions
@@ -387,6 +423,9 @@ namespace Altaxo.Gui.Graph.Graph3D.Viewing.GraphControllerMouseHandlers
         _grac.View?.RenderOverlay();
     }
 
+    /// <summary>
+    /// Adds a clicked object to the current selection and activates corresponding grips.
+    /// </summary>
     private void AddSelectedObject(HitTestPointData hitPoint, IHitTestObject clickedObject)
     {
       _selectedObjects.Add(clickedObject);
@@ -409,6 +448,9 @@ namespace Altaxo.Gui.Graph.Graph3D.Viewing.GraphControllerMouseHandlers
       _grac.View?.RenderOverlay();
     }
 
+    /// <summary>
+    /// Creates grip handles for the current selection.
+    /// </summary>
     private IGripManipulationHandle[]? GetGripsFromSelectedObjects()
     {
       if (_selectedObjects.Count == 1) // single object selected

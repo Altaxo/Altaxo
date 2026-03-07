@@ -37,20 +37,41 @@ namespace Altaxo.Graph.Graph3D.GraphicsContext.D3D
   public class D3DGraphicsContext
         : GraphicsContext3DBase, IDisposable
   {
+    /// <summary>
+    /// Position-only triangle buffers grouped by material key.
+    /// </summary>
     protected Dictionary<MaterialKey, PositionIndexedTriangleBuffer> _positionIndexedTriangleBuffers = new Dictionary<MaterialKey, PositionIndexedTriangleBuffer>();
 
+    /// <summary>
+    /// Position-normal triangle buffers grouped by material key.
+    /// </summary>
     protected Dictionary<MaterialKey, PositionNormalIndexedTriangleBuffer> _positionNormalIndexedTriangleBuffers = new Dictionary<MaterialKey, PositionNormalIndexedTriangleBuffer>();
 
     //protected Dictionary<IMaterial, PositionColorIndexedTriangleBuffer> _positionColorIndexedTriangleBuffers = new Dictionary<IMaterial, PositionColorIndexedTriangleBuffer>(MaterialComparer.Instance);
 
+    /// <summary>
+    /// Position-color triangle buffers grouped by material and clip planes.
+    /// </summary>
     protected Dictionary<MaterialPlusClippingKey, PositionColorIndexedTriangleBuffer> _positionColorIndexedTriangleBuffers = new Dictionary<MaterialPlusClippingKey, PositionColorIndexedTriangleBuffer>();
 
+    /// <summary>
+    /// Position-normal-color triangle buffers grouped by material and clip planes.
+    /// </summary>
     protected Dictionary<MaterialPlusClippingKey, PositionNormalColorIndexedTriangleBuffer> _positionNormalColorIndexedTriangleBuffers = new Dictionary<MaterialPlusClippingKey, PositionNormalColorIndexedTriangleBuffer>();
 
+    /// <summary>
+    /// Position-UV triangle buffers grouped by material key.
+    /// </summary>
     protected Dictionary<MaterialKey, PositionUVIndexedTriangleBuffer> _positionUVIndexedTriangleBuffers = new Dictionary<MaterialKey, PositionUVIndexedTriangleBuffer>();
 
+    /// <summary>
+    /// Position-normal-UV triangle buffers grouped by material key.
+    /// </summary>
     protected Dictionary<MaterialKey, PositionNormalUVIndexedTriangleBuffer> _positionNormalUVIndexedTriangleBuffers = new Dictionary<MaterialKey, PositionNormalUVIndexedTriangleBuffer>();
 
+    /// <summary>
+    /// Position-normal-U triangle buffers grouped by material, clipping and color provider.
+    /// </summary>
     protected Dictionary<MaterialPlusClippingPlusColorProviderKey, PositionNormalUIndexedTriangleBuffer> _positionNormalUIndexedTriangleBuffers = new Dictionary<MaterialPlusClippingPlusColorProviderKey, PositionNormalUIndexedTriangleBuffer>();
 
     /// <summary>Transformation of positions from local coordinates to global coordinates.</summary>
@@ -59,10 +80,16 @@ namespace Altaxo.Graph.Graph3D.GraphicsContext.D3D
     /// <summary>Transformation of normal vectors from local coordinates to global coordinates.</summary>
     private Matrix3x3 _transposedInverseTransformation = Matrix3x3.Identity;
 
+    /// <summary>
+    /// Disposes this instance.
+    /// </summary>
     public void Dispose()
     {
     }
 
+    /// <summary>
+    /// Gets position-only triangle buffers.
+    /// </summary>
     public IEnumerable<KeyValuePair<MaterialKey, PositionIndexedTriangleBuffer>> PositionIndexedTriangleBuffers
     {
       get
@@ -71,6 +98,9 @@ namespace Altaxo.Graph.Graph3D.GraphicsContext.D3D
       }
     }
 
+    /// <summary>
+    /// Gets position-only triangle buffers as base indexed triangle buffers.
+    /// </summary>
     public IEnumerable<KeyValuePair<MaterialKey, IndexedTriangleBuffer>> PositionIndexedTriangleBuffersAsIndexedTriangleBuffers
     {
       get
@@ -80,6 +110,9 @@ namespace Altaxo.Graph.Graph3D.GraphicsContext.D3D
       }
     }
 
+    /// <summary>
+    /// Gets position-normal triangle buffers.
+    /// </summary>
     public IEnumerable<KeyValuePair<MaterialKey, PositionNormalIndexedTriangleBuffer>> PositionNormalIndexedTriangleBuffers
     {
       get
@@ -88,6 +121,9 @@ namespace Altaxo.Graph.Graph3D.GraphicsContext.D3D
       }
     }
 
+    /// <summary>
+    /// Gets position-normal triangle buffers as base indexed triangle buffers.
+    /// </summary>
     public IEnumerable<KeyValuePair<MaterialKey, IndexedTriangleBuffer>> PositionNormalIndexedTriangleBuffersAsIndexedTriangleBuffers
     {
       get
@@ -97,6 +133,9 @@ namespace Altaxo.Graph.Graph3D.GraphicsContext.D3D
       }
     }
 
+    /// <summary>
+    /// Gets position-color triangle buffers.
+    /// </summary>
     public IEnumerable<KeyValuePair<IMaterial, PositionColorIndexedTriangleBuffer>> PositionColorIndexedTriangleBuffers
     {
       get
@@ -105,6 +144,9 @@ namespace Altaxo.Graph.Graph3D.GraphicsContext.D3D
       }
     }
 
+    /// <summary>
+    /// Gets position-color triangle buffers as base indexed triangle buffers.
+    /// </summary>
     public IEnumerable<KeyValuePair<MaterialKey, IndexedTriangleBuffer>> PositionColorIndexedTriangleBuffersAsIndexedTriangleBuffers
     {
       get
@@ -114,6 +156,9 @@ namespace Altaxo.Graph.Graph3D.GraphicsContext.D3D
       }
     }
 
+    /// <summary>
+    /// Gets position-normal-color triangle buffers.
+    /// </summary>
     public IEnumerable<KeyValuePair<IMaterial, PositionNormalColorIndexedTriangleBuffer>> PositionNormalColorIndexedTriangleBuffers
     {
       get
@@ -122,6 +167,9 @@ namespace Altaxo.Graph.Graph3D.GraphicsContext.D3D
       }
     }
 
+    /// <summary>
+    /// Gets position-normal-color triangle buffers as base indexed triangle buffers.
+    /// </summary>
     public IEnumerable<KeyValuePair<MaterialKey, IndexedTriangleBuffer>> PositionNormalColorIndexedTriangleBuffersAsIndexedTriangleBuffers
     {
       get
@@ -131,6 +179,9 @@ namespace Altaxo.Graph.Graph3D.GraphicsContext.D3D
       }
     }
 
+    /// <summary>
+    /// Gets position-UV triangle buffers.
+    /// </summary>
     public IEnumerable<KeyValuePair<MaterialKey, PositionUVIndexedTriangleBuffer>> PositionUVIndexedTriangleBuffers
     {
       get
@@ -139,6 +190,9 @@ namespace Altaxo.Graph.Graph3D.GraphicsContext.D3D
       }
     }
 
+    /// <summary>
+    /// Gets position-UV triangle buffers as base indexed triangle buffers.
+    /// </summary>
     public IEnumerable<KeyValuePair<MaterialKey, IndexedTriangleBuffer>> PositionUVIndexedTriangleBuffersAsIndexedTriangleBuffers
     {
       get
@@ -148,6 +202,9 @@ namespace Altaxo.Graph.Graph3D.GraphicsContext.D3D
       }
     }
 
+    /// <summary>
+    /// Gets position-normal-UV triangle buffers.
+    /// </summary>
     public IEnumerable<KeyValuePair<MaterialKey, PositionNormalUVIndexedTriangleBuffer>> PositionNormalUVIndexedTriangleBuffers
     {
       get
@@ -156,6 +213,9 @@ namespace Altaxo.Graph.Graph3D.GraphicsContext.D3D
       }
     }
 
+    /// <summary>
+    /// Gets position-normal-UV triangle buffers as base indexed triangle buffers.
+    /// </summary>
     public IEnumerable<KeyValuePair<MaterialKey, IndexedTriangleBuffer>> PositionNormalUVIndexedTriangleBuffersAsIndexedTriangleBuffers
     {
       get
@@ -165,6 +225,9 @@ namespace Altaxo.Graph.Graph3D.GraphicsContext.D3D
       }
     }
 
+    /// <summary>
+    /// Gets position-normal-U triangle buffers as base indexed triangle buffers.
+    /// </summary>
     public IEnumerable<KeyValuePair<MaterialKey, IndexedTriangleBuffer>> PositionNormalUIndexedTriangleBuffersAsIndexedTriangleBuffers
     {
       get
@@ -176,6 +239,9 @@ namespace Altaxo.Graph.Graph3D.GraphicsContext.D3D
 
     #region Transformation
 
+    /// <summary>
+    /// Gets the current transformation.
+    /// </summary>
     public override Matrix4x3 Transformation
     {
       get
@@ -184,6 +250,9 @@ namespace Altaxo.Graph.Graph3D.GraphicsContext.D3D
       }
     }
 
+    /// <summary>
+    /// Gets the transposed inverse transformation.
+    /// </summary>
     public override Matrix3x3 TransposedInverseTransformation
     {
       get
@@ -192,11 +261,17 @@ namespace Altaxo.Graph.Graph3D.GraphicsContext.D3D
       }
     }
 
+    /// <summary>
+    /// Saves graphics state.
+    /// </summary>
     public override object SaveGraphicsState()
     {
       return new GraphicState(_transformation, _transposedInverseTransformation);
     }
 
+    /// <summary>
+    /// Restores graphics state.
+    /// </summary>
     public override void RestoreGraphicsState(object graphicsState)
     {
       var gs = graphicsState as GraphicState;
@@ -209,24 +284,36 @@ namespace Altaxo.Graph.Graph3D.GraphicsContext.D3D
         throw new ArgumentException(nameof(graphicsState) + " is not a valid graphic state!");
     }
 
+    /// <summary>
+    /// Prepends a transformation.
+    /// </summary>
     public override void PrependTransform(Matrix4x3 m)
     {
       _transformation.PrependTransform(m);
       _transposedInverseTransformation = _transformation.GetTransposedInverseMatrix3x3();
     }
 
+    /// <summary>
+    /// Prepends a translation transform.
+    /// </summary>
     public override void TranslateTransform(double x, double y, double z)
     {
       _transformation.TranslatePrepend(x, y, z);
       // no change to the inverse transform
     }
 
+    /// <summary>
+    /// Prepends a translation transform.
+    /// </summary>
     public override void TranslateTransform(VectorD3D translation)
     {
       _transformation.TranslatePrepend(translation.X, translation.Y, translation.Z);
       // no change to the inverse transform
     }
 
+    /// <summary>
+    /// Prepends rotations around x, y and z axes.
+    /// </summary>
     public override void RotateTransform(double degreeX, double degreeY, double degreeZ)
     {
       if (0 != degreeZ)
@@ -240,6 +327,9 @@ namespace Altaxo.Graph.Graph3D.GraphicsContext.D3D
         _transposedInverseTransformation = _transformation.GetTransposedInverseMatrix3x3();
     }
 
+    /// <summary>
+    /// Gets a position-normal indexed triangle buffer matching the material.
+    /// </summary>
     public override PositionNormalIndexedTriangleBuffers GetPositionNormalIndexedTriangleBuffer(IMaterial material)
     {
       var result = new PositionNormalIndexedTriangleBuffers();
@@ -259,6 +349,9 @@ namespace Altaxo.Graph.Graph3D.GraphicsContext.D3D
       return result;
     }
 
+    /// <summary>
+    /// Gets or creates the position-normal triangle buffer for the material.
+    /// </summary>
     private PositionNormalIndexedTriangleBuffer InternalGetPositionNormalIndexedTriangleBuffer(IMaterial material)
     {
       var materialKey = new MaterialKey(material);
@@ -271,6 +364,9 @@ namespace Altaxo.Graph.Graph3D.GraphicsContext.D3D
       return result;
     }
 
+    /// <summary>
+    /// Gets or creates the position-normal-color triangle buffer for the material.
+    /// </summary>
     private PositionNormalColorIndexedTriangleBuffer InternalGetPositionNormalColorIndexedTriangleBuffer(IMaterial material)
     {
       var key = new MaterialPlusClippingKey(material, clipPlanes: null);
@@ -283,6 +379,9 @@ namespace Altaxo.Graph.Graph3D.GraphicsContext.D3D
       return result;
     }
 
+    /// <summary>
+    /// Gets or creates the position-normal-UV triangle buffer for the material.
+    /// </summary>
     private PositionNormalUVIndexedTriangleBuffer InternalGetPositionNormalUVIndexedTriangleBuffer(IMaterial material)
     {
       var materialKey = new MaterialKey(material);
@@ -296,6 +395,9 @@ namespace Altaxo.Graph.Graph3D.GraphicsContext.D3D
       return result;
     }
 
+    /// <summary>
+    /// Gets a position indexed triangle buffer matching the material.
+    /// </summary>
     public override PositionIndexedTriangleBuffers GetPositionIndexedTriangleBuffer(IMaterial material)
     {
       var result = new PositionIndexedTriangleBuffers();
@@ -315,6 +417,9 @@ namespace Altaxo.Graph.Graph3D.GraphicsContext.D3D
       return result;
     }
 
+    /// <summary>
+    /// Gets position-normal indexed triangle buffers with clipping.
+    /// </summary>
     public override PositionNormalIndexedTriangleBuffers GetPositionNormalIndexedTriangleBufferWithClipping(IMaterial material, PlaneD3D[] clipPlanes)
     {
       var result = new PositionNormalIndexedTriangleBuffers();
@@ -334,6 +439,9 @@ namespace Altaxo.Graph.Graph3D.GraphicsContext.D3D
       return result;
     }
 
+    /// <summary>
+    /// Gets or creates the position indexed triangle buffer for the material.
+    /// </summary>
     private PositionIndexedTriangleBuffer InternalGetPositionIndexedTriangleBuffer(IMaterial material)
     {
       var materialKey = new MaterialKey(material);
@@ -347,6 +455,9 @@ namespace Altaxo.Graph.Graph3D.GraphicsContext.D3D
       return result;
     }
 
+    /// <summary>
+    /// Gets or creates the position-color indexed triangle buffer for the material.
+    /// </summary>
     private PositionColorIndexedTriangleBuffer InternalGetPositionColorIndexedTriangleBuffer(IMaterial material)
     {
       var key = new MaterialPlusClippingKey(material, null);
@@ -359,6 +470,9 @@ namespace Altaxo.Graph.Graph3D.GraphicsContext.D3D
       return result;
     }
 
+    /// <summary>
+    /// Gets or creates the position-normal-color indexed triangle buffer for material and clip planes.
+    /// </summary>
     private PositionNormalColorIndexedTriangleBuffer InternalGetPositionNormalColorIndexedTriangleBuffer(IMaterial material, PlaneD3D[] clipPlanes)
     {
       // Transform the clip planes to our coordinate system
@@ -375,6 +489,9 @@ namespace Altaxo.Graph.Graph3D.GraphicsContext.D3D
       return result;
     }
 
+    /// <summary>
+    /// Gets or creates the position-UV indexed triangle buffer for the material.
+    /// </summary>
     private PositionUVIndexedTriangleBuffer InternalGetPositionUVIndexedTriangleBuffer(IMaterial material)
     {
       var materialKey = new MaterialKey(material);
@@ -388,6 +505,9 @@ namespace Altaxo.Graph.Graph3D.GraphicsContext.D3D
       return result;
     }
 
+    /// <summary>
+    /// Gets or creates a position-normal-U indexed triangle buffer.
+    /// </summary>
     public override IPositionNormalUIndexedTriangleBuffer GetPositionNormalUIndexedTriangleBuffer(IMaterial material, PlaneD3D[]? clipPlanes, Gdi.Plot.IColorProvider colorProvider)
     {
       // Transform the clip planes to our coordinate system
@@ -404,15 +524,27 @@ namespace Altaxo.Graph.Graph3D.GraphicsContext.D3D
       return result;
     }
 
+    /// <summary>
+    /// Serializable graphics-state snapshot.
+    /// </summary>
     internal class GraphicState
     {
+      /// <summary>
+      /// Initializes a new instance of the <see cref="GraphicState"/> class.
+      /// </summary>
       internal GraphicState(Matrix4x3 transformation, Matrix3x3 transposedInverseTransformation)
       {
         Transformation = transformation;
         TransposedInverseTransformation = transposedInverseTransformation;
       }
 
+      /// <summary>
+      /// Gets the saved transformation.
+      /// </summary>
       internal Matrix4x3 Transformation { get; private set; }
+      /// <summary>
+      /// Gets the saved transposed inverse transformation.
+      /// </summary>
       internal Matrix3x3 TransposedInverseTransformation { get; private set; }
     }
 

@@ -36,6 +36,9 @@ namespace Altaxo.Gui.Graph.Graph3D.Common
   using Device = Vortice.Direct3D11.ID3D11Device;
 
 
+  /// <summary>
+  /// Exports 3D graph scenes to bitmap streams using D3D11 offscreen rendering.
+  /// </summary>
   public class D3D11BitmapExporter : Altaxo.Main.IProjectItemImageExporter
   {
     /// <summary>
@@ -127,6 +130,14 @@ namespace Altaxo.Gui.Graph.Graph3D.Common
       }
     }
 
+    /// <summary>
+    /// Renders the specified scene to an offscreen target and writes it to a stream.
+    /// </summary>
+    /// <param name="sizeX">Target width in pixels.</param>
+    /// <param name="sizeY">Target height in pixels.</param>
+    /// <param name="scene">Scene to render.</param>
+    /// <param name="options">Export options.</param>
+    /// <param name="toStream">Destination stream.</param>
     public void Export(int sizeX, int sizeY, ID3D11Scene scene, Altaxo.Graph.Gdi.GraphExportOptions options, System.IO.Stream toStream)
     {
       Device? device = null;

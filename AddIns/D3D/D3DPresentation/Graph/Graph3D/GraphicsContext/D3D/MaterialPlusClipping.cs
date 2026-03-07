@@ -32,10 +32,19 @@ using Altaxo.Geometry;
 
 namespace Altaxo.Graph.Graph3D.GraphicsContext.D3D
 {
+  /// <summary>
+  /// Material key used for dictionary grouping of geometry buffers.
+  /// </summary>
   public class MaterialKey : Main.IImmutable
   {
+    /// <summary>
+    /// Gets the material represented by this key.
+    /// </summary>
     public IMaterial Material { get; private set; }
 
+    /// <summary>
+    /// Initializes a new instance of the <see cref="MaterialKey"/> class.
+    /// </summary>
     public MaterialKey(IMaterial material)
     {
       if (material is null)
@@ -44,11 +53,17 @@ namespace Altaxo.Graph.Graph3D.GraphicsContext.D3D
       Material = material;
     }
 
+    /// <summary>
+    /// Determines equality with another object.
+    /// </summary>
     public override bool Equals(object? obj)
     {
       return obj is MaterialKey from && Material.Equals(from.Material);
     }
 
+    /// <summary>
+    /// Returns the hash code.
+    /// </summary>
     public override int GetHashCode()
     {
       return Material.GetHashCode();
@@ -60,14 +75,23 @@ namespace Altaxo.Graph.Graph3D.GraphicsContext.D3D
   /// </summary>
   public class MaterialPlusClippingKey : MaterialKey
   {
+    /// <summary>
+    /// Gets the optional clip planes.
+    /// </summary>
     public PlaneD3D[]? ClipPlanes { get; private set; }
 
+    /// <summary>
+    /// Initializes a new instance of the <see cref="MaterialPlusClippingKey"/> class.
+    /// </summary>
     public MaterialPlusClippingKey(IMaterial material, PlaneD3D[]? clipPlanes)
       : base(material)
     {
       ClipPlanes = clipPlanes;
     }
 
+    /// <summary>
+    /// Determines equality with another object.
+    /// </summary>
     public override bool Equals(object? obj)
     {
       if (!(obj is MaterialPlusClippingKey from))
@@ -91,6 +115,9 @@ namespace Altaxo.Graph.Graph3D.GraphicsContext.D3D
       return true;
     }
 
+    /// <summary>
+    /// Returns the hash code.
+    /// </summary>
     public override int GetHashCode()
     {
       var result = 17 * Material.GetHashCode();
@@ -100,6 +127,9 @@ namespace Altaxo.Graph.Graph3D.GraphicsContext.D3D
       return result;
     }
 
+    /// <summary>
+    /// Returns the hash code of the provided key.
+    /// </summary>
     public int GetHashCode(MaterialPlusClippingKey obj)
     {
       return obj.GetHashCode();

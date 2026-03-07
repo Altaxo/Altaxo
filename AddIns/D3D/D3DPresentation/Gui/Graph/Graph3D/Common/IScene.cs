@@ -20,41 +20,41 @@
 namespace Altaxo.Gui.Graph.Graph3D.Common
 {
   using System;
+  using Altaxo.Drawing;
   using Altaxo.Geometry;
-  using Vortice.Direct3D11;
+  using Altaxo.Graph.Graph3D;
+  using Altaxo.Graph.Graph3D.Camera;
+  using Altaxo.Graph.Graph3D.GraphicsContext.D3D;
 
   /// <summary>
-  /// Scene.
+  /// Defines scene APIs used by Altaxo graph rendering code.
   /// </summary>
-  public interface IScene : IDisposable
+  public interface IAltaxo3DScene
   {
     /// <summary>
-    /// Attaches the scene to the specified scene host.
+    /// Sets marker geometry.
     /// </summary>
-    /// <param name="host">The scene host.</param>
-    void Attach(SharpGen.Runtime.ComObject hostDevice, PointD2D hostSize);
-
+    public void SetMarkerGeometry(D3DOverlayContext markerGeometry);
     /// <summary>
-    /// Informes the scene that the host size has changed.
+    /// Sets primary drawing geometry.
     /// </summary>
-    /// <param name="hostSize">Size of the host.</param>
-    void SetHostSize(PointD2D hostSize);
-
+    public void SetDrawing(D3DGraphicsContext drawing);
     /// <summary>
-    /// Detaches this scene from the scene host.
+    /// Sets light settings.
     /// </summary>
-    void Detach();
-
+    public void SetLighting(LightSettings lightSettings);
     /// <summary>
-    /// Updates the scene, taking into account the specified time.
+    /// Sets the active camera.
     /// </summary>
-    /// <param name="timeSpan">The current scene time.</param>
-    void Update(TimeSpan timeSpan);
-
+    public void SetCamera(CameraBase camera);
     /// <summary>
-    /// Renders this scene to the scene host.
+    /// Sets the scene background color.
     /// </summary>
-    void Render();
+    public void SetSceneBackColor(AxoColor? sceneBackColor);
+    /// <summary>
+    /// Sets overlay geometry.
+    /// </summary>
+    public void SetOverlayGeometry(D3DOverlayContext overlayGeometry);
 
     /// <summary>
     /// Gets the color of the scene background. If null is returned, the render function is free to use its own color as scene background.
@@ -62,18 +62,40 @@ namespace Altaxo.Gui.Graph.Graph3D.Common
     /// <value>
     /// The color of the scene background.
     /// </value>
-    Altaxo.Drawing.AxoColor? SceneBackgroundColor { get; }
+    public Altaxo.Drawing.AxoColor? SceneBackgroundColor { get; }
   }
 
   /// <summary>
   /// Scene.
   /// </summary>
-  public interface ID3D11Scene : IScene
+  public interface IScene : IDisposable, IAltaxo3DScene
   {
     /// <summary>
     /// Attaches the scene to the specified scene host.
     /// </summary>
     /// <param name="host">The scene host.</param>
-    void Attach(ID3D11Device hostDevice, PointD2D hostSize);
+    public void Attach(SharpGen.Runtime.ComObject hostDevice, PointD2D hostSize);
+
+    /// <summary>
+    /// Informes the scene that the host size has changed.
+    /// </summary>
+    /// <param name="hostSize">Size of the host.</param>
+    public void SetHostSize(PointD2D hostSize);
+
+    /// <summary>
+    /// Detaches this scene from the scene host.
+    /// </summary>
+    public void Detach();
+
+    /// <summary>
+    /// Updates the scene, taking into account the specified time.
+    /// </summary>
+    /// <param name="timeSpan">The current scene time.</param>
+    public void Update(TimeSpan timeSpan);
+
+    /// <summary>
+    /// Renders this scene to the scene host.
+    /// </summary>
+    public void Render();
   }
 }

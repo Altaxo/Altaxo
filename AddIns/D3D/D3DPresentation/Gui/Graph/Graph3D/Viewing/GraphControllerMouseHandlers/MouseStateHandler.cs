@@ -49,6 +49,9 @@ namespace Altaxo.Gui.Graph.Graph3D.Viewing.GraphControllerMouseHandlers
     /// <summary>Transformation that can be used to transform root layer coordinates into the coordinates of the cached active layer.</summary>
     protected Matrix4x3 _cachedActiveLayerTransformation;
 
+    /// <summary>
+    /// Gets the tool type represented by this handler.
+    /// </summary>
     public abstract GraphToolType GraphToolType { get; }
 
     /// <summary>
@@ -122,6 +125,9 @@ namespace Altaxo.Gui.Graph.Graph3D.Viewing.GraphControllerMouseHandlers
     /// Returns true when painting the overlay is currently required; and false if it is not required.
     /// </summary>
     /// <returns>True when painting the overlay is currently required; and false if it is not required.</returns>
+    /// <summary>
+    /// Indicates whether overlay painting is currently required.
+    /// </summary>
     public virtual bool IsOverlayPaintingRequired { get { return true; } }
 
     /// <summary>
