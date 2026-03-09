@@ -37,6 +37,7 @@ namespace Altaxo.Graph.Gdi.Plot.Styles
 {
   using System.ComponentModel;
   using System.Diagnostics.CodeAnalysis;
+  using System.Linq;
   using Altaxo.Calc;
   using Altaxo.Graph.Scales.Ticks;
   using ColorProvider;
@@ -443,11 +444,137 @@ namespace Altaxo.Graph.Gdi.Plot.Styles
       else
       {
         // TODO use a bivariate Radial Spline interpolation to get a smooth image
+        // what we need here is (i) a list of x-y values, at which to determine the z value, and (ii) a list of z values
+        // (i) a closed polygon, which determines the x-y range of the plot (we do not plot data outside this polynom)
+        // and (iii) a spline that can be used to evaluate the data
+
+
+        PaintIrregularData(gfrx, gl, plotData, gl.XAxis.PhysicalVariantToNormal, gl.YAxis.PhysicalVariantToNormal, _scale.PhysicalVariantToNormal);
       }
     }
 
+    private void PaintIrregularData(Graphics gfrx, IPlotArea gl, XYZColumnPlotData plotData, Func<AltaxoVariant, double> xTransformation, Func<AltaxoVariant, double> yTransformation, Func<AltaxoVariant, double> zTransformation)
+    {
+      var arr = plotData.GetDataPoints(ensureZIsNotEmpty: true).Select(p => new { x = xTransformation(p.x), y = yTransformation(p.y), z = zTransformation(p.z), rowIndex = p.rowIndex }).ToArray();
+
+      // now create the spline
+      var spline = Altaxo.Calc.Interpolation.RBFSmoothingInterpolation2D.Fit(arr.Select(p => p.x).ToList(), arr.Select(p => p.y).ToList(), arr.Select(p => p.z).ToList());
+
+      var lxmin = arr.Min(p => p.x);
+      var lxmax = arr.Max(p => p.x);
+      var lymin = arr.Min(p => p.y);
+      var lymax = arr.Max(p => p.y);
+
+      var scale = (1L << 56) / Math.Max(Math.Max(Math.Abs(lxmax), Math.Abs(lxmin)), Math.Max(Math.Abs(lymax), Math.Abs(lymin)));
+
+      var pointsXY = arr.Select(p => new Clipper2Lib.Point64((long)(p.x * scale), (long)(p.y * scale))).ToArray();
+      var hull = new Altaxo.Geometry.Int64_2D.ConcaveHull(pointsXY, 0, 1L << 46);
+      var hullPoints = new Clipper2Lib.Path64(hull.ConcaveHullPoints.Select(p => p.point));
+      var hullBounds = Clipper2Lib.Clipper.GetBounds(hullPoints);
 
 
+      // allocate a bitmap of same dimensions than the underlying layer
+      _imageType = CachedImageType.Other;
+
+      int dimX = (int)Math.Ceiling(gl.Size.X / 72.0 * gfrx.DpiX);
+      int dimY = (int)Math.Ceiling(gl.Size.Y / 72.0 * gfrx.DpiY);
+
+      dimX = Math.Min(2048, dimX);
+      dimY = Math.Min(2048, dimY);
+
+      // look if the image has the right dimensions
+      if (_cachedImage is null || _cachedImage.Width != dimX || _cachedImage.Height != dimY)
+      {
+        if (_cachedImage is not null)
+          _cachedImage.Dispose();
+
+        // please notice: the horizontal direction of the image is related to the row index!!! (this will turn the image in relation to the table)
+        // and the vertical direction of the image is related to the column index
+        _cachedImage = new System.Drawing.Bitmap(dimX, dimY, System.Drawing.Imaging.PixelFormat.Format32bppArgb);
+      }
+
+      // now, there a two very distinct options
+      // (i) if the image is not clipped to the layer, then we calculate the bounds of the image in logical coordinates, and evaluate the image pixels in the logical coordinate system, and then transform the image to the layer coordinate system by the DrawImage function
+      // (ii) if the image is clipped to the layer, then we calculate the bounds of the image in logical coordinates, but clamp that logical coordinates to [0, 1], and then evaluate the pixels
+
+      // note: lxmin, lxmax, lymin, lymax are in already the bounds in logical coordinates
+
+      if (_clipToLayer)
+      {
+        lxmin = Math.Max(0, lxmin);
+        lxmax = Math.Min(1, lxmax);
+        lymin = Math.Max(0, lymin);
+        lymax = Math.Min(1, lymax);
+      }
+
+
+      byte[] imageBytes = new byte[dimX * dimY * 4];
+      Color colorInvalid = _colorProvider.GetColor(double.NaN);
+      int addr = 0;
+      for (int j = 0; j < dimY; ++j)
+      {
+        for (int i = 0; i < dimX; ++i, addr += 4)
+        {
+
+          double rx = i / (double)dimX;
+          double lx = lxmin * (1 - rx) + lxmax * (rx);
+          double ry = j / (double)dimY;
+          double ly = lymin * (1 - ry) + lymax * (ry);
+
+          var l = new Clipper2Lib.Point64((long)(lx * scale), (long)(ly * scale));
+
+          double val = double.NaN;
+          if (Clipper2Lib.Clipper.PointInPolygon(l, hullPoints) != Clipper2Lib.PointInPolygonResult.IsOutside)
+          {
+            val = spline.Evaluate(lx, ly);
+          }
+
+          if (double.IsNaN(val))
+          {
+            //_cachedImage.SetPixel(nx, ny, _colorInvalid);
+            imageBytes[addr + 0] = colorInvalid.B;
+            imageBytes[addr + 1] = colorInvalid.G;
+            imageBytes[addr + 2] = colorInvalid.R;
+            imageBytes[addr + 3] = colorInvalid.A;
+          }
+          else
+          {
+            //_cachedImage.SetPixel(nx, ny, GetColor(val));
+            Color c = _colorProvider.GetColor(val);
+            imageBytes[addr + 0] = c.B;
+            imageBytes[addr + 1] = c.G;
+            imageBytes[addr + 2] = c.R;
+            imageBytes[addr + 3] = c.A;
+          }
+        }
+      }
+
+      // Lock the bitmap's bits.
+      var rect = new Rectangle(0, 0, _cachedImage.Width, _cachedImage.Height);
+      System.Drawing.Imaging.BitmapData bmpData =
+          _cachedImage.LockBits(rect, System.Drawing.Imaging.ImageLockMode.WriteOnly,
+          _cachedImage.PixelFormat);
+
+      // Get the address of the first line.
+      IntPtr ptr = bmpData.Scan0;
+
+      // Copy the RGB values back to the bitmap
+      System.Runtime.InteropServices.Marshal.Copy(imageBytes, 0, ptr, imageBytes.Length);
+
+      _cachedImage.UnlockBits(bmpData);
+
+      // now, draw the image
+      var graphicsState = gfrx.Save(); // Of course, save the graphics state so we can make our tricks undone afterwards
+      gfrx.InterpolationMode = InterpolationMode.Default; // Trick1: Set the interpolation mode, whatever it was before, back to default
+      gfrx.PixelOffsetMode = PixelOffsetMode.Default;  // Trick2: Set the PixelOffsetMode, whatever it was before, back to default
+
+      gl.CoordinateSystem.LogicalToLayerCoordinates(new Logical3D(lxmin, lymin), out var x0, out var y0);
+      gl.CoordinateSystem.LogicalToLayerCoordinates(new Logical3D(lxmin, lymax), out var x1, out var y1);
+      gl.CoordinateSystem.LogicalToLayerCoordinates(new Logical3D(lxmax, lymin), out var x2, out var y2);
+      var pts = new PointF[] { new PointF((float)x0, (float)y0), new PointF((float)x2, (float)y2), new PointF((float)x1, (float)y1) };
+      gfrx.DrawImage(_cachedImage, pts, new RectangleF(0, 0, _cachedImage.Width - 1, _cachedImage.Height - 1), GraphicsUnit.Pixel); // Trick3: Paint both in X and Y direction one pixel less than the source bitmap acually has, this prevents soft edges
+      gfrx.Restore(graphicsState);
+    }
 
 
     public void Paint(Graphics gfrx, IPlotArea gl, IROMatrix<double> matrix, IReadOnlyList<double> logicalRowHeaderValues, IReadOnlyList<double> logicalColumnHeaderValues) // plots the curve with the choosen style
