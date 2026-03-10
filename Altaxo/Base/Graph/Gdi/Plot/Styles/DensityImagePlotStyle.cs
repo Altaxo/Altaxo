@@ -105,6 +105,9 @@ namespace Altaxo.Graph.Gdi.Plot.Styles
     [NonSerialized]
     private object? _imageConditionMemento;
 
+
+    private double _concavity = Math.Cos(15 * Math.PI / 180d); // allow 15° inwards bending in relation to the convex hull of the data points
+
     #region Serialization
 
     [Altaxo.Serialization.Xml.XmlSerializationSurrogateFor("AltaxoBase", "Altaxo.Graph.DensityImagePlotStyle", 0)]
@@ -468,7 +471,7 @@ namespace Altaxo.Graph.Gdi.Plot.Styles
       var scale = (1L << 56) / Math.Max(Math.Max(Math.Abs(lxmax), Math.Abs(lxmin)), Math.Max(Math.Abs(lymax), Math.Abs(lymin)));
 
       var pointsXY = arr.Select(p => new Clipper2Lib.Point64((long)(p.x * scale), (long)(p.y * scale))).ToArray();
-      var hull = new Altaxo.Geometry.Int64_2D.ConcaveHull(pointsXY, 0, 1L << 46);
+      var hull = new Altaxo.Geometry.Int64_2D.ConcaveHull(pointsXY, _concavity, 1L << 46);
       var hullPoints = new Clipper2Lib.Path64(hull.ConcaveHullPoints.Select(p => p.point));
       var hullBounds = Clipper2Lib.Clipper.GetBounds(hullPoints);
 
