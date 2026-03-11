@@ -6,8 +6,15 @@ using Altaxo.Calc.LinearAlgebra;
 
 namespace Altaxo.Calc.Optimization
 {
+  /// <summary>
+  /// Represents the result of a nonlinear minimization, including the minimizing point and derived statistics
+  /// such as covariance, correlation, and parameter standard errors.
+  /// </summary>
   public class NonlinearMinimizationResult
   {
+    /// <summary>
+    /// Gets the objective model evaluated at the minimizing point.
+    /// </summary>
     public IObjectiveModel ModelInfoAtMinimum { get; }
 
     /// <summary>
@@ -31,12 +38,18 @@ namespace Altaxo.Calc.Optimization
     public Matrix<double>? Covariance { get; private set; }
 
     /// <summary>
-    ///  Returns the correlation matrix at minimizing point.
+    /// Returns the correlation matrix at the minimizing point.
     /// </summary>
     public Matrix<double>? Correlation { get; private set; }
 
+    /// <summary>
+    /// Gets the number of iterations performed by the minimizer.
+    /// </summary>
     public int Iterations { get; }
 
+    /// <summary>
+    /// Gets the exit condition reported by the minimizer.
+    /// </summary>
     public ExitCondition ReasonForExit { get; }
 
     /// <summary>
@@ -44,6 +57,30 @@ namespace Altaxo.Calc.Optimization
     /// </summary>
     public IReadOnlyList<bool> IsFixedByUserOrBoundaries { get; }
 
+    /// <summary>
+    /// Gets the number of free (non-fixed) parameters.
+    /// </summary>
+    public int NumberOfFreeParameters => IsFixedByUserOrBoundaries.Where(x => !x).Count();
+
+    /// <summary>
+    /// Gets the number of fixed parameters (fixed either by the user, or because they are stuck at a boundary).
+    /// </summary>
+    public int NumberOfFixedParameters => IsFixedByUserOrBoundaries.Where(x => x).Count();
+
+    /// <summary>
+    /// Gets the total number of parameters.
+    /// </summary>
+    public int NumberOfParameters => IsFixedByUserOrBoundaries.Count;
+
+    /// <summary>
+    /// Initializes a new instance of the <see cref="NonlinearMinimizationResult"/> class.
+    /// </summary>
+    /// <param name="modelInfo">The objective model at the minimizing point.</param>
+    /// <param name="iterations">The number of iterations performed.</param>
+    /// <param name="reasonForExit">The reason for termination of the minimization.</param>
+    /// <param name="isFixed">
+    /// Optional flags that indicate whether each parameter is fixed either by the user or due to being stuck at a boundary.
+    /// </param>
     public NonlinearMinimizationResult(IObjectiveModel modelInfo, int iterations, ExitCondition reasonForExit, IReadOnlyList<bool>? isFixed = null)
     {
       ModelInfoAtMinimum = modelInfo;
@@ -54,6 +91,11 @@ namespace Altaxo.Calc.Optimization
       EvaluateCovariance(modelInfo, isFixed);
     }
 
+    /// <summary>
+    /// Computes covariance, correlation, and standard errors based on the Hessian at the minimizing point.
+    /// </summary>
+    /// <param name="objective">The objective model.</param>
+    /// <param name="isFixed">Optional flags that indicate which parameters are fixed.</param>
     private void EvaluateCovariance(IObjectiveModel objective, IReadOnlyList<bool>? isFixed)
     {
       objective.EvaluateAt(objective.Point); // Hessian may be not yet updated.
@@ -91,9 +133,9 @@ namespace Altaxo.Calc.Optimization
     }
 
     /// <summary>
-    /// Computes the Moore-Penrose Pseudo-Inverse of this matrix.
-    /// Here we take care that the pseudo-inverse is
-    /// calculated correctly, even if the provided matrix has diagonal elements which differ by orders of magnitude.
+    /// Computes the Moore-Penrose pseudo-inverse of the provided matrix.
+    /// This method takes care that the pseudo-inverse is calculated correctly even if the provided matrix has diagonal
+    /// elements that differ by orders of magnitude.
     /// This is often the case when the parameters of the fit have very different orders of magnitude.
     /// </summary>
     public static Matrix<double> PseudoInverseWithScaling(Matrix<double> m)

@@ -41,6 +41,7 @@ using Altaxo.Gui.Science.Spectroscopy.Calibration;
 using Altaxo.Gui.Science.Spectroscopy.Raman;
 using Altaxo.Gui.Worksheet.Viewing;
 using Altaxo.Science.Spectroscopy.Calibration;
+using Altaxo.Science.Spectroscopy.PeakFitting;
 using Altaxo.Science.Spectroscopy.PeakFitting.MultipleSpectra;
 using Altaxo.Science.Spectroscopy.Raman;
 using Altaxo.Worksheet.Commands;
@@ -824,6 +825,26 @@ namespace Altaxo.Science.Spectroscopy
             }
           }
         }
+
+        // ******************************************************
+        //     output the Chi² data in dep. on number of peaks
+        // ******************************************************
+
+        if (fitResults[0].PeakDescriptions is PeakFittingByIncrementalPeakAdditionResult pfr)
+        {
+          var cPos = peakTable.DataColumns.EnsureExistence($"NumberOfPeaks", typeof(DoubleColumn), ColumnKind.X, groupNumberBase + 4);
+          var cPro = peakTable.DataColumns.EnsureExistence($"Chi²WrtNumberOfPeaks", typeof(DoubleColumn), ColumnKind.V, groupNumberBase + 4);
+          var cSigma = peakTable.DataColumns.EnsureExistence($"Sigma²WrtNumberOfPeaks", typeof(DoubleColumn), ColumnKind.V, groupNumberBase + 4);
+
+          for (int i = 0; i < pfr.ChiSquareWrtToNumberOfPeaks.Count; ++i)
+          {
+            cPos[i] = i; // number of peaks
+            cPro[i] = pfr.ChiSquareWrtToNumberOfPeaks[i];
+            cSigma[i] = pfr.SigmaSquareWrtToNumberOfPeaks[i];
+          }
+        }
+
+
 
         resultList.Add((entry.orgCols, entry.xPreprocessedCol, entry.yPreprocessedCol, fitResults));
       }

@@ -26,6 +26,7 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading;
+using Altaxo.Calc;
 using Altaxo.Calc.FitFunctions.Peaks;
 using Altaxo.Calc.FitFunctions.Probability;
 using Altaxo.Calc.LinearAlgebra;
@@ -36,6 +37,12 @@ using Altaxo.Science.Spectroscopy.PeakSearching;
 
 namespace Altaxo.Science.Spectroscopy.PeakFitting
 {
+  public class PeakFittingByIncrementalPeakAdditionResult : List<PeakDescription>
+  {
+    public IReadOnlyList<double> ChiSquareWrtToNumberOfPeaks { get; init; } = [];
+    public IReadOnlyList<double> SigmaSquareWrtToNumberOfPeaks { get; init; } = [];
+  }
+
   /// <summary>
   /// Fits peaks by incrementally adding peaks to a composite model until a stopping criterion is met.
   /// </summary>
@@ -301,7 +308,7 @@ namespace Altaxo.Science.Spectroscopy.PeakFitting
     /// <param name="peakDescriptions">Peak descriptions from the previous peak searching step.</param>
     /// <param name="cancellationToken">Token used to cancel this task.</param>
     /// <returns>A list of peak descriptions for the fitted peaks.</returns>
-    public List<PeakDescription> Execute(double[] xArray, double[] yArray, IEnumerable<PeakSearching.PeakDescription> peakDescriptions, CancellationToken cancellationToken)
+    public PeakFittingByIncrementalPeakAdditionResult Execute(double[] xArray, double[] yArray, IEnumerable<PeakSearching.PeakDescription> peakDescriptions, CancellationToken cancellationToken)
     {
       // First, deduce some characteristics from the x-values
       double minimalX = double.PositiveInfinity;
@@ -348,8 +355,12 @@ namespace Altaxo.Science.Spectroscopy.PeakFitting
 
       var fitFunction = fitFunctionWithOneTerm.WithOrderOfBaselinePolynomial(OrderOfBaselinePolynomial);
 
+      List<double> _chiSquareWrtToNumberOfPeaks = new List<double>(); // list to store the chi-square values for each number of peaks, used for debugging and pruning
+      List<double> _sigmaSquareWrtToNumberOfPeaks = new List<double>(); // list to store the chi-square values for each number of peaks, used for debugging and pruning
 
       double[] yRest = (double[])yArray.Clone();
+      _chiSquareWrtToNumberOfPeaks.Add(RMath.Pow2(VectorMath.EuclideanNorm(yRest)));
+      _sigmaSquareWrtToNumberOfPeaks.Add(_chiSquareWrtToNumberOfPeaks[0] / yRest.Length);
 
       var lowerBounds = new List<double?>(Enumerable.Repeat<double?>(null, OrderOfBaselinePolynomial + 1));
       var upperBounds = new List<double?>(Enumerable.Repeat<double?>(null, OrderOfBaselinePolynomial + 1));
@@ -500,6 +511,8 @@ namespace Altaxo.Science.Spectroscopy.PeakFitting
         fitResult2 = fit.Fit(xArray, yArray, initialGuess, lowerBounds, upperBounds, null, paramsFixed, cancellationToken);
         double sumChiSquareSecond = fitResult2.ModelInfoAtMinimum.Value;
         // Current.Console.WriteLine($"SumChiSquare First={sumChiSquareFirst}, second={sumChiSquareSecond}");
+        _chiSquareWrtToNumberOfPeaks.Add(sumChiSquareSecond);
+        _sigmaSquareWrtToNumberOfPeaks.Add(sumChiSquareSecond / fitResult2.ModelInfoAtMinimum.DegreeOfFreedom);
 
 
         previousGuess = fitResult2.MinimizingPoint.ToArray();
@@ -548,7 +561,11 @@ namespace Altaxo.Science.Spectroscopy.PeakFitting
         previousGuess = tempArray;
       }
 
-      var result = new List<PeakDescription>();
+      var result = new PeakFittingByIncrementalPeakAdditionResult()
+      {
+        ChiSquareWrtToNumberOfPeaks = _chiSquareWrtToNumberOfPeaks,
+        SigmaSquareWrtToNumberOfPeaks = _sigmaSquareWrtToNumberOfPeaks,
+      };
 
       if (FitWidthScalingFactor.HasValue && fitResult2 is not null)
       {
