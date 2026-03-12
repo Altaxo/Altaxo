@@ -61,13 +61,13 @@
   </ItemGroup>
   <ItemGroup>
     <PackageReference Include="Vortice.Mathematics" Version="2.1.0" />
-    <PackageReference Include="Vortice.D3DCompiler" Version="3.8.2" />
-    <PackageReference Include="Vortice.Direct2D1" Version="3.8.2" />
-    <PackageReference Include="Vortice.Direct3D11" Version="3.8.2" />
-    <PackageReference Include="Vortice.Direct3D12" Version="3.8.2" />
-    <PackageReference Include="Vortice.Direct3D9" Version="3.8.2" />
-    <PackageReference Include="Vortice.DirectX" Version="3.8.2" />
-    <PackageReference Include="Vortice.DXGI" Version="3.8.2" />
+    <PackageReference Include="Vortice.D3DCompiler" Version="3.8.3" />
+    <PackageReference Include="Vortice.Direct2D1" Version="3.8.3" />
+    <PackageReference Include="Vortice.Direct3D11" Version="3.8.3" />
+    <PackageReference Include="Vortice.Direct3D12" Version="3.8.3" />
+    <PackageReference Include="Vortice.Direct3D9" Version="3.8.3" />
+    <PackageReference Include="Vortice.DirectX" Version="3.8.3" />
+    <PackageReference Include="Vortice.DXGI" Version="3.8.3" />
     <PackageReference Include="SharpGen.Runtime" Version="2.4.2-beta" />
     <PackageReference Include="SharpGen.Runtime.COM" Version="2.4.2-beta" />
 
