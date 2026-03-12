@@ -24,6 +24,7 @@
 
 using System;
 using System.Collections.Generic;
+using Altaxo.Calc;
 using Altaxo.Units;
 
 namespace Altaxo.Science.Thermodynamics.Fluids
@@ -238,8 +239,8 @@ namespace Altaxo.Science.Thermodynamics.Fluids
     /// <summary>
     /// Gets the dimensionless coefficient of fugacity from mole density and temperature.
     /// </summary>
-    /// <param name="moleDensity">The mole density.</param>
-    /// <param name="temperature">The temperature.</param>
+    /// <param name="moleDensity">The mole density in mol/m³.</param>
+    /// <param name="temperature">The temperature in K.</param>
     /// <returns>Dimensionless coefficient of fugacity.</returns>
     public double CoefficientOfFugacity_FromMoleDensityAndTemperature(double moleDensity, double temperature)
     {
@@ -248,7 +249,49 @@ namespace Altaxo.Science.Thermodynamics.Fluids
 
       double phiR = PhiR_OfReducedVariables(delta, tau);
       double phiR_delta = PhiR_delta_OfReducedVariables(delta, tau);
-      return Math.Exp(phiR + delta * phiR_delta - Math.Log(1 - delta * phiR_delta));
+      return Math.Exp(phiR + delta * phiR_delta - RMath.Log1p(delta * phiR_delta));
+    }
+
+    /// <summary>
+    /// Gets the dimensionless coefficient of fugacity from mole density and temperature.
+    /// </summary>
+    /// <param name="moleDensity">The mole density in units compatible to in mol/m³.</param>
+    /// <param name="temperature">The temperature in units compatible to K.</param>
+    /// <returns>Dimensionless coefficient of fugacity.</returns>
+    public DimensionfulQuantity CoefficientOfFugacity_FromMoleDensityAndTemperature(DimensionfulQuantity moleDensity, DimensionfulQuantity temperature)
+    {
+      moleDensity.CheckUnitCompatibleWith(Altaxo.Units.VolumetricMolarDensity.MolePerCubicMeter.Instance, nameof(moleDensity));
+      temperature.CheckUnitCompatibleWith(Altaxo.Units.Temperature.Kelvin.Instance, nameof(temperature));
+      return new DimensionfulQuantity(CoefficientOfFugacity_FromMoleDensityAndTemperature(moleDensity.AsValueInSIUnits, temperature.AsValueInSIUnits), Altaxo.Units.Dimensionless.Unity.Instance);
+    }
+
+    /// <summary>
+    /// Gets the dimensionless coefficient of fugacity from mole density and temperature.
+    /// </summary>
+    /// <param name="massDensity">The mass density in kg/m³.</param>
+    /// <param name="temperature">The temperature in K.</param>
+    /// <returns>Dimensionless coefficient of fugacity.</returns>
+    public double CoefficientOfFugacity_FromMassDensityAndTemperature(double massDensity, double temperature)
+    {
+      double delta = GetDeltaFromMassDensity(massDensity); // reduced density
+      double tau = GetTauFromTemperature(temperature); // reduced inverse temperature
+
+      double phiR = PhiR_OfReducedVariables(delta, tau);
+      double phiR_delta = PhiR_delta_OfReducedVariables(delta, tau);
+      return Math.Exp(phiR + delta * phiR_delta - RMath.Log1p(delta * phiR_delta));
+    }
+
+    /// <summary>
+    /// Gets the dimensionless coefficient of fugacity from mass density and temperature.
+    /// </summary>
+    /// <param name="massDensity">The mass density in units compatible to kg/m³.</param>
+    /// <param name="temperature">The temperature in units compatible to K.</param>
+    /// <returns>Dimensionless coefficient of fugacity.</returns>
+    public virtual DimensionfulQuantity CoefficientOfFugacity_FromMassDensityAndTemperature(DimensionfulQuantity massDensity, DimensionfulQuantity temperature)
+    {
+      massDensity.CheckUnitCompatibleWith(Altaxo.Units.VolumetricMassDensity.KilogramPerCubicMeter.Instance, nameof(massDensity));
+      temperature.CheckUnitCompatibleWith(Altaxo.Units.Temperature.Kelvin.Instance, nameof(temperature));
+      return new DimensionfulQuantity(CoefficientOfFugacity_FromMassDensityAndTemperature(massDensity.AsValueInSIUnits, temperature.AsValueInSIUnits), Altaxo.Units.Dimensionless.Unity.Instance);
     }
 
 
