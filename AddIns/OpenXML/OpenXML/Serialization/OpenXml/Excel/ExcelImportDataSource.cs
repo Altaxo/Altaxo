@@ -26,8 +26,6 @@
 using System;
 using System.Collections.Generic;
 using System.Diagnostics.CodeAnalysis;
-using System.Linq;
-using System.Text;
 using Altaxo.Data;
 
 namespace Altaxo.Serialization.OpenXml.Excel
@@ -158,10 +156,6 @@ namespace Altaxo.Serialization.OpenXml.Excel
     {
       new ExcelImporter().Import(validFileNames, destinationTable, _processOptions, attachDataSource: false);
     }
-
-    #region Properties
-
-    #endregion Properties
 
     public override (IReadOnlyList<string> FileExtensions, string Explanation) GetFileExtensions()
       => new ExcelImporter().GetFileExtensions();

@@ -241,7 +241,7 @@ namespace Altaxo.Serialization.OpenXml.Excel
         if (idxRowExcel < docAnalysis.NumberOfMainHeaderLines)
         {
           // get the column names
-          if (idxRowExcel == docAnalysis.IndexOfCaptionLine && !importOptions.UseNeutralColumnName)
+          if (idxRowExcel + 1 == docAnalysis.IndexOfCaptionLine && !importOptions.UseNeutralColumnName)
           {
             int idxColumn = -1;
             foreach (Cell cell in row.Elements<Cell>())
