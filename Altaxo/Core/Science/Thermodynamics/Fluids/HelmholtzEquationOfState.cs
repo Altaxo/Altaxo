@@ -236,6 +236,23 @@ namespace Altaxo.Science.Thermodynamics.Fluids
     #region Thermodynamic properties derived from dimensionless Helmholtz energy
 
     /// <summary>
+    /// Gets the dimensionless coefficient of fugacity from mole density and temperature.
+    /// </summary>
+    /// <param name="moleDensity">The mole density.</param>
+    /// <param name="temperature">The temperature.</param>
+    /// <returns>Dimensionless coefficient of fugacity.</returns>
+    public double CoefficientOfFugacity_FromMoleDensityAndTemperature(double moleDensity, double temperature)
+    {
+      double delta = GetDeltaFromMoleDensity(moleDensity); // reduced density
+      double tau = GetTauFromTemperature(temperature); // reduced inverse temperature
+
+      double phiR = PhiR_OfReducedVariables(delta, tau);
+      double phiR_delta = PhiR_delta_OfReducedVariables(delta, tau);
+      return Math.Exp(phiR + delta * phiR_delta - Math.Log(1 - delta * phiR_delta));
+    }
+
+
+    /// <summary>
     /// Gets the mass density (in kg/m³) from mole density (in mol/m³).
     /// </summary>
     /// <param name="moleDensity">The mole density in mol/m³.</param>
