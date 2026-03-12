@@ -1061,7 +1061,7 @@ StartOfFunction:
       var (xre, yre, rowCountRe) = dataReal.GetResolvedXYData();
       var (xim, yim, rowCountIm) = dataImag.GetResolvedXYData();
 
-      if (rowCountRe == 0 || rowCountIm == 0)
+      if (rowCountRe == 0 || rowCountIm == 0 || xre is null || yre is null || xim is null || yim is null)
         return null;
 
       var dict = new Dictionary<double, double>();
