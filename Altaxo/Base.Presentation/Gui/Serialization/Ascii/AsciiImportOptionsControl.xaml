@@ -5,7 +5,7 @@
 						 xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
 						 xmlns:axogc="clr-namespace:Altaxo.Gui.Common"
 						 xmlns:core="clr-namespace:System;assembly=mscorlib"
-						 xmlns:axosa="clr-namespace:Altaxo.Serialization.Ascii;assembly=AltaxoBase"
+						 xmlns:axosa="clr-namespace:Altaxo.Serialization.Ascii;assembly=AltaxoCore"
 						 xmlns:local="clr-namespace:Altaxo.Gui.Serialization.Ascii"
 						 mc:Ignorable="d">
 	<UserControl.Resources>

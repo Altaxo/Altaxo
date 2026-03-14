@@ -22,39 +22,59 @@
 
 #endregion Copyright
 
+using System;
 using System.Collections.Generic;
 
 namespace Altaxo.Serialization.Ascii
 {
   /// <summary>
-  /// This separation strategy returns the entire line as a single token. This strategy can be used for instance when you have text containing spaces, that should be imported in one single text column.
+  /// This strategy assumes that the tokens are separated by one or more whitespace characters (tabs and spaces).
   /// </summary>
-  public record SingleLineSeparationStrategy : IAsciiSeparationStrategy
+  public record SkipWhiteSpaceSeparationStrategy : IAsciiSeparationStrategy
   {
+    /// <summary>
+    /// The separator characters used to split the input line.
+    /// </summary>
+    private static char[] _sSeparators = new[] { ' ', '\t' };
+
     #region Serialization
 
-    /// <summary>2014-08-03 initial version.</summary>
-    [Altaxo.Serialization.Xml.XmlSerializationSurrogateFor(typeof(SingleLineSeparationStrategy), 0)]
+    /// <summary>
+    /// V0: 2014-08-03 initial version.
+    /// V1: 2026-03-13 Moved from AltaxoBase to AltaxoCore
+    /// </summary>
+    [Altaxo.Serialization.Xml.XmlSerializationSurrogateFor("AltaxoBase", "Altaxo.Serialization.Ascii.SkipWhiteSpaceSeparationStrategy", 0)]
+    [Altaxo.Serialization.Xml.XmlSerializationSurrogateFor(typeof(SkipWhiteSpaceSeparationStrategy), 1)]
     private class XmlSerializationSurrogate0 : Altaxo.Serialization.Xml.IXmlSerializationSurrogate
     {
       public virtual void Serialize(object obj, Altaxo.Serialization.Xml.IXmlSerializationInfo info)
       {
+        var s = (SkipWhiteSpaceSeparationStrategy)obj;
       }
 
       public object Deserialize(object? o, Altaxo.Serialization.Xml.IXmlDeserializationInfo info, object? parent)
       {
-        var s = (SingleLineSeparationStrategy?)o ?? new SingleLineSeparationStrategy();
+        var s = (SkipWhiteSpaceSeparationStrategy?)o ?? new SkipWhiteSpaceSeparationStrategy();
         return s;
       }
     }
 
     #endregion Serialization
 
-    public IEnumerable<string> GetTokens(string line)
+    /// <summary>
+    /// Initializes a new instance of the <see cref="SkipWhiteSpaceSeparationStrategy"/> class.
+    /// </summary>
+    public SkipWhiteSpaceSeparationStrategy()
     {
-      yield return line;
     }
 
+    /// <inheritdoc/>
+    public IEnumerable<string> GetTokens(string line)
+    {
+      return line.Split(_sSeparators, StringSplitOptions.RemoveEmptyEntries);
+    }
+
+    /// <inheritdoc/>
     public override string ToString()
     {
       return $"{GetType().Name}";

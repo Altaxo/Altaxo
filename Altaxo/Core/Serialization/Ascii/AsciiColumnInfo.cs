@@ -33,6 +33,12 @@ namespace Altaxo.Serialization.Ascii
   /// </summary>
   public record AsciiColumnInfo : IEquatable<AsciiColumnInfo>
   {
+    /// <summary>
+    /// Initializes a new instance of the <see cref="AsciiColumnInfo"/> record.
+    /// </summary>
+    /// <param name="t">The column type.</param>
+    /// <param name="scoreValue">The score value used during structure recognition.</param>
+    /// <param name="shortCut">The shortcut used in textual structure representations.</param>
     private AsciiColumnInfo(AsciiColumnType t, int scoreValue, char shortCut)
     {
       ColumnType = t;
@@ -81,8 +87,14 @@ namespace Altaxo.Serialization.Ascii
     /// </summary>
     public static ImmutableDictionary<AsciiColumnType, AsciiColumnInfo> ColumnTypeToColumnInfo { get; }
 
+    /// <summary>
+    /// Gets a dictionary that maps shortcut characters to the corresponding <see cref="AsciiColumnInfo"/>.
+    /// </summary>
     public static ImmutableDictionary<char, AsciiColumnInfo> ShortCutToColumnInfo { get; }
 
+    /// <summary>
+    /// Initializes the lookup dictionaries.
+    /// </summary>
     static AsciiColumnInfo()
     {
       {

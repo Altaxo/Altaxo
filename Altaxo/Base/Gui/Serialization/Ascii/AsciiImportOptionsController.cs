@@ -154,7 +154,7 @@ namespace Altaxo.Gui.Serialization.Ascii
       if (args is not null && args.Length >= 3 && args[2] is AsciiDocumentAnalysisOptions)
         _analysisOptions = (AsciiDocumentAnalysisOptions)args[2];
       else
-        _analysisOptions = Current.PropertyService.GetValue(AsciiDocumentAnalysisOptions.PropertyKeyAsciiDocumentAnalysisOptions, Altaxo.Main.Services.RuntimePropertyKind.UserAndApplicationAndBuiltin);
+        _analysisOptions = Current.PropertyService.GetValue(AsciiImporterImpl.PropertyKeyAsciiDocumentAnalysisOptions, Altaxo.Main.Services.RuntimePropertyKind.UserAndApplicationAndBuiltin);
 
       return base.InitializeDocument(args);
     }

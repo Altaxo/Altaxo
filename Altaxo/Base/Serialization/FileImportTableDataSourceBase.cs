@@ -31,29 +31,57 @@ using Altaxo.Data;
 
 namespace Altaxo.Serialization
 {
+  /// <summary>
+  /// Base class for table data sources that import data from one or more files.
+  /// </summary>
   public abstract class FileImportTableDataSourceBase : TableDataSourceBase, ICloneable, Altaxo.Data.IAltaxoTableDataSource
   {
+    /// <summary>
+    /// Gets or sets the import options used to control how and when the data source is updated.
+    /// </summary>
     protected IDataSourceImportOptions _importOptions;
 
+    /// <summary>
+    /// List of configured files (stored as absolute and relative file names).
+    /// </summary>
     protected List<AbsoluteAndRelativeFileName> _files = [];
 
+    /// <summary>
+    /// The set of resolved absolute file names currently being watched.
+    /// </summary>
     private HashSet<string> _resolvedFileNames = [];
 
+    /// <summary>
+    /// Indicates whether the data source has unsaved changes.
+    /// </summary>
     protected bool _isDirty = false;
 
+    /// <summary>
+    /// File system watchers monitoring the directories of the resolved files.
+    /// </summary>
     protected System.IO.FileSystemWatcher[] _fileSystemWatchers = [];
 
+    /// <summary>
+    /// Trigger-based update helper that throttles file system events.
+    /// </summary>
     protected Altaxo.Main.TriggerBasedUpdate? _triggerBasedUpdate;
 
     /// <summary>Indicates that serialization of the whole AltaxoDocument (!) is still in progress. Data sources should not be updated during serialization.</summary>
     [NonSerialized]
     protected bool _isDeserializationInProgress;
 
+    /// <summary>
+    /// Initializes a new instance of the <see cref="FileImportTableDataSourceBase"/> class.
+    /// </summary>
     protected FileImportTableDataSourceBase()
     {
       _importOptions = new DataSourceImportOptions();
     }
 
+    /// <summary>
+    /// Initializes a new instance of the <see cref="FileImportTableDataSourceBase"/> class.
+    /// </summary>
+    /// <param name="fileNames">The file names to import from.</param>
     protected FileImportTableDataSourceBase(IEnumerable<string> fileNames)
       : this()
     {
@@ -61,6 +89,10 @@ namespace Altaxo.Serialization
         _files.Add(new AbsoluteAndRelativeFileName(fileName));
     }
 
+    /// <summary>
+    /// Initializes a new instance of the <see cref="FileImportTableDataSourceBase"/> class by copying from another instance.
+    /// </summary>
+    /// <param name="from">The instance to copy from.</param>
     protected FileImportTableDataSourceBase(FileImportTableDataSourceBase from)
     {
       using (var token = SuspendGetToken())
@@ -72,11 +104,14 @@ namespace Altaxo.Serialization
       }
     }
 
+    /// <inheritdoc/>
     protected abstract override IEnumerable<Main.DocumentNodeAndName> GetDocumentNodeChildrenWithName();
 
+    /// <inheritdoc/>
     public abstract void VisitDocumentReferences(Main.DocNodeProxyReporter ReportProxies);
 
 
+    /// <inheritdoc/>
     protected override void OnResume(int eventCount)
     {
       base.OnResume(eventCount);
@@ -87,6 +122,7 @@ namespace Altaxo.Serialization
         UpdateWatching(); // Compromise - we update only if the watch is off
     }
 
+    /// <inheritdoc/>
     public override void FillData_Unchecked(DataTable destinationTable, IProgressReporter reporter)
     {
       var validFileNames = _files.Select(x => x.GetResolvedFileNameOrNull()).OfType<string>().Where(x => !string.IsNullOrEmpty(x)).ToArray();
@@ -111,8 +147,22 @@ namespace Altaxo.Serialization
       }
     }
 
+    /// <summary>
+    /// Performs the actual import from the provided list of valid (resolved) file names.
+    /// </summary>
+    /// <param name="validFileNames">The resolved file names to import from.</param>
+    /// <param name="destinationTable">The destination table that receives the imported data.</param>
+    /// <param name="reporter">A progress reporter.</param>
     protected abstract void ImportFromFiles(string[] validFileNames, DataTable destinationTable, IProgressReporter reporter);
 
+    /// <summary>
+    /// Gets or sets the single source file name.
+    /// </summary>
+    /// <remarks>
+    /// This property can only be used when exactly one file is configured. If more than one file is configured,
+    /// an <see cref="InvalidOperationException"/> is thrown.
+    /// </remarks>
+    /// <exception cref="InvalidOperationException">Thrown if more than one file is configured.</exception>
     public string SourceFileName
     {
       get
@@ -136,6 +186,9 @@ namespace Altaxo.Serialization
       }
     }
 
+    /// <summary>
+    /// Gets or sets the source file names.
+    /// </summary>
     public IEnumerable<string> SourceFileNames
     {
       get => _files.Select(x => x.GetResolvedFileNameOrNull() ?? x.AbsoluteFileName);
@@ -149,14 +202,19 @@ namespace Altaxo.Serialization
       }
     }
 
+    /// <inheritdoc/>
     public virtual object ProcessDataObject
     {
       get => SourceFileNames;
       set => SourceFileNames = (IEnumerable<string>)value;
     }
 
+    /// <summary>
+    /// Gets the number of configured source file names.
+    /// </summary>
     public int SourceFileNameCount => _files.Count;
 
+    /// <inheritdoc/>
     public override IDataSourceImportOptions ImportOptions
     {
       get => _importOptions;
@@ -173,8 +231,14 @@ namespace Altaxo.Serialization
       }
     }
 
+    /// <inheritdoc/>
     public abstract object ProcessOptionsObject { get; set; }
 
+    /// <summary>
+    /// Replaces the current file list with a single file.
+    /// </summary>
+    /// <param name="value">The file to set.</param>
+    /// <exception cref="ArgumentNullException">Thrown if <paramref name="value"/> is <see langword="null"/>.</exception>
     protected void SetSingleFile(AbsoluteAndRelativeFileName value)
     {
       if (value is null)
@@ -188,13 +252,22 @@ namespace Altaxo.Serialization
         UpdateWatching();
     }
 
+    /// <summary>
+    /// Callback invoked after this instance has been deserialized.
+    /// </summary>
+    /// <remarks>
+    /// Note: It is not necessary to call <see cref="UpdateWatching"/> here; <see cref="UpdateWatching"/> is called when the table
+    /// connects to this data source via subscription to the DataSourceChanged event.
+    /// </remarks>
     public void OnAfterDeserialization()
     {
-      // Note: it is not neccessary to call UpdateWatching here; UpdateWatching is called when the table connects to this data source via subscription to the DataSourceChanged event
+      // Note: it is not necessary to call UpdateWatching here; UpdateWatching is called when the table connects to this data source via subscription to the DataSourceChanged event
     }
 
 
-
+    /// <summary>
+    /// Updates file watching according to the current import options and configured files.
+    /// </summary>
     public void UpdateWatching()
     {
       SwitchOffWatching();
@@ -220,6 +293,10 @@ namespace Altaxo.Serialization
       SwitchOnWatching(validFileNames);
     }
 
+    /// <summary>
+    /// Enables file watching for the specified resolved file names.
+    /// </summary>
+    /// <param name="validFileNames">The resolved file names to watch.</param>
     private void SwitchOnWatching(string[] validFileNames)
     {
       _triggerBasedUpdate = new Main.TriggerBasedUpdate(Current.TimerQueue)
@@ -255,6 +332,9 @@ namespace Altaxo.Serialization
       _fileSystemWatchers = watchers.ToArray();
     }
 
+    /// <summary>
+    /// Disables file watching and releases associated resources.
+    /// </summary>
     private void SwitchOffWatching()
     {
       IDisposable? disp = null;
@@ -275,6 +355,9 @@ namespace Altaxo.Serialization
         disp.Dispose();
     }
 
+    /// <summary>
+    /// Callback invoked by <see cref="Altaxo.Main.TriggerBasedUpdate"/> to update the data source.
+    /// </summary>
     public void EhUpdateByTimerQueue()
     {
       if (_parent is not null)
@@ -288,6 +371,11 @@ namespace Altaxo.Serialization
       }
     }
 
+    /// <summary>
+    /// Handles changes detected by a <see cref="System.IO.FileSystemWatcher"/> and forwards them to the trigger-based update logic.
+    /// </summary>
+    /// <param name="sender">The event sender.</param>
+    /// <param name="e">The file system event arguments.</param>
     private void EhTriggerByFileSystemWatcher(object sender, System.IO.FileSystemEventArgs e)
     {
       if (!_resolvedFileNames.Contains(e.FullPath))
@@ -296,12 +384,16 @@ namespace Altaxo.Serialization
       _triggerBasedUpdate?.Trigger();
     }
 
+    /// <summary>
+    /// Must be called after deserialization of the whole document has completely finished.
+    /// </summary>
     protected void EhAfterDeserializationHasCompletelyFinished()
     {
       _isDeserializationInProgress = false;
       UpdateWatching();
     }
 
+    /// <inheritdoc/>
     protected override void Dispose(bool disposing)
     {
       if (!IsDisposed)
@@ -310,26 +402,50 @@ namespace Altaxo.Serialization
       base.Dispose(disposing);
     }
 
+    /// <summary>
+    /// Gets the supported file extensions and their explanation.
+    /// </summary>
+    /// <returns>A tuple containing the supported file extensions and an explanation.</returns>
     public abstract (IReadOnlyList<string> FileExtensions, string Explanation) GetFileExtensions();
 
+    /// <inheritdoc/>
     public abstract object Clone();
 
+    /// <inheritdoc/>
     public abstract bool CopyFrom(object obj);
   }
 
+  /// <summary>
+  /// Generic base class for file import table data sources that have strongly typed, immutable process options.
+  /// </summary>
+  /// <typeparam name="TProcessOptions">The type of the process options.</typeparam>
   public abstract class FileImportTableDataSourceBase<TProcessOptions> : FileImportTableDataSourceBase, IAltaxoTableDataSource where TProcessOptions : Main.IImmutable
   {
+    /// <summary>
+    /// The process options used during import.
+    /// </summary>
     protected TProcessOptions _processOptions;
 
+    /// <summary>
+    /// Initializes a new instance of the <see cref="FileImportTableDataSourceBase{TProcessOptions}"/> class.
+    /// </summary>
     protected FileImportTableDataSourceBase()
     {
     }
 
+    /// <summary>
+    /// Initializes a new instance of the <see cref="FileImportTableDataSourceBase{TProcessOptions}"/> class.
+    /// </summary>
+    /// <param name="fileNames">The file names to import from.</param>
     protected FileImportTableDataSourceBase(IEnumerable<string> fileNames)
       : base(fileNames)
     {
     }
 
+    /// <summary>
+    /// Initializes a new instance of the <see cref="FileImportTableDataSourceBase{TProcessOptions}"/> class by copying from another instance.
+    /// </summary>
+    /// <param name="from">The instance to copy from.</param>
     protected FileImportTableDataSourceBase(FileImportTableDataSourceBase<TProcessOptions> from)
       : base(from)
     {
@@ -341,12 +457,16 @@ namespace Altaxo.Serialization
       }
     }
 
+    /// <inheritdoc/>
     public override object ProcessOptionsObject
     {
       get => _processOptions;
       set => _processOptions = ((TProcessOptions)value);
     }
 
+    /// <summary>
+    /// Gets or sets the strongly typed process options.
+    /// </summary>
     public TProcessOptions ProcessOptions
     {
       get => _processOptions;
@@ -355,6 +475,7 @@ namespace Altaxo.Serialization
 
 
 
+    /// <inheritdoc/>
     public override bool CopyFrom(object obj)
     {
       if (ReferenceEquals(this, obj))
@@ -376,10 +497,12 @@ namespace Altaxo.Serialization
       return false;
     }
 
+    /// <inheritdoc/>
     public override void VisitDocumentReferences(Main.DocNodeProxyReporter ReportProxies)
     {
     }
 
+    /// <inheritdoc/>
     protected override IEnumerable<Main.DocumentNodeAndName> GetDocumentNodeChildrenWithName()
     {
       if (_processOptions is Main.IDocumentNode docNode)

@@ -175,7 +175,7 @@ namespace Altaxo.Data
 
       if (Current.Gui.ShowOpenFileDialog(options) && options.FileNames.Length > 0)
       {
-        var analysisOptions = dataTable.GetPropertyValue(AsciiDocumentAnalysisOptions.PropertyKeyAsciiDocumentAnalysisOptions, null) ?? throw new InvalidProgramException(); ;
+        var analysisOptions = dataTable.GetPropertyValue(AsciiImporterImpl.PropertyKeyAsciiDocumentAnalysisOptions, null) ?? throw new InvalidProgramException(); ;
         if (!ShowAsciiImportOptionsDialog(options.FileName, analysisOptions, out var importOptions))
           return;
 

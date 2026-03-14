@@ -31,7 +31,7 @@ using Altaxo.Data;
 namespace Altaxo.Serialization.Ascii
 {
   /// <summary>
-  /// AsciiExporter provides some static methods to export tables or columns to ascii files
+  /// Provides methods to export tables or columns to ASCII files.
   /// </summary>
   public class AsciiExporter
   {
@@ -44,11 +44,18 @@ namespace Altaxo.Serialization.Ascii
 
     private AsciiExportOptions _exportOptions;
 
+    /// <summary>
+    /// Initializes a new instance of the <see cref="AsciiExporter"/> class using default export options.
+    /// </summary>
     public AsciiExporter()
       : this(new AsciiExportOptions())
     {
     }
 
+    /// <summary>
+    /// Initializes a new instance of the <see cref="AsciiExporter"/> class.
+    /// </summary>
+    /// <param name="options">The export options to use.</param>
     public AsciiExporter(AsciiExportOptions options)
     {
       _exportOptions = options ?? throw new ArgumentNullException(nameof(options));
@@ -61,6 +68,11 @@ namespace Altaxo.Serialization.Ascii
       };
     }
 
+    /// <summary>
+    /// Gets the converter function used to serialize values of the specified column type.
+    /// </summary>
+    /// <param name="columnType">The column type.</param>
+    /// <returns>The converter function, or <see langword="null"/> if no converter is registered for the given type.</returns>
     public Func<Altaxo.Data.AltaxoVariant, string>? GetConverter(System.Type columnType)
     {
       if (_typeConverters.TryGetValue(columnType, out var result))
@@ -73,6 +85,7 @@ namespace Altaxo.Serialization.Ascii
     /// Returns the default converter for a given column type.
     /// </summary>
     /// <param name="columnType">The column type.</param>
+    /// <param name="options">The export options used for formatting.</param>
     /// <returns>Default converter for the given column type.</returns>
     public Func<AltaxoVariant, string> GetDefaultConverter(System.Type columnType, AsciiExportOptions options)
     {
@@ -117,8 +130,7 @@ namespace Altaxo.Serialization.Ascii
     /// Exports the data column names of a table into a single line of ascii.
     /// </summary>
     /// <param name="strwr">A stream writer to write the ascii data to.</param>
-    /// <param name="table">The data table whichs data column names should be exported.</param>
-    /// <param name="options">The options controlling the export process.</param>
+    /// <param name="table">The data table whose data column names should be exported.</param>
     protected void ExportDataColumnNames(StreamWriter strwr, Altaxo.Data.DataTable table)
     {
       int nColumns = table.DataColumns.ColumnCount;
@@ -176,7 +188,6 @@ namespace Altaxo.Serialization.Ascii
     /// </summary>
     /// <param name="strwr">A stream writer to write the ascii data to.</param>
     /// <param name="columnCollection">The column collection to export.</param>
-    /// <param name="options">The options used for exporting the data.</param>
     protected void ExportDataColumns(
       StreamWriter strwr,
       Altaxo.Data.DataColumnCollection columnCollection
@@ -216,7 +227,9 @@ namespace Altaxo.Serialization.Ascii
     /// </summary>
     /// <param name="myStream">The stream the table should be exported to.</param>
     /// <param name="table">The table that is to be exported.</param>
-    /// <param name="options">The options used for exporting of the data.</param>
+    /// <remarks>
+    /// The export options are taken from the <see cref="AsciiExporter"/> instance.
+    /// </remarks>
     public void ExportAscii(System.IO.Stream myStream, Altaxo.Data.DataTable table)
     {
       var strwr = new StreamWriter(myStream, System.Text.Encoding.Default); // Change to Unicode or quest encoding by a dialog box
@@ -296,8 +309,8 @@ namespace Altaxo.Serialization.Ascii
     /// <summary>
     /// Converts a given string to a string which will not contain the separator char nor contains newlines.
     /// </summary>
-    /// <param name="s"></param>
-    /// <returns></returns>
+    /// <param name="s">The string to convert.</param>
+    /// <returns>The converted string.</returns>
     public string ConvertToSaveString(string s)
     {
       s = s.Replace(_exportOptions.SeparatorChar, _exportOptions.SubstituteForSeparatorChar);

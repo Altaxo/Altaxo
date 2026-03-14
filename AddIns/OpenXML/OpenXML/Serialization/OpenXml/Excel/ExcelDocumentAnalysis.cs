@@ -2,7 +2,7 @@
 
 /////////////////////////////////////////////////////////////////////////////
 //    Altaxo:  a data processing and data plotting program
-//    Copyright (C) 2002-2024 Dr. Dirk Lellinger
+//    Copyright (C) 2002-2026 Dr. Dirk Lellinger
 //
 //    This program is free software; you can redistribute it and/or modify
 //    it under the terms of the GNU General Public License as published by
@@ -25,16 +25,13 @@
 #nullable enable
 using System;
 using System.Collections.Generic;
-using System.Linq;
-using System.Text;
 using Altaxo.Serialization.Ascii;
-using DocumentFormat.OpenXml.Packaging;
 using DocumentFormat.OpenXml.Spreadsheet;
 
 namespace Altaxo.Serialization.OpenXml.Excel
 {
   /// <summary>
-  /// Supports the analysis of an Excel spreadsheet
+  /// Supports the analysis of an Excel worksheet.
   /// </summary>
   public class ExcelDocumentAnalysis
   {
@@ -44,10 +41,19 @@ namespace Altaxo.Serialization.OpenXml.Excel
 
     private NumberOfLinesPerLineComposition _lineAnalysisOptionsScoring;
 
+    /// <summary>
+    /// Gets the line structure with the highest score (i.e., the most frequently occurring structure) as determined during analysis.
+    /// </summary>
     public AsciiLineComposition? HighestScoredLineStructure { get; protected set; }
 
+    /// <summary>
+    /// Gets the number of main header lines.
+    /// </summary>
     public int NumberOfMainHeaderLines { get; protected set; }
 
+    /// <summary>
+    /// Gets the index of the caption line (ATTENTION: zero based!) within the header lines, or <c>-1</c> if no caption line was recognized.
+    /// </summary>
     public int? IndexOfCaptionLine { get; protected set; }
 
     private ExcelDocumentAnalysis()
@@ -57,54 +63,51 @@ namespace Altaxo.Serialization.OpenXml.Excel
     /// <summary>
     /// Analyzes the first lines of the Excel spreadsheet.
     /// </summary>
-    /// <param name="worksheetPart">The Excel worksheet to analyze</param>
-    /// <param name="workbookPart">Exel workbook (needed to resolve references).</param>
-    /// <param name="importOptions">The import options. Some of the field can already be filled with useful values. Since it is not neccessary to determine the value of those known fields, the analysis will be run faster then.</param>
+    /// <param name="worksheetPart">The Excel worksheet to analyze.</param>
+    /// <param name="workbookPart">Excel workbook (needed to resolve references).</param>
+    /// <param name="importOptions">The import options. Some of the fields can already be filled with useful values. Since it is not necessary to determine the value of those known fields, the analysis will run faster.</param>
     /// <returns>An analysis document.</returns>
-    public ExcelDocumentAnalysis(WorksheetPart worksheetPart, WorkbookPart workbookPart, ExcelImportOptions importOptions)
+    public ExcelDocumentAnalysis(List<List<Cell>> columns, ExcelImportOptions importOptions)
     {
       importOptions ??= new ExcelImportOptions();
-      InternalAnalyze(worksheetPart, workbookPart, importOptions);
+      InternalAnalyze(columns, importOptions);
     }
 
     /// <summary>
-    /// Analyzes the first <code>nLines</code> of the ascii stream.
+    /// Analyzes an Excel worksheet and updates the provided import options.
     /// </summary>
-    /// <param name="importOptions">The import options. Some of the field can already be filled with useful values. Since it is not neccessary to determine the value of those known fields, the analysis will be run faster then.</param>
-    /// <param name="stream">The ascii stream to analyze.</param>
-    /// <param name="analysisOptions">Options that specify how many lines are analyzed, and what number formats and date/time formats will be tested.</param>
-    /// <returns>Import options that can be used in a following step to read in the ascii stream. If the stream contains no data, the returned import options will be not fully specified.
-    /// The same instance is returned as given by the parameter <paramref name="importOptions"/>. If <paramref name="importOptions"/> was <c>null</c>, a new instance is created.</returns>
-    public static ExcelImportOptions Analyze(WorksheetPart worksheetPart, WorkbookPart workbookPart, ExcelImportOptions? importOptions)
+    /// <param name="worksheetPart">The Excel worksheet to analyze.</param>
+    /// <param name="workbookPart">Excel workbook (needed to resolve references).</param>
+    /// <param name="importOptions">The import options to update. If <see langword="null"/>, a new instance is created.</param>
+    /// <returns>The updated import options.</returns>
+    public static ExcelImportOptions Analyze(List<List<Cell>> columns, ExcelImportOptions? importOptions)
     {
       importOptions ??= new ExcelImportOptions();
       var analysis = new ExcelDocumentAnalysis();
-      analysis.InternalAnalyze(worksheetPart, workbookPart, importOptions);
+      analysis.InternalAnalyze(columns, importOptions);
       return importOptions;
     }
 
     /// <summary>
-    /// Analyzes the first <code>nLines</code> of the ascii stream.
+    /// Performs the worksheet analysis and writes results into the provided <paramref name="importOptions"/>.
     /// </summary>
-    /// <param name="importOptions">The import options. This can already contain known values. On return, this instance should be ready to be used to import ascii data, i.e. all fields should contain values unequal to <c>null</c>.</param>
-    /// <param name="stream">The ascii stream to analyze.</param>
-    /// <param name="analysisOptions">Options that specify how many lines are analyzed, and what number formats and date/time formats will be tested.</param>
+    /// <param name="worksheetPart">The Excel worksheet to analyze.</param>
+    /// <param name="workbookPart">Excel workbook (needed to resolve references).</param>
+    /// <param name="importOptions">The import options to update.</param>
 
-    public void InternalAnalyze(WorksheetPart worksheetPart, WorkbookPart workbookPart, ExcelImportOptions importOptions)
+    public void InternalAnalyze(List<List<Cell>> columns, ExcelImportOptions importOptions)
     {
       if (importOptions is null)
         throw new ArgumentNullException(nameof(importOptions));
-
-      var sheetData = worksheetPart.Worksheet.GetFirstChild<SheetData>();
 
       // Analyze each of the first few lines with all possible separation strategies
       _lineAnalysisOfBodyLines = new List<AsciiLineComposition>();
 
       int numberOfLinesToSkip = importOptions.NumberOfMainHeaderLines.HasValue && importOptions.NumberOfMainHeaderLines.Value > 0 ? importOptions.NumberOfMainHeaderLines.Value : 0;
 
-      foreach (Row row in sheetData.Elements<Row>().Skip(numberOfLinesToSkip))
+      for (int idxRow = numberOfLinesToSkip; idxRow < columns[0].Count; ++idxRow)
       {
-        _lineAnalysisOfBodyLines.Add(ExcelLineAnalysis.GetStructure(row));
+        _lineAnalysisOfBodyLines.Add(ExcelRowAnalysis.GetStructure(columns, idxRow));
       }
 
       (var maxNumberOfEqualLines, HighestScoredLineStructure) = CalculateScoreOfLineAnalysisOption(_lineAnalysisOfBodyLines);
@@ -117,14 +120,17 @@ namespace Altaxo.Serialization.OpenXml.Excel
 
       // get the index of the caption line
       if (importOptions.IndexOfCaptionLine is null)
-        EvaluateIndexOfCaptionLine(sheetData);
+        EvaluateIndexOfCaptionLine(columns);
       else
         IndexOfCaptionLine = importOptions.IndexOfCaptionLine.Value;
     }
 
     /// <summary>
-    /// Evaluates the number of main header lines. The presumtion is here, that the number of main header lines was not known before.
+    /// Evaluates the number of main header lines.
     /// </summary>
+    /// <remarks>
+    /// The presumption is that the number of main header lines was not known before.
+    /// </remarks>
     private void EvaluateNumberOfMainHeaderLines()
     {
       if (_lineAnalysisOfBodyLines is null || HighestScoredLineStructure is null)
@@ -143,7 +149,7 @@ namespace Altaxo.Serialization.OpenXml.Excel
     /// <summary>
     /// Evaluates the index of caption line. If the caption line could not be recognized, <see cref="IndexOfCaptionLine"/> is set to -1.
     /// </summary>
-    private void EvaluateIndexOfCaptionLine(SheetData sheetData)
+    private void EvaluateIndexOfCaptionLine(List<List<Cell>> columns)
     {
       if (_lineAnalysisOfBodyLines is null || HighestScoredLineStructure is null)
         throw new InvalidProgramException();
@@ -173,9 +179,9 @@ namespace Altaxo.Serialization.OpenXml.Excel
       else // number of header lines was known before. Thus we have to analyze those lines, but only with the best separation strategy
       {
         _lineAnalysisOfHeaderLines = new List<AsciiLineComposition>();
-        foreach (var row in sheetData.Elements<Row>())
+        for (int idxRow = 0; idxRow < NumberOfMainHeaderLines; ++idxRow)
         {
-          _lineAnalysisOfHeaderLines.Add(ExcelLineAnalysis.GetStructure(row));
+          _lineAnalysisOfHeaderLines.Add(ExcelRowAnalysis.GetStructure(columns, idxRow));
         }
 
         // preferredly, we search for a line with the same number of columns, but with every cell a text cell (shortcut 'T')
@@ -204,25 +210,25 @@ namespace Altaxo.Serialization.OpenXml.Excel
     }
 
     /// <summary>
-    /// Determines, which lines are the most fr
+    /// Determines the most frequent line composition.
     /// </summary>
-    /// <param name="analysisOption"></param>
-    /// <param name="result"></param>
-    /// <param name="maxNumberOfEqualLines"></param>
-    /// <param name="bestLine"></param>
+    /// <param name="result">The analyzed line compositions.</param>
+    /// <returns>
+    /// A tuple containing the maximum number of equal lines and the corresponding line composition.
+    /// </returns>
     public static (int MaxNumberOfEqualLines, AsciiLineComposition? LineComposition) CalculateScoreOfLineAnalysisOption(IReadOnlyList<AsciiLineComposition> result)
     {
       return CalculateScoreOfLineAnalysisOption(result, null);
     }
 
     /// <summary>
-    /// Determines, which lines are the most fr
+    /// Determines the most frequent line composition.
     /// </summary>
-    /// <param name="analysisOption"></param>
-    /// <param name="lines"></param>
-    /// <param name="excludeLineStructureHashes"></param>
-    /// <param name="maxNumberOfEqualLines"></param>
-    /// <param name="bestLine"></param>
+    /// <param name="lines">The analyzed line compositions.</param>
+    /// <param name="excludeLineStructureHashes">Line compositions to exclude from consideration.</param>
+    /// <returns>
+    /// A tuple containing the maximum number of equal lines and the corresponding line composition.
+    /// </returns>
     private static (int MaxNumberOfEqualLines, AsciiLineComposition? LineComposition) CalculateScoreOfLineAnalysisOption(IReadOnlyList<AsciiLineComposition> lines, HashSet<AsciiLineComposition>? excludeLineStructureHashes)
     {
       // Dictionary, Key is the line composition, Value is the number of lines that have this composition
@@ -273,25 +279,6 @@ namespace Altaxo.Serialization.OpenXml.Excel
       }
 
       return (maxNumberOfEqualLines, bestLine);
-    }
-
-    private static void PutRecognizedStructuresToClipboard(IEnumerable<AsciiLineAnalysis> analysisResults, IEnumerable<AsciiLineAnalysisOption> lineAnalysisOptions)
-    {
-      var stb = new StringBuilder();
-
-      foreach (var sepStrat in lineAnalysisOptions)
-      {
-        stb.AppendLine("Strategy " + sepStrat.ToString());
-        stb.AppendLine("----------------------------------");
-        foreach (var lineResult in analysisResults)
-          stb.AppendLine(lineResult[sepStrat].ToString());
-
-        stb.AppendLine();
-      }
-
-      var clip = Current.Gui.GetNewClipboardDataObject();
-      clip.SetData(typeof(string), stb.ToString());
-      Current.Gui.SetClipboardDataObject(clip);
     }
   }
 }

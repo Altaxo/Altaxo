@@ -2,7 +2,7 @@
 
 /////////////////////////////////////////////////////////////////////////////
 //    Altaxo:  a data processing and data plotting program
-//    Copyright (C) 2002-2024 Dr. Dirk Lellinger
+//    Copyright (C) 2002-2026 Dr. Dirk Lellinger
 //
 //    This program is free software; you can redistribute it and/or modify
 //    it under the terms of the GNU General Public License as published by
@@ -33,24 +33,31 @@ using DocumentFormat.OpenXml.Spreadsheet;
 
 namespace Altaxo.Serialization.OpenXml.Excel
 {
+  /// <summary>
+  /// Data file importer for Excel workbooks (<c>.xlsx</c>).
+  /// </summary>
   public record ExcelImporter : DataFileImporterBase
   {
+    /// <inheritdoc/>
     public override (IReadOnlyList<string> FileExtensions, string Explanation) GetFileExtensions()
     {
       return ([".xlsx"], "Excel files (*.xlsx)");
     }
 
+    /// <inheritdoc/>
     public override object CheckOrCreateImportOptions(object? importOptions)
     {
       return importOptions as ExcelImportOptions ?? new ExcelImportOptions();
     }
 
+    /// <inheritdoc/>
     public override IAltaxoTableDataSource? CreateTableDataSource(IReadOnlyList<string> fileNames, object importOptions)
     {
       return new ExcelImportDataSource(fileNames, (ExcelImportOptions)importOptions);
     }
 
 
+    /// <inheritdoc/>
     public override double GetProbabilityForBeingThisFileFormat(string fileName)
     {
       double p = 0;
@@ -158,6 +165,7 @@ namespace Altaxo.Serialization.OpenXml.Excel
       return stb.Length == 0 ? null : stb.ToString();
     }
 
+    /// <inheritdoc/>
     public override string? Import(IReadOnlyList<string> fileNames, DataTable table, object importOptionsObj, bool attachDataSource = true)
     {
       var importOptions = (ExcelImportOptions)importOptionsObj;
@@ -178,6 +186,17 @@ namespace Altaxo.Serialization.OpenXml.Excel
       return null;
     }
 
+    /// <summary>
+    /// Imports all selected sheets from one Excel file into the provided table.
+    /// </summary>
+    /// <param name="fileName">The Excel file name.</param>
+    /// <param name="table">The destination table.</param>
+    /// <param name="importOptions">The import options.</param>
+    /// <param name="columnNameDictionary">A dictionary used to track already used column names.</param>
+    /// <param name="groupNumber">The current column group number. Updated by this method.</param>
+    /// <returns>
+    /// A string containing error messages, or <see langword="null"/> if no errors occurred.
+    /// </returns>
     public string? ImportOneFile(string fileName, DataTable table, ExcelImportOptions importOptions, Dictionary<string, int> columnNameDictionary, ref int groupNumber)
     {
       using (SpreadsheetDocument document = SpreadsheetDocument.Open(fileName, false))
@@ -201,58 +220,86 @@ namespace Altaxo.Serialization.OpenXml.Excel
       return null;
     }
 
+    /// <summary>
+    /// Imports a single sheet of an Excel workbook into the provided table.
+    /// </summary>
+    /// <param name="worksheetPart">The worksheet part.</param>
+    /// <param name="workbookPart">The workbook part (needed to resolve references).</param>
+    /// <param name="table">The destination table.</param>
+    /// <param name="importOptions">The import options.</param>
+    /// <param name="columnNameDictionary">A dictionary used to track already used column names.</param>
+    /// <param name="fileName">The source file name.</param>
+    /// <param name="sheetName">The sheet name.</param>
+    /// <param name="groupNumber">The current column group number. Updated by this method.</param>
     public static void ImportOneSheet(WorksheetPart worksheetPart, WorkbookPart workbookPart, DataTable table, ExcelImportOptions importOptions, Dictionary<string, int> columnNameDictionary, string fileName, string sheetName, ref int groupNumber)
     {
-      var docAnalysis = new ExcelDocumentAnalysis(worksheetPart, workbookPart, importOptions);
+      var sheetData = worksheetPart.Worksheet.GetFirstChild<SheetData>();
+      var excelColumns = ExcelColumnAnalysis.GetColumns(sheetData);
 
-      // create the columns
-      DataColumn[] columns = new DataColumn[docAnalysis.HighestScoredLineStructure.Count];
-      string[] columnNames = new string[docAnalysis.HighestScoredLineStructure.Count];
-      for (int i = 0; i < columns.Length; i++)
+      // we use the document analysis here only to determine the number of header lines and the caption line.
+      var docAnalysis = new ExcelDocumentAnalysis(excelColumns, importOptions);
+
+      var numberOfHeaderLines = docAnalysis.NumberOfMainHeaderLines;
+
+      var idxDestColumn = 0;
+      var idxSrcColumn = 0;
+      var srcColumnToDestColumnMapping = new Dictionary<int, DataColumn>();
+      foreach (var column in excelColumns)
       {
-        switch (docAnalysis.HighestScoredLineStructure[i].ColumnType)
+        var typeOfColumn = ExcelColumnAnalysis.GetTypeOfColumn(column, numberOfHeaderLines);
+
+        DataColumn destColumn = null;
+        switch (typeOfColumn)
         {
-          case Ascii.AsciiColumnType.Int64:
-          case Ascii.AsciiColumnType.Double:
-            columns[i] = new DoubleColumn();
+          case Type t when t == typeof(double):
+            destColumn = new DoubleColumn();
             break;
-          case Ascii.AsciiColumnType.DateTime:
-            columns[i] = new DateTimeColumn();
+          case Type t when t == typeof(int):
+            destColumn = new DoubleColumn();
             break;
-          default:
-            columns[i] = new TextColumn();
+          case Type t when t == typeof(DateTime):
+            destColumn = new DateTimeColumn();
+            break;
+          case Type t when t == typeof(string):
+            destColumn = new TextColumn();
             break;
         }
+        ;
 
-        // add the columns already here (because we need them to determine the property column cells), later we will rename them
-        table.DataColumns.Add(columns[i], Guid.NewGuid().ToString(), i == 0 ? ColumnKind.X : ColumnKind.V, groupNumber);
+        if (destColumn is not null)
+        {
+          srcColumnToDestColumnMapping.Add(idxSrcColumn, destColumn);
+          // add the columns already here (because we need them to determine the property column cells), later we will rename them
+          table.DataColumns.Add(destColumn, Guid.NewGuid().ToString(), idxDestColumn == 0 ? ColumnKind.X : ColumnKind.V, groupNumber);
+          ++idxDestColumn;
+        }
+        ++idxSrcColumn;
       }
 
-      SheetData sheetData = worksheetPart.Worksheet.GetFirstChild<SheetData>();
 
+      var columnNames = new string[srcColumnToDestColumnMapping.Count];
       var headerText = new StringBuilder();
       int idxHeaderLine = 0;
-      int idxRowExcel = -1;
       int idxRowAltaxo = -1;
-      foreach (Row row in sheetData.Elements<Row>())
+      for (int idxRowExcel = 0; idxRowExcel < excelColumns[0].Count; ++idxRowExcel)
       {
-        ++idxRowExcel;
-
         if (idxRowExcel < docAnalysis.NumberOfMainHeaderLines)
         {
           // get the column names
-          if (idxRowExcel + 1 == docAnalysis.IndexOfCaptionLine && !importOptions.UseNeutralColumnName)
+          if (idxRowExcel == docAnalysis.IndexOfCaptionLine && !importOptions.UseNeutralColumnName)
           {
-            int idxColumn = -1;
-            foreach (Cell cell in row.Elements<Cell>())
+            for (int idxColumn = 0; idxColumn < excelColumns.Count; ++idxColumn)
             {
-              ++idxColumn;
-              columnNames[idxColumn] = GetCellValue(cell, workbookPart); // cell.CellValue.Text;
+              var cell = excelColumns[idxColumn][idxRowExcel];
+
+              if (srcColumnToDestColumnMapping.ContainsKey(idxColumn))
+              {
+                columnNames[idxColumn] = GetCellValue(cell, workbookPart); // cell.CellValue.Text;
+              }
             }
           }
           else
           {
-            int idxColumn = -1;
             DataColumn? pCol = null;
             if (importOptions.HeaderLinesDestination == Ascii.AsciiHeaderLinesDestination.ImportToProperties ||
                 importOptions.HeaderLinesDestination == Ascii.AsciiHeaderLinesDestination.ImportToPropertiesAndNotes ||
@@ -262,15 +309,18 @@ namespace Altaxo.Serialization.OpenXml.Excel
               pCol = table.PropCols.EnsureExistence($"HeaderLine{idxHeaderLine}", typeof(TextColumn), ColumnKind.V, 0);
               ++idxHeaderLine;
             }
-            foreach (Cell cell in row.Elements<Cell>())
+            for (int idxColumn = 0; idxColumn < excelColumns.Count; ++idxColumn)
             {
-              ++idxColumn;
+              var cell = excelColumns[idxColumn][idxRowExcel];
+              if (!srcColumnToDestColumnMapping.TryGetValue(idxColumn, out var destColumn))
+                continue;
+
               var value = GetCellValue(cell, workbookPart); // cell.CellValue.Text;
               if (!string.IsNullOrEmpty(value))
               {
                 if (pCol is not null)
                 {
-                  pCol[table.DataColumns.GetColumnNumber(columns[idxColumn])] = value;
+                  pCol[table.DataColumns.GetColumnNumber(destColumn)] = value;
                 }
 
                 if (idxColumn == 0)
@@ -292,27 +342,25 @@ namespace Altaxo.Serialization.OpenXml.Excel
         else
         {
           ++idxRowAltaxo;
-          int idxColumn = -1;
-          foreach (Cell cell in row.Elements<Cell>())
+          for (int idxColumn = 0; idxColumn < excelColumns.Count; ++idxColumn)
           {
-            ++idxColumn;
+            var cell = excelColumns[idxColumn][idxRowExcel];
+            if (!srcColumnToDestColumnMapping.TryGetValue(idxColumn, out var destColumn))
+              continue;
 
-            if (idxColumn >= docAnalysis.HighestScoredLineStructure.Count)
-              break;
-
-            switch (docAnalysis.HighestScoredLineStructure[idxColumn].ColumnType)
+            switch (destColumn)
             {
-              case Ascii.AsciiColumnType.Int64:
-              case Ascii.AsciiColumnType.Double:
-                if (true == cell.CellValue?.TryGetDouble(out var dbl))
-                  columns[idxColumn][idxRowAltaxo] = dbl;
+              case DoubleColumn:
+                if (true == cell?.CellValue?.TryGetDouble(out var dbl))
+                  destColumn[idxRowAltaxo] = dbl;
                 break;
-              case Ascii.AsciiColumnType.DateTime:
+              case DateTimeColumn:
                 if (true == cell.CellValue?.TryGetDateTime(out var dt))
-                  columns[idxColumn][idxRowAltaxo] = dt;
+                  destColumn[idxRowAltaxo] = dt;
                 break;
+              case TextColumn:
               default:
-                columns[idxColumn][idxRowAltaxo] = GetCellValue(cell, workbookPart); //cell.CellValue.Text;
+                destColumn[idxRowAltaxo] = GetCellValue(cell, workbookPart); //cell.CellValue.Text;
                 break;
             }
           }
@@ -320,7 +368,7 @@ namespace Altaxo.Serialization.OpenXml.Excel
       }
 
       // now rename the columns to the table
-      for (int i = 0; i < columns.Length; ++i)
+      for (int i = 0; i < table.DataColumnCount; ++i)
       {
         var columnName = columnNames[i];
         if (string.IsNullOrEmpty(columnName))
@@ -329,9 +377,9 @@ namespace Altaxo.Serialization.OpenXml.Excel
           columnName = importOptions.NeutralColumnName;
         (columnName, var postfix) = GetColumnNameWithPostfix(columnName, table, columnNameDictionary);
 
-        table.DataColumns.SetColumnName(columns[i], columnName);
+        table.DataColumns.SetColumnName(table.DataColumns[i], columnName);
 
-        int columnNumber = table.DataColumns.GetColumnNumber(columns[i]);
+        int columnNumber = table.DataColumns.GetColumnNumber(table.DataColumns[i]);
         if (importOptions.IncludeFilePathAsProperty)
         {
           table.PropCols.EnsureExistence("FileName", typeof(TextColumn), ColumnKind.V, 0)[columnNumber] = fileName;
@@ -354,10 +402,16 @@ namespace Altaxo.Serialization.OpenXml.Excel
       ++groupNumber;
     }
 
-    private static string GetCellValue(Cell cell, WorkbookPart workbookPart)
+    /// <summary>
+    /// Gets the textual value of a spreadsheet cell.
+    /// </summary>
+    /// <param name="cell">The cell.</param>
+    /// <param name="workbookPart">The workbook part used to resolve shared strings.</param>
+    /// <returns>The cell value as text, or <see langword="null"/> if the cell has no value.</returns>
+    private static string GetCellValue(Cell? cell, WorkbookPart workbookPart)
     {
-      var value = cell.CellValue?.InnerText;
-      if (cell.DataType is not null && cell.DataType.Value == CellValues.SharedString)
+      var value = cell?.CellValue?.InnerText;
+      if (cell?.DataType is not null && cell.DataType.Value == CellValues.SharedString)
       {
         return workbookPart.SharedStringTablePart.SharedStringTable
             .Elements<SharedStringItem>().ElementAt(int.Parse(value)).InnerText;
@@ -365,6 +419,11 @@ namespace Altaxo.Serialization.OpenXml.Excel
       return value;
     }
 
+    /// <summary>
+    /// Gets the cell type as a string.
+    /// </summary>
+    /// <param name="cell">The cell.</param>
+    /// <returns>A string representing the cell type.</returns>
     private static string GetCellType(Cell cell)
     {
       if (cell.DataType == null)
@@ -408,7 +467,7 @@ namespace Altaxo.Serialization.OpenXml.Excel
 
 
     /// <summary>
-    /// Creates a columnName by providing a base column name. If the column name is already in use, a number will be appended. 
+    /// Creates a column name by providing a base column name. If the column name is already in use, a number will be appended.
     /// </summary>
     /// <param name="columnName">Name of the column.</param>
     /// <param name="table">The table.</param>

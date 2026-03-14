@@ -2,7 +2,7 @@
 
 /////////////////////////////////////////////////////////////////////////////
 //    Altaxo:  a data processing and data plotting program
-//    Copyright (C) 2002-2024 Dr. Dirk Lellinger
+//    Copyright (C) 2002-2026 Dr. Dirk Lellinger
 //
 //    This program is free software; you can redistribute it and/or modify
 //    it under the terms of the GNU General Public License as published by
@@ -28,7 +28,7 @@ using Altaxo.Serialization.Ascii;
 namespace Altaxo.Serialization.OpenXml.Excel
 {
   /// <summary>
-  /// Import options for importing Galactic SPC files.
+  /// Import options for importing Excel files.
   /// </summary>
   public record ExcelImportOptions : Main.IImmutable
   {
@@ -64,10 +64,19 @@ namespace Altaxo.Serialization.OpenXml.Excel
     /// </summary>
     public IReadOnlyList<int> IndicesOfImportedSheets { get; init; } = [];
 
+    /// <summary>
+    /// Gets the number of main header lines.
+    /// </summary>
     public int? NumberOfMainHeaderLines { get; init; }
 
+    /// <summary>
+    /// Gets the index of the caption line within the header lines.
+    /// </summary>
     public int? IndexOfCaptionLine { get; init; }
 
+    /// <summary>
+    /// Gets the recognized line composition (if available).
+    /// </summary>
     public AsciiLineComposition? RecognizedStructure { get; init; }
 
     #region Serialization
@@ -78,6 +87,7 @@ namespace Altaxo.Serialization.OpenXml.Excel
     [Altaxo.Serialization.Xml.XmlSerializationSurrogateFor(typeof(ExcelImportOptions), 0)]
     public class SerializationSurrogate0 : Altaxo.Serialization.Xml.IXmlSerializationSurrogate
     {
+      /// <inheritdoc/>
       public void Serialize(object obj, Altaxo.Serialization.Xml.IXmlSerializationInfo info)
       {
         var s = (ExcelImportOptions)obj;
@@ -92,6 +102,7 @@ namespace Altaxo.Serialization.OpenXml.Excel
         info.AddValueOrNull("RecognizedStructure", s.RecognizedStructure);
       }
 
+      /// <inheritdoc/>
       public object Deserialize(object? o, Altaxo.Serialization.Xml.IXmlDeserializationInfo info, object? parent)
       {
         var useNeutralColumnName = info.GetBoolean("UseNeutralColumnName");

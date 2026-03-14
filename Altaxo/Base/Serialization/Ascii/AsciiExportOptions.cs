@@ -32,10 +32,13 @@ using Altaxo.Main.Properties;
 namespace Altaxo.Serialization.Ascii
 {
   /// <summary>
-  /// Options for export of ASCII files
+  /// Options for exporting ASCII files.
   /// </summary>
   public record AsciiExportOptions
   {
+    /// <summary>
+    /// Property key used to store <see cref="AsciiExportOptions"/> per table.
+    /// </summary>
     public static readonly PropertyKey<AsciiExportOptions> PropertyKeyAsciiExportOptions = new(
       "12CFB92C-8D90-4A34-A481-7C30B15654AB",
       "Table\\AsciiExportOptions",
@@ -99,6 +102,9 @@ namespace Altaxo.Serialization.Ascii
 
     private CultureInfo _culture;
 
+    /// <summary>
+    /// Gets the culture used for formatting numbers and date/time values during export.
+    /// </summary>
     public CultureInfo Culture
     {
       get
@@ -150,6 +156,7 @@ namespace Altaxo.Serialization.Ascii
     [Altaxo.Serialization.Xml.XmlSerializationSurrogateFor(typeof(AsciiExportOptions), 0)]
     private class XmlSerializationSurrogate0 : Altaxo.Serialization.Xml.IXmlSerializationSurrogate
     {
+      /// <inheritdoc/>
       public virtual void Serialize(object obj, Altaxo.Serialization.Xml.IXmlSerializationInfo info)
       {
         var s = (AsciiExportOptions)obj;
@@ -163,6 +170,13 @@ namespace Altaxo.Serialization.Ascii
         info.AddValue("DateTimeFormat", s.DateTimeFormat);
       }
 
+      /// <summary>
+      /// Deserializes version 0 of <see cref="AsciiExportOptions"/>.
+      /// </summary>
+      /// <param name="o">The instance to deserialize into, or <see langword="null"/> to create a new instance.</param>
+      /// <param name="info">The deserialization info.</param>
+      /// <param name="parent">The parent object.</param>
+      /// <returns>The deserialized <see cref="AsciiExportOptions"/>.</returns>
       protected virtual AsciiExportOptions SDeserialize(object? o, Altaxo.Serialization.Xml.IXmlDeserializationInfo info, object? parent)
       {
         var s = (o is null ? new AsciiExportOptions() : (AsciiExportOptions)o);
@@ -186,6 +200,7 @@ namespace Altaxo.Serialization.Ascii
         };
       }
 
+      /// <inheritdoc/>
       public object Deserialize(object? o, Altaxo.Serialization.Xml.IXmlDeserializationInfo info, object? parent)
       {
         var s = SDeserialize(o, info, parent);

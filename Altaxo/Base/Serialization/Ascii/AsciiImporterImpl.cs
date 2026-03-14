@@ -27,16 +27,22 @@ using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 using Altaxo.Data;
+using Altaxo.Main.Properties;
 
 namespace Altaxo.Serialization.Ascii
 {
   /// <summary>
-  /// Central class for import of ascii data.
+  /// Central class for importing ASCII data.
   /// </summary>
   public record AsciiImporterImpl : DataFileImporterBase, Main.IImmutable
   {
     /// <summary>Prepend this string to a file name in order to designate the stream origin as file name origin.</summary>
     public const string FileUrlStart = @"file:///";
+
+    /// <summary>
+    /// Property key used to store <see cref="AsciiDocumentAnalysisOptions"/> per table.
+    /// </summary>
+    public static readonly PropertyKey<AsciiDocumentAnalysisOptions> PropertyKeyAsciiDocumentAnalysisOptions = new PropertyKey<AsciiDocumentAnalysisOptions>("2AD2EBB9-F4C6-4BD2-A71B-23974776F5DF", "Table\\AsciiAnalysisOptions", PropertyLevel.All, typeof(Altaxo.Data.DataTable), AsciiDocumentAnalysisOptions.GetDefaultSystemOptions);
 
     /// <inheritdoc/>
     public override (IReadOnlyList<string> FileExtensions, string Explanation) GetFileExtensions()

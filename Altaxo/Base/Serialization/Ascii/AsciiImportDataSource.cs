@@ -32,6 +32,9 @@ using Altaxo.Data;
 
 namespace Altaxo.Serialization.Ascii
 {
+  /// <summary>
+  /// Table data source that imports tabular data from one or more ASCII text files.
+  /// </summary>
   public class AsciiImportDataSource : FileImportTableDataSourceBase<AsciiImportOptions>
   {
     #region Serialization
@@ -44,6 +47,7 @@ namespace Altaxo.Serialization.Ascii
     [Altaxo.Serialization.Xml.XmlSerializationSurrogateFor(typeof(AsciiImportDataSource), 0)]
     private class XmlSerializationSurrogate0 : Altaxo.Serialization.Xml.IXmlSerializationSurrogate
     {
+      /// <inheritdoc/>
       public virtual void Serialize(object obj, Altaxo.Serialization.Xml.IXmlSerializationInfo info)
       {
         var s = (AsciiImportDataSource)obj;
@@ -53,6 +57,7 @@ namespace Altaxo.Serialization.Ascii
         info.AddArray("AsciiFiles", s._files.ToArray(), s._files.Count);
       }
 
+      /// <inheritdoc/>
       public object Deserialize(object? o, Altaxo.Serialization.Xml.IXmlDeserializationInfo info, object? parent)
       {
         if (o is AsciiImportDataSource s)
@@ -64,6 +69,10 @@ namespace Altaxo.Serialization.Ascii
     }
 
     [MemberNotNull(nameof(_importOptions), nameof(_processOptions))]
+    /// <summary>
+    /// Deserializes version 0 of <see cref="AsciiImportDataSource"/>.
+    /// </summary>
+    /// <param name="info">The deserialization info.</param>
     private void DeserializeSurrogate0(Altaxo.Serialization.Xml.IXmlDeserializationInfo info)
     {
       _isDeserializationInProgress = true;
@@ -80,8 +89,10 @@ namespace Altaxo.Serialization.Ascii
     #endregion Version 0
 
     /// <summary>
-    /// Deserialization constructor
+    /// Deserialization constructor.
     /// </summary>
+    /// <param name="info">The deserialization info.</param>
+    /// <param name="version">The serialization version.</param>
     protected AsciiImportDataSource(Altaxo.Serialization.Xml.IXmlDeserializationInfo info, int version)
     {
       switch (version)
@@ -98,26 +109,42 @@ namespace Altaxo.Serialization.Ascii
 
     #region Construction
 
+    /// <summary>
+    /// Initializes a new instance of the <see cref="AsciiImportDataSource"/> class.
+    /// </summary>
+    /// <param name="fileName">The file name to import from.</param>
+    /// <param name="options">The import options controlling how the ASCII content is parsed.</param>
     public AsciiImportDataSource(string fileName, AsciiImportOptions options)
       : this(new string[] { fileName }, options)
     {
     }
 
+    /// <summary>
+    /// Initializes a new instance of the <see cref="AsciiImportDataSource"/> class.
+    /// </summary>
+    /// <param name="fileNames">The file names to import from.</param>
+    /// <param name="options">The import options controlling how the ASCII content is parsed.</param>
     public AsciiImportDataSource(IEnumerable<string> fileNames, AsciiImportOptions options)
       : base(fileNames)
     {
       _processOptions = options;
     }
 
+    /// <summary>
+    /// Initializes a new instance of the <see cref="AsciiImportDataSource"/> class by copying from another instance.
+    /// </summary>
+    /// <param name="from">The instance to copy from.</param>
     public AsciiImportDataSource(AsciiImportDataSource from)
       : base(from)
     {
     }
 
+    /// <inheritdoc/>
     public override object Clone() => new AsciiImportDataSource(this);
 
     #endregion Construction
 
+    /// <inheritdoc/>
     protected override void ImportFromFiles(string[] validFileNames, DataTable destinationTable, IProgressReporter reporter)
     {
 
@@ -156,6 +183,7 @@ namespace Altaxo.Serialization.Ascii
       }
     }
 
+    /// <inheritdoc/>
     public override (IReadOnlyList<string> FileExtensions, string Explanation) GetFileExtensions()
     {
       return new AsciiImporterImpl().GetFileExtensions();

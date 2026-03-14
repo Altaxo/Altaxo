@@ -24,9 +24,6 @@
 
 #nullable disable
 using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
 using Altaxo.Serialization.Ascii;
 
 namespace Altaxo.Gui.Settings
@@ -37,12 +34,12 @@ namespace Altaxo.Gui.Settings
     {
       AsciiDocumentAnalysisOptions sysDoc = null;
 
-      Current.PropertyService.UserSettings.TryGetValue(AsciiDocumentAnalysisOptions.PropertyKeyAsciiDocumentAnalysisOptions, out var userDoc);
-      sysDoc = Current.PropertyService.GetValue<AsciiDocumentAnalysisOptions>(AsciiDocumentAnalysisOptions.PropertyKeyAsciiDocumentAnalysisOptions, Altaxo.Main.Services.RuntimePropertyKind.ApplicationAndBuiltin);
+      Current.PropertyService.UserSettings.TryGetValue(AsciiImporterImpl.PropertyKeyAsciiDocumentAnalysisOptions, out var userDoc);
+      sysDoc = Current.PropertyService.GetValue<AsciiDocumentAnalysisOptions>(AsciiImporterImpl.PropertyKeyAsciiDocumentAnalysisOptions, Altaxo.Main.Services.RuntimePropertyKind.ApplicationAndBuiltin);
       if (sysDoc is null)
         throw new ApplicationException("AsciiDocumentAnalysisOptions not properly registered with builtin settings!");
 
-      _controller = new Altaxo.Gui.Common.ConditionalDocumentControllerWithDisabledView<AsciiDocumentAnalysisOptions>(() => sysDoc.Clone(), () => sysDoc)
+      _controller = new Altaxo.Gui.Common.ConditionalDocumentControllerWithDisabledView<AsciiDocumentAnalysisOptions>(() => sysDoc, () => sysDoc)
       {
         EnablingText = "Override system settings"
       };
@@ -54,11 +51,11 @@ namespace Altaxo.Gui.Settings
       if (_controller.ModelObject is not null)
       {
         var userDoc = (AsciiDocumentAnalysisOptions)_controller.ModelObject;
-        Current.PropertyService.UserSettings.SetValue(AsciiDocumentAnalysisOptions.PropertyKeyAsciiDocumentAnalysisOptions, userDoc);
+        Current.PropertyService.UserSettings.SetValue(AsciiImporterImpl.PropertyKeyAsciiDocumentAnalysisOptions, userDoc);
       }
       else
       {
-        Current.PropertyService.UserSettings.RemoveValue(AsciiDocumentAnalysisOptions.PropertyKeyAsciiDocumentAnalysisOptions);
+        Current.PropertyService.UserSettings.RemoveValue(AsciiImporterImpl.PropertyKeyAsciiDocumentAnalysisOptions);
       }
     }
   }

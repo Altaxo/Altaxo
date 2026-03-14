@@ -11,6 +11,13 @@ using Altaxo.Gui.Workbench;
 
 namespace Altaxo.Serialization
 {
+  /// <summary>
+  /// Base type for data file importers.
+  /// </summary>
+  /// <remarks>
+  /// Implementations provide file format detection, import option handling, and logic to import data into <see cref="DataTable"/> instances.
+  /// This type also contains convenience methods to show UI dialogs and orchestrate importing into existing or new worksheets.
+  /// </remarks>
   public abstract record DataFileImporterBase : IDataFileImporter, Main.IImmutable
   {
     /// <inheritdoc/>
@@ -28,6 +35,14 @@ namespace Altaxo.Serialization
     /// <inheritdoc/>
     public abstract string? Import(IReadOnlyList<string> fileNames, DataTable table, object importOptions, bool attachDataSource = true);
 
+    /// <summary>
+    /// Imports the provided files using the given initial options, optionally distributing the result into separate tables.
+    /// </summary>
+    /// <param name="fileNames">The file names to import.</param>
+    /// <param name="initialOptions">The initial import options.</param>
+    /// <returns>
+    /// A string containing error messages, or <see langword="null"/> if no errors occurred.
+    /// </returns>
     public virtual string? Import(IReadOnlyList<string> fileNames, ImportOptionsInitial initialOptions)
     {
       var stb = new StringBuilder();
@@ -62,7 +77,7 @@ namespace Altaxo.Serialization
     }
 
     /// <summary>
-    /// Imports the show dialogs. First the dialog to choose the files, then to choose the initial import options, and optionally the dialog to choose whether to import
+    /// Shows import dialogs, then performs the import.
     /// in an existing worksheet or in another worksheet.
     /// </summary>
     /// <param name="activeViewContent">Content of the active view.</param>
@@ -128,7 +143,7 @@ namespace Altaxo.Serialization
     /// Shows a file import dialog for the specific importer provided as parameter, and imports the files to the table if the user clicked on "OK".
     /// </summary>
     /// <param name="importer">The data file importer.</param>
-    /// <returns>The open file options. If the use has cancelled this dialog, the return value is null.</returns>
+    /// <returns>The open file options. If the user has cancelled this dialog, the return value is null.</returns>
     public static OpenFileOptions? ShowOpenFileDialog(IDataFileImporter importer)
     {
       var fileOptions = new Altaxo.Gui.OpenFileOptions();
@@ -165,7 +180,7 @@ namespace Altaxo.Serialization
 
         if (errors is not null)
         {
-          Current.Gui.ErrorMessageBox(errors, "Some errors occured during import!");
+          Current.Gui.ErrorMessageBox(errors, "Some errors occurred during import!");
         }
       }
     }
@@ -206,6 +221,11 @@ namespace Altaxo.Serialization
       }
     }
 
+    /// <summary>
+    /// Adds an error message to the provided <see cref="StringBuilder"/> if it is not <see langword="null"/> or empty.
+    /// </summary>
+    /// <param name="errors">The error string builder.</param>
+    /// <param name="message">The error message to add.</param>
     public static void AddError(StringBuilder errors, string? message)
     {
       if (!string.IsNullOrEmpty(message))
@@ -217,7 +237,6 @@ namespace Altaxo.Serialization
     /// then the import is done without further questions.
     /// </summary>
     /// <param name="activeViewContent">Content of the active view.</param>
-    /// <exception cref="System.NotImplementedException"></exception>
     public static void ImportShowReducedDialogsForAllTypes(IViewContent activeViewContent)
     {
       var importers = Altaxo.Main.Services.ReflectionService.GetNonAbstractSubclassesOf(typeof(IDataFileImporter))
@@ -365,10 +384,15 @@ namespace Altaxo.Serialization
 
       if (errors.Length > 0)
       {
-        Current.Gui.ErrorMessageBox($"Some errors have occured during import:\r\n\r\n{errors}", "Import errors");
+        Current.Gui.ErrorMessageBox($"Some errors have occurred during import:\r\n\r\n{errors}", "Import errors");
       }
     }
 
+    /// <summary>
+    /// Imports a single file into the specified table, using the best matching registered importer.
+    /// </summary>
+    /// <param name="table">The table to import into.</param>
+    /// <param name="fileName">The file name.</param>
     public static void ImportFromFile(DataTable table, string fileName)
     {
       var importers = Altaxo.Main.Services.ReflectionService.GetNonAbstractSubclassesOf(typeof(IDataFileImporter))

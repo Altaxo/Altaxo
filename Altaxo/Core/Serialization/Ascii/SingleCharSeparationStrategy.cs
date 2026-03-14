@@ -27,17 +27,25 @@ using System.Collections.Generic;
 namespace Altaxo.Serialization.Ascii
 {
   /// <summary>
-  /// This strategy assumes that the tokens are separated by exactly one (!) separation char. The separation character has to
+  /// This strategy assumes that the tokens are separated by exactly one separation character.
+  /// The separation character has to
   /// be provided in the constructor.
   /// </summary>
   public record SingleCharSeparationStrategy : IAsciiSeparationStrategy
   {
+    /// <summary>
+    /// Gets the character used to separate tokens.
+    /// </summary>
     public char SeparatorChar { get; init; }
 
     #region Serialization
 
-    /// <summary>2014-08-03 initial version.</summary>
-    [Altaxo.Serialization.Xml.XmlSerializationSurrogateFor(typeof(SingleCharSeparationStrategy), 0)]
+    /// <summary>
+    /// V0: 2014-08-03 initial version.
+    /// V1: 2026-03-13 Moved from AltaxoBase to AltaxoCore
+    /// </summary>
+    [Altaxo.Serialization.Xml.XmlSerializationSurrogateFor("AltaxoBase", "Altaxo.Serialization.Ascii.SingleCharSeparationStrategy", 0)]
+    [Altaxo.Serialization.Xml.XmlSerializationSurrogateFor(typeof(SingleCharSeparationStrategy), 1)]
     private class XmlSerializationSurrogate0 : Altaxo.Serialization.Xml.IXmlSerializationSurrogate
     {
       public virtual void Serialize(object obj, Altaxo.Serialization.Xml.IXmlSerializationInfo info)
@@ -74,6 +82,7 @@ namespace Altaxo.Serialization.Ascii
     {
     }
 
+    /// <inheritdoc/>
     public IEnumerable<string> GetTokens(string line)
     {
       int len = line.Length;
@@ -89,6 +98,12 @@ namespace Altaxo.Serialization.Ascii
       }
     }
 
+    /// <summary>
+    /// Gets a human-readable representation of the separator character.
+    /// </summary>
+    /// <returns>
+    /// A short name for common separators (e.g. <c>TAB</c>, <c>SPACE</c>) or the character itself for other separators.
+    /// </returns>
     public string GetSeparatorCharReadable()
     {
       return SeparatorChar switch
@@ -99,6 +114,7 @@ namespace Altaxo.Serialization.Ascii
       };
     }
 
+    /// <inheritdoc/>
     public override string ToString()
     {
       return $"{this.GetType().Name}[{GetSeparatorCharReadable()}]";

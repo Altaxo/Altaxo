@@ -25,10 +25,10 @@
 #nullable disable
 using System;
 using System.Collections.Generic;
+using System.Collections.Immutable;
 using System.Collections.ObjectModel;
 using System.Globalization;
 using System.Linq;
-using System.Text;
 using Altaxo.Collections;
 using Altaxo.Serialization.Ascii;
 
@@ -45,7 +45,7 @@ namespace Altaxo.Gui.Serialization.Ascii
 
   [ExpectedTypeOfView(typeof(IAsciiDocumentAnalysisOptionsView))]
   [UserControllerForObject(typeof(AsciiDocumentAnalysisOptions))]
-  public class AsciiDocumentAnalysisOptionsController : MVCANControllerEditOriginalDocBase<AsciiDocumentAnalysisOptions, IAsciiDocumentAnalysisOptionsView>
+  public class AsciiDocumentAnalysisOptionsController : MVCANControllerEditImmutableDocBase<AsciiDocumentAnalysisOptions, IAsciiDocumentAnalysisOptionsView>
   {
     private SelectableListNodeList _availableCultureList;
 
@@ -95,14 +95,12 @@ namespace Altaxo.Gui.Serialization.Ascii
 
     public override bool Apply(bool disposeController)
     {
-      _doc.NumberOfLinesToAnalyze = _view.NumberOfLinesToAnalyze;
-
-      _doc.NumberFormatsToTest.Clear();
-      _doc.DateTimeFormatsToTest.Clear();
-      foreach (var item in _numberFormatsToAnalyze)
-        _doc.NumberFormatsToTest.Add((CultureInfo)item.Value.Tag);
-      foreach (var item in _dateTimeFormatsToAnalyze)
-        _doc.DateTimeFormatsToTest.Add((CultureInfo)item.Value.Tag);
+      _doc = _doc with
+      {
+        NumberOfLinesToAnalyze = _view.NumberOfLinesToAnalyze,
+        NumberFormatsToTest = _numberFormatsToAnalyze.Select(item => (CultureInfo)item.Value.Tag).ToImmutableHashSet(),
+        DateTimeFormatsToTest = _dateTimeFormatsToAnalyze.Select(item => (CultureInfo)item.Value.Tag).ToImmutableHashSet(),
+      };
 
       return ApplyEnd(true, disposeController);
     }

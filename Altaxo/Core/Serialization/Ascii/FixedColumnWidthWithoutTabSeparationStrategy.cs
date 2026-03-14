@@ -34,12 +34,22 @@ namespace Altaxo.Serialization.Ascii
   /// </summary>
   public record FixedColumnWidthWithoutTabSeparationStrategy : IAsciiSeparationStrategy
   {
+    /// <summary>
+    /// Gets the start positions of tokens (beginning with the second token).
+    /// </summary>
+    /// <remarks>
+    /// The start position of the first token is implicitly 0.
+    /// </remarks>
     public ImmutableArray<int> StartPositions { get; init; }
 
     #region Serialization
 
-    /// <summary>2014-08-03 initial version.</summary>
-    [Altaxo.Serialization.Xml.XmlSerializationSurrogateFor(typeof(FixedColumnWidthWithoutTabSeparationStrategy), 0)]
+    /// <summary>
+    /// V0: 2014-08-03 initial version.
+    /// V1: 2026-03-13 Moved from AltaxoBase to AltaxoCore
+    /// </summary>
+    [Altaxo.Serialization.Xml.XmlSerializationSurrogateFor("AltaxoBase", "Altaxo.Serialization.Ascii.FixedColumnWidthWithoutTabSeparationStrategy", 0)]
+    [Altaxo.Serialization.Xml.XmlSerializationSurrogateFor(typeof(FixedColumnWidthWithoutTabSeparationStrategy), 1)]
     private class XmlSerializationSurrogate0 : Altaxo.Serialization.Xml.IXmlSerializationSurrogate
     {
       public virtual void Serialize(object obj, Altaxo.Serialization.Xml.IXmlSerializationInfo info)
@@ -79,6 +89,7 @@ namespace Altaxo.Serialization.Ascii
 
 
 
+    /// <inheritdoc/>
     public IEnumerable<string> GetTokens(string line)
     {
       int len = line.Length;
@@ -104,6 +115,7 @@ namespace Altaxo.Serialization.Ascii
       }
     }
 
+    /// <inheritdoc/>
     public override string ToString()
     {
       return $"{GetType().Name}:StartPos={StartPositions}";

@@ -41,7 +41,7 @@ namespace Altaxo.Serialization.Ascii
     /// <summary>Column contains date/time values.</summary>
     DateTime,
 
-    /// <summary>Column contains text (could not parsed as number or data/time).</summary>
+    /// <summary>Column contains text (could not be parsed as a number or a date/time value).</summary>
     Text
   }
 }

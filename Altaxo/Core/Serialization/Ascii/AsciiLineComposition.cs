@@ -40,11 +40,19 @@ namespace Altaxo.Serialization.Ascii
     /// The structure of the line. This list holds <see cref="System.Type" /> values that represent the recognized items in the line.
     /// </summary>
     public ImmutableArray<AsciiColumnInfo> Columns { get; } = ImmutableArray<AsciiColumnInfo>.Empty;
+
+    /// <summary>
+    /// Gets the compact shortcut string that represents the column types in this line.
+    /// </summary>
     public string ShortCuts { get; }
 
     protected int _hashValue;
     protected int _priorityValue;
 
+    /// <summary>
+    /// Initializes a new instance of the <see cref="AsciiLineComposition"/> class.
+    /// </summary>
+    /// <param name="columns">The column information for each token in the line.</param>
     public AsciiLineComposition(ImmutableArray<AsciiColumnInfo> columns)
     {
       Columns = columns;
@@ -58,6 +66,11 @@ namespace Altaxo.Serialization.Ascii
       _priorityValue = Columns.Sum(x => x.ScoreValue);
     }
 
+    /// <summary>
+    /// Initializes a new instance of the <see cref="AsciiLineComposition"/> class from the given column types.
+    /// </summary>
+    /// <param name="columnTypes">The column types to include.</param>
+    /// <param name="count">Optional count for preallocation.</param>
     public AsciiLineComposition(IEnumerable<AsciiColumnType> columnTypes, int? count)
     {
       var b = count.HasValue ? ImmutableArray.CreateBuilder<AsciiColumnInfo>(count.Value) : ImmutableArray.CreateBuilder<AsciiColumnInfo>();
@@ -79,16 +92,21 @@ namespace Altaxo.Serialization.Ascii
     }
 
 
+    /// <summary>
+    /// Gets the scoring value used to compare line compositions.
+    /// </summary>
     public int LineStructureScoring => _priorityValue;
 
     #region Serialization
 
     /// <summary>
-    /// 2014-08-03 initial version.
-    /// 2023-06-26 Renane AsciiLineStructure to AsciiLineComposition
+    /// V0: 2014-08-03 initial version.
+    /// V1: 2023-06-26 Rename AsciiLineStructure to AsciiLineComposition
+    /// V2: 2026-03-13 Moved from AltaxoBase to AltaxoCore
     /// </summary>
     [Altaxo.Serialization.Xml.XmlSerializationSurrogateFor("AltaxoBase", "Altaxo.Serialization.Ascii.AsciiLineStructure", 0)]
-    [Altaxo.Serialization.Xml.XmlSerializationSurrogateFor(typeof(AsciiLineComposition), 1)]
+    [Altaxo.Serialization.Xml.XmlSerializationSurrogateFor("AltaxoBase", "Altaxo.Serialization.Ascii.AsciiLineComposition", 1)]
+    [Altaxo.Serialization.Xml.XmlSerializationSurrogateFor(typeof(AsciiLineComposition), 2)]
     private class XmlSerializationSurrogate0 : Altaxo.Serialization.Xml.IXmlSerializationSurrogate
     {
       public virtual void Serialize(object obj, Altaxo.Serialization.Xml.IXmlSerializationInfo info)
@@ -141,11 +159,13 @@ namespace Altaxo.Serialization.Ascii
       }
     }
 
+    /// <inheritdoc/>
     public override int GetHashCode()
     {
       return _hashValue;
     }
 
+    /// <inheritdoc/>
     public bool Equals(AsciiLineComposition? other)
     {
       return
@@ -153,6 +173,7 @@ namespace Altaxo.Serialization.Ascii
         (ShortCuts == o.ShortCuts);
     }
 
+    /// <inheritdoc/>
     public override bool Equals(object? other)
     {
       return
@@ -203,6 +224,7 @@ namespace Altaxo.Serialization.Ascii
       return a == b;
     }
 
+    /// <inheritdoc/>
     public override string ToString()
     {
       var stb = new StringBuilder();

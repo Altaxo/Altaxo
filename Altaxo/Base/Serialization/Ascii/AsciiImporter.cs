@@ -34,7 +34,7 @@ using Altaxo.Main;
 namespace Altaxo.Serialization.Ascii
 {
   /// <summary>
-  /// Central class for import of ascii data.
+  /// Central class for importing ASCII data.
   /// </summary>
   public static class AsciiImporter
   {
@@ -50,7 +50,7 @@ namespace Altaxo.Serialization.Ascii
     /// </summary>
     /// <param name="dataTable">The table into which to import.</param>
     /// <param name="stream">The stream to read from.</param>
-    /// <param name="streamOriginHint">Stream origin hint. If the stream was opened from a file, you should prepend <see cref=" FileUrlStart"/> to the file name.</param>
+    /// <param name="streamOriginHint">Stream origin hint. If the stream was opened from a file, you should prepend <see cref="FileUrlStart"/> to the file name.</param>
     /// <param name="importOptions">The Ascii import options. This parameter can be null, or the options can be not fully specified. In this case the method tries to determine the import options by analyzing the stream.</param>
     /// <exception cref="System.ArgumentNullException">
     /// Argument importOptions is null
@@ -83,7 +83,7 @@ namespace Altaxo.Serialization.Ascii
 
       var newpropcols = new DataColumnCollection();
 
-      // in case a structure is provided, allocate already the columsn
+      // in case a structure is provided, allocate already the columns
 
       if (importOptions.RecognizedStructure is not null)
       {
@@ -313,7 +313,7 @@ namespace Altaxo.Serialization.Ascii
     /// </summary>
     /// <param name="dataTable">The table into which to import.</param>
     /// <param name="stream">The stream to read from.</param>
-    /// <param name="streamOriginHint">Stream origin hint. If the stream was opened from a file, you should prepend <see cref=" FileUrlStart"/> to the file name.</param>
+    /// <param name="streamOriginHint">Stream origin hint. If the stream was opened from a file, you should prepend <see cref="FileUrlStart"/> to the file name.</param>
     /// <param name="importOptions">The Ascii import options. This parameter must not be <c>null</c>. If the provided options are not fully specified, it is tried to analyse the stream to get fully specified options.</param>
     /// <exception cref="System.ArgumentNullException">
     /// Argument importOptions is null
@@ -341,7 +341,7 @@ namespace Altaxo.Serialization.Ascii
     /// </summary>
     /// <param name="dataTable">The table where to import into.</param>
     /// <param name="stream">The stream to import from.</param>
-    /// <param name="streamOriginHint">Designates a short hint where the provided stream originates from. Can be <c>Null</c> if the origin is unknown.</param>
+    /// <param name="streamOriginHint">Designates a short hint where the provided stream originates from. Can be <c>null</c> if the origin is unknown.</param>
     /// <param name="importOptions">On return, contains the recognized import options that were used to import from the provided stream.</param>
     public static void ImportFromAsciiStream(this DataTable dataTable, Stream stream, string streamOriginHint, out AsciiImportOptions importOptions)
     {
@@ -356,7 +356,7 @@ namespace Altaxo.Serialization.Ascii
     /// </summary>
     /// <param name="dataTable">The table where to import into.</param>
     /// <param name="stream">The stream to import from.</param>
-    /// <param name="streamOriginHint">Designates a hint where the provided stream originates from. Can be <c>Null</c> if the origin is unknown.</param>
+    /// <param name="streamOriginHint">Designates a hint where the provided stream originates from. Can be <c>null</c> if the origin is unknown.</param>
     public static void ImportFromAsciiStream(this DataTable dataTable, Stream stream, string streamOriginHint)
     {
       ImportFromAsciiStream(dataTable, stream, streamOriginHint, out var dummy);
@@ -520,7 +520,7 @@ namespace Altaxo.Serialization.Ascii
     /// <summary>
     /// Imports a couple of ASCII files into one (!) table. The first column of each file is considered to be the x-column, and if they match another x-column, the newly imported columns will get the same column group.
     /// </summary>
-    /// <param name="dataTable">If successfull, contains the data table with imported data.</param>
+    /// <param name="dataTable">If successful, contains the data table with imported data.</param>
     /// <param name="fileNames">An array of filenames to import.</param>
     /// <param name="sortFileNames">If <c>true</c>, the fileNames are sorted before usage in ascending order using the default string comparator.</param>
     /// <param name="importOptions">Options used to import the Ascii files. This parameter can be <c>null</c>. In this case the value on return is the determined import options of the first file (if <paramref name="determineImportOptionsSeparatelyForEachFile"/> is <c>false</c>) or of the last file (if <paramref name="determineImportOptionsSeparatelyForEachFile"/> is <c>true</c>).</param>
@@ -651,7 +651,7 @@ namespace Altaxo.Serialization.Ascii
     /// If <c>false</c>, the import options are either provided by the parameter <paramref name="importOptions"/> (if not null and fully specified), or during import of the first file. The so determined importOptions are then used to import all other files.
     /// </param>
     /// <param name="errors">Null if no error occurs, or an error description.</param>
-    /// <returns>True if successfull; otherwise, false.</returns>
+    /// <returns>True if successful; otherwise, false.</returns>
     private static bool TryInternalImportFromMultipleAsciiFilesHorizontally(this DataTable dataTable, IEnumerable<string> fileNames, bool sortFileNames, [MaybeNullWhen(false)][AllowNull] ref AsciiImportOptions importOptions, bool determineImportOptionsSeparatelyForEachFile, [MaybeNullWhen(true)] out string errors)
     {
 
@@ -799,7 +799,7 @@ namespace Altaxo.Serialization.Ascii
     /// If <c>false</c>, the import options are either provided by the parameter <paramref name="importOptions"/> (if not null and fully specified), or during import of the first file. The so determined importOptions are then used to import all other files.
     /// </param>
     /// <param name="errors">Null if no error occurs, or an error description.</param>
-    /// <returns>True if sucessfull; otherwise, false.</returns>
+    /// <returns>True if successful; otherwise, false.</returns>
     private static bool TryInternalImportFromMultipleAsciiFilesVertically(this DataTable dataTable, IEnumerable<string> fileNames, bool sortFileNames, [MaybeNullWhen(false)][AllowNull] ref AsciiImportOptions importOptions, bool determineImportOptionsSeparatelyForEachFile, [MaybeNullWhen(true)] out string errors)
     {
       if (TryInternalImportMultipleFilesVerticallyIntoNewTable(out var temporaryTable, fileNames, sortFileNames, ref importOptions, determineImportOptionsSeparatelyForEachFile, out errors))
@@ -831,7 +831,7 @@ namespace Altaxo.Serialization.Ascii
     /// <param name="sortFileNames">If <c>true</c>, the fileNames are sorted before usage in ascending order using the default string comparator.</param>
     /// <param name="importOptions">Options used to import the Ascii files. This parameter must not be null, and the options must be fully specified.</param>
     /// <param name="errors">Null if no error occurs, or an error description.</param>
-    /// <returns>True if successfull; otherwise, false.</returns>
+    /// <returns>True if successful; otherwise, false.</returns>
     public static bool TryImportFromMultipleAsciiFilesHorizontally(this DataTable dataTable, IEnumerable<string> fileNames, bool sortFileNames, [MaybeNullWhen(false)][AllowNull] AsciiImportOptions importOptions, [MaybeNullWhen(true)] out string errors)
     {
       if (dataTable is null)
@@ -855,7 +855,7 @@ namespace Altaxo.Serialization.Ascii
     /// <param name="sortFileNames">If <c>true</c>, the fileNames are sorted before usage in ascending order using the default string comparator.</param>
     /// <param name="importOptions">On return, contains the options used to import the first Ascii files. These options are also used to import all other Ascii files.</param>
     /// <param name="errors">Null if no error occurs, or an error description.</param>
-    /// <returns>True if successfull; otherwise, false.</returns>
+    /// <returns>True if successful; otherwise, false.</returns>
     public static bool TryImportFromMultipleAsciiFilesHorizontally(this DataTable dataTable, IEnumerable<string> fileNames, bool sortFileNames, [MaybeNullWhen(false)] out AsciiImportOptions importOptions, [MaybeNullWhen(true)] out string errors)
     {
       if (dataTable is null)
@@ -870,7 +870,7 @@ namespace Altaxo.Serialization.Ascii
     }
 
     /// <summary>
-    /// Imports multiple Ascii files into the provided table in horizontal order, i.e. in new columns. Depending on the value of <paramref name="determineImportOptionsSeparatelyForEachFile"/>, the import options are either deterimined from the first file and then used for all other files, or determined separately for each file.
+    /// Imports multiple Ascii files into the provided table in horizontal order, i.e. in new columns. Depending on the value of <paramref name="determineImportOptionsSeparatelyForEachFile"/>, the import options are either determined from the first file and then used for all other files, or determined separately for each file.
     /// The first column of each file is considered to be the x-column, and if they match another x-column, the newly imported columns will get the same column group.
     /// </summary>
     /// <param name="dataTable">The table the data should be imported to.</param>
@@ -878,7 +878,7 @@ namespace Altaxo.Serialization.Ascii
     /// <param name="sortFileNames">If <c>true</c>, the fileNames are sorted before usage in ascending order using the default string comparator.</param>
     /// <param name="determineImportOptionsSeparatelyForEachFile">If <c>true</c>, the import options are determined for each file separately. Otherwise, i.e. if <c>false</c>, the import options are determined from the first file that is imported.</param>
     /// <param name="errors">Null if no error occurs, or an error description.</param>
-    /// <returns>True if successfull; otherwise, false.</returns>
+    /// <returns>True if successful; otherwise, false.</returns>
     public static bool TryImportFromMultipleAsciiFilesHorizontally(this DataTable dataTable, IEnumerable<string> fileNames, bool sortFileNames, bool determineImportOptionsSeparatelyForEachFile, [MaybeNullWhen(true)] out string errors)
     {
       if (dataTable is null)
@@ -904,7 +904,7 @@ namespace Altaxo.Serialization.Ascii
     /// <param name="sortFileNames">If <c>true</c>, the fileNames are sorted before usage in ascending order using the default string comparator.</param>
     /// <param name="importOptions">Options used to import the Ascii files. This parameter must not be null, and the options must be fully specified.</param>
     /// <param name="errors">Null if no error occurs, or an error description.</param>
-    /// <returns>True if successfull; otherwise, false.</returns>
+    /// <returns>True if successful; otherwise, false.</returns>
     public static bool TryImportFromMultipleAsciiFilesVertically(this DataTable dataTable, IEnumerable<string> fileNames, bool sortFileNames, AsciiImportOptions importOptions, [MaybeNullWhen(true)] out string errors)
     {
       if (dataTable is null)
@@ -921,7 +921,7 @@ namespace Altaxo.Serialization.Ascii
     }
 
     /// <summary>
-    /// Imports multiple Ascii files into the provided table in vertical order, i.e. in new rows.. The import options are determined from the first file, and then used to import all other files.
+    /// Imports multiple Ascii files into the provided table in vertical order, i.e. in new rows. The import options are determined from the first file, and then used to import all other files.
     /// If the names of the subsequently imported table columns match, the data will be written in the matching column. Otherwise new columns with the unmatched column names were created.
     /// Property columns will only be imported from the first table.
     /// </summary>
@@ -930,7 +930,7 @@ namespace Altaxo.Serialization.Ascii
     /// <param name="sortFileNames">If <c>true</c>, the fileNames are sorted before usage in ascending order using the default string comparator.</param>
     /// <param name="importOptions">On return, contains the options used to import the first Ascii files. These options are also used to import all other Ascii files.</param>
     /// <param name="errors">Null if no error occurs, or an error description.</param>
-    /// <returns>True if successfull; otherwise, false.</returns>
+    /// <returns>True if successful; otherwise, false.</returns>
     public static bool TryImportFromMultipleAsciiFilesVertically(this DataTable dataTable, IEnumerable<string> fileNames, bool sortFileNames, [MaybeNullWhen(false)] out AsciiImportOptions importOptions, [MaybeNullWhen(true)] out string errors)
     {
       if (dataTable is null)
@@ -944,7 +944,7 @@ namespace Altaxo.Serialization.Ascii
     }
 
     /// <summary>
-    /// Imports multiple Ascii files into the provided table in vertical order, i.e. in new rows.. Depending on the value of <paramref name="determineImportOptionsSeparatelyForEachFile"/>, the import options are either deterimined from the first file and then used for all other files, or determined separately for each file.
+    /// Imports multiple Ascii files into the provided table in vertical order, i.e. in new rows. Depending on the value of <paramref name="determineImportOptionsSeparatelyForEachFile"/>, the import options are either determined from the first file and then used for all other files, or determined separately for each file.
     /// If the names of the subsequently imported table columns match, the data will be written in the matching column. Otherwise new columns with the unmatched column names were created.
     /// Property columns will only be imported from the first table.
     /// </summary>
@@ -953,7 +953,7 @@ namespace Altaxo.Serialization.Ascii
     /// <param name="sortFileNames">If <c>true</c>, the fileNames are sorted before usage in ascending order using the default string comparator.</param>
     /// <param name="determineImportOptionsSeparatelyForEachFile">If <c>true</c>, the import options are determined for each file separately. Otherwise, i.e. if <c>false</c>, the import options are determined from the first file that is imported.</param>
     /// <param name="errors">Null if no error occurs, or an error description.</param>
-    /// <returns>True if successfull; otherwise, false.</returns>
+    /// <returns>True if successful; otherwise, false.</returns>
     public static bool TryImportFromMultipleAsciiFilesVertically(this DataTable dataTable, IEnumerable<string> fileNames, bool sortFileNames, bool determineImportOptionsSeparatelyForEachFile, [MaybeNullWhen(true)] out string errors)
     {
       if (dataTable is null)
@@ -1081,7 +1081,7 @@ namespace Altaxo.Serialization.Ascii
     /// Imports ascii from a memory stream into a table. Returns null (!) if nothing is imported.
     /// </summary>
     /// <param name="stream">The stream to import ascii from. Is not (!) closed at the end of this function.</param>
-    /// <param name="streamOriginHint">Designates a short hint where the provided stream originates from. Can be <c>Null</c> if the origin is unknown.</param>
+    /// <param name="streamOriginHint">Designates a short hint where the provided stream originates from. Can be <c>null</c> if the origin is unknown.</param>
     /// <param name="defaultImportOptions">The default import options. The importer uses this options as base, but updates some fields by analyzing the data to import.</param>
     /// <returns>The table representation of the imported text, or null if nothing is imported.</returns>
     private static DataTable? InternalImportStreamIntoNewTable(Stream stream, string streamOriginHint, AsciiImportOptions? defaultImportOptions)
@@ -1103,7 +1103,7 @@ namespace Altaxo.Serialization.Ascii
     /// Imports ascii from a stream into a table. Returns null (!) if nothing is imported.
     /// </summary>
     /// <param name="stream">The stream to import ascii from. Is not (!) closed at the end of this function.</param>
-    /// <param name="streamOriginHint">Designates a short hint where the provided stream originates from. Can be <c>Null</c> if the origin is unknown.</param>
+    /// <param name="streamOriginHint">Designates a short hint where the provided stream originates from. Can be <c>null</c> if the origin is unknown.</param>
     /// <returns>The table representation of the imported text, or null if nothing is imported.</returns>
     public static DataTable? ImportStreamIntoNewTable(Stream stream, string streamOriginHint)
     {
@@ -1235,9 +1235,9 @@ namespace Altaxo.Serialization.Ascii
     {
       AsciiDocumentAnalysisOptions? result = null;
       if (dataTable is not null)
-        result = dataTable.GetPropertyValue(AsciiDocumentAnalysisOptions.PropertyKeyAsciiDocumentAnalysisOptions, null);
+        result = dataTable.GetPropertyValue(AsciiImporterImpl.PropertyKeyAsciiDocumentAnalysisOptions, null);
       if (result is null)
-        result = Current.PropertyService.GetValue(AsciiDocumentAnalysisOptions.PropertyKeyAsciiDocumentAnalysisOptions, Main.Services.RuntimePropertyKind.UserAndApplicationAndBuiltin);
+        result = Current.PropertyService.GetValue<AsciiDocumentAnalysisOptions>(AsciiImporterImpl.PropertyKeyAsciiDocumentAnalysisOptions, Main.Services.RuntimePropertyKind.UserAndApplicationAndBuiltin);
       return result;
     }
 

@@ -2,7 +2,7 @@
 
 /////////////////////////////////////////////////////////////////////////////
 //    Altaxo:  a data processing and data plotting program
-//    Copyright (C) 2002-2024 Dr. Dirk Lellinger
+//    Copyright (C) 2002-2026 Dr. Dirk Lellinger
 //
 //    This program is free software; you can redistribute it and/or modify
 //    it under the terms of the GNU General Public License as published by
@@ -24,6 +24,7 @@
 
 #nullable enable
 using System;
+using System.Collections.Generic;
 using System.Collections.Immutable;
 using Altaxo.Serialization.Ascii;
 using DocumentFormat.OpenXml.Spreadsheet;
@@ -31,23 +32,24 @@ using DocumentFormat.OpenXml.Spreadsheet;
 namespace Altaxo.Serialization.OpenXml.Excel
 {
   /// <summary>
-  /// Analyse a single line of text with regard to different separation strategies, and store
-  /// the result in a dictionary that contains entries for the separation strategy and the resulting structure.
+  /// Analyzes a single row with regard to its column structure and returns the recognized composition.
   /// </summary>
-  public class ExcelLineAnalysis
+  public class ExcelRowAnalysis
   {
     /// <summary>
-    /// Analyse the provided line of text with regard to one separation stragegy and returns the resulting structure.
+    /// Analyzes the provided spreadsheet row and returns the resulting structure.
     /// </summary>
     /// <param name="row">The row of a Excel spreadsheet.</param>
     /// <returns>The resulting structure.</returns>
-    public static AsciiLineComposition GetStructure(Row row)
+    public static AsciiLineComposition GetStructure(List<List<Cell>> columns, int idxRow)
     {
       var tabStruc = ImmutableArray.CreateBuilder<AsciiColumnInfo>();
 
-      foreach (Cell cell in row.Elements<Cell>())
+      for (int idxColumn = 0; idxColumn < columns.Count; ++idxColumn)
       {
-        if (string.IsNullOrEmpty(cell.CellValue?.Text))
+        var cell = columns[idxColumn][idxRow];
+
+        if (string.IsNullOrEmpty(cell?.CellValue?.Text))
         {
           tabStruc.Add(AsciiColumnInfo.DBNull);
           continue;
@@ -94,5 +96,6 @@ namespace Altaxo.Serialization.OpenXml.Excel
 
       return new AsciiLineComposition(tabStruc.ToImmutable());
     }
+
   } // end class
 }

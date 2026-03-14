@@ -31,20 +31,34 @@ namespace Altaxo.Serialization.Ascii
 {
   /// <summary>
   /// This strategy assumes that the tokens fill the printout (!) at fixed positions and have a fixed length.
-  /// For the printout position, we have to assume a certain tabulator with. Each tabulator char in the string advances the printout position by a certain amount depending on the current printout
+  /// For the printout position, we have to assume a certain tabulator width. Each tabulator character in the string advances the printout position by a certain amount depending on the current printout
   /// position.
   /// The starting printout position of the first token is always zero. The starting printout positions of each subsequent token (beginning with the second token) has to be provided in the constructor.
   /// </summary>
   /// <remarks>For a tab width of 1, this strategy is identical to the <see cref="FixedColumnWidthWithoutTabSeparationStrategy" />.</remarks>
   public record FixedColumnWidthWithTabSeparationStrategy : IAsciiSeparationStrategy
   {
+    /// <summary>
+    /// Gets the start positions of tokens in tabbed printout coordinates (beginning with the second token).
+    /// </summary>
+    /// <remarks>
+    /// The start position of the first token is implicitly 0.
+    /// </remarks>
     public ImmutableArray<int> StartPositions { get; init; }
+
+    /// <summary>
+    /// Gets the tab size used to convert tab characters into printout positions.
+    /// </summary>
     public int TabSize { get; init; }
 
     #region Serialization
 
-    /// <summary>2014-08-03 initial version.</summary>
-    [Altaxo.Serialization.Xml.XmlSerializationSurrogateFor(typeof(FixedColumnWidthWithTabSeparationStrategy), 0)]
+    /// <summary>
+    /// V0: 2014-08-03 initial version.
+    /// V1: 2026-03-13 Moved from AltaxoBase to AltaxoCore
+    /// </summary>
+    [Altaxo.Serialization.Xml.XmlSerializationSurrogateFor("AltaxoBase", "Altaxo.Serialization.Ascii.FixedColumnWidthWithTabSeparationStrategy", 0)]
+    [Altaxo.Serialization.Xml.XmlSerializationSurrogateFor(typeof(FixedColumnWidthWithTabSeparationStrategy), 1)]
     private class XmlSerializationSurrogate0 : Altaxo.Serialization.Xml.IXmlSerializationSurrogate
     {
       public virtual void Serialize(object obj, Altaxo.Serialization.Xml.IXmlSerializationInfo info)
@@ -89,6 +103,7 @@ namespace Altaxo.Serialization.Ascii
       TabSize = tabSize;
     }
 
+    /// <inheritdoc/>
     public IEnumerable<string> GetTokens(string line)
     {
       int len = line.Length;
@@ -117,6 +132,7 @@ namespace Altaxo.Serialization.Ascii
         yield return line.Substring(stringPos, line.Length - stringPos);
     }
 
+    /// <inheritdoc/>
     public override string ToString()
     {
       return $"{GetType().Name}:TabSize={TabSize}:StartPos={StartPositions}";

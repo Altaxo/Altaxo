@@ -4,7 +4,7 @@
              xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
              xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
              xmlns:core="clr-namespace:System;assembly=mscorlib"
-             xmlns:asa="clr-namespace:Altaxo.Serialization.Ascii;assembly=AltaxoBase"
+             xmlns:asa="clr-namespace:Altaxo.Serialization.Ascii;assembly=AltaxoCore"
              xmlns:axogc="clr-namespace:Altaxo.Gui.Common;assembly=AltaxoBase.Presentation" 
              xmlns:local="clr-namespace:Altaxo.Gui.Serialization.OpenXml.Excel;assembly=OpenXMLAddin"
              d:DataContext="{d:DesignInstance Type=local:ExcelImportOptionsController}"

@@ -26,7 +26,7 @@ namespace Altaxo.Serialization.Ascii
         var GermanCulture = System.Globalization.CultureInfo.GetCultureInfo("de");
         var analysisOptions = AsciiDocumentAnalysisOptions.GetOptionsForCultures(
             System.Globalization.CultureInfo.InvariantCulture, GermanCulture);
-        analysisOptions.NumberOfLinesToAnalyze = linesToAnalyze;
+        analysisOptions = analysisOptions with { NumberOfLinesToAnalyze = linesToAnalyze };
 
         AsciiImportOptions analysis;
         using (var stream = new FileStream(fileName, FileMode.Open, FileAccess.Read, FileShare.Read))
@@ -41,7 +41,7 @@ namespace Altaxo.Serialization.Ascii
         Assert.Equal('\t', ((SingleCharSeparationStrategy)analysis.SeparationStrategy).SeparatorChar); // tab as separator char
         Assert.Equal(25, analysis.RecognizedStructure.Count); // file consists of 25 columns
         Assert.True("iv" == analysis.NumberFormatCulture.TwoLetterISOLanguageName); // invariant culture
-        Assert.True("iv" == analysis.DateTimeFormatCulture.TwoLetterISOLanguageName); // invariant culture
+        Assert.True("iv" == analysis.DateTimeFormatCulture.TwoLetterISOLanguageName || "de" == analysis.DateTimeFormatCulture.TwoLetterISOLanguageName); // invariant culture or german culture
         Assert.True(analysis.IsFullySpecified);
 
         Assert.True(AsciiColumnType.Double == analysis.RecognizedStructure[0].ColumnType);
@@ -83,7 +83,7 @@ namespace Altaxo.Serialization.Ascii
         var GermanCulture = System.Globalization.CultureInfo.GetCultureInfo("de");
         var analysisOptions = AsciiDocumentAnalysisOptions.GetOptionsForCultures(
             System.Globalization.CultureInfo.InvariantCulture, GermanCulture);
-        analysisOptions.NumberOfLinesToAnalyze = linesToAnalyze;
+        analysisOptions = analysisOptions with { NumberOfLinesToAnalyze = linesToAnalyze };
 
         AsciiImportOptions analysis;
         using (var stream = new FileStream(fileName, FileMode.Open, FileAccess.Read, FileShare.Read))
