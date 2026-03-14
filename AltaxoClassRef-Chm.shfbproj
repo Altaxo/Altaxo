@@ -20,14 +20,10 @@
     <DocumentationSources>
       <DocumentationSource sourceFile="rtnet\bin\AltaxoBase.dll" />
       <DocumentationSource sourceFile="rtnet\bin\AltaxoBase.xml" />
-      <DocumentationSource sourceFile="rtnet\bin\AltaxoBase.Presentation.dll" />
-      <DocumentationSource sourceFile="rtnet\bin\AltaxoBase.Presentation.xml" />
       <DocumentationSource sourceFile="rtnet\bin\AltaxoCore.dll" />
       <DocumentationSource sourceFile="rtnet\bin\AltaxoCore.xml" />
       <DocumentationSource sourceFile="rtnet\bin\AltaxoDom.dll" />
       <DocumentationSource sourceFile="rtnet\bin\AltaxoDom.xml" />
-      <DocumentationSource sourceFile="rtnet\bin\AltaxoDom.Presentation.dll" />
-      <DocumentationSource sourceFile="rtnet\bin\AltaxoDom.Presentation.xml" />
     </DocumentationSources>
     <HelpFileFormat>HtmlHelp1</HelpFileFormat>
     <SyntaxFilters>C#</SyntaxFilters>
