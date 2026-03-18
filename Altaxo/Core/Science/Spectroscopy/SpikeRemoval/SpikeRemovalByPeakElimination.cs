@@ -139,7 +139,7 @@ namespace Altaxo.Science.Spectroscopy.SpikeRemoval
     /// <returns>The x, y and regions array, where y contains the spectrum with eliminated spikes.</returns>
     public static (double[] x, double[] y, int[]? regions) EliminateSpikesByTopologicalSearching(double[] x, double[] y, int[]? regions, int maximalWidthInPoints, bool forNegativeSpikes)
     {
-      var yy = (double[])y.Clone();
+      var yNew = (double[])y.Clone();
 
       foreach (var (start, end) in RegionHelper.GetRegionRanges(regions, x.Length))
       {
@@ -179,25 +179,36 @@ namespace Altaxo.Science.Spectroscopy.SpikeRemoval
           for (int j = indices.Length - 1; j >= Math.Max(0, indices.Length - 10); --j)
           {
             var idx = indices[j];
-
-            var leftPos = (int)Math.Max(0, Math.Floor(peakFinder.PeakPositions[idx] - peakFinder.Widths![idx] / 2.0));
-            var rightPos = (int)Math.Min(data.Length - 1, Math.Ceiling(peakFinder.PeakPositions[idx] + peakFinder.Widths![idx] / 2.0));
-
-
-            // interpolate data
-            for (int k = leftPos + 1; k < rightPos; ++k)
-            {
-              var r = (k - leftPos) / (double)(rightPos - leftPos);
-              var newValue = r * data[rightPos] + (1 - r) * data[leftPos]; // interpolate the base line from left to right
-              yy[start + k] = newValue; // replace the values in yArray with the baseline
-            }
+            PatchPositiveSpikeInline(x, y, yNew, peakFinder.PeakPositions[idx], peakFinder.Widths![idx]);
           }
         }
       }
 
-      return (x, yy, regions);
+      return (x, yNew, regions);
     }
 
+    /// <summary>
+    /// Removes a positive spike by using the SNIP baseline algorithm around that spike.
+    /// </summary>
+    /// <param name="x">The x array (spectral x-axis values).</param>
+    /// <param name="y">The y array (spectral values).</param>
+    /// <param name="yNew">The new spectral values.</param>
+    /// <param name="peakPosition">The peak position.</param>
+    /// <param name="width">The width of the peak.</param>
+    public static void PatchPositiveSpikeInline(double[] x, double[] y, double[] yNew, int peakPosition, double width)
+    {
+      double peakPositionFine = peakPosition;
+      if (peakPosition > 0 && peakPosition < y.Length - 2)
+      {
+        // refine the peak position by fitting a parabola to the peak and its two neighbors, and then calculating the maximum of that parabola
+        peakPositionFine -= 0.5 * (y[peakPosition + 1] - y[peakPosition - 1]) / (y[peakPosition + 1] - 2 * y[peakPosition] + y[peakPosition - 1]);
+      }
+
+      var leftPos = (int)Math.Max(0, Math.Floor(peakPositionFine - 1 - width));
+      var rightPos = (int)Math.Min(y.Length - 1, Math.Ceiling(peakPositionFine + 1 + width));
+      var snip = new BaselineEvaluation.SNIP_Linear() { IsHalfWidthInXUnits = false, HalfWidth = width / 2 };
+      snip.Execute(new ReadOnlySpan<double>(x, leftPos, rightPos + 1 - leftPos), new ReadOnlySpan<double>(y, leftPos, rightPos + 1 - leftPos), new Span<double>(yNew, leftPos, rightPos + 1 - leftPos));
+    }
 
 
 

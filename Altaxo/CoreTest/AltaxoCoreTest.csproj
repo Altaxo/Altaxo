@@ -68,12 +68,13 @@
   </ItemGroup>
 
   <ItemGroup>
-    <None Update="Serialization\Ascii\SampleData\SampleData1.txt">
+    <None Update="Science\Spectroscopy\SpikeRemoval\TestFiles\*">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>
-    <None Update="Serialization\Ascii\SampleData\SampleData2.txt">
+    <None Update="Serialization\Ascii\SampleData\*">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>
+    
   </ItemGroup>
 
   <UsingTask TaskName="GitVersionFile" AssemblyFile="..\..\MSBuildVersioning.dll" />
