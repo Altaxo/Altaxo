@@ -26,7 +26,6 @@ using System;
 using System.Collections.Generic;
 using Altaxo.Calc;
 using Altaxo.Calc.LinearAlgebra;
-using Altaxo.Science.Spectroscopy.SpikeRemoval;
 
 namespace Altaxo.Science.Spectroscopy.EnsembleProcessing
 {
@@ -235,7 +234,6 @@ namespace Altaxo.Science.Spectroscopy.EnsembleProcessing
           yyNew[i] = yy[i] = y[idxSpectrum, i];
         }
 
-
         foreach (var range in GetContiguousRanges(list))
         {
           System.Diagnostics.Debug.WriteLine($"({idxSpectrum}, {range.lowerIdx}, {range.upperIdx}),");
@@ -296,8 +294,27 @@ namespace Altaxo.Science.Spectroscopy.EnsembleProcessing
           if (fwhm > rangeWidth * 1.5 && rangeWidth >= 2)
             fwhm = rangeWidth;
 
-          if (fwhm <= MaximalWidth)
-            SpikeRemovalByPeakElimination.PatchPositiveSpikeInline(x, yy, yyNew, maxIdx, fwhm);
+          if (fwhm <= MaximalWidth) // we patch the range only if we do not exeed the MaximalWidth
+          {
+            // refine the maximum position if possible
+            double peakPositionFine = maxIdx;
+            if (maxIdx > 0 && maxIdx < y.ColumnCount - 1 && yy[maxIdx - 1] < yy[maxIdx] && yy[maxIdx + 1] < yy[maxIdx])
+            {
+              // refine the peak position by fitting a parabola to the peak and its two neighbors, and then calculating the maximum of that parabola
+              peakPositionFine -= 0.5 * (yy[maxIdx + 1] - yy[maxIdx - 1]) / (yy[maxIdx + 1] - 2 * yy[maxIdx] + yy[maxIdx - 1]);
+            }
+
+            // now for patching this, we need to points to the left and right which are not affected by the spike
+            // at first, we try to get them from the FWHM of the peak
+            var leftPos = (int)Math.Max(0, Math.Floor(peakPositionFine - 1 - fwhm));
+            var rightPos = (int)Math.Min(yy.Length - 1, Math.Ceiling(peakPositionFine + 1 + fwhm));
+            // but we also ensure that leftPos is outside the range of the outliers, and likewise rightPos, so that the outer points of the SNIP algorithm are not outlier points
+            leftPos = Math.Max(0, Math.Min(leftPos, range.lowerIdx - 1));
+            rightPos = Math.Min(yy.Length - 1, Math.Max(rightPos, range.upperIdx + 1));
+            // now use the SNIP algorithm to patch the range
+            var snip = new BaselineEvaluation.SNIP_Linear() { IsHalfWidthInXUnits = false, HalfWidth = fwhm / 2 };
+            snip.Execute(new ReadOnlySpan<double>(x, leftPos, rightPos + 1 - leftPos), new ReadOnlySpan<double>(yy, leftPos, rightPos + 1 - leftPos), new Span<double>(yyNew, leftPos, rightPos + 1 - leftPos));
+          }
         }
 
         for (int i = 0; i < yy.Length; i++)
@@ -332,8 +349,6 @@ namespace Altaxo.Science.Spectroscopy.EnsembleProcessing
       yield return (start, prev);
     }
 
-
-
     /// <summary>
     /// Computes robust lower and upper bounds from the provided sorted data by taking the values
     /// at <paramref name="lowerPercentile"/> and <paramref name="upperPercentile"/> and extending
@@ -359,7 +374,6 @@ namespace Altaxo.Science.Spectroscopy.EnsembleProcessing
       var sigma = range / (zHigh - zLow);
       return (pLow - multiplier * sigma, pHigh + multiplier * sigma);
     }
-
 
     /// <summary>
     /// Calculates the value at the specified percentile within a sorted array using linear interpolation.
