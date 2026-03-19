@@ -157,7 +157,13 @@ namespace Altaxo.Calc.FitFunctions
         (() => new Transitions.GompertzTransition(0,0), 11, new double[]{7, 1/9d, -3, 5}, 1.2133630509177669241),
         (() => new Transitions.LogisticDecreasing(1,1), 0.5, new double[]{2,3,5,1,3}, 1+3*0.5+2/(1+Math.Exp((0.5-3)/5))),
         (() => new Transitions.LogisticIncreasing(1,1), 0.5, new double[]{2,3,5,1,3}, 1+3*0.5+2/(1+Math.Exp(-(0.5-3)/5))),
-
+        (() => new RubberElasticity.NeoHookUniaxial() { CrossSectionArea=1000}, 1.5, new double[]{13}, 60840),
+        (() => new RubberElasticity.NeoHookPlanar() { CrossSectionArea=1000}, 1.5, new double[]{13}, 63336),
+        (() => new RubberElasticity.NeoHookBiaxial() { CrossSectionArea=1000}, 1.5, new double[]{13}, 129467.52),
+        (() => new RubberElasticity.MooneyRivlinUniaxial() { CrossSectionArea=1000}, 1.5, new double[]{13, 17}, 92664),
+        (() => new RubberElasticity.MooneyRivlinPlanar() { CrossSectionArea=1000}, 1.5, new double[]{13, 17}, 146160),
+        (() => new RubberElasticity.MooneyRivlinBiaxial() { CrossSectionArea=1000}, 1.5, new double[]{13, 17}, 1187615.52),
+        (() => new RubberElasticity.YeohUniaxial() { CrossSectionArea=1000}, 1.5, new double[]{13, 17, 7}, 2317313.7),
       };
     private static DoubleEqualityComparer CompareD = new DoubleEqualityComparer(1E-100, 1E-12);
     private static DoubleEqualityComparer CompareDerivatives = new DoubleEqualityComparer(1E-4, 1E-4);
