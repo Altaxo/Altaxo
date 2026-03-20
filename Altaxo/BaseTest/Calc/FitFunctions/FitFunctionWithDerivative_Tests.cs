@@ -157,13 +157,18 @@ namespace Altaxo.Calc.FitFunctions
         (() => new Transitions.GompertzTransition(0,0), 11, new double[]{7, 1/9d, -3, 5}, 1.2133630509177669241),
         (() => new Transitions.LogisticDecreasing(1,1), 0.5, new double[]{2,3,5,1,3}, 1+3*0.5+2/(1+Math.Exp((0.5-3)/5))),
         (() => new Transitions.LogisticIncreasing(1,1), 0.5, new double[]{2,3,5,1,3}, 1+3*0.5+2/(1+Math.Exp(-(0.5-3)/5))),
-        (() => new RubberElasticity.NeoHookUniaxial() { CrossSectionArea=1000}, 1.5, new double[]{13}, 60840),
-        (() => new RubberElasticity.NeoHookPlanar() { CrossSectionArea=1000}, 1.5, new double[]{13}, 63336),
-        (() => new RubberElasticity.NeoHookBiaxial() { CrossSectionArea=1000}, 1.5, new double[]{13}, 129467.52),
+        (() => new RubberElasticity.NeoHookeanUniaxial() { CrossSectionArea=1000}, 1.5, new double[]{13}, 60840),
+        (() => new RubberElasticity.NeoHookeanPlanar() { CrossSectionArea=1000}, 1.5, new double[]{13}, 63336),
+        (() => new RubberElasticity.NeoHookeanBiaxial() { CrossSectionArea=1000}, 1.5, new double[]{13}, 129467.52),
         (() => new RubberElasticity.MooneyRivlinUniaxial() { CrossSectionArea=1000}, 1.5, new double[]{13, 17}, 92664),
         (() => new RubberElasticity.MooneyRivlinPlanar() { CrossSectionArea=1000}, 1.5, new double[]{13, 17}, 146160),
         (() => new RubberElasticity.MooneyRivlinBiaxial() { CrossSectionArea=1000}, 1.5, new double[]{13, 17}, 1187615.52),
         (() => new RubberElasticity.YeohUniaxial() { CrossSectionArea=1000}, 1.5, new double[]{13, 17, 7}, 2317313.7),
+        (() => new RubberElasticity.YeohPlanar() { CrossSectionArea=1000}, 1.5, new double[]{13, 17, 7}, 2783617.6872),
+        (() => new RubberElasticity.YeohBiaxial() { CrossSectionArea=1000}, 1.5, new double[]{13, 17, 7}, 22331639.0284775424),
+        (() => new RubberElasticity.OdgenUniaxial() { CrossSectionArea=1000, NumberOfTerms=2}, 1.5, new double[]{13, 7/5d, 17, 9/7d}, 34331.467904237440101),
+        (() => new RubberElasticity.OdgenPlanar() { CrossSectionArea=1000, NumberOfTerms=2}, 1.5, new double[]{13, 7/5d, 17, 9/7d}, 37307.338103404806281),
+        (() => new RubberElasticity.OdgenBiaxial() { CrossSectionArea=1000, NumberOfTerms=2}, 1.5, new double[]{13, 7/5d, 17, 9/7d}, 39798.322011527046739),
       };
     private static DoubleEqualityComparer CompareD = new DoubleEqualityComparer(1E-100, 1E-12);
     private static DoubleEqualityComparer CompareDerivatives = new DoubleEqualityComparer(1E-4, 1E-4);
@@ -242,6 +247,12 @@ namespace Altaxo.Calc.FitFunctions
       }
 
       ff.Evaluate(xx, parameters, yy, null);
+
+      for (int i = 1; i < 5; ++i)
+      {
+        AssertEx.AreEqual(y[0], y[i], 1E-100, 1E-12, $"FitFunction {ff.GetType()} should return the same value for the same x value, but deviates at index [{i}]");
+      }
+
       var y0 = y[4];
 
       ff.EvaluateDerivative(xx, parameters, null, actualDerivative, null);

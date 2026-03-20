@@ -35,9 +35,10 @@ namespace Altaxo.Calc.FitFunctions.RubberElasticity
   /// <remarks>
   /// The model evaluates the engineering stress as a function of engineering strain using the
   /// two material parameters <c>C10</c> and <c>C01</c>.
+  /// <para>Reference: [1] R. S. Rivlin, „Large elastic deformations of isotropic materials IV. further developments of the general theory“, Philosophical Transactions of the Royal Society of London. Series A, Mathematical and Physical Sciences, Bd. 241, Nr. 835, S. 379–397, Okt. 1948, doi: 10.1098/rsta.1948.0024.</para>
   /// </remarks>
   [FitFunctionClass]
-  public record NeoHookUniaxial : IFitFunctionWithDerivative
+  public record NeoHookeanBiaxial : IFitFunctionWithDerivative
   {
     /// <inheritdoc/>
     public event EventHandler? Changed;
@@ -66,13 +67,13 @@ namespace Altaxo.Calc.FitFunctions.RubberElasticity
     /// V0: 2026-03-19 initial version.
     /// </summary>
     /// <seealso cref="Altaxo.Serialization.Xml.IXmlSerializationSurrogate" />
-    [Altaxo.Serialization.Xml.XmlSerializationSurrogateFor(typeof(NeoHookUniaxial), 0)]
+    [Altaxo.Serialization.Xml.XmlSerializationSurrogateFor(typeof(NeoHookeanBiaxial), 0)]
     private class XmlSerializationSurrogate0 : Altaxo.Serialization.Xml.IXmlSerializationSurrogate
     {
       /// <inheritdoc/>
       public virtual void Serialize(object obj, Altaxo.Serialization.Xml.IXmlSerializationInfo info)
       {
-        var s = (NeoHookUniaxial)obj;
+        var s = (NeoHookeanBiaxial)obj;
         info.AddValue(nameof(CrossSectionArea), s.CrossSectionArea);
       }
 
@@ -80,22 +81,22 @@ namespace Altaxo.Calc.FitFunctions.RubberElasticity
       public virtual object Deserialize(object? o, Altaxo.Serialization.Xml.IXmlDeserializationInfo info, object? parent)
       {
         var crossSectionArea = info.GetDouble(nameof(CrossSectionArea));
-        return new NeoHookUniaxial() { CrossSectionArea = crossSectionArea };
+        return new NeoHookeanBiaxial() { CrossSectionArea = crossSectionArea };
       }
     }
 
     #endregion Serialization
 
-    [FitFunctionCreator("Neo-Hook (uniaxial loading)", "RubberElasticity", 1, 1, 1)]
-    [System.ComponentModel.Description("${res:Altaxo.Calc.FitFunctions.RubberElasticity.NeoHookUniaxial}")]
+    [FitFunctionCreator("Neo-Hook (biaxial loading)", "RubberElasticity", 1, 1, 1)]
+    [System.ComponentModel.Description("${res:Altaxo.Calc.FitFunctions.RubberElasticity.NeoHookeanBiaxial}")]
 
     /// <summary>
     /// Creates a new instance of the fit function.
     /// </summary>
-    /// <returns>A new <see cref="NeoHookUniaxial"/> instance.</returns>
+    /// <returns>A new <see cref="NeoHookeanBiaxial"/> instance.</returns>
     public static IFitFunction Create()
     {
-      return new NeoHookUniaxial();
+      return new NeoHookeanBiaxial();
     }
 
     /// <inheritdoc/>
@@ -144,7 +145,7 @@ namespace Altaxo.Calc.FitFunctions.RubberElasticity
     }
 
     /// <summary>
-    /// Evaluates the Mooney-Rivlin uniaxial model for the specified strain and parameters.
+    /// Evaluates the Neo-Hookean biaxial model for the specified strain and parameters.
     /// </summary>
     /// <param name="epsilon">Engineering strain.</param>
     /// <param name="C10">First order Mooney-Rivlin parameter of I1.</param>
@@ -152,8 +153,7 @@ namespace Altaxo.Calc.FitFunctions.RubberElasticity
     public static double Evaluate(double epsilon, double C10)
     {
       var lambda = 1 + epsilon;
-      var lambda2 = lambda * lambda;
-      return 2 * C10 * (lambda - 1 / lambda2);
+      return 4 * C10 * (lambda - 1 / RMath.Pow5(lambda));
     }
 
 
@@ -179,7 +179,7 @@ namespace Altaxo.Calc.FitFunctions.RubberElasticity
       {
         var lambda = 1 + independent[i, 0];
         var lambda2 = lambda * lambda;
-        DF[i, 0] = CrossSectionArea * 2 * (lambda - 1 / lambda2);
+        DF[i, 0] = CrossSectionArea * 4 * (lambda - 1 / RMath.Pow5(lambda));
       }
     }
 

@@ -35,9 +35,10 @@ namespace Altaxo.Calc.FitFunctions.RubberElasticity
   /// <remarks>
   /// The model evaluates the engineering stress as a function of engineering strain using the
   /// two material parameters <c>C10</c> and <c>C01</c>.
+  /// <para>Reference: [1] R. S. Rivlin, „Large elastic deformations of isotropic materials IV. further developments of the general theory“, Philosophical Transactions of the Royal Society of London. Series A, Mathematical and Physical Sciences, Bd. 241, Nr. 835, S. 379–397, Okt. 1948, doi: 10.1098/rsta.1948.0024.</para>
   /// </remarks>
   [FitFunctionClass]
-  public record NeoHookPlanar : IFitFunctionWithDerivative
+  public record NeoHookeanUniaxial : IFitFunctionWithDerivative
   {
     /// <inheritdoc/>
     public event EventHandler? Changed;
@@ -66,13 +67,13 @@ namespace Altaxo.Calc.FitFunctions.RubberElasticity
     /// V0: 2026-03-19 initial version.
     /// </summary>
     /// <seealso cref="Altaxo.Serialization.Xml.IXmlSerializationSurrogate" />
-    [Altaxo.Serialization.Xml.XmlSerializationSurrogateFor(typeof(NeoHookPlanar), 0)]
+    [Altaxo.Serialization.Xml.XmlSerializationSurrogateFor(typeof(NeoHookeanUniaxial), 0)]
     private class XmlSerializationSurrogate0 : Altaxo.Serialization.Xml.IXmlSerializationSurrogate
     {
       /// <inheritdoc/>
       public virtual void Serialize(object obj, Altaxo.Serialization.Xml.IXmlSerializationInfo info)
       {
-        var s = (NeoHookPlanar)obj;
+        var s = (NeoHookeanUniaxial)obj;
         info.AddValue(nameof(CrossSectionArea), s.CrossSectionArea);
       }
 
@@ -80,22 +81,22 @@ namespace Altaxo.Calc.FitFunctions.RubberElasticity
       public virtual object Deserialize(object? o, Altaxo.Serialization.Xml.IXmlDeserializationInfo info, object? parent)
       {
         var crossSectionArea = info.GetDouble(nameof(CrossSectionArea));
-        return new NeoHookPlanar() { CrossSectionArea = crossSectionArea };
+        return new NeoHookeanUniaxial() { CrossSectionArea = crossSectionArea };
       }
     }
 
     #endregion Serialization
 
-    [FitFunctionCreator("Neo-Hook (planar loading)", "RubberElasticity", 1, 1, 1)]
-    [System.ComponentModel.Description("${res:Altaxo.Calc.FitFunctions.RubberElasticity.NeoHookPlanar}")]
+    [FitFunctionCreator("Neo-Hook (uniaxial loading)", "RubberElasticity", 1, 1, 1)]
+    [System.ComponentModel.Description("${res:Altaxo.Calc.FitFunctions.RubberElasticity.NeoHookeanUniaxial}")]
 
     /// <summary>
     /// Creates a new instance of the fit function.
     /// </summary>
-    /// <returns>A new <see cref="NeoHookPlanar"/> instance.</returns>
+    /// <returns>A new <see cref="NeoHookeanUniaxial"/> instance.</returns>
     public static IFitFunction Create()
     {
-      return new NeoHookPlanar();
+      return new NeoHookeanUniaxial();
     }
 
     /// <inheritdoc/>
@@ -144,7 +145,7 @@ namespace Altaxo.Calc.FitFunctions.RubberElasticity
     }
 
     /// <summary>
-    /// Evaluates the Mooney-Rivlin uniaxial model for the specified strain and parameters.
+    /// Evaluates the Neo-Hookean model with uniaxial loading for the specified strain and parameters.
     /// </summary>
     /// <param name="epsilon">Engineering strain.</param>
     /// <param name="C10">First order Mooney-Rivlin parameter of I1.</param>
@@ -152,8 +153,8 @@ namespace Altaxo.Calc.FitFunctions.RubberElasticity
     public static double Evaluate(double epsilon, double C10)
     {
       var lambda = 1 + epsilon;
-      var lambda3 = lambda * lambda * lambda;
-      return 2 * C10 * (lambda - 1 / lambda3);
+      var lambda2 = lambda * lambda;
+      return 2 * C10 * (lambda - 1 / lambda2);
     }
 
 
@@ -178,8 +179,8 @@ namespace Altaxo.Calc.FitFunctions.RubberElasticity
       for (int i = 0; i < independent.RowCount; i++)
       {
         var lambda = 1 + independent[i, 0];
-        var lambda3 = lambda * lambda * lambda;
-        DF[i, 0] = CrossSectionArea * 2 * (lambda - 1 / lambda3);
+        var lambda2 = lambda * lambda;
+        DF[i, 0] = CrossSectionArea * 2 * (lambda - 1 / lambda2);
       }
     }
 

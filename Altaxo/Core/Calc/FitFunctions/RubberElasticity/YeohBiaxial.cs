@@ -30,18 +30,15 @@ using Altaxo.Calc.Regression.Nonlinear;
 namespace Altaxo.Calc.FitFunctions.RubberElasticity
 {
   /// <summary>
-  /// Mooney-Rivlin model for biaxial loading.
+  /// Yeoh model for biaxial loading.
   /// </summary>
   /// <remarks>
   /// The model evaluates the engineering stress as a function of engineering strain using the
   /// two material parameters <c>C10</c> and <c>C01</c>.
-  /// <para>References:</para>
-  /// <para>[1] M. Mooney, „A Theory of Large Elastic Deformation“, Journal of Applied Physics, Bd. 11, Nr. 9, S. 582–592, Sep. 1940, doi: 10.1063/1.1712836.</para>
-  /// <para>[2] R. S. Rivlin, „Large elastic deformations of isotropic materials IV. further developments of the general theory“, Philosophical Transactions of the Royal Society of London. Series A, Mathematical and Physical Sciences, Bd. 241, Nr. 835, S. 379–397, Okt. 1948, doi: 10.1098/rsta.1948.0024.</para>
-  /// <para>[3] M. C. Boyce und E. M. Arruda, „Constitutive Models of Rubber Elasticity: A Review“, Rubber Chemistry and Technology, Bd. 73, Nr. 3, S. 504–523, Juli 2000, doi: 10.5254/1.3547602.</para>
+  /// <para>Reference: [1] O. H. Yeoh, „Some Forms of the Strain Energy Function for Rubber“, Rubber Chemistry and Technology, Bd. 66, Nr. 5, S. 754–771, Nov. 1993, doi: 10.5254/1.3538343.</para>
   /// </remarks>
   [FitFunctionClass]
-  public record MooneyRivlinBiaxial : IFitFunctionWithDerivative
+  public record YeohBiaxial : IFitFunctionWithDerivative
   {
     /// <inheritdoc/>
     public event EventHandler? Changed;
@@ -62,7 +59,7 @@ namespace Altaxo.Calc.FitFunctions.RubberElasticity
     public int NumberOfDependentVariables => 1;
 
     /// <inheritdoc/>
-    public int NumberOfParameters => 2;
+    public int NumberOfParameters => 3;
 
     #region Serialization
 
@@ -70,13 +67,13 @@ namespace Altaxo.Calc.FitFunctions.RubberElasticity
     /// V0: 2026-03-19 initial version.
     /// </summary>
     /// <seealso cref="Altaxo.Serialization.Xml.IXmlSerializationSurrogate" />
-    [Altaxo.Serialization.Xml.XmlSerializationSurrogateFor(typeof(MooneyRivlinBiaxial), 0)]
+    [Altaxo.Serialization.Xml.XmlSerializationSurrogateFor(typeof(YeohBiaxial), 0)]
     private class XmlSerializationSurrogate0 : Altaxo.Serialization.Xml.IXmlSerializationSurrogate
     {
       /// <inheritdoc/>
       public virtual void Serialize(object obj, Altaxo.Serialization.Xml.IXmlSerializationInfo info)
       {
-        var s = (MooneyRivlinBiaxial)obj;
+        var s = (YeohBiaxial)obj;
         info.AddValue(nameof(CrossSectionArea), s.CrossSectionArea);
       }
 
@@ -84,21 +81,22 @@ namespace Altaxo.Calc.FitFunctions.RubberElasticity
       public virtual object Deserialize(object? o, Altaxo.Serialization.Xml.IXmlDeserializationInfo info, object? parent)
       {
         var crossSectionArea = info.GetDouble(nameof(CrossSectionArea));
-        return new MooneyRivlinBiaxial() { CrossSectionArea = crossSectionArea };
+        return new YeohBiaxial() { CrossSectionArea = crossSectionArea };
       }
     }
 
     #endregion Serialization
 
-    [FitFunctionCreator("Mooney-Rivlin (biaxial loading)", "RubberElasticity", 1, 1, 2)]
-    [System.ComponentModel.Description("${res:Altaxo.Calc.FitFunctions.RubberElasticity.MooneyRivlinBiaxial}")]
+    [FitFunctionCreator("Yeoh model (biaxial loading)", "RubberElasticity", 1, 1, 3)]
+    [System.ComponentModel.Description("${res:Altaxo.Calc.FitFunctions.RubberElasticity.YeohBiaxial}")]
+
     /// <summary>
     /// Creates a new instance of the fit function.
     /// </summary>
-    /// <returns>A new <see cref="MooneyRivlinBiaxial"/> instance.</returns>
+    /// <returns>A new <see cref="YeohBiaxial"/> instance.</returns>
     public static IFitFunction Create()
     {
-      return new MooneyRivlinBiaxial();
+      return new YeohBiaxial();
     }
 
     /// <inheritdoc/>
@@ -132,7 +130,8 @@ namespace Altaxo.Calc.FitFunctions.RubberElasticity
       return i switch
       {
         0 => "C10",
-        1 => "C01",
+        1 => "C20",
+        2 => "C30",
         _ => throw new ArgumentOutOfRangeException(nameof(i), $"Parameter index {i} is out of range.")
       };
     }
@@ -144,30 +143,35 @@ namespace Altaxo.Calc.FitFunctions.RubberElasticity
       {
         0 => 2E6,
         1 => 5E6,
+        2 => 2E6,
         _ => throw new ArgumentOutOfRangeException(nameof(i), $"Parameter index {i} is out of range.")
       };
     }
 
     /// <summary>
-    /// Evaluates the Mooney-Rivlin biaxial model for the specified strain and parameters.
+    /// Evaluates the Yeoh biaxial model for the specified strain and parameters.
     /// </summary>
     /// <param name="epsilon">Engineering strain.</param>
-    /// <param name="C10">First Mooney-Rivlin parameter.</param>
-    /// <param name="C01">Second Mooney-Rivlin parameter.</param>
+    /// <param name="C10">First order Mooney-Rivlin parameter of I1.</param>
+    /// <param name="C20">Second order Mooney-Rivlin parameter of I1.</param>
+    /// <param name="C30">Third order Mooney-Rivlin parameter of I1.</param>
     /// <returns>The engineering stress predicted by the model.</returns>
-    public static double Evaluate(double epsilon, double C10, double C01)
+    public static double Evaluate(double epsilon, double C10, double C20, double C30)
     {
       var lambda = 1 + epsilon;
       var lambda2 = lambda * lambda;
       var lambda4 = lambda2 * lambda2;
-      return 4 * (C10 + C01 * lambda2) * (lambda2 * lambda4 - 1) / (lambda * lambda4);
-    }
+      var lambda6 = lambda4 * lambda2;
+      var lambda8 = lambda4 * lambda4;
 
+      return (4 * (lambda6 - 1) * (2 * C20 * lambda4 + 3 * C30 * RMath.Pow4(lambda2 - 1) *
+        RMath.Pow2(1 + 2 * lambda2) + lambda8 * (C10 - 6 * C20 + 4 * C20 * lambda2))) / (lambda8 * lambda4 * lambda);
+    }
 
     /// <inheritdoc/>
     public void Evaluate(double[] independent, double[] parameters, double[] FV)
     {
-      FV[0] = CrossSectionArea * Evaluate(independent[0], parameters[0], parameters[1]);
+      FV[0] = CrossSectionArea * Evaluate(independent[0], parameters[0], parameters[1], parameters[2]);
     }
 
     /// <inheritdoc/>
@@ -175,7 +179,7 @@ namespace Altaxo.Calc.FitFunctions.RubberElasticity
     {
       for (int i = 0; i < independent.RowCount; i++)
       {
-        FV[i] = CrossSectionArea * Evaluate(independent[i, 0], parameters[0], parameters[1]);
+        FV[i] = CrossSectionArea * Evaluate(independent[i, 0], parameters[0], parameters[1], parameters[2]);
       }
     }
 
@@ -187,9 +191,13 @@ namespace Altaxo.Calc.FitFunctions.RubberElasticity
         var epsilon = independent[i, 0];
         var lambda = 1 + epsilon;
         var lambda2 = lambda * lambda;
+        var lambda3 = lambda2 * lambda;
         var lambda4 = lambda2 * lambda2;
-        DF[i, 0] = CrossSectionArea * 4 * (lambda - 1 / (lambda4 * lambda));
-        DF[i, 1] = CrossSectionArea * 4 * (lambda4 * lambda2 - 1) / (lambda2 * lambda);
+        var lambda5 = lambda3 * lambda2;
+        var lambda6 = lambda4 * lambda2;
+        DF[i, 0] = CrossSectionArea * 4 * (lambda - 1 / lambda5);
+        DF[i, 1] = CrossSectionArea * 8 * RMath.Pow3(lambda2 - 1) * (1 + 2 * lambda2) * (1 + lambda2 + lambda4) / (lambda5 * lambda2 * lambda2);
+        DF[i, 2] = CrossSectionArea * 12 * RMath.Pow4(lambda2 - 1) * RMath.Pow2(1 + 2 * lambda2) * (lambda6 - 1) / (lambda6 * lambda6 * lambda);
       }
     }
 
@@ -202,7 +210,7 @@ namespace Altaxo.Calc.FitFunctions.RubberElasticity
     /// <inheritdoc/>
     public (IReadOnlyList<double?>? LowerBounds, IReadOnlyList<double?>? UpperBounds) GetParameterBoundariesSoftLimit()
     {
-      return (new double?[] { 0, 0 }, null);
+      return (new double?[] { 0, null, null }, null);
     }
   }
 }

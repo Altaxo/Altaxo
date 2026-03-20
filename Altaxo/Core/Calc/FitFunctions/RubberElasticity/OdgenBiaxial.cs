@@ -30,14 +30,14 @@ using Altaxo.Calc.Regression.Nonlinear;
 namespace Altaxo.Calc.FitFunctions.RubberElasticity
 {
   /// <summary>
-  /// Neo-Hook model for uniaxial loading.
+  /// Odgen model for biaxial loading.
   /// </summary>
   /// <remarks>
-  /// The model evaluates the engineering stress as a function of engineering strain using the
-  /// two material parameters <c>C10</c> and <c>C01</c>.
+  /// The model can consist of multiple terms, each having a prefactor and an exponent.
+  /// <para>Reference: [1] R. W. Ogden, „Large deformation isotropic elasticity – on the correlation of theory and experiment for incompressible rubberlike solids“, Proceedings of the Royal Society of London. A. Mathematical and Physical Sciences, Bd. 326, Nr. 1567, S. 565–584, Feb. 1972, doi: 10.1098/rspa.1972.0026.</para>
   /// </remarks>
   [FitFunctionClass]
-  public record NeoHookBiaxial : IFitFunctionWithDerivative
+  public record OdgenBiaxial : IFitFunctionWithDerivative
   {
     /// <inheritdoc/>
     public event EventHandler? Changed;
@@ -51,6 +51,22 @@ namespace Altaxo.Calc.FitFunctions.RubberElasticity
     /// </remarks>
     public double CrossSectionArea { get; init; } = 1;
 
+    /// <summary>
+    /// Gets the number of terms in the model (order of the model.
+    /// </summary>
+    public int NumberOfTerms
+    {
+      get;
+      init
+      {
+        if (value < 1)
+        {
+          throw new ArgumentOutOfRangeException(nameof(value), $"Number of terms must be at least 1, but was {value}.");
+        }
+        field = value;
+      }
+    } = 1;
+
     /// <inheritdoc/>
     public int NumberOfIndependentVariables => 1;
 
@@ -58,7 +74,7 @@ namespace Altaxo.Calc.FitFunctions.RubberElasticity
     public int NumberOfDependentVariables => 1;
 
     /// <inheritdoc/>
-    public int NumberOfParameters => 1;
+    public int NumberOfParameters => 2 * NumberOfTerms;
 
     #region Serialization
 
@@ -66,13 +82,13 @@ namespace Altaxo.Calc.FitFunctions.RubberElasticity
     /// V0: 2026-03-19 initial version.
     /// </summary>
     /// <seealso cref="Altaxo.Serialization.Xml.IXmlSerializationSurrogate" />
-    [Altaxo.Serialization.Xml.XmlSerializationSurrogateFor(typeof(NeoHookBiaxial), 0)]
+    [Altaxo.Serialization.Xml.XmlSerializationSurrogateFor(typeof(OdgenBiaxial), 0)]
     private class XmlSerializationSurrogate0 : Altaxo.Serialization.Xml.IXmlSerializationSurrogate
     {
       /// <inheritdoc/>
       public virtual void Serialize(object obj, Altaxo.Serialization.Xml.IXmlSerializationInfo info)
       {
-        var s = (NeoHookBiaxial)obj;
+        var s = (OdgenBiaxial)obj;
         info.AddValue(nameof(CrossSectionArea), s.CrossSectionArea);
       }
 
@@ -80,22 +96,22 @@ namespace Altaxo.Calc.FitFunctions.RubberElasticity
       public virtual object Deserialize(object? o, Altaxo.Serialization.Xml.IXmlDeserializationInfo info, object? parent)
       {
         var crossSectionArea = info.GetDouble(nameof(CrossSectionArea));
-        return new NeoHookBiaxial() { CrossSectionArea = crossSectionArea };
+        return new OdgenBiaxial() { CrossSectionArea = crossSectionArea };
       }
     }
 
     #endregion Serialization
 
-    [FitFunctionCreator("Neo-Hook (biaxial loading)", "RubberElasticity", 1, 1, 1)]
-    [System.ComponentModel.Description("${res:Altaxo.Calc.FitFunctions.RubberElasticity.NeoHookBiaxial}")]
+    [FitFunctionCreator("Odgen (biaxial loading)", "RubberElasticity", 1, 1, 2)]
+    [System.ComponentModel.Description("${res:Altaxo.Calc.FitFunctions.RubberElasticity.OdgenBiaxial}")]
 
     /// <summary>
     /// Creates a new instance of the fit function.
     /// </summary>
-    /// <returns>A new <see cref="NeoHookBiaxial"/> instance.</returns>
+    /// <returns>A new <see cref="OdgenBiaxial"/> instance.</returns>
     public static IFitFunction Create()
     {
-      return new NeoHookBiaxial();
+      return new OdgenBiaxial();
     }
 
     /// <inheritdoc/>
@@ -126,40 +142,58 @@ namespace Altaxo.Calc.FitFunctions.RubberElasticity
     /// <inheritdoc/>
     public string ParameterName(int i)
     {
-      return i switch
+      if (i >= 0 && i < NumberOfParameters)
       {
-        0 => "C10",
-        _ => throw new ArgumentOutOfRangeException(nameof(i), $"Parameter index {i} is out of range.")
-      };
+        return i % 2 == 0 ? $"µ{i / 2 + 1}" : $"α{i / 2 + 1}";
+      }
+      else
+      {
+        throw new ArgumentOutOfRangeException(nameof(i), $"Parameter index {i} is out of range.");
+      }
+      ;
     }
 
     /// <inheritdoc/>
     public double DefaultParameterValue(int i)
     {
-      return i switch
+      if (i >= 0 && i < NumberOfParameters)
       {
-        0 => 5E6,
-        _ => throw new ArgumentOutOfRangeException(nameof(i), $"Parameter index {i} is out of range.")
-      };
+        return i % 2 == 0 ? 5e6 : 1.0;
+      }
+      else
+      {
+        throw new ArgumentOutOfRangeException(nameof(i), $"Parameter index {i} is out of range.");
+      }
+      ;
     }
 
     /// <summary>
-    /// Evaluates the Mooney-Rivlin uniaxial model for the specified strain and parameters.
+    /// Evaluates one term of the Odgen model with biaxial loading (pure shear) for the specified strain and parameters.
     /// </summary>
     /// <param name="epsilon">Engineering strain.</param>
-    /// <param name="C10">First order Mooney-Rivlin parameter of I1.</param>
+    /// <param name="µ">The coefficent of the term.</param>
+    /// <param name="α">The exponent of the term.</param>
     /// <returns>The engineering stress predicted by the model.</returns>
-    public static double Evaluate(double epsilon, double C10)
+    public static double EvaluateOneTerm(double epsilon, double µ, double α)
     {
       var lambda = 1 + epsilon;
-      return 4 * C10 * (lambda - 1 / RMath.Pow5(lambda));
+      return µ * (Math.Pow(lambda, α - 1) - Math.Pow(lambda, -1 - 2 * α));
     }
 
 
     /// <inheritdoc/>
     public void Evaluate(double[] independent, double[] parameters, double[] FV)
     {
-      FV[0] = CrossSectionArea * Evaluate(independent[0], parameters[0]);
+      var epsilon = independent[0];
+      var sum = 0d;
+      for (int i = 0; i < NumberOfTerms; i++)
+      {
+        var µ = parameters[2 * i];
+        var α = parameters[2 * i + 1];
+        sum += EvaluateOneTerm(epsilon, µ, α);
+      }
+
+      FV[0] = CrossSectionArea * sum;
     }
 
     /// <inheritdoc/>
@@ -167,7 +201,15 @@ namespace Altaxo.Calc.FitFunctions.RubberElasticity
     {
       for (int i = 0; i < independent.RowCount; i++)
       {
-        FV[i] = CrossSectionArea * Evaluate(independent[i, 0], parameters[0]);
+        var epsilon = independent[i, 0];
+        var sum = 0d;
+        for (int k = 0; k < NumberOfTerms; k++)
+        {
+          var µ = parameters[2 * k];
+          var α = parameters[2 * k + 1];
+          sum += EvaluateOneTerm(epsilon, µ, α);
+        }
+        FV[i] = CrossSectionArea * sum;
       }
     }
 
@@ -176,9 +218,15 @@ namespace Altaxo.Calc.FitFunctions.RubberElasticity
     {
       for (int i = 0; i < independent.RowCount; i++)
       {
-        var lambda = 1 + independent[i, 0];
-        var lambda2 = lambda * lambda;
-        DF[i, 0] = CrossSectionArea * 4 * (lambda - 1 / RMath.Pow5(lambda));
+        var epsilon = independent[i, 0];
+        var lambda = 1 + epsilon;
+        for (int k = 0; k < NumberOfTerms; k++)
+        {
+          var µ = parameters[2 * k];
+          var α = parameters[2 * k + 1];
+          DF[i, 2 * k] = CrossSectionArea * (Math.Pow(lambda, 3 * α) - 1) * Math.Pow(lambda, -1 - 2 * α);
+          DF[i, 2 * k + 1] = CrossSectionArea * µ * Math.Log(lambda) * (Math.Pow(lambda, -1 - 2 * α) * (2 + Math.Pow(lambda, 3 * α)));
+        }
       }
     }
 
@@ -191,7 +239,7 @@ namespace Altaxo.Calc.FitFunctions.RubberElasticity
     /// <inheritdoc/>
     public (IReadOnlyList<double?>? LowerBounds, IReadOnlyList<double?>? UpperBounds) GetParameterBoundariesSoftLimit()
     {
-      return (new double?[] { 0 }, null);
+      return (null, null);
     }
   }
 }

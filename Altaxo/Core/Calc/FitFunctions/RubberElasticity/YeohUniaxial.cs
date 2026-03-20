@@ -35,6 +35,7 @@ namespace Altaxo.Calc.FitFunctions.RubberElasticity
   /// <remarks>
   /// The model evaluates the engineering stress as a function of engineering strain using the
   /// two material parameters <c>C10</c> and <c>C01</c>.
+  /// <para>Reference: [1] O. H. Yeoh, „Some Forms of the Strain Energy Function for Rubber“, Rubber Chemistry and Technology, Bd. 66, Nr. 5, S. 754–771, Nov. 1993, doi: 10.5254/1.3538343.</para>
   /// </remarks>
   [FitFunctionClass]
   public record YeohUniaxial : IFitFunctionWithDerivative
@@ -201,7 +202,7 @@ namespace Altaxo.Calc.FitFunctions.RubberElasticity
     /// <inheritdoc/>
     public (IReadOnlyList<double?>? LowerBounds, IReadOnlyList<double?>? UpperBounds) GetParameterBoundariesSoftLimit()
     {
-      return (new double?[] { 0, 0, 0 }, null);
+      return (new double?[] { 0, null, null }, null);
     }
   }
 }
