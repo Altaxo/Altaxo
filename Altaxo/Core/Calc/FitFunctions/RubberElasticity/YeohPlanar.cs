@@ -87,13 +87,12 @@ namespace Altaxo.Calc.FitFunctions.RubberElasticity
 
     #endregion Serialization
 
-    [FitFunctionCreator("Yeoh model (planar loading)", "RubberElasticity", 1, 1, 3)]
-    [System.ComponentModel.Description("${res:Altaxo.Calc.FitFunctions.RubberElasticity.YeohPlanar}")]
-
     /// <summary>
     /// Creates a new instance of the fit function.
     /// </summary>
     /// <returns>A new <see cref="YeohPlanar"/> instance.</returns>
+    [FitFunctionCreator("Yeoh model (planar loading)", "RubberElasticity", 1, 1, 3)]
+    [System.ComponentModel.Description("${res:Altaxo.Calc.FitFunctions.RubberElasticity.YeohPlanar}")]
     public static IFitFunction Create()
     {
       return new YeohPlanar();

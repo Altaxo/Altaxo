@@ -103,13 +103,12 @@ namespace Altaxo.Calc.FitFunctions.RubberElasticity
 
     #endregion Serialization
 
-    [FitFunctionCreator("Odgen (planar loading)", "RubberElasticity", 1, 1, 2)]
-    [System.ComponentModel.Description("${res:Altaxo.Calc.FitFunctions.RubberElasticity.OdgenPlanar}")]
-
     /// <summary>
     /// Creates a new instance of the fit function.
     /// </summary>
     /// <returns>A new <see cref="OdgenPlanar"/> instance.</returns>
+    [FitFunctionCreator("Odgen (planar loading)", "RubberElasticity", 1, 1, 2)]
+    [System.ComponentModel.Description("${res:Altaxo.Calc.FitFunctions.RubberElasticity.OdgenPlanar}")]
     public static IFitFunction Create()
     {
       return new OdgenPlanar();

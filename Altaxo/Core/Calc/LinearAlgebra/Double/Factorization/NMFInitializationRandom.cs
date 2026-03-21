@@ -30,7 +30,7 @@ namespace Altaxo.Calc.LinearAlgebra.Double.Factorization
   /// Provides a random initialization for non-negative matrix factorization (NMF).
   /// </summary>
   /// <remarks>
-  /// The generated factors are scaled to match the average magnitude of <paramref name="X"/> and are constrained to be
+  /// The generated factors are scaled to match the average magnitude of the input matrix and are constrained to be
   /// strictly positive to avoid zero entries.
   /// </remarks>
   public record NMFInitializationRandom : INonnegativeMatrixFactorizationInitializer, Main.IImmutable

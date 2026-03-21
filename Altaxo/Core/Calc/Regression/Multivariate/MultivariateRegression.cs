@@ -153,8 +153,7 @@ namespace Altaxo.Calc.Regression.Multivariate
     /// <param name="preprocessSingleSpectrum">Information how to preprocess the spectra, here: how to process each spectrum separately.</param>
     /// <param name="xOfXRaw">The x-values (wavelength, frequency, etc.) of the spectra (needed for preprocessing).</param>
     /// <param name="matrixXRaw">Matrix of preprocessed spectra (number of observations, number of wavelengths).</param>
-    /// <param name="meanX">Contains the mean spectrum, calculated during the analysis stage.</param>
-    /// <param name="scaleX">Contains the scaling factor for each spectral slot, calculated during the analysis stage.</param>
+    /// <param name="auxiliaryDataX">Contains data from preprocessing that is needed later on for preprocessing spectra for prediction.</param>
     /// <param name="xOfXPre">On return, contains the x-values of the preprocessed spectra.</param>
     /// <param name="matrixXPre">On return, contains the matrix of preprocessed spectra (each spectrum is a row in the matrix).</param>
     public static void PreprocessSpectraForPrediction(
@@ -224,7 +223,6 @@ namespace Altaxo.Calc.Regression.Multivariate
     /// Preprocesses the x and y matrices before usage in multivariate calibrations.
     /// </summary>
     /// <param name="preprocessSingleSpectrum">Information how to preprocess the spectra, here: how to process each spectrum separately.</param>
-    /// <param name="preprocessEnsembleOfSpectra">Information how to preprocess the spectra, here: how to process the spectra ensemble.</param>
     /// <param name="xOfXRaw">The x-values (wavelength, frequency, etc.) of the spectra (needed for preprocessing).</param>
     /// <param name="matrixXRaw">Matrix of preprocessed spectra (number of observations, number of wavelengths).</param>
     /// <param name="auxDataX">Contains data from the ensemble preprocessing that is needed later on for preprocessing spectra for prediction.</param>
@@ -559,7 +557,6 @@ namespace Altaxo.Calc.Regression.Multivariate
     /// <param name="numberOfFactors">Number of factors used for calculation.</param>
     /// <param name="groupingStrategy">The strategy how to group the spectra for cross prediction.</param>
     /// <param name="preprocessSingleSpectrum">Information how to preprocess the spectra, here: how to process each spectrum separately.</param>
-    /// <param name="preprocessEnsembleOfSpectra">Information how to preprocess the spectra, here: how to process the spectra ensemble.</param>
     /// <param name="regressionMethod">The type of regression (e.g. PCR, PLS1, PLS2) provided as an empty regression object.</param>
     /// <param name="yCrossPredicted">Matrix of cross-predicted y values. Must be of same dimension as the <paramref name="matrixYRaw"/> matrix.</param>
     /// <returns>Mean number of spectra used for cross prediction.</returns>
@@ -590,7 +587,6 @@ namespace Altaxo.Calc.Regression.Multivariate
     /// <param name="numFactors">Number of factors used for calculation.</param>
     /// <param name="groupingStrategy">The strategy how to group the spectra for cross prediction.</param>
     /// <param name="preprocessSingleSpectrum">Information how to preprocess the spectra, here: how to process each spectrum separately.</param>
-    /// <param name="preprocessEnsembleOfSpectra">Information how to preprocess the spectra, here: how to process the spectra ensemble.</param>
     /// <param name="regress">The type of regression (e.g. PCR, PLS1, PLS2) provided as an empty regression object.</param>
     /// <param name="crossXResiduals">On return, the matrix of spectral residuals.</param>
     /// <returns>Mean number of spectra used for prediction.</returns>

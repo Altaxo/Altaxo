@@ -30,7 +30,7 @@ namespace Altaxo.Calc.LinearAlgebra.Double.Factorization
   /// Non-negative matrix factorization (NMF) using the classic multiplicative update rules.
   /// </summary>
   /// <remarks>
-  /// References: Berry, M. W., Browne, M., Langville, A. N., Pauca, V. P., Plemmons, R. J. (2007). Algorithms and applications for approximate nonnegative matrix factorization. Computational Statistics & Data Analysis, 52(1), 155–173. https://doi.org/10.1016/j.csda.2006.11.006
+  /// References: Berry, M. W., Browne, M., Langville, A. N., Pauca, V. P., Plemmons, R. J. (2007). Algorithms and applications for approximate nonnegative matrix factorization. Computational Statistics &amp; Data Analysis, 52(1), 155–173. https://doi.org/10.1016/j.csda.2006.11.006
   /// </remarks>
   public record NonnegativeMatrixFactorizationByMultiplicativeUpdate : NonnegativeMatrixFactorizationBase
   {

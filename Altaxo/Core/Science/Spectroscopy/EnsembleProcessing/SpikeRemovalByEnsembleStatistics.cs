@@ -399,7 +399,7 @@ namespace Altaxo.Science.Spectroscopy.EnsembleProcessing
 
     /// <summary>
     /// Computes the inverse cumulative distribution function (quantile function) of the standard normal distribution
-    /// for a specified probability (Abramowitz & Stegun, accurate to ~4.5e-4).
+    /// for a specified probability (Abramowitz &amp; Stegun, accurate to ~4.5e-4).
     /// </summary>
     /// <param name="p">The probability for which to compute the quantile. Must be greater than 0 and less than 1.</param>
     /// <returns>The z-score such that the probability of a standard normal random variable being less than or equal to this

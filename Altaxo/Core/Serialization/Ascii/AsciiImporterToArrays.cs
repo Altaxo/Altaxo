@@ -376,7 +376,6 @@ namespace Altaxo.Serialization.Ascii
     /// <summary>
     /// Imports from an ASCII file into an existing table. The import options have to be known already.
     /// </summary>
-    /// <param name="dataTable">The data table to import into.</param>
     /// <param name="fileName">File name of the file to import.</param>
     /// <param name="importOptions">The import options. This parameter must not be null.</param>
     public void ImportFromAsciiFile(string fileName, AsciiImportOptions importOptions)
@@ -396,12 +395,9 @@ namespace Altaxo.Serialization.Ascii
     /// <summary>
     /// Imports from an ASCII file into an existing table.
     /// </summary>
-    /// <param name="dataTable">The data table to import into.</param>
     /// <param name="fileName">File name of the file to import.</param>
     /// <param name="importOptions">On return, contains the import options that were used to import the file.</param>
     /// <exception cref="System.ArgumentNullException">
-    /// Argument dataTable is null
-    /// or
     /// Argument fileName is null or empty
     /// </exception>
     public void ImportFromAsciiFile(string fileName, out AsciiImportOptions importOptions)
@@ -419,11 +415,8 @@ namespace Altaxo.Serialization.Ascii
     /// <summary>
     /// Imports from an ASCII file into an existing table.
     /// </summary>
-    /// <param name="dataTable">The data table to import into.</param>
     /// <param name="fileName">File name of the file to import.</param>
     /// <exception cref="System.ArgumentNullException">
-    /// Argument dataTable is null
-    /// or
     /// Argument fileName is null or empty
     /// </exception>
     public void ImportFromAsciiFile(string fileName)
@@ -441,7 +434,6 @@ namespace Altaxo.Serialization.Ascii
     /// <summary>
     /// Imports from an ASCII text provided as string into an existing table. The import options have to be known already.
     /// </summary>
-    /// <param name="dataTable">The data table to import into.</param>
     /// <param name="asciiText">The Ascii text that is to be imported.</param>
     /// <param name="importOptions">The import options. This parameter must not be null, and the options must be fully specified.</param>
     public void ImportFromAsciiText(string asciiText, AsciiImportOptions importOptions)
@@ -467,7 +459,6 @@ namespace Altaxo.Serialization.Ascii
     /// <summary>
     /// Imports from an ASCII text provided as string into an existing table.
     /// </summary>
-    /// <param name="dataTable">The data table to import into.</param>
     /// <param name="asciiText">The Ascii text that is to be imported.</param>
     /// <param name="importOptions">On return, contains the import options that were used to import the Ascii text.</param>
     public void ImportFromAsciiText(string asciiText, out AsciiImportOptions importOptions)
@@ -490,7 +481,6 @@ namespace Altaxo.Serialization.Ascii
     /// <summary>
     /// Imports from an ASCII text provided as string into an existing table.
     /// </summary>
-    /// <param name="dataTable">The data table to import into.</param>
     /// <param name="asciiText">The Ascii text that is to be imported.</param>
     public void ImportFromAsciiText(string asciiText)
     {

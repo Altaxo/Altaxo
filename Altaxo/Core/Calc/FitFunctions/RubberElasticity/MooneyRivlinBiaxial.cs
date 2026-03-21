@@ -90,12 +90,12 @@ namespace Altaxo.Calc.FitFunctions.RubberElasticity
 
     #endregion Serialization
 
-    [FitFunctionCreator("Mooney-Rivlin (biaxial loading)", "RubberElasticity", 1, 1, 2)]
-    [System.ComponentModel.Description("${res:Altaxo.Calc.FitFunctions.RubberElasticity.MooneyRivlinBiaxial}")]
     /// <summary>
     /// Creates a new instance of the fit function.
     /// </summary>
     /// <returns>A new <see cref="MooneyRivlinBiaxial"/> instance.</returns>
+    [FitFunctionCreator("Mooney-Rivlin (biaxial loading)", "RubberElasticity", 1, 1, 2)]
+    [System.ComponentModel.Description("${res:Altaxo.Calc.FitFunctions.RubberElasticity.MooneyRivlinBiaxial}")]
     public static IFitFunction Create()
     {
       return new MooneyRivlinBiaxial();

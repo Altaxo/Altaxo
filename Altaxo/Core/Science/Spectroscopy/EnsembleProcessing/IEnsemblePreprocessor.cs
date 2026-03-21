@@ -47,7 +47,7 @@ namespace Altaxo.Science.Spectroscopy.EnsembleProcessing
     /// <summary>
     /// Processes the spectra for prediction.
     /// For prediction it is necessary to use the auxiliary data previously evaluated by
-    /// <see cref="Execute(double[], Matrix{double}, int[]?)"/>, in order to apply the same treatment to the spectra.
+    /// <see cref="Execute(double[], Matrix{double}, int[])"/>, in order to apply the same treatment to the spectra.
     /// </summary>
     /// <param name="x">The x-values of the spectra.</param>
     /// <param name="spectraMatrix">The matrix of spectra. Each row of the matrix represents a spectrum.</param>

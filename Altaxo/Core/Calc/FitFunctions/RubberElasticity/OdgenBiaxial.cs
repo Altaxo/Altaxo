@@ -102,13 +102,12 @@ namespace Altaxo.Calc.FitFunctions.RubberElasticity
 
     #endregion Serialization
 
-    [FitFunctionCreator("Odgen (biaxial loading)", "RubberElasticity", 1, 1, 2)]
-    [System.ComponentModel.Description("${res:Altaxo.Calc.FitFunctions.RubberElasticity.OdgenBiaxial}")]
-
     /// <summary>
     /// Creates a new instance of the fit function.
     /// </summary>
     /// <returns>A new <see cref="OdgenBiaxial"/> instance.</returns>
+    [FitFunctionCreator("Odgen (biaxial loading)", "RubberElasticity", 1, 1, 2)]
+    [System.ComponentModel.Description("${res:Altaxo.Calc.FitFunctions.RubberElasticity.OdgenBiaxial}")]
     public static IFitFunction Create()
     {
       return new OdgenBiaxial();

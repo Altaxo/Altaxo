@@ -87,13 +87,12 @@ namespace Altaxo.Calc.FitFunctions.RubberElasticity
 
     #endregion Serialization
 
-    [FitFunctionCreator("Neo-Hook (biaxial loading)", "RubberElasticity", 1, 1, 1)]
-    [System.ComponentModel.Description("${res:Altaxo.Calc.FitFunctions.RubberElasticity.NeoHookeanBiaxial}")]
-
     /// <summary>
     /// Creates a new instance of the fit function.
     /// </summary>
     /// <returns>A new <see cref="NeoHookeanBiaxial"/> instance.</returns>
+    [FitFunctionCreator("Neo-Hook (biaxial loading)", "RubberElasticity", 1, 1, 1)]
+    [System.ComponentModel.Description("${res:Altaxo.Calc.FitFunctions.RubberElasticity.NeoHookeanBiaxial}")]
     public static IFitFunction Create()
     {
       return new NeoHookeanBiaxial();

@@ -236,7 +236,6 @@ namespace Altaxo.Calc.Interpolation
 
     /// <summary>
     /// Interpolates a list of points (<paramref name="u"/>, <paramref name="v"/>) and stores results into <paramref name="w"/>.
-    /// Also computes the first partial derivatives which are stored in <paramref name="dwdx"/> and <paramref name="dwdy"/>.
     /// </summary>
     /// <param name="x">X coordinates of grid points (ascending).</param>
     /// <param name="y">Y coordinates of grid points (ascending).</param>

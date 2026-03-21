@@ -70,10 +70,11 @@ namespace Altaxo.Science.Spectroscopy.Normalization
       }
     }
 
+    /// <summary>
     /// XML serialization surrogate for <see cref="NormalizationMax"/>.
     /// </summary>
     /// <remarks>
-    /// V1: 2026-02-23 Added MinimumXValue, MaximumXValue and BaseOnMinimumValue properties.
+    /// V1: 2026-02-23 Added MinimumXValue, MaximumXValue and BasedOnMinimumYValue properties.
     /// </remarks>
     [Altaxo.Serialization.Xml.XmlSerializationSurrogateFor(typeof(NormalizationMax), 1)]
     public class SerializationSurrogate1 : Altaxo.Serialization.Xml.IXmlSerializationSurrogate
@@ -104,7 +105,7 @@ namespace Altaxo.Science.Spectroscopy.Normalization
     }
 
     /// <summary>
-    /// XML serialization surrogate for obsolete <see cref="NormalizationMinMax"/>.
+    /// XML serialization surrogate for obsolete <c>NormalizationMinMax</c>.
     /// </summary>
     [Altaxo.Serialization.Xml.XmlSerializationSurrogateFor("AltaxoCore", "Altaxo.Science.Spectroscopy.Normalization.NormalizationMinMax", 0)]
     public class SerializationSurrogateMinMax0 : Altaxo.Serialization.Xml.IXmlSerializationSurrogate
@@ -123,7 +124,7 @@ namespace Altaxo.Science.Spectroscopy.Normalization
     }
 
     /// <summary>
-    /// XML serialization surrogate for obsolete <see cref="NormalizationMinMax"/>.
+    /// XML serialization surrogate for obsolete <c>NormalizationMinMaxInRange</c>.
     /// </summary>
     [Altaxo.Serialization.Xml.XmlSerializationSurrogateFor("AltaxoCore", "Altaxo.Science.Spectroscopy.Normalization.NormalizationMinMaxInRange", 0)]
     public class SerializationSurrogateMinMaxInRange0 : Altaxo.Serialization.Xml.IXmlSerializationSurrogate

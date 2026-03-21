@@ -56,11 +56,6 @@ namespace Altaxo.Calc.Regression.Multivariate
     protected ISingleSpectrumPreprocessor _singleSpectrumPreprocessor;
 
     /// <summary>
-    /// Preprocessor applied to an ensemble of spectra (mean/scale preprocessing).
-    /// </summary>
-    //protected IEnsembleMeanScalePreprocessor _ensembleOfSpectraPreprocessor;
-
-    /// <summary>
     /// The multivariate regression analysis implementation.
     /// </summary>
     protected MultivariateRegression _analysis;
@@ -204,7 +199,6 @@ namespace Altaxo.Calc.Regression.Multivariate
     /// <param name="numFactors">The initial number of factors to use.</param>
     /// <param name="groupingStrategy">The grouping strategy used for cross validation.</param>
     /// <param name="preprocessSingleSpectrum">The preprocessor applied to each single spectrum.</param>
-    /// <param name="preprocessEnsembleOfSpectra">The preprocessor applied to an ensemble of spectra.</param>
     /// <param name="analysis">The analysis instance used to build the model and perform predictions.</param>
     /// <param name="YCrossValidationPrediction">Matrix that will receive the predicted <c>Y</c> values for all observations.</param>
     public CrossPredictedYEvaluator(
@@ -282,7 +276,6 @@ namespace Altaxo.Calc.Regression.Multivariate
     /// <param name="numFactors">The initial number of factors to use.</param>
     /// <param name="groupingStrategy">The grouping strategy used for cross validation.</param>
     /// <param name="preprocessSingleSpectrum">The preprocessor applied to each single spectrum.</param>
-    /// <param name="preprocessEnsembleOfSpectra">The preprocessor applied to an ensemble of spectra.</param>
     /// <param name="analysis">The analysis instance used to build the model and compute residuals.</param>
     public CrossPredictedXResidualsEvaluator(
       int numberOfPoints,

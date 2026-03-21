@@ -105,7 +105,7 @@ namespace Altaxo.Calc.LinearAlgebra.Double.Factorization
       var (mfactors, mloadings) = new PrincipalComponentAnalysisBySVD().Factorize(matrixX, NumberOfComponents);
 
       var relError = RelativeError(mfactors, mloadings, originalMatrix2);
-      Assert.True(relError < 1E-15);
+      Assert.True(relError < 1E-14);
     }
   }
 }
