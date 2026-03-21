@@ -25,12 +25,18 @@
 #nullable enable
 using System;
 using System.Collections.Generic;
+using System.IO;
 using System.Linq;
+using System.Threading.Tasks;
 using Altaxo.AddInItems;
+using Altaxo.Collections;
+using Altaxo.Data;
 using Altaxo.Gui.Graph.Gdi.Viewing;
 using Altaxo.Gui.Workbench;
 using Altaxo.Main.Services;
 using Altaxo.Main.Services.Files;
+using Altaxo.Serialization;
+using Altaxo.Serialization.AltaxoProjects;
 
 namespace Altaxo.Main
 {
@@ -371,15 +377,45 @@ namespace Altaxo.Main
 
     public override void ExecuteActionsImmediatelyBeforeRunningApplication(string[] cmdArgs, string[] cmdParameter, string[] cmdFiles)
     {
+      // first, find out if among the files is an Altaxo project
+      // if there is one, the load the Altaxo project first
+      // if there are more than one Altaxo project in the command line, load only the first one, but write a warning to the message window
+      // after the Altaxo project is loaded, try to load the other files by importing them
+
+      string? firstAltaxoFile = null;
+
+      var altaxoImporter = new AltaxoImporter();
+
+      var hashOfOtherFiles = new HashSet<string>(cmdFiles);
       foreach (var file in cmdFiles)
       {
-        if (System.IO.File.Exists(file))
-          LoadProjectFromFileOrFolder(FileName.Create(file), showUserInteraction: false);
-        else if (System.IO.Directory.Exists(file))
-          LoadProjectFromFileOrFolder(DirectoryName.Create(file));
-        break;
+        if (altaxoImporter.GetProbabilityForBeingThisFileFormat(file) == 1)
+        {
+          hashOfOtherFiles.Remove(file);
+
+          if (firstAltaxoFile is null)
+            firstAltaxoFile = file;
+          else
+            Current.InfoTextMessageService.WriteLine(MessageLevel.Warning, "command line", $"Warning: Altaxo project {file} given as command line argument was ignored, because the first command line argument {firstAltaxoFile} was loaded instead");
+        }
       }
 
+      // now load the Altaxo project
+      if (firstAltaxoFile is not null)
+      {
+        if (System.IO.File.Exists(firstAltaxoFile))
+          LoadProjectFromFileOrFolder(FileName.Create(firstAltaxoFile), showUserInteraction: false);
+        else if (System.IO.Directory.Exists(firstAltaxoFile))
+          LoadProjectFromFileOrFolder(DirectoryName.Create(firstAltaxoFile));
+      }
+
+      // now import the other files
+      if (hashOfOtherFiles.Count > 0)
+      {
+        ImportFilesOtherThanAltaxoProjects(hashOfOtherFiles);
+      }
+
+      // and finally, execute scripts etc. if required
       for (int i = 0; i < cmdArgs.Length; ++i)
       {
         var lowerarg = cmdArgs[i].ToLowerInvariant();
@@ -387,6 +423,62 @@ namespace Altaxo.Main
         {
           ExecuteTableScriptOfTable(cmdArgs[i + 1]);
           ++i; // switch over the next argument, since it is then already processed
+        }
+      }
+    }
+
+    public void ImportFilesOtherThanAltaxoProjects(HashSet<string> otherFiles)
+    {
+      var importers = Altaxo.Main.Services.ReflectionService.GetNonAbstractSubclassesOf(typeof(Altaxo.Serialization.IDataFileImporter))
+                      .Select(t => (IDataFileImporter)Activator.CreateInstance(t))
+                      .ToArray();
+
+      // if it is not a project file, then maybe a data file...
+      foreach (var itemFullName in otherFiles)
+      {
+        var fileExtension = Path.GetExtension(itemFullName).ToLowerInvariant();
+        var table = new DataTable(Path.GetFileNameWithoutExtension(Path.GetFileName(itemFullName)));
+
+        bool wasHandled = false;
+        foreach (var imp in importers)
+        {
+          if (imp.GetFileExtensions().FileExtensions.Contains(fileExtension))
+          {
+            wasHandled = true;
+            try
+            {
+              imp.Import([itemFullName], table, imp.CheckOrCreateImportOptions(null), attachDataSource: true);
+              Current.ProjectService.CreateNewWorksheet(table);
+              continue;
+            }
+            catch
+            {
+            }
+          }
+        }
+
+        var tasks = importers.Select(imp => new Task<double>(() => imp.GetProbabilityForBeingThisFileFormat(itemFullName))).ToArray();
+        tasks.ForEachDo(task => task.Start());
+        Task.WaitAll(tasks);
+        var maxIdx = tasks.IndexOfMax((t) => t.Result);
+        if (tasks[maxIdx].Result > 0)
+        {
+          wasHandled |= true;
+          try
+          {
+            importers[maxIdx].Import([itemFullName], table, importers[maxIdx].CheckOrCreateImportOptions(null), attachDataSource: true);
+            Current.Project.DataTableCollection.Add(table);
+            Current.ProjectService.CreateNewWorksheet(table);
+            continue;
+          }
+          catch
+          {
+          }
+        }
+
+        if (!wasHandled)
+        {
+          Current.InfoTextMessageService.WriteLine(MessageLevel.Warning, "command line", $"The file '{itemFullName}' given in the command line could not be imported because there is no importer for it, or the file is corrupt.");
         }
       }
     }
