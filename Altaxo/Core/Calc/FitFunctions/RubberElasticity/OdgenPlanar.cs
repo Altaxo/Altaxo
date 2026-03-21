@@ -33,8 +33,7 @@ namespace Altaxo.Calc.FitFunctions.RubberElasticity
   /// Odgen model for planar loading.
   /// </summary>
   /// <remarks>
-  /// The model evaluates the engineering stress as a function of engineering strain using the
-  /// two material parameters <c>C10</c> and <c>C01</c>.
+  /// The model evaluates the engineering stress as a function of engineering strain using a user-chooseable number of terms, each with a prefactor µ and an exponent α.
   /// <para>Reference: [1] R. W. Ogden, „Large deformation isotropic elasticity – on the correlation of theory and experiment for incompressible rubberlike solids“, Proceedings of the Royal Society of London. A. Mathematical and Physical Sciences, Bd. 326, Nr. 1567, S. 565–584, Feb. 1972, doi: 10.1098/rspa.1972.0026.</para>
   /// </remarks>
   [FitFunctionClass]

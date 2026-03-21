@@ -33,8 +33,7 @@ namespace Altaxo.Calc.FitFunctions.RubberElasticity
   /// Yeoh model for biaxial loading.
   /// </summary>
   /// <remarks>
-  /// The model evaluates the engineering stress as a function of engineering strain using the
-  /// two material parameters <c>C10</c> and <c>C01</c>.
+  /// The model evaluates the engineering stress as a function of engineering strain using the three material parameters <c>C10</c>, <c>C20</c> and <c>C30</c>.
   /// <para>Reference: [1] O. H. Yeoh, „Some Forms of the Strain Energy Function for Rubber“, Rubber Chemistry and Technology, Bd. 66, Nr. 5, S. 754–771, Nov. 1993, doi: 10.5254/1.3538343.</para>
   /// </remarks>
   [FitFunctionClass]

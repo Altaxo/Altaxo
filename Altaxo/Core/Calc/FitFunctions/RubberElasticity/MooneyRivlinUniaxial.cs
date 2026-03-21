@@ -33,8 +33,7 @@ namespace Altaxo.Calc.FitFunctions.RubberElasticity
   /// Mooney-Rivlin model for uniaxial loading.
   /// </summary>
   /// <remarks>
-  /// The model evaluates the engineering stress as a function of engineering strain using the
-  /// two material parameters <c>C10</c> and <c>C01</c>.
+  /// The model evaluates the engineering stress as a function of engineering strain using the two material parameters <c>C10</c> and <c>C01</c>.
   /// <para>References:</para>
   /// <para>[1] M. Mooney, „A Theory of Large Elastic Deformation“, Journal of Applied Physics, Bd. 11, Nr. 9, S. 582–592, Sep. 1940, doi: 10.1063/1.1712836.</para>
   /// <para>[2] R. S. Rivlin, „Large elastic deformations of isotropic materials IV. further developments of the general theory“, Philosophical Transactions of the Royal Society of London. Series A, Mathematical and Physical Sciences, Bd. 241, Nr. 835, S. 379–397, Okt. 1948, doi: 10.1098/rsta.1948.0024.</para>
