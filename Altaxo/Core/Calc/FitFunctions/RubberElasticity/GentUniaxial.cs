@@ -35,7 +35,7 @@ namespace Altaxo.Calc.FitFunctions.RubberElasticity
   /// <remarks>
   /// The model evaluates the engineering stress as a function of engineering strain using the two material parameters <c>G</c> and <c>Jm</c>.
   /// <para>References:</para>
-  /// <para>[1] [1] A. N. Gent, „A New Constitutive Relation for Rubber“, Rubber Chemistry and Technology, Bd. 69, Nr. 1, S. 59–61, März 1996, doi: 10.5254/1.3538357.</para>
+  /// <para>[1] A. N. Gent, „A New Constitutive Relation for Rubber“, Rubber Chemistry and Technology, Bd. 69, Nr. 1, S. 59–61, März 1996, doi: 10.5254/1.3538357.</para>
   /// </remarks>
   [FitFunctionClass]
   public record GentUniaxial : IFitFunctionWithDerivative
@@ -46,14 +46,6 @@ namespace Altaxo.Calc.FitFunctions.RubberElasticity
     /// <summary>
     /// Gets the cross-sectional area of the sample.
     /// </summary>
-    /// <remarks>
-    /// The current implementation evaluates engineering stress directly and does not use this value in the calculation.
-    /// It is stored as part of the fit-function configuration.
-    /// <para>References:</para>
-    /// <para>[1] M. Mooney, „A Theory of Large Elastic Deformation“, Journal of Applied Physics, Bd. 11, Nr. 9, S. 582–592, Sep. 1940, doi: 10.1063/1.1712836.</para>
-    /// <para>[2] R. S. Rivlin, „Large elastic deformations of isotropic materials IV. further developments of the general theory“, Philosophical Transactions of the Royal Society of London. Series A, Mathematical and Physical Sciences, Bd. 241, Nr. 835, S. 379–397, Okt. 1948, doi: 10.1098/rsta.1948.0024.</para>
-    /// <para>[3] M. C. Boyce und E. M. Arruda, „Constitutive Models of Rubber Elasticity: A Review“, Rubber Chemistry and Technology, Bd. 73, Nr. 3, S. 504–523, Juli 2000, doi: 10.5254/1.3547602.</para>
-    /// </remarks>
     public double CrossSectionArea { get; init; } = 1;
 
     /// <inheritdoc/>

@@ -49,10 +49,6 @@ namespace Altaxo.Calc.FitFunctions.RubberElasticity
     /// <summary>
     /// Gets the cross-sectional area of the sample.
     /// </summary>
-    /// <remarks>
-    /// The current implementation evaluates engineering stress directly and does not use this value in the calculation.
-    /// It is stored as part of the fit-function configuration.
-    /// </remarks>
     public double CrossSectionArea { get; init; } = 1;
 
     /// <inheritdoc/>
