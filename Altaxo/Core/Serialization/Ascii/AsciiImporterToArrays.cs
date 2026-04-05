@@ -512,6 +512,7 @@ namespace Altaxo.Serialization.Ascii
     /// Get a unique column name based on a provided string.
     /// </summary>
     /// <param name="sbase">The base name. Can be null.</param>
+    /// <param name="columnNames">The existing column names.</param>
     /// <returns>An unique column name based on the provided string.</returns>
     public string FindUniqueColumnName(string? sbase, List<string> columnNames)
     {
@@ -558,6 +559,7 @@ namespace Altaxo.Serialization.Ascii
     /// already exists, a new name is created by appending a dot and then A-ZZ.
     /// </summary>
     /// <param name="sbase">A string which is the base of the new name. Must not be null!</param>
+    /// <param name="columnNames">The set of existing column names.</param>
     /// <returns>An unique column name based on the provided string.</returns>
     protected string FindUniqueColumnNameWithBase(string sbase, HashSet<string> columnNames)
     {

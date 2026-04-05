@@ -303,6 +303,7 @@ namespace Altaxo.Calc
     /// <param name="xArray">The x array.</param>
     /// <param name="x">The x value for which the y value should be calculated.</param>
     /// <param name="y">The y array, which must have the same length as the x array.</param>
+    /// <param name="extendToSides">If <see langword="true"/>, extends the interpolation to the nearest side values when <paramref name="x"/> is outside the range.</param>
     /// <returns>The linearly interpolated y value of the given x value. If x is outside the elements of the x array, null is returned.</returns>
     public static double GetLinearlyInterpolatedYOfXInUnorderedArray(ReadOnlySpan<double> xArray, double x, ReadOnlySpan<double> y, bool extendToSides = false)
     {

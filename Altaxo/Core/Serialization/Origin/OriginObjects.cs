@@ -459,6 +459,8 @@ namespace Altaxo.Serialization.Origin
 
     /// <summary>Initializes a new instance of <see cref="Window"/>.</summary>
     /// <param name="name">Optional window name.</param>
+    /// <param name="label">Optional window label.</param>
+    /// <param name="hidden">If <see langword="true"/>, the window is hidden.</param>
     public Window(string name = "", string label = "", bool hidden = false)
     {
       Name = name;

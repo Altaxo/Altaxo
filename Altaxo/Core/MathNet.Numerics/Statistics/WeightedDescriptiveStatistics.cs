@@ -362,6 +362,11 @@ namespace Altaxo.Calc.Statistics
     /// <param name="minimum">For setting Minimum.</param>
     /// <param name="maximum">For setting Maximum.</param>
     /// <param name="n">For setting Count.</param>
+    /// <param name="w1">For setting the total weight.</param>
+    /// <param name="den">For setting the weighted variance denominator.</param>
+    /// <param name="w2">For setting the second weight moment.</param>
+    /// <param name="w3">For setting the third weight moment.</param>
+    /// <param name="w4">For setting the fourth weight moment.</param>
     private void SetStatisticsWeighted(double mean, double variance, double skewness, double kurtosis, double minimum, double maximum, long n, double w1, double den, double w2, double w3, double w4)
     {
       Mean = mean;

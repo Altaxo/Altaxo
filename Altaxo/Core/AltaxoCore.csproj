@@ -8,14 +8,14 @@
     <DefineConstants>MANAGED</DefineConstants>
     <TransformOnBuild>true</TransformOnBuild>
     <nullable>enable</nullable>
-    <NoWarn>1701;1702;1573;1591;3001;3002;3003;3008;</NoWarn>
+    <NoWarn>1701;1702;3001;3002;3003;3008;</NoWarn>
     <CoreCompileDependsOn>GenAssInfo</CoreCompileDependsOn>
   </PropertyGroup>
 
   <!-- Enforce XML documentation and treat specific warnings as errors    -->
   <PropertyGroup>
     <GenerateDocumentationFile>true</GenerateDocumentationFile>
-    <WarningsAsErrors>CS1571;CS1572;CS1573;CS1574;CS1580;CS1584;CS1587;CS1591</WarningsAsErrors>
+    <WarningsAsErrors>CS1571;CS1572;CS1573;CS1574;CS1580;CS1584;CS1587</WarningsAsErrors>
   </PropertyGroup>
   
   <ItemGroup>

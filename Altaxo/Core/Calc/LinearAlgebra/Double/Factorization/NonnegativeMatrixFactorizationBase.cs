@@ -177,6 +177,8 @@ namespace Altaxo.Calc.LinearAlgebra.Double.Factorization
       /// Creates a new instance of <see cref="ErrorHistory"/> with the specified history depth.
       /// </summary>
       /// <param name="depth">The number of historical elements to store.</param>
+      /// <param name="tolerance">The tolerance that determines when an error improvement is considered significant.</param>
+      /// <param name="iterations">The number of additional iterations allowed after reaching the minimum error.</param>
       public ErrorHistory(int depth, double tolerance, int iterations)
       {
         _tolerance = tolerance;
