@@ -44,9 +44,13 @@ namespace Altaxo.Calc.Optimization
 
     /// <inheritdoc />
     /// <summary>
-    /// Creates L-BFGS minimizer
+    /// Creates an L-BFGS minimizer.
     /// </summary>
+    /// <param name="gradientTolerance">The stopping threshold for the gradient norm.</param>
+    /// <param name="parameterTolerance">The stopping threshold for parameter changes.</param>
+    /// <param name="functionProgressTolerance">The stopping threshold for function value progress.</param>
     /// <param name="memory">Numbers of gradients and steps to store.</param>
+    /// <param name="maximumIterations">The maximum number of iterations.</param>
     public LimitedMemoryBfgsMinimizer(double gradientTolerance, double parameterTolerance, double functionProgressTolerance, int memory, int maximumIterations = 1000) : base(gradientTolerance, parameterTolerance, functionProgressTolerance, maximumIterations)
     {
       Memory = memory;

@@ -378,6 +378,7 @@ namespace Altaxo.Serialization.Renishaw
     /// <summary>
     /// Get data according to specific block name
     /// </summary>
+    /// <param name="sr">The source stream.</param>
     /// <param name="block_name">Name of the block.</param>
     /// <param name="isOptional">True if this block is optional, i.e. not mandatory.</param>
     private void TreatBlockData(Stream sr, string block_name, bool isOptional = false)

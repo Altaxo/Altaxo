@@ -116,6 +116,7 @@ namespace Altaxo.Calc.Interpolation
     /// <param name="lambda">Smoothing parameter (Tikhonov regularization). Use 0 for interpolation; use &gt; 0 for smoothing.</param>
     /// <param name="epsilon">Kernel shape parameter (used by some kernels, e.g. Gaussian/multiquadric).</param>
     /// <param name="tail">Optional polynomial tail.</param>
+    /// <param name="collapseDuplicateSites">If <see langword="true"/>, duplicate <c>(x,y)</c> sites are collapsed by averaging their <c>z</c> values.</param>
     /// <returns>A fitted smoother that can be evaluated at arbitrary <c>(x,y)</c>.</returns>
     public static RBFSmoothingInterpolation2D Fit(
       IReadOnlyList<double> x,
@@ -161,6 +162,7 @@ namespace Altaxo.Calc.Interpolation
     /// <param name="lambda">Smoothing parameter (Tikhonov regularization). Use 0 for interpolation; use &gt; 0 for smoothing.</param>
     /// <param name="epsilon">Kernel shape parameter (used by some kernels, e.g. Gaussian/multiquadric).</param>
     /// <param name="tail">Optional polynomial tail.</param>
+    /// <param name="collapseDuplicateSites">If <see langword="true"/>, duplicate <c>(x,y)</c> sites are collapsed by averaging their <c>z</c> values.</param>
     /// <returns>A fitted smoother that can be evaluated at arbitrary <c>(x,y)</c>.</returns>
     public static RBFSmoothingInterpolation2D Fit(
       ReadOnlySpan<double> x,
@@ -188,6 +190,7 @@ namespace Altaxo.Calc.Interpolation
     /// <param name="lambda">Smoothing parameter (Tikhonov regularization).</param>
     /// <param name="epsilon">Kernel shape parameter (used by some kernels).</param>
     /// <param name="tail">Optional polynomial tail.</param>
+    /// <param name="collapseDuplicateSites">If <see langword="true"/>, duplicate <c>(x,y)</c> sites are collapsed by averaging their <c>z</c> values.</param>
     /// <returns>A fitted smoother instance.</returns>
     private static RBFSmoothingInterpolation2D FitCore(
       ReadOnlySpan<double> x,

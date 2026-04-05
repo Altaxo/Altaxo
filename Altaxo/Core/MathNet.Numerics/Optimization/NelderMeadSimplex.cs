@@ -105,6 +105,8 @@ namespace Altaxo.Calc.Optimization
     /// </summary>
     /// <param name="objectiveFunction">The objective function, no gradient or hessian needed</param>
     /// <param name="initialGuess">The initial guess</param>
+    /// <param name="convergenceTolerance">The convergence tolerance.</param>
+    /// <param name="maximumIterations">The maximum number of iterations.</param>
     /// <returns>The minimum point</returns>
     public static MinimizationResult Minimum(IObjectiveFunction objectiveFunction, Vector<double> initialGuess, double convergenceTolerance = 1e-8, int maximumIterations = 1000)
     {
@@ -119,7 +121,9 @@ namespace Altaxo.Calc.Optimization
     /// <param name="objectiveFunction">The objective function, no gradient or hessian needed</param>
     /// <param name="initialGuess">The initial guess</param>
     /// <param name="cancellationToken">Token to cancel the evaluation</param>
-    /// <param name="reportChi2Progress">Event handler that can be used to report the NumberOfIterations and Chi² value achived so far. Can be null</param>
+    /// <param name="reportChi2Progress">Event handler that can be used to report the number of iterations and Chi² value achieved so far. Can be null.</param>
+    /// <param name="convergenceTolerance">The convergence tolerance.</param>
+    /// <param name="maximumIterations">The maximum number of iterations.</param>
     /// <returns>The minimum point</returns>
     public static MinimizationResult Minimum(IObjectiveFunction objectiveFunction, Vector<double> initialGuess, CancellationToken cancellationToken, Action<int, double>? reportChi2Progress, double convergenceTolerance = 1e-8, int maximumIterations = 1000)
     {
@@ -138,7 +142,9 @@ namespace Altaxo.Calc.Optimization
     /// <param name="initialGuess">The initial guess</param>
     /// <param name="initalPertubation">The initial perturbation</param>
     /// <param name="cancellationToken">Token to cancel the evaluation</param>
-    /// <param name="reportChi2Progress">Event handler that can be used to report the NumberOfIterations and Chi² value achived so far. Can be null</param>
+    /// <param name="reportChi2Progress">Event handler that can be used to report the number of iterations and Chi² value achieved so far. Can be null.</param>
+    /// <param name="convergenceTolerance">The convergence tolerance.</param>
+    /// <param name="maximumIterations">The maximum number of iterations.</param>
     /// <returns>The minimum point</returns>
     public static MinimizationResult Minimum(IObjectiveFunction objectiveFunction, Vector<double> initialGuess, Vector<double> initalPertubation, CancellationToken cancellationToken, Action<int, double>? reportChi2Progress, double convergenceTolerance = 1e-8, int maximumIterations = 1000)
     {

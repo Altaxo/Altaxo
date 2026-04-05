@@ -140,6 +140,7 @@ namespace Altaxo.Serialization.WITec
     /// <param name="startOfData">The start of data.</param>
     /// <param name="endOfData">The end of data.</param>
     /// <param name="buffer">The buffer.</param>
+    /// <param name="parent">The parent node, or <see langword="null"/> if this is the root node.</param>
     protected WITecTreeNode(string nodeName, Stream stream, long startOfData, long endOfData, byte[] buffer, WITecTreeNode? parent)
     {
       Name = nodeName;

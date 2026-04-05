@@ -50,9 +50,13 @@ namespace Altaxo.Calc.Optimization.TrustRegion
     /// <param name="objective">The objective model, including function, jacobian, observations, and parameter bounds.</param>
     /// <param name="subproblem">The subproblem</param>
     /// <param name="initialGuess">The initial guess values.</param>
-    /// <param name="functionTolerance">The stopping threshold for L2 norm of the residuals.</param>
+    /// <param name="lowerBound">The optional lower bounds for the parameters.</param>
+    /// <param name="upperBound">The optional upper bounds for the parameters.</param>
+    /// <param name="scales">The optional parameter scaling factors.</param>
+    /// <param name="isFixed">Optional flags indicating which parameters are fixed.</param>
     /// <param name="gradientTolerance">The stopping threshold for infinity norm of the gradient vector.</param>
     /// <param name="stepTolerance">The stopping threshold for L2 norm of the change of parameters.</param>
+    /// <param name="functionTolerance">The stopping threshold for L2 norm of the residuals.</param>
     /// <param name="radiusTolerance">The stopping threshold for trust region radius</param>
     /// <param name="maximumIterations">The max iterations.</param>
     /// <returns></returns>

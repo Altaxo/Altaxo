@@ -94,6 +94,8 @@ namespace Altaxo.Calc
     /// <summary>
     /// Computes the generalized Mittag-Leffler function, E_(α, β)(x).
     /// </summary>
+    /// <param name="alpha">The α parameter.</param>
+    /// <param name="beta">The β parameter.</param>
     /// <param name="x">The value to evaluate.</param>
     /// <returns>The Mittag-Leffler function evaluated at given value.</returns>
     /// <remarks>
@@ -106,6 +108,9 @@ namespace Altaxo.Calc
     /// <summary>
     /// Computes the three-parameter Mittag-Leffler function, E_(α, β, γ)(x).
     /// </summary>
+    /// <param name="alpha">The α parameter.</param>
+    /// <param name="beta">The β parameter.</param>
+    /// <param name="gamma">The γ parameter.</param>
     /// <param name="x">The value to evaluate.</param>
     /// <returns>The Mittag-Leffler function evaluated at given value.</returns>
     /// <remarks>
@@ -119,6 +124,7 @@ namespace Altaxo.Calc
     /// <summary>
     /// Computes the Mittag-Leffler function, E_(α)(z).
     /// </summary>
+    /// <param name="alpha">The α parameter.</param>
     /// <param name="z">The value to evaluate.</param>
     /// <returns>The Mittag-Leffler function evaluated at given value.</returns>
     /// <remarks>
@@ -131,6 +137,8 @@ namespace Altaxo.Calc
     /// <summary>
     /// Computes the generalized Mittag-Leffler function, E_(α, β)(z).
     /// </summary>
+    /// <param name="alpha">The α parameter.</param>
+    /// <param name="beta">The β parameter.</param>
     /// <param name="z">The value to evaluate.</param>
     /// <returns>The Mittag-Leffler function evaluated at given value.</returns>
     /// <remarks>
@@ -143,6 +151,9 @@ namespace Altaxo.Calc
     /// <summary>
     /// Computes the three-parameter Mittag-Leffler function, E_(α, β, γ)(z).
     /// </summary>
+    /// <param name="alpha">The α parameter.</param>
+    /// <param name="beta">The β parameter.</param>
+    /// <param name="gamma">The γ parameter.</param>
     /// <param name="z">The value to evaluate.</param>
     /// <returns>The Mittag-Leffler function evaluated at given value.</returns>
     /// <remarks>
